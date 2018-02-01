@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.NotDefinedDataset;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
 import org.n52.series.db.beans.ereporting.EReportingBlobDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingBooleanDatasetEntity;
@@ -51,6 +52,7 @@ import org.n52.series.db.beans.ereporting.EReportingQuantityDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingReferencedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.series.db.beans.ereporting.EReportingTextDatasetEntity;
+import org.n52.series.db.beans.ereporting.NotDefinedEReportingDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -77,6 +79,11 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @Override
     public Class<?> getSeriesClass() {
         return EReportingDatasetEntity.class;
+    }
+
+    @Override
+    public Class<?> getNotDefinedDatasetClass() {
+        return NotDefinedEReportingDatasetEntity.class;
     }
 
     @Override
@@ -325,6 +332,11 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         @Override
         public Class<? extends EReportingReferencedDatasetEntity> referenceClass() {
             return EReportingReferencedDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends NotDefinedEReportingDatasetEntity> notDefinedClass() {
+            return NotDefinedEReportingDatasetEntity.class;
         }
 
         public static EReportingDatasetFactory getInstance() {

@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,18 +101,30 @@ public class SensorML20SensorML101Converter
     public AbstractFeature convert(AbstractFeature objectToConvert)
             throws ConverterException {
         if (objectToConvert instanceof AbstractSensorML) {
-            AbstractSensorML asml = (AbstractSensorML) objectToConvert;
-            if (objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)
-                    || asml.getDefaultElementEncoding()
-                            .equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
-                return convertSensorML20ToSensorML101(asml);
-            } else if (asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
-                    || asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
-                return convertSensorML101ToSensorML20(asml);
-            }
+            return convert((AbstractSensorML) objectToConvert);
+        } else if (objectToConvert instanceof SosProcedureDescription && ((SosProcedureDescription) objectToConvert).getProcedureDescription() instanceof AbstractSensorML) {
+            AbstractSensorML convert = convert((AbstractSensorML) ((SosProcedureDescription) objectToConvert).getProcedureDescription());
+            SosProcedureDescription sosProcedureDescription = new SosProcedureDescription(convert);
+            sosProcedureDescription.add(((SosProcedureDescription) objectToConvert));
+            sosProcedureDescription.setDescriptionFormat(convert.getDefaultElementEncoding());
+           return sosProcedureDescription;
         }
         throw new ConverterException(String.format("The procedure's description format %s is not supported!",
                 objectToConvert.getDefaultElementEncoding()));
+    }
+
+    private  AbstractSensorML convert(AbstractSensorML asml)
+            throws ConverterException {
+        if (asml.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)
+                || asml.getDefaultElementEncoding()
+                        .equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
+            return convertSensorML20ToSensorML101(asml);
+        } else if (asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
+                || asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
+            return convertSensorML101ToSensorML20(asml);
+        }
+        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+                asml.getDefaultElementEncoding()));
     }
 
     private AbstractSensorML convertSensorML20ToSensorML101(AbstractSensorML objectToConvert)

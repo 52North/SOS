@@ -38,7 +38,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -52,18 +51,19 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
-import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.schema.TargetType;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,12 +80,12 @@ import geodb.GeoDB;
 public class H2Configuration {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
 
-    private static final String HIBERNATE_CONNECTION_URL = DefaultHibernateConstants.CONNECTION_STRING_PROPERTY;
+    private static final String HIBERNATE_CONNECTION_URL = HibernateConstants.CONNECTION_URL;
 
     private static final String HIBERNATE_CONNECTION_DRIVER_CLASS =
             DefaultHibernateConstants.DRIVER_PROPERTY;
 
-    private static final String HIBERNATE_DIALECT = DefaultHibernateConstants.DIALECT_PROPERTY;
+    private static final String HIBERNATE_DIALECT = HibernateConstants.DIALECT;
 
     private static final String H2_DRIVER = "org.h2.Driver";
 
@@ -105,53 +105,75 @@ public class H2Configuration {
         private List<String> getResources() {
             List<String> resources = Lists.newLinkedList();
             // core
-            resources.add("/mapping/core/Codespace.hbm.xml");
-            resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
-            resources.add("/mapping/core/FeatureOfInterestType.hbm.xml");
-            resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
-            resources.add("/mapping/core/ObservableProperty.hbm.xml");
-            resources.add("/mapping/core/Offering.hbm.xml");
-            resources.add("/mapping/core/Parameter.hbm.xml");
-            resources.add("/mapping/core/Procedure.hbm.xml");
-            resources.add("/mapping/core/ProcedureDescriptionFormat.hbm.xml");
-            resources.add("/mapping/core/Unit.hbm.xml");
-            resources.add("/mapping/core/ObservationConstellation.hbm.xml");
-            resources.add("/mapping/core/ObservationType.hbm.xml");
-            // transactional module
-            resources.add("/mapping/transactional/RelatedFeature.hbm.xml");
-            resources.add("/mapping/transactional/RelatedFeatureRole.hbm.xml");
-            resources.add("/mapping/transactional/ResultTemplate.hbm.xml");
-            resources.add("/mapping/transactional/ValidProcedureTime.hbm.xml");
-            resources.add("/mapping/transactional/TFeatureOfInterest.hbm.xml");
-            resources.add("/mapping/transactional/TObservableProperty.hbm.xml");
-            resources.add("/mapping/transactional/TOffering.hbm.xml");
-            resources.add("/mapping/transactional/TProcedure.hbm.xml");
-            // observation/values
-            resources.add("/mapping/series/base/ValuedObservation.hbm.xml");
-            resources.add("/mapping/series/base/Series.hbm.xml");
-            resources.add("/mapping/series/base/Observation.hbm.xml");
-            resources.add("/mapping/series/base/TemporalReferencedObservation.hbm.xml");
-            resources.add("/mapping/series/base/ContextualReferencedObservation.hbm.xml");
-            resources.add("/mapping/series/observation/Blob.hbm.xml");
-            resources.add("/mapping/series/observation/Boolean.hbm.xml");
-            resources.add("/mapping/series/observation/Category.hbm.xml");
-            resources.add("/mapping/series/observation/Complex.hbm.xml");
-            resources.add("/mapping/series/observation/Count.hbm.xml");
-            resources.add("/mapping/series/observation/Geometry.hbm.xml");
-            resources.add("/mapping/series/observation/Numeric.hbm.xml");
-            resources.add("/mapping/series/observation/SweDataArray.hbm.xml");
-            resources.add("/mapping/series/observation/Text.hbm.xml");
-            resources.add("/mapping/series/value/Blob.hbm.xml");
-            resources.add("/mapping/series/value/Boolean.hbm.xml");
-            resources.add("/mapping/series/value/Category.hbm.xml");
-            resources.add("/mapping/series/value/Complex.hbm.xml");
-            resources.add("/mapping/series/value/Count.hbm.xml");
-            resources.add("/mapping/series/value/Geometry.hbm.xml");
-            resources.add("/mapping/series/value/Numeric.hbm.xml");
-            resources.add("/mapping/series/value/SweDataArray.hbm.xml");
-            resources.add("/mapping/series/value/Text.hbm.xml");
-            resources.add("/mapping/parameter/feature/FeatureParameterValues.hbm.xml");
-            resources.add("/mapping/parameter/observation/ParameterValues.hbm.xml");
+            resources.add("/hbm/core/CategoryResource.hbm.xml");
+            resources.add("/hbm/core/CodespaceResource.hbm.xml");
+            resources.add("/hbm/core/FeatureResource.hbm.xml");
+            resources.add("/hbm/core/FormatResource.hbm.xml");
+            resources.add("/hbm/core/OfferingResource.hbm.xml");
+            resources.add("/hbm/core/ParameterResource.hbm.xml");
+            resources.add("/hbm/core/PhenomenonResource.hbm.xml");
+            resources.add("/hbm/core/PlatformResource.hbm.xml");
+            resources.add("/hbm/core/ProcedureHistoryResource.hbm.xml");
+            resources.add("/hbm/core/ProcedureResource.hbm.xml");
+            resources.add("/hbm/core/RelatedFeatureResource.hbm.xml");
+            resources.add("/hbm/core/RelatedFeatureRoleResource.hbm.xml");
+            resources.add("/hbm/core/ResultTemplateResource.hbm.xml");
+            resources.add("/hbm/core/SamplingGeometryResource.hbm.xml");
+            resources.add("/hbm/core/ServiceResource.hbm.xml");
+            resources.add("/hbm/core/UnitResource.hbm.xml");
+            // dataset
+            resources.add("/hbm/dataset/DataResource.hbm.xml");
+            resources.add("/hbm/dataset/DatasetResource.hbm.xml");
+            resources.add("/hbm/dataset/RelatedDataResource.hbm.xml");
+            resources.add("/hbm/dataset/RelatedDatasetResource.hbm.xml");
+//            // core
+//            resources.add("/mapping/core/Codespace.hbm.xml");
+//            resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
+//            resources.add("/mapping/core/FeatureOfInterestType.hbm.xml");
+//            resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
+//            resources.add("/mapping/core/ObservableProperty.hbm.xml");
+//            resources.add("/mapping/core/Offering.hbm.xml");
+//            resources.add("/mapping/core/Parameter.hbm.xml");
+//            resources.add("/mapping/core/Procedure.hbm.xml");
+//            resources.add("/mapping/core/ProcedureDescriptionFormat.hbm.xml");
+//            resources.add("/mapping/core/Unit.hbm.xml");
+//            resources.add("/mapping/core/ObservationConstellation.hbm.xml");
+//            resources.add("/mapping/core/ObservationType.hbm.xml");
+//            // transactional module
+//            resources.add("/mapping/transactional/RelatedFeature.hbm.xml");
+//            resources.add("/mapping/transactional/RelatedFeatureRole.hbm.xml");
+//            resources.add("/mapping/transactional/ResultTemplate.hbm.xml");
+//            resources.add("/mapping/transactional/ValidProcedureTime.hbm.xml");
+//            resources.add("/mapping/transactional/TFeatureOfInterest.hbm.xml");
+//            resources.add("/mapping/transactional/TObservableProperty.hbm.xml");
+//            resources.add("/mapping/transactional/TOffering.hbm.xml");
+//            resources.add("/mapping/transactional/TProcedure.hbm.xml");
+//            // observation/values
+//            resources.add("/mapping/series/base/ValuedObservation.hbm.xml");
+//            resources.add("/mapping/series/base/Series.hbm.xml");
+//            resources.add("/mapping/series/base/Observation.hbm.xml");
+//            resources.add("/mapping/series/base/TemporalReferencedObservation.hbm.xml");
+//            resources.add("/mapping/series/base/ContextualReferencedObservation.hbm.xml");
+//            resources.add("/mapping/series/observation/Blob.hbm.xml");
+//            resources.add("/mapping/series/observation/Boolean.hbm.xml");
+//            resources.add("/mapping/series/observation/Category.hbm.xml");
+//            resources.add("/mapping/series/observation/Complex.hbm.xml");
+//            resources.add("/mapping/series/observation/Count.hbm.xml");
+//            resources.add("/mapping/series/observation/Geometry.hbm.xml");
+//            resources.add("/mapping/series/observation/Numeric.hbm.xml");
+//            resources.add("/mapping/series/observation/SweDataArray.hbm.xml");
+//            resources.add("/mapping/series/observation/Text.hbm.xml");
+//            resources.add("/mapping/series/value/Blob.hbm.xml");
+//            resources.add("/mapping/series/value/Boolean.hbm.xml");
+//            resources.add("/mapping/series/value/Category.hbm.xml");
+//            resources.add("/mapping/series/value/Complex.hbm.xml");
+//            resources.add("/mapping/series/value/Count.hbm.xml");
+//            resources.add("/mapping/series/value/Geometry.hbm.xml");
+//            resources.add("/mapping/series/value/Numeric.hbm.xml");
+//            resources.add("/mapping/series/value/SweDataArray.hbm.xml");
+//            resources.add("/mapping/series/value/Text.hbm.xml");
+//            resources.add("/mapping/parameter/feature/FeatureParameterValues.hbm.xml");
+//            resources.add("/mapping/parameter/observation/ParameterValues.hbm.xml");
             return resources;
         }
     };
@@ -315,7 +337,9 @@ public class H2Configuration {
                 Path createTempFile = null;
                 Path dropTempFile = null;
                 try (Statement stmt = conn.createStatement()) {
-                    configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
+                    configuration = new Configuration().configure("/hibernate.cfg.xml");
+                    configuration.setProperty(HibernateConstants.CONNECTION_URL, H2_CONNECTION_URL);
+                    configuration.addProperties(properties);
                     @SuppressWarnings("unchecked")
                     List<String> resources = (List<String>) properties
                             .get(SessionFactoryProvider.HIBERNATE_RESOURCES);
@@ -327,7 +351,13 @@ public class H2Configuration {
                     dropTempFile = Files.createTempFile("drop", "tmp");
                     SchemaExport schemaExport = new SchemaExport();
                     schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
-                    Metadata metadata = new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build()).buildMetadata();
+
+                    configuration.buildSessionFactory();
+                    StandardServiceRegistry serviceRegistry = configuration.getStandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
+                    MetadataSources metadataSources = new MetadataSources(serviceRegistry);
+                    Metadata metadata = metadataSources.buildMetadata();
+
+//                    Metadata metadata = new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build()).buildMetadata();
                     schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
                     createScript = Files.readAllLines(createTempFile);
                     schemaExport.setOutputFile(dropTempFile.toString());
@@ -337,7 +367,7 @@ public class H2Configuration {
                         LOG.debug("Executing {}", s);
                         stmt.execute(s);
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     new RuntimeException(e);
                 } finally {
                     try {

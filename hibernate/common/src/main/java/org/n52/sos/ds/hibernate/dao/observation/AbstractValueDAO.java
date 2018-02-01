@@ -223,7 +223,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
         if (!isIncludeChildObservableProperties()) {
-            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILDREN, false));
+            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
         } else {
             criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
         }

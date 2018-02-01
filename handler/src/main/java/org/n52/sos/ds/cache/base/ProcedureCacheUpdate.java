@@ -31,11 +31,11 @@ package org.n52.sos.ds.cache.base;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -44,6 +44,7 @@ import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.ProcedureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdate.class);
 
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
-    private List<ProcedureEntity> procedures = new ArrayList<>();
+    private Collection<ProcedureEntity> procedures = new ArrayList<>();
     private Map<String,Collection<DatasetEntity>> procedureDatasetMap = new HashMap<>();
 
     /**
@@ -75,45 +76,43 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     @SuppressWarnings("unchecked")
     private Map<String,Collection<DatasetEntity>> getProcedureDatasets() throws OwsExceptionReport {
         if (procedureDatasetMap.isEmpty()) {
-            try {
-                Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper.mapByProcedure(
-                        new DatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
-                if (map != null) {
-                    procedureDatasetMap.putAll(map);
-                }
-            } catch (DataAccessException dae) {
-                throw new NoApplicableCodeException().causedBy(dae).withMessage("Error while querying datasets for offerings");
+            Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper.mapByProcedure(
+                    new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
+            if (map != null) {
+                procedureDatasetMap.putAll(map);
             }
         }
         return procedureDatasetMap;
     }
 
-//    private void getProcedureDescriptionFormat() {
-//        getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
-//    }
+    private void setTypeProcedure(ProcedureEntity procedure) {
+        if (procedure.isType()) {
+            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.TYPE, procedure.getIdentifier());
+        } else {
+            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.INSTANCE, procedure.getIdentifier());
+        }
+    }
 
+    private void setAggregatedProcedure(ProcedureEntity procedure) {
+        if (procedure.isAggregation()) {
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION, procedure.getIdentifier());
+        } else {
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT, procedure.getIdentifier());
+        }
+    }
 
-//    private void setTypeProcedure(Procedure procedure) {
-//        if (procedure.isType()) {
-//            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.TYPE, procedure.getIdentifier());
-//        } else {
-//            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.INSTANCE, procedure.getIdentifier());
-//        }
-//    }
-//
-//    private void setAggregatedProcedure(Procedure procedure) {
-//        if (procedure.isAggregation()) {
-//            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION, procedure.getIdentifier());
-//        } else {
-//            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT, procedure.getIdentifier());
-//        }
-//    }
-//
-//    private void setTypeInstanceProcedure(Procedure procedure) {
-//        if (procedure.isSetTypeOf()) {
-//            getCache().addTypeOfProcedure(procedure.getTypeOf().getIdentifier(), procedure.getIdentifier());
-//        }
-//    }
+    private void setTypeInstanceProcedure(ProcedureEntity procedure) {
+        if (procedure.isSetTypeOf()) {
+            getCache().addTypeOfProcedure(procedure.getTypeOf().getIdentifier(), procedure.getIdentifier());
+        }
+    }
+
+    private void getParents(Set<String> parents, ProcedureEntity procedure) {
+        for (ProcedureEntity parent : procedure.getParents()) {
+            parents.add(parent.getIdentifier());
+            getParents(parents, parent);
+        }
+    }
 
     @Override
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
@@ -131,27 +130,29 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         startStopwatch();
 //        getProcedureDescriptionFormat();
         try {
-            procedures = new ProcedureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            procedures = new ProcedureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
             getProcedureDatasets();
-//        try {
-//        Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
-//            List<ProcedureEntity> procedures = procedureDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
-//            for (ProcedureEntity procedure : procedures) {
-//                String identifier = procedure.getIdentifier();
-//                getCache().addProcedure(identifier);
-//                if (procedure.isSetName()) {
-//                    getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
-//                }
-//                getCache().setOfferingsForProcedure(identifier, DatasourceCacheUpdateHelper
-//                        .getAllOfferingIdentifiersFromDatasets(procedureDatasetMap.get(identifier)));
-//                getCache().setObservablePropertiesForProcedure(identifier, DatasourceCacheUpdateHelper
-//                        .getAllObservablePropertyIdentifiersFromDatasets(procedureDatasetMap.get(identifier)));
-//
-//                if (procedure.hasParents()) {
-//                    getCache().addParentProcedures(identifier, getParents(procedure));
-//                }
-//            }
-        } catch (DataAccessException | OwsExceptionReport dae) {
+            for (ProcedureEntity procedure : procedures) {
+                String identifier = procedure.getIdentifier();
+                getCache().addProcedure(identifier);
+                if (procedure.isSetName()) {
+                    getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
+                }
+                getCache().setOfferingsForProcedure(identifier, DatasourceCacheUpdateHelper
+                        .getAllOfferingIdentifiersFromDatasets(procedureDatasetMap.get(identifier)));
+                getCache().setObservablePropertiesForProcedure(identifier, DatasourceCacheUpdateHelper
+                        .getAllObservablePropertyIdentifiersFromDatasets(procedureDatasetMap.get(identifier)));
+
+                setTypeProcedure(procedure);
+                setAggregatedProcedure(procedure);
+                setTypeInstanceProcedure(procedure);
+                Set<String> parents = new HashSet<>();
+                if (procedure.hasParents()) {
+                    getParents(parents, procedure);
+                    getCache().addParentProcedures(identifier, parents);
+                }
+            }
+        } catch (OwsExceptionReport dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating procedure cache!"));
         }

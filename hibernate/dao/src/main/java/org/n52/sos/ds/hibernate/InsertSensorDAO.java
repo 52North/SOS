@@ -46,6 +46,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
@@ -190,9 +191,10 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                     offeringDAO.getAndUpdateOrInsert(assignedOffering, hRelatedFeatures,
                                             observationTypes, featureOfInterestTypes, session);
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
+                                CategoryEntity hCategory = daoFactory.getObservablePropertyDAO().getOrInsertCategory(hObservableProperty, session);
                                  DatasetEntity hObservationConstellation = observationConstellationDAO
                                         .checkOrInsertSeries(hProcedure, hObservableProperty,
-                                                hOffering, assignedOffering.isParentOffering(), session);
+                                                hOffering, hCategory, assignedOffering.isParentOffering(), session);
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
                                     AbstractFeature sosFeatureOfInterest = request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
                                     AbstractFeatureEntity hFeature = daoFactory.getFeatureDAO().insertFeature(

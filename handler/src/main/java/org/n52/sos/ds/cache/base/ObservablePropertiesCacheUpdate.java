@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.cache.base;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
@@ -45,8 +45,6 @@ import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-
 /**
  *
  * @author Christian Autermann <c.autermann@52north.org>
@@ -61,12 +59,14 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
         try {
-            List<PhenomenonEntity> observableProperties =
-                    new PhenomenonDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
-
+            Collection<PhenomenonEntity> observableProperties =
+                    new PhenomenonDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
+            List<PhenomenonEntity> publishedObservableProperty =  new PhenomenonDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {
                 String identifier = observableProperty.getIdentifier();
-                getCache().addPublishedObservableProperty(identifier);
+                if (publishedObservableProperty.contains(observableProperty)) {
+                    getCache().addPublishedObservableProperty(identifier);
+                }
                 if (observableProperty.isSetName()) {
                     getCache().addObservablePropertyIdentifierHumanReadableName(identifier,
                             observableProperty.getName());
@@ -97,8 +97,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     }
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+        IoParameters parameters = IoParameters.createDefaults();
+        parameters.extendWith(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
+        return new DbQuery(parameters);
     }
 }

@@ -35,7 +35,6 @@ import java.util.Set;
 
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -79,7 +78,9 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         if (datasets != null) {
             String identifier = procedure.getIdentifier();
             getCache().addProcedure(identifier);
-            getCache().addPublishedProcedure(identifier);
+            if (datasets != null && !datasets.isEmpty() && datasets.stream().anyMatch(d -> d.isPublished())) {
+                getCache().addPublishedProcedure(identifier);
+            }
             if (procedure.isSetName()) {
                 getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
             }

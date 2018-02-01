@@ -85,13 +85,13 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
 
     private boolean hasObservations(String observableProperty, Set<String> offerings) {
-        if (offerings != null) {
-            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
-                    return true;
-                }
-            }
-        }
+//        if (offerings != null) {
+//            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
+//                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
 

@@ -82,4 +82,5 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                                       sessionStore),
               new ProcedureCacheUpdate(threadCount, sessionStore));
     }
+
 }

@@ -81,8 +81,9 @@ public class ValidProcedureTimeDAO {
      *            Valid start time
      * @param session
      *            Hibernate session
+     * @return
      */
-    public void insertValidProcedureTime(ProcedureEntity procedure, FormatEntity procedureDescriptionFormat,
+    public ProcedureHistoryEntity insertValidProcedureTime(ProcedureEntity procedure, FormatEntity procedureDescriptionFormat,
             String xmlDescription, DateTime validStartTime, Session session) {
         ProcedureHistoryEntity vpd = new ProcedureHistoryEntity();
         vpd.setProcedure(procedure);
@@ -91,6 +92,8 @@ public class ValidProcedureTimeDAO {
         vpd.setStartTime(validStartTime.toDate());
         session.save(vpd);
         session.flush();
+        session.refresh(vpd);
+        return vpd;
     }
 
     /**

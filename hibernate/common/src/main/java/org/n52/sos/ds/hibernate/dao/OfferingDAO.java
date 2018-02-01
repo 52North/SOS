@@ -761,8 +761,6 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             }
         }
         session.saveOrUpdate(offering);
-        session.flush();
-        session.refresh(offering);
         return offering;
     }
 

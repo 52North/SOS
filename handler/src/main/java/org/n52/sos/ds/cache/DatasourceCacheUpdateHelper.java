@@ -51,7 +51,6 @@ public class DatasourceCacheUpdateHelper {
 
     }
 
-    @SuppressWarnings("rawtypes")
     public static Set<String> getAllOfferingIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets) {
         Set<String> offerings = new HashSet<String>(datasets.size());
@@ -63,13 +62,11 @@ public class DatasourceCacheUpdateHelper {
         return offerings;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Set<String> getAllProcedureIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets) {
         return getAllProcedureIdentifiersFromDatasetEntitys(datasets, null);
     }
 
-    @SuppressWarnings("rawtypes")
     public static Set<String> getAllProcedureIdentifiersFromDatasetEntitys(
             Collection<DatasetEntity> datasets, ProcedureFlag procedureFlag) {
         Set<String> procedures = new HashSet<String>(datasets.size());
@@ -94,7 +91,6 @@ public class DatasourceCacheUpdateHelper {
         return procedures;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Collection<String> getAllOfferingIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> offerings = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
@@ -105,7 +101,6 @@ public class DatasourceCacheUpdateHelper {
         return offerings;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Collection<String> getAllProcedureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> procedures = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
@@ -116,7 +111,6 @@ public class DatasourceCacheUpdateHelper {
         return procedures;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Set<String> getAllObservablePropertyIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> observableProperties = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
@@ -127,7 +121,6 @@ public class DatasourceCacheUpdateHelper {
         return observableProperties;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Collection<String> getAllFeatureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> features = Sets.newTreeSet();
         for (DatasetEntity dataset : datasets) {
@@ -138,8 +131,6 @@ public class DatasourceCacheUpdateHelper {
         return features;
     }
 
-
-    @SuppressWarnings("rawtypes")
     public static Collection<? extends String> getAllProcedureIdentifiersFromDatasets(
             Collection<DatasetEntity> datasets, ProcedureFlag parent) {
         Set<String> procedures = Sets.newTreeSet();
@@ -163,7 +154,6 @@ public class DatasourceCacheUpdateHelper {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     public static Map<String,Collection<DatasetEntity>> mapByOffering(
             Collection<DatasetEntity> datasets) {
         Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();
@@ -175,7 +165,6 @@ public class DatasourceCacheUpdateHelper {
         return map;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Map<String,Collection<DatasetEntity>> mapByProcedure(
             Collection<DatasetEntity> datasets) {
         Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();
@@ -187,7 +176,6 @@ public class DatasourceCacheUpdateHelper {
         return map;
     }
 
-    @SuppressWarnings("rawtypes")
     public static Map<String,Collection<DatasetEntity>> mapByObservableProperty(
             Collection<DatasetEntity> datasets) {
         Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();

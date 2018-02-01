@@ -60,8 +60,8 @@ public class ProfileGeneratorSplitter {
         ProfileValue profileValue = new ProfileValue("");
         profileValue.setGmlId("pv" + entity.getId());
         UoM uom = null;
-        if (entity.hasLevelUnit()) {
-            UnitEntity levelunit = entity.getLevelUnit();
+        if (entity.hasVerticalUnit()) {
+            UnitEntity levelunit = entity.getVerticalUnit();
             uom = new UoM(levelunit.getUnit());
             if (levelunit.isSetName()) {
                 uom.setName(levelunit.getName());
@@ -70,11 +70,11 @@ public class ProfileGeneratorSplitter {
                 uom.setLink(levelunit.getLink());
             }
         }
-        if (entity.hasFromLevel()) {
-            profileValue.setFromLevel(new QuantityValue(entity.getFromLevel().doubleValue(), uom));
+        if (entity.hasVerticalFrom()) {
+            profileValue.setFromLevel(new QuantityValue(entity.getVerticalFrom().doubleValue(), uom));
         }
-        if (entity.hasToLevel()) {
-            profileValue.setToLevel(new QuantityValue(entity.getToLevel().doubleValue(), uom));
+        if (entity.hasVerticalTo()) {
+            profileValue.setToLevel(new QuantityValue(entity.getVerticalTo().doubleValue(), uom));
         }
         profileValue.setValue(createProfileLevel(entity));
         return profileValue;
@@ -88,9 +88,16 @@ public class ProfileGeneratorSplitter {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
-                if (observation.hasParameters() && observation.hasValue()) {
-                    QuantityValue levelStart = getLevelStart(observation.getParameters());
-                    QuantityValue levelEnd = getLevelEnd(observation.getParameters());
+                QuantityValue levelStart = getLevelStart(observation.getParameters());
+                QuantityValue levelEnd = getLevelEnd(observation.getParameters());
+                if (observation.hasVerticalFrom() || observation.hasVerticalTo()) {
+                    levelStart = getLevelStart(observation.getVerticalFrom(), entity.getVerticalFromName(), entity.getVerticalUnit());
+                    levelEnd = getLevelEnd(observation.getVerticalTo(), entity.getVerticalToName(), entity.getVerticalUnit());
+                } else if (observation.hasParameters() && observation.hasValue()) {
+                    levelStart = getLevelStart(observation.getParameters());
+                    levelEnd = getLevelEnd(observation.getParameters());
+                }
+                if (levelStart != null || levelEnd != null) {
                     BigDecimal key = getKey(levelStart, levelEnd);
                     Value<?> value = new ObservationValueCreator().visit(observation);
                     if (map.containsKey(key)) {
@@ -150,6 +157,43 @@ public class ProfileGeneratorSplitter {
             }
         }
         return null;
+    }
+
+    private static QuantityValue getLevelStart(BigDecimal fromLevel, String fromLevelName, UnitEntity levelUnit) {
+        if (fromLevel != null) {
+            return fromLevelName != null && !fromLevelName.isEmpty()
+                    ? getLevel(fromLevel, fromLevelName, levelUnit)
+                    : getLevel(fromLevel, "from", levelUnit);
+        }
+        return null;
+    }
+
+    private static QuantityValue getLevelEnd(BigDecimal toLevel, String toLevelName, UnitEntity levelUnit) {
+        if (toLevel != null) {
+            return toLevelName != null && !toLevelName.isEmpty()
+                    ? getLevel(toLevel, toLevelName, levelUnit)
+                    : getLevel(toLevel, "to", levelUnit);
+        }
+        return null;
+    }
+
+    private static QuantityValue getLevel(BigDecimal v, String n, UnitEntity u) {
+        QuantityValue value = new QuantityValue(v);
+        value.setDefinition(n);
+        value.setName(n);
+        if (u != null && u.isSetIdentifier()) {
+            UoM uom = new UoM(u.getIdentifier());
+            if (u.isSetName()) {
+                uom.setName(u.getName());
+            }
+            if (u.isSetLink()) {
+                uom.setLink(u.getLink());
+            }
+            value.setUnit(uom);
+        } else {
+            value.setUnit(new UoM("m").setName("meter"));
+        }
+        return value;
     }
 
     private static boolean checkParameterForStartLevel(String name) {

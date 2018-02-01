@@ -64,11 +64,14 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         LOGGER.debug("Executing FeatureOfInterestCacheUpdate");
         startStopwatch();
         try {
-            List<FeatureEntity> features = new FeatureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            Collection<FeatureEntity> features = new FeatureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
+            List<FeatureEntity> publishedFeatureOfInterest = new FeatureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             ProcedureDao procedureDao = new ProcedureDao(getSession());
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getIdentifier();
-                getCache().addPublishedFeatureOfInterest(identifier);
+                if (publishedFeatureOfInterest.contains(featureEntity)) {
+                    getCache().addPublishedFeatureOfInterest(identifier);
+                }
                 getCache().addFeatureOfInterest(identifier);
                 if (featureEntity.isSetName()) {
                         getCache().addFeatureOfInterestIdentifierHumanReadableName(identifier, featureEntity.getName());

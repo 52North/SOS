@@ -30,11 +30,11 @@ package org.n52.sos.ds.hibernate;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
@@ -65,7 +65,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -162,11 +161,11 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
 
             session.flush();
             transaction.commit();
-        } catch (final HibernateException he) {
+        } catch (PersistenceException pe) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            handleHibernateException(he);
+            handleHibernateException(pe);
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -194,51 +193,48 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         OmObservationConstellation sosObsConst = sosObservation.getObservationConstellation();
         cache.addOfferings(sosObsConst.getOfferings());
 
-        Set<DatasetEntity> datasets = new HashSet<>();
         AbstractFeatureEntity hFeature = null;
 
-        for (String offeringID : sosObsConst.getOfferings()) {
-            DatasetEntity hDataset = cache.get(sosObsConst, offeringID);
-            if (hDataset == null) {
-                if (!cache.isChecked(sosObsConst, offeringID)) {
-                    try {
-                        hDataset =
-                                daoFactory.getSeriesDAO().checkSeries(
-                                        sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
-                        // add to cache table
-                        cache.putConstellation(sosObsConst, offeringID, hDataset);
-                    } catch (OwsExceptionReport owse) {
-                        exceptions.add(owse);
-                    }
-                    // mark as checked
-                    cache.checkConstellation(sosObsConst, offeringID);
-                }
-            }
-            if (hDataset != null) {
-                // getFeature feature from local cache or create if necessary
-                hFeature = getFeature(sosObsConst.getFeatureOfInterest(), cache, session);
+        if (sosObsConst.getOfferings().size() > 1) {
 
-                // only do feature checking once for each
-                // AbstractFeature/offering combo
-                if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                    daoFactory.getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(
-                            hFeature, hDataset.getOffering(), session);
-                    cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
-                }
-
-                datasets.add(hDataset);
-            }
         }
 
-        if (!datasets.isEmpty()) {
+        String offeringID = sosObsConst.getOfferings().iterator().next();
+        DatasetEntity hDataset = cache.get(sosObsConst, offeringID);
+        if (hDataset == null) {
+            if (!cache.isChecked(sosObsConst, offeringID)) {
+                try {
+                    hDataset =
+                            daoFactory.getSeriesDAO().checkSeries(
+                                    sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
+                    // add to cache table
+                    cache.putConstellation(sosObsConst, offeringID, hDataset);
+                } catch (OwsExceptionReport owse) {
+                    exceptions.add(owse);
+                }
+                // mark as checked
+                cache.checkConstellation(sosObsConst, offeringID);
+            }
+        }
+        if (hDataset != null) {
+            // getFeature feature from local cache or create if necessary
+            hFeature = getFeature(sosObsConst.getFeatureOfInterest(), cache, session);
+
+            // only do feature checking once for each
+            // AbstractFeature/offering combo
+            if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
+                daoFactory.getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(
+                        hFeature, hDataset.getOffering(), session);
+                cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
+            }
             AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 observationDAO.insertObservationSingleValue(
-                        datasets, hFeature, sosObservation,
+                        hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             } else if (sosObservation.getValue() instanceof MultiObservationValues) {
                 observationDAO.insertObservationMultiValue(
-                        datasets, hFeature, sosObservation,
+                        hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             }
         }
@@ -256,34 +252,34 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         }
     }
 
-    protected void handleHibernateException(HibernateException he)
+    protected void handleHibernateException(PersistenceException pe)
             throws OwsExceptionReport {
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new observation!";
 
-        if (he instanceof JDBCException) {
-            if (he instanceof ConstraintViolationException) {
-                final ConstraintViolationException cve = (ConstraintViolationException) he;
-                checkEqualsAndThrow(cve.getConstraintName(), he);
-                checkContainsAndThrow(cve.getMessage(), he);
+        if (pe instanceof PersistenceException) {
+            CompositeOwsException ce = new CompositeOwsException();
+            if (pe.getCause() instanceof ConstraintViolationException) {
+                final ConstraintViolationException cve = (ConstraintViolationException) pe.getCause();
+                checkEqualsAndThrow(cve.getConstraintName(), pe);
+                checkContainsAndThrow(cve.getMessage(), pe);
+                SQLException sqle = cve.getSQLException();
+                checkContainsAndThrow(sqle.getMessage(), pe);
+                // if this is a JDBCException, pass the underlying SQLException
+                // as the causedBy exception so that we can show the actual error in the
+                // OwsExceptionReport when batching
+                for (Throwable next : sqle) {
+                    checkContainsAndThrow(next.getMessage(), pe);
+                    ce.add(new NoApplicableCodeException().causedBy(next));
+                }
             }
-            SQLException sqle =((JDBCException) he).getSQLException();
-            checkContainsAndThrow(sqle.getMessage(), he);
-            // if this is a JDBCException, pass the underlying SQLException
-            // as the causedBy exception so that we can show the actual error in the
-            // OwsExceptionReport when batching
-            CompositeOwsException e = new CompositeOwsException();
-            for (Throwable next : sqle) {
-                checkContainsAndThrow(next.getMessage(), he);
-                e.add(new NoApplicableCodeException().causedBy(next));
-            }
-            throw e.setStatus(status);
+            throw ce.setStatus(status);
         } else {
-            throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
+            throw new NoApplicableCodeException().causedBy(pe).withMessage(exceptionMsg).setStatus(status);
         }
     }
 
-    private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {
+    private void checkEqualsAndThrow(String constraintName, PersistenceException e) throws OwsExceptionReport {
         if (!Strings.isNullOrEmpty(constraintName)) {
             String exceptionMsg = null;
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
@@ -292,13 +288,13 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 exceptionMsg = "Observation identifier already contained in database";
             }
             if(!Strings.isNullOrEmpty(exceptionMsg)) {
-                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
+                throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
     }
 
-    private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
+    private void checkContainsAndThrow(String message, PersistenceException e) throws OwsExceptionReport {
         if (!Strings.isNullOrEmpty(message)) {
             String exceptionMsg = null;
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
@@ -307,7 +303,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                 exceptionMsg = "Observation identifier already contained in database";
             }
             if (!Strings.isNullOrEmpty(exceptionMsg)) {
-                throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
+                throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }

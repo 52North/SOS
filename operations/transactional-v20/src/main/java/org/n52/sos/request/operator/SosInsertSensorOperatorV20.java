@@ -364,24 +364,6 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
-        SosContentCache cache = getCache();
-
-        // add parent procedure offerings
-        if (request.getProcedureDescription().isSetParentProcedure()) {
-            Set<String> allParentProcedures = cache.getParentProcedures(
-                    request.getProcedureDescription().getParentProcedure().getTitleOrFromHref(), true, true);
-            for (String parentProcedure : allParentProcedures) {
-                for (String offering : cache.getOfferingsForProcedure(parentProcedure)) {
-                    // TODO I18N
-                    if (!checkOfferingsForOffering(sosOfferings, offering)) {
-                        SosOffering sosOffering = new SosOffering(offering, "");
-                        sosOffering.setParentOfferingFlag(true);
-                        sosOfferings.add(sosOffering);
-                    }
-
-                }
-            }
-        }
 
         // if no offerings are assigned, generate one
         if (CollectionHelper.isEmpty(sosOfferings)) {
@@ -393,16 +375,6 @@ public class SosInsertSensorOperatorV20 extends
             checkReservedCharacter(offering.getIdentifier(), Sos2Constants.InsertSensorParams.offeringIdentifier);
         }
         request.setAssignedOfferings(new ArrayList<>(sosOfferings));
-    }
-
-    private boolean checkOfferingsForOffering(Set<SosOffering> sosOfferings, String offering) {
-        for (SosOffering sosOffering : sosOfferings) {
-            if (sosOffering.getIdentifier().equals(offering)) {
-                sosOffering.setParentOfferingFlag(true);
-                return true;
-            }
-        }
-        return false;
     }
 
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {

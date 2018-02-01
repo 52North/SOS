@@ -62,6 +62,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.util.XmlOptionsHelper;
@@ -82,6 +83,7 @@ public class DaoFactory {
     private DecoderRepository decoderRepository;
     private XmlOptionsHelper xmlOptionsHelper;
     private I18NDAORepository i18NDAORepository;
+    private GeometryHandler geometryHandler;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -113,6 +115,11 @@ public class DaoFactory {
     @Inject
     public void setXmlOptionsHelper(XmlOptionsHelper xmlOptionsHelper) {
         this.xmlOptionsHelper = xmlOptionsHelper;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
     }
 
     public AbstractSeriesDAO getSeriesDAO() {
@@ -231,6 +238,10 @@ public class DaoFactory {
 
     public I18NDAORepository getI18NDAORepository() {
         return i18NDAORepository;
+    }
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
     }
 
 }

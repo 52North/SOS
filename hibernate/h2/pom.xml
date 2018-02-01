@@ -56,8 +56,8 @@
             <scope>runtime</scope>
         </dependency> 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-mappings</artifactId>
+            <groupId>org.n52.series.db</groupId>
+            <artifactId>mappings</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -111,8 +111,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hibernate-mappings</artifactId>
+                                    <groupId>org.n52.series.db</groupId>
+                                    <artifactId>mappings</artifactId>
                                     <overWrite>false</overWrite>
                                 </artifactItem>
                             </artifactItems>

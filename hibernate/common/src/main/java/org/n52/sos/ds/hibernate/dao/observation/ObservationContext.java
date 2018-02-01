@@ -37,7 +37,9 @@ import org.hibernate.criterion.Restrictions;
 //import org.n52.sos.ds.hibernate.entities.ProcedureEntity;
 //import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureEntity;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -52,12 +54,14 @@ import org.n52.series.db.beans.ProcedureEntity;
  *
  */
 public class ObservationContext {
-    private AbstractFeatureEntity featureOfInterest;
+    private AbstractFeatureEntity<?> featureOfInterest;
     private PhenomenonEntity observableProperty;
     private ProcedureEntity procedure;
     private OfferingEntity offering;
+    private CategoryEntity category;
     private boolean hiddenChild = false;
     private boolean publish = true;
+    private FormatEntity observationType;
 
     /**
      * Indicates that the series of the observation should be published
@@ -66,24 +70,54 @@ public class ObservationContext {
         return publish;
     }
 
-    public void setPublish(boolean publish) {
+    public ObservationContext setPublish(boolean publish) {
         this.publish = publish;
+        return this;
     }
 
-    public AbstractFeatureEntity getFeatureOfInterest() {
+    public AbstractFeatureEntity<?> getFeatureOfInterest() {
         return featureOfInterest;
     }
 
-    public void setFeatureOfInterest(AbstractFeatureEntity featureOfInterest) {
+    public ObservationContext setFeatureOfInterest(AbstractFeatureEntity<?> featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
+        return this;
     }
 
     public PhenomenonEntity getPhenomenon() {
         return observableProperty;
     }
 
-    public void setPhenomenon(PhenomenonEntity observableProperty) {
+    public ObservationContext setPhenomenon(PhenomenonEntity observableProperty) {
         this.observableProperty = observableProperty;
+        return this;
+    }
+
+    /**
+     * @return the category
+     */
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    /**
+     * @param category the category to set
+     */
+    public ObservationContext setCategory(CategoryEntity category) {
+        this.category = category;
+        return this;
+    }
+
+    /**
+     * @return the offering
+     */
+    public OfferingEntity getOffering() {
+        return offering;
+    }
+
+    public ObservationContext setOffering(OfferingEntity offering) {
+        this.offering = offering;
+        return this;
     }
 
     public ProcedureEntity getProcedure() {
@@ -94,9 +128,20 @@ public class ObservationContext {
     /**
      * @param procedure
      *                  the procedure to set
+     * @return
      */
-    public void setProcedure(ProcedureEntity procedure) {
+    public ObservationContext setProcedure(ProcedureEntity procedure) {
         this.procedure = procedure;
+        return this;
+    }
+
+    public FormatEntity getObservationType() {
+        return observationType;
+    }
+
+    public ObservationContext setObservationType(FormatEntity observationType) {
+        this.observationType = observationType;
+        return this;
     }
 
     public boolean isSetFeatureOfInterest() {
@@ -111,26 +156,32 @@ public class ObservationContext {
         return getProcedure() != null;
     }
 
-    /**
-     * @return the offering
-     */
-    public OfferingEntity getOffering() {
-        return offering;
-    }
-
-    public void setOffering(OfferingEntity offering) {
-        this.offering = offering;
-    }
-
     public boolean isSetOffering() {
         return getOffering() != null;
     }
 
+    public boolean isSetCategory() {
+        return getCategory() != null;
+    }
+
+    public boolean isSetObservationType() {
+        return getObservationType() != null;
+    }
+
     public void addIdentifierRestrictionsToCritera(Criteria c) {
-        if (isSetFeatureOfInterest()) {
-            c.add(Restrictions
-                    .eq(DatasetEntity.PROPERTY_FEATURE,
-                        getFeatureOfInterest()));
+        addIdentifierRestrictionsToCritera(c, true);
+    }
+
+    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeature) {
+        if (includeFeature) {
+            if (isSetFeatureOfInterest()) {
+                c.add(Restrictions
+                        .eq(DatasetEntity.PROPERTY_FEATURE,
+                            getFeatureOfInterest()));
+
+            }
+        } else {
+            c.add(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE));
         }
         if (isSetPhenomenon()) {
             c.add(Restrictions
@@ -139,27 +190,42 @@ public class ObservationContext {
         }
         if (isSetProcedure()) {
             c.add(Restrictions
-                    .eq( DatasetEntity.PROPERTY_PROCEDURE,
+                    .eq(DatasetEntity.PROPERTY_PROCEDURE,
                         getProcedure()));
         }
         if (isSetOffering()) {
-            c.add(Restrictions.eq( DatasetEntity.PROPERTY_OFFERING, offering));
+            c.add(Restrictions
+                    .eq(DatasetEntity.PROPERTY_OFFERING,
+                        getOffering()));
+        }
+
+        if (isSetCategory()) {
+            c.add(Restrictions
+                    .eq(DatasetEntity.PROPERTY_CATEGORY,
+                        getCategory()));
         }
     }
 
     public void addValuesToSeries(DatasetEntity contextual) {
-        if (isSetFeatureOfInterest()) {
+        if (!contextual.isSetFeature() && isSetFeatureOfInterest()) {
             contextual.setFeature(getFeatureOfInterest());
         }
-        if (isSetPhenomenon()) {
+        if (contextual.getPhenomenon() == null && isSetPhenomenon()) {
             contextual.setPhenomenon(getPhenomenon());
         }
-        if (isSetProcedure()) {
+        if (contextual.getProcedure() == null && isSetProcedure()) {
             contextual.setProcedure(getProcedure());
         }
-        if (isSetOffering()) {
+        if (!contextual.isSetOffering() && isSetOffering()) {
             contextual.setOffering(getOffering());
         }
+        if (contextual.getCategory() == null && isSetCategory()) {
+            contextual.setCategory(getCategory());
+        }
+        if (!contextual.isSetObservationType() && isSetObservationType()) {
+            contextual.setObservationType(getObservationType());
+        }
+       contextual.setHiddenChild(isHiddenChild());
     }
 
     public void setHiddenChild(boolean hiddenChild) {

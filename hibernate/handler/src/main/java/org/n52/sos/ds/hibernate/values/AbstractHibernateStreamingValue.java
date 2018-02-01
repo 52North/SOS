@@ -43,7 +43,6 @@ import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
 import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingData;
 import org.n52.shetland.aqd.AqdConstants;

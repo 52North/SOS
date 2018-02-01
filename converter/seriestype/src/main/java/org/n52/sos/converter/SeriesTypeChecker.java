@@ -34,9 +34,7 @@ import java.util.Set;
 
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos1Constants;
@@ -44,8 +42,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
-import org.n52.shetland.ogc.swe.simpleType.SweCategory;
-import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.convert.AbstractRequestResponseModifier;
 
 import com.google.common.collect.Maps;
@@ -81,25 +77,25 @@ public class SeriesTypeChecker extends AbstractRequestResponseModifier {
 
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
-       if (request instanceof InsertObservationRequest) {
-           return checkForSeriesType((InsertObservationRequest)request);
-       }
+//       if (request instanceof InsertObservationRequest) {
+//           return checkForSeriesType((InsertObservationRequest)request);
+//       }
        return request;
     }
 
-    private OwsServiceRequest checkForSeriesType(InsertObservationRequest request) {
-        if (request.hasExtension(Sos2Constants.Extensions.SeriesType)) {
-            Extension<?> seriesType = request.getExtension(Sos2Constants.Extensions.SeriesType).get();
-            for (OmObservation observation : request.getObservations()) {
-                if (seriesType.getValue() instanceof SweText) {
-                    observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
-                } else if (seriesType.getValue() instanceof SweCategory) {
-                    observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
-                }
-            }
-        }
-        return request;
-    }
+//    private OwsServiceRequest checkForSeriesType(InsertObservationRequest request) {
+//        if (request.hasExtension(Sos2Constants.Extensions.SeriesType)) {
+//            Extension<?> seriesType = request.getExtension(Sos2Constants.Extensions.SeriesType).get();
+//            for (OmObservation observation : request.getObservations()) {
+//                if (seriesType.getValue() instanceof SweText) {
+//                    observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
+//                } else if (seriesType.getValue() instanceof SweCategory) {
+//                    observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
+//                }
+//            }
+//        }
+//        return request;
+//    }
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {

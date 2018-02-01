@@ -48,6 +48,7 @@ import org.n52.series.db.beans.dataset.CountDataset;
 import org.n52.series.db.beans.dataset.DataArrayDataset;
 import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.GeometryDataset;
+import org.n52.series.db.beans.dataset.NotDefinedDataset;
 import org.n52.series.db.beans.dataset.ProfileDataset;
 import org.n52.series.db.beans.dataset.QuantityDataset;
 import org.n52.series.db.beans.dataset.ReferencedDataset;
@@ -63,6 +64,13 @@ public abstract class DatasetFactory {
     private Dataset dataset()
             throws OwsExceptionReport {
         return instantiate(datasetClass());
+    }
+
+    public abstract Class<? extends NotDefinedDataset> notDefinedClass();
+
+    private NotDefinedDataset notDefined()
+            throws OwsExceptionReport {
+        return instantiate(notDefinedClass());
     }
 
     public abstract Class<? extends BlobDataset> blobClass();
@@ -188,31 +196,34 @@ public abstract class DatasetFactory {
         return instantiate(classForObservationType(observationType));
     }
 
-    public Dataset visit(Data<?> o) throws OwsExceptionReport {
-       if (o instanceof QuantityData) {
-           return numeric();
-       } else if (o instanceof BlobData) {
-           return blob();
-       } else if (o instanceof BooleanData) {
-           return truth();
-       } else if (o instanceof CategoryData) {
-           return category();
-       } else if (o instanceof CountData) {
-           return count();
-       } else if (o instanceof GeometryData) {
-           return geometry();
-       } else if (o instanceof DataArrayData) {
-           return sweDataArray();
-       } else if (o instanceof TextData) {
-           return text();
-       } else if (o instanceof ComplexData) {
-           return complex();
-       } else if (o instanceof ProfileData) {
-           return profile();
-       } else if (o instanceof ReferencedData) {
-           return reference();
-       }
+    public Dataset visit(Data<?> o)
+            throws OwsExceptionReport {
+        if (o != null) {
+            if (o instanceof QuantityData) {
+                return numeric();
+            } else if (o instanceof BlobData) {
+                return blob();
+            } else if (o instanceof BooleanData) {
+                return truth();
+            } else if (o instanceof CategoryData) {
+                return category();
+            } else if (o instanceof CountData) {
+                return count();
+            } else if (o instanceof GeometryData) {
+                return geometry();
+            } else if (o instanceof DataArrayData) {
+                return sweDataArray();
+            } else if (o instanceof TextData) {
+                return text();
+            } else if (o instanceof ComplexData) {
+                return complex();
+            } else if (o instanceof ProfileData) {
+                return profile();
+            } else if (o instanceof ReferencedData) {
+                return reference();
+            }
+        }
 
-       return dataset();
+        return notDefined();
     }
 }

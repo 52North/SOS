@@ -42,11 +42,13 @@ import org.n52.series.db.beans.CountDatasetEntity;
 import org.n52.series.db.beans.DataArrayDatasetEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.GeometryDatasetEntity;
+import org.n52.series.db.beans.NotDefinedDatasetEntity;
 import org.n52.series.db.beans.ProfileDatasetEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.series.db.beans.ReferencedDatasetEntity;
 import org.n52.series.db.beans.TextDatasetEntity;
 import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.NotDefinedDataset;
 import org.n52.series.db.beans.dataset.QuantityDataset;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
@@ -183,6 +185,11 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
+    public Class<?> getNotDefinedDatasetClass() {
+        return NotDefinedDatasetEntity.class;
+    }
+
+    @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) {
         // nothing to add
     }
@@ -261,6 +268,11 @@ public class SeriesDAO extends AbstractSeriesDAO {
         @Override
         public Class<? extends ReferencedDatasetEntity> referenceClass() {
             return ReferencedDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends NotDefinedDatasetEntity> notDefinedClass() {
+            return NotDefinedDatasetEntity.class;
         }
 
         public static DefaultDatasetFactory getInstance() {

@@ -41,6 +41,7 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
@@ -180,6 +181,14 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return (PhenomenonEntity) criteria.uniqueResult();
     }
 
+    private CategoryEntity getCategroyForIdentifier(String identifier, Session session) {
+        Criteria criteria = session.createCriteria(CategoryEntity.class)
+                .add(Restrictions.eq(CategoryEntity.IDENTIFIER, identifier));
+        LOGGER.debug("QUERY getCategroyForIdentifier(identifier): {}",
+                HibernateHelper.getSqlString(criteria));
+        return (CategoryEntity) criteria.uniqueResult();
+    }
+
     /**
      * Get observable properties by identifiers
      *
@@ -265,6 +274,22 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             session.refresh(obsProp);
         }
         return obsProp;
+    }
+
+    public CategoryEntity getOrInsertCategory(PhenomenonEntity obsProp, Session session) {
+        CategoryEntity category = getCategroyForIdentifier(obsProp.getIdentifier(), session);
+        if (category == null) {
+            category = new CategoryEntity();
+            category.setIdentifier(obsProp.getIdentifier());
+            category.setIdentifierCodespace(obsProp.getIdentifierCodespace());
+            category.setName(obsProp.getName());
+            category.setNameCodespace(obsProp.getNameCodespace());
+            category.setDescription(obsProp.getDescription());
+            session.save(category);
+            session.flush();
+            session.refresh(category);
+        }
+        return category;
     }
 
     protected void insertNonExisting(

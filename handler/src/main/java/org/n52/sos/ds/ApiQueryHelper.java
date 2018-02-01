@@ -29,8 +29,8 @@
 package org.n52.sos.ds;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.n52.series.db.beans.FormatEntity;
 
@@ -43,11 +43,7 @@ public interface ApiQueryHelper {
     }
 
     default Set<String> toStringSet(Collection<FormatEntity> formats) {
-        Set<String> set = new HashSet<>();
-        for (FormatEntity format : formats) {
-            set.add(format.getFormat());
-        }
-        return set;
+        return formats.stream().map(t -> t.getFormat()).collect(Collectors.toSet());
     }
 
 }

@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
@@ -45,6 +46,7 @@ import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -68,7 +70,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 //    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String identifier;
-    @SuppressWarnings("rawtypes")
     private final Collection<DatasetEntity> datasets;
     private final OfferingEntity offering;
     private final Locale defaultLanguage;
@@ -106,7 +107,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // since they are performed once per offering
 
         getCache().addOffering(identifier);
-        getCache().addPublishedOffering(identifier);
+        if (datasets != null && !datasets.isEmpty() && datasets.stream().anyMatch(d -> d.isPublished())) {
+            getCache().addPublishedOffering(identifier);
+        }
         addOfferingNamesAndDescriptionsToCache(identifier, session);
         // only check once, check flag in other methods
         // Procedures
@@ -121,18 +124,25 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().setObservablePropertiesForOffering(identifier, getObservablePropertyIdentifier(session));
 
         // Observation types
-        getCache().setObservationTypesForOffering(identifier, toStringSet(offering.getObservationTypes()));
+        getCache().setObservationTypesForOffering(identifier, getObservationTypes());
+        getCache().setAllowedObservationTypeForOffering(identifier, toStringSet(offering.getObservationTypes()));
+
+        // Related features
+        if (offering.hasRelatedFeatures()) {
+            getCache().setRelatedFeaturesForOffering(identifier, getRelatedFeatures(offering.getRelatedFeatures()));
+        }
 
         // Features of Interest
         getCache().setFeaturesOfInterestForOffering(identifier, DatasourceCacheUpdateHelper.getAllFeatureIdentifiersFromDatasets(datasets));
-        getCache().setFeatureOfInterestTypesForOffering(identifier, toStringSet(offering.getFeatureTypes()));
+        getCache().setFeatureOfInterestTypesForOffering(identifier, getFeatureTypes());
+        getCache().setAllowedFeatureOfInterestTypeForOffering(identifier, toStringSet(offering.getFeatureTypes()));
 
         // Spatial Envelope
         getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
 
         // Temporal extent
-        getCache().setMinPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getPhenomenonTimeStart()));
-        getCache().setMaxPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getPhenomenonTimeEnd()));
+        getCache().setMinPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeStart()));
+        getCache().setMaxPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeEnd()));
         getCache().setMinResultTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getResultTimeStart()));
         getCache().setMaxResultTimeForOffering(identifier,DateTimeHelper.makeDateTime(offering.getResultTimeEnd()));
     }
@@ -240,7 +250,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             Envelope e = new Envelope();
             int srid = -1;
             for (DatasetEntity de : datasets) {
-                if (de.getFeature().isSetGeometry() && !de.getFeature().getGeometryEntity().isEmpty()) {
+                if (de.isSetFeature() && de.getFeature().isSetGeometry() && !de.getFeature().getGeometryEntity().isEmpty()) {
                     if (srid < 0 ) {
                         srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();
                     }
@@ -252,6 +262,20 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return new ReferencedEnvelope();
     }
 
+    protected Collection<String> getRelatedFeatures(Set<RelatedFeatureEntity> relatedFeatures) {
+        return relatedFeatures.stream().map(rf -> rf.getFeature().getIdentifier()).collect(Collectors.toSet());
+    }
+
+    private Collection<String> getObservationTypes() {
+        return datasets.stream().filter(d -> d.isSetObservationType()).map(d -> d.getObservationType().getFormat())
+                .collect(Collectors.toSet());
+    }
+
+    private Collection<String> getFeatureTypes() {
+        return datasets.stream().filter(d -> d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
+                .map(d -> d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
+    }
+
     @Override
     public void execute() {
         try {
@@ -260,7 +284,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getErrors().add(owse);
         } catch (Exception e) {
             getErrors().add(new GenericThrowableWrapperException(e)
-                    .withMessage("Error while processing procedure cache update task!"));
+                    .withMessage(String.format("Error while processing offering cache update task for '%s'!"), identifier));
         }
     }
 }

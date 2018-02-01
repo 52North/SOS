@@ -36,7 +36,6 @@ import org.hibernate.HibernateException;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
@@ -89,10 +88,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 offeringDAO = new OfferingDao(getSession());
             }
             if (offeringsToUpdate == null) {
-                if (offeringsIdToUpdate == null || (offeringsIdToUpdate != null && offeringsIdToUpdate.isEmpty())) {
-                    return offeringDAO.getAllInstances(new DbQuery(IoParameters.createDefaults()));
+                if (offeringsIdToUpdate == null || offeringsIdToUpdate.isEmpty()) {
+                    return offeringDAO.get(new DbQuery(IoParameters.createDefaults()));
                 } else {
-                    return offeringDAO.getAllInstances(createDatasetDbQuery(offeringsIdToUpdate));
+                    return offeringDAO.get(createDatasetDbQuery(offeringsIdToUpdate));
                 }
             }
         } catch (Exception e) {
@@ -113,8 +112,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         if (offDatasetMap == null) {
             try {
                 offDatasetMap = DatasourceCacheUpdateHelper.mapByOffering(
-                    new DatasetDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults())));
-            } catch (HibernateException | DataAccessException dae) {
+                    new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
+            } catch (HibernateException dae) {
                 throw new NoApplicableCodeException().causedBy(dae).withMessage("Error while querying datasets for offerings");
             }
         }
@@ -126,26 +125,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         this.offeringsToUpdate = getOfferingsToUpdate();
-//        for (OfferingEntity offering : getOfferingsToUpdate()) {
-//            String identifier = offering.getIdentifier();
-//            if (shouldOfferingBeProcessed(offering)) {
-//                getCache().addOffering(identifier);
-//
-//                if (offering instanceof TOffering) {
-//                    TOffering tOffering = (TOffering) offering;
-//                    // Related features
-//                    Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
-//                    if (!relatedFeatures.isEmpty()) {
-//                        getCache().setRelatedFeaturesForOffering(identifier, relatedFeatures);
-//                    }
-//                    getCache().setAllowedObservationTypeForOffering(identifier,
-//                            getObservationTypesFromObservationType(tOffering.getObservationTypes()));
-//                    // featureOfInterestTypes
-//                    getCache().setAllowedFeatureOfInterestTypeForOffering(identifier,
-//                            getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
-//                }
-//            }
-//        }
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         //execute multi-threaded updates
@@ -158,9 +137,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
-        boolean hasSamplingGeometry = false;
         for (OfferingEntity offering : getOfferingsToUpdate()){
-//            if (shouldOfferingBeProcessed(offering)) {
                 Collection<DatasetEntity> datasets
                         = getOfferingDatasets().get(offering.getIdentifier());
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(
@@ -168,45 +145,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                         datasets,
                         this.defaultLanguage,
                         this.i18NDAORepository));
-//            }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }
 
-//    /**
-//     * Check if the observation table contains samplingGeometries with values.
-//     *
-//     * @return <code>true</code>, if the observation table contains samplingGeometries with values
-//     */
-//    private boolean checkForSamplingGeometry() {
-//        try {
-//            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-//            return observationDAO.containsSamplingGeometries(getSession());
-//        } catch (OwsExceptionReport e) {
-//            LOGGER.error("Error while getting observation DAO class from factory!", e);
-//            getErrors().add(e);
-//        }
-//        return false;
-//    }
-
-//    protected boolean shouldOfferingBeProcessed(OfferingEntity offering) {
-//        return false;
-//    }
-
-//    protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
-//        Set<String> obsTypes = new HashSet<>(observationTypes.size());
-//        for (ObservationType obsType : observationTypes) {
-//            obsTypes.add(obsType.getObservationType());
-//        }
-//        return obsTypes;
-//    }
-
-//    protected Collection<String> getFeatureOfInterestTypesFromFeatureOfInterestType(
-//            Set<FeatureOfInterestType> featureOfInterestTypes) {
-//        Set<String> featTypes = new HashSet<>(featureOfInterestTypes.size());
-//        for (FeatureOfInterestType featType : featureOfInterestTypes) {
-//            featTypes.add(featType.getFeatureOfInterestType());
-//        }
-//        return featTypes;
-//    }
 }

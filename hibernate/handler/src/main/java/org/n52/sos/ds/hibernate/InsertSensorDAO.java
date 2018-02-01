@@ -46,6 +46,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
@@ -151,7 +152,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
             if (procedureDescriptionFormat != null)  {
                 final ProcedureEntity hProcedure =
                         new ProcedureDAO(daoFactory).getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
-                                request.getProcedureDescription(), request.isType(),session);
+                                request.getProcedureDescription(), request.isType(), session);
                 // TODO: set correct validTime,
                 new ValidProcedureTimeDAO(daoFactory).insertValidProcedureTime(
                         hProcedure,
@@ -187,6 +188,10 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                             assignedOffering.getOfferingName()), hRelatedFeatures, observationTypes,
                                             featureOfInterestTypes, session);
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
+                                CategoryEntity hCategory = daoFactory.getObservablePropertyDAO().getOrInsertCategory(hObservableProperty, session);
+                                ObservationContext ctx =
+                                        new ObservationContext().setCategory(hCategory).setOffering(hOffering)
+                                                .setPhenomenon(hObservableProperty).setProcedure(hProcedure);
                                 seriesDAO.checkOrInsertSeries(hProcedure,
                                         hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
@@ -241,7 +246,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                                 daoFactory.getObservationDAO(),
                                                 daoFactory,
                                                 sosObservation,
-                                                Sets.newHashSet(hObservationConstellationReferenceSeries),
+                                                hObservationConstellationReferenceSeries,
                                                 hFeature,
                                                 codespaceCache,
                                                 unitCache,
@@ -256,13 +261,13 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                                 session).get(0);
                                         hReferenceSeries.setPublished(false);
                                         session.update(hReferenceSeries);
-                                        ObservationContext ctx = new ObservationContext();
-                                        ctx.setPhenomenon(hObservableProperty);
-                                        ctx.setFeatureOfInterest(hFeature);
-                                        ctx.setProcedure(hProcedure);
-                                        ctx.setOffering(hOffering);
-                                        ctx.setPublish(false);
-                                        DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctx, observation, session);
+                                        ObservationContext ctxReferenced = new ObservationContext();
+                                        ctxReferenced.setPhenomenon(hObservableProperty);
+                                        ctxReferenced.setFeatureOfInterest(hFeature);
+                                        ctxReferenced.setProcedure(hProcedure);
+                                        ctxReferenced.setOffering(hOffering);
+                                        ctxReferenced.setPublish(false);
+                                        DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
                                         hSeries.setReferenceValues(Sets.newHashSet(hReferenceSeries));
                                         session.update(hSeries);
                                     }

@@ -29,13 +29,18 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.RootEntityResultTransformer;
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ValuedParameter;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
@@ -64,7 +69,10 @@ import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ParameterFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate DAO class to om:pramameter
@@ -74,7 +82,11 @@ import org.n52.sos.ds.hibernate.util.ParameterFactory;
  */
 public class ParameterDAO {
 
+    private static final Logger LOG = LoggerFactory
+            .getLogger(ParameterDAO.class);
+
     public Set<Parameter<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
+        Set<Parameter<?>> parameters = new HashSet<>();
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                 ParameterPersister persister = new ParameterPersister(
@@ -83,10 +95,10 @@ public class ParameterDAO {
                         unitCache,
                         session
                 );
-                namedValue.getValue().accept(persister);
+                parameters.add(namedValue.getValue().accept(persister));
             }
         }
-        return null;
+        return parameters;
     }
 
     /**
@@ -192,14 +204,23 @@ public class ParameterDAO {
         }
 
         private <V, T extends Parameter<V>> T persist(T parameter, V value) throws OwsExceptionReport {
+            Criteria c = session.createCriteria(parameter.getClass())
+                    .setResultTransformer(RootEntityResultTransformer.INSTANCE)
+                    .add(Restrictions.eq(ValuedParameter.NAME, namedValue.getName().getHref()))
+                    .add(Restrictions.eq(ValuedParameter.VALUE, value));
             if (parameter instanceof HasUnit && !((HasUnit)parameter).isSetUnit()) {
                 ((HasUnit)parameter).setUnit(getUnit(namedValue.getValue()));
+                c.add(Restrictions.eq(HasUnit.UNIT, ((HasUnit)parameter).getUnit()));
             }
-
+            LOG.trace("QUERY parameter: {}",
+                    HibernateHelper.getSqlString(c));
+            Parameter p = (Parameter) c.uniqueResult();
+            if (p != null) {
+                return (T) p;
+            }
             parameter.setName(namedValue.getName().getHref());
             parameter.setValue(value);
             session.saveOrUpdate(parameter);
-            session.flush();
             return parameter;
         }
 

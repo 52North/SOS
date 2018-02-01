@@ -45,6 +45,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
@@ -217,10 +218,10 @@ public class InsertResultDAO
                     }
                 }
                 if (observation.getValue() instanceof SingleObservationValue) {
-                    observationDAO.insertObservationSingleValue(Sets.newHashSet(obsConst), feature,
+                    observationDAO.insertObservationSingleValue(obsConst, feature,
                             observation, codespaceCache, unitCache, session);
                 } else if (observation.getValue() instanceof MultiObservationValues) {
-                    observationDAO.insertObservationMultiValue(Sets.newHashSet(obsConst), feature,
+                    observationDAO.insertObservationMultiValue(obsConst, feature,
                             observation, codespaceCache, unitCache, session);
                 }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {
@@ -555,16 +556,18 @@ public class InsertResultDAO
     }
 
     private DatasetEntity insertObservationConstellationForProfiles(AbstractSeriesDAO obsConstDao,
-           FormatDAO obsTypeDao, OmObservation o, Session session) {
+           FormatDAO obsTypeDao, OmObservation o, Session session) throws OwsExceptionReport {
         ProcedureEntity procedure = daoFactory.getProcedureDAO()
                 .getProcedureForIdentifier(o.getObservationConstellation().getProcedureIdentifier(), session);
         PhenomenonEntity observableProperty = daoFactory.getObservablePropertyDAO()
                 .getOrInsertObservableProperty(o.getObservationConstellation().getObservableProperty(), session);
         OfferingEntity offering = daoFactory.getOfferingDAO()
                 .getOfferingForIdentifier(o.getObservationConstellation().getOfferings().iterator().next(), session);
+        CategoryEntity category = daoFactory.getObservablePropertyDAO()
+                .getOrInsertCategory(observableProperty, session);
 
         DatasetEntity oc = obsConstDao.checkOrInsertSeries(procedure, observableProperty,
-                offering, false, session);
+                offering, category, false, session);
         if (o.getObservationConstellation().isSetObservationType()) {
             oc.setObservationType(obsTypeDao
                     .getFormatEntityObject(o.getObservationConstellation().getObservationType(), session));

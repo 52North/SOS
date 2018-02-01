@@ -533,7 +533,7 @@ public abstract class AbstractObservationDAO
         Criteria criteria = session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
         if (!isIncludeChildObservableProperties()) {
-            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILDREN, false));
+            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
         } else {
             criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
         }
@@ -562,13 +562,13 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *                            If an error occurs
      */
-    public void insertObservationMultiValue(Set<DatasetEntity> observationConstellations,
+    public void insertObservationMultiValue(DatasetEntity observationConstellation,
             AbstractFeatureEntity feature, OmObservation containerObservation,
                                             Map<String, CodespaceEntity> codespaceCache,
                                             Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
-            insertObservationSingleValue(observationConstellations, feature, sosObservation, codespaceCache, unitCache,
+            insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
                                          session);
         }
     }
@@ -588,10 +588,10 @@ public abstract class AbstractObservationDAO
      *
      * @throws OwsExceptionReport
      */
-    public void insertObservationSingleValue(Set<DatasetEntity> hObservationConstellations,
+    public void insertObservationSingleValue(DatasetEntity hObservationConstellation,
             AbstractFeatureEntity hFeature, OmObservation sosObservation, Session session)
             throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation, null, null, session);
+        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, session);
     }
 
     /**
@@ -615,7 +615,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      */
     @SuppressWarnings("rawtypes")
-    public void insertObservationSingleValue(Set<DatasetEntity> hObservationConstellations,
+    public void insertObservationSingleValue(DatasetEntity hObservationConstellation,
                                              AbstractFeatureEntity hFeature, OmObservation sosObservation,
                                              Map<String, CodespaceEntity> codespaceCache,
                                              Map<UoM, UnitEntity> unitCache, Session session)
@@ -627,21 +627,19 @@ public abstract class AbstractObservationDAO
                 this,
                 getDaoFactory(),
                 sosObservation,
-                hObservationConstellations,
+                hObservationConstellation,
                 hFeature,
                 codespaceCache,
                 unitCache,
-                getOfferings(hObservationConstellations),
+                getOfferings(hObservationConstellation),
                 session
         );
         value.getValue().accept(persister);
     }
 
-    private Set<OfferingEntity> getOfferings(Set<DatasetEntity> hObservationConstellations) {
+    private Set<OfferingEntity> getOfferings(DatasetEntity hObservationConstellation) {
         Set<OfferingEntity> offerings = Sets.newHashSet();
-        for (DatasetEntity observationConstellation : hObservationConstellations) {
-            offerings.add(observationConstellation.getOffering());
-        }
+        offerings.add(hObservationConstellation.getOffering());
         return offerings;
     }
 
@@ -1468,7 +1466,7 @@ public abstract class AbstractObservationDAO
     }
 
     private GeometryHandler getGeometryHandler() {
-        return GeometryHandler.getInstance();
+        return getDaoFactory().getGeometryHandler();
     }
 
     /**

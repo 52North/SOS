@@ -164,8 +164,8 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         Set<String> identifiers = Sets.newHashSet();
         for (Observation<?> observation : queryObservation) {
             if (!identifiers.contains(observation.getIdentifier())) {
-                identifiers.add(observation.getIdentifier());
-                checkedObservations.add(observation);
+                identifiers.copy(observation.getIdentifier());
+                checkedObservations.copy(observation);
             }
         }
         return checkedObservations;
@@ -188,7 +188,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         Criteria c =
                 daoFactory.getObservationDAO()
                         .getObservationClassCriteriaForResultModel(request.getResultModel(), session);
-        c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
+        c.copy(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }

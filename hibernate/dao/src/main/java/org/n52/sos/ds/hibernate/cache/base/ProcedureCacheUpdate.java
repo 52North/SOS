@@ -173,7 +173,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                             daoFactory.getOfferingDAO().getOfferingIdentifiersForProcedure(procedureIdentifier, getSession())));
                 } catch (OwsExceptionReport ce) {
                     LOGGER.error("Error while querying offering identifiers for procedure!", ce);
-                    getErrors().add(ce);
+                    getErrors().copy(ce);
                 }
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
                         daoFactory.getObservablePropertyDAO().getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
@@ -196,7 +196,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
             procedureTimeExtrema = daoFactory.getProcedureDAO().getProcedureTimeExtrema(getSession());
         } catch (OwsExceptionReport ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
-            getErrors().add(ce);
+            getErrors().copy(ce);
         }
         if (!CollectionHelper.isEmpty(procedureTimeExtrema)) {
             for (Entry<String, TimeExtrema> entry : procedureTimeExtrema.entrySet()) {
@@ -215,7 +215,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().addPublishedProcedures(parents);
             }
         } catch (CodedException e) {
-           getErrors().add(e);
+           getErrors().copy(e);
         }
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
@@ -229,7 +229,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     private void getParents(Set<String> parents, Procedure procedure) {
         if (procedure instanceof TProcedure && ((TProcedure)procedure).getParents() != null) {
             for (Procedure parent : ((TProcedure)procedure).getParents()) {
-                parents.add(parent.getIdentifier());
+                parents.copy(parent.getIdentifier());
                 getParents(parents, parent);
             }
         }

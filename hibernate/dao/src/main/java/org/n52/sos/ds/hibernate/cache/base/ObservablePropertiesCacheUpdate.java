@@ -123,12 +123,12 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 try {
                     getCache().setOfferingsForObservableProperty(observableProperty, offeringDAO.getOfferingIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport e) {
-                    getErrors().add(e);
+                    getErrors().copy(e);
                 }
                 try {
                     getCache().setProceduresForObservableProperty(observableProperty, procedureDAO.getProcedureIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport owse) {
-                    getErrors().add(owse);
+                    getErrors().copy(owse);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 getCache().addPublishedObservableProperties(parents);
             }
         } catch (CodedException e) {
-           getErrors().add(e);
+           getErrors().copy(e);
         }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());
     }
@@ -150,7 +150,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     private void getParents(Set<String> parents, ObservableProperty observableProperty) {
         if (observableProperty instanceof TObservableProperty && ((TObservableProperty)observableProperty).getParents() != null) {
             for (ObservableProperty parent : ((TObservableProperty)observableProperty).getParents()) {
-                parents.add(parent.getIdentifier());
+                parents.copy(parent.getIdentifier());
                 getParents(parents, parent);
             }
         }

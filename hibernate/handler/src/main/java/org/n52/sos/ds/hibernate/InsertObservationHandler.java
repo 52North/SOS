@@ -80,7 +80,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 @Configurable
-public class InsertObservationDAO extends AbstractInsertObservationHandler  {
+public class InsertObservationHandler extends AbstractInsertObservationHandler  {
     private static final int FLUSH_THRESHOLD = 50;
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
     private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
@@ -107,7 +107,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     /**
      * constructor
      */
-    public InsertObservationDAO() {
+    public InsertObservationHandler() {
         super(SosConstants.SOS);
     }
 
@@ -257,21 +257,19 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new observation!";
 
-        if (pe instanceof PersistenceException) {
+        if (pe instanceof PersistenceException && pe.getCause() instanceof ConstraintViolationException) {
             CompositeOwsException ce = new CompositeOwsException();
-            if (pe.getCause() instanceof ConstraintViolationException) {
-                final ConstraintViolationException cve = (ConstraintViolationException) pe.getCause();
-                checkEqualsAndThrow(cve.getConstraintName(), pe);
-                checkContainsAndThrow(cve.getMessage(), pe);
-                SQLException sqle = cve.getSQLException();
-                checkContainsAndThrow(sqle.getMessage(), pe);
-                // if this is a JDBCException, pass the underlying SQLException
-                // as the causedBy exception so that we can show the actual error in the
-                // OwsExceptionReport when batching
-                for (Throwable next : sqle) {
-                    checkContainsAndThrow(next.getMessage(), pe);
-                    ce.add(new NoApplicableCodeException().causedBy(next));
-                }
+            final ConstraintViolationException cve = (ConstraintViolationException) pe.getCause();
+            checkEqualsAndThrow(cve.getConstraintName(), pe);
+            checkContainsAndThrow(cve.getMessage(), pe);
+            SQLException sqle = cve.getSQLException();
+            checkContainsAndThrow(sqle.getMessage(), pe);
+            // if this is a JDBCException, pass the underlying SQLException
+            // as the causedBy exception so that we can show the actual error in the
+            // OwsExceptionReport when batching
+            for (Throwable next : sqle) {
+                checkContainsAndThrow(next.getMessage(), pe);
+                ce.add(new NoApplicableCodeException().causedBy(next));
             }
             throw ce.setStatus(status);
         } else {

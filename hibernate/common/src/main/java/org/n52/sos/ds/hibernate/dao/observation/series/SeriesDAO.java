@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.n52.series.db.beans.BlobDatasetEntity;
 import org.n52.series.db.beans.BooleanDatasetEntity;
 import org.n52.series.db.beans.CategoryDatasetEntity;
+import org.n52.series.db.beans.CategoryProfileDatasetEntity;
 import org.n52.series.db.beans.ComplexDatasetEntity;
 import org.n52.series.db.beans.CountDatasetEntity;
 import org.n52.series.db.beans.DataArrayDatasetEntity;
@@ -45,10 +46,12 @@ import org.n52.series.db.beans.GeometryDatasetEntity;
 import org.n52.series.db.beans.NotDefinedDatasetEntity;
 import org.n52.series.db.beans.ProfileDatasetEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
+import org.n52.series.db.beans.QuantityProfileDatasetEntity;
 import org.n52.series.db.beans.ReferencedDatasetEntity;
 import org.n52.series.db.beans.TextDatasetEntity;
+import org.n52.series.db.beans.TextProfileDatasetEntity;
 import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.NotDefinedDataset;
+import org.n52.series.db.beans.dataset.ProfileDataset;
 import org.n52.series.db.beans.dataset.QuantityDataset;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
@@ -263,6 +266,21 @@ public class SeriesDAO extends AbstractSeriesDAO {
         @Override
         public Class<? extends ProfileDatasetEntity> profileClass() {
             return ProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> textProfileClass() {
+            return TextProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> categoryProfileClass() {
+            return CategoryProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> quantityProfileClass() {
+            return QuantityProfileDatasetEntity.class;
         }
 
         @Override

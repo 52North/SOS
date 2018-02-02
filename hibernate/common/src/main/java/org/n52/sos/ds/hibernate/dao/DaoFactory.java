@@ -65,6 +65,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.util.SweHelper;
 import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
@@ -84,6 +85,7 @@ public class DaoFactory {
     private XmlOptionsHelper xmlOptionsHelper;
     private I18NDAORepository i18NDAORepository;
     private GeometryHandler geometryHandler;
+    private SweHelper sweHelper;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -120,6 +122,11 @@ public class DaoFactory {
     @Inject
     public void setGeometryHandler(GeometryHandler geometryHandler) {
         this.geometryHandler = geometryHandler;
+    }
+
+    @Inject
+    public void setSweHelper(SweHelper sweHelper) {
+        this.sweHelper = sweHelper;
     }
 
     public AbstractSeriesDAO getSeriesDAO() {
@@ -242,6 +249,10 @@ public class DaoFactory {
 
     public GeometryHandler getGeometryHandler() {
         return geometryHandler;
+    }
+
+    public SweHelper getSweHelper() {
+        return sweHelper;
     }
 
 }

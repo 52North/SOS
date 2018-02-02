@@ -55,11 +55,11 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  * @since 4.0.0
  *
  */
-public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
+public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
     private HibernateSessionHolder sessionHolder;
     private DaoFactory daoFactory;
 
-    public DeleteSensorDAO() {
+    public DeleteSensorHandler() {
         super(SosConstants.SOS);
     }
 

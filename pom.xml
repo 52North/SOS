@@ -88,7 +88,7 @@
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <hibernate.version>5.2.12.Final</hibernate.version>
-        <sqlite.version>3.19.3</sqlite.version>
+        <sqlite.version>3.21.0.1</sqlite.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <geotools.version>14.1</geotools.version>
         <jackson.version>2.9.2</jackson.version>

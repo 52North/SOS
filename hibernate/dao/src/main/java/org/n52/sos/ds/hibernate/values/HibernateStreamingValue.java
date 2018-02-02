@@ -71,9 +71,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     public HibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
         super(connectionProvider, daoFactory, request);
-        this.procedure.add(procedure);
-        this.observableProperty.add(observableProperty);
-        this.featureOfInterest.add(featureOfInterest);
+        this.procedure.copy(procedure);
+        this.observableProperty.copy(observableProperty);
+        this.featureOfInterest.copy(featureOfInterest);
     }
 
     @Override

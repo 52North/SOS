@@ -143,7 +143,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             offeringTimeExtrema = daoFactory.getOfferingDAO().getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
         } catch (OwsExceptionReport ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
-            getErrors().add(ce);
+            getErrors().copy(ce);
         }
         if (!CollectionHelper.isEmpty(offeringTimeExtrema)) {
             for (Entry<String, OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
@@ -199,7 +199,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             return observationDAO.containsSamplingGeometries(getSession());
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while getting observation DAO class from factory!", e);
-            getErrors().add(e);
+            getErrors().copy(e);
         }
         return false;
     }
@@ -230,7 +230,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
         Set<String> obsTypes = new HashSet<>(observationTypes.size());
         for (ObservationType obsType : observationTypes) {
-            obsTypes.add(obsType.getObservationType());
+            obsTypes.copy(obsType.getObservationType());
         }
         return obsTypes;
     }
@@ -239,7 +239,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             Set<FeatureOfInterestType> featureOfInterestTypes) {
         Set<String> featTypes = new HashSet<>(featureOfInterestTypes.size());
         for (FeatureOfInterestType featType : featureOfInterestTypes) {
-            featTypes.add(featType.getFeatureOfInterestType());
+            featTypes.copy(featType.getFeatureOfInterestType());
         }
         return featTypes;
     }
@@ -249,7 +249,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         for (RelatedFeature hRelatedFeature : hOffering.getRelatedFeatures()) {
             if (hRelatedFeature.getFeatureOfInterest() != null
                     && hRelatedFeature.getFeatureOfInterest().getIdentifier() != null) {
-                relatedFeatureList.add(hRelatedFeature.getFeatureOfInterest().getIdentifier());
+                relatedFeatureList.copy(hRelatedFeature.getFeatureOfInterest().getIdentifier());
             }
         }
         return relatedFeatureList;

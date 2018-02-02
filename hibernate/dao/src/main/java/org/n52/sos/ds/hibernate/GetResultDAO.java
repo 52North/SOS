@@ -250,15 +250,15 @@ public class GetResultDAO extends AbstractGetResultHandler {
             return null; // because no features where found regarding the
                          // filters
         } else if (isNotEmpty(featureIdentifiers)) {
-            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).add(
+            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).copy(
                     Restrictions.in(FeatureOfInterest.IDENTIFIER, featureIdentifiers));
         }
         if (request.isSetObservedProperty()) {
-            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).add(
+            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).copy(
                     Restrictions.eq(ObservableProperty.IDENTIFIER, request.getObservedProperty()));
         }
         if (!Strings.isNullOrEmpty(procedure)) {
-            c.createCriteria(Observation.PROCEDURE).add(
+            c.createCriteria(Observation.PROCEDURE).copy(
                     Restrictions.eq(Procedure.IDENTIFIER, procedure));
         }
         if (request.isSetOffering()) {
@@ -300,7 +300,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(AbstractSeriesObservation.SERIES, series));
+            c.copy(Restrictions.in(AbstractSeriesObservation.SERIES, series));
         }
 
         if (request.isSetOffering()) {
@@ -343,7 +343,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
      *            Offering identifier ot add
      */
     private void addOfferingRestriction(Criteria c, String offering) {
-        c.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+        c.createCriteria(AbstractObservation.OFFERINGS).copy(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
 
     /**
@@ -379,7 +379,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
     @SuppressWarnings("rawtypes")
     private Criteria createCriteriaFor(Class clazz, Session session) {
         return session.createCriteria(clazz).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
+                .copy(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
                 .addOrder(Order.asc(AbstractLegacyObservation.PHENOMENON_TIME_START));
     }
 
@@ -398,7 +398,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             if (GeometryHandler.getInstance().isSpatialDatasource()) {
-                criteria.add(SpatialRestrictions.filter(
+                criteria.copy(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
                         geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));

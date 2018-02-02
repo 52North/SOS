@@ -85,11 +85,12 @@ public class ResultHandlingHelper {
     private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
     public final String OM_PROCEDURE = "om:procedure";
     public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
-    private final SweHelper helper = new SweHelper();
+    private final SweHelper helper;
     private GeometryHandler geometryHandler;
 
-    public ResultHandlingHelper(GeometryHandler geometryHandler) {
+    public ResultHandlingHelper(GeometryHandler geometryHandler, SweHelper sweHelper) {
         this.geometryHandler = geometryHandler;
+        this.helper = sweHelper;
     }
 
     /**

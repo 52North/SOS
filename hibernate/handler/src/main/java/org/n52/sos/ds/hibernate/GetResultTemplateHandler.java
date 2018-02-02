@@ -50,13 +50,13 @@ import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservab
  * @since 4.0.0
  *
  */
-public class GetResultTemplateDAO
+public class GetResultTemplateHandler
         extends AbstractGetResultTemplateHandler {
     private HibernateSessionHolder sessionHolder;
 
     private DaoFactory daoFactory;
 
-    public GetResultTemplateDAO() {
+    public GetResultTemplateHandler() {
         super(SosConstants.SOS);
     }
 

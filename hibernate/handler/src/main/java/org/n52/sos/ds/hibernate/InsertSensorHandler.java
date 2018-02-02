@@ -57,6 +57,7 @@ import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.RelatedFeatureRoleEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.QuantityDataset;
 import org.n52.shetland.ogc.PhenomenonNameDescriptionProvider;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -110,14 +111,14 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class InsertSensorDAO extends AbstractInsertSensorHandler {
+public class InsertSensorHandler extends AbstractInsertSensorHandler {
 
     private HibernateSessionHolder sessionHolder;
     private DaoFactory daoFactory;
     public static final Predicate<SmlCapabilities> REFERENCE_VALUES_PREDICATE =
             SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_REFERENCE_VALUES);
 
-    public InsertSensorDAO() {
+    public InsertSensorHandler() {
         super(SosConstants.SOS);
     }
 
@@ -268,7 +269,9 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                         ctxReferenced.setOffering(hOffering);
                                         ctxReferenced.setPublish(false);
                                         DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
-                                        hSeries.setReferenceValues(Sets.newHashSet(hReferenceSeries));
+                                        if (hSeries instanceof QuantityDataset) {
+                                            ((QuantityDataset)hSeries).setReferenceValues(Sets.newHashSet(hReferenceSeries));
+                                        }
                                         session.update(hSeries);
                                     }
                                 }

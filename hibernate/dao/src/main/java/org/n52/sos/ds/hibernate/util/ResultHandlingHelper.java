@@ -66,7 +66,7 @@ import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
-import org.n52.sos.util.SweHelper;
+import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.base.Strings;
 import org.locationtech.jts.io.WKTWriter;
@@ -81,9 +81,10 @@ public class ResultHandlingHelper {
     private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
     public final String OM_PROCEDURE = "om:procedure";
     public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
-    private final SweHelper helper = new SweHelper();
+    private final org.n52.svalbard.util.SweHelper helper;
     
-    public ResultHandlingHelper() {
+    public ResultHandlingHelper(SweHelper sweHelper) {
+        this.helper = sweHelper;
         
     }
 

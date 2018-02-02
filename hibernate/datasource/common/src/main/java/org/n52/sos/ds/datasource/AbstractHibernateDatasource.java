@@ -178,6 +178,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
 
     private boolean seriesMetadataDatasource = true;
+
+    private StandardServiceRegistry registry;
+
+    private Metadata metadata;
+
     /**
      * Create settings definition for username
      *
@@ -474,7 +479,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Metadata metadata = getMetadata(settings);
             createTempFile = Files.createTempFile("create", ".tmp");
             SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
             List<String> readAllLines = Files.readAllLines(createTempFile);
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
@@ -505,9 +510,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Path dropTempFile = null;
         try {
             Metadata metadata = getMetadata(settings);
-            dropTempFile = Files.createTempFile("drop", "tmp");
+            dropTempFile = Files.createTempFile("drop", ".tmp");
             SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(dropTempFile.toString());
+            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(dropTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
             List<String> readAllLines = Files.readAllLines(dropTempFile);
             return readAllLines.toArray(new String[readAllLines.size()]);
@@ -529,9 +534,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Path createTempFile = null;
         try {
             Metadata metadata = getMetadata(settings);
-            createTempFile = Files.createTempFile("update", "tmp");
+            createTempFile = Files.createTempFile("update", ".tmp");
             SchemaUpdate schemaUpdate = new SchemaUpdate();
-            schemaUpdate.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaUpdate.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
             schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata);
             Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
             return nonDublicated.toArray(new String[nonDublicated.size()]);
@@ -552,9 +557,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void validateSchema(Map<String, Object> settings) {
         try {
             SchemaValidator schemaValidator = new SchemaValidator();
-            StandardServiceRegistry serviceRegistry = getServiceRegistry(settings);
+            getServiceRegistry(settings);
             Metadata metadata = getMetadata(settings);
-            schemaValidator.validate(metadata, serviceRegistry);
+            schemaValidator.validate(metadata, registry);
         } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
         }
@@ -566,26 +571,27 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected Metadata getMetadata(Map<String, Object> settings) {
-        StandardServiceRegistry registry = null;
-        try {
-            registry = getServiceRegistry(settings);
+        if (metadata == null) {
+            getServiceRegistry(settings);
             MetadataSources sources = new MetadataSources(registry);
 
             for (File dir : getMappingPaths(settings)) {
                 sources.addDirectory(dir);
             }
-            return sources.getMetadataBuilder().build();
-        } finally {
-            StandardServiceRegistryBuilder.destroy(registry);
+            metadata = sources.getMetadataBuilder().build();
         }
+        return metadata;
     }
 
     protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
-        CustomConfiguration config = getConfig(settings);
-        StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
-        settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
-        registryBuilder.applySettings(settings);
-        return registryBuilder.build();
+        if (registry == null) {
+            CustomConfiguration config = getConfig(settings);
+            StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
+            settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+            registryBuilder.applySettings(settings);
+            registry =  registryBuilder.build();
+        }
+        return registry;
     }
 
 
@@ -709,6 +715,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public void checkPostCreation(Properties properties) {
+        metadata = null;
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+            registry = null;
+        }
 //        if (checkIfExtensionDirectoryExists()) {
 //            StringBuilder builder =
 //                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));

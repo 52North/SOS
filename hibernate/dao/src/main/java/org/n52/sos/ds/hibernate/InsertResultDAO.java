@@ -89,6 +89,7 @@ import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -291,7 +292,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
             throws OwsExceptionReport {
         try {
             
-            return HibernateObservationUtilities.unfoldObservation(observation, isConvertComplexProfileToSingleProfiles());
+            return new ObservationUnfolder(observation, null).unfold(isConvertComplexProfileToSingleProfiles());
         } catch (final Exception e) {
             throw new InvalidParameterValueException()
                     .causedBy(e)

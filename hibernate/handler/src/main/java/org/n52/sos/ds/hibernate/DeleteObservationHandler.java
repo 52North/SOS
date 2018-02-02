@@ -64,7 +64,7 @@ import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 
 import com.google.common.base.Joiner;
 
-public class DeleteObservationDAO
+public class DeleteObservationHandler
         extends AbstractDeleteObservationHandler {
 
     private HibernateSessionHolder sessionHolder;

@@ -103,6 +103,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     protected final AbstractObservationRequest request;
     protected Criterion temporalFilterCriterion;
     private final DaoFactory daoFactory;
+    private final EReportingHelper helper;
 
     /**
      * constructor
@@ -116,6 +117,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
         this.daoFactory = daoFactory;
+        this.helper = new EReportingHelper(daoFactory.getSweHelper());
     }
 
     @Override
@@ -476,8 +478,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 addValuesToObservation(o, observation, responseFormat);
             } else {
                 checkTime(o, observation);
-                EReportingHelper.mergeValues((SweDataArray) observation.getValue().getValue().getValue(),
-                        EReportingHelper.createSweDataArray(observation, (EReportingData) o));
+                helper.mergeValues((SweDataArray) observation.getValue().getValue().getValue(),
+                        helper.createSweDataArray(observation, (EReportingData) o));
             }
             if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
                     .getObservationType())) {
@@ -512,9 +514,9 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                             new EReportingQualityDAO().getEReportingQuality(o.getDataset().getId(), year,
                                     ((EReportingData)o).getPrimaryObservation(), session);
                     if (eReportingQuality != null) {
-                        observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(eReportingQuality, true));
+                        observation.setResultQuality(helper.getGmdDomainConsistency(eReportingQuality, true));
                     } else {
-                        observation.setResultQuality(EReportingHelper.getGmdDomainConsistency(new EReportingQualityEntity(), true));
+                        observation.setResultQuality(helper.getGmdDomainConsistency(new EReportingQualityEntity(), true));
                     }
                 }
             }
@@ -529,7 +531,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 observation.getObservationConstellation().setObservationType(
                         OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
-            observation.setValue(EReportingHelper.createSweDataArrayValue(observation, (EReportingData) o));
+            observation.setValue(helper.createSweDataArrayValue(observation, (EReportingData) o));
         } else {
             observation.setValue(getSingleObservationValue(o, value));
         }

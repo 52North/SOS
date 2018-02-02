@@ -108,7 +108,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     protected Set<String> getProcedureIdentifiers(Set<Procedure> procedures) {
         Set<String> identifiers = new HashSet<String>(procedures.size());
         for (Procedure procedure : procedures) {
-            identifiers.add(procedure.getIdentifier());
+            identifiers.copy(procedure.getIdentifier());
         }
         return identifiers;
     }
@@ -127,9 +127,9 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         try {
             getProcedureInformationFromDbAndAddItToCacheMaps();
         } catch (OwsExceptionReport owse) {
-            getErrors().add(owse);
+            getErrors().copy(owse);
         } catch (Exception e) {
-            getErrors().add(new GenericThrowableWrapperException(e)
+            getErrors().copy(new GenericThrowableWrapperException(e)
                     .withMessage("Error while processing procedure cache update task!"));
         }
     }

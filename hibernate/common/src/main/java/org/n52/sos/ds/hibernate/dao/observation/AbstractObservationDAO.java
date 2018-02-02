@@ -103,6 +103,7 @@ import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
@@ -566,7 +567,7 @@ public abstract class AbstractObservationDAO
             AbstractFeatureEntity feature, OmObservation containerObservation,
                                             Map<String, CodespaceEntity> codespaceCache,
                                             Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
-        List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
+        List<OmObservation> unfoldObservations = new ObservationUnfolder(containerObservation, getDaoFactory().getSweHelper()).unfold();
         for (OmObservation sosObservation : unfoldObservations) {
             insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
                                          session);

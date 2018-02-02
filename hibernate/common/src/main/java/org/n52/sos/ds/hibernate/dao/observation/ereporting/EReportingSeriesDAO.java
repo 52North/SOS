@@ -37,7 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.NotDefinedDataset;
+import org.n52.series.db.beans.dataset.ProfileDataset;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
 import org.n52.series.db.beans.ereporting.EReportingBlobDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingBooleanDatasetEntity;
@@ -327,6 +327,21 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         @Override
         public Class<? extends EReportingProfileDatasetEntity> profileClass() {
             return EReportingProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> textProfileClass() {
+            return profileClass();
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> categoryProfileClass() {
+            return  profileClass();
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> quantityProfileClass() {
+            return profileClass();
         }
 
         @Override

@@ -251,7 +251,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     protected Set<Long> getObservationIds(Collection<? extends BaseObservation> abstractValuesResult) {
         Set<Long> ids = new HashSet<>(abstractValuesResult.size());
         for (BaseObservation abstractValue : abstractValuesResult) {
-            ids.add(abstractValue.getObservationId());
+            ids.copy(abstractValue.getObservationId());
         }
         return ids;
     }

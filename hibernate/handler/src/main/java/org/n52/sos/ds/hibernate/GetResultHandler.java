@@ -85,9 +85,9 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class GetResultDAO extends AbstractGetResultHandler {
+public class GetResultHandler extends AbstractGetResultHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetResultHandler.class);
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
@@ -96,7 +96,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     private boolean strictSpatialFilteringProfile;
 
-    public GetResultDAO() {
+    public GetResultHandler() {
         super(SosConstants.SOS);
     }
 
@@ -140,7 +140,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 final SosResultStructure sosResultStructure = createSosResultStructure(resultTemplates.get(0).getStructure());
                 final List<DataEntity<?>> observations;
                     observations = querySeriesObservation(request, featureIdentifier, session);
-                response.setResultValues(new ResultHandlingHelper(geometryHandler).createResultValuesFromObservations(observations,
+                response.setResultValues(new ResultHandlingHelper(geometryHandler, daoFactory.getSweHelper()).createResultValuesFromObservations(observations,
                         sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder()));
             }
             return response;

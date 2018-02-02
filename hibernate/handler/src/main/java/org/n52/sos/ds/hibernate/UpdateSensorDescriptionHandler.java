@@ -61,12 +61,12 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  * @since 4.0.0
  *
  */
-public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionHandler {
+public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler {
 
     private HibernateSessionHolder sessionHolder;
     private DaoFactory daoFactory;
 
-    public UpdateSensorDescriptionDAO() {
+    public UpdateSensorDescriptionHandler() {
         super(SosConstants.SOS);
     }
 
@@ -98,14 +98,14 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
                 ProcedureEntity procedure =
-                        new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+                        daoFactory.getProcedureDAO().getProcedureForIdentifier(request.getProcedureIdentifier(), session);
                     FormatEntity procedureDescriptionFormat =
-                            new FormatDAO().getFormatEntityObject(
+                            new DaoFactory().getProcedureDescriptionFormatDAO().getFormatEntityObject(
                                     request.getProcedureDescriptionFormat(), session);
                     Set<ProcedureHistoryEntity> procedureHistories = procedure.getProcedureHistory();
-                    ValidProcedureTimeDAO procedureHistroyDAO = new ValidProcedureTimeDAO(daoFactory);
+                    ValidProcedureTimeDAO procedureHistroyDAO = daoFactory.getValidProcedureTimeDAO();
                     for (ProcedureHistoryEntity procedureHistroy : procedureHistories) {
-                        if (procedureHistroy.getFormat().equals(procedureDescriptionFormat)
+                        if (procedureHistroy.getFormat().getFormat().equals(procedureDescriptionFormat.getFormat())
                                 && procedureHistroy.getEndTime() == null) {
                             procedureHistroy.setEndTime(currentTime.toDate());
                             procedureHistroyDAO.updateValidProcedureTime(procedureHistroy, session);

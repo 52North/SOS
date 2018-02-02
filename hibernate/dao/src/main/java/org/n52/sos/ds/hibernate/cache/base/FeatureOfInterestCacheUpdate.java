@@ -106,7 +106,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                             .setConnection(getSession());
             getCache().setGlobalEnvelope(this.featureQueryHandler.getEnvelopeForFeatureIDs(queryHandler));
         } catch (OwsExceptionReport ex) {
-            getErrors().add(ex);
+            getErrors().copy(ex);
         }
         LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
     }

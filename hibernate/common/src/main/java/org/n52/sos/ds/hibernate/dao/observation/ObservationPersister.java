@@ -396,7 +396,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty)
             throws OwsExceptionReport {
-        return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(), dataset.getCategory(),
+        return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(), dataset.getCategory(), featureOfInterest,
                 true, session);
     }
 
@@ -440,11 +440,13 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         daos.observation().addDescription(omObservation, observation);
         daos.observation().addTime(omObservation, observation);
         observation.setValue(value);
-        GeometryEntity geometryEntity = new GeometryEntity();
-        geometryEntity.setGeometry(JTSConverter.convert(samplingGeometry));
-        observation.setGeometryEntity(geometryEntity);
-        checkUpdateFeatureOfInterestGeometry();
-
+        if (samplingGeometry != null) {
+            GeometryEntity geometryEntity = new GeometryEntity();
+            geometryEntity.setGeometry(JTSConverter.convert(samplingGeometry));
+            observation.setGeometryEntity(geometryEntity);
+            checkUpdateFeatureOfInterestGeometry();
+            omObservation.removeSpatialFilteringProfileParameter();
+        }
         ObservationContext observationContext = daos.observation().createObservationContext();
 
         String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity)observation);

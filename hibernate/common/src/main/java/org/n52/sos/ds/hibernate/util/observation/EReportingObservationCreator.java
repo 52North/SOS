@@ -49,6 +49,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.svalbard.util.SweHelper;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
@@ -65,8 +66,12 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
                                     EReportingDataArrayDataEntity.class,
                                     EReportingTextDataEntity.class);
 
-    private final EReportingObservationHelper helper
-            = new EReportingObservationHelper();
+    private final EReportingObservationHelper helper = new EReportingObservationHelper();
+    private SweHelper sweHelper;
+
+    public void setSweHelper(SweHelper sweHelper) {
+        this.sweHelper = sweHelper;
+    }
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
@@ -79,7 +84,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
             EReportingDataEntity<?> eReportingObservation = (EReportingDataEntity<?>) observation;
             create(omObservation, eReportingObservation.getDataset());
             add(omObservation, observation);
-            omObservation.setValue(EReportingHelper.createSweDataArrayValue(omObservation, eReportingObservation));
+            omObservation.setValue(new EReportingHelper(sweHelper).createSweDataArrayValue(omObservation, eReportingObservation));
             omObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         }
         return omObservation;

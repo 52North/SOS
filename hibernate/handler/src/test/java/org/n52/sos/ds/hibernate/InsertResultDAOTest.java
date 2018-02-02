@@ -48,7 +48,7 @@ public class InsertResultDAOTest
     private static final String OBS_PROP_2 = "obsProp_2";
     private static final String OBS_PROP_3 = "obsProp_3";
 
-    private InsertResultDAO insertResultDAO = new InsertResultDAO();
+    private InsertResultHandler insertResultDAO = new InsertResultHandler();
 
     @Test
     public void test_getIndexForObservedPropertyAndUnit_SimpleObservation()

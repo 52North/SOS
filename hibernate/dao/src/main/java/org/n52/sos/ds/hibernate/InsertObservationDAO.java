@@ -178,7 +178,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
         Set<Offering> offerings = Sets.newHashSet();
         for (ObservationConstellation observationConstellation : hObservationConstellations) {
-            offerings.add(observationConstellation.getOffering());
+            offerings.copy(observationConstellation.getOffering());
         }
         return offerings;
     }
@@ -233,7 +233,7 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
                     cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
                 }
 
-                hObservationConstellations.add(hObservationConstellation);
+                hObservationConstellations.copy(hObservationConstellation);
             }
         }
 

@@ -9,7 +9,7 @@
         <property name="order" value="17.0" />
         <property name="optional" value="true" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
-        <property name="defaultValue" value="" />
+        <property name="defaultValue" value="northing,latitude,southing" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="swe.coordinate.easting" />
@@ -18,7 +18,7 @@
         <property name="order" value="18.0" />
         <property name="optional" value="true" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
-        <property name="defaultValue" value="" />
+        <property name="defaultValue" value="easting,longitude,westing" />
     </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="swe.coordinate.altitude" />
@@ -27,6 +27,6 @@
         <property name="order" value="19.0" />
         <property name="optional" value="true" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
-        <property name="defaultValue" value="" />
+        <property name="defaultValue" value="altitude,height,depth" />
     </bean>
 </beans>

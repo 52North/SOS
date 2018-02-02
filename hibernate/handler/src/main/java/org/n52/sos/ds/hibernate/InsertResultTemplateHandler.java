@@ -68,7 +68,7 @@ import org.n52.sos.util.GeometryHandler;
  * @since 4.0.0
  *
  */
-public class InsertResultTemplateDAO
+public class InsertResultTemplateHandler
         extends AbstractInsertResultTemplateHandler
         implements Constructable {
 
@@ -78,7 +78,7 @@ public class InsertResultTemplateDAO
     private GeometryHandler geometryHandler;
     private boolean allowTemplateWithoutProcedureAndFeature;
 
-    public InsertResultTemplateDAO() {
+    public InsertResultTemplateHandler() {
         super(SosConstants.SOS);
     }
 
@@ -104,7 +104,7 @@ public class InsertResultTemplateDAO
 
     @Override
     public void init() {
-        helper = new ResultHandlingHelper(geometryHandler);
+        helper = new ResultHandlingHelper(geometryHandler, daoFactory.getSweHelper());
     }
 
     @Override

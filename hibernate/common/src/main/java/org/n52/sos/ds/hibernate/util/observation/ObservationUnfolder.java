@@ -113,10 +113,11 @@ import com.google.common.collect.Maps;
 public class ObservationUnfolder {
     private final OmObservation multiObservation;
 
-    private final SweHelper helper = new SweHelper();
+    private final SweHelper helper;
 
-    public ObservationUnfolder(OmObservation multiObservation) {
+    public ObservationUnfolder(OmObservation multiObservation, SweHelper sweHelper) {
         this.multiObservation = multiObservation;
+        this.helper = sweHelper;
     }
 
     public List<OmObservation> unfold() throws OwsExceptionReport {

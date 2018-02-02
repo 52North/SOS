@@ -95,8 +95,9 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
-import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.util.SweHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,11 +112,11 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class InsertResultDAO
+public class InsertResultHandler
         extends AbstractInsertResultHandler
         implements Constructable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultHandler.class);
     public static final String CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES =
             "misc.convertComplexProfileToSingleProfiles";
     private static final int FLUSH_THRESHOLD = 50;
@@ -124,8 +125,9 @@ public class InsertResultDAO
     private boolean convertComplexProfileToSingleProfiles;
     private GeometryHandler geometryHandler;
     private ResultHandlingHelper helper;
+    private SweHelper sweHelper;
 
-    public InsertResultDAO() {
+    public InsertResultHandler() {
         super(SosConstants.SOS);
     }
 
@@ -144,9 +146,14 @@ public class InsertResultDAO
         this.geometryHandler = geometryHandler;
     }
 
+    @Inject
+    public void setSweHelper(SweHelper sweHelper) {
+        this.sweHelper = sweHelper;
+    }
+
     @Override
     public void init() {
-        helper = new ResultHandlingHelper(geometryHandler);
+        helper = new ResultHandlingHelper(geometryHandler, sweHelper);
     }
 
     @Override
@@ -294,8 +301,7 @@ public class InsertResultDAO
             throws OwsExceptionReport {
         try {
 
-            return HibernateObservationUtilities.unfoldObservation(observation,
-                    isConvertComplexProfileToSingleProfiles());
+            return new ObservationUnfolder(observation, sweHelper).unfold(isConvertComplexProfileToSingleProfiles());
         } catch (final Exception e) {
             throw new InvalidParameterValueException()
                     .causedBy(e)
@@ -323,7 +329,7 @@ public class InsertResultDAO
         final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
         for (DatasetEntity obsConst : obsConsts) {
-            if (observationType == null) {
+            if (observationType == null && obsConst.isSetObservationType()) {
                 observationType = obsConst.getObservationType().getFormat();
             }
         }

@@ -40,6 +40,7 @@ import org.n52.sos.ds.cache.base.ObservationTimeCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
 import org.n52.sos.ds.cache.base.ProcedureCacheUpdate;
 import org.n52.sos.ds.cache.base.RelatedFeaturesCacheUpdate;
+import org.n52.sos.ds.cache.base.ResultTemplateCacheUpdate;
 
 /**
  *
@@ -73,7 +74,8 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                                       new ObservablePropertiesCacheUpdate(),
                                       new FeatureOfInterestCacheUpdate(),
                                       new RelatedFeaturesCacheUpdate(),
-                                      new ObservationTimeCacheUpdate()),
+                                      new ObservationTimeCacheUpdate(),
+                                      new ResultTemplateCacheUpdate()),
               new I18NCacheUpdate(serviceMetadataRepository,
                                   i18NDAORepository),
               new OfferingCacheUpdate(threadCount,

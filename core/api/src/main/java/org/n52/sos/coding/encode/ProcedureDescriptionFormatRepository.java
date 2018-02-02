@@ -112,6 +112,7 @@ public class ProcedureDescriptionFormatRepository
     }
 
     protected void addProcedureDescriptionFormat(ProcedureDescriptionFormatKey key) {
+        isActive(key);
         this.keys.add(key);
         Map<String, Set<String>> byService = this.procedureDescriptionFormats.get(key.getService());
         if (byService == null) {

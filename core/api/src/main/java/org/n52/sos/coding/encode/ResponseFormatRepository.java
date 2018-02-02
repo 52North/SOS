@@ -96,6 +96,7 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
     }
 
     protected void addResponseFormat(ResponseFormatKey key) {
+        isActive(key);
         this.responseFormats.computeIfAbsent(key.getService(), Functions.forSupplier(HashMap::new))
                 .computeIfAbsent(key.getVersion(), Functions.forSupplier(HashSet::new))
                 .add(key.getResponseFormat());

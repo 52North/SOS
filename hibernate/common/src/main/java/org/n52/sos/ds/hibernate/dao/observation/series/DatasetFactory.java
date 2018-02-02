@@ -28,6 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.Optional;
+
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.data.Data.BlobData;
 import org.n52.series.db.beans.data.Data.BooleanData;
@@ -143,6 +147,27 @@ public abstract class DatasetFactory {
         return instantiate(profileClass());
     }
 
+    public abstract Class<? extends ProfileDataset> textProfileClass();
+
+    public Dataset textProfile()
+            throws OwsExceptionReport {
+        return instantiate(textProfileClass());
+    }
+
+    public abstract Class<? extends ProfileDataset> categoryProfileClass();
+
+    public Dataset categoryProfile()
+            throws OwsExceptionReport {
+        return instantiate(categoryProfileClass());
+    }
+
+    public abstract Class<? extends ProfileDataset> quantityProfileClass();
+
+    public Dataset quantityProfile()
+            throws OwsExceptionReport {
+        return instantiate(quantityProfileClass());
+    }
+
     public abstract Class<? extends ReferencedDataset> referenceClass();
 
     public ReferencedDataset reference()
@@ -218,6 +243,16 @@ public abstract class DatasetFactory {
             } else if (o instanceof ComplexData) {
                 return complex();
             } else if (o instanceof ProfileData) {
+                Optional<DataEntity<?>> value = ((ProfileDataEntity)o).getValue().stream().findFirst();
+                if (value.isPresent()) {
+                    if (value.get() instanceof QuantityData) {
+                        return quantityProfile();
+                    } else if (value.get() instanceof CategoryData) {
+                        return categoryProfile();
+                    } else if (value.get() instanceof TextData) {
+                        return textProfile();
+                    }
+                }
                 return profile();
             } else if (o instanceof ReferencedData) {
                 return reference();

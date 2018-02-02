@@ -242,11 +242,11 @@ public class InsertDAOTest
     private EventBus serviceEventBus = new EventBus();
 
     /* FIXTURES */
-    private final InsertSensorDAO insertSensorDAO = new InsertSensorDAO();
-    private final DeleteSensorDAO deleteSensorDAO = new DeleteSensorDAO();
-    private final InsertObservationDAO insertObservationDAO = new InsertObservationDAO();
-    private final InsertResultTemplateDAO insertResultTemplateDAO = new InsertResultTemplateDAO();
-    private final InsertResultDAO insertResultDAO = new InsertResultDAO();
+    private final InsertSensorHandler insertSensorDAO = new InsertSensorHandler();
+    private final DeleteSensorHandler deleteSensorDAO = new DeleteSensorHandler();
+    private final InsertObservationHandler insertObservationDAO = new InsertObservationHandler();
+    private final InsertResultTemplateHandler insertResultTemplateDAO = new InsertResultTemplateHandler();
+    private final InsertResultHandler insertResultDAO = new InsertResultHandler();
     private final GetObservationDao getObsDAO = new GetObservationDao();
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
     private final I18NDAORepository i18NDAORepository = new I18NDAORepository();

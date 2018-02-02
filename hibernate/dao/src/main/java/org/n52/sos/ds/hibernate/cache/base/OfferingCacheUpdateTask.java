@@ -367,7 +367,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         try {
             getOfferingInformationFromDbAndAddItToCacheMaps(getSession());
         } catch (OwsExceptionReport owse) {
-            getErrors().add(owse);
+            getErrors().copy(owse);
         }
     }
 }

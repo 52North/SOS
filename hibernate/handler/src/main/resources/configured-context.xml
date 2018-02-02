@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <!-- Querying database used by proxy DAOs -->
+    <!-- Querying database used by proxy Handlers -->
 
     <bean id="describeSensorDao"
           class="org.n52.sos.ds.hibernate.dao.DescribeSensorDao"/>
@@ -40,45 +40,45 @@
     </bean>
     -->
 
-    <!-- <bean id="getFeatureOfInterestDAO"
-          class="org.n52.sos.ds.hibernate.GetFeatureOfInterestDAO"/> -->
+    <!-- <bean id="getFeatureOfInterestHandler"
+          class="org.n52.sos.ds.hibernate.GetFeatureOfInterestHandler"/> -->
 
     <!-- Querying database -->
 
-    <bean id="insertResultTemplateDAO"
-          class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
+    <bean id="insertResultTemplateHandler"
+          class="org.n52.sos.ds.hibernate.InsertResultTemplateHandler"/>
 
-    <bean id="insertResultDAO"
-          class="org.n52.sos.ds.hibernate.InsertResultDAO"/>
+    <bean id="insertResultHandler"
+          class="org.n52.sos.ds.hibernate.InsertResultHandler"/>
 
-    <bean id="getResultTemplateDAO"
-          class="org.n52.sos.ds.hibernate.GetResultTemplateDAO"/>
+    <bean id="getResultTemplateHandler"
+          class="org.n52.sos.ds.hibernate.GetResultTemplateHandler"/>
 
-    <bean id="getResultDAO"
-          class="org.n52.sos.ds.hibernate.GetResultDAO"/>
+    <bean id="getResultHandler"
+          class="org.n52.sos.ds.hibernate.GetResultHandler"/>
 
-    <bean id="deleteSensorDAO"
-          class="org.n52.sos.ds.hibernate.DeleteSensorDAO"/>
+    <bean id="deleteSensorHandler"
+          class="org.n52.sos.ds.hibernate.DeleteSensorHandler"/>
 
-    <bean id="insertSensorDAO"
-          class="org.n52.sos.ds.hibernate.InsertSensorDAO"/>
+    <bean id="insertSensorHandler"
+          class="org.n52.sos.ds.hibernate.InsertSensorHandler"/>
 
-    <bean id="updateSensorDescriptionDAO"
-          class="org.n52.sos.ds.hibernate.UpdateSensorDescriptionDAO"/>
+    <bean id="updateSensorDescriptionHandler"
+          class="org.n52.sos.ds.hibernate.UpdateSensorDescriptionHandler"/>
 
-    <bean id="insertObservationDAO"
-          class="org.n52.sos.ds.hibernate.InsertObservationDAO"/>
+    <bean id="insertObservationHandler"
+          class="org.n52.sos.ds.hibernate.InsertObservationHandler"/>
 
-    <bean id="deleteDeletedObservationsDAO"
+    <bean id="deleteDeletedObservationsHandler"
           class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
 
-    <bean id="generalQueryDAO"
+    <bean id="generalQueryHandler"
           class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
 
-    <bean id="procedureFormatDAO"
+    <bean id="procedureFormatHandler"
           class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
 
-    <bean id="renameDAO"
+    <bean id="renameHandler"
           class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
 
     <bean id="insertSensorCapabilitiesExtensionProvider"

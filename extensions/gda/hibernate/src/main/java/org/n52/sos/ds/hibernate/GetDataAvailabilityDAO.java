@@ -142,6 +142,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         Session session = sessionHolder.getSession();
         try {
             List<?> dataAvailabilityValues = queryDataAvailabilityValues(req, session);
+            if (isForceGDAv20Response()) {
+                req.setResponseFormat(GetDataAvailabilityConstants.NS_GDA_20);
+            }
             GetDataAvailabilityResponse response = req.getResponse();
             response.setNamespace(req.getNamespace());
             for (Object o : dataAvailabilityValues) {

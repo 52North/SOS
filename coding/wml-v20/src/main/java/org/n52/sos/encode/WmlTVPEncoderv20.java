@@ -257,7 +257,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         InterpolationType interpolationType = InterpolationType.Continuous;
         if (sosObservation.isSetValue() &&
                 sosObservation.getValue().isSetValue() &&
-                sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
                 sosObservation.getObservationConstellation().isSetDefaultPointMetadata() &&
                 sosObservation.getObservationConstellation().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
                 sosObservation.getObservationConstellation().getDefaultPointMetadata()

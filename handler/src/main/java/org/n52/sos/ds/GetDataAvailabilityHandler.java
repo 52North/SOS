@@ -96,6 +96,9 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         response.setService(request.getService());
         response.setVersion(request.getVersion());
         response.setResponseFormat(request.getResponseFormat());
+        if (checkForGDAv20(request)) {
+            response.setResponseFormat(GetDataAvailabilityConstants.NS_GDA_20);
+        }
         for (DataAvailability da : queryDataAvailabilityValues(request)) {
             if (da != null) {
                 response.addDataAvailability(da);

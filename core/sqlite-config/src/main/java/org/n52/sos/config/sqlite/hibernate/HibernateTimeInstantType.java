@@ -30,11 +30,11 @@ package org.n52.sos.config.sqlite.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TypeMismatchException;
-
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.DateTimeParseException;
+import org.n52.sos.ds.hibernate.type.AbstractStringBasedHibernateUserType;
 
 import com.google.common.base.Strings;
 

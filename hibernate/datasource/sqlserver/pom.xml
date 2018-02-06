@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>hibernate-datasource</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>hibernate-datasource-sqlserver</artifactId>
@@ -36,8 +36,8 @@
             <artifactId>hibernate-session-factory</artifactId>
         </dependency>
 		<dependency>
-			<groupId>com.microsoft</groupId>
-			<artifactId>sqljdbc4</artifactId>
+			<groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -54,6 +54,7 @@
             <artifactId>hibernate-c3p0</artifactId>
             <scope>runtime</scope>
         </dependency>
+		<!-- Hibernate Core Dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -87,8 +88,6 @@
                     <usedDependencies>
                         <usedDependency>${project.groupId}:api</usedDependency>
                         <usedDependency>${project.groupId}:hibernate-common</usedDependency>
-                        <usedDependency>${project.groupId}:hibernate-session-factory</usedDependency>
-                        <usedDependency>com.microsoft:sqljdbc4</usedDependency>
                     </usedDependencies>
                 </configuration>
             </plugin>

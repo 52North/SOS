@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource</artifactId>
@@ -16,6 +16,7 @@
         <module>h2</module>
         <module>mysql</module>
         <module>common</module>
+        <module>sqlserver</module>
     </modules>
     <dependencies>
         <dependency>
@@ -30,18 +31,16 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
             <id>oracle</id>
             <modules>
                 <module>oracle</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>sqlserver</id>
-            <modules>
-                <module>sqlserver</module>
             </modules>
         </profile>
     </profiles>

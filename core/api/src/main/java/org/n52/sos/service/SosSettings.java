@@ -33,7 +33,14 @@ public interface SosSettings {
     String SENSOR_DIRECTORY = "service.sensorDirectory";
     String MAX_GET_OBSERVATION_RESULTS = "service.maxGetObservationResults";
     String DEREGISTER_JDBC_DRIVER = "service.jdbc.deregister";
-    String STRICT_SPATIAL_FILTERING_PROFILE
-            = "service.strictSpatialFilteringProfile";
+    String STRICT_SPATIAL_FILTERING_PROFILE  = "service.strictSpatialFilteringProfile";
+    String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
+    String LIST_ONLY_PARENT_OFFERINGS = "service.capabilities.listOnlyParentOfferings";
+    String UPDATE_FEATURE_GEOMETRY = "service.updateFeatureGeometry";
+    String CACHE_FILE_FOLDER = "service.cacheFileFolder";
+    String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS = "service.createFeatureGeometryFromSamplingGeometries";
+    String ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE = "service.allowTemplateWithoutProcedureAndFeature";
+    String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
+    String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
 
 }

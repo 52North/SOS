@@ -74,46 +74,50 @@ public class SosGetFeatureOfInterestOperatorV20
     }
 
     @Override
-    protected void checkParameters(GetFeatureOfInterestRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
-            checkServiceParameter(sosRequest.getService());
+            checkServiceParameter(request.getService());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSingleVersionParameter(sosRequest);
+            checkSingleVersionParameter(request);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(sosRequest.getObservedProperties(),
+            checkObservedProperties(request.getObservedProperties(),
                     Sos2Constants.GetFeatureOfInterestParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedureIDs(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkQueryableProcedures(request.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
             // add instance and child procedures to request
-            if (sosRequest.isSetProcedures()) {
-                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
+            if (request.isSetProcedures()) {
+                request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
-                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+//            checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
+//                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+            checkFeatureOfInterestIdentifiers(request.getFeatureIdentifiers(), Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+            if (request.isSetFeatureOfInterestIdentifiers()) {
+                request.setFeatureIdentifiers(addChildFeatures(request.getFeatureIdentifiers()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSpatialFilters(sosRequest.getSpatialFilters(),
+            checkSpatialFilters(request.getSpatialFilters(),
                     Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        checkExtensions(sosRequest, exceptions);
+        checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
     }
 

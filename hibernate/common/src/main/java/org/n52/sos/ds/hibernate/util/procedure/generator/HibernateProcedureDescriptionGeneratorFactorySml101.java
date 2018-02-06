@@ -37,7 +37,6 @@ import org.n52.faroe.SettingsService;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
@@ -53,7 +52,6 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101
 
     private final DaoFactory daoFactory;
     private final SettingsService settingsService;
-    private final EntitiyHelper entitiyHelper;
     private final GeometryHandler geometryHandler;
     private final I18NDAORepository i18NDAORepository;
     private final ContentCacheController cacheController;
@@ -62,14 +60,12 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101
     @Inject
     public HibernateProcedureDescriptionGeneratorFactorySml101(DaoFactory daoFactory,
                                                                SettingsService settingsService,
-                                                               EntitiyHelper entitiyHelper,
                                                                GeometryHandler geometryHandler,
                                                                I18NDAORepository i18NDAORepository,
                                                                ContentCacheController cacheController,
                                                                ProfileHandler profileHandler) {
         this.daoFactory = daoFactory;
         this.settingsService = settingsService;
-        this.entitiyHelper = entitiyHelper;
         this.geometryHandler = geometryHandler;
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
@@ -85,7 +81,6 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101
     public HibernateProcedureDescriptionGenerator create(HibernateProcedureDescriptionGeneratorKey key) {
         HibernateProcedureDescriptionGenerator generator
                 = new HibernateProcedureDescriptionGeneratorSml101(getProfileHandler(),
-                                                                   getEntitiyHelper(),
                                                                    getGeometryHandler(),
                                                                    getDaoFactory(),
                                                                    getI18NDAORepository(),
@@ -100,10 +95,6 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101
 
     public SettingsService getSettingsService() {
         return settingsService;
-    }
-
-    public EntitiyHelper getEntitiyHelper() {
-        return entitiyHelper;
     }
 
     public GeometryHandler getGeometryHandler() {

@@ -29,13 +29,11 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.data.Data;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 
 /**
  * Abstract test class that contains implemented methods
@@ -58,11 +56,11 @@ public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
     }
 
     @SuppressWarnings("rawtypes")
-    protected static Class<? extends Observation> getObservationClass() throws OwsExceptionReport {
+    protected static Class<? extends Data> getObservationClass() throws OwsExceptionReport {
         return getObservationDao().getObservationFactory().observationClass();
     }
 
-    protected static Class<? extends ContextualReferencedObservation> getContextualReferencedObservationClass() throws OwsExceptionReport {
+    protected static Class<? extends Data> getContextualReferencedObservationClass() throws OwsExceptionReport {
         return getObservationDao().getObservationFactory().contextualReferencedClass();
     }
 

@@ -38,8 +38,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -51,12 +51,13 @@ import junit.framework.TestCase;
  * @since 4.0.0
  *
  */
-public class AbstractHibernateFullDBDatasourceTest extends TestCase {
+public class AbstractHibernateFullDBDatasourceTest
+        extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
 
-    private static final int CHANGEABLE_COUNT = 10;
+    private static int CHANGEABLE_COUNT = 10;
 
-    private static final int MAX_COUNT = 15;
+    private static int MAX_COUNT = 19;
 
     @Override
     protected void setUp() throws Exception {
@@ -65,17 +66,17 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     public void testGetSettingDefinitions() throws Exception {
-        final Set<SettingDefinition<?>> settings = ds.getSettingDefinitions();
+        Set<SettingDefinition<?>> settings = ds.getSettingDefinitions();
         checkSettingDefinitionsTransactional(settings);
     }
 
     public void testGetChangableSettingDefinitions() throws Exception {
-        final Set<SettingDefinition<?>> settings = ds.getChangableSettingDefinitions(new Properties());
+        Set<SettingDefinition<?>> settings = ds.getChangableSettingDefinitions(new Properties());
         checkSettingDefinitionsChangableSetting(settings);
     }
 
     public void testParseDatasourceProperties() throws Exception {
-        final Properties current = new Properties();
+        Properties current = new Properties();
         current.put(HibernateConstants.DEFAULT_CATALOG, "public");
         current.put(HibernateConstants.CONNECTION_USERNAME, "postgres");
         current.put(HibernateConstants.CONNECTION_PASSWORD, "postgres");
@@ -86,32 +87,36 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         current.put(HibernateDatasourceConstants.PROVIDED_JDBC, "true");
         current.put(HibernateDatasourceConstants.HIBERNATE_DIRECTORY, "some-directory-stuff-to-test");
 
-        final Map<String, Object> settings = ds.parseDatasourceProperties(current);
-        checkSettingKeys(settings.keySet(), false, false);
+        Map<String, Object> settings = ds.parseDatasourceProperties(current);
+        checkSettingKeys(settings.keySet(), false, false, false);
     }
 
-    private void checkSettingDefinitionsTransactional(final Set<SettingDefinition<?>> settings) {
-        checkSettingDefinitions(settings, false, true);
+    private void checkSettingDefinitionsTransactional(Set<SettingDefinition<?>> settings) {
+        checkSettingDefinitions(settings, false, true, true);
     }
 
-    private void checkSettingDefinitionsChangableSetting(final Set<SettingDefinition<?>> settings) {
-        checkSettingDefinitions(settings, true, false);
+    private void checkSettingDefinitionsChangableSetting(Set<SettingDefinition<?>> settings) {
+        checkSettingDefinitions(settings, true, false, false);
 
     }
 
-    private void checkSettingDefinitions(final Set<SettingDefinition<?>> settings, final boolean changeable, final boolean settingsDefinitions) {
-        final List<String> keys = new ArrayList<>();
-        final Iterator<SettingDefinition<?>> iterator = settings.iterator();
+    private void checkSettingDefinitions(Set<SettingDefinition<?>> settings, boolean changeable,
+            boolean settingsDefinitions, boolean timeFormat) {
+        List<String> keys = new ArrayList<>();
+        Iterator<SettingDefinition<?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());
         }
-        checkSettingKeys(keys, changeable, settingsDefinitions);
+        checkSettingKeys(keys, changeable, settingsDefinitions, timeFormat);
     }
 
-    private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions) {
+    private void checkSettingKeys(Collection<String> keys, boolean changeable, boolean settingsDefinitions,
+            boolean timeFormat) {
         boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
+        boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
         boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
+        boolean seriesMetadata = keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -122,25 +127,49 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(keys.contains(AbstractHibernateDatasource.MIN_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.MAX_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.BATCH_SIZE_KEY));
-        assertTrue(changeable || settingsDefinitions || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
+        assertTrue(
+                changeable || settingsDefinitions || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
+        assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
+        assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_Z_KEY));
 
         if (changeable) {
             assertEquals(CHANGEABLE_COUNT, keys.size());
         } else {
             int counter = MAX_COUNT;
-            if (!transactional) { counter--; }
-            if (!concept) { counter--; }
-            if (!multiLanguage){ counter--; }
-            if (settingsDefinitions){ counter--; }
+            if (!transactional) {
+                counter--;
+            }
+            if (!concept) {
+                counter--;
+            }
+            if (!featureConcept) {
+                counter--;
+            }
+            if (!multiLanguage) {
+                counter--;
+            }
+            if (!seriesMetadata) {
+                counter--;
+            }
+            if (settingsDefinitions) {
+                counter--;
+            }
+            if (!timeFormat) {
+                counter -= 3;
+            }
             assertEquals(counter, keys.size());
         }
     }
 
-    private class MockDatasource extends AbstractHibernateFullDBDatasource {
+    private class MockDatasource
+            extends AbstractHibernateFullDBDatasource {
         @Override
         protected Dialect createDialect() {
             return null;
@@ -152,17 +181,17 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         }
 
         @Override
-        public boolean checkSchemaCreation(final Map<String, Object> settings) {
+        public boolean checkSchemaCreation(Map<String, Object> settings) {
             return false;
         }
 
         @Override
-        protected String toURL(final Map<String, Object> settings) {
+        protected String toURL(Map<String, Object> settings) {
             return null;
         }
 
         @Override
-        protected String[] parseURL(final String url) {
+        protected String[] parseURL(String url) {
             return new String[] { "localhost", "5432", "db" };
         }
 
@@ -172,7 +201,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         }
 
         @Override
-        public void clear(final Properties settings) {
+        public void clear(Properties settings) {
         }
 
         @Override
@@ -181,17 +210,18 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         }
 
         @Override
-        protected void validatePrerequisites(final Connection con, final DatabaseMetadata metadata, final Map<String, Object> settings) {
+        protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
         }
 
         @Override
-        protected Connection openConnection(final Map<String, Object> settings) throws SQLException {
+        protected Connection openConnection(Map<String, Object> settings) throws SQLException {
             return null;
         }
 
         @Override
-        protected String[] checkDropSchema(final String[] dropSchema) {
+        protected String[] checkDropSchema(String[] dropSchema) {
             return null;
         }
+
     }
 }

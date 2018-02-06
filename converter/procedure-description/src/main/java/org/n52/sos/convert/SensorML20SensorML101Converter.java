@@ -31,12 +31,10 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.Component;
 import org.n52.shetland.ogc.sensorML.ProcessChain;
@@ -49,44 +47,49 @@ import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * {@link Converter} class to convert SensorML 2.0 to SensorML 1.0.1 and the other way round.
+ * {@link Converter} class to convert SensorML 2.0 to SensorML 1.0.1 and the
+ * other way round.
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class SensorML20SensorML101Converter implements Converter<AbstractSensorML, AbstractSensorML> {
+public class SensorML20SensorML101Converter
+        extends
+        ProcedureDescriptionConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20SensorML101Converter.class);
 
-    private static final Set<ConverterKey> CONVERTER_KEY_TYPES
-            = ImmutableSet.<ConverterKey>builder()
-                    .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                                          SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-                    .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
-                                          SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-                    .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                                          SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-                    .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
-                                          SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-                    .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                                          SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
-                    .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
-                                          SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
-                    .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                                          SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
-                    .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
-                                          SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
-                    .build();
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey> builder()
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .build();
 
     public SensorML20SensorML101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
-                     Joiner.on(", ").join(CONVERTER_KEY_TYPES));
+                Joiner.on(", ").join(CONVERTER_KEY_TYPES));
     }
 
     @Override
@@ -95,17 +98,33 @@ public class SensorML20SensorML101Converter implements Converter<AbstractSensorM
     }
 
     @Override
-    public AbstractSensorML convert(AbstractSensorML objectToConvert) throws ConverterException {
-        if (objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL) ||
-                 objectToConvert.getDefaultElementEncoding().equals(
-                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
-            return convertSensorML20ToSensorML101(objectToConvert);
-        } else if (objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL) ||
-                 objectToConvert.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
-            return convertSensorML101ToSensorML20(objectToConvert);
+    public AbstractFeature convert(AbstractFeature objectToConvert)
+            throws ConverterException {
+        if (objectToConvert instanceof AbstractSensorML) {
+            return convert((AbstractSensorML) objectToConvert);
+        } else if (objectToConvert instanceof SosProcedureDescription && ((SosProcedureDescription) objectToConvert).getProcedureDescription() instanceof AbstractSensorML) {
+            AbstractSensorML convert = convert((AbstractSensorML) ((SosProcedureDescription) objectToConvert).getProcedureDescription());
+            SosProcedureDescription sosProcedureDescription = new SosProcedureDescription(convert);
+            sosProcedureDescription.add(((SosProcedureDescription) objectToConvert));
+            sosProcedureDescription.setDescriptionFormat(convert.getDefaultElementEncoding());
+           return sosProcedureDescription;
         }
         throw new ConverterException(String.format("The procedure's description format %s is not supported!",
-                                                   objectToConvert.getDefaultElementEncoding()));
+                objectToConvert.getDefaultElementEncoding()));
+    }
+
+    private  AbstractSensorML convert(AbstractSensorML asml)
+            throws ConverterException {
+        if (asml.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)
+                || asml.getDefaultElementEncoding()
+                        .equals(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)) {
+            return convertSensorML20ToSensorML101(asml);
+        } else if (asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
+                || asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
+            return convertSensorML101ToSensorML20(asml);
+        }
+        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+                asml.getDefaultElementEncoding()));
     }
 
     private AbstractSensorML convertSensorML20ToSensorML101(AbstractSensorML objectToConvert)
@@ -119,8 +138,8 @@ public class SensorML20SensorML101Converter implements Converter<AbstractSensorM
         } else if (objectToConvert instanceof AggregateProcess) {
             return toProcessChain((AggregateProcess) objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
-                                                   .getClass().getName()));
+        throw new ConverterException(
+                String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
     }
 
     private AbstractSensorML toSystem(PhysicalSystem objectToConvert) {
@@ -169,8 +188,8 @@ public class SensorML20SensorML101Converter implements Converter<AbstractSensorM
         } else {
             return convertSml101AbstractProcess(objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
-                                                   .getClass().getName()));
+        throw new ConverterException(
+                String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
     }
 
     private AbstractSensorML convertSml101AbstractProcess(AbstractSensorML objectToConvert)
@@ -184,8 +203,8 @@ public class SensorML20SensorML101Converter implements Converter<AbstractSensorM
         } else if (objectToConvert instanceof ProcessChain) {
             return toAggregateProcess((ProcessChain) objectToConvert);
         }
-        throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
-                                                   .getClass().getName()));
+        throw new ConverterException(
+                String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
     }
 
     private AbstractSensorML toPhysicalSystem(System objectToConvert) {

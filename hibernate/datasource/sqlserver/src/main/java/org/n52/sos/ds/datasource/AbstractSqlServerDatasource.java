@@ -41,18 +41,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialectSpatialIndex;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -194,7 +191,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
         checkClasspath();
     }
 
@@ -264,19 +261,19 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                names.add(table.getName());
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
+            List<String> names = new LinkedList<>();
+            while (tables.hasNext()) {
+                Table table = tables.next();
+                if (table.isPhysicalTable()) {
+                    names.add(table.getName());
+                }
             }
-        }
-        if (!names.isEmpty()) {
-            Connection conn = null;
-            Statement stmt = null;
-            try {
-                conn = openConnection(settings);
+            if (!names.isEmpty()) {
                 stmt = conn.createStatement();
                 StringBuffer statement = new StringBuffer();
                 // alter table MyOtherTable nocheck constraint all
@@ -305,12 +302,12 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                         .append(");");
                 LOGGER.debug("Executed clear datasource SQL statement: {}", statement);
                 stmt.execute(statement.toString());
-            } catch (SQLException ex) {
-                throw new ConfigurationError(ex);
-            } finally {
-                close(stmt);
-                close(conn);
             }
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(stmt);
+            close(conn);
         }
     }
 
@@ -321,6 +318,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
             Class.forName(getDriverClass());
             String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);

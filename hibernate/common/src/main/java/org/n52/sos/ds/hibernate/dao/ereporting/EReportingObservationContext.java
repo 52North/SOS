@@ -30,18 +30,19 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.HasEReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.HasEReportingSamplingPoint;
+
 
 public class EReportingObservationContext extends ObservationContext {
-    private EReportingSamplingPoint samplingPoint;
+    private EReportingSamplingPointEntity samplingPoint;
 
     /**
      * @return the featureOfInterest
      */
-    public EReportingSamplingPoint getSamplingPoint() {
+    public EReportingSamplingPointEntity getSamplingPoint() {
         return samplingPoint;
     }
 
@@ -49,7 +50,7 @@ public class EReportingObservationContext extends ObservationContext {
      * @param samplingPoint
      *            the samplingPoint to set
      */
-    public void setSamplingPoint(EReportingSamplingPoint samplingPoint) {
+    public void setSamplingPoint(EReportingSamplingPointEntity samplingPoint) {
         this.samplingPoint = samplingPoint;
     }
 
@@ -66,7 +67,7 @@ public class EReportingObservationContext extends ObservationContext {
     }
 
     @Override
-    public void addValuesToSeries(HasWriteableObservationContext contextual) {
+    public void addValuesToSeries(DatasetEntity contextual) {
         super.addValuesToSeries(contextual);
         if (isSetSamplingPoint() && contextual instanceof HasEReportingSamplingPoint) {
             ((HasEReportingSamplingPoint) contextual).setSamplingPoint(getSamplingPoint());

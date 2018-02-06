@@ -69,7 +69,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     @Override
     public void execute() {
-        LOGGER.info("Executing I18NCacheUpdate");
+        LOGGER.debug("Executing I18NCacheUpdate");
         startStopwatch();
         try {
             getCache().addSupportedLanguage(this.serviceMetadataRepository.getAvailableLocales());
@@ -78,9 +78,9 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
             getCache().addSupportedLanguage(getEntityLocales(I18NObservablePropertyMetadata.class));
             getCache().addSupportedLanguage(getEntityLocales(I18NProcedureMetadata.class));
         } catch (OwsExceptionReport ce) {
-            getErrors().add(ce);
+            getErrors().copy(ce);
         }
-        LOGGER.info("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
+        LOGGER.debug("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
     }
 
     private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type)

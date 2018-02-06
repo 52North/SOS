@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.Specimen"
+    				 extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
+                     discriminator-value="Specimen">
+        <join table="specimen">
+            <key foreign-key="specimenFeatureFk">
+                <column name="featureOfInterestId" >
+                    <comment>Foreign Key (FK) to the related featureOfInterest from the featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
+                </column>
+            </key>
+
+            <property name="materialClass" type="string">
+                <column name="materialClass" not-null="true">
+                    <comment>Material class</comment>
+                </column>
+            </property>
+            <property name="samplingTimeStart"
+                      type="timestamp">
+                <column name="samplingTimeStart"
+                        length="29"
+                        not-null="true">
+                    <comment>Time stamp when the specimen was started</comment>
+                </column>
+            </property>
+            <property name="samplingTimeEnd"
+                      type="timestamp">
+                <column name="samplingTimeEnd"
+                        length="29"
+                        not-null="true">
+                    <comment>Time stamp when the specimen was stopped</comment>
+                </column>
+            </property>
+            <property name="samplingMethod" type="string">
+                <column name="samplingMethod">
+                	<comment>Sampling method as referenced link</comment>
+                </column>
+            </property>
+            <property name="size" type="double">
+                <column name="size">
+                    <comment>Sampling method as referenced link</comment>
+                </column>
+            </property>
+            <many-to-one name="sizeUnit"
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="observationUnitFk">
+                <column name="sizeUnitId"
+                        not-null="false">
+                    <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+                </column>
+            </many-to-one>
+            <property name="currentLocation" type="string">
+                <column name="currentLocation" >
+                    <comment>Sampling method as referenced link</comment>
+                </column>
+            </property>
+            <property name="specimenType" type="string">
+                <column name="specimenType">
+                    <comment>Specimen type</comment>
+                </column>
+            </property>
+            <!-- processingDetails  not yet supported -->
+        </join>
+    </subclass>
+</hibernate-mapping>

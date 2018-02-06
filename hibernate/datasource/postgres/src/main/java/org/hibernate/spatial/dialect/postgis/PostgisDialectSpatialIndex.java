@@ -41,6 +41,10 @@ public class PostgisDialectSpatialIndex extends PostgisDialect implements Spatia
 
     private static final long serialVersionUID = 1L;
 
+    public PostgisDialectSpatialIndex() {
+        super();
+    }
+
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
         // http://postgis.net/docs/manual-2.0/using_postgis_dbmanagement.html#idp60795872
         // CREATE INDEX [indexname] ON [tablename] USING GIST ( [geometryfield] );

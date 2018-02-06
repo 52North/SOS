@@ -32,14 +32,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.NamedQueryDefinition;
 import org.hibernate.engine.spi.NamedSQLQueryDefinition;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory;
 import org.hibernate.hql.internal.ast.QueryTranslatorImpl;
 import org.hibernate.hql.spi.QueryTranslatorFactory;
@@ -47,7 +47,10 @@ import org.hibernate.internal.CriteriaImpl;
 import org.hibernate.internal.SessionImpl;
 import org.hibernate.loader.criteria.CriteriaJoinWalker;
 import org.hibernate.loader.criteria.CriteriaQueryTranslator;
+import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.hibernate.persister.entity.OuterJoinLoadable;
+import org.hibernate.query.Query;
+import org.hibernate.query.spi.NamedQueryRepository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -60,6 +63,7 @@ import com.google.common.collect.Maps;
  *
  */
 public final class HibernateHelper {
+
     /**
      * Private constructor
      */
@@ -76,15 +80,16 @@ public final class HibernateHelper {
      */
     public static String getSqlString(Criteria criteria) {
         CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
-        SessionImplementor session = criteriaImpl.getSession();
+        SharedSessionContractImplementor session = criteriaImpl.getSession();
         SessionFactoryImplementor factory = session.getFactory();
         CriteriaQueryTranslator translator =
                 new CriteriaQueryTranslator(factory, criteriaImpl, criteriaImpl.getEntityOrClassName(),
                         CriteriaQueryTranslator.ROOT_SQL_ALIAS);
-        String[] implementors = factory.getImplementors(criteriaImpl.getEntityOrClassName());
+        MetamodelImplementor metamodel = factory.getMetamodel();
+        String[] implementors = metamodel.getImplementors(criteriaImpl.getEntityOrClassName());
 
         CriteriaJoinWalker walker =
-                new CriteriaJoinWalker((OuterJoinLoadable) factory.getEntityPersister(implementors[0]), translator,
+                new CriteriaJoinWalker((OuterJoinLoadable) metamodel.entityPersister(implementors[0]), translator,
                         factory, criteriaImpl, criteriaImpl.getEntityOrClassName(), session.getLoadQueryInfluencers());
 
         return walker.getSQLString();
@@ -97,7 +102,7 @@ public final class HibernateHelper {
      *            HQL query to convert to SQL
      * @return SQL query string from HQL
      */
-    public static String getSqlString(Query query, Session session) {
+    public static String getSqlString(Query<?> query, Session session) {
         final QueryTranslatorFactory ast = new ASTQueryTranslatorFactory();
         SessionFactory sessionFactory = session.getSessionFactory();
         final QueryTranslatorImpl qt =
@@ -143,14 +148,17 @@ public final class HibernateHelper {
      * @return if the named query supported
      */
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
-        NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
-        NamedSQLQueryDefinition namedSQLQueryDef =
-                ((SessionImpl) session).getSessionFactory().getNamedSQLQuery(namedQuery);
+        NamedQueryRepository namedQueryRepository = ((SessionImpl) session).getSessionFactory().getNamedQueryRepository();
+        NamedQueryDefinition namedQueryDef = namedQueryRepository.getNamedQueryDefinition(namedQuery);
+        NamedSQLQueryDefinition namedSQLQueryDef = namedQueryRepository.getNamedSQLQueryDefinition(namedQuery);
+//        NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
+//        NamedSQLQueryDefinition namedSQLQueryDef =
+//                ((SessionImpl) session).getSessionFactory().getNamedSQLQuery(namedQuery);
         return namedQueryDef != null || namedSQLQueryDef != null;
     }
 
     public static Dialect getDialect(Session session) {
-        return ((SessionFactoryImplementor) session.getSessionFactory()).getDialect();
+        return ((SessionFactoryImplementor) session.getSessionFactory()).getServiceRegistry().getService( JdbcServices.class ).getDialect();
     }
 
     public static List<List<Long>> getValidSizedLists(Collection<Long> queryIds) {
@@ -160,8 +168,8 @@ public final class HibernateHelper {
             int startIndex = 0;
             int endIndex = HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
             while (startIndex < queryIdsList.size() - 1) {
-                if (endIndex > (queryIdsList.size())) {
-                    endIndex = (queryIdsList.size());
+                if (endIndex > queryIdsList.size()) {
+                    endIndex = queryIdsList.size();
                 }
                 lists.add(queryIdsList.subList(startIndex, endIndex));
                 startIndex = endIndex;

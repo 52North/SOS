@@ -35,7 +35,7 @@ import java.util.Map;
  * @since 4.0.0
  *
  */
-public class DefaultProfileHandler extends ProfileHandler {
+public class DefaultProfileHandler implements ProfileHandler {
 
     private Profile activeProfile;
 
@@ -44,6 +44,10 @@ public class DefaultProfileHandler extends ProfileHandler {
     public DefaultProfileHandler() {
         activeProfile = new DefaultProfile();
         availableProfiles.put(activeProfile.getIdentifier(), activeProfile);
+    }
+
+    @Override
+    public void init() {
     }
 
     @Override
@@ -60,5 +64,17 @@ public class DefaultProfileHandler extends ProfileHandler {
     public boolean isSetActiveProfile() {
         return activeProfile != null;
     }
+
+    @Override
+    public void activateProfile(String identifier) {
+        availableProfiles.get(identifier).setActiveProfile(true);
+
+    }
+
+    @Override
+    public void persist() {}
+
+    @Override
+    public void reloadProfiles() {}
 
 }

@@ -38,7 +38,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.junit.Test;
-
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sos.Sos1Constants;
@@ -53,7 +54,8 @@ import org.locationtech.jts.geom.Envelope;
  * @since 4.0.0
  *
  */
-public class SosHelperTest extends SosHelper {
+public class SosHelperTest
+        extends SosHelper {
 
     public static final int EPSG4326 = 4326;
 

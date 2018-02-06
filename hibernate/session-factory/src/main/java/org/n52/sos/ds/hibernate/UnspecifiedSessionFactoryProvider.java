@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.Properties;
-
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
@@ -50,6 +49,7 @@ import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
+import org.n52.sos.ds.hibernate.type.IsoTimeStringType;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.service.DriverCleanupListener;
@@ -185,6 +185,9 @@ public abstract class UnspecifiedSessionFactoryProvider
         } else {
             configuration.registerTypeOverride(new UtcTimestampType());
         }
+        configuration.registerTypeOverride(new IsoTimeStringType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE),
+                properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
+                Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
     }
 
     protected abstract Configuration getConfiguration(Properties properties);

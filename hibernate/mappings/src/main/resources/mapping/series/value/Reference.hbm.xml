@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ReferenceValuedSeriesObservation"
+                     extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                     table="referencevalue">
+        <comment>Value table for category observation</comment>
+        <key foreign-key="observationRefValueFk">
+            <column name="observationId" >
+                <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+            </column>
+        </key>
+        <property name="href"
+                   type="string">
+             <column name="href">
+                 <comment>href value</comment>
+             </column>
+         </property>
+         <property name="title"
+                   type="string">
+             <column name="title">
+                 <comment>title value</comment>
+             </column>
+         </property>
+         <property name="role"
+                   type="string">
+             <column name="role">
+                 <comment>role value</comment>
+             </column>
+         </property>
+    </joined-subclass>
+</hibernate-mapping>

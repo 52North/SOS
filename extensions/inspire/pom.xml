@@ -3,76 +3,15 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>extensions</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>inspire</artifactId>
-    <version>5.0.0-SNAPSHOT</version>
+     <version>5.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>52°North SOS - SOS 2.0 Inspire extension</name>
     <description>52°North Sensor Observation Service Inspire extension module</description>
     <modules>
         <module>code</module>
     </modules>
-    <properties>
-        <maven.build.timestamp.format>yyyy-MM-dd_HH-mm</maven.build.timestamp.format>
-    </properties>
-    <organization>
-        <name>52°North</name>
-        <url>http://52north.org/</url>
-    </organization>
-    <developers>
-        <developer>
-            <name>Carsten Hollmann</name>
-            <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
-        </developer>
-    </developers>
-    <mailingLists>
-        <mailingList>
-            <name>Sensor Web Mailing List</name>
-            <post>swe@52north.org</post>
-            <subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe>
-            <unsubscribe>http://list.52north.org/mailman/listinfo/swe#subscribers</unsubscribe>
-            <archive>http://list.52north.org/pipermail/swe/</archive>
-        </mailingList>
-    </mailingLists>
-    <issueManagement>
-        <system>Bugzilla</system>
-        <url>https://bugzilla.52north.org/</url>
-    </issueManagement>
-    <contributors>
-        <contributor>
-            <name>Carsten Hollmann</name>
-            <roles>
-                <role>designer</role>
-            </roles>
-            <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
-        </contributor>
-    </contributors>
-    <repositories>
-        <repository>
-            <id>n52-releases</id>
-            <name>52n Releases</name>
-            <url>http://52north.org/maven/repo/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>n52-snapshots</id>
-            <name>52n Snapshots</name>
-            <url>http://52north.org/maven/repo/snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 </project>

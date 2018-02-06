@@ -48,7 +48,7 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
  * @since 4.3.0
  *
  */
-public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDialect implements SpatialIndexDialect {
+public class MySQLSpatial5InnoDBTimestampDialect extends MySQL56InnoDBSpatialDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 4518550802945449263L;
 

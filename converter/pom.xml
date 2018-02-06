@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>converter</artifactId>
     <packaging>pom</packaging>
@@ -15,5 +15,7 @@
         <module>identifier-modifier</module>
         <module>split-and-merge</module>
         <module>procedure-description</module>
+        <module>observation</module>
+        <module>seriestype</module>
     </modules>
 </project>

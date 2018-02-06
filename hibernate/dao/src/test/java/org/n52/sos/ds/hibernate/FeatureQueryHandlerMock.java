@@ -50,7 +50,7 @@ import org.n52.shetland.util.ReferencedEnvelope;
 public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
-    public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
+    public String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
         if (samplingFeature.isSetIdentifier()) {
             return samplingFeature.getIdentifier();
         }
@@ -90,18 +90,6 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
     public int getStorage3DEPSG() {
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponseEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponse3DEPSG() {
-        // TODO Auto-generated method stub
         return 0;
     }
 }

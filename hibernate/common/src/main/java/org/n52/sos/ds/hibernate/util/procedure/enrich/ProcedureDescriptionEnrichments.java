@@ -29,184 +29,34 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.Locale;
-import java.util.Map;
-
-import org.hibernate.Session;
 
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
+import org.n52.sos.ds.procedure.enrich.AbstractProcedureDescriptionEnrichments;
+import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
 
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class ProcedureDescriptionEnrichments {
-    private String identifier;
-    private SosProcedureDescription<?> description;
-    private String version;
-    private String procedureDescriptionFormat;
-    private Map<String, Procedure> procedureCache;
-    private Session session;
-    private HibernateProcedureConverter converter;
-    private TimePeriod validTime;
-    private final Locale language;
-    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
-    private String typeOfIdentifier;
-    private String typeOfFormat;
-    private final DaoFactory daoFactory;
+public class ProcedureDescriptionEnrichments
+        extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
 
-    private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
-        this.serviceProvider = serviceProvider;
-        this.language = locale;
-        this.daoFactory = daoFactory;
+    public ProcedureDescriptionEnrichments(
+            Locale locale,
+            LocalizedProducer<OwsServiceProvider> serviceProvider,
+            AbstractProcedureCreationContext ctx) {
+        super(locale, serviceProvider, ctx);
     }
 
-    public ProcedureDescriptionEnrichments setIdentifier(String identifier) {
-        this.identifier = identifier;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setDescription(
-            SosProcedureDescription<?> description) {
-        this.description = description;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setVersion(String version) {
-        this.version = version;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setProcedureDescriptionFormat(
-            String pdf) {
-        this.procedureDescriptionFormat = pdf;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setProcedureCache(
-            Map<String, Procedure> procedureCache) {
-        this.procedureCache = procedureCache;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setSession(Session session) {
-        this.session = session;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setConverter(
-            HibernateProcedureConverter converter) {
-        this.converter = converter;
-        return this;
-
-    }
-
-    public ProcedureDescriptionEnrichments setValidTime(TimePeriod validTime) {
-        this.validTime = validTime;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setTypeOfIdentifier(String typeOfIdentifier) {
-        this.typeOfIdentifier = typeOfIdentifier;
-        return this;
-    }
-
-    public ProcedureDescriptionEnrichments setTypeOfFormat(String typeOfFormat) {
-        this.typeOfFormat = typeOfFormat;
-        return this;
-    }
-
-    public Iterable<ProcedureDescriptionEnrichment> createAll() {
-        return Iterables.filter(
-                Lists.newArrayList(
-                        createFeatureOfInterestEnrichment(),
-                        createRelatedProceduresEnrichment(),
-                        createOfferingEnrichment(),
-                        createValidTimeEnrichment(),
-                        createBoundingBoxEnrichment(),
-                        createClassifierEnrichment(),
-                        createIdentificationEnrichment(),
-                        createContactsEnrichment(),
-                        createKeywordEnrichment(),
-                        createValidTimeEnrichment(),
-                        createObservablePropertyEnrichment(),
-                        createTypeOfEnrichmentEnrichment()),
-                ProcedureDescriptionEnrichment.predicate());
-    }
-
-    public void enrichAll() throws OwsExceptionReport {
-        for (ProcedureDescriptionEnrichment enrichment : createAll()) {
-            enrichment.enrich();
-        }
-    }
-
-    public BoundingBoxEnrichment createBoundingBoxEnrichment() {
-        return setValues(new BoundingBoxEnrichment());
-    }
-
-    public ClassifierEnrichment createClassifierEnrichment() {
-        return setValues(new ClassifierEnrichment());
-    }
-
-    public IdentificationEnrichment createIdentificationEnrichment() {
-        return setValues(new IdentificationEnrichment(this.daoFactory.getI18NDAORepository()));
-    }
-
-    public ContactsEnrichment createContactsEnrichment() {
-        return setValues(new ContactsEnrichment(this.language, this.serviceProvider));
-    }
-
-    public KeywordEnrichment createKeywordEnrichment() {
-        return setValues(new KeywordEnrichment());
-    }
-
-    public FeatureOfInterestEnrichment createFeatureOfInterestEnrichment() {
-        return setValues(new FeatureOfInterestEnrichment());
-    }
-
-    public RelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment(daoFactory))
-                .setConverter(converter).setProcedureCache(procedureCache)
-                .setProcedureDescriptionFormat(procedureDescriptionFormat)
-                .setValidTime(validTime);
-    }
-
-    public OfferingEnrichment createOfferingEnrichment() {
-        return setValues(new OfferingEnrichment());
-    }
-
-    public ValidTimeEnrichment createValidTimeEnrichment() {
-        return setValues(new ValidTimeEnrichment()).setValidTime(validTime);
-    }
-
-    private ObservablePropertyEnrichment createObservablePropertyEnrichment() {
-        return setValues(new ObservablePropertyEnrichment(this.daoFactory.getI18NDAORepository()));
-    }
-
-    private TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
-        return setValues(new TypeOfEnrichment()).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
-    }
-
-    private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
-        enrichment.setDescription(description)
-                .setIdentifier(identifier)
-                .setVersion(version)
-                .setLocale(language)
-                .setSession(session);
-        return enrichment;
-    }
-
-    public static ProcedureDescriptionEnrichments create(Locale language, LocalizedProducer<OwsServiceProvider> serviceProvider, DaoFactory daoFactory) {
-        return new ProcedureDescriptionEnrichments(language, serviceProvider, daoFactory);
+    public AbstractRelatedProceduresEnrichment<ProcedureEntity> createRelatedProceduresEnrichment() {
+        return setValues(new RelatedProceduresEnrichment(getProcedureCreationContext()))
+                .setConverter(getConverter())
+                .setProcedure(getProcedure())
+                .setProcedureDescriptionFormat(getProcedureDescriptionFormat())
+                .setValidTime(getValidTime());
     }
 }

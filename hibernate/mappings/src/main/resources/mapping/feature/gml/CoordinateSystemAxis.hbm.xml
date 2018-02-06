@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gml.CoordinateSystemAxisEntity"
+           table="coordinatesystemaxis">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">coordSysAxisId_seq</param>
+            </generator>
+        </id>
+        <property name="nilReason" column="nilReason" type="string" />
+        <property name="href" column="href" type="string" />
+        <property name="type" column="type" type="string" />
+        <property name="role" column="role" type="string" />
+        <property name="arcrole" column="arcrole" type="string" />
+        <property name="title" column="title" type="string" />
+        <property name="show" column="show" type="string" />
+        <property name="actuate" column="actuate" type="string" />
+        <property name="remoteSchema" column="remoteSchema" type="string" />
+        <property name="identifier" type="string" >
+            <column name="identifier" unique-key="csaIdentifierUK">
+                <comment>The identifier of the object, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="csaCodespaceIdentifierFk">
+            <column name="codespace">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+                <comment>The name of the object, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="csaCodespaceNameFk">
+            <column name="codespaceName">
+                <comment>The name of the object, gml:name. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+                <comment>Description of the object, gml:description. Optional</comment>
+            </column>
+        </property>
+        <property name="remarks" column="remarks" type="string" />
+        <property name="axisAbbrev" column="axisAbbrev"  type="string" />
+        <many-to-one name="codespaceAxisAbbrev" column="codespaceAxisAbbrev" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="scsacodeaaFk" />
+        <property name="axisDirection" column="axisDirection" type="string" />
+        <many-to-one name="codespaceAxisDirection" column="codespaceAxisDirection"  class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="scsacodeadFk" />
+        <property name="minimumValue" column="minimumValue" type="double" length="29" />
+        <property name="maximumValue" column="maximumValue" type="double" length="29"  />
+        <property name="rangeMeaning" column="rangeMeaning" type="string" />
+        <many-to-one name="codespaceRangeMeaning" column="codespaceRangeMeaning" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="scsacodermFk" />
+        <many-to-one name="uom"
+                     column="unitId"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     not-null="true"
+                     foreign-key="csaUnitFk" />
+    </class>
+</hibernate-mapping>

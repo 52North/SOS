@@ -159,5 +159,10 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
                     AbstractObservationDAO.class.getName());
         }
     }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+    }
 
 }

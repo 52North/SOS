@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility" extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
+        discriminator-value="EnvironmentalMonitoringFacility">
+        <join table="inspireenvmonfac">
+            <key foreign-key="specimenFeatureFk">
+                <column name="featureOfInterestId">
+                    <comment>Foreign Key (FK) to the related featureOfInterest from the featureOfInterest table.
+                        Contains "featureOfInterest".featureOfInterestId</comment>
+                </column>
+            </key>
+            <component name="mediaMonitored" class="org.n52.sos.ds.hibernate.entities.feature.inspire.MediaMonitored">
+                <set name="mediaMonitored" table="mediamonitored">
+                    <key column="featureOfInterestId" not-null="true" />
+                    <element column="mediaMonitored" type="string" not-null="true" />
+                </set>
+            </component>
+            <property name="measurementRegime" type="string">
+                <column name="measurementRegime">
+                    <comment>Measurement regime</comment>
+                </column>
+            </property>
+            <property name="mobile" type="org.hibernate.type.TrueFalseType">
+                <column name="mobile" not-null="true" default="'F'" check="mobile in ('T','F')">
+                    <comment>Flag to indicate that this feature is mobile or not </comment>
+                </column>
+            </property>
+        </join>
+    </subclass>
+</hibernate-mapping>

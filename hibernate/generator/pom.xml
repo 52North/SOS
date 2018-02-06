@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>hibernate-script-generator</artifactId>
     <name>52°North SOS - Hibernate Generator</name>
@@ -58,12 +58,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        <!-- 
          <dependency>
              <groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
          </dependency>
-          -->
+         <!--  -->
     </dependencies>
     <profiles>
         <profile>

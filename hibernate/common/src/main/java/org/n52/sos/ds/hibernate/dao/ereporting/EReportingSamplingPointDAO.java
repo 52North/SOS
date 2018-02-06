@@ -31,17 +31,16 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.aqd.AqdSamplingPoint;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * DAO class for entity {@link EReportingSamplingPoint}
+ * DAO class for entity {@link EReportingSamplingPointEntity}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
@@ -63,40 +62,40 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
      * @return Default criteria
      */
     public Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(EReportingSamplingPoint.class).setResultTransformer(
+        return session.createCriteria(EReportingSamplingPointEntity.class).setResultTransformer(
                 Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**
-     * Get the {@link EReportingSamplingPoint} for the id
+     * Get the {@link EReportingSamplingPointEntity} for the id
      *
      * @param samplingPointId
-     *            Id to get {@link EReportingSamplingPoint} for
+     *            Id to get {@link EReportingSamplingPointEntity} for
      * @param session
      *            Hibernate session
-     * @return The resulting {@link EReportingSamplingPoint}
+     * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPoint getEReportingSamplingPoint(long samplingPointId, Session session) {
+    public EReportingSamplingPointEntity getEReportingSamplingPoint(long samplingPointId, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPoint.ID, samplingPointId));
+        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_ID, samplingPointId));
         LOGGER.debug("QUERY getEReportingSamplingPoint(samplingPointId): {}", HibernateHelper.getSqlString(c));
-        return (EReportingSamplingPoint) c.uniqueResult();
+        return (EReportingSamplingPointEntity) c.uniqueResult();
     }
 
     /**
-     * Get the {@link EReportingSamplingPoint} for the identifier
+     * Get the {@link EReportingSamplingPointEntity} for the identifier
      *
      * @param identifier
-     *            Identifier to get {@link EReportingSamplingPoint} for
+     *            Identifier to get {@link EReportingSamplingPointEntity} for
      * @param session
      *            Hibernate session
-     * @return The resulting {@link EReportingSamplingPoint}
+     * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPoint getEReportingSamplingPoint(String identifier, Session session) {
+    public EReportingSamplingPointEntity getEReportingSamplingPoint(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, identifier));
+        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, identifier));
         LOGGER.debug("QUERY getEReportingSamplingPoint(identifier): {}", HibernateHelper.getSqlString(c));
-        return (EReportingSamplingPoint) c.uniqueResult();
+        return (EReportingSamplingPointEntity) c.uniqueResult();
     }
 
     /**
@@ -106,15 +105,15 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
      *            {@link AqdSamplingPoint} to insert
      * @param session
      *            Hibernate session
-     * @return The resulting {@link EReportingSamplingPoint}
+     * @return The resulting {@link EReportingSamplingPointEntity}
      */
-    public EReportingSamplingPoint getOrInsert(AqdSamplingPoint samplingPoint, Session session) {
+    public EReportingSamplingPointEntity getOrInsert(AqdSamplingPoint samplingPoint, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, samplingPoint.getIdentifier()));
+        c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, samplingPoint.getIdentifier()));
         LOGGER.debug("QUERY getOrIntert(samplingPoint): {}", HibernateHelper.getSqlString(c));
-        EReportingSamplingPoint eReportingSamplingPoint = (EReportingSamplingPoint) c.uniqueResult();
+        EReportingSamplingPointEntity eReportingSamplingPoint = (EReportingSamplingPointEntity) c.uniqueResult();
         if (eReportingSamplingPoint == null) {
-            eReportingSamplingPoint = new EReportingSamplingPoint();
+            eReportingSamplingPoint = new EReportingSamplingPointEntity();
             addIdentifierNameDescription(samplingPoint, eReportingSamplingPoint, session);
             eReportingSamplingPoint.setAssessmentType(new EReportingAssessmentTypeDAO().getOrInsert(
                     samplingPoint.getAssessmentType(), session));

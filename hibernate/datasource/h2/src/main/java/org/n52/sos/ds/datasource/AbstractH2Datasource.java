@@ -98,12 +98,12 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
 
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = openConnection(settings);
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
             stmt = conn.createStatement();
             stmt.execute("set referential_integrity false");
             while (tables.hasNext()) {

@@ -80,6 +80,17 @@ public interface SosContentCache
      */
     Set<String> getAllowedObservationTypesForOffering(String offering);
 
+
+    /**
+     * Returns the all observation types for the specified offering.
+     *
+     * @param offering
+     *            the offering
+     *
+     * @return the all observation types
+     */
+    Set<String> getAllObservationTypesForOffering(String offering);
+
     /**
      * Returns the allowed featureOfInterest types for the specified offering.
      *
@@ -134,6 +145,17 @@ public interface SosContentCache
      * @return the features associated with the offering
      */
     Set<String> getFeaturesOfInterestForOffering(String offering);
+
+
+    /**
+     * Returns all offerings for the specified featureOfInterest.
+     *
+     * @param featureOfInterest
+     *            the featureOfInterest
+     *
+     * @return the offerings associated with the featureOfInterest
+     */
+    Set<String> getOfferingsForFeatureOfInterest(String featureOfInterest);
 
     /**
      * Returns all FeaturesOfInterest for the specified SosResultTemplate.
@@ -604,6 +626,86 @@ public interface SosContentCache
     Set<String> getChildProcedures(Set<String> procedure, boolean fullHierarchy, boolean includeSelves);
 
     /**
+     * Returns collection containing parent offerings for the passed offering,
+     * optionally navigating the full hierarchy and including itself.
+     *
+     * @param offering
+     *            the offering id to find parents for
+     * @param fullHierarchy
+     *            whether or not to traverse the full offering hierarchy in one
+     *            direction starting from <tt>offering</tt>
+     * @param includeSelf
+     *            whether or not to include the passed offering id in the
+     *            result
+     *
+     * @return a set containing the passed offering id's parents (and
+     *         optionally itself)
+     */
+    Set<String> getParentOfferings(String offering, boolean fullHierarchy, boolean includeSelf);
+
+    /**
+     * Returns collection containing parent offerings for the passed
+     * offerings, optionally navigating the full hierarchy and including
+     * itself.
+     *
+     * @param offerings
+     *            the offering id's to find parents for
+     * @param fullHierarchy
+     *            whether or not to traverse the full offering hierarchy in one
+     *            direction starting from <tt>offering</tt>
+     * @param includeSelves
+     *            whether or not to include the passed offering id in the
+     *            result
+     *
+     * @return a set containing the passed offering id's parents (and
+     *         optionally itself)
+     */
+    Set<String> getParentOfferings(Set<String> offerings, boolean fullHierarchy, boolean includeSelves);
+
+    /**
+     * Returns collection containing child offerings for the passed offerings,
+     * optionally navigating the full hierarchy and including itself.
+     *
+     * @param offering
+     *            offering id to find children for
+     * @param fullHierarchy
+     *            whether or not to navigate the full offering hierarchy
+     * @param includeSelf
+     *            whether or not to include the passed offering id in the
+     *            result
+     *
+     * @return Collection containing the passed offering id's children
+     *         (and optionally itself)
+     */
+    Set<String> getChildOfferings(String offering, boolean fullHierarchy, boolean includeSelf);
+
+    /**
+     * Returns collection containing child offerings for the passed offerings,
+     * optionally navigating the full hierarchy and including itself.
+     *
+     * @param offering
+     *            offering ids to find children for
+     * @param fullHierarchy
+     *            whether or not to navigate the full offering hierarchy
+     * @param includeSelves
+     *            whether or not to include the passed offering ids in the
+     *            result
+     *
+     * @return Collection containing the passed offering ids' children
+     *         (and optionally themselves)
+     */
+    Set<String> getChildOfferings(Set<String> offering, boolean fullHierarchy, boolean includeSelves);
+
+    /**
+     * Returns <code>true</code> if the passed offering has parent offerings.
+     *
+     * @param offering
+     *            offering id to check for parents
+     * @return <code>true</code> if the passed offering has parent offerings.
+     */
+    boolean hasParentOfferings(String offering);
+
+    /**
      * Checks whether the specified related feature has been used as sampling
      * feature
      *
@@ -711,6 +813,16 @@ public interface SosContentCache
     Set<String> getInstancesForProcedure(String identifier);
 
     boolean hasInstancesForProcedure(String identifier);
+
+    Set<String> getProcedureDescriptionFormatsForProcedure(String procedure);
+
+    Set<String> getPublishedFeatureOfInterest();
+
+    Set<String> getPublishedProcedures();
+
+    Set<String> getPublishedOfferings();
+
+    Set<String> getPublishedObservableProperties();
 
     enum TypeInstance {
         TYPE, INSTANCE;

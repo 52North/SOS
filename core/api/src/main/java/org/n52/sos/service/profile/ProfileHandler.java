@@ -30,42 +30,23 @@ package org.n52.sos.service.profile;
 
 import java.util.Map;
 
-import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
 
 /**
  * @since 4.0.0
  *
  */
-//FIXME make this a interface
-public abstract class ProfileHandler implements Constructable {
-
-    @Deprecated
-    private static ProfileHandler instance;
-
-    @Override
-    @Deprecated
-    public void init() {
-        ProfileHandler.instance = this;
-    }
-
-    /**
-     * Gets the singleton instance of the ProfileHandler.
-     * <p/>
-     *
-     * @return the profile handler
-     *         <p/>
-     * @throws ConfigurationError
-     *             if no implementation can be found
-     */
-    @Deprecated
-    public static ProfileHandler getInstance() throws ConfigurationError {
-        return ProfileHandler.instance;
-    }
+public interface ProfileHandler extends Constructable {
 
     public abstract Profile getActiveProfile();
 
     public abstract Map<String, Profile> getAvailableProfiles();
 
     public abstract boolean isSetActiveProfile();
+
+    void activateProfile(String identifier);
+
+    void persist();
+
+    void reloadProfiles();
 }

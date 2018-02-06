@@ -29,16 +29,17 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 
+import org.n52.janmayen.Producer;
 import org.n52.janmayen.component.AbstractComponentRepository;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.janmayen.Producer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,11 +57,11 @@ public class AdditionalObservationCreatorRepository extends
             = Maps.newHashMap();
 
 
-    @Autowired(required = false)
-    private Collection<AdditionalObservationCreator> components;
+    @Inject
+    private Optional<Collection<AdditionalObservationCreator>> components = Optional.of(Collections.emptyList());
 
-    @Autowired(required = false)
-    private Collection<AdditionalObservationCreatorFactory> componentFactories;
+    @Inject
+    private Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories = Optional.of(Collections.emptyList());
 
     @Override
     public void init() {

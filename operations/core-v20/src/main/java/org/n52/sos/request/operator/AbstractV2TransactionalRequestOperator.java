@@ -85,13 +85,13 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
 
     private boolean hasObservations(String observableProperty, Set<String> offerings) {
-        if (offerings != null) {
-            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
-                    return true;
-                }
-            }
-        }
+//        if (offerings != null) {
+//            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
+//                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
 
@@ -125,8 +125,7 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
 
     protected static boolean isComplexObservation(OmObservation observation) {
-        return observation.getObservationConstellation().getObservationType()
-                .equalsIgnoreCase(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION) &&
+        return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equalsIgnoreCase(observation.getObservationConstellation().getObservationType()) &&
                observation.getValue().getValue() instanceof ComplexValue;
     }
 }

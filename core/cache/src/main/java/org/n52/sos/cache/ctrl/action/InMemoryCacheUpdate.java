@@ -32,13 +32,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.cache.SosContentCacheUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -57,24 +56,24 @@ public abstract class InMemoryCacheUpdate extends SosContentCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryCacheUpdate.class);
 
     /**
-     * Get a list of all SosSamplingFeatures contained in the abstract feature.
+     * Get a list of all SosAbstractSamplingFeatures contained in the abstract feature.
      *
      * @param abstractFeature
      *            the abstract feature
      *
      * @return a list of all sampling features
      */
-    protected List<SamplingFeature> sosFeaturesToList(AbstractFeature abstractFeature) {
+    protected List<AbstractSamplingFeature> sosFeaturesToList(AbstractFeature abstractFeature) {
         return asStream(abstractFeature).collect(Collectors.toList());
     }
 
-    private Stream<SamplingFeature> asStream(FeatureCollection fc) {
+    private Stream<AbstractSamplingFeature> asStream(FeatureCollection fc) {
         return fc.getMembers().values().stream().flatMap(this::asStream);
     }
 
-    private Stream<SamplingFeature> asStream(AbstractFeature f) {
-        if (f instanceof SamplingFeature) {
-            return Stream.of((SamplingFeature) f);
+    private Stream<AbstractSamplingFeature> asStream(AbstractFeature f) {
+        if (f instanceof AbstractSamplingFeature) {
+            return Stream.of((AbstractSamplingFeature) f);
         } else if (f instanceof FeatureCollection) {
             return asStream((FeatureCollection) f);
         } else {
@@ -89,15 +88,15 @@ public abstract class InMemoryCacheUpdate extends SosContentCacheUpdate {
     /**
      * Creates the Envelope for all passed sampling features.
      *
-     * @param samplingFeatures
+     * @param AbstractSamplingFeatures
      *            the sampling features
      *
      * @return the envelope for all features
      */
-    protected Envelope createEnvelopeFrom(List<SamplingFeature> samplingFeatures) {
-        return samplingFeatures.stream()
-                .filter(SamplingFeature::isSetGeometry)
-                .map(SamplingFeature::getGeometry)
+    protected Envelope createEnvelopeFrom(List<AbstractSamplingFeature> AbstractSamplingFeatures) {
+        return AbstractSamplingFeatures.stream()
+                .filter(AbstractSamplingFeature::isSetGeometry)
+                .map(AbstractSamplingFeature::getGeometry)
                 .map(Geometry::getEnvelopeInternal)
                 .collect(Envelope::new,
                          Envelope::expandToInclude,

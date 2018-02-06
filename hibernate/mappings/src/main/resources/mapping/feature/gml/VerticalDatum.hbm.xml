@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity"
+           table="verticaldatum">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">verticalDatumId_seq</param>
+            </generator>
+        </id>
+        <property name="nilReason" column="nilReason" type="string" />
+        <property name="href" column="href" type="string" />
+        <property name="type" column="type" type="string" />
+        <property name="role" column="role" type="string" />
+        <property name="arcrole" column="arcrole" type="string" />
+        <property name="title" column="title" type="string" />
+        <property name="show" column="show" type="string" />
+        <property name="actuate" column="actuate" type="string" />
+        <property name="remoteSchema" column="remoteSchema" type="string" />
+        <property name="identifier" type="string" >
+            <column name="identifier" unique-key="vdIdentifierUK">
+                <comment>The identifier of the object, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="vdCodespaceIdentifierFk">
+            <column name="codespace">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+                <comment>The name of the object, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="vdCodespaceNameFk">
+            <column name="codespaceName">
+                <comment>The name of the object, gml:name. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+                <comment>Description of the object, gml:description. Optional</comment>
+            </column>
+        </property>
+        <property name="remarks" column="remarks" type="string" />
+        <many-to-one name="domainOfValidity"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gml.DomainOfValidityEntity"
+                     foreign-key="vddovFk">
+            <column index="vddovIdx"
+                    name="domainOfValidityId"
+                    not-null="false">
+            </column>
+        </many-to-one>
+        <set name="scope" table="verticaldatumscope">
+          <key column="verticalDatumId" not-null="true" foreign-key="vdscopefk"/>
+          <element column="scope" type="string" not-null="true" />
+        </set>
+        <property name="anchorDefinition" column="anchorDefinition" type="string" />
+        <many-to-one name="codespaceAnchorDef" column="codespaceAnchorDef"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
+                     foreign-key="vdCodespaceADefFk" />
+        <property name="realizationEpoch"
+                  type="timestamp">
+            <column name="realizationEpoch"
+                    not-null="false"
+                    default="NULL"
+                    length="29" >
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -29,20 +29,21 @@
 package org.n52.sos.cache.ctrl.action;
 
 import java.util.Collection;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
-
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.util.action.Action;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.cache.SosWritableContentCache;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
-import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -64,12 +65,11 @@ import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
  */
 public class SensorInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorInsertionUpdate.class);
-
     private final InsertSensorResponse response;
-
     private final InsertSensorRequest request;
+    private final ConverterRepository converter;
 
-    public SensorInsertionUpdate(InsertSensorRequest request, InsertSensorResponse response) {
+    public SensorInsertionUpdate(InsertSensorRequest request, InsertSensorResponse response, ConverterRepository converter) {
         if (request == null || response == null) {
             String msg =
                     String.format("Missing argument: '%s': %s; '%s': %s", InsertSensorRequest.class.getName(),
@@ -79,6 +79,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         }
         this.response = response;
         this.request = request;
+        this.converter = converter;
     }
 
     @Override
@@ -89,8 +90,20 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         // procedure relations
         cache.addProcedure(procedure);
         if (request.getProcedureDescription().isSetParentProcedure()) {
+            cache.addPublishedProcedure(procedure);
             cache.addParentProcedures(procedure, Sets.newHashSet(request.getProcedureDescription().getParentProcedure().getTitleOrFromHref()));
+            cache.addPublishedProcedure(request.getProcedureDescription().getParentProcedure().getHref());
         }
+
+        // Update procedureDescriptionFormats
+        String procedureDescriptionFormat = request.getProcedureDescriptionFormat();
+        Set<String> formats = Sets.newHashSet(procedureDescriptionFormat);
+        Set<String> toNamespaceConverterFrom = converter.getToNamespaceConverterFrom(procedureDescriptionFormat);
+        if (CollectionHelper.isNotEmpty(toNamespaceConverterFrom)) {
+            formats.addAll(toNamespaceConverterFrom);
+        }
+        getCache().addProcedureDescriptionFormatsForProcedure(procedure, formats);
+
         // if the inserted procedure is not a type, add values to cache
         if (!request.isType()) {
             // TODO child procedures
@@ -100,6 +113,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
                 } else {
                     cache.addOffering(sosOffering.getIdentifier());
+                    cache.addPublishedOffering(sosOffering.getIdentifier());
                     cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
                     if (sosOffering.isSetName()) {
                         cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
@@ -140,8 +154,10 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
                     cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
                 }
+                cache.addPublishedObservableProperty(observableProperty);
             }
         }
+
         // procedure type/instance metadata
         if (request.isType()) {
             cache.addTypeInstanceProcedure(SosContentCache.TypeInstance.TYPE, response.getAssignedProcedure());

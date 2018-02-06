@@ -28,6 +28,7 @@
  */
 package org.hibernate.spatial.dialect.sqlserver;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -41,38 +42,42 @@ public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008Spatia
 
     private static final long serialVersionUID = 1L;
 
+    public SqlServer2008SpatialDialectSpatialIndex() {
+        super();
+    }
+
     // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
 
         // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
         // CREATE SPATIAL INDEX SIndx_SpatialTable_geometry_col1 ON SpatialTable(geometry_col)
 
-        String name = index.getName();
-        Table table = index.getTable();
-        Iterator<Column> columns = index.getColumnIterator();
-        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-
-
-        StringBuilder buf = new StringBuilder( "create" )
-                        .append( " spatial index " )
-                        .append( this.qualifyIndexName() ?
-                                        name :
-                                        StringHelper.unqualify( name ) )
-                        .append( " on " )
-                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
-                        .append( " (" );
-        while (columns.hasNext()) {
-            Column column = columns.next();
-            buf.append(column.getQuotedName(this));
-            if (columnOrderMap.containsKey(column)) {
-                buf.append(" ").append(columnOrderMap.get(column));
-            }
-            if (columns.hasNext()) {
-                buf.append(", ");
-            }
-        }
-        buf.append(")");
-        return buf.toString();
+//        String name = index.getName();
+//        Table table = index.getTable();
+//        Iterator<Column> columns = index.getColumnIterator();
+//        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
+//
+//
+//        StringBuilder buf = new StringBuilder( "create" )
+//                        .append( " spatial index " )
+//                        .append( this.qualifyIndexName() ?
+//                                        name :
+//                                        StringHelper.unqualify( name ) )
+//                        .append( " on " )
+//                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
+//                        .append( " (" );
+//        while (columns.hasNext()) {
+//            Column column = columns.next();
+//            buf.append(column.getQuotedName(this));
+//            if (columnOrderMap.containsKey(column)) {
+//                buf.append(" ").append(columnOrderMap.get(column));
+//            }
+//            if (columns.hasNext())
+//                buf.append(", ");
+//        }
+//        buf.append(")");
+//        return buf.toString();
+        return "";
     }
 
 }

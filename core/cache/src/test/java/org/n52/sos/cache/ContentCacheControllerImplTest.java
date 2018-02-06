@@ -72,6 +72,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.n52.iceland.convert.ConverterRepository;
 import org.junit.rules.TemporaryFolder;
 
 import org.n52.faroe.ConfigurationError;
@@ -141,12 +142,16 @@ public class ContentCacheControllerImplTest {
     private OwsServiceResponse response;
     private OmObservation observation;
 
+    private ConverterRepository converter;
+
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Before
     public void initController() {
         this.controller = createController();
+        converter = new ConverterRepository();
+        converter.init();
     }
 
     @After
@@ -589,7 +594,7 @@ public class ContentCacheControllerImplTest {
     }
 
     @Test
-    public void should_not_contain_related_result_templates_after_DeleteSenosr() throws OwsExceptionReport {
+    public void should_not_contain_related_result_templates_after_DeleteSensor() throws OwsExceptionReport {
         updateCacheWithInsertResultTemplate(RESULT_TEMPLATE_IDENTIFIER);
         deleteSensorPreparation();
 
@@ -879,7 +884,7 @@ public class ContentCacheControllerImplTest {
     private void updateCacheWithInsertSensor(String procedureIdentifier) throws OwsExceptionReport {
         insertSensorRequestExample(procedureIdentifier);
         insertSensorResponseExample(procedureIdentifier);
-        controller.update(new SensorInsertionUpdate((InsertSensorRequest) request, (InsertSensorResponse) response));
+        controller.update(new SensorInsertionUpdate((InsertSensorRequest) request, (InsertSensorResponse) response, converter));
     }
 
     private DateTime getPhenomenonTimeFromObservation() {
@@ -949,16 +954,16 @@ public class ContentCacheControllerImplTest {
                 .getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
     }
 
-    private void insertObservationRequestExample(String procedure) {
+    private void insertObservationRequestExample(String procedure) throws OwsExceptionReport {
         insertObservationRequestExample(procedure, System.currentTimeMillis());
     }
 
-    private void insertObservationRequestExample(String procedure, long phenomenonTime) {
+    private void insertObservationRequestExample(String procedure, long phenomenonTime) throws OwsExceptionReport {
         insertObservationRequestExample(procedure, 11.0, 22.0, WGS84, FEATURE, phenomenonTime);
     }
 
     private void insertObservationRequestExample(String procedure, double xCoord, double yCoord, int epsgCode,
-            String feature, long phenomenonTime) {
+            String feature, long phenomenonTime) throws OwsExceptionReport {
         request =
                 aInsertObservationRequest()
                         .setProcedureId(procedure)

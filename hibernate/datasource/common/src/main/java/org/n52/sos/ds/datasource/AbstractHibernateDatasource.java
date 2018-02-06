@@ -29,44 +29,55 @@
 package org.n52.sos.ds.datasource;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
+import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.hibernate.tool.schema.TargetType;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.ChoiceSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
+import org.n52.hibernate.type.SmallBooleanType;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
+import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -99,6 +110,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SERIES_CONCEPT.name();
 
+    protected static final String FEATURE_CONCEPT_TITLE = "Feature concept";
+
+    protected static final String FEATURE_CONCEPT_DESCRIPTION = "Select the feature concept this SOS should use";
+
+    protected static final String FEATURE_CONCEPT_KEY = "sos.feature.concept";
+
+    protected static final String FEATURE_CONCEPT_DEFAULT_VALUE = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
+
     protected static final String TRANSACTIONAL_TITLE = "Transactional Profile";
 
     protected static final String TRANSACTIONAL_DESCRIPTION = "Should the database support the transactional profile?";
@@ -114,6 +133,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String MULTILINGUALISM_KEY = "sos.language";
 
     protected static final boolean MULTILINGUALISM_DEFAULT_VALUE = false;
+
+    protected static final String SERIES_METADATA_TITLE = "Series metadata support";
+
+    protected static final String SERIES_METADATA_DESCRIPTION = "Should the database support series metadata? This holds global data for observations of this series.";
+
+    protected static final String SERIES_METADATA_KEY = "sos.series.metadata";
+
+    protected static final boolean SERIES_METADATA_DEFAULT_VALUE = false;
 
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
@@ -138,6 +165,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
 
+    private final ChoiceSettingDefinition featureConceptDefinition = createFeatureConceptDefinition();
+
     private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
 
     private boolean transactionalDatasource = true;
@@ -145,6 +174,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition multilingualismDefinition = createMultilingualismDefinition();
 
     private boolean multilingualismDatasource = true;
+
+    private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
+
+    private boolean seriesMetadataDatasource = true;
+
+    private StandardServiceRegistry registry;
+
+    private Metadata metadata;
 
     /**
      * Create settings definition for username
@@ -194,6 +231,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return def;
     }
 
+    protected ChoiceSettingDefinition createFeatureConceptDefinition() {
+        ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
+        choiceSettingDefinition
+                .setTitle(FEATURE_CONCEPT_TITLE)
+                .setDescription(FEATURE_CONCEPT_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP)
+                .setKey(FEATURE_CONCEPT_KEY)
+                .setOrder(3);
+        choiceSettingDefinition.addOption(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name(),
+                FeatureConcept.DEFAULT_FEATURE_CONCEPT.getDisplayName());
+        choiceSettingDefinition.addOption(FeatureConcept.EXTENDED_FEATURE_CONCEPT.name(),
+                FeatureConcept.EXTENDED_FEATURE_CONCEPT.getDisplayName());
+        choiceSettingDefinition.setDefaultValue(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        return choiceSettingDefinition;
+    }
+
     /**
      * Create settings definition for transactional support
      *
@@ -218,6 +271,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setGroup(ADVANCED_GROUP);
         def.setOrder(4);
         def.setKey(MULTILINGUALISM_KEY);
+        return def;
+    }
+
+    /**
+     * Create settings definition for transactional support
+     *
+     * @return Transactional support settings definition
+     */
+    protected BooleanSettingDefinition createSeriesMetadataDefinition() {
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(SERIES_METADATA_DEFAULT_VALUE)
+            .setTitle(SERIES_METADATA_TITLE)
+            .setDescription(SERIES_METADATA_DESCRIPTION)
+            .setGroup(ADVANCED_GROUP)
+            .setKey(SERIES_METADATA_KEY);
+        def.setOrder(6);
         return def;
     }
 
@@ -264,47 +333,118 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public CustomConfiguration getConfig(Map<String, Object> settings) {
         CustomConfiguration config = new CustomConfiguration();
         config.configure("/sos-hibernate.cfg.xml");
-        config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
-        addDatabaseConceptMappingDirectory(config, settings);
-        if (isTransactionalDatasource()) {
-            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
-            if (transactional != null && transactional) {
-                config.addDirectory(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
-            }
+        for (File path : getMappingPaths(settings)) {
+            config.addDirectory(path);
         }
-        if (isMultiLanguageDatasource()) {
-            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
-            if (multiLanguage != null && multiLanguage) {
-                config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
-            }
-        }
+        Properties properties = new Properties();
         if (isSetSchema(settings)) {
-            Properties properties = new Properties();
             properties.put(HibernateConstants.DEFAULT_SCHEMA, settings.get(HibernateConstants.DEFAULT_SCHEMA));
-            config.addProperties(properties);
         }
+        properties.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+        properties.put(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY, toURL(settings));
+        config.addProperties(properties);
+        config.registerTypeOverride(SmallBooleanType.INSTANCE);
         config.buildMappings();
         return config;
     }
 
-    /**
-     * Adds concept depending mapping file directories to the
-     * {@link CustomConfiguration}.
-     *
-     * @param config
-     *            Configuration to add mapping directories
-     * @param settings
-     *            Setting to get values from
-     */
-    private void addDatabaseConceptMappingDirectory(CustomConfiguration config, Map<String, Object> settings) {
-        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
+    protected Set<File> getMappingPaths(Map<String, Object> settings) {
+        Set<File> paths  = new HashSet<>();
+        paths.add(resource(HIBERNATE_MAPPING_CORE_PATH));
+        for (String resource : getDatabaseConceptMappingDirectory(settings)) {
+            paths.add(resource(resource));
+        }
+        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
+            paths.add(resource(featureConceptMappingDirectory));
+        }
+//        if (isTransactionalDatasource()) {
+//            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
+//            if (transactional != null && transactional.booleanValue()) {
+//                paths.add(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
+//            }
+//        }
+//        if (isMultiLanguageDatasource()) {
+//            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
+//            if (multiLanguage != null && multiLanguage.booleanValue()) {
+//                paths.add(resource(HIBERNATE_MAPPING_I18N_PATH));
+//            }
+//        }
+        DatabaseConcept databaseConcept = getDatabaseConcept(settings);
+        if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+            Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
+            if (t != null && t) {
+                paths.add(resource(HIBERNATE_MAPPING_EXTENSION));
+            }
+        }
+        return paths;
+    }
+
+    protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {
+        String concept = (String)settings.get(this.featureConceptDefinition.getKey());
+        if (concept == null || concept.isEmpty()) {
+            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+            concept = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_PATH)) {
+                    concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
+            }
+            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+                    featureConceptDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+                    concept,
+                    featureConceptDefinition.getKey(),
+                    concept);
+        }
+        switch (FeatureConcept.valueOf(concept)) {
+        case EXTENDED_FEATURE_CONCEPT:
+            return HIBERNATE_MAPPING_FEATURE_PATH;
+        default:
+            return null;
+        }
+    }
+
+    protected Set<String> getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
+//        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+//        if (concept == null || concept.isEmpty()) {
+//            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+//            concept = DatabaseConcept.SERIES_CONCEPT.name();
+//            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+//                concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+//            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+//                concept = DatabaseConcept.OLD_CONCEPT.name();
+//            }
+//            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+//                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+//                    databaseConceptDefinition.getKey(),
+//                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+//                    concept,
+//                    databaseConceptDefinition.getKey(),
+//                    concept);
+//        }
+        HashSet<String> mappings = Sets.newHashSet();
+        switch (getDatabaseConcept(settings)) {
+            case SERIES_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH);
+                break;
+            case EREPORTING_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH);
+                break;
+            default:
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH);
+                break;
+        }
+        return mappings;
+    }
+
+    private DatabaseConcept getDatabaseConcept(Map<String, Object> settings) {
+        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = DatabaseConcept.SERIES_CONCEPT.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH)) {
                 concept = DatabaseConcept.EREPORTING_CONCEPT.name();
-            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
-                concept = DatabaseConcept.OLD_CONCEPT.name();
             }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
@@ -314,54 +454,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     databaseConceptDefinition.getKey(),
                     concept);
         }
-        switch (DatabaseConcept.valueOf(concept)) {
-        case SERIES_CONCEPT:
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
-            break;
-        case EREPORTING_CONCEPT:
-            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH));
-            break;
-        case OLD_CONCEPT:
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH));
-            break;
-        default:
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH));
-            config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH));
-        }
-    }
-
-    private String getDatabaseConceptMappingDirectoriesString(Map<String, Object> settings) {
-        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
-        StringBuilder builder = new StringBuilder();
-        switch (DatabaseConcept.valueOf(concept)) {
-        case SERIES_CONCEPT:
-            builder.append(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
-            break;
-        case EREPORTING_CONCEPT:
-            builder.append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EREPORTING_CONCEPT_VALUE_PATH);
-            break;
-        case OLD_CONCEPT:
-            builder.append(HIBERNATE_MAPPING_OLD_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_OLD_CONCEPT_VALUE_PATH);
-            break;
-        default:
-            builder.append(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH);
-        }
-        return builder.toString();
+        return DatabaseConcept.valueOf(concept);
     }
 
     /**
@@ -381,67 +474,126 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public String[] createSchema(Map<String, Object> settings) {
-        String[] script = getConfig(settings).generateSchemaCreationScript(getDialectInternal());
-        String[] pre = getPreSchemaScript();
-        String[] post = getPostSchemaScript();
+        Path createTempFile = null;
+        try {
+            Metadata metadata = getMetadata(settings);
+            createTempFile = Files.createTempFile("create", ".tmp");
+            SchemaExport schemaExport = new SchemaExport();
+            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
+            List<String> readAllLines = Files.readAllLines(createTempFile);
+            String[] script = readAllLines.toArray(new String[readAllLines.size()]);
+            String[] pre = getPreSchemaScript();
+            String[] post = getPostSchemaScript();
 
-        script =
-                (pre == null) ? (post == null) ? script : concat(script, post) : (post == null) ? concat(pre, script)
-                        : concat(pre, script, post);
+            script =
+                    (pre == null) ? (post == null) ? script : concat(script, post) : (post == null) ? concat(pre, script)
+                            : concat(pre, script, post);
 
-        return checkCreateSchema(script);
+            return checkCreateSchema(script);
+        } catch (IOException e) {
+            throw new ConfigurationError(e);
+        } finally {
+            try {
+                if (createTempFile != null) {
+                    Files.deleteIfExists(createTempFile);
+                }
+            } catch (IOException e) {
+                LOG.info("Unable to delete temp file {}", createTempFile.toString());
+            }
+        }
+
     }
 
     @Override
     public String[] dropSchema(Map<String, Object> settings) {
-        Connection conn = null;
+        Path dropTempFile = null;
         try {
-            conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            String[] dropScript =
-                    checkDropSchema(getConfig(settings).generateDropSchemaScript(getDialectInternal(), metadata));
-            return dropScript;
-        } catch (SQLException ex) {
+            Metadata metadata = getMetadata(settings);
+            dropTempFile = Files.createTempFile("drop", ".tmp");
+            SchemaExport schemaExport = new SchemaExport();
+            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(dropTempFile.toString());
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
+            List<String> readAllLines = Files.readAllLines(dropTempFile);
+            return readAllLines.toArray(new String[readAllLines.size()]);
+        } catch (IOException ex) {
             throw new ConfigurationError(ex);
         } finally {
-            close(conn);
+            try {
+                if (dropTempFile != null) {
+                    Files.deleteIfExists(dropTempFile);
+                }
+            } catch (IOException e) {
+                LOG.info("Unable to delete temp file {}", dropTempFile.toString());
+            }
         }
     }
 
     @Override
     public String[] updateSchema(Map<String, Object> settings) {
-        Connection conn = null;
+        Path createTempFile = null;
         try {
-            conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            List<SchemaUpdateScript> upSchema =
-                    getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
-            return checkScriptForDuplicatedEntries(Arrays.asList(SchemaUpdateScript.toStringArray(upSchema)));
-        } catch (SQLException ex) {
+            Metadata metadata = getMetadata(settings);
+            createTempFile = Files.createTempFile("update", ".tmp");
+            SchemaUpdate schemaUpdate = new SchemaUpdate();
+            schemaUpdate.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata);
+            Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
+            return nonDublicated.toArray(new String[nonDublicated.size()]);
+        } catch (IOException ex) {
             throw new ConfigurationError(ex);
         } finally {
-            close(conn);
+            try {
+                if (createTempFile != null) {
+                    Files.deleteIfExists(createTempFile);
+                }
+            } catch (IOException e) {
+                LOG.info("Unable to delete temp file {}", createTempFile.toString());
+            }
         }
     }
 
     @Override
     public void validateSchema(Map<String, Object> settings) {
-        Connection conn = null;
         try {
-            conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            getConfig(settings).validateSchema(getDialectInternal(), metadata);
-        } catch (SQLException | HibernateException ex) {
+            SchemaValidator schemaValidator = new SchemaValidator();
+            getServiceRegistry(settings);
+            Metadata metadata = getMetadata(settings);
+            schemaValidator.validate(metadata, registry);
+        } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
-        } finally {
-            close(conn);
         }
     }
 
-    protected DatabaseMetadata getDatabaseMetadata(Connection conn, CustomConfiguration customConfiguration)
+    protected Metadata getMetadata(Connection conn, Map<String, Object> settings)
             throws SQLException {
-        return new DatabaseMetadata(conn, getDialectInternal(), customConfiguration, true);
+        return getMetadata(settings);
     }
+
+    protected Metadata getMetadata(Map<String, Object> settings) {
+        if (metadata == null) {
+            getServiceRegistry(settings);
+            MetadataSources sources = new MetadataSources(registry);
+
+            for (File dir : getMappingPaths(settings)) {
+                sources.addDirectory(dir);
+            }
+            metadata = sources.getMetadataBuilder().build();
+        }
+        return metadata;
+    }
+
+    protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
+        if (registry == null) {
+            CustomConfiguration config = getConfig(settings);
+            StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
+            settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+            registryBuilder.applySettings(settings);
+            registry =  registryBuilder.build();
+        }
+        return registry;
+    }
+
 
     @Override
     public boolean checkIfSchemaExists(Map<String, Object> settings) {
@@ -449,15 +601,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             /* check if any of the needed tables is existing */
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
-            Iterator<Table> iter = getConfig(settings).getTableMappings();
+            Metadata metadata = getMetadata(conn, settings);
+            Iterator<Table> iter = metadata.collectTableMappings().iterator();
             String catalog = checkCatalog(conn);
             String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Set<String> tableNames = getTableNames(conn, catalog, schema);
             while (iter.hasNext()) {
                 Table table = iter.next();
-                if (table.isPhysicalTable()
-                        && metadata.isTable(table.getQuotedName())
-                        && metadata.getTableMetadata(table.getName(), schema, catalog, table.isQuoted()) != null) {
+                if (table.isPhysicalTable() && tableNames.contains(table.getName())) {
                     return true;
                 }
             }
@@ -467,6 +618,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         } finally {
             close(conn);
         }
+    }
+
+    protected Set<String> getTableNames(Connection conn, String catalog, String schema) throws SQLException {
+        Set<String> tableNames = new HashSet<>();
+        ResultSet rs = conn.getMetaData().getTables(catalog, schema, null, null);
+        while (rs.next()) {
+            tableNames.add(rs.getString("TABLE_NAME"));
+        }
+        return tableNames;
     }
 
     protected String checkSchema(String schema, String catalog, Connection conn) throws SQLException {
@@ -485,7 +645,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return null;
     }
 
-    private String checkCatalog(Connection conn) throws SQLException {
+    protected String checkCatalog(Connection conn) throws SQLException {
         return conn.getCatalog();
     }
 
@@ -494,7 +654,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            execute(sql, conn);
+            execute(Lists.newArrayList(sql), conn);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
@@ -524,7 +684,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
+            Metadata metadata = getMetadata(conn, settings);
             validatePrerequisites(conn, metadata, settings);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
@@ -555,25 +715,29 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     @Override
     public void checkPostCreation(Properties properties) {
-        if (checkIfExtensionDirectoryExists()) {
-            StringBuilder builder =
-                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
-            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+        metadata = null;
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+            registry = null;
         }
+//        if (checkIfExtensionDirectoryExists()) {
+//            StringBuilder builder =
+//                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
+//            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+//        }
     }
 
-    private boolean checkIfExtensionDirectoryExists() {
-        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
-        if (dirUrl != null) {
-            try {
-                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
-            } catch (UnsupportedEncodingException e) {
-                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
-            }
-        }
-        return false;
-    }
+//    private boolean checkIfExtensionDirectoryExists() {
+//        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
+//        if (dirUrl != null) {
+//            try {
+//                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
+//            } catch (UnsupportedEncodingException e) {
+//                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
+//            }
+//        }
+//        return false;
+//    }
 
     protected Set<SettingDefinition<?>> filter(Set<SettingDefinition<?>> definitions, Set<String> keysToExclude) {
         Iterator<SettingDefinition<?>> iterator = definitions.iterator();
@@ -607,7 +771,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @throws HibernateException
      *             If an error occurs
      */
-    protected void execute(String[] sql, Connection conn) throws HibernateException {
+    protected void execute(Collection<String> sql, Connection conn) throws HibernateException {
         Statement stmt = null;
         String lastCmd = null;
         try {
@@ -674,21 +838,39 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected void addMappingFileDirectories(Map<String, Object> settings, Properties p) {
         StringBuilder builder = new StringBuilder();
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
-        builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                getDatabaseConceptMappingDirectoriesString(settings));
-        if (isTransactionalDatasource()) {
-            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
-            if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
-            }
+        for (String path : getDatabaseConceptMappingDirectory(settings)) {
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(path);
         }
-        if (isMultiLanguageDatasource()) {
-            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
+        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                    featureConceptMappingDirectory);
+        }
+//        if (isTransactionalDatasource()) {
+//            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
+//            if (t != null && t) {
+//                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+//            }
+//        }
+//        if (isMultiLanguageDatasource()) {
+//            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
+//            if (t != null && t) {
+//                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
+//            }
+//        }
+        DatabaseConcept databaseConcept = getDatabaseConcept(settings);
+        if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+            Boolean t = (Boolean) settings.get(seriesMetadataDefiniton.getKey());
             if (t != null && t) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION);
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+    }
+
+    protected ChoiceSettingDefinition getFeatureConceptDefinition() {
+        return featureConceptDefinition;
     }
 
     protected ChoiceSettingDefinition getDatabaseConceptDefinition() {
@@ -704,8 +886,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *         path
      */
     protected boolean isTransactional(Properties properties) {
-        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+//        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+//        return p == null || p.contains(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
+        return true;
     }
 
     /**
@@ -718,16 +901,39 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected boolean isMultiLanguage(Properties properties) {
-        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+//        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+//        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
+        return true;
     }
 
     protected BooleanSettingDefinition getMulitLanguageDefiniton() {
         return multilingualismDefinition;
     }
 
+    /**
+     * Check if properties contains series metadata mapping path
+     *
+     * @param properties
+     *            Datasource properties
+     * @return <code>true</code>, if properties contains series metadata mapping
+     *         path
+     */
+    protected boolean isSeriesMetadata(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_EXTENSION);
+    }
+
+    /**
+     * Get series metadata setting definition
+     *
+     * @return Series metadata setting definition
+     */
+    protected BooleanSettingDefinition getSeriesMetadataDefiniton() {
+        return seriesMetadataDefiniton;
+    }
+
     private String[] concat(String[] first, String[]... rest) {
-        int length = first.length;
+                int length = first.length;
         for (int i = 0; i < rest.length; ++i) {
             length += rest[i].length;
         }
@@ -799,11 +1005,30 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * @param multiLanguageDatasource
+     * @param multi
      *            language the multi language to set
      */
     public void setMultiLangugage(boolean multiLanguageDatasource) {
         this.multilingualismDatasource = multiLanguageDatasource;
+    }
+
+    /**
+     * Check if the datasource is series metadata
+     *
+     * @return <code>true</code>, if it is a seriesMetadataDatasource
+     */
+    public boolean isSeriesMetadataDatasource() {
+        return seriesMetadataDatasource;
+    }
+
+    /**
+     * Set series metadata datasource flag
+     *
+     * @param seriesMetadataDatasource
+     *            the seriesMetadataDatasource flag to set
+     */
+    public void setSeriesMetadataDatasource(boolean seriesMetadataDatasource) {
+        this.seriesMetadataDatasource = seriesMetadataDatasource;
     }
 
     /**
@@ -833,7 +1058,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
                         getGeneratedForeignKeyFor("relatedFeatureHasRole"),
                         getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
-                        getGeneratedForeignKeyFor("offeringAllowedObservationType"));
+                        getGeneratedForeignKeyFor("offeringAllowedObservationType"),
+                        getGeneratedForeignKeyFor("observationhasoffering"),
+                        getGeneratedForeignKeyFor("relatedfeaturehasrole"),
+                        getGeneratedForeignKeyFor("offeringallowedfeaturetype"),
+                        getGeneratedForeignKeyFor("offeringallowedobservationtype"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
             if (string.startsWith("alter table")) {
@@ -851,11 +1080,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         // eliminate duplicated lines while keeping the order
-        return checkScriptForDuplicatedEntries(checkedSchema);
-    }
-
-    protected String[] checkScriptForDuplicatedEntries(List<String> script) {
-        Set<String> nonDublicated = Sets.newLinkedHashSet(script);
+        Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 
@@ -863,13 +1088,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * Create the beginning character of a generated foreign key from a table
      * name hasCode()
      *
-     * @param tableName
+     * @param string
      *            Table name
      * @return Beginning characters of a generated foreign key like
      *         "FK + table name hasCode()"
      */
     private String getGeneratedForeignKeyFor(String tableName) {
-        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase(Locale.ROOT)).toString();
+        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
     }
 
     /**
@@ -895,8 +1120,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String catalog = checkCatalog(conn);
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<>();
+        Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
+        List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
@@ -926,15 +1151,41 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
-    @Deprecated
     public String getConnectionProviderIdentifier() {
         return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
     }
 
     @Override
-    @Deprecated
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
+
+    /**
+     * Workaround for Java {@link DriverManager} issue with more than one
+     * registered drivers. Only the first {@link SQLException} is catched and
+     * thrown instead of the {@link SQLException} related to the driver which is
+     * valid for the URL.
+     *
+     * @param url
+     *            DB connection URL
+     * @param user
+     *            User name
+     * @param password
+     *            Password
+     * @throws SQLException
+     */
+    protected void precheckDriver(String url, String user, String password) throws SQLException {
+        Driver driver = DriverManager.getDriver(url);
+        if (driver != null) {
+            java.util.Properties info = new java.util.Properties();
+            if (user != null) {
+                info.put("user", user);
+            }
+            if (password != null) {
+                info.put("password", password);
+            }
+            driver.connect(url, info).close();
+        }
     }
 
     /**
@@ -954,7 +1205,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @param settings
      *            Datasource settings
      */
-    protected abstract void validatePrerequisites(Connection con, DatabaseMetadata metadata,
+    protected abstract void validatePrerequisites(Connection con, Metadata metadata,
             Map<String, Object> settings);
 
     /**
@@ -974,5 +1225,4 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *             If the SQL connection creation fails
      */
     protected abstract Connection openConnection(Map<String, Object> settings) throws SQLException;
-
 }

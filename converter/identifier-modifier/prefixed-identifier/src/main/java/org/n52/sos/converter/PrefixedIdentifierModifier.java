@@ -68,8 +68,15 @@ import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * {@link RequestResponseModifier} to dynamically added/removed to/from the
+ * identifier in the responses/requests.
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
- // TODO add this class to org.n52.sos.convert.RequestResponseModifier file
 
     private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
 
@@ -239,10 +246,9 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
             abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
         }
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXml()) {
-            ((SamplingFeature) abstractFeature).setXml(null);
+        if (abstractFeature.isSetXml()) {
+            abstractFeature.setXml(null);
         }
-
     }
 
     @Override

@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.util.action.Action;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 
 import org.locationtech.jts.geom.Envelope;
@@ -61,9 +62,10 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     private final String templateIdentifier;
 
     public ResultInsertionUpdate(String templateIdentifier, List<OmObservation> observations) {
-        if (observations == null || templateIdentifier == null || templateIdentifier.isEmpty()) {
-            String msg = String.format("Missing argument: '%s': %s; template identifier: '%s'",
-                                       OmObservation.class.getName(), observations, templateIdentifier);
+        if (observations == null || observations.isEmpty() || templateIdentifier == null || templateIdentifier.isEmpty()) {
+            String msg =
+                    String.format("Missing argument: '%s': %s; template identifier: '%s'",
+                            OmObservation.class.getName(), observations, templateIdentifier);
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -74,14 +76,13 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     @Override
     public void execute() {
         // TODO remove not required updates and adjust test accordingly
-        final SosWritableContentCache cache = getCache();
+        final InMemoryCacheImpl cache = (InMemoryCacheImpl) getCache();
         for (OmObservation observation : observations) {
-            String observationType = observation.getObservationConstellation().getObservationType();
-            String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
-            String observableProperty = observation.getObservationConstellation().getObservableProperty()
-                    .getIdentifier();
-            Time phenomenonTime = observation.getPhenomenonTime();
-            Time resultTime = observation.getResultTime();
+            final String observationType = observation.getObservationConstellation().getObservationType();
+            final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
+            final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
+            final Time phenomenonTime = observation.getPhenomenonTime();
+            final Time resultTime = observation.getResultTime();
 
             cache.updatePhenomenonTime(phenomenonTime);
             cache.updateResultTime(resultTime);
@@ -93,14 +94,14 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
             cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
             cache.addObservablePropertyForProcedure(procedure, observableProperty);
 
-            List<SamplingFeature> observedFeatures = sosFeaturesToList(observation.getObservationConstellation()
-                    .getFeatureOfInterest());
+            List<AbstractSamplingFeature> observedFeatures =
+                    sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 
             Envelope envelope = createEnvelopeFrom(observedFeatures);
 
             cache.updateGlobalEnvelope(envelope);
 
-            observedFeatures.stream().map(SamplingFeature::getIdentifier).forEach(featureOfInterest -> {
+            observedFeatures.stream().map(AbstractSamplingFeature::getIdentifier).forEach(featureOfInterest -> {
                 cache.addFeatureOfInterest(featureOfInterest);
                 cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);

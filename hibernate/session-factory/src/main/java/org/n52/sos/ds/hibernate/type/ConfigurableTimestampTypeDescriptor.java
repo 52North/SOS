@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import com.google.common.base.Strings;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,7 +36,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.TimeZone;
-
 import org.hibernate.type.descriptor.ValueBinder;
 import org.hibernate.type.descriptor.ValueExtractor;
 import org.hibernate.type.descriptor.WrapperOptions;
@@ -43,8 +43,7 @@ import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.type.descriptor.sql.BasicBinder;
 import org.hibernate.type.descriptor.sql.BasicExtractor;
 import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
-
-import com.google.common.base.Strings;
+import org.joda.time.DateTimeZone;
 
 /**
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
@@ -53,7 +52,7 @@ import com.google.common.base.Strings;
  * @author Shane StClair <shane@axiomalaska.com>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
- * @since 4.4.0
+ * @since 4.3.12
  */
 public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor {
 
@@ -75,7 +74,7 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
      */
     public ConfigurableTimestampTypeDescriptor(String timeZone) {
         if (!Strings.isNullOrEmpty(timeZone)) {
-            this.timeZone = TimeZone.getTimeZone(timeZone.trim());
+            this.timeZone = DateTimeZone.forID(timeZone.trim()).toTimeZone();
         }
     }
 
@@ -86,6 +85,13 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
             protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options)
                     throws SQLException {
                 st.setTimestamp(index, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
+                        Calendar.getInstance(timeZone));
+            }
+
+            @Override
+            protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
+                    throws SQLException {
+                st.setTimestamp(name, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
                         Calendar.getInstance(timeZone));
             }
         };

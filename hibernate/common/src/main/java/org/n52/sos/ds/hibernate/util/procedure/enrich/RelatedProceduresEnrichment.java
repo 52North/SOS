@@ -28,27 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.convert.ConverterException;
-import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.TProcedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
+import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -56,158 +47,75 @@ import com.google.common.collect.Sets;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment {
-    private String procedureDescriptionFormat;
-    private HibernateProcedureConverter converter;
-    private Map<String, Procedure> procedureCache;
-    private TimePeriod validTime;
-    private final DaoFactory daoFactory;
+public class RelatedProceduresEnrichment
+        extends AbstractRelatedProceduresEnrichment<ProcedureEntity> {
 
-    public RelatedProceduresEnrichment(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    public RelatedProceduresEnrichment(AbstractProcedureCreationContext ctx) {
+        super(ctx);
     }
 
-    public RelatedProceduresEnrichment setProcedureDescriptionFormat(String pdf) {
-        this.procedureDescriptionFormat = checkNotNull(pdf);
-        return this;
-    }
-
-    public RelatedProceduresEnrichment setConverter(
-            HibernateProcedureConverter c) {
-        this.converter = checkNotNull(c);
-        return this;
-    }
-
-    public RelatedProceduresEnrichment setProcedureCache(
-            Map<String, Procedure> cache) {
-        this.procedureCache = cache;
-        return this;
-    }
-
-    public RelatedProceduresEnrichment setValidTime(TimePeriod validTime) {
-        this.validTime = validTime;
-        return this;
-    }
-
-    @Override
-    public void enrich() throws OwsExceptionReport {
-        Set<String> parentProcedures = getParentProcedures();
-        if (parentProcedures != null) {
-            getDescription().setParentProcedure(new ReferenceType(parentProcedures.iterator().next()));
-        }
-        Set<AbstractSensorML> childProcedures = getChildProcedures();
-        if (CollectionHelper.isNotEmpty(childProcedures)) {
-            getDescription().addChildProcedures(childProcedures);
-        }
-    }
-
-    /**
-     * Add a collection of child procedures to a procedure
-     *
-     * @param procedure
-     *            Parent procedure identifier
-     * @param outputFormat
-     *            Procedure description format
-     * @param version
-     *            Service version
-     * @param cache
-     *            Loaded procedure map
-     * @param session
-     *            Hibernate session
-     * @return Set with child procedure descriptions
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     * @throws ConverterException
-     *             If creation of child procedure description fails
-     */
-    private Set<AbstractSensorML> getChildProcedures()
+    protected Set<AbstractSensorML> getChildProcedures()
             throws OwsExceptionReport {
 
-        final Collection<String> childIdentfiers =
-                getCache().getChildProcedures(getIdentifier(), false, false);
-
-        if (CollectionHelper.isEmptyOrNull(childIdentfiers)) {
+        if (!getProcedure().hasChildren()) {
             return Sets.newHashSet();
         }
 
-        if (procedureCache == null) {
-            procedureCache = createProcedureCache();
-        }
-
         Set<AbstractSensorML> childProcedures = Sets.newHashSet();
-        for (String childId : childIdentfiers) {
-            Procedure child = procedureCache.get(childId);
+        for (ProcedureEntity child : getProcedure().getChildren()) {
 
-            //if child has valid vpts, use the most recent one within
-            //the validTime to create the child procedure
-            ValidProcedureTime childVpt = null;
-            if (child instanceof TProcedure) {
-                TProcedure tChild = (TProcedure) child;
-                for (ValidProcedureTime cvpt : tChild.getValidProcedureTimes()) {
-                    TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
-                            cvpt.getEndTime());
+            // if child has valid vpts, use the most recent one within
+            // the validTime to create the child procedure
+            ProcedureHistoryEntity childHistory = null;
+            for (ProcedureHistoryEntity cph : child.getProcedureHistory()) {
+                TimePeriod thisCvptValidTime = new TimePeriod(cph.getStartTime(), cph.getEndTime());
 
-                    if (validTime != null && !validTime.isSetEnd() && !thisCvptValidTime.isSetEnd()) {
-                        childVpt = cvpt;
-                    } else {
-                        //make sure this child's validtime is within the parent's valid time,
-                        //if parent has one
-                        if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
-                            continue;
-                        }
+                if (getValidTime() != null && !getValidTime().isSetEnd() && !thisCvptValidTime.isSetEnd()) {
+                    childHistory = cph;
+                } else {
+                    // make sure this child's validtime is within the
+                    // parent's valid time,
+                    // if parent has one
+                    if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())) {
+                        continue;
+                    }
 
-                        if (childVpt == null || cvpt.getEndTime() == null ||
-                                (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
-                                cvpt.getEndTime().after(childVpt.getEndTime()))) {
-                            childVpt = cvpt;
-                        }
+                    if (childHistory == null || cph.getEndTime() == null || (cph.getEndTime() != null
+                            && childHistory.getEndTime() != null && cph.getEndTime().after(childHistory.getEndTime()))) {
+                        childHistory = cph;
                     }
                 }
             }
 
-            if (childVpt != null) {
-                //matching child validProcedureTime was found, use it to build procedure description
-                SosProcedureDescription<?> childDescription =
-                        converter.createSosProcedureDescriptionFromValidProcedureTime(
-                                child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
+            if (childHistory != null) {
+                // matching child validProcedureTime was found, use it to build
+                // procedure description
+                SosProcedureDescription<?> childDescription = ((HibernateProcedureConverter) getConverter())
+                        .createSosProcedureDescriptionFromValidProcedureTime(child, getProcedureDescriptionFormat(),
+                                childHistory, getVersion(), getLocale(), getSession());
                 if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                    childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
+                    childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
                 }
-            } else  if  (child != null) {
-                //no matching child validProcedureTime, generate the procedure description
-                SosProcedureDescription<?> childDescription = converter.createSosProcedureDescription(
-                        child, procedureDescriptionFormat, getVersion(), procedureCache, getLocale(), getSession());
+            } else if (child != null) {
+                // no matching child validProcedureTime, generate the procedure
+                // description
+                SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(child,
+                        getProcedureDescriptionFormat(), getVersion(), getLocale(), getSession());
                 // TODO check if call is necessary because it is also called in
                 // createSosProcedureDescription()
                 // addValuesToSensorDescription(childProcID,childProcedureDescription,
                 // version, outputFormat, session);
                 if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                    childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
+                    childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
                 }
             }
         }
         return childProcedures;
     }
 
-    private Map<String, Procedure> createProcedureCache() {
-        Set<String> identifiers = getCache().getChildProcedures(getIdentifier(), true, false);
-        List<Procedure> children = daoFactory.getProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
-        Map<String, Procedure> cache = Maps.newHashMapWithExpectedSize(children.size());
-        for (Procedure child : children) {
-            cache.put(child.getIdentifier(), child);
-        }
-        return cache;
-    }
-
-     /**
-     * Add parent procedures to a procedure
-     *
-     * @param procID
-     *            procedure identifier to add parent procedures to
-     *
-     * @throws OwsExceptionReport
-     */
-    private Set<String> getParentProcedures() throws OwsExceptionReport {
+    protected Set<String> getParentProcedures()
+            throws OwsExceptionReport {
         return getCache().getParentProcedures(getIdentifier(), false, false);
     }
+
 }

@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
+import org.locationtech.jts.geom.Envelope;
 import org.n52.iceland.cache.ContentCache;
 import org.n52.janmayen.stream.Streams;
 import org.n52.shetland.ogc.gml.time.Time;

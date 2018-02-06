@@ -30,6 +30,7 @@ package org.n52.sos.cache;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.coding.SupportedTypeRepository;
 
 
 public class WriteableCacheTest {

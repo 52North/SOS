@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -15,10 +15,209 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+        <helgoland.version>1.0.0</helgoland.version>
         <jetty.port.http>9090</jetty.port.http>
         <jetty.port.stop>9091</jetty.port.stop>
     </properties>
+    <build>
+        <finalName>${conf.sos.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Suite*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <ignoredUnusedDeclaredDependencies>
+                        <ignoredUnusedDeclaredDependency>org.n52.series-api.db:webapp:war</ignoredUnusedDeclaredDependency>
+                    </ignoredUnusedDeclaredDependencies>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>hibernate-mapping</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <usedDependencies>
+                                <usedDependency>org.springframework:spring-core</usedDependency>
+                            </usedDependencies>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.n52.series.db</groupId>
+                                    <artifactId>mappings</artifactId>
+                                    <overWrite>false</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <includes>**/*.xml,**/README</includes>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>svalbard</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <includes>svalbard-*-context.xml</includes>
+                            <outputDirectory>${project.build.outputDirectory}/contexts/configured/</outputDirectory>
+                            <overWrite>true</overWrite>
+                            <overWriteReleases>false</overWriteReleases>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.n52.arctic-sea</groupId>
+                                    <artifactId>svalbard</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.arctic-sea</groupId>
+                                    <artifactId>svalbard-exi</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.arctic-sea</groupId>
+                                    <artifactId>svalbard-json</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.arctic-sea</groupId>
+                                    <artifactId>svalbard-json-common</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.arctic-sea</groupId>
+                                    <artifactId>svalbard-xmlbeans</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.n52.arctic-sea</groupId>
+                                    <artifactId>svalbard-xmlstream</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 
+            <plugin>
+              <groupId>com.googlecode.maven-download-plugin</groupId>
+              <artifactId>download-maven-plugin</artifactId>
+              <version>1.3.0</version>
+              <executions>
+                  <execution>
+                      <id>download-helgoland</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>wget</goal>
+                      </goals>
+                      <configuration>
+                          <url>https://github.com/52North/helgoland/releases/download/v${helgoland.version}/client.${helgoland.version}.war</url>
+                          <unpack>true</unpack>
+                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
+                      </configuration>
+                  </execution>
+              </executions>
+            </plugin>
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                            <exclude>**/static/**</exclude>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>false</filtering>
+                            <include>**/static/**</include>
+                        </resource>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <filtering>true</filtering>
+                            <targetPath>WEB-INF/classes</targetPath>
+                        </resource>
+                        <resource>
+                            <directory>../misc/db</directory>
+                            <filtering>false</filtering>
+                            <targetPath>sql</targetPath>
+                            <includes>
+                                <include>**/*.sql</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                    <overlays>
+                        <overlay>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>views</artifactId>
+                        </overlay>
+                        <overlay>
+                            <groupId>org.n52.series-api.db</groupId>
+                            <artifactId>webapp</artifactId>
+                            <includes>
+                                <include>WEB-INF/spring/*</include>
+                                <include>WEB-INF/classes/**</include>
+                                <!-- 
+                                <include>WEB-INF/classes/*.json</include>
+                                <include>WEB-INF/classes/*.properties</include>
+                                <include>WEB-INF/classes/*.txt</include>
+                                <include>WEB-INF/classes/org/*</include>
+                                <include>WEB-INF/classes/**/*.class)</include>
+                                 -->
+                            </includes>
+                            <excludes>
+                                <exclude>WEB-INF/spring/series-database-config.xml</exclude>
+                                <exclude>WEB-INF/classes/*.xml</exclude>
+                            </excludes>
+                        </overlay>
+                    </overlays>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
+    <!-- copied from REST-API series-dao-webapp -->  
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-oxm</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aspects</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjtools</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- LOGGING -->
+
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>iceland</artifactId>
@@ -30,17 +229,22 @@
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard-exi</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard-json-common</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard-json</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard-xmlbeans</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.arctic-sea</groupId>
-            <artifactId>svalbard-exi</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -64,12 +268,21 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-cbor</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -99,6 +312,37 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-om-v20</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-om-v100</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sos-v100</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sensorML-v101</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sensorML-v20</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -179,14 +423,7 @@
             <artifactId>cache</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gc-dao</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- CODING -->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-kvp</artifactId>
@@ -217,7 +454,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>request-response-coordinate-transformer</artifactId>
+            <artifactId>extensions-v20</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -238,11 +475,29 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>handler</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-handler</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <!-- 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>gc-dao</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-dao</artifactId>
             <scope>runtime</scope>
         </dependency>
+         -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>
@@ -251,6 +506,16 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-common</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+		    <groupId>${project.groupId}</groupId>
+		    <artifactId>hibernate-datasource-h2</artifactId>
+            <scope>runtime</scope>
+		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-sqlserver</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -263,51 +528,91 @@
             <artifactId>hibernate-datasource-mysql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         
         <!-- CONVERTER -->
+        
+        <!-- coordinates -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>request-response-coordinate-transformer</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
+        <!-- procedure -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>procedure-description-converter</artifactId>
             <scope>runtime</scope>
         </dependency>
         
-        <!-- GET DATA AVAILABILITY -->
-
+        <!-- Split and Merge observations -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>gda-operation</artifactId>
+            <artifactId>split-and-merge</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>gda-hibernate</artifactId>
+            <artifactId>observation-converter</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- flexible identifiers -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>abstract-identifier</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>flexible-identifier</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>prefixed-identifier</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ereporting-identifier</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- BINDINGS -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>seriestype</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- INSERT FEATUREOFINTEREST -->
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-ifoi-v10</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- DELETE RESULT TEMPLATE -->
+
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-drt-v100</artifactId>
             <scope>runtime</scope>
         </dependency>
 
         <!-- DELETE OBSERVATION -->
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-core</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v10</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-hibernate</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v20</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-kvp</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
 
         <!-- dependencies for integration test -->
         <dependency>
@@ -362,6 +667,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Statistics -->
@@ -406,12 +717,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- EREPORTING -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ereporting</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- INSPIRE -->
         <dependency>
@@ -419,50 +724,13 @@
             <artifactId>inspire-code</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <!-- AQD eReporting -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-aqd-v10</artifactId>
+            <artifactId>aqd-v10</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core-aqd-v10</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>aqd-split-and-merge</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <!-- flexible identifiers -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>abstract-identifier</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>flexible-identifier</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>prefixed-identifier</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ereporting-identifier</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <!-- Split and Merge observatioons -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>split-and-merge</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+
         <!-- netCDF -->
         <dependency>
             <groupId>com.axiomalaska</groupId>
@@ -471,7 +739,7 @@
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
+            <artifactId>netcdf4</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -489,123 +757,187 @@
             <artifactId>coding-oceansites</artifactId>
             <scope>runtime</scope>
         </dependency>
-    </dependencies>
-    <build>
-        <finalName>${conf.sos.name}##${project.version}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/*Suite*.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>hibernate-mapping</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <usedDependencies>
-                                <usedDependency>org.springframework:spring-core</usedDependency>
-                            </usedDependencies>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hibernate-mappings</artifactId>
-                                    <overWrite>false</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>**/*.xml,**/README</includes>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/webapp</directory>
-                            <filtering>true</filtering>
-                        </resource>
-                        <resource>
-                            <directory>src/main/resources</directory>
-                            <filtering>true</filtering>
-                            <targetPath>WEB-INF/classes</targetPath>
-                        </resource>
-                        <resource>
-                            <directory>../misc/db</directory>
-                            <filtering>false</filtering>
-                            <targetPath>sql</targetPath>
-                            <includes>
-                                <include>**/*.sql</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                    <overlays>
-                        <overlay>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>views</artifactId>
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <configuration>
-                    <waitForChild>true</waitForChild>
-                    <jvmArgs>-Xmx2048m</jvmArgs>
-                    <httpConnector>
-                        <port>${jetty.port.http}</port>
-                    </httpConnector>
-                    <stopPort>${jetty.port.stop}</stopPort>
-                    <systemProperties>
-                        <systemProperty>
-                            <name>catalina.base</name>
-                            <value>${project.build.directory}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.level.main.global</name>
-                            <value>INFO</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.level.main.n52</name>
-                            <value>DEBUG</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.fileappender.filename</name>
-                            <value>${project.build.finalName}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.history.max</name>
-                            <value>3</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>config.logger.maxFileSize</name>
-                            <value>10MB</value>
-                        </systemProperty>
-                    </systemProperties>
-                    <contextXml>src/main/resources/jetty-context.xml</contextXml>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                    </webApp>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+        
+        <!-- REST API Dependencies -->
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>io</artifactId>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>commons-codec</groupId>
+              <artifactId>commons-codec</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>rest</artifactId>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>spi</artifactId>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.series-api.db</groupId>
+            <artifactId>webapp</artifactId>
+            <version>${dataset.dao.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>dao</artifactId>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+         </dependency>
+        <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>sos-integration</artifactId>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+         <dependency>
+          <groupId>org.n52.series.db</groupId>
+          <artifactId>entities</artifactId>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-main</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+	</dependencies>
+            
     <profiles>
         <profile>
             <id>oracle</id>
@@ -623,19 +955,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>sqlserver</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.microsoft</groupId>
-                    <artifactId>sqljdbc4</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <!-- Profile for integration testing, run with: mvn -P itest clean install -->

@@ -107,7 +107,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     @Override
     public OmObservation next() throws OwsExceptionReport {
         try {
-            OmObservation observation = getObservationTemplate().cloneTemplate();
+            OmObservation observation = getObservationTemplate.cloneTemplate(withIdentifierNameDesription);
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
             checkForModifications(observation);

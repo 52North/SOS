@@ -54,7 +54,6 @@ import org.n52.sos.ds.CacheFeederHandler;
 public class UpdateSchedulingTest {
 
     private static final long TIMEOUT = 100 * 5;
-
     private static final long PAUSE = 50;
 
     private ContentCacheControllerImpl createController() throws ConfigurationError {

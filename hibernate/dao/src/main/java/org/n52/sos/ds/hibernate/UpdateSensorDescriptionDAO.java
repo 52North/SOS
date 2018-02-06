@@ -47,7 +47,7 @@ import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
+import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
@@ -92,16 +92,20 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
-            for (SosProcedureDescription<?> procedureDescription : request.getProcedureDescriptions()) {
+            ProcedureDAO procedureDAO = new ProcedureDAO();
+            Procedure procedure =
+                    procedureDAO.getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+            for (SosProcedureDescription procedureDescription : request.getProcedureDescriptions()) {
                 DateTime currentTime = new DateTime(DateTimeZone.UTC);
                 // TODO: check for all validTimes of descriptions for this
                 // identifier
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
-                Procedure procedure = new ProcedureDAO(daoFactory)
-                        .getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+//                
+                procedure = procedureDAO.updateProcedure(procedure, procedureDescription, session);
+                
                 if (procedure instanceof TProcedure) {
-                    ProcedureDescriptionFormat procedureDescriptionFormat = new ProcedureDescriptionFormatDAO()
+                    ProcedureDescriptionFormat procedureDescriptionFormat = new FormatDAO()
                             .getProcedureDescriptionFormatObject(
                                     request.getProcedureDescriptionFormat(), session);
                     Set<ValidProcedureTime> validProcedureTimes = ((TProcedure) procedure).getValidProcedureTimes();
@@ -132,9 +136,9 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionH
         }
     }
 
+    
     @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
-
 }

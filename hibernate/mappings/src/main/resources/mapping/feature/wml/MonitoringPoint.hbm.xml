@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint"
+    				 extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
+                     discriminator-value="WmlMonitoringPoint">
+        <join table="wmlmonitoringpoint">
+            <key foreign-key="wmlmpFeatureFk">
+                <column name="featureOfInterestId">
+                    <comment>Foreign Key (FK) to the related featureOfInterest
+                        from the featureOfInterest table. Contains
+                        "featureOfInterest".featureOfInterestId</comment>
+                </column>
+            </key>
+            <component name="content" class="org.n52.sos.ds.hibernate.entities.feature.MonitoringPointContent">
+                <set name="relatedParty" table="wmlmprelatedparty">
+                    <key>
+                        <column name="featureOfInterestId" not-null="true" />
+                    </key>
+                    <many-to-many class="org.n52.sos.ds.hibernate.entities.feature.gmd.ResponsiblePartyEntity"
+                        foreign-key="wmlmprpFk">
+                        <column name="responsiblePartyId" not-null="true" />
+                    </many-to-many>
+                </set>
+                <set name="verticalDatum" table="wmlmpverticaldatum">
+                    <key foreign-key="wmlmpvdFk">
+                        <column name="featureOfInterestId"></column>
+                    </key>
+                    <many-to-many class="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity">
+                        <column name="verticalDatumId" not-null="true" />
+                    </many-to-many>
+                </set>
+            </component>
+        </join>
+    </subclass>
+</hibernate-mapping>

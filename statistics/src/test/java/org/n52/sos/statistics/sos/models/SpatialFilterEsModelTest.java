@@ -32,7 +32,8 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;

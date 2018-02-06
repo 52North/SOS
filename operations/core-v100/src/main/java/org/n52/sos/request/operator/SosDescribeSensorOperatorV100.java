@@ -31,16 +31,15 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.http.MediaType;
-import org.n52.sos.ds.AbstractDescribeSensorHandler;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.SosHelper;
+import org.n52.sos.ds.AbstractDescribeSensorHandler;
 
 /**
  * class handles the DescribeSensor request
@@ -89,7 +88,7 @@ public class SosDescribeSensorOperatorV100 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureID(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
+            checkProcedure(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -110,8 +109,8 @@ public class SosDescribeSensorOperatorV100 extends
     }
 
     private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
-        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat)) {
-            SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat, true)) {
+            checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
                     sosRequest.getService(), sosRequest.getVersion());
         }
     }

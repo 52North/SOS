@@ -28,30 +28,20 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesBooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesCategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesCountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesGeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesSweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesTextObservation;
 
 /**
  * TODO JavaDoc
@@ -64,71 +54,81 @@ public class SeriesObservationFactory extends ObservationFactory {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Class<? extends SeriesObservation> observationClass() {
-        return AbstractSeriesObservation.class;
+    public Class<? extends DataEntity> observationClass() {
+        return DataEntity.class;
     }
 
     @Override
-    public Class<? extends TemporalReferencedSeriesObservation> temporalReferencedClass() {
-        return TemporalReferencedSeriesObservation.class;
+    public Class<? extends DataEntity> temporalReferencedClass() {
+        return DataEntity.class;
     }
 
     @Override
-    public Class<? extends ContextualReferencedSeriesObservation> contextualReferencedClass() {
-        return ContextualReferencedSeriesObservation.class;
+    public Class<? extends DataEntity> contextualReferencedClass() {
+        return DataEntity.class;
     }
 
     @Override
-    public Class<? extends BlobObservation> blobClass() {
-        return SeriesBlobObservation.class;
+    public Class<? extends BlobDataEntity> blobClass() {
+        return BlobDataEntity.class;
     }
 
     @Override
-    public Class<? extends BooleanObservation> truthClass() {
-        return SeriesBooleanObservation.class;
+    public Class<? extends BooleanDataEntity> truthClass() {
+        return BooleanDataEntity.class;
     }
 
     @Override
-    public Class<? extends CategoryObservation> categoryClass() {
-        return SeriesCategoryObservation.class;
+    public Class<? extends CategoryDataEntity> categoryClass() {
+        return CategoryDataEntity.class;
     }
 
     @Override
-    public Class<? extends CountObservation> countClass() {
-        return SeriesCountObservation.class;
+    public Class<? extends CountDataEntity> countClass() {
+        return CountDataEntity.class;
     }
 
     @Override
-    public Class<? extends GeometryObservation> geometryClass() {
-        return SeriesGeometryObservation.class;
+    public Class<? extends GeometryDataEntity> geometryClass() {
+        return GeometryDataEntity.class;
     }
 
     @Override
-    public Class<? extends NumericObservation> numericClass() {
-        return SeriesNumericObservation.class;
+    public Class<? extends QuantityDataEntity> numericClass() {
+        return QuantityDataEntity.class;
     }
 
     @Override
-    public Class<? extends SweDataArrayObservation> sweDataArrayClass() {
-        return SeriesSweDataArrayObservation.class;
+    public Class<? extends DataArrayDataEntity> sweDataArrayClass() {
+        return DataArrayDataEntity.class;
     }
 
     @Override
-    public Class<? extends TextObservation> textClass() {
-        return SeriesTextObservation.class;
+    public Class<? extends TextDataEntity> textClass() {
+        return TextDataEntity.class;
     }
 
     @Override
-    public Class<? extends ComplexObservation> complexClass() {
-        return SeriesComplexObservation.class;
+    public Class<? extends ComplexDataEntity> complexClass() {
+        return ComplexDataEntity.class;
     }
 
-    public Series series() {
-        return new Series();
+    @Override
+    public Class<? extends ProfileDataEntity> profileClass() {
+        return ProfileDataEntity.class;
     }
 
-    public Class<? extends Series> seriesClass() {
-        return Series.class;
+    @Override
+    public Class<? extends ReferencedDataEntity> referenceClass() {
+        return ReferencedDataEntity.class;
+    }
+
+    public DatasetEntity series() {
+        return new DatasetEntity();
+    }
+
+    public Class<? extends DatasetEntity> seriesClass() {
+        return DatasetEntity.class;
     }
 
     public static SeriesObservationFactory getInstance() {

@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>netcdf</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>coding-netcdf</artifactId>
@@ -52,13 +52,17 @@
             <artifactId>api-netcdf</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.axiomalaska</groupId>
-            <artifactId>cf4j</artifactId>
-        </dependency>
+	        <groupId>com.axiomalaska</groupId>
+	        <artifactId>cf4j</artifactId>
+      	</dependency>
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf4</artifactId>
+		</dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
-        </dependency>   
+            <artifactId>cdm</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

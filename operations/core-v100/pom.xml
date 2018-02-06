@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>operations</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>core-v100</artifactId>
@@ -36,8 +36,8 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-opengis</artifactId>
         </dependency>
     </dependencies>
 </project>

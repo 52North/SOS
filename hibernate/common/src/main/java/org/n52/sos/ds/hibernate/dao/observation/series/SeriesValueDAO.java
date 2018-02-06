@@ -29,13 +29,13 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link AbstractValueDAO} for series concept
@@ -55,7 +55,12 @@ public class SeriesValueDAO extends AbstractSeriesValueDAO {
 
     @Override
     protected Class<?> getSeriesValueClass() {
-        return AbstractValuedSeriesObservation.class;
+        return DataEntity.class;
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return SeriesValuedObervationFactory.getInstance();
     }
 
 }

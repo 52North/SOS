@@ -34,7 +34,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.n52.shetland.ogc.filter.SpatialFilter;
-import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -48,26 +47,51 @@ public class FeatureQueryHandlerQueryObject {
 
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
 
-    private Set<String> featureIdentifiers = Sets.newHashSet();
+    private Set<String> features = Sets.newHashSet();
+
+    private Object feature;
 
     private String version;
+
+    public FeatureQueryHandlerQueryObject(Object connection) {
+        this.connection = connection;
+    }
 
     public Object getConnection() {
         return connection;
     }
 
-    public FeatureQueryHandlerQueryObject setConnection(Object connection) {
-        this.connection = connection;
-                return this;
+    /**
+     * @return the features
+     */
+    public Set<String> getFeatures() {
+        return features;
     }
 
-    public Locale getI18N() {
-        return i18n;
-    }
-
-    public FeatureQueryHandlerQueryObject setI18N(Locale i18n) {
-        this.i18n = i18n;
+    /**
+     * @param features
+     *            the features to set
+     */
+    public FeatureQueryHandlerQueryObject setFeatures(Collection<String> features) {
+        this.features.clear();
+        if (features != null) {
+            this.features.addAll(features);
+        }
         return this;
+    }
+
+    public FeatureQueryHandlerQueryObject addFeatures(Collection<String> features) {
+        this.features.addAll(features);
+        return this;
+    }
+
+    public FeatureQueryHandlerQueryObject addFeature(String feature) {
+        this.features.add(feature);
+        return this;
+    }
+
+    public boolean isSetFeatures() {
+        return getFeatures() != null && !getFeatures().isEmpty();
     }
 
     public List<SpatialFilter> getSpatialFilters() {
@@ -75,7 +99,7 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     public FeatureQueryHandlerQueryObject setSpatialFilters(List<SpatialFilter> spatialFilters) {
-        if (CollectionHelper.isNotEmpty(spatialFilters)) {
+        if (spatialFilters != null) {
             this.spatialFilters.addAll(spatialFilters);
         }
         return this;
@@ -95,27 +119,56 @@ public class FeatureQueryHandlerQueryObject {
         return null;
     }
 
-    public Set<String> getFeatureIdentifiers() {
-        return featureIdentifiers;
+    // public Set<String> getFeatureIdentifiers() {
+    // return featureIdentifiers;
+    // }
+    //
+    // public FeatureQueryHandlerQueryObject
+    // setFeatureIdentifiers(Collection<String> featureIdentifiers) {
+    // if (featureIdentifiers != null && !featureIdentifiers.isEmpty()) {
+    // this.featureIdentifiers.addAll(featureIdentifiers);
+    // }
+    // return this;
+    // }
+    //
+    // public FeatureQueryHandlerQueryObject addFeatureIdentifier(String
+    // identifier) {
+    // if (!Strings.isNullOrEmpty(identifier)) {
+    // featureIdentifiers.add(identifier);
+    // }
+    // return this;
+    // }
+    //
+    // public String getFeatureIdentifier() {
+    // if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
+    // return getFeatureIdentifiers().iterator().next();
+    // }
+    // return Constants.EMPTY_STRING;
+    // }
+
+    public boolean isSetSpatialFilters() {
+        return getSpatialFilters() != null && !getSpatialFilters().isEmpty();
     }
 
-    public FeatureQueryHandlerQueryObject setFeatureIdentifiers(Collection<String> featureIdentifiers) {
-        if (CollectionHelper.isNotEmpty(featureIdentifiers)) {
-            this.featureIdentifiers.addAll(featureIdentifiers);
-        }
+    public Locale getI18N() {
+        return i18n;
+    }
+
+    public FeatureQueryHandlerQueryObject setI18N(Locale i18n) {
+        this.i18n = i18n;
         return this;
     }
 
     public FeatureQueryHandlerQueryObject addFeatureIdentifier(String identifier) {
         if (!Strings.isNullOrEmpty(identifier)) {
-            featureIdentifiers.add(identifier);
+            features.add(identifier);
         }
         return this;
     }
 
     public String getFeatureIdentifier() {
-        if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
-            return getFeatureIdentifiers().iterator().next();
+        if (!getFeatures().isEmpty()) {
+            return getFeatures().iterator().next();
         }
         return "";
     }
@@ -129,27 +182,31 @@ public class FeatureQueryHandlerQueryObject {
         return version;
     }
 
-    public boolean isSetConnection() {
-        return getConnection() != null;
-    }
-
-//    public boolean isSetRequestedSrid() {
-//        return requestedSrid > 0;
-//    }
-
-    public boolean isSetI18N() {
-        return getI18N() != null;
-    }
-
-    public boolean isSetSpatialFilters() {
-        return CollectionHelper.isNotEmpty(getSpatialFilters());
-    }
-
-    public boolean isSetFeatureIdentifiers() {
-        return CollectionHelper.isNotEmpty(getFeatureIdentifiers());
-    }
+    // public boolean isSetFeatureIdentifiers() {
+    // return CollectionHelper.isNotEmpty(getFeatureIdentifiers());
+    // }
 
     public boolean isSetVersion() {
         return !Strings.isNullOrEmpty(getVersion());
+    }
+
+    /**
+     * @return the feature
+     */
+    public Object getFeatureObject() {
+        return feature;
+    }
+
+    /**
+     * @param feature the feature to set
+     * @return
+     */
+    public FeatureQueryHandlerQueryObject setFeatureObject(Object feature) {
+        this.feature = feature;
+        return this;
+    }
+
+    public boolean isSetFeatureObject() {
+        return getFeatureObject() != null;
     }
 }

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,16 +56,18 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
-
 
 /**
  * Implementation of the abstract class AbstractGetObservationByIdHandler
@@ -103,14 +107,27 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 
     @Override
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            List<Observation<?>> observations = queryObservation(request, session);
+            List<OmObservation> omObservations = Lists.newArrayList();
+            if (DaoFactory.getInstance().isSeriesDAO()) {
+                omObservations.addAll(querySeriesObservation(request, session));
+            }
+            List<Observation<?>> observations = Lists.newArrayList();
+            observations.addAll(queryObservation(request, session));
+            omObservations.addAll(HibernateObservationUtilities.createSosObservationsFromObservations(
+                    checkObservations(observations, request), request, LocaleHelper.fromRequest(request), session));
             GetObservationByIdResponse response = new GetObservationByIdResponse();
+            
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
@@ -128,9 +145,30 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         }
     }
 
-    @Override
-    public boolean isSupported() {
-        return true;
+    private List<OmObservation> querySeriesObservation(GetObservationByIdRequest request,
+            Session session) throws OwsExceptionReport, ConverterException {
+        List<OmObservation> observations = Lists.newArrayList();
+        if (HibernateStreamingConfiguration.getInstance().isForceDatasourceStreaming()) {
+            observations.addAll(querySeriesObservationForStreaming(request, session));
+        } else {
+            observations.addAll(querySeriesObservationForNonStreaming(request, session));
+        }
+        return observations;
+    }
+
+    private List<Observation<?>> checkObservations(List<Observation<?>> queryObservation, GetObservationByIdRequest request) {
+        if (!request.isCheckForDuplicity()) {
+            return queryObservation;
+        }
+        List<Observation<?>> checkedObservations = Lists.newArrayList();
+        Set<String> identifiers = Sets.newHashSet();
+        for (Observation<?> observation : queryObservation) {
+            if (!identifiers.contains(observation.getIdentifier())) {
+                identifiers.copy(observation.getIdentifier());
+                checkedObservations.copy(observation);
+            }
+        }
+        return checkedObservations;
     }
 
     /**
@@ -150,7 +188,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         Criteria c =
                 daoFactory.getObservationDAO()
                         .getObservationClassCriteriaForResultModel(request.getResultModel(), session);
-        c.add(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
+        c.copy(Restrictions.in(AbstractObservation.IDENTIFIER, request.getObservationIdentifier()));
         LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -162,4 +200,74 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         }
         return null;
     }
+    
+    /**
+     * Query the series observations for streaming datasource
+     *
+     * @param request
+     *            The GetObservation request
+     * @param session
+     *            Hibernate Session
+     * @return List of internal observations
+     * @throws OwsExceptionReport
+     *             If an error occurs.
+     * @throws ConverterException
+     *             If an error occurs during sensor description creation.
+     */
+    protected List<OmObservation> querySeriesObservationForStreaming(GetObservationByIdRequest request,
+            final Session session) throws OwsExceptionReport, ConverterException {
+        final long start = System.currentTimeMillis();
+        final List<OmObservation> result = new LinkedList<OmObservation>();
+        // get valid featureOfInterest identifier
+        List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, session);
+        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
+        for (Series series : serieses) {
+            Collection<? extends OmObservation> createSosObservationFromSeries =
+                    HibernateObservationUtilities
+                            .createSosObservationFromSeries(series, request, session);
+            OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
+            HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
+            streamingValue.setResponseFormat(request.getResponseFormat());
+            streamingValue.setObservationTemplate(observationTemplate);
+            observationTemplate.setValue(streamingValue);
+            result.add(observationTemplate);
+        }
+        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        return result;
+    }
+
+    protected List<OmObservation> querySeriesObservationForNonStreaming(
+            GetObservationByIdRequest request, Session session) throws OwsExceptionReport, ConverterException {
+        final long start = System.currentTimeMillis();
+        Collection<Observation<?>> seriesObservations = Lists.newArrayList();
+        List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, session);
+        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
+        SeriesObservationDAO observationDAO = (SeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();
+        for (Series series : serieses) {
+           seriesObservations.addAll(observationDAO.getSeriesObservationFor(series, null, session));
+        }
+        final List<OmObservation> result = new LinkedList<OmObservation>();
+        result.addAll(HibernateGetObservationHelper.toSosObservation(seriesObservations, request, session));
+        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        return result;
+    }
+
+    /**
+     * Get the series streaming observation value for the observations
+     *
+     * @param request
+     *            GetObservation request
+     * @param seriesId
+     *            Series id
+     * @return Streaming observation value
+     * @throws CodedException 
+     */
+    private HibernateSeriesStreamingValue getSeriesStreamingValue(GetObservationByIdRequest request, long seriesId) throws CodedException {
+        if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
+            return new HibernateChunkSeriesStreamingValue(request, seriesId, request.isCheckForDuplicity());
+        } else {
+            return new HibernateScrollableSeriesStreamingValue(request, seriesId, request.isCheckForDuplicity());
+        }
+    }
+
 }

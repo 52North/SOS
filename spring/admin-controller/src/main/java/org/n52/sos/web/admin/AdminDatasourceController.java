@@ -30,19 +30,26 @@ package org.n52.sos.web.admin;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.xmlbeans.XmlException;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.sos.ds.GeneralQueryDAO;
+import org.n52.sos.exception.MissingServiceOperatorException;
 import org.n52.sos.web.common.ControllerConstants;
-
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -64,21 +71,33 @@ import com.google.common.collect.Maps;
  *
  */
 @Controller
-public class AdminDatasourceController extends AbstractDatasourceController {
+public class AdminDatasourceController
+        extends AbstractDatasourceController {
+
     private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceController.class);
+
     private static final String ROWS = "rows";
+
     private static final String NAMES = "names";
+
     private static final String SUPPORTS_CLEAR = "supportsClear";
+
     private static final String SUPPORTS_DELETE_DELETED = "supportsDeleteDeleted";
 
     @Inject
     private Optional<GeneralQueryDAO> generalQueryDAO;
 
+    @Inject
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    private RequestOperatorRepository requestOperatorRepository;
+
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE)
     public ModelAndView index() throws SQLException, OwsExceptionReport {
         Map<String, Object> model = Maps.newHashMap();
         model.put(SUPPORTS_CLEAR, getDatasource().supportsClear());
-        model.put(SUPPORTS_DELETE_DELETED, generalQueryDAO!=null);
+        model.put(SUPPORTS_DELETE_DELETED, generalQueryDAO != null);
         return new ModelAndView(ControllerConstants.Views.ADMIN_DATASOURCE, model);
     }
 
@@ -133,4 +152,25 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         }
         updateCache();
     }
+
+    @ResponseBody
+    @ExceptionHandler(MissingServiceOperatorException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String onConnectionMissingServiceOperatorException(MissingServiceOperatorException e) {
+        return e.getMessage();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA, method = RequestMethod.POST)
+    public String addSampledata(HttpServletRequest request) throws OwsExceptionReport, ConnectionProviderException,
+            IOException, URISyntaxException, XmlException, MissingServiceOperatorException, DecodingException {
+
+        boolean sampledataAdded = new SampleDataInserter(OwsServiceRequestContext.fromRequest(request),
+                decoderRepository, requestOperatorRepository).insertSampleData();
+        if (sampledataAdded) {
+            updateCache();
+        }
+        return "OK";
+    }
+
 }

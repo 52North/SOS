@@ -29,26 +29,26 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.i18n.I18nProcedureEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NProcedureMetadata, HibernateI18NProcedureMetadata> {
+public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<ProcedureEntity, I18NProcedureMetadata, I18nProcedureEntity> {
     private DaoFactory daoFactory;
 
     @Inject
@@ -57,18 +57,18 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NPr
     }
 
     @Override
-    protected Procedure getEntity(String id, Session session) {
+    protected ProcedureEntity getEntity(String id, Session session) {
         return daoFactory.getProcedureDAO().getProcedureForIdentifier(id, session);
     }
 
     @Override
-    protected Class<HibernateI18NProcedureMetadata> getHibernateEntityClass() {
-        return HibernateI18NProcedureMetadata.class;
+    protected Class<I18nProcedureEntity> getHibernateEntityClass() {
+        return I18nProcedureEntity.class;
     }
 
     @Override
-    protected HibernateI18NProcedureMetadata createHibernateObject() {
-        return new HibernateI18NProcedureMetadata();
+    protected I18nProcedureEntity createHibernateObject() {
+        return new I18nProcedureEntity();
     }
 
     @Override
@@ -78,31 +78,31 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<Procedure, I18NPr
 
     @Override
     protected void fillHibernateObject(I18NProcedureMetadata i18n,
-                                       HibernateI18NProcedureMetadata h18n) {
+            I18nProcedureEntity h18n) {
         super.fillHibernateObject(i18n, h18n);
         Optional<LocalizedString> longName
-                = i18n.getLongName().getLocalization(h18n.getLocale());
+                = i18n.getLongName().getLocalization(new Locale(h18n.getLocale()));
         if (longName.isPresent()) {
-            h18n.setLongname(longName.get().getText());
+            h18n.setLongName(longName.get().getText());
         }
         Optional<LocalizedString> shortName
-                = i18n.getShortName().getLocalization(h18n.getLocale());
+                = i18n.getShortName().getLocalization(new Locale(h18n.getLocale()));
         if (shortName.isPresent()) {
-            h18n.setShortname(shortName.get().getText());
+            h18n.setShortName(shortName.get().getText());
         }
     }
 
     @Override
-    protected void fillSosObject(HibernateI18NProcedureMetadata h18n,
+    protected void fillSosObject(I18nProcedureEntity h18n,
                                  I18NProcedureMetadata i18n) {
         super.fillSosObject(h18n, i18n);
-        if (h18n.isSetLongname()) {
+        if (h18n.hasLongName()) {
             i18n.getLongName().addLocalization(h18n.getLocale(),
-                                               h18n.getLongname());
+                                               h18n.getLongName());
         }
-        if (h18n.isSetShortname()) {
+        if (h18n.hasShortName()) {
             i18n.getShortName().addLocalization(h18n.getLocale(),
-                                                h18n.getShortname());
+                                                h18n.getShortName());
         }
     }
 

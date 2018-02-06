@@ -31,14 +31,12 @@ package org.n52.sos.convert;
 import java.util.Collections;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterKey;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -50,25 +48,26 @@ import com.google.common.collect.ImmutableSet;
  * @since 4.2.0
  *
  */
-public class SensorMLUrlMimeTypeConverter implements Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> {
+public class SensorMLUrlMimeTypeConverter
+        extends
+        ProcedureDescriptionConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLUrlMimeTypeConverter.class);
 
-    private static final Set<ConverterKey> CONVERTER_KEY_TYPES
-            = ImmutableSet.<ConverterKey>builder()
-                    .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
-                                          SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
-                    .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
-                                          SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-                    .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
-                                          SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
-                    .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
-                                          SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
-                    .build();
+    private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey> builder()
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,
+                    SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL))
+            .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL,
+                    SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE))
+            .build();
 
     public SensorMLUrlMimeTypeConverter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
-                     Joiner.on(", ").join(CONVERTER_KEY_TYPES));
+                Joiner.on(", ").join(CONVERTER_KEY_TYPES));
     }
 
     @Override
@@ -77,7 +76,7 @@ public class SensorMLUrlMimeTypeConverter implements Converter<SosProcedureDescr
     }
 
     @Override
-    public SosProcedureDescription<?> convert(SosProcedureDescription<?> description) {
+    public AbstractFeature convert(AbstractFeature description) {
         return description;
     }
 

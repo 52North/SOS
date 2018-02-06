@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.n52.iceland.ds.DatasourceDaoIdentifier;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.ReferencedEnvelope;
 
@@ -104,13 +104,10 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      * @return Identifier of the inserted feature
      * @throws OwsExceptionReport
      */
-    String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
+    String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
 
     int getStorageEPSG();
 
     int getStorage3DEPSG();
 
-    int getDefaultResponseEPSG();
-
-    int getDefaultResponse3DEPSG();
 }

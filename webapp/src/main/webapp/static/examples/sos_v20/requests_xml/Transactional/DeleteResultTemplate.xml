@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<drt:DeleteResultTemplate
+        service="SOS"
+        version="2.0.0"
+        xmlns:drt="http://www.opengis.net/drt/1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.opengis.net/drt/1.0
+            https://52north.org/schema/sosdrt/1.0/sosdrt.xsd">
+    <!--
+        Two ways for defining the ResultTemplate to delete are available by
+        DRT 1.0
+        A: By result template id (a list of <drt:resultTemplate> element is
+           supported.
+        B: A list of offering observed property tuples
+    -->
+    <drt:resultTemplate>http://www.52north.org/test/procedure/9/template/1</drt:resultTemplate>
+    <!--
+    <drt:tuple>
+	<drt:offering>http://www.52north.org/test/offering/9</drt:offering>
+	<drt:observedProperty>http://www.52north.org/test/observableProperty/9_3</drt:observedProperty>
+    </drt:tuple>
+    -->
+</drt:DeleteResultTemplate>

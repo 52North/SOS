@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle8iDialect;

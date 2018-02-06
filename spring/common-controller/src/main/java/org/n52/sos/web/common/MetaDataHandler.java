@@ -30,7 +30,7 @@ package org.n52.sos.web.common;
 
 import javax.servlet.ServletContext;
 
-import org.n52.sos.util.AbstractEnumPropertiesFileHandler;
+import org.n52.iceland.util.AbstractEnumPropertiesFileHandler;
 
 /**
  * @since 4.0.0

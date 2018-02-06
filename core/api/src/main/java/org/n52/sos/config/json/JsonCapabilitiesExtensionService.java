@@ -41,18 +41,19 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.n52.janmayen.function.Consumers;
+import org.n52.janmayen.function.Functions;
 import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.json.JsonConstants;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.janmayen.function.Consumers;
-import org.n52.janmayen.function.Functions;
+import org.n52.shetland.ogc.ows.extension.AbstractExtension;
 import org.n52.shetland.ogc.ows.extension.DisableableExtension;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.extension.StringBasedExtension;
 import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
-import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.exception.NoSuchExtensionException;
@@ -399,8 +400,8 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         private String identifier;
 
         StaticCapabilitiesImpl(String identifier, String document) {
-            this.identifier = identifier;
-            this.document = document;
+            setIdentifier(identifier);
+            setDocument(document);
         }
 
         @Override
@@ -434,14 +435,10 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
 
     }
 
-    private static abstract class AbstractSwesExtension implements Extension<String>,
-                                                                   DisableableExtension,
-                                                                   StringBasedExtension {
+    private static abstract class AbstractDisableableExtension extends AbstractExtension<String>
+            implements DisableableExtension, StringBasedExtension {
         private boolean disabled = false;
         private String value;
-        private String identifier;
-        private String definition;
-        private String namespace = SweConstants.NS_SWE_20;
 
         public void setDisabled(boolean disabled) {
             this.disabled = disabled;
@@ -452,8 +449,9 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
             return this.disabled;
         }
 
-        public void setExtension(String value) {
-            setValue(value);
+        public AbstractDisableableExtension setExtension(String extension) {
+            setValue(extension);
+            return this;
         }
 
         @Override
@@ -462,47 +460,14 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         }
 
         @Override
-        public String getIdentifier() {
-            return this.identifier;
-        }
-
-        @Override
-        public String getDefinition() {
-            return this.definition;
+        public AbstractDisableableExtension setValue(String value) {
+            this.value = value;
+            return this;
         }
 
         @Override
         public String getValue() {
-            return this.value;
-        }
-
-        @Override
-        public String getNamespace() {
-            return this.namespace;
-        }
-
-        @Override
-        public AbstractSwesExtension setNamespace(String namespace) {
-            this.namespace = namespace;
-            return this;
-        }
-
-        @Override
-        public AbstractSwesExtension setIdentifier(String identifier) {
-            this.identifier = identifier;
-            return this;
-        }
-
-        @Override
-        public AbstractSwesExtension setDefinition(String definition) {
-            this.definition = definition;
-            return this;
-        }
-
-        @Override
-        public AbstractSwesExtension setValue(String value) {
-            this.value = value;
-            return this;
+            return value;
         }
 
         @Override
@@ -520,7 +485,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         }
     }
 
-    private static class SosObservationOfferingExtensionImpl extends AbstractSwesExtension
+    private static class SosObservationOfferingExtensionImpl extends AbstractDisableableExtension
             implements SosObservationOfferingExtension {
 
         private String offeringName;
@@ -541,7 +506,8 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         }
     }
 
-    private static class CapabilitiesExtensionImpl extends AbstractSwesExtension
+    private static class CapabilitiesExtensionImpl
+            extends AbstractDisableableExtension
             implements StringBasedCapabilitiesExtension {
 
         @Override

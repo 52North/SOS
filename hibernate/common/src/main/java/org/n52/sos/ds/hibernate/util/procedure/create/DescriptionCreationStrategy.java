@@ -31,18 +31,19 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 
 import com.google.common.base.Predicate;
 
 /**
  * Strategy pattern to create {@link SosProcedureDescription}.
  */
-public interface DescriptionCreationStrategy extends Predicate<Procedure> {
+public interface DescriptionCreationStrategy extends Predicate<ProcedureEntity> {
 
-    SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport;
+
 }

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gmd.ResponsiblePartyEntity"
+           table="responsibleparty">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">responsiblePartyId_seq</param>
+            </generator>
+        </id>
+        <property name="nilReason" column="nilReason" type="string" />
+        <property name="href" column="href" type="string" />
+        <property name="type" column="type" type="string" />
+        <property name="role" column="role" type="string" />
+        <property name="arcrole" column="arcrole" type="string" />
+        <property name="title" column="title" type="string" />
+        <property name="show" column="show" type="string" />
+        <property name="actuate" column="actuate" type="string" />
+        <property name="remoteSchema" column="remoteSchema" type="string" />
+        <property name="id" column="id" type="string" />
+        <property name="uuid" column="uuid" type="string" />
+        <property name="individualName" column="individualName" type="string" />
+        <property name="organizationName" column="organizationName" type="string" />
+        <property name="positionName" column="positionName" type="string" />
+        <many-to-one name="contactInfo"
+                     column="contactInfo"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.ContactEntity"
+                     foreign-key="rpcontactFk" />
+        <many-to-one name="ciRole"
+                     column="ciRole"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.RoleEntity"
+                     foreign-key="rproleFk" />
+    </class>
+</hibernate-mapping>

@@ -45,9 +45,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.janmayen.NcName;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -55,9 +54,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.OwsRange;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -70,10 +67,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.SosQueryBuilder;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
-import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -310,82 +305,6 @@ public class SosHelper {
     }
 
     /**
-     * help method to check the result format parameter. If the application/zip result format is set, true is returned.
-     * If not and the value is text/xml; subtype="OM" false is returned. If neither zip nor OM is set, a
-     * ServiceException with InvalidParameterValue as its code is thrown.
-     *
-     * @param responseFormat String containing the value of the result format parameter
-     * @param service
-     * @param version
-     *
-     * @throws OwsExceptionReport * if the parameter value is incorrect
-     */
-    public static void checkResponseFormat(final String responseFormat, final String service, final String version)
-            throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(responseFormat)) {
-            throw new MissingResponseFormatParameterException();
-        } else {
-            final Collection<String> supportedResponseFormats = ResponseFormatRepository.getInstance()
-                    .getSupportedResponseFormats(service, version);
-            if (!supportedResponseFormats.contains(responseFormat)) {
-                throw new InvalidResponseFormatParameterException(responseFormat);
-            }
-        }
-    }
-
-    /**
-     * checks whether the value of procedureDescriptionFormat parameter is valid
-     *
-     * @param procedureDescriptionFormat the procedureDecriptionFormat parameter which should be checked
-     * @param service                    Service
-     * @param version                    Service version
-     *
-     * @throws OwsExceptionReport if the value of the procedureDecriptionFormat is incorrect
-     */
-    public static void checkProcedureDescriptionFormat(final String procedureDescriptionFormat, final String service,
-                                                       final String version) throws OwsExceptionReport {
-        checkFormat(procedureDescriptionFormat, new OwsServiceKey(service, version),
-                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
-    }
-
-    /**
-     * checks whether the value of outputFormat parameter is valid
-     *
-     * @param checkOutputFormat the outputFormat parameter which should be checked
-     * @param service           Service
-     * @param version           Service version
-     *
-     * @throws OwsExceptionReport if the value of the outputFormat is incorrect
-     */
-    public static void checkOutputFormat(final String checkOutputFormat, final String service, final String version)
-            throws OwsExceptionReport {
-        checkFormat(checkOutputFormat, new OwsServiceKey(service, version),
-                    Sos1Constants.DescribeSensorParams.outputFormat);
-    }
-
-    /**
-     * checks whether the value of procedure format parameter is valid
-     *
-     * @param format             the procedure format parameter which should be checked
-     * @param serviceOperatorKey Service and version
-     * @param parameter          name of the checked parameter
-     *
-     * @throws OwsExceptionReport if the value of the procedure format is incorrect
-     */
-    private static void checkFormat(final String format, OwsServiceKey serviceOperatorKey, Enum<?> parameter)
-            throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(format)) {
-            throw new MissingParameterValueException(parameter);
-        } else {
-            final Collection<String> supportedFormats = ProcedureDescriptionFormatRepository.getInstance()
-                    .getSupportedProcedureDescriptionFormats(serviceOperatorKey);
-            if (!supportedFormats.contains(format)) {
-                throw new InvalidParameterValueException(parameter, format);
-            }
-        }
-    }
-
-    /**
      * Get valid FOI identifiers for SOS 2.0
      *
      * @param featureIDs FOI identifiers to test
@@ -411,7 +330,6 @@ public class SosHelper {
      */
     @Deprecated
     public static MinMax<String> getMinMaxFromEnvelope(Envelope envelope) {
-        // TODO for full 3D support add minz to parameter in setStringValue
         return new MinMax<String>()
                 .setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));

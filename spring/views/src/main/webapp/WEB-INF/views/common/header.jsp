@@ -55,11 +55,11 @@
 
         <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
             <script type="text/javascript">
-				$(function() {
-					showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
-				});
-			</script>
-		</c:if>
+                $(function() {
+                        showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
+                });
+	    </script>
+	</c:if>
 	</head>
 	<body>
 		<div id="wrap">
@@ -80,14 +80,14 @@
                                                 <span class="menu-title">Client</span>
                                             </a>
                                             <ul>
-                                             	<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
-			                                        <li>
-			                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
-			                                                <span class="menu-title">Sensor Web JS Client</span>
-			                                            </a>
-			                                        </li>
-		                                    	</c:if>
-                                   			 </ul>
+                                              <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/helgoland/index.html')}">
+                                                <li>
+                                                    <a id="sw-client-menuitem" target="_blank" href="<c:url value="/static/client/helgoland/index.html" />">
+                                                        <span class="menu-title">Sensor Web Thin Client (Helgoland)</span>
+                                                    </a>
+                                                </li>
+                                              </c:if>
+                                            </ul>
                                         </li>
                                     </c:if>
                                         <li>
@@ -97,7 +97,7 @@
                                             <ul>
                                             	<c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
 			                                        <li>
-			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc" />">
+			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="https://52north.github.io/series-rest-api/" />">
 			                                                <span class="menu-title">Sensor Web Client REST-API</span>
 			                                            </a>
 			                                        </li>
@@ -149,7 +149,7 @@
                                                                     <span class="menu-title">Datasource</span>
                                                                 </a>
                                                             </li>
-															<li>
+                                                            <li>
                                                                 <a href="<c:url value="/admin/sensors" />">
                                                                     <span class="menu-title">Procedure Descriptions</span>
                                                                 </a>
@@ -165,10 +165,19 @@
                                                                 </a>
                                                             </li>
                                                             <li>
-                                                                <a href="<c:url value="/admin/i18n" />">
-                                                                    <span class="menu-title">I18N Settings</span>
+                                                                <a href="<c:url value="/admin/profiles" />">
+                                                                    <span class="menu-title">Profiles</span>
                                                                 </a>
                                                             </li>
+                                                            <%--
+                                                            <c:if test="${sos:supportsI18N()}">
+	                                                            <li>
+	                                                                <a href="<c:url value="/admin/i18n" />">
+	                                                                    <span class="menu-title">I18N Settings</span>
+	                                                                </a>
+	                                                            </li>
+                                                            </c:if>
+                                                            --%>
                                                             <c:if test="${sos:hasClass('org.n52.sos.web.admin.AdminEReportingHeaderController')}">
                                                                 <li>
                                                                     <a href="<c:url value="/admin/ereporting" />">

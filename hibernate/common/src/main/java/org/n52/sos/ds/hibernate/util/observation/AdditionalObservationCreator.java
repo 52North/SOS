@@ -28,18 +28,25 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import org.hibernate.Session;
 import org.n52.janmayen.component.Component;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 
 public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
 
-    OmObservation create(OmObservation omObservation, Series series);
+    OmObservation create(OmObservation omObservation, DatasetEntity series);
 
-    OmObservation create(OmObservation omObservation, Observation<?> observation) throws CodedException;
+    OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException;
 
-    OmObservation add(OmObservation sosObservation, Observation<?> hObservation);
+    OmObservation add(OmObservation omObservation, DataEntity<?> observation);
+
+    OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException;
+
+    OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
+
+    OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
 
 }

@@ -52,7 +52,7 @@ import org.n52.shetland.ogc.sos.response.GetResultResponse;
  * @since 5.0.0
  *
  */
-public abstract class AbstractGetResultHandler extends AbstractOperationHandler {
+public abstract class AbstractGetResultHandler extends AbstractResultHandlingHandler {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractGetResultHandler.class);
 
     public AbstractGetResultHandler(String service) {

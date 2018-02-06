@@ -30,19 +30,23 @@ package org.n52.sos.cache;
 
 import java.util.Collection;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.CacheFeederHandler;
 
-/**
- * TODO JavaDoc
- * @author Christian Autermann
- */
-public class NoOpCacheFeederHandler implements CacheFeederHandler {
+public class NoOpCacheFeederHandler
+        implements
+        CacheFeederHandler {
+
     @Override
-    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offerings) {
+    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offerings)
+            throws OwsExceptionReport {
+
     }
 
     @Override
-    public void updateCache(SosWritableContentCache cache) {
+    public void updateCache(SosWritableContentCache cache)
+            throws OwsExceptionReport {
+
     }
 
 }

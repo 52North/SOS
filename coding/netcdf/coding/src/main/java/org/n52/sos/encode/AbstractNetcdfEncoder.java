@@ -46,7 +46,6 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
@@ -86,7 +85,6 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
@@ -189,11 +187,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     @Override
-    public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
     public boolean isObservationAndMeasurmentV20Type() {
         return false;
     }
@@ -206,6 +199,11 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     @Override
     public boolean supportsResultStreamingForMergedValues() {
         return false;
+    }
+
+    @Override
+    public Map<String, Set<SupportedType>> getSupportedResponseFormatObservationTypes() {
+        return Collections.singletonMap(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(), getSupportedTypes());
     }
 
     @Override
@@ -289,7 +287,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
         if (getNetcdfHelper().getNetcdfVersion().isNetdf4format() && !Nc4Iosp.isClibraryPresent()) {
             throw new EncodingException("Can't encode to netCDF because the native netCDF4 C library isn't installed. "
-                            + "See https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html");
+                            + "See http://www.unidata.ucar.edu/software/netcdf/docs/winbin.html");
         }
 
         try {
@@ -334,7 +332,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         addGlobaleAttributes(writer, sensorDataset);
 
         // add appropriate dims for feature type
-        List<Dimension> noDims = Lists.newArrayList();
         List<Dimension> timeDims = Lists.newArrayList();
         List<Dimension> latLngDims = Lists.newArrayList();
         List<Dimension> latDims = Lists.newArrayList();
@@ -383,7 +380,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // time var
         Variable vTime = addVariableTime(writer, timeDims);
         if (numTimes > 1 && writer.getVersion().isNetdf4format()) {
-            vTime.addAttribute(new Attribute(CDM.CHUNK_SIZE, getNetcdfHelper().getChunkSizeTime()));
+            vTime.addAttribute(new Attribute(CDM.CHUNK_SIZES, getNetcdfHelper().getChunkSizeTime()));
         }
         ArrayDouble timeArray = new ArrayDouble(getDimShapes(timeDims));
         initArrayWithFillValue(timeArray, getNetcdfHelper().getFillValue());
@@ -1316,14 +1313,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Attribute getAttribute(NetcdfFileWriter writer, String name) {
-        if (CollectionHelper.isNotEmpty(writer.getNetcdfFile().getRootGroup().getAttributes())) {
-            for (Attribute attr : writer.getNetcdfFile().getRootGroup().getAttributes()) {
-                if (name.equals(attr.getShortName())) {
-                    return attr;
-                }
-            }
-        }
-        return null;
+        return writer.findGlobalAttribute(name);
     }
 
     protected String getPrefixlessIdentifier(String identifier) {

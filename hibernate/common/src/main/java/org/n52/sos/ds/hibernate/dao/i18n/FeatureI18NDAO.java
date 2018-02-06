@@ -34,16 +34,15 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.i18n.I18nFeatureEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata;
 
 
-public class FeatureI18NDAO extends AbstractHibernateI18NDAO<FeatureOfInterest, I18NFeatureMetadata, HibernateI18NFeatureOfInterestMetadata> {
+public class FeatureI18NDAO extends AbstractHibernateI18NDAO<AbstractFeatureEntity, I18NFeatureMetadata, I18nFeatureEntity> {
     private DaoFactory daoFactory;
 
     @Inject
@@ -52,18 +51,18 @@ public class FeatureI18NDAO extends AbstractHibernateI18NDAO<FeatureOfInterest, 
     }
 
     @Override
-    protected FeatureOfInterest getEntity(String id, Session session) {
+    protected AbstractFeatureEntity getEntity(String id, Session session) {
         return new FeatureOfInterestDAO(daoFactory).get(id, session);
     }
 
     @Override
-    protected Class<HibernateI18NFeatureOfInterestMetadata> getHibernateEntityClass() {
-        return HibernateI18NFeatureOfInterestMetadata.class;
+    protected Class<I18nFeatureEntity> getHibernateEntityClass() {
+        return I18nFeatureEntity.class;
     }
 
     @Override
-    protected HibernateI18NFeatureOfInterestMetadata createHibernateObject() {
-        return new HibernateI18NFeatureOfInterestMetadata();
+    protected I18nFeatureEntity createHibernateObject() {
+        return new I18nFeatureEntity();
     }
 
     @Override

@@ -42,14 +42,12 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
-
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -67,8 +65,8 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
             session = getSession();
             transaction = session.beginTransaction();
             Criteria criteria = session.createCriteria(getObservationClass());
-            try (ScrollableIterable<Observation<?>> iterable = ScrollableIterable.fromCriteria(criteria)) {
-                for (Observation<?> o : iterable) {
+            try (ScrollableIterable<DataEntity<?>> iterable = ScrollableIterable.fromCriteria(criteria)) {
+                for (DataEntity<?> o : iterable) {
                     session.delete(o);
                 }
             }
@@ -108,7 +106,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
             throws OwsExceptionReport {
         List<String> list =
                 session.createCriteria(getObservationClass()).add(r.getCriterion(d, time))
-                        .setProjection(Projections.distinct(Projections.property(AbstractObservation.IDENTIFIER))).list();
+                        .setProjection(Projections.distinct(Projections.property(DataEntity.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
             s.add(valueOf(id));

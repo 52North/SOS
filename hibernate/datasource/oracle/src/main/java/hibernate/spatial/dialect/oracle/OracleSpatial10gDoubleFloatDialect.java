@@ -39,7 +39,9 @@ import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.n52.sos.ds.datasource.SpatialIndexDialect;
 
-public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect implements SpatialIndexDialect {
+public class OracleSpatial10gDoubleFloatDialect
+        extends OracleSpatial10gDialect
+        implements SpatialIndexDialect {
 
     private static final long serialVersionUID = -1294060043623083068L;
 
@@ -48,37 +50,40 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
         registerColumnType(Types.DOUBLE, "float");
     }
 
-
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
 
         // https://docs.oracle.com/cd/A97630_01/appdev.920/a96630/sdo_objindex.htm#i78196
-        // CREATE INDEX cola_spatial_idx ON cola_markets(shape) INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+        // CREATE INDEX cola_spatial_idx ON cola_markets(shape) INDEXTYPE IS
+        // MDSYS.SPATIAL_INDEX;
 
-        String name = index.getName();
-        Table table = index.getTable();
-        Iterator<Column> columns = index.getColumnIterator();
-        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-
-
-        StringBuilder buf = new StringBuilder( "create" )
-                        .append( " index " )
-                        .append( this.qualifyIndexName() ?
-                                        name :
-                                        StringHelper.unqualify( name ) )
-                        .append( " on " )
-                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
-                        .append( " (" );
-        while (columns.hasNext()) {
-            Column column = columns.next();
-            buf.append(column.getQuotedName(this));
-            if (columnOrderMap.containsKey(column)) {
-                buf.append(" ").append(columnOrderMap.get(column));
-            }
-            if (columns.hasNext()) {
-                buf.append(", ");
-            }
-        }
-        buf.append(")  INDEXTYPE IS MDSYS.SPATIAL_INDEX");
-        return buf.toString();
+        // String name = index.getName();
+        // Table table = index.getTable();
+        // Iterator<Column> columns = index.getColumnIterator();
+        // java.util.Map<Column, String> columnOrderMap = new HashMap<Column,
+        // String>();
+        //
+        //
+        // StringBuilder buf = new StringBuilder( "create" )
+        // .append( " index " )
+        // .append( this.qualifyIndexName() ?
+        // name :
+        // StringHelper.unqualify( name ) )
+        // .append( " on " )
+        // .append( table.getQualifiedName( this, defaultCatalog, defaultSchema
+        // ) )
+        // .append( " (" );
+        // while (columns.hasNext()) {
+        // Column column = columns.next();
+        // buf.append(column.getQuotedName(this));
+        // if (columnOrderMap.containsKey(column)) {
+        // buf.append(" ").append(columnOrderMap.get(column));
+        // }
+        // if (columns.hasNext()) {
+        // buf.append(", ");
+        // }
+        // }
+        // buf.append(") INDEXTYPE IS MDSYS.SPATIAL_INDEX");
+        // return buf.toString();
+        return "";
     }
 }

@@ -158,6 +158,6 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      */
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;
-    }
+}
 
 }

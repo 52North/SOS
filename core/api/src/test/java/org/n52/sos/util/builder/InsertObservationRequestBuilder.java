@@ -31,6 +31,7 @@ package org.n52.sos.util.builder;
 import java.util.ArrayList;
 
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
 /**
@@ -44,14 +45,14 @@ public class InsertObservationRequestBuilder {
         return new InsertObservationRequestBuilder();
     }
 
-    private String procedureId;
+    private String procedure;
 
     private ArrayList<String> offerings;
 
     private ArrayList<OmObservation> observations;
 
     public InsertObservationRequestBuilder setProcedureId(String procedureId) {
-        this.procedureId = procedureId;
+        this.procedure = procedureId;
         return this;
     }
 
@@ -71,11 +72,11 @@ public class InsertObservationRequestBuilder {
         return this;
     }
 
-    public InsertObservationRequest build() {
+    public InsertObservationRequest build() throws OwsExceptionReport {
         InsertObservationRequest request = new InsertObservationRequest();
         request.setObservation(observations);
         request.setOfferings(offerings);
-        request.setAssignedSensorId(procedureId);
+        request.setAssignedSensorId(procedure);
         return request;
     }
 

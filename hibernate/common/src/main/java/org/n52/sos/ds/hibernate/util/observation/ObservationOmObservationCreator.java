@@ -38,11 +38,10 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.util.LocalizedProducer;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.parameter.Parameter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -55,19 +54,15 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.Value;
-import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
-import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
+import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -78,19 +73,23 @@ import com.google.common.collect.Sets;
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
-    private final Collection<? extends Observation<?>> observations;
+    private final Collection<? extends DataEntity<?>> observations;
     private final AbstractObservationRequest request;
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
     private final Map<String, AbstractPhenomenon> observedProperties = Maps.newHashMap();
     private final Map<String, SosProcedureDescription<?>> procedures = Maps.newHashMap();
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
+    private final Map<Long, Set<Parameter<?>>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
 
-
-    public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
-            AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
-            Locale language, String pdf, DaoFactory daoFactory, Session session) {
-        super(request, language, serviceProvider, pdf, daoFactory, session);
+    public ObservationOmObservationCreator(
+            Collection<? extends DataEntity<?>> observations,
+            AbstractObservationRequest request,
+            Locale i18n,
+            String pdf,
+            OmObservationCreatorContext creatorContext,
+            Session session) {
+        super(request, i18n, pdf, creatorContext, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -99,7 +98,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
     }
 
-    private Collection<? extends Observation<?>> getObservations() {
+    private Collection<? extends DataEntity<?>> getObservations() {
         return observations;
     }
 
@@ -107,7 +106,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return request.getResultModel();
     }
 
-    private SosProcedureDescription<?> getProcedure(String procedureId) {
+    private AbstractFeature getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }
 
@@ -126,7 +125,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         } else if (this.observationCollection == null) {
             this.observationCollection = Lists.newLinkedList();
             // now iterate over resultset and create Measurement for each row
-            for (Observation<?> hObservation : getObservations()) {
+            for (DataEntity<?> hObservation : getObservations()) {
 //                // check remaining heap size and throw exception if minimum is
 //                // reached
 //                SosHelper.checkFreeMemory();
@@ -145,27 +144,27 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return ObservationStream.of(this.observationCollection);
     }
 
-    protected OmObservation createObservation(Observation<?> hObservation) throws OwsExceptionReport, ConverterException {
+    protected OmObservation createObservation(DataEntity<?> hObservation) throws OwsExceptionReport, ConverterException {
         LOGGER.trace("Creating Observation...");
         SosHelper.checkFreeMemory();
         String procedureId = createProcedure(hObservation);
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
-        final Value<?> value = hObservation.accept(new ObservationValueCreator());
+        Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
+        final Value<?> value = new ObservationValueCreator().visit(hObservation);
         OmObservation sosObservation = null;
         if (value != null) {
-            // TODO delete, set in ObservationValueCreator
-//            if (hObservation.getUnit() != null) {
-//                value.setUnit(hObservation.getUnit().getUnit());
-//            }
+            value.setUnit(queryUnit(hObservation.getDataset()));
             checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
             OmObservationConstellation obsConst =
-                    createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
+                    createObservationConstellation(hObservation, procedureId, phenomenonId, featureId, offerings);
             sosObservation = createNewObservation(obsConst, hObservation, value);
             // add SpatialFilteringProfile
-            if (hObservation.hasSamplingGeometry()) {
-                sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+            if (hObservation.isSetGeometryEntity()) {
+                sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler()
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(hObservation.getGeometryEntity().getGeometry())));
             }
+            addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);
             checkForAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs
@@ -177,12 +176,21 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return sosObservation;
     }
 
-    private void addParameter(OmObservation observation, Observation<?> hObservation) throws OwsExceptionReport {
-        if (hObservation.hasParameters()) {
-            for (Parameter<?> parameter : hObservation.getParameters()) {
-                observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
+    private void addRelatedObservations(OmObservation sosObservation, DataEntity<?> hObservation) throws CodedException {
+        new RelatedObservationAdder(sosObservation, hObservation).add();
+    }
+
+    private void addParameter(OmObservation observation, DataEntity<?> hObservation) throws OwsExceptionReport {
+        if (hObservation instanceof DataEntity) {
+            DatasetEntity series = ((DataEntity) hObservation).getDataset();
+            if (!seriesParameter.containsKey(series.getId())) {
+                seriesParameter.put(series.getId(), series.getParameters());
+            }
+            if (!seriesParameter.get(series.getId()).isEmpty()) {
+                new DatasetParameterAdder(observation, seriesParameter.get(series.getId())).add();
             }
         }
+        new ParameterAdder(observation, hObservation).add();
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {
@@ -196,24 +204,21 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private OmObservation createNewObservation(OmObservationConstellation oc, Observation<?> ho, Value<?> value) {
+    private OmObservation createNewObservation(OmObservationConstellation oc, DataEntity<?> ho, Value<?> value) {
         final OmObservation o = new OmObservation();
-        o.setObservationID(Long.toString(ho.getObservationId()));
+        o.setObservationID(Long.toString(ho.getId()));
         if (ho.isSetIdentifier() && !ho.getIdentifier().startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
             final CodeWithAuthority identifier = new CodeWithAuthority(ho.getIdentifier());
-            if (ho.isSetCodespace()) {
-                identifier.setCodeSpace(ho.getCodespace().getCodespace());
+            if (ho.isSetIdentifierCodespace()) {
+                identifier.setCodeSpace(ho.getIdentifierCodespace().getName());
             }
             o.setIdentifier(identifier);
         }
         if (ho.isSetDescription()) {
             o.setDescription(ho.getDescription());
         }
-        o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
-        o.setTokenSeparator(getTokenSeparator());
-        o.setTupleSeparator(getTupleSeparator());
-        o.setDecimalSeparator(getDecimalSeparator());
         o.setObservationConstellation(oc);
+        addDefaultValuesToObservation(o);
         o.setResultTime(new TimeInstant(new DateTime(ho.getResultTime(), DateTimeZone.UTC)));
 
         if (ho.getValidTimeStart() != null || ho.getValidTimeEnd() != null) {
@@ -225,96 +230,79 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return o;
     }
 
-    private Time getPhenomenonTime(final Observation<?> hObservation) {
-        // create time element
-        final DateTime phenStartTime = new DateTime(hObservation.getPhenomenonTimeStart(), DateTimeZone.UTC);
-        DateTime phenEndTime;
-        if (hObservation.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(hObservation.getPhenomenonTimeEnd(), DateTimeZone.UTC);
-        } else {
-            phenEndTime = phenStartTime;
-        }
-        Time phenomenonTime;
-        if (phenStartTime.equals(phenEndTime)) {
-            phenomenonTime = new TimeInstant(phenStartTime);
-        } else {
-            phenomenonTime = new TimePeriod(phenStartTime, phenEndTime);
-        }
-        return phenomenonTime;
+    private Time getPhenomenonTime(final DataEntity<?> hObservation) {
+        return new PhenomenonTimeCreator(hObservation).create();
     }
 
-    private String createPhenomenon(final Observation<?> hObservation) throws CodedException {
+    private String createPhenomenon(final DataEntity<?> hObservation) throws CodedException {
         LOGGER.trace("Creating Phenomenon...");
-        final String phenID = hObservation.getObservableProperty().getIdentifier();
+        final String phenID = hObservation.getDataset().getPhenomenon().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
-             OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getObservableProperty());
-//            final String description = hObservation.getObservableProperty().getDescription();
-//            OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
-//            if (hObservation.getObservableProperty().isSetName()) {
-//                omObservableProperty.setHumanReadableIdentifier(hObservation.getObservableProperty().getName());
-//                omObservableProperty.setName(new CodeType(hObservation.getObservableProperty().getName()));
-//            }
+            OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getDataset().getPhenomenon());
             observedProperties.put(phenID, omObservableProperty);
         }
         LOGGER.trace("Creating Phenomenon done.");
         return phenID;
     }
 
-    private String createProcedure(final Observation<?> hObservation) throws OwsExceptionReport,
+    private String createProcedure(final DataEntity<?> hObservation) throws OwsExceptionReport,
             ConverterException {
         // TODO sfp full description
         LOGGER.trace("Creating Procedure...");
-        final String procedureId = hObservation.getProcedure().getIdentifier();
+        final String procedureId = hObservation.getDataset().getProcedure().getIdentifier();
         if (!procedures.containsKey(procedureId)) {
-            final SosProcedureDescription<?> procedure = createProcedure(procedureId);
+            final SosProcedureDescription<?> procedure = createProcedure(hObservation.getDataset().getProcedure());
             procedures.put(procedureId, procedure);
         }
         LOGGER.trace("Creating Procedure done.");
         return procedureId;
     }
 
-    private String createFeatureOfInterest(final Observation<?> hObservation) throws OwsExceptionReport {
+    private String createFeatureOfInterest(final DataEntity<?> hObservation) throws OwsExceptionReport {
         LOGGER.trace("Creating Feature...");
-        final String foiID = hObservation.getFeatureOfInterest().getIdentifier();
+        final String foiID = hObservation.getDataset().getFeature().getIdentifier();
         if (!features.containsKey(foiID)) {
-            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getFeatureOfInterest());
+            final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getDataset().getFeature());
             features.put(foiID, featureByID);
         }
         LOGGER.trace("Creating Feature done.");
         return foiID;
     }
 
-    private OmObservationConstellation createObservationConstellation(Observation<?> hObservation,
-            String procedureId, String phenomenonId, String featureId) {
+    private Set<String> createOfferingSet(DataEntity<?> hObservation, String procedure, String observedProperty) {
+        Set<String> offerings = Sets.newHashSet();
+        offerings.add(hObservation.getDataset().getOffering().getIdentifier());
+        return offerings;
+    }
+    private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation,
+            String procedureId, String phenomenonId, String featureId, Set<String> offerings) throws CodedException {
         OmObservationConstellation obsConst =
                 new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
-                        getFeature(featureId));
+                        getFeature(featureId), offerings);
         if (observationConstellations.containsKey(obsConst.hashCode())) {
             return observationConstellations.get(obsConst.hashCode());
-        } else {
-            int hashCode = obsConst.hashCode();
-            /* sfp the offerings to find the templates */
-            if (obsConst.getOfferings() == null) {
-                final Set<String> offerings =
-                        Sets.newHashSet(getCache().getOfferingsForObservableProperty(
-                                obsConst.getObservableProperty().getIdentifier()));
-                offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
-                obsConst.setOfferings(offerings);
-            }
-            if (!Strings.isNullOrEmpty(getResultModel())) {
-                obsConst.setObservationType(getResultModel());
-            }
-            final ObservationConstellationDAO dao = getDaoFactory().getObservationConstellationDAO();
-            final ObservationConstellation hoc =
-                    dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
-                            hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());
-            if (hoc != null && hoc.getObservationType() != null) {
-                obsConst.setObservationType(hoc.getObservationType().getObservationType());
-            }
-            observationConstellations.put(hashCode, obsConst);
-            return obsConst;
         }
+        int hashCode = obsConst.hashCode();
+        if (!Strings.isNullOrEmpty(getResultModel())) {
+            obsConst.setObservationType(getResultModel());
+        }
+        if (hObservation.getDataset().isSetObservationType()) {
+            obsConst.setObservationType(hObservation.getDataset().getObservationType().getFormat());
+        }
+        observationConstellations.put(hashCode, obsConst);
+        if (hObservation instanceof DataEntity<?>) {
+            DatasetEntity series = ((DataEntity<?>) hObservation).getDataset();
+            if (series.isSetIdentifier()) {
+                addIdentifier(obsConst, series);
+            }
+                obsConst.setObservationType(getResultModel());
+            if (series.isSetName()) {
+                addName(obsConst, series);
+            }
+            if (series.isSetDescription()) {
+                obsConst.setDescription(series.getDescription());
+            }
+        }
+        return obsConst;
     }
-
-
 }

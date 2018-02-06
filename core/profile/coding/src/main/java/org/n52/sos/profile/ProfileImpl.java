@@ -85,6 +85,8 @@ public class ProfileImpl implements Profile {
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
 
+    private String definition;
+
     public ProfileImpl() {
 
     }
@@ -97,6 +99,10 @@ public class ProfileImpl implements Profile {
     @Override
     public boolean isActiveProfile() {
         return activeProfile;
+    }
+
+    public void setActiveProfile(boolean activeProfile) {
+        this.activeProfile = activeProfile;
     }
 
     @Override
@@ -126,10 +132,6 @@ public class ProfileImpl implements Profile {
             this.identifier = JavaHelper.generateID(Long.toString(System.currentTimeMillis()));
             LOGGER.warn("The identifier is null or empty! This generated identifier {} is set!", this.identifier);
         }
-    }
-
-    public void setActiveProfile(boolean activeProfile) {
-        this.activeProfile = activeProfile;
     }
 
     public void setObservationResponseFormat(String observationResponseFormat) {
@@ -182,11 +184,6 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
-    public boolean isEncodeProcedureInObservation() {
-        return encodeProcedureInObservation != null && !encodeProcedureInObservation.isEmpty();
-    }
-
-    @Override
     public boolean isEncodeProcedureInObservation(String namespace) {
         Boolean encode = encodeProcedureInObservation.get(namespace);
         if (encode != null) {
@@ -208,6 +205,11 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
+    public Map<String, Boolean> getEncodeProcedureInObservation() {
+        return encodeProcedureInObservation;
+    }
+
+    @Override
     public boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation() {
         return returnLatestValueIfTemporalFilterIsMissingInGetObservation;
     }
@@ -224,8 +226,9 @@ public class ProfileImpl implements Profile {
     }
 
     public void setDefaultObservationTypesForEncoding(Map<String, String> defaultObservationTypesForEncoding) {
+        this.defaultObservationTypesForEncoding.clear();
         if (defaultObservationTypesForEncoding != null) {
-            this.defaultObservationTypesForEncoding = defaultObservationTypesForEncoding;
+            this.defaultObservationTypesForEncoding.putAll(defaultObservationTypesForEncoding);
         }
     }
 
@@ -284,8 +287,12 @@ public class ProfileImpl implements Profile {
     }
 
     @Override
-    public boolean isSetNoDataPlaceholder() {
-        return noDataPlaceholder != null && !noDataPlaceholder.isEmpty();
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
+    @Override
+    public String getDefinition() {
+        return definition;
+    }
 }

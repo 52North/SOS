@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>operations</artifactId>
     <packaging>pom</packaging>
@@ -16,5 +16,7 @@
         <module>enhanced-v20</module>
         <module>resultHandling-v20</module>
         <module>transactional-v20</module>
+        <module>extensions-v20</module>
+        <module>aqd-v10</module>
     </modules>
 </project>

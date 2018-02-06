@@ -32,33 +32,38 @@ import java.sql.Timestamp;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
+import org.n52.series.db.beans.DataEntity;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Abstract DAO class for querying {@link AbstractValuedLegacyObservation}
+ * Abstract DAO class for querying {@link ValuedObservation<?>}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public abstract class AbstractValueDAO extends TimeCreator {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
@@ -67,7 +72,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * @param c
      *            Criteria to add crtierion
      * @param request
-     *            GetObservation request
+     *            GetObservationRequest request
      * @param session
      *            Hiberante Session
      * @throws OwsExceptionReport
@@ -76,12 +81,44 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session) throws OwsExceptionReport {
-        if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            c.add(SpatialRestrictions.filter(
-                    AbstractObservation.SAMPLING_GEOMETRY,
-                    request.getSpatialFilter().getOperator(),
-                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                            request.getSpatialFilter().getGeometry())));
+        if (request instanceof GetObservationRequest) {
+            if (((GetObservationRequest)request).hasSpatialFilteringProfileSpatialFilter()) {
+                if (GeometryHandler.getInstance().isSpatialDatasource()) {
+                    c.add(SpatialRestrictions.filter(
+                            DataEntity.PROPERTY_GEOMETRY_ENTITY,
+                            ((GetObservationRequest)request).getSpatialFilter().getOperator(),
+                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                    ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
+                } else {
+                    // TODO add filter with lat/lon
+                    LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+                }
+            }
+        }
+    }
+
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session)
+            throws OwsExceptionReport {
+        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
+            ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), DataEntity.PROPERTY_ID, identifier);
+            if (resultFilterExpression != null) {
+                c.add(resultFilterExpression);
+            }
+        }
+    }
+
+    protected ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getValuedObservationFactory().numericClass(), getValuedObservationFactory().countClass(),
+                getValuedObservationFactory().textClass(), getValuedObservationFactory().categoryClass(),
+                getValuedObservationFactory().complexClass(), getValuedObservationFactory().profileClass());
+    }
+
+
+    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
+        if (temporalFilterCriterion != null) {
+            logArgs += ", filterCriterion";
+            c.add(temporalFilterCriterion);
         }
     }
 
@@ -98,7 +135,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime, String logArgs) {
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
@@ -111,13 +148,15 @@ public abstract class AbstractValueDAO extends TimeCreator {
         // get observations with exactly the extrema time
         c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
 
+        logArgs += ", sosIndeterminateTime";
         // not really necessary to return the Criteria object, but useful if we
         // want to chain
+        logArgs += ", filterCriterion";
         return c;
     }
 
     /**
-     * Get projection for {@link ExtendedIndeterminateTime} value
+     * Get projection for {@link IndeterminateValue} value
      *
      * @param indetTime
      *            Value to get projection for
@@ -125,16 +164,16 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected Projection getIndeterminateTimeExtremaProjection(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return Projections.min(AbstractValuedLegacyObservation.PHENOMENON_TIME_START);
+            return Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START);
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return Projections.max(AbstractValuedLegacyObservation.PHENOMENON_TIME_END);
+            return Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END);
         }
         return null;
     }
 
     /**
      * Get the AbstractValue property to filter on for an
-     * {@link ExtendedIndeterminateTime}
+     * {@link IndeterminateValue}
      *
      * @param indetTime
      *            Value to get property for
@@ -142,9 +181,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected String getIndeterminateTimeFilterProperty(IndeterminateValue indetTime) {
         if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
-            return AbstractValuedLegacyObservation.PHENOMENON_TIME_START;
+            return DataEntity.PROPERTY_SAMPLING_TIME_START;
         } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
-            return AbstractValuedLegacyObservation.PHENOMENON_TIME_END;
+            return DataEntity.PROPERTY_SAMPLING_TIME_END;
         }
         return null;
     }
@@ -160,32 +199,33 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Start row
      * @param request
      */
-    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, GetObservationRequest request) {
-        c.addOrder(Order.asc(getOrderColumn(request)));
+    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, AbstractObservationRequest request) {
         if (chunkSize > 0) {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
         }
     }
 
-    private String getOrderColumn(GetObservationRequest request) {
-        if (request.isSetTemporalFilter()) {
-            TemporalFilter filter = request.getTemporalFilters().iterator().next();
-            if (filter.getValueReference().contains(AbstractTemporalReferencedObservation.RESULT_TIME)) {
-               return AbstractTemporalReferencedObservation.RESULT_TIME;
+    protected String getOrderColumn(AbstractObservationRequest request) {
+        if (request instanceof GetObservationRequest) {
+            if (((GetObservationRequest)request).isSetTemporalFilter()) {
+                TemporalFilter filter = ((GetObservationRequest)request).getTemporalFilters().iterator().next();
+                if (filter.getValueReference().contains(DataEntity.PROPERTY_RESULT_TIME)) {
+                   return DataEntity.PROPERTY_RESULT_TIME;
+                }
             }
         }
-        return AbstractTemporalReferencedObservation.PHENOMENON_TIME_START;
+        return DataEntity.PROPERTY_SAMPLING_TIME_START;
     }
 
     @SuppressWarnings("rawtypes")
     protected Criteria getDefaultCriteria(Class clazz, Session session) {
         Criteria criteria = session.createCriteria(clazz)
-                .add(Restrictions.eq(Observation.DELETED, false));
+                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
         if (!isIncludeChildObservableProperties()) {
-            criteria.add(Restrictions.eq(Observation.CHILD, false));
+            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
         } else {
-            criteria.add(Restrictions.eq(Observation.PARENT, false));
+            criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
         }
 
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -197,4 +237,5 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport;
 
+    protected abstract ValuedObservationFactory getValuedObservationFactory();
 }

@@ -45,7 +45,7 @@ import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
  * @since 5.0.0
  *
  */
-public abstract class AbstractGetResultTemplateHandler extends AbstractOperationHandler {
+public abstract class AbstractGetResultTemplateHandler extends AbstractResultHandlingHandler {
     public AbstractGetResultTemplateHandler(String service) {
         super(service, Sos2Constants.Operations.GetResultTemplate.name());
     }

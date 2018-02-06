@@ -30,7 +30,9 @@ package org.n52.sos.util.builder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;

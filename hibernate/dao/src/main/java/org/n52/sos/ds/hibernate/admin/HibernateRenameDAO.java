@@ -62,7 +62,7 @@ public class HibernateRenameDAO implements RenameDAO {
             s = sessionHolder.getSession();
             t = s.beginTransaction();
             ObservableProperty op = (ObservableProperty) s.createCriteria(ObservableProperty.class)
-                    .add(Restrictions.eq(ObservableProperty.IDENTIFIER, oldName)).uniqueResult();
+                    .copy(Restrictions.eq(ObservableProperty.IDENTIFIER, oldName)).uniqueResult();
 
             if (op == null) {
                 throw new NoSuchObservablePropertyException(oldName);

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>core</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>sqlite-config</artifactId>
     <name>52°North SOS - SQLite Configuration</name>
@@ -24,6 +24,14 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard-json-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -46,6 +54,10 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
@@ -56,12 +68,10 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -93,9 +103,9 @@
 			<artifactId>javax.inject</artifactId>
 		</dependency>
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
+   <build>
+   <plugins>
+     <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -104,10 +114,13 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
-	                        <excludes>
-			                	<exclude>**/*Test.*</exclude>
-			                	<exclude>**/*$.*</exclude>
-			                </excludes>
+                            <classifier>tests</classifier>
+                            <excludes>
+                                <exclude>**/*Test.*</exclude>
+                                <exclude>**/*$.*</exclude>
+                                <exclude>**/decode/*</exclude>
+                                <exclude>**/encode/*</exclude>
+                            </excludes>
                         </configuration>
                     </execution>
                 </executions>

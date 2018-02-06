@@ -28,17 +28,16 @@
  */
 package org.n52.sos.request.operator;
 
-import static org.n52.iceland.util.HasStatusCode.hasStatusCode;
-
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
+import org.n52.iceland.util.HasStatusCode;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
 import org.locationtech.jts.io.ParseException;
@@ -105,7 +104,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(NULL);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextIp(false));
     }
 
@@ -116,7 +115,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(NULL);
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextToken(false));
     }
 
@@ -127,7 +126,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(false, false));
     }
 
@@ -138,7 +137,7 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(true, false));
     }
 
@@ -149,8 +148,15 @@ public class TransactionalRequestCheckerTest {
         tsc.setTransactionalAllowedIps(IP.toString());
         tsc.setTransactionalToken(TOKEN);
         thrown.expect(OwsExceptionReport.class);
-        thrown.expect(hasStatusCode(HTTPStatus.UNAUTHORIZED));
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.UNAUTHORIZED));
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(false, true));
+    }
+
+    @Test
+    public void shouldException_MissingRequestContext() throws OwsExceptionReport {
+        thrown.expect(NoApplicableCodeException.class);
+        thrown.expect(HasStatusCode.hasStatusCode(HTTPStatus.INTERNAL_SERVER_ERROR));
+        new TransactionalRequestChecker(tsc).check(null);
     }
 
     private OwsServiceRequestContext getRequestContextIp(boolean validIp) {

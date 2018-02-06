@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="getCapabilitiesHandler" class="org.n52.sos.ds.GetCapabilitiesHandler"/>
+    <bean id="describeSensorHandler" class="org.n52.sos.ds.DescribeSensorHandler"/>
+    <bean id="getObservationHandler" class="org.n52.sos.ds.GetObservationHandler"/>
+    <bean id="getDataAvailabilityHandler" class="org.n52.sos.ds.GetDataAvailabilityHandler"/>
+    <bean id="getFeatureOfInterestHandler" class="org.n52.sos.ds.GetFeatureOfInterestHandler"/>
+    <bean id="getObservationByIdHandler" class="org.n52.sos.ds.GetObservationByIdHandler"/>
+    <bean id="cacheFeederHandler" class="org.n52.sos.ds.SosCacheFeederHandler"/>
+
+    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository" />
+    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml101"/>
+    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml20"/>
+    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryWml20"/>
+    <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryInspireOmpr30"/>
+
+    <bean class="org.n52.sos.ds.procedure.ProcedureConverter"/>
+    <bean class="org.n52.sos.ds.procedure.ProcedureCreationContext"/>
+
+</beans>

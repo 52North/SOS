@@ -95,6 +95,8 @@ public interface ControllerConstants {
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "admin/observableProperties";
 
         String ADMIN_EXTENSIONS = "/admin/extensions";
+
+        String ADMIN_PROFILES = "/admin/profiles";
     }
 
     /**
@@ -149,6 +151,8 @@ public interface ControllerConstants {
         String ADMIN_DATABASE_EXECUTE = "/admin/datasource";
 
         String ADMIN_DATABASE_SETTINGS = "/admin/datasource/settings";
+
+        String ADMIN_DATABASE_ADD_SAMPLEDATA = "/admin/datasource/addSampledata";
 
         String ADMIN_CACHE = "/admin/cache";
 
@@ -227,6 +231,8 @@ public interface ControllerConstants {
         String ADMIN_EXTENSIONS = "/admin/extensions";
 
         String ADMIN_EXTENSIONS_JSON_ENDPOINT = "/admin/extensions/json";
+
+        String ADMIN_PROFILES = "/admin/profiles";
     }
 
     String SETTINGS_MODEL_ATTRIBUTE = "settings";

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>hibernate</artifactId>
     <packaging>pom</packaging>
@@ -14,11 +14,14 @@
         <module>mappings</module>
         <module>session-factory</module>
         <module>common</module>
-        <module>dao</module>
+        <module>handler</module>
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
         <module>utils</module>
+        <module>c3p0</module>
+        <!-- <module>dao</module> -->
+        <!-- <module>entities</module> -->
     </modules>
 	<profiles>
         <profile>

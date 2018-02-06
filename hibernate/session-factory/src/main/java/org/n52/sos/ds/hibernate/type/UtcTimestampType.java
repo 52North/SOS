@@ -28,12 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.LiteralType;
 import org.hibernate.type.TimestampType;
@@ -91,4 +93,15 @@ public class UtcTimestampType extends AbstractSingleColumnStandardBasicType<Date
     public Date fromStringValue(String xml) throws HibernateException {
         return TimestampType.INSTANCE.fromStringValue(xml);
     }
+
+    @Override
+    public Date seed(SharedSessionContractImplementor session) {
+        return TimestampType.INSTANCE.seed(session);
+    }
+
+    @Override
+    public Date next(Date current, SharedSessionContractImplementor session) {
+        return TimestampType.INSTANCE.next(current, session);
+    }
+
 }

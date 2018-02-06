@@ -43,18 +43,17 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.spi.Stoppable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
+import org.n52.janmayen.ConfigLocationProvider;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.janmayen.ConfigLocationProvider;
 import org.n52.sos.config.sqlite.hibernate.HibernateFileType;
 import org.n52.sos.config.sqlite.hibernate.HibernateSQLiteDialect;
 import org.n52.sos.config.sqlite.hibernate.HibernateTimeInstantType;
 import org.n52.sos.config.sqlite.hibernate.HibernateUriType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -167,10 +166,10 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
                 try {
                     if (this.sessionFactory instanceof SessionFactoryImpl) {
                         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) this.sessionFactory;
-                        if (sessionFactoryImpl.getConnectionProvider() instanceof Stoppable) {
-                            Stoppable stoppable = (Stoppable) sessionFactoryImpl.getConnectionProvider();
-                            stoppable.stop();
-                        }
+//                        if (sessionFactoryImpl.getConnectionProvider() instanceof Stoppable) {
+//                            Stoppable stoppable = (Stoppable) sessionFactoryImpl.getConnectionProvider();
+//                            stoppable.stop();
+//                        }
                     }
                     this.sessionFactory.close();
                     LOG.info("Connection provider closed successfully!");

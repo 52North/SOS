@@ -37,7 +37,10 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
+
+import com.google.common.collect.Sets;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
@@ -51,9 +54,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateStreamingValue.class);
     protected final ValueDAO valueDAO = new ValueDAO();
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
-    protected final long procedure;
-    protected final long featureOfInterest;
-    protected final long observableProperty;
+    protected final Set<Long> procedure = Sets.newHashSet();
+    protected final Set<Long> featureOfInterest = Sets.newHashSet();
+    protected final Set<Long> observableProperty = Sets.newHashSet();
 
     /**
      * constructor
@@ -68,9 +71,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     public HibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
         super(connectionProvider, daoFactory, request);
-        this.procedure = procedure;
-        this.observableProperty = observableProperty;
-        this.featureOfInterest = featureOfInterest;
+        this.procedure.copy(procedure);
+        this.observableProperty.copy(observableProperty);
+        this.featureOfInterest.copy(featureOfInterest);
     }
 
     @Override
@@ -79,21 +82,24 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
             if (session == null) {
                 session = sessionHolder.getSession();
             }
-            TemporalReferencedLegacyObservation minTime;
-            TemporalReferencedLegacyObservation maxTime;
-            // query with temporal filter
-            if (temporalFilterCriterion != null) {
-                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
-                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+            if (request instanceof GetObservationRequest) {
+                GetObservationRequest getObsReq = (GetObservationRequest)request;
+                TemporalReferencedLegacyObservation minTime;
+                TemporalReferencedLegacyObservation maxTime;
+                // query with temporal filter
+                if (temporalFilterCriterion != null) {
+                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                }
+                // query without temporal or indeterminate filters
+                else {
+                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, session);
+                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, session);
+                }
+                setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
+                setResultTime(createResutlTime(maxTime));
+                setValidTime(createValidTime(minTime, maxTime));
             }
-            // query without temporal or indeterminate filters
-            else {
-                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, session);
-                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, session);
-            }
-            setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
-            setResultTime(createResutlTime(maxTime));
-            setValidTime(createValidTime(minTime, maxTime));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
         }
@@ -102,10 +108,18 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     @Override
     protected void queryUnit() {
         try {
-            setUnit(valueDAO.getUnit(request, procedure, observableProperty, featureOfInterest, session));
+            if (request instanceof GetObservationRequest) {
+                setUnit(valueDAO.getUnit((GetObservationRequest)request, procedure, observableProperty, featureOfInterest, session));
+            }
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         }
+    }
+    
+    @Override
+    public void mergeValue(StreamingValue<AbstractValuedLegacyObservation<?>> streamingValue) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

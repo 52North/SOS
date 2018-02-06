@@ -30,37 +30,40 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import javax.inject.Inject;
 
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.n52.svalbard.decode.DecoderRepository;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.util.CodingHelper;
-import org.n52.svalbard.util.XmlHelper;
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.HibernateRelations.HasObservablePropertyGetter;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.UnitEntity;
+import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
 import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.util.JTSConverter;
+import org.n52.svalbard.decode.DecoderRepository;
 
 /**
  * TODO JavaDoc
@@ -77,36 +80,75 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public QuantityValue visit(NumericValuedObservation o) {
-        QuantityValue v = new QuantityValue(o.getValue());
-        addUnit(o, v);
+    public Value<?> visit(DataEntity o)
+            throws OwsExceptionReport {
+       if (o instanceof QuantityDataEntity) {
+           return visit((QuantityDataEntity)o);
+       } else if (o instanceof BlobDataEntity) {
+           return visit((BlobDataEntity)o);
+       } else if (o instanceof BooleanDataEntity) {
+           return visit((BooleanDataEntity)o);
+       } else if (o instanceof CategoryDataEntity) {
+           return visit((CategoryDataEntity)o);
+       } else if (o instanceof ComplexDataEntity) {
+           return visit((ComplexDataEntity)o);
+       } else if (o instanceof CountDataEntity) {
+           return visit((CountDataEntity)o);
+       } else if (o instanceof GeometryDataEntity) {
+           return visit((GeometryDataEntity)o);
+       } else if (o instanceof TextDataEntity) {
+           return visit((TextDataEntity)o);
+       } else if (o instanceof DataArrayDataEntity) {
+           return visit((DataArrayDataEntity)o);
+       } else if (o instanceof ProfileDataEntity) {
+           return visit((ProfileDataEntity)o);
+       } else if (o instanceof ReferencedDataEntity) {
+           return visit((ReferencedDataEntity)o);
+       }
+        return null;
+    }
+
+    @Override
+    public QuantityValue visit(QuantityDataEntity o) {
+        QuantityValue v = new QuantityValue(o.getValue().doubleValue());
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
         return v;
     }
 
 
     @Override
-    public UnknownValue visit(BlobValuedObservation o) {
+    public UnknownValue visit(BlobDataEntity o) {
         UnknownValue v = new UnknownValue(o.getValue());
-        addUnit(o, v);
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
         return v;
     }
 
     @Override
-    public BooleanValue visit(BooleanValuedObservation o) {
+    public BooleanValue visit(BooleanDataEntity o) {
         BooleanValue v = new BooleanValue(o.getValue());
-        addUnit(o, v);
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
         return v;
     }
 
     @Override
-    public CategoryValue visit(CategoryValuedObservation o) {
+    public CategoryValue visit(CategoryDataEntity o) {
         CategoryValue v = new CategoryValue(o.getValue());
-        addUnit(o, v);
+        addAdditonalData(o, v);
+        addDefinitionFromObservableProperty(o, v);
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
         return v;
     }
 
     @Override
-    public ComplexValue visit(ComplexValuedObservation o) throws OwsExceptionReport {
+    public ComplexValue visit(ComplexDataEntity o) throws OwsExceptionReport {
         SweAbstractDataComponentCreator visitor
                 = new SweAbstractDataComponentCreator();
         SweDataRecord record = visitor.visit(o);
@@ -114,44 +156,80 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public CountValue visit(CountValuedObservation o) {
+    public CountValue visit(CountDataEntity o) {
         return new CountValue(o.getValue());
     }
 
     @Override
-    public GeometryValue visit(GeometryValuedObservation o) {
-        GeometryValue v = new GeometryValue(o.getValue());
-        addUnit(o, v);
+    public GeometryValue visit(GeometryDataEntity o) throws OwsExceptionReport {
+        GeometryValue v = new GeometryValue(JTSConverter.convert(o.getValue().getGeometry()));
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
         return v;
     }
 
     @Override
-    public TextValue visit(TextValuedObservation o) {
+    public TextValue visit(TextDataEntity o) {
         TextValue v = new TextValue(o.getValue());
-        addUnit(o, v);
+        addAdditonalData(o, v);
+        addDefinitionFromObservableProperty(o, v);
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
         return v;
     }
 
     @Override
-    public SweDataArrayValue visit(SweDataArrayValuedObservation o)
+    public SweDataArrayValue visit(DataArrayDataEntity o)
             throws OwsExceptionReport {
-
-        try {
-            XmlObject xml = XmlHelper.parseXmlString(o.getValue());
-            SweDataArray array = (SweDataArray)decoderRepository.getDecoder(CodingHelper.getDecoderKey(xml)).decode(xml);
-            return new SweDataArrayValue(array);
-        } catch (DecodingException ex) {
-            throw new NoApplicableCodeException().causedBy(ex);
-        }
-
+        SweDataArray array = new SweDataArray();
+        // TODO
+        return new SweDataArrayValue(array);
     }
 
-    protected void addUnit(ValuedObservation<?> o, Value<?> v) {
-        if (!v.isSetUnit() && o.isSetUnit()) {
-            v.setUnit(o.getUnit().getUnit());
+    @Override
+    public ProfileValue visit(ProfileDataEntity o) throws OwsExceptionReport {
+        return ProfileGeneratorSplitter.create(o);
+    }
+
+    @Override
+    public ReferenceValue visit(ReferencedDataEntity o) {
+        ReferenceValue v = new ReferenceValue(new ReferenceType(o.getValue()));
+        if (o.hasValueName()) {
+            v.getValue().setTitle(o.getValueName());
+        }
+        if (o.getDataset().hasUnit()) {
+            v.setUnit(getUnit(o.getDataset().getUnit()));
+        }
+        return v;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected void addAdditonalData(DataEntity o, SweAbstractSimpleType v) {
+        if (o.hasValueIdentifier()) {
+            v.setIdentifier(o.getValueIdentifier());
+        }
+        if (o.hasValueName()) {
+            v.setName(o.getValueName());
+        }
+        if (o.hasValueDescription()) {
+            v.setDescription(o.getValueDescription());
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    protected void addDefinitionFromObservableProperty(DataEntity o, SweAbstractSimpleType v) {
+        if (o instanceof HasObservablePropertyGetter) {
+            if (((HasObservablePropertyGetter)o).getObservableProperty() != null) {
+                v.setDefinition(((HasObservablePropertyGetter)o).getObservableProperty().getIdentifier());
+            }
+        }
+    }
 
+    protected UoM getUnit(UnitEntity unit) {
+        UoM uom = new UoM(unit.getUnit());
+        return uom;
+    }
 
 }

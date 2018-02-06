@@ -62,6 +62,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
  */
 public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHandler {
 
+    @Inject
     private ServiceOperatorRepository serviceOperatorRepository;
 
     public AbstractGetCapabilitiesHandler(String service) {

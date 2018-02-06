@@ -17,8 +17,6 @@
         </id>
         <many-to-one name="series"
                      class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="observationSeriesFk">
             <column index="obsSeriesIdx"
                     name="seriesId"
@@ -62,8 +60,6 @@
         </property>
         <many-to-one name="codespace"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="obsCodespaceIdentifierFk">
             <column name="codespace">
             	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
@@ -77,7 +73,6 @@
         </property>
         <many-to-one name="codespaceName"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
-                     fetch="select"
                      foreign-key="obsCodespaceNameFk">
             <column name="codespaceName">
             	<comment>The name of the observation, gml:name. Optional</comment>
@@ -138,8 +133,6 @@
         </property>
         <many-to-one name="unit"
                      class="org.n52.sos.ds.hibernate.entities.Unit"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="observationUnitFk">
             <column name="unitId"
                     not-null="false">
@@ -147,10 +140,8 @@
             </column>
         </many-to-one>
         <set name="offerings"
-             table="observationHasOffering"
-             inverse="false"
-             fetch="select"
-             lazy="true" >
+             table="observationhasoffering"
+             inverse="false">
             <key>
                 <column name="observationId"
                         not-null="true"
@@ -174,11 +165,18 @@
             <column name="samplingGeometry">
             	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
-        </property><set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select">
+        </property>
+        <set name="parameters" table="parameter" inverse="true" fetch="join" cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>
-            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
         </set>
+        <set name="relatedObservations" table="relatedobservations" fetch="join" access="field" cascade="all">
+	        <key>
+	            <column name="observationId" not-null="true" index="relatedObsObsIdx" />
+	        </key>
+	        <one-to-many class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation" />
+    	</set>
     </class>
 </hibernate-mapping>

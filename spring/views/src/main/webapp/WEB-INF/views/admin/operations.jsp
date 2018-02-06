@@ -42,6 +42,26 @@
 <script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter-2.7.12.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter.widgets-2.7.12.min.js'/>"></script>
 
+<div class="btn-group pull-right">
+    <button id="activateAll" class="btn btn-success"><i class="icon-ok-circle icon-white" style="color:#fff;"></i></button>
+    <button id="disableAll" class="btn btn-danger"><i class="icon-ban-circle icon-white"></i></button>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $("#activateAll").on("click", function() {
+        $("tbody > tr > td.status > button.btn-danger").each(function(){
+            $( this ).click();
+        });
+    });
+    $("#disableAll").on("click", function() {
+        $("tbody > tr > td.status > button.btn-success").each(function(){
+            $( this ).click();
+        });
+    });
+});
+</script>
+
 <table id="operationsTable" class="table table-striped table-bordered">
     <thead>
         <tr>
@@ -117,7 +137,7 @@ jQuery(document).ready(function($) {
                 0: { sorter: "text" },
                 1: { sorter: "text" },
                 2: { sorter: "text" },
-                3: { sorter: false } 
+                3: { sorter: "text" } 
             },
             sortList: [ [0,0], [1,1], [2,0] ]
         });

@@ -73,7 +73,6 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 import org.n52.svalbard.ConformanceClasses;
@@ -123,6 +122,7 @@ public class SosInsertSensorOperatorV20 extends
     @Override
     protected void checkParameters(InsertSensorRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
+        String generatedId = JavaHelper.generateID(request.getProcedureDescription().toString());
         // check parameters with variable content
         try {
             checkServiceParameter(request.getService());
@@ -135,13 +135,13 @@ public class SosInsertSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            SosHelper.checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(), request.getService(),
+            checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(), request.getService(),
                     request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkAndSetAssignedProcedureID(request);
+            checkAndSetAssignedProcedureID(request, generatedId);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -157,7 +157,7 @@ public class SosInsertSensorOperatorV20 extends
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
-            checkAndSetAssignedOfferings(request);
+            checkAndSetAssignedOfferings(request, generatedId);
             try {
                 checkProcedureAndOfferingCombination(request);
             } catch (OwsExceptionReport owse) {
@@ -350,7 +350,7 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedProcedureID(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         if (request.getProcedureDescription().isSetIdentifier()) {
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
@@ -362,26 +362,8 @@ public class SosInsertSensorOperatorV20 extends
                 Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
-        SosContentCache cache = getCache();
-
-        // add parent procedure offerings
-        if (request.getProcedureDescription().isSetParentProcedure()) {
-            Set<String> allParentProcedures = cache.getParentProcedures(
-                    request.getProcedureDescription().getParentProcedure().getTitleOrFromHref(), true, true);
-            for (String parentProcedure : allParentProcedures) {
-                for (String offering : cache.getOfferingsForProcedure(parentProcedure)) {
-                    // TODO I18N
-                    if (!checkOfferingsForOffering(sosOfferings, offering)) {
-                        SosOffering sosOffering = new SosOffering(offering, "");
-                        sosOffering.setParentOfferingFlag(true);
-                        sosOfferings.add(sosOffering);
-                    }
-
-                }
-            }
-        }
 
         // if no offerings are assigned, generate one
         if (CollectionHelper.isEmpty(sosOfferings)) {
@@ -395,19 +377,9 @@ public class SosInsertSensorOperatorV20 extends
         request.setAssignedOfferings(new ArrayList<>(sosOfferings));
     }
 
-    private boolean checkOfferingsForOffering(Set<SosOffering> sosOfferings, String offering) {
-        for (SosOffering sosOffering : sosOfferings) {
-            if (sosOffering.getIdentifier().equals(offering)) {
-                sosOffering.setParentOfferingFlag(true);
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
-            if (!offering.isParentOffering() && getCache().getOfferings().contains(offering.getIdentifier())) {
+            if (!offering.isParentOffering() && getCache().getPublishedOfferings().contains(offering.getIdentifier())) {
                 throw new InvalidParameterValueException().at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
                                 "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",

@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
     <bean id="oceansitesSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="OceanSITES netCDF" />
         <property name="description" value="Define OceanSITES specific parameter" />

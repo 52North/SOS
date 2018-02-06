@@ -35,7 +35,6 @@ import java.util.function.Supplier;
 import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
-
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -44,7 +43,6 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
-import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -57,7 +55,7 @@ import org.n52.svalbard.util.XmlHelper;
  * @since 4.0.0
  *
  */
-public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObservationRequest> {
+public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<GetObservationRequest> {
 
 
     private DecoderRepository decoderRepository;
@@ -142,6 +140,7 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
         builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
                     this::parseMergeObservationIntoDataArray);
         builder.add("extension", decodeList(this::parseExtensionParameter));
+        builder.add("$filter", this::parseODataFes);
 
     }
 

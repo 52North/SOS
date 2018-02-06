@@ -34,20 +34,19 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.i18n.I18nPhenomenonEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NObservablePropertyMetadata;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<ObservableProperty, I18NObservablePropertyMetadata, HibernateI18NObservablePropertyMetadata> {
+public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<PhenomenonEntity, I18NObservablePropertyMetadata, I18nPhenomenonEntity> {
     private final DaoFactory daoFactory;
 
     @Inject
@@ -56,13 +55,13 @@ public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<Observab
     }
 
     @Override
-    protected ObservableProperty getEntity(String id, Session session) {
+    protected PhenomenonEntity getEntity(String id, Session session) {
         return new ObservablePropertyDAO(daoFactory).getObservablePropertyForIdentifier(id, session);
     }
 
     @Override
-    protected Class<HibernateI18NObservablePropertyMetadata> getHibernateEntityClass() {
-        return HibernateI18NObservablePropertyMetadata.class;
+    protected Class<I18nPhenomenonEntity> getHibernateEntityClass() {
+        return I18nPhenomenonEntity.class;
     }
 
     @Override
@@ -71,8 +70,8 @@ public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<Observab
     }
 
     @Override
-    protected HibernateI18NObservablePropertyMetadata createHibernateObject() {
-        return new HibernateI18NObservablePropertyMetadata();
+    protected I18nPhenomenonEntity createHibernateObject() {
+        return new I18nPhenomenonEntity();
     }
 
     @Override

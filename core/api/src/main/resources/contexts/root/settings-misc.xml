@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <bean id="miscellaneousSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Miscellaneous" />
@@ -135,6 +135,14 @@
         <property name="order" value="17.0" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="operation.gda.forceVersion20" />
+        <property name="title" value="Should the SOS forced returning DataAvailability v2.0?" />
+        <property name="description" value="Should the SOS forced returning DataAvailability v2.0?" />
+        <property name="order" value="20.0" />
+        <property name="group" ref="miscellaneousSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.includeOriginalRequest" />

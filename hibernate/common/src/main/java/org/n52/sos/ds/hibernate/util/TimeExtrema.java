@@ -29,6 +29,9 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 /**
  * Hold min and max obs time
@@ -40,8 +43,11 @@ import org.joda.time.DateTime;
 public class TimeExtrema {
 
     private DateTime minPhenomenonTime;
+
     private DateTime maxPhenomenonTime;
+
     private DateTime minResultTime;
+
     private DateTime maxResultTime;
 
     public DateTime getMinPhenomenonTime() {
@@ -76,12 +82,29 @@ public class TimeExtrema {
         this.maxResultTime = maxResultTime;
     }
 
+    public Time getPhenomenonTime() {
+        if (isSetPhenomenonTimes()) {
+            if (getMinPhenomenonTime().equals(getMaxPhenomenonTime())) {
+                return new TimeInstant(getMaxPhenomenonTime());
+            }
+            return new TimePeriod(getMinPhenomenonTime(), getMaxPhenomenonTime());
+            }
+        return null;
+    }
+
+    public Time getResultTime() {
+        if (isSetResultTimes()) {
+            return new TimeInstant(getMaxResultTime());
+        }
+        return null;
+    }
+
     public boolean isSetPhenomenonTimes() {
         return getMinPhenomenonTime() != null && getMaxPhenomenonTime() != null;
     }
 
     public boolean isSetResultTimes() {
-        return getMinResultTime()!= null && getMaxResultTime() != null;
+        return getMinResultTime() != null && getMaxResultTime() != null;
     }
 
     public boolean isSetTimes() {

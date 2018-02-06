@@ -42,6 +42,7 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.ObservationValue;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -49,11 +50,12 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.netcdf.data.dataset.IdentifierDatasetSensor;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesProfileSensorDataset;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesSensorDataset;
@@ -76,8 +78,6 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 import ucar.nc2.constants.CF;
-
-import org.n52.shetland.ogc.om.ObservationStream;
 
 /**
  * Utility class for netCDF encoding.
@@ -150,10 +150,10 @@ public class NetCDFUtil {
 
             // get foi
             AbstractFeature aFoi = obsConst.getFeatureOfInterest();
-            if (!(aFoi instanceof SamplingFeature)) {
+            if (!(aFoi instanceof AbstractSamplingFeature)) {
                 throw new EncodingException("Encountered a feature which isn't a SamplingFeature");
             }
-            SamplingFeature foi = (SamplingFeature) aFoi;
+            AbstractSamplingFeature foi = (AbstractSamplingFeature) aFoi;
 
             for (Point point : FeatureUtil.getFeaturePoints(foi)) {
                 try {
@@ -189,15 +189,15 @@ public class NetCDFUtil {
                 OmObservableProperty phenomenon = phenomena.get(0);
                 // add dimensional values to procedure dimension tracking maps
                 if (isLng(phenomenon.getIdentifier())) {
-                    sensorLngs.get(sensor).add(quantityValue.getValue());
+                    sensorLngs.get(sensor).add(quantityValue.getValue().doubleValue());
                 }
 
                 if (isLat(phenomenon.getIdentifier())) {
-                    sensorLats.get(sensor).add(quantityValue.getValue());
+                    sensorLats.get(sensor).add(quantityValue.getValue().doubleValue());
                 }
 
                 if (isZ(phenomenon.getIdentifier())) {
-                    Double zValue = quantityValue.getValue();
+                    Double zValue = quantityValue.getValue().doubleValue();
 //                    if (isDepth(phenomenon.getIdentifier())) {
 //                        zValue = 0 - zValue;
 //                    }
@@ -209,9 +209,9 @@ public class NetCDFUtil {
             if (sosObs.isSetParameter()) {
                 if (sosObs.isSetHeightDepthParameter()) {
                     if (sosObs.isSetHeightParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue());
+                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue().doubleValue());
                     } else if (sosObs.isSetDepthParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue());
+                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue().doubleValue());
                     }
                 }
                 if (hasSamplingGeometry(sosObs)) {
@@ -444,8 +444,8 @@ public class NetCDFUtil {
 
         for (OmObservation sosObservation : observationCollection) {
             sosObservation.getObservationConstellation().getFeatureOfInterest();
-            SamplingFeature samplingFeature =
-                    (SamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
+            AbstractSamplingFeature samplingFeature =
+                    (AbstractSamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
             if (samplingFeature != null && samplingFeature.getGeometry() != null) {
                 if (envelope == null) {
                     envelope = samplingFeature.getGeometry().getEnvelopeInternal();
@@ -472,7 +472,7 @@ public class NetCDFUtil {
     // }
     // }
 
-    public static SubSensor createSubSensor(String sensor, SamplingFeature foi) {
+    public static SubSensor createSubSensor(String sensor, AbstractSamplingFeature foi) {
         // return null if sensor or station id is same as foi
         if (sensor.equals(foi.getIdentifierCodeWithAuthority().getValue())) {
             return null;

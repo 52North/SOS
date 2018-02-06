@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.Strings;
 
 /**

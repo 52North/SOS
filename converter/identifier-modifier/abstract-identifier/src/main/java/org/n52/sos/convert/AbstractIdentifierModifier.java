@@ -42,6 +42,9 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.janmayen.function.Functions;
@@ -101,11 +104,46 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 public abstract class AbstractIdentifierModifier implements RequestResponseModifier {
+
+    private ContentCacheController contentCacheController;
+    private ProfileHandler profileHandler;
+
+    protected ContentCacheController getCacheController() {
+        return this.contentCacheController;
+    }
+
+    @Inject
+    public void setCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
+
+    protected SosContentCache getCache() {
+        return (SosContentCache)getCacheController().getCache();
+    }
+
+    protected ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+
+    protected Profile getActiveProfile() {
+        return getProfileHandler().getActiveProfile();
+    }
+
+    @Override
+    public RequestResponseModifierFacilitator getFacilitator() {
+        return new RequestResponseModifierFacilitator().setAdderRemover(true);
+    }
 
     protected abstract boolean checkForFlag(OwsServiceRequest request, OwsServiceResponse response) throws
             InvalidParameterValueException;
@@ -543,19 +581,6 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     private Collection<String> checkProcedureIdentifier(Set<String> identifiers) {
         return identifiers.stream().map(this::checkProcedureIdentifier).collect(toList());
-    }
-
-    protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
-    }
-
-    protected SosContentCache getCache() {
-        return Configurator.getInstance().getCache();
-    }
-
-    @Override
-    public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator().setAdderRemover(true);
     }
 
     private Optional<Function<String, String>> getIdentifierCheckerForName(String name) {

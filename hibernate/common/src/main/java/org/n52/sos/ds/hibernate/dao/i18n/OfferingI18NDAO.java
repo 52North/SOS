@@ -34,15 +34,14 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.i18n.I18nOfferingEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
 
-public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {
+public class OfferingI18NDAO extends AbstractHibernateI18NDAO<OfferingEntity, I18NOfferingMetadata, I18nOfferingEntity> {
     private final DaoFactory daoFactory;
 
     @Inject
@@ -51,18 +50,18 @@ public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOffe
     }
 
     @Override
-    protected Offering getEntity(String id, Session session) {
+    protected OfferingEntity getEntity(String id, Session session) {
         return new OfferingDAO(daoFactory).getOfferingForIdentifier(id, session);
     }
 
     @Override
-    protected Class<HibernateI18NOfferingMetadata> getHibernateEntityClass() {
-        return HibernateI18NOfferingMetadata.class;
+    protected Class<I18nOfferingEntity> getHibernateEntityClass() {
+        return I18nOfferingEntity.class;
     }
 
     @Override
-    protected HibernateI18NOfferingMetadata createHibernateObject() {
-        return new HibernateI18NOfferingMetadata();
+    protected I18nOfferingEntity createHibernateObject() {
+        return new I18nOfferingEntity();
     }
 
     @Override

@@ -32,7 +32,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -40,8 +42,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
+import org.hibernate.boot.Metadata;
+import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
@@ -63,12 +65,12 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
 
-
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             String jdbc = toURL(settings);
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);
@@ -82,8 +84,11 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?>> newHashSet(getDatabaseDefinition(), getDatabaseConceptDefinition(),
-                getTransactionalDefiniton(), getMulitLanguageDefiniton());
+        AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(
+                "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
+                System.getProperty("user.home") + File.separator + "sos");
+        return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
+                getTransactionalDefiniton(), getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
     }
 
     private StringSettingDefinition getDatabaseDefinition() {
@@ -126,7 +131,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         String path = (String) settings.get(DATABASE_KEY);
         File f = new File(path + ".h2.db");
         if (f.exists()) {
-            return false;
+            return checkTableSize(settings);
         } else {
             File parent = f.getParentFile();
             if (parent != null && !parent.exists()) {
@@ -147,8 +152,26 @@ public class H2FileDatasource extends AbstractH2Datasource {
         }
     }
 
+    private boolean checkTableSize(Map<String, Object> settings) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            stmt = conn.createStatement();
+            stmt.execute("show tables");
+            ResultSet resultSet = stmt.getResultSet();
+            resultSet.last();
+            return resultSet.getRow() <= 1;
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(conn);
+            close(stmt);
+        }
+    }
+
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override

@@ -34,20 +34,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import org.n52.sos.web.common.AbstractController;
-import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -76,7 +75,7 @@ public class AdminLoggingController extends AbstractController {
 
     private static final String ERROR_MODEL_ATTRIBUTE = "error";
 
-    @Autowired
+    @Inject
     private AbstractLoggingConfigurator loggingConfigurator;
 
     @RequestMapping(method = RequestMethod.GET)

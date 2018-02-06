@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.dao;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.Codespace;
+import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +55,11 @@ public class CodespaceDAO {
      *            Hibernate session
      * @return Codespace object
      */
-    public Codespace getCodespace(final String codespace, final Session session) {
+    public CodespaceEntity getCodespace(final String codespace, final Session session) {
         Criteria criteria =
-                session.createCriteria(Codespace.class).add(Restrictions.eq(Codespace.CODESPACE, codespace));
+                session.createCriteria(CodespaceEntity.class).add(Restrictions.eq(CodespaceEntity.PROPERTY_NAME, codespace));
         LOGGER.debug("QUERY getCodespace(codespace): {}", HibernateHelper.getSqlString(criteria));
-        return (Codespace) criteria.uniqueResult();
+        return (CodespaceEntity) criteria.uniqueResult();
     }
 
     /**
@@ -71,11 +71,11 @@ public class CodespaceDAO {
      *            Hibernate session
      * @return Codespace object
      */
-    public Codespace getOrInsertCodespace(final String codespace, final Session session) {
-        Codespace result = getCodespace(codespace, session);
+    public CodespaceEntity getOrInsertCodespace(final String codespace, final Session session) {
+        CodespaceEntity result = getCodespace(codespace, session);
         if (result == null) {
-            result = new Codespace();
-            result.setCodespace(codespace);
+            result = new CodespaceEntity();
+            result.setName(codespace);
             session.save(result);
             session.flush();
             session.refresh(result);

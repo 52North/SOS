@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.ReferencedEnvelope;
@@ -50,7 +51,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
-    public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
+    public String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
         if (samplingFeature.isSetIdentifier()) {
             return samplingFeature.getIdentifier();
         }
@@ -92,18 +93,6 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
-
-    @Override
-    public int getDefaultResponseEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int getDefaultResponse3DEPSG() {
-        // TODO Auto-generated method stub
-        return 0;
     }
 
 }

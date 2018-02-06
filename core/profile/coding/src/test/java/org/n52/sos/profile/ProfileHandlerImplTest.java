@@ -54,7 +54,7 @@ public class ProfileHandlerImplTest {
 
     @Test
     public void is_two_profles_available() {
-        assertThat(phi.getAvailableProfiles().size(), is(2));
+        assertThat(phi.getAvailableProfiles().size(), is(3));
     }
 
     @Test
@@ -103,5 +103,21 @@ public class ProfileHandlerImplTest {
         assertThat(profile.getDefaultObservationTypesForEncoding().isEmpty(), is(false));
         assertThat(profile.getDefaultObservationTypesForEncoding().containsKey("http://www.opengis.net/waterml/2.0"), is(true));
         assertThat(profile.getDefaultObservationTypesForEncoding().get("http://www.opengis.net/waterml/2.0"), is("http://www.opengis.net/def/observationType/waterml/2.0/MeasurementTimeseriesTVPObservation"));
+    }
+
+    @Test
+    public void check_persist() {
+        phi.activateProfile("hydrology");
+        phi.persist();
+        phi.reloadProfiles();
+        assertThat(phi.getAvailableProfiles().get("hydrology").isActiveProfile(), is(true));
+        assertThat(phi.getAvailableProfiles().get("SOS_20_PROFILE").isActiveProfile(), is(false));
+
+        phi.activateProfile("SOS_20_PROFILE");
+        phi.persist();
+        phi.reloadProfiles();
+        assertThat(phi.getAvailableProfiles().get("hydrology").isActiveProfile(), is(false));
+        assertThat(phi.getAvailableProfiles().get("SOS_20_PROFILE").isActiveProfile(), is(true));
+
     }
 }

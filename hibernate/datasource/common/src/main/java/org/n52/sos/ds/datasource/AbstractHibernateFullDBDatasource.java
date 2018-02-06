@@ -71,11 +71,15 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         set.add(createBatchSizeDefinition(batchSizeDefault));
         set.add(createProvidedJdbcDriverDefinition(providedJdbc));
         set.add(getDatabaseConceptDefinition());
+        set.add(getFeatureConceptDefinition());
         if (isTransactionalDatasource()) {
             set.add(getTransactionalDefiniton());
         }
         if (isMultiLanguageDatasource()) {
             set.add(getMulitLanguageDefiniton());
+        }
+        if (isSeriesMetadataDatasource()) {
+            set.add(getSeriesMetadataDefiniton());
         }
         return set;
     }
@@ -138,6 +142,8 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.C3P0_ACQUIRE_INCREMENT, "1");
         p.put(HibernateConstants.C3P0_TIMEOUT, "0");
         p.put(HibernateConstants.C3P0_MAX_STATEMENTS, "0");
+        p.put(HibernateConstants.C3P0_PRIVILEGE_SPAWNED_THREAD, "true");
+        p.put(HibernateConstants.C3P0_CONTEXT_CLASS_LOADER_SOURCE, "library");
         if (settings.containsKey(BATCH_SIZE_KEY)) {
             p.put(HibernateConstants.JDBC_BATCH_SIZE, settings.get(BATCH_SIZE_KEY).toString());
         }
@@ -146,7 +152,16 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
-        p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
+        p.put(FEATURE_CONCEPT_KEY, settings.get(FEATURE_CONCEPT_KEY));
+        if (settings.containsKey(TIMEZONE_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
+        }
+        if (settings.containsKey(TIME_STRING_FORMAT_KEY) && settings.get(TIME_STRING_FORMAT_KEY) != null) {
+            p.put(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT, settings.get(TIME_STRING_FORMAT_KEY));
+        }
+        if (settings.containsKey(TIME_STRING_Z_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIME_STRING_Z, settings.get(TIME_STRING_Z_KEY).toString());
+        }
         addMappingFileDirectories(settings, p);
 
         return p;
@@ -167,10 +182,18 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         }
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
-
-        settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)) {
+            settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        }
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT)) {
+            settings.put(TIME_STRING_FORMAT_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT));
+        }
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_Z)) {
+            settings.put(TIME_STRING_Z_KEY, Boolean.valueOf(current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z)));
+        }
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
 
         final String[] parsed = parseURL(url);

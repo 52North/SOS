@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <bean id="xmlResponseWriterFactory"
           class="org.n52.iceland.response.XmlResponseWriterFactory" />
@@ -24,6 +24,12 @@
     <bean id="responseFormatRepositoryInitializer"
           class="org.n52.sos.coding.encode.ResponseFormatRepositoryInitializer"/>
 
+  <bean id="procedureDescriptionFormatRepository"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
+
+   <bean id="procedureDescriptionFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepositoryInitializer"/>
+
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
 
@@ -42,11 +48,6 @@
     <bean id="driverCleanupListener"
           class="org.n52.sos.service.DriverCleanupListener" />
 
-    <bean id="procedureDescriptionFormatRepository"
-          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
-
-    <bean id="procedureDescriptionFormatRepositoryInitializer"
-          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepositoryInitializer" />
 
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>
@@ -69,4 +70,19 @@
             </map>
         </property>
     </bean>
+
+    <bean id="reportingHeaderSQLiteManager"
+          class="org.n52.sos.config.sqlite.ReportingHeaderSQLiteManager">
+        <property name="sessionFactory">
+            <bean class="org.n52.sos.config.sqlite.SQLiteSessionFactory">
+                <property name="databaseName" value="eReportingHeader" />
+                <property name="annotatedClasses">
+                    <array>
+                        <value>org.n52.sos.config.sqlite.entities.JSONFragment</value>
+                    </array>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
 </beans>

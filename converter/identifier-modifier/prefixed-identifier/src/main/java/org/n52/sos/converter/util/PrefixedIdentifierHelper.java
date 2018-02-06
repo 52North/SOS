@@ -34,6 +34,13 @@ import org.n52.janmayen.lifecycle.Constructable;
 
 import com.google.common.base.Strings;
 
+/**
+ * Helper class for the {@link PrefixedIdentifierModifier}
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 @Configurable
 public class PrefixedIdentifierHelper implements Constructable {
     @Deprecated
@@ -159,7 +166,7 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetAnyPrefix() {
-        return isSetGlobalPrefix() && isSetFeatureOfInterestPrefix() && isSetObservablePropertyPrefix() && isSetOfferingPrefix() && isSetProcedurePrefix();
+        return isSetGlobalPrefix() || isSetFeatureOfInterestPrefix() || isSetObservablePropertyPrefix() || isSetOfferingPrefix() || isSetProcedurePrefix();
     }
 
 }

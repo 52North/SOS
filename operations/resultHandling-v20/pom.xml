@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>operations</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>resultHandling-v20</artifactId>
@@ -27,9 +27,13 @@
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
         </dependency>
-        <dependency>
+         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard</artifactId>
-        </dependency>
+         </dependency>
+         <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>faroe-annotations</artifactId>
+         </dependency>
     </dependencies>
 </project>

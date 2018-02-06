@@ -34,12 +34,12 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.ProcessMethod;
 import org.n52.shetland.ogc.sensorML.ProcessModel;
@@ -51,8 +51,6 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
@@ -72,10 +70,10 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
     private String processMethodRulesDefinitionDescriptionTemplate;
 
     public HibernateProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler,
-                                                        EntitiyHelper entitiyHelper, GeometryHandler geometryHandler,
+                                                        GeometryHandler geometryHandler,
                                                         DaoFactory daoFactory, I18NDAORepository i18NDAORepository,
                                                         ContentCacheController cacheController) {
-        super(profileHandler, entitiyHelper, geometryHandler, daoFactory, i18NDAORepository, cacheController);
+        super(profileHandler, geometryHandler, daoFactory, i18NDAORepository, cacheController);
     }
 
     @Setting(ProcedureDescriptionSettings.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
@@ -97,18 +95,18 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
      * @throws OwsExceptionReport If an error occurs
      */
     @Override
-    public SosProcedureDescription<?> generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
+    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
             throws OwsExceptionReport {
         setLocale(i18n);
         // 2 try to get position from entity
-        if (procedure.isSpatial()) {
-            // 2.1 if position is available -> system -> own class <- should
-            // be compliant with SWE lightweight profile
-            return new SosProcedureDescription<>(createSmlSystem(procedure, session));
-        } else {
+//        if (procedure.isSpatial()) {
+//            // 2.1 if position is available -> system -> own class <- should
+//            // be compliant with SWE lightweight profile
+//            return new SosProcedureDescription<>(createSmlSystem(procedure, session));
+//        } else {
             // 2.2 if no position is available -> processModel -> own class
             return new SosProcedureDescription<>(createSmlProcessModel(procedure, session));
-        }
+//        }
     }
 
     /**
@@ -121,7 +119,7 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
      *
      * @throws OwsExceptionReport If an error occurs
      */
-    private ProcessModel createSmlProcessModel(Procedure procedure, Session session) throws OwsExceptionReport {
+    private ProcessModel createSmlProcessModel(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
         final ProcessModel processModel = new ProcessModel();
         setCommonValues(procedure, processModel, session);
         processModel.setMethod(createMethod(procedure, getObservablePropertiesForProcedure(procedure.getIdentifier())));
@@ -139,7 +137,7 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
      *
      * @throws OwsExceptionReport If an error occurs
      */
-    private System createSmlSystem(Procedure procedure, Session session) throws OwsExceptionReport {
+    private System createSmlSystem(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
         System smlSystem = new System();
         setCommonValues(procedure, smlSystem, session);
         smlSystem.setPosition(createPosition(procedure));
@@ -154,7 +152,7 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
      *
      * @return SenbsorML ProcessModel
      */
-    private ProcessMethod createMethod(Procedure procedure, String[] observableProperties) {
+    private ProcessMethod createMethod(ProcedureEntity procedure, String[] observableProperties) {
         return new ProcessMethod(createRulesDefinition(procedure, observableProperties));
     }
 
@@ -166,7 +164,7 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
      *
      * @return SensorML RulesDefinition
      */
-    private RulesDefinition createRulesDefinition(Procedure procedure, String[] observableProperties) {
+    private RulesDefinition createRulesDefinition(ProcedureEntity procedure, String[] observableProperties) {
         RulesDefinition rD = new RulesDefinition();
         String template = processMethodRulesDefinitionDescriptionTemplate;
         String description = String.format(template, procedure.getIdentifier(), String.join(",", observableProperties));

@@ -42,36 +42,13 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class ProfileParser {
+public class ProfileParser implements ProfileCoding {
 
-    private static final String IDENTIFIER = "identifier";
-    private static final String ACTIVE = "active";
-    private static final String OBSERVATION_RESPONSE_FORMAT = "observationResponseFormat";
-    private static final String ENCODE_FOI_IN_OBS = "encodeFeatureOfInterestInObservations";
-    private static final String ENCODE_NAMESPACE_FOIS = "encodingNamespaceForFeatureOfInterestEncoding";
-    private static final String SHOW_METADATA_OF_EMPTY_OBS = "showMetadataOfEmptyObservations";
-    private static final String LIST_FOIS_IN_OFFERINGS = "listFeatureOfInterestsInOfferings";
-    private static final String ENCODE_CHILD_PROCS = "encodeChildProcedureDescriptions";
-    private static final String SHOW_FULL_OPS_METADATA ="showFullOperationsMetadata";
-    private static final String SHOW_FULL_OPS_METADATA_FOR_OBS = "showFullOperationsMetadataForObservations";
-    private static final String ALLOW_SUBSETTING = "allowSubsettingForSOS20OM20";
-    private static final String MERGE_VALUES = "mergeValues";
-    private static final String NO_DATA_PLACEHOLDER = "NoDataPlaceholder";
-    private static final String RESPONSE_PLACEHOLDER = "responsePlaceholder";
-    private static final String PLACEHOLDER = "placeholder";
-    private static final String RETURN_LATEST_VALUE = "returnLatestValueIfTemporalFilterIsMissingInGetObservation";
-
-    private static final String ENCODE_PROCEDURE = "EncodeProcedure";
-    private static final String NAMESPACE = "namespace";
-    private static final String ENCCODE = "encode";
-
-    private static final String DEFAULT_OBS_TYPE_FOR_ENCODING = "DefaultObservationTypesForEncoding";
-    private static final String  OBS_TYPE = "observationType";
-
-    public Profile parseSosProfile(JsonNode node) {
+    public Profile parseProfile(JsonNode node) {
         ProfileImpl profile = new ProfileImpl();
         profile.setIdentifier(parseIdentifier(node));
         profile.setActiveProfile(parseActiveProfile(node));
+        profile.setDefinition(parseDefinition(node));
         profile.setListFeatureOfInterestsInOfferings(parseListFeatureOfInterestsInOfferings(node));
         profile.setEncodeChildProcedureDescriptions(parseEncodeChildProcedureDescriptions(node));
         profile.setShowFullOperationsMetadata(parseShowFullOperationsMetadata(node));
@@ -103,6 +80,10 @@ public class ProfileParser {
 
     private String parseIdentifier(JsonNode node) {
         return parseText(node.path(IDENTIFIER));
+    }
+
+    private String parseDefinition(JsonNode node) {
+        return parseText(node.path(DEFINITION));
     }
 
     private boolean parseActiveProfile(JsonNode node) {

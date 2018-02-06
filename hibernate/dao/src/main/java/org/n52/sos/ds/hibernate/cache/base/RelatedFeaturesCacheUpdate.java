@@ -65,7 +65,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
             for (RelatedFeature relatedFeature : relatedFeatures) {
                 Set<String> roles = new HashSet<>(relatedFeature.getRelatedFeatureRoles().size());
                 for (RelatedFeatureRole relatedFeatureRole : relatedFeature.getRelatedFeatureRoles()) {
-                    roles.add(relatedFeatureRole.getRelatedFeatureRole());
+                    roles.copy(relatedFeatureRole.getRelatedFeatureRole());
                 }
                 getCache().setRolesForRelatedFeature(relatedFeature.getFeatureOfInterest().getIdentifier(), roles);
             }

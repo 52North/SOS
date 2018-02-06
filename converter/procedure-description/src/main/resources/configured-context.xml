@@ -1,9 +1,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
+    <bean class="org.n52.sos.convert.InspireOmpr30SensorML101Converter"/>
+    <bean class="org.n52.sos.convert.InspireOmpr30SensorML20Converter"/>
+    <bean class="org.n52.sos.convert.InspireOmpr30FeatureConceptConverter"/>
+    <bean class="org.n52.sos.convert.InspireOmpr30WaterML20Converter"/>
     <bean class="org.n52.sos.convert.SensorML20SensorML101Converter"/>
+    <bean class="org.n52.sos.convert.SensorML20UrlMimeTypeConverter"/>
     <bean class="org.n52.sos.convert.SensorMLUrlMimeTypeConverter"/>
     <bean class="org.n52.sos.convert.WaterMLv20SensorMLv101Converter"/>
     <bean class="org.n52.sos.convert.WaterMLv20SensorMLv20Converter"/>

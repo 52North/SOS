@@ -35,13 +35,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -51,6 +50,8 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -59,10 +60,10 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.ProcedureDescriptionSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
@@ -150,21 +151,21 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected void setCommonData(Procedure procedure, AbstractFeature feature, Session session)
+    protected void setCommonData(ProcedureEntity procedure, AbstractFeature feature, Session session)
             throws OwsExceptionReport {
         String identifier = procedure.getIdentifier();
         addNameAndDescription(procedure, feature);
         feature.setIdentifier(identifier);
     }
 
-    protected void addNameAndDescription(Procedure procedure, AbstractFeature feature) throws OwsExceptionReport {
+    protected void addNameAndDescription(ProcedureEntity procedure, AbstractFeature feature) throws OwsExceptionReport {
         I18NDAO<I18NProcedureMetadata> i18nDAO = i18NDAORepository.getDAO(I18NProcedureMetadata.class);
         Locale requestedLocale = getLocale();
         if (i18nDAO == null) {
             // no locale support
-            ProcedureDAO featureDAO = daoFactory.getProcedureDAO();
-            feature.addName(featureDAO.getName(procedure));
-            feature.setDescription(featureDAO.getDescription(procedure));
+            ProcedureDAO dao = daoFactory.getProcedureDAO();
+            feature.addName(dao.getName(procedure));
+            feature.setDescription(dao.getDescription(procedure));
         } else {
             if (requestedLocale != null) {
                 // specific locale was requested
@@ -207,16 +208,17 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
      *
      * @return Collection with names
      */
-    protected List<CodeType> createNames(Procedure procedure) {
+    protected List<CodeType> createNames(ProcedureEntity procedure) {
         // locale
         return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
     }
 
-    protected List<String> createDescriptions(Procedure procedure, String[] observableProperties) {
+    protected List<String> createDescriptions(ProcedureEntity procedure, String[] observableProperties) {
         String template = this.descriptionTemplate;
         String identifier = procedure.getIdentifier();
         String obsProps = Arrays.stream(observableProperties).collect(Collectors.joining(","));
-        String type = procedure.isSpatial() ? "sensor system" : "procedure";
+//        String type = procedure.isSpatial() ? "sensor system" : "procedure";
+        String type = "procedure";
         return Lists.newArrayList(String.format(template, type, identifier, obsProps));
     }
 
@@ -236,14 +238,14 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
      *             If an error occurs.
      */
     @VisibleForTesting
-    AbstractObservation<?> getExampleObservation(String identifier, String observableProperty, Session session)
+    DataEntity<?> getExampleObservation(String identifier, String observableProperty, Session session)
             throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
         c.setMaxResults(1);
         LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
                 HibernateHelper.getSqlString(c));
-        final AbstractObservation<?> example = (AbstractObservation) c.uniqueResult();
+        final DataEntity<?> example = (DataEntity) c.uniqueResult();
         if (example == null) {
             LOGGER.debug(
                     "Could not receive example observation from database for procedure '{}' observing property '{}'.",
@@ -254,7 +256,13 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
 
     @VisibleForTesting
     String[] getObservablePropertiesForProcedure(String identifier) {
-        Set<String> props = getCache().getObservablePropertiesForProcedure(identifier);
+        SortedSet<String> props = new TreeSet<>();
+        Set<String> obsProps = getCache().getObservablePropertiesForProcedure(identifier);
+        for (String obsProp : obsProps) {
+            if (getCache().getPublishedObservableProperties().contains(obsProp)) {
+                props.add(obsProp);
+            }
+        }
         return props.toArray(new String[props.size()]);
     }
 }

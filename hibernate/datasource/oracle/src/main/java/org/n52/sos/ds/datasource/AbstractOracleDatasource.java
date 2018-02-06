@@ -31,30 +31,25 @@ package org.n52.sos.ds.datasource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import oracle.jdbc.OracleDriver;
-
 import org.hibernate.HibernateException;
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.internal.util.config.ConfigurationException;
-import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
+import org.hibernate.spatial.HibernateSpatialConfigurationSettings;
+import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.n52.iceland.ds.Datasource;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ds.Datasource;
 import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
+import oracle.jdbc.OracleDriver;
 
 
 /**
@@ -130,7 +125,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
          Properties p = super.getDatasourceProperties(settings);
-         p.put(HibernateConstants.CONNECION_FINDER, OracleC3P0ConnectionFinder.class.getName());
+         p.put(HibernateSpatialConfigurationSettings.CONNECTION_FINDER, OracleC3P0ConnectionFinder.class.getName());
          return p;
     }
 
@@ -214,7 +209,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings)
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings)
             throws ConfigurationException {
         checkClasspath();
     }
@@ -225,11 +220,11 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         String schema = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
+            Metadata metadata = getMetadata(conn, settings);
             // fix problem with quoted tables
             schema = (String)settings.get(SCHEMA_KEY);
             settings.put(SCHEMA_KEY, null);
-            getConfig(settings).validateSchema(getDialectInternal(), metadata);
+            new SchemaValidator().validate(metadata);
         } catch (HibernateException | SQLException ex) {
             throw new ConfigurationException(ex.getMessage(), ex);
         } finally {

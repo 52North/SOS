@@ -29,6 +29,9 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 /**
  * Holder for observation time extrema. Contains phenomenon, result and valid
@@ -60,8 +63,40 @@ public class ObservationTimeExtrema extends TimeExtrema {
         this.maxValidTime = maxValidTime;
     }
 
+    public Time getValidTime() {
+        if (isSetValidTime()) {
+            if (getMinValidTime().equals(getMaxValidTime())) {
+                return new TimeInstant(getMaxValidTime());
+            }
+            return new TimePeriod(getMinValidTime(), getMaxValidTime());
+        }
+        return null;
+    }
+
     public boolean isSetValidTime() {
         return getMinValidTime() != null && getMaxValidTime() != null;
+    }
+
+    public boolean isEmpty() {
+        return !isSetPhenomenonTimes() && !isSetResultTimes() && !isSetValidTime();
+    }
+
+    public void expand(ObservationTimeExtrema ote) {
+        if (isEmpty() && !ote.isEmpty()) {
+            setMinPhenomenonTime(ote.getMinPhenomenonTime());
+            setMaxPhenomenonTime(ote.getMaxPhenomenonTime());
+            setMinResultTime(ote.getMinResultTime());
+            setMaxResultTime(ote.getMaxResultTime());
+            setMinValidTime(ote.getMinValidTime());
+            setMaxValidTime(ote.getMaxValidTime());
+        } else {
+            setMinPhenomenonTime(getMinPhenomenonTime().isAfter(ote.getMinPhenomenonTime()) ? ote.getMinPhenomenonTime() : getMinPhenomenonTime());
+            setMaxPhenomenonTime(getMaxPhenomenonTime().isBefore(ote.getMaxPhenomenonTime()) ? ote.getMaxPhenomenonTime() : getMaxPhenomenonTime());
+            setMinResultTime(getMinResultTime().isAfter(ote.getMinResultTime()) ? ote.getMinResultTime() : getMinResultTime());
+            setMaxResultTime(getMaxResultTime().isBefore(ote.getMaxResultTime()) ? ote.getMaxResultTime() : getMaxResultTime());
+            setMinValidTime(getMinValidTime().isAfter(ote.getMinValidTime()) ? ote.getMinValidTime() : getMinValidTime());
+            setMaxValidTime(getMaxValidTime().isBefore(ote.getMaxValidTime()) ? ote.getMaxValidTime() : getMaxValidTime());
+        }
     }
 
 }

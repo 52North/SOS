@@ -116,11 +116,6 @@ public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVis
     }
 
     @Override
-    public Value<?> visit(SweCategoryRange component) throws OwsExceptionReport {
-        throw notSupported(component);
-    }
-
-    @Override
     public Value<?> visit(SweQuantity component) {
         return new QuantityValue(component.getValue(), component.getUom());
     }
@@ -144,6 +139,12 @@ public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVis
 
     @Override
     public Value<?> visit(SweCountRange component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweCategoryRange component)
             throws OwsExceptionReport {
         throw notSupported(component);
     }

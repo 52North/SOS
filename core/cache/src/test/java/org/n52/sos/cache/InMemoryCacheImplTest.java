@@ -47,8 +47,10 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -90,6 +92,9 @@ public class InMemoryCacheImplTest {
                 return Collections.emptySet();
             }
         };
+        SupportedTypeRepository supportedTypeRepository = new SupportedTypeRepository();
+        supportedTypeRepository.init(new DecoderRepository(), new EncoderRepository());
+        instance.setSupportedTypeRepository(supportedTypeRepository);
     }
 
     @After

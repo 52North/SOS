@@ -59,7 +59,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
 
     private final DeleteSensorRequest request;
 
-    public SensorDeletionUpdate(CacheFeederHandler cacheFeederDAO,DeleteSensorRequest request) {
+    public SensorDeletionUpdate(CacheFeederHandler cacheFeederDAO, DeleteSensorRequest request) {
         super(cacheFeederDAO);
         if (request == null) {
             String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), request);
@@ -75,6 +75,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         final String procedure = request.getProcedureIdentifier();
 
         cache.removeProcedure(procedure);
+        cache.removePublishedProcedure(procedure);
 
         cache.removeMinPhenomenonTimeForProcedure(procedure);
         cache.removeMaxPhenomenonTimeForProcedure(procedure);
@@ -118,6 +119,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
                     cache.removeObservablePropertiesForResultTemplate(resultTemplate);
                 }
                 cache.removeOffering(offering);
+                cache.removePublishedOffering(offering);
             }
         }
 
@@ -129,6 +131,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
 
         cache.removeRolesForRelatedFeatureNotIn(cache.getRelatedFeatures());
         cache.setFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
+        cache.setPublishedFeaturesOfInterest(cache.getFeaturesOfInterestWithOffering());
 
         // observable property relations
         for (String observableProperty : cache.getObservablePropertiesForProcedure(procedure)) {

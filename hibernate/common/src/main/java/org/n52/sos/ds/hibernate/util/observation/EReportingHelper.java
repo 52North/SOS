@@ -31,11 +31,13 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingData;
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.shetland.aqd.AqdConstants;
-import org.n52.shetland.aqd.AqdUomRepository;
-import org.n52.shetland.aqd.ElementType;
 import org.n52.shetland.aqd.AqdConstants.PrimaryObservation;
+import org.n52.shetland.aqd.AqdUomRepository;
 import org.n52.shetland.aqd.AqdUomRepository.Uom;
+import org.n52.shetland.aqd.ElementType;
 import org.n52.shetland.iso.gmd.GmdDomainConsistency;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -58,9 +60,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingQualityData;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HibernateEReportingRelations.EReportingValues;
 import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.collect.Lists;
@@ -75,11 +74,13 @@ import com.google.common.collect.Sets;
  */
 public class EReportingHelper {
 
+    private final SweHelper helper;
+
     /**
      * private constructor
      */
-    private EReportingHelper() {
-
+    public EReportingHelper(SweHelper sweHelper) {
+        this.helper = sweHelper;
     }
 
     /**
@@ -94,13 +95,13 @@ public class EReportingHelper {
      * @throws CodedException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
-            EReportingValues observation) throws CodedException {
+    public SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
+            EReportingData observation) throws CodedException {
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         sweDataArrayValue.setValue(createSweDataArray(omObservation, observation));
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
         observationValue.setPhenomenonTime(getPhenomenonTime(omObservation,
-                ((AbstractTemporalReferencedObservation) observation).createPhenomenonTime()));
+                DataTimeCreator.createPhenomenonTime(observation)));
         addQuality(observation, observationValue);
         return observationValue;
     }
@@ -114,7 +115,7 @@ public class EReportingHelper {
      *            {@link EReportingValue} to create {@link SweDataArray} from
      * @return Created {@link SweDataArray}
      */
-    public static SweDataArray createSweDataArray(OmObservation omObservation, EReportingValues observation) {
+    public SweDataArray createSweDataArray(OmObservation omObservation, EReportingData observation) {
         SweDataArray sweDataArray = new SweDataArray();
         sweDataArray.setElementCount(createElementCount(omObservation));
         PrimaryObservation primaryObservation = PrimaryObservation.from(observation.getPrimaryObservation());
@@ -133,23 +134,23 @@ public class EReportingHelper {
      *            {@link SweDataArray} to be added to the other
      * @return Merged {@link SweDataArray}
      */
-    public static SweDataArray mergeValues(SweDataArray combinedValue, SweDataArray value) {
+    public SweDataArray mergeValues(SweDataArray combinedValue, SweDataArray value) {
         if (value.isSetValues()) {
             combinedValue.addAll(value.getValues());
         }
         return combinedValue;
     }
 
-    private static String getUnit(OmObservation omObservation, EReportingValues observation) {
+    private String getUnit(OmObservation omObservation, EReportingData observation) {
         if (omObservation.isSetValue() && omObservation.getValue().getValue().isSetUnit()) {
             return omObservation.getValue().getValue().getUnit();
-        } else if (observation.isSetUnit()) {
-            return observation.getUnit().getUnit();
+        } else if (observation.getDataset().hasUnit()) {
+            return observation.getDataset().getUnit().getUnit();
         }
         return null;
     }
 
-    private static SweCount createElementCount(OmObservation omObservation) {
+    private SweCount createElementCount(OmObservation omObservation) {
         if (omObservation.isSetValue() && omObservation.getValue().getValue() instanceof SweDataArrayValue) {
             SweDataArray value = (SweDataArray) omObservation.getValue().getValue().getValue();
             SweCount elementCount = value.getElementCount();
@@ -158,7 +159,7 @@ public class EReportingHelper {
         return new SweCount().setValue(1);
     }
 
-    private static SweAbstractDataComponent createElementType(PrimaryObservation primaryObservation, String unit) {
+    private SweAbstractDataComponent createElementType(PrimaryObservation primaryObservation, String unit) {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.setDefinition(AqdConstants.NAME_FIXED_OBSERVATIONS);
         dataRecord.addField(createField(ElementType.START_TIME, createSweTimeSamplingTime(ElementType.START_TIME)));
@@ -173,11 +174,11 @@ public class EReportingHelper {
         return dataRecord;
     }
 
-    private static SweField createField(ElementType elementType, SweAbstractDataComponent content) {
+    private SweField createField(ElementType elementType, SweAbstractDataComponent content) {
         return new SweField(elementType.getName(), content);
     }
 
-    private static SweAbstractDataComponent createSweTimeSamplingTime(ElementType elementType) {
+    private SweAbstractDataComponent createSweTimeSamplingTime(ElementType elementType) {
         SweTime time = new SweTime();
         time.setDefinition(elementType.getDefinition());
         if (elementType.isSetUOM()) {
@@ -186,15 +187,15 @@ public class EReportingHelper {
         return time;
     }
 
-    private static SweAbstractDataComponent createSweCatagory(ElementType elementType) {
+    private SweAbstractDataComponent createSweCatagory(ElementType elementType) {
         return new SweCategory().setDefinition(elementType.getDefinition());
     }
 
-    private static SweAbstractDataComponent createSweQuantity(ElementType elementType) {
+    private SweAbstractDataComponent createSweQuantity(ElementType elementType) {
         return createSweQuantity(elementType, elementType.getUOM());
     }
 
-    private static SweAbstractDataComponent createSweQuantity(ElementType elementType, String unit) {
+    private SweAbstractDataComponent createSweQuantity(ElementType elementType, String unit) {
         SweQuantity quantity = new SweQuantity();
         quantity.setDefinition(elementType.getDefinition());
         Uom aqdUom = AqdUomRepository.getAqdUom(unit);
@@ -206,11 +207,11 @@ public class EReportingHelper {
         return quantity;
     }
 
-    private static SweAbstractEncoding createEncoding(OmObservation omObservation) {
-        return new SweHelper().createTextEncoding(omObservation);
+    private SweAbstractEncoding createEncoding(OmObservation omObservation) {
+        return helper.createTextEncoding(omObservation);
     }
 
-    private static void addDoubleValue(List<String> list, Double value) {
+    private void addDoubleValue(List<String> list, Double value) {
         if (value != null) {
             list.add(Double.toString(value));
         } else {
@@ -219,7 +220,7 @@ public class EReportingHelper {
 
     }
 
-    private static void addIntegerValue(List<String> list, Integer value) {
+    private void addIntegerValue(List<String> list, Integer value) {
         if (value != null) {
             list.add(Integer.toString(value));
         } else {
@@ -227,7 +228,7 @@ public class EReportingHelper {
         }
     }
 
-    private static void addValue(List<String> value, OmObservation omObservation) {
+    private void addValue(List<String> value, OmObservation omObservation) {
         if (omObservation.getValue() instanceof SingleObservationValue<?>) {
             value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
         } else {
@@ -235,7 +236,7 @@ public class EReportingHelper {
         }
     }
 
-    private static void addValue(List<String> value, EReportingValues observation, OmObservation omObservation) {
+    private void addValue(List<String> value, EReportingData observation, OmObservation omObservation) {
         if (observation.isSetValue()) {
             // TODO check if this is the best solution
             if (omObservation.isSetDecimalSeparator() && omObservation.getDecimalSeparator() != ".") {
@@ -248,9 +249,8 @@ public class EReportingHelper {
         }
     }
 
-    private static List<List<String>> createValue(OmObservation omObservation, EReportingValues observation, PrimaryObservation primaryObservation) {
+    private List<List<String>> createValue(OmObservation omObservation, EReportingData observation, PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
-        addTimes(value, ((AbstractTemporalReferencedObservation) observation).createPhenomenonTime());
         addIntegerValue(value, observation.getVerification());
         addIntegerValue(value, observation.getValidation());
         addValue(value, observation, omObservation);
@@ -262,7 +262,7 @@ public class EReportingHelper {
         return list;
     }
 
-    private static void addTimes(List<String> value, Time time) {
+    private void addTimes(List<String> value, Time time) {
         if (time instanceof TimeInstant) {
             value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
             value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
@@ -275,7 +275,7 @@ public class EReportingHelper {
         }
     }
 
-    private static Time getPhenomenonTime(OmObservation omObservation, Time time) {
+    private Time getPhenomenonTime(OmObservation omObservation, Time time) {
         if (omObservation.isSetValue() && omObservation.getPhenomenonTime() != null) {
             if (omObservation.getPhenomenonTime() instanceof TimePeriod) {
                 TimePeriod timePeriod = (TimePeriod) omObservation.getPhenomenonTime();
@@ -291,11 +291,11 @@ public class EReportingHelper {
         return time;
     }
 
-    private static void addQuality(EReportingValues eReportingObservation, SingleObservationValue<?> value) throws CodedException {
+    private void addQuality(EReportingData eReportingObservation, SingleObservationValue<?> value) throws CodedException {
         value.addQualityList(getGmdDomainConsistency(eReportingObservation, false));
     }
 
-    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) throws CodedException {
+    public Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) throws CodedException {
         Set<OmResultQuality> set = Sets.newHashSet();
         if (eReportingObservation.isSetDataCaptureFlag()) {
             set.add(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCaptureFlag()));

@@ -40,7 +40,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
  * @since 4.1.0
  *
  */
-public class GetObservationByIdKvpDecoderv20 extends AbstractSosKvpDecoder<GetObservationByIdRequest> {
+public class GetObservationByIdKvpDecoderv20 extends AbstractObservationKvpDecoder<GetObservationByIdRequest> {
 
     public GetObservationByIdKvpDecoderv20() {
         super(GetObservationByIdRequest::new,

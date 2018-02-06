@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+    <env:Body>
+        <sos:InsertResultTemplate service="SOS"
+            version="2.0.0" xmlns:swes="http://www.opengis.net/swes/2.0"
+            xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:swe="http://www.opengis.net/swe/2.0"
+            xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:gml="http://www.opengis.net/gml/3.2"
+            xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:om="http://www.opengis.net/om/2.0"
+            xmlns:sams="http://www.opengis.net/samplingSpatial/2.0" xmlns:sf="http://www.opengis.net/sampling/2.0"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+            <sos:proposedTemplate>
+                <!-- Before using this example, make sure that all preconditions are fulfilled,
+                    e.g. perform InsertSensor example. -->
+                <sos:ResultTemplate>
+                    <swes:identifier>http://www.52north.org/test/procedure/10/template/Glider_Journy_10</swes:identifier>
+                    <sos:offering>http://www.52north.org/test/offering/10</sos:offering>
+                    <sos:observationTemplate>
+                        <om:OM_Observation gml:id="sensor2obsTemplate">
+                            <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation" />
+                            <om:phenomenonTime nilReason="template" />
+                            <om:resultTime nilReason="template" />
+                            <om:procedure xlink:href="http://www.52north.org/test/procedure/10" />
+                            <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/10_8" />
+                            <om:featureOfInterest xsi:nil="true" nilReason="template" />
+                            <om:result />
+                        </om:OM_Observation>
+                    </sos:observationTemplate>
+                    <sos:resultStructure>
+                        <swe:DataRecord>
+                            <swe:field name="phenomenonTime">
+                                <swe:Time definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
+                                    <swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
+                                </swe:Time>
+                            </swe:field>
+                            <swe:field name="test_observable_property_10_8">
+                                <swe:DataRecord definition="http://www.52north.org/test/observableProperty/10_8">
+                                    <swe:field name="test_observable_property_10_8_1">
+                                        <swe:Quantity definition="http://www.52north.org/test/observableProperty/10_8_1">
+                                            <swe:uom code="test_unit_10_8_1" />
+                                        </swe:Quantity>
+                                    </swe:field>
+                                    <swe:field name="test_observable_property_10_8_2">
+                                        <swe:Category definition="http://www.52north.org/test/observableProperty/10_8_2">
+                                            <swe:codeSpace  xlink:href="NOT_DEFINED" />
+                                        </swe:Category>
+                                    </swe:field>
+                                    <swe:field name="test_observable_property_10_8_3">
+                                        <swe:Count definition="http://www.52north.org/test/observableProperty/10_8_3" />
+                                    </swe:field>
+                                    <swe:field name="test_observable_property_10_8_4">
+                                        <swe:Text definition="http://www.52north.org/test/observableProperty/10_8_4" />
+                                    </swe:field>
+                                    <swe:field name="test_observable_property_10_8_5">
+                                        <swe:Boolean definition="http://www.52north.org/test/observableProperty/10_8_5" />
+                                    </swe:field>
+                                </swe:DataRecord>
+                            </swe:field>
+                            <swe:field name="featureOfInterest">
+                                <!-- definition should be the om:featureOfInterest
+                                    to point to the observation template. -->
+                                <swe:Text definition="om:featureOfInterest" />
+                            </swe:field>
+                            <swe:field name="samplingGeometry">
+                                <swe:Vector definition="http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry" referenceFrame="http://www.opengis.net/def/crs/EPSG/0/4326">
+                                    <swe:coordinate name="latitude">
+                                        <swe:Quantity definition="latitude" axisID="lat">
+                                            <swe:uom code="deg" />
+                                        </swe:Quantity>
+                                    </swe:coordinate>
+                                    <swe:coordinate name="longitude">
+                                        <swe:Quantity definition="longitude" axisID="lon">
+                                            <swe:uom code="deg" />
+                                        </swe:Quantity>
+                                    </swe:coordinate>
+                                </swe:Vector>
+                            </swe:field>
+                        </swe:DataRecord>
+                    </sos:resultStructure>
+                    <sos:resultEncoding>
+                        <swe:TextEncoding tokenSeparator="#" blockSeparator="@" />
+                    </sos:resultEncoding>
+                </sos:ResultTemplate>
+            </sos:proposedTemplate>
+        </sos:InsertResultTemplate>
+    </env:Body>
+</env:Envelope>

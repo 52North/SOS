@@ -1,0 +1,10 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean class="org.n52.sos.ds.hibernate.SessionFactoryProvider" />
+
+    <bean id="sessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
+
+</beans>

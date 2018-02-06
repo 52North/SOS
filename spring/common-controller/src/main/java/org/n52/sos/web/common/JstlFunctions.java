@@ -136,4 +136,9 @@ public class JstlFunctions {
         }
         return Json.print(node);
     }
+
+    public static boolean supportsI18N() {
+        return false;
+//        return I18NDAORepository.getInstance().isSupported();
+    }
 }

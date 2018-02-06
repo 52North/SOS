@@ -34,7 +34,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 /**

@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.hibernate;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.unique.DefaultUniqueDelegate;
-import org.hibernate.metamodel.relational.Column;
+import org.hibernate.mapping.Column;
 
 public class SQLiteUniqueDelegate extends DefaultUniqueDelegate {
 
@@ -40,11 +40,6 @@ public class SQLiteUniqueDelegate extends DefaultUniqueDelegate {
 
     @Override
     public String getColumnDefinitionUniquenessFragment(Column column) {
-            return " UNIQUE";
-    }
-
-    @Override
-    public String getColumnDefinitionUniquenessFragment(org.hibernate.mapping.Column column) {
         return " UNIQUE";
     }
 

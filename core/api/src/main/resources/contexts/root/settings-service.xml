@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
     <bean id="serviceSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="Service" />
         <property name="order" value="2.0" />
@@ -12,7 +12,7 @@
         <property name="description" value="The endpoint URL of this sos which will be shown in the GetCapabilities response (e.g. &lt;code&gt;http://localhost:8080/52nSOS/sos&lt;/code&gt; or &lt;code&gt;http://localhost:8080/52nSOS/service&lt;/code&gt;). The path to a specific binding (like &lt;code&gt;/soap&lt;/code&gt;) will appended to this URL. For detailed information, please read the &lt;a href=&quot;https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation&quot;&gt;documentation&lt;/a&gt;" />
         <property name="order" value="0.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="http://localhost:8080/iceland/service" />
+        <property name="defaultValue" value="http://localhost:8080/52n-sos-webapp/service" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.strictSpatialFilteringProfile" />
@@ -88,6 +88,14 @@
         <property name="defaultValue" value="120" />
         <property name="minimum" value="0" />
     </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="service.capabilitiesCacheUpdate" />
+        <property name="title" value="Content cache update interval" />
+        <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html" />
+        <property name="order" value="7.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="0 0/120 * * * ?" />
+    </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.exposeChildObservableProperties" />
         <property name="title" value="Should this SOS expose child observable properties?" />
@@ -96,12 +104,62 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.capabilities.listOnlyParentOfferings" />
+        <property name="title" value="Should the service list only parent offerings in service capabilities?" />
+        <property name="description" value="The service would list only parent offerings in the serivce capabilites. Lower level offerings would be referenced in extension elements of related ObservationOfferings." />
+        <property name="order" value="18.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.createFeatureGeometryFromSamplingGeometries" />
+        <property name="title" value="Should this SOS create the featureOfInterest geometry from samplingGeometries?" />
+        <property name="description" value="Whether the SOS should create the featureOfInterest geometry from samplingGeometries." />
+        <property name="order" value="20.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
     <bean class="org.n52.faroe.settings.FileSettingDefinition">
         <property name="key" value="service.cacheFileFolder" />
         <property name="title" value="Cache file folder" />
-        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. &lt;span class='text-warning'&gt;If you define a path, then grant the necessary rights (&lt;strong&gt;write and read permission&lt;/strong&gt;) to the &lt;strong&gt;application server user&lt;/strong&gt;!" />
-        <property name="order" value="19.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. &lt;span class='text-warning'&gt;If you define a path, then grant the necessary rights (lt;code&gt;write and read permission&lt;/code&gt;) to the &lt;code&gt;application server user&lt;/code&gt;!" />
+        <property name="order" value="21.0" />
         <property name="optional" value="true" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+     </bean>
+     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.updateFeatureGeometry" />
+        <property name="title" value="Should this SOS create the featureOfInterest geometry from samplingGeometries?" />
+        <property name="description" value="Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation. Note: The geometries are added to the end of the LineString! Also if the new observation is between existing observations!" />
+        <property name="order" value="22.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
     </bean>
+
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.includeResultTimeForMerging" />
+        <property name="title" value="Should this SOS include the resultTime for merging?" />
+        <property name="description" value="Whether the SOS should include the resultTime as inidcator when merging observations!" />
+        <property name="order" value="23.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="misc.convertComplexProfileToSingleProfiles" />
+        <property name="title" value="Should the SOS convert complex profiles to single profiles?" />
+        <property name="description" value="Should the SOS convert complex profiles to single profiles?" />
+        <property name="order" value="23.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.allowTemplateWithoutProcedureAndFeature" />
+        <property name="title" value="Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?" />
+        <property name="description" value="Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!" />
+        <property name="order" value="24.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+
 </beans>

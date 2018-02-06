@@ -73,6 +73,8 @@ public class DefaultProfile implements Profile {
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
 
+    private String definition;
+
     @Override
     public String getIdentifier() {
         return DEFAULT_IDENTIFIER;
@@ -81,6 +83,11 @@ public class DefaultProfile implements Profile {
     @Override
     public boolean isActiveProfile() {
         return true;
+    }
+
+    @Override
+    public void setActiveProfile(boolean active) {
+        // nothing to do;
     }
 
     @Override
@@ -132,6 +139,11 @@ public class DefaultProfile implements Profile {
     }
 
     @Override
+    public Map<String, Boolean> getEncodeProcedureInObservation() {
+        return encodeProcedureInObservation;
+    }
+
+    @Override
     public boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation() {
         return DEAFULT_RETURN_LATEST_VALUE_IF_TEMPORAL_FILTER_IS_MISSING_IN_GETOBSERVATION;
     }
@@ -172,8 +184,13 @@ public class DefaultProfile implements Profile {
     }
 
     @Override
-    public boolean isSetNoDataPlaceholder() {
-        return defaultNoDataPlaceholder != null && !defaultNoDataPlaceholder.isEmpty();
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+    @Override
+    public String getDefinition() {
+        return definition;
     }
 
 }

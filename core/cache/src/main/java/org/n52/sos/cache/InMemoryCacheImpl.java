@@ -44,9 +44,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.locationtech.jts.geom.Envelope;
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.function.Predicates;
 import org.n52.janmayen.function.Suppliers;
@@ -58,9 +56,9 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.cache.SosContentCache.ComponentAggregation;
-import org.n52.sos.cache.SosContentCache.TypeInstance;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -82,10 +80,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private final Map<String, Set<String>> allowedFeatureOfInterestTypeForOfferings = newSynchronizedMap();
     private final Map<String, Set<String>> childFeaturesForFeatureOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> childProceduresForProcedures = newSynchronizedMap();
+    private final Map<String, Set<String>> childOfferingsForOfferings = newSynchronizedMap();
     private final Map<String, Set<String>> compositePhenomenonsForProcedure = newSynchronizedMap();
     private final Map<String, Set<String>> compositePhenomenonsForOffering = newSynchronizedMap();
     private final Map<String, Set<String>> compositePhenomenonsForObservableProperty = newSynchronizedMap();
     private final Map<String, Set<String>> featuresOfInterestForOfferings = newSynchronizedMap();
+    private final Map<String, Set<String>> offeringsForFeaturesOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> featuresOfInterestForResultTemplates = newSynchronizedMap();
     private final Map<String, Set<String>> observablePropertiesForCompositePhenomenons = newSynchronizedMap();
     private final Map<String, Set<String>> observablePropertiesForOfferings = newSynchronizedMap();
@@ -97,6 +97,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private final Map<String, Set<String>> offeringsForProcedures = newSynchronizedMap();
     private final Map<String, Set<String>> parentFeaturesForFeaturesOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> parentProceduresForProcedures = newSynchronizedMap();
+    private final Map<String, Set<String>> parentOfferingsForOfferings = newSynchronizedMap();
     private final Map<String, Set<String>> proceduresForFeaturesOfInterest = newSynchronizedMap();
     private final Map<String, Set<String>> proceduresForObservableProperties = newSynchronizedMap();
     private final Map<String, Set<String>> proceduresForOfferings = newSynchronizedMap();
@@ -129,6 +130,11 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     private int defaultEpsgCode = 4326;
     private ReferencedEnvelope globalEnvelope = new ReferencedEnvelope(null, defaultEpsgCode);
     private DateTime updateTime;
+    private final Map<String, Set<String>> procedureProcedureDescriptionFormats = newSynchronizedMap();
+    private Set<String> publishedFeatureOfInterest = newSynchronizedSet();
+    private Set<String> publishedProcedure= newSynchronizedSet();
+    private Set<String> publishedOffering = newSynchronizedSet();
+    private Set<String> publishedObservableProperty = newSynchronizedSet();
 
     @Override
     public DateTime getLastUpdateTime() {
@@ -399,8 +405,20 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
+    public Set<String> getAllObservationTypesForOffering(final String offering) {
+        Set<String> observationTypes  =Sets.newHashSet(copyOf(this.allowedObservationTypeForOfferings.get(offering)));
+        observationTypes.addAll(getObservationTypesForOffering(offering));
+        return observationTypes;
+    }
+
+    @Override
     public Set<String> getFeaturesOfInterestForOffering(String offering) {
         return copyOf(this.featuresOfInterestForOfferings.get(offering));
+    }
+
+    @Override
+    public Set<String> getOfferingsForFeatureOfInterest(final String featureOfInterest) {
+        return copyOf(this.offeringsForFeaturesOfInterest.get(featureOfInterest));
     }
 
     @Override
@@ -440,12 +458,28 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
-    public Set<String> getParentFeatures(String featureIdentifier, boolean fullHierarchy, boolean includeSelf) {
+    public Set<String> getParentProcedures(final Set<String> procedureIdentifiers, final boolean fullHierarchy,
+            final boolean includeSelves) {
+        return getHierarchy(this.parentProceduresForProcedures, procedureIdentifiers, fullHierarchy, includeSelves);
+    }
+
+    @Override
+    public Set<String> getParentFeatures(final String featureIdentifier, final boolean fullHierarchy,
+            final boolean includeSelf) {
         return getHierarchy(this.parentFeaturesForFeaturesOfInterest, featureIdentifier, fullHierarchy, includeSelf);
     }
 
     @Override
-    public Set<String> getChildProcedures(String procedureIdentifier, boolean fullHierarchy, boolean includeSelf) {
+    public Set<String> getParentFeatures(final Set<String> featureIdentifiers, final boolean fullHierarchy,
+            final boolean includeSelves) {
+        return getHierarchy(this.parentFeaturesForFeaturesOfInterest, featureIdentifiers, fullHierarchy,
+                includeSelves);
+    }
+
+
+    @Override
+    public Set<String> getChildProcedures(final String procedureIdentifier, final boolean fullHierarchy,
+            final boolean includeSelf) {
         return getHierarchy(this.childProceduresForProcedures, procedureIdentifier, fullHierarchy, includeSelf);
     }
 
@@ -454,20 +488,42 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         return getHierarchy(this.childProceduresForProcedures, procedureIdentifiers, fullHierarchy, includeSelves);
     }
 
+
     @Override
-    public Set<String> getChildFeatures(String featureIdentifier, boolean fullHierarchy, boolean includeSelf) {
+    public Set<String> getParentOfferings(final String offeringIdentifier, final boolean fullHierarchy,
+            final boolean includeSelf) {
+        return getHierarchy(this.parentOfferingsForOfferings, offeringIdentifier, fullHierarchy, includeSelf);
+    }
+
+    @Override
+    public Set<String> getParentOfferings(final Set<String> offeringIdentifiers, final boolean fullHierarchy,
+            final boolean includeSelves) {
+        return getHierarchy(this.parentOfferingsForOfferings, offeringIdentifiers, fullHierarchy,
+                includeSelves);
+    }
+
+
+    @Override
+    public Set<String> getChildOfferings(final String offeringIdentifier, final boolean fullHierarchy,
+            final boolean includeSelf) {
+        return getHierarchy(this.childOfferingsForOfferings, offeringIdentifier, fullHierarchy, includeSelf);
+    }
+
+    @Override
+    public Set<String> getChildOfferings(final Set<String> offeringIdentifiers, final boolean fullHierarchy,
+            final boolean includeSelves) {
+        return getHierarchy(this.childOfferingsForOfferings, offeringIdentifiers, fullHierarchy, includeSelves);
+    }
+
+    @Override
+    public boolean hasParentOfferings(String offering) {
+        return this.parentOfferingsForOfferings.containsKey(offering);
+    }
+
+    @Override
+    public Set<String> getChildFeatures(final String featureIdentifier, final boolean fullHierarchy,
+            final boolean includeSelf) {
         return getHierarchy(this.childFeaturesForFeatureOfInterest, featureIdentifier, fullHierarchy, includeSelf);
-    }
-
-    @Override
-    public Set<String> getParentProcedures(Set<String> procedureIdentifiers, boolean fullHierarchy,
-                                           boolean includeSelves) {
-        return getHierarchy(this.parentProceduresForProcedures, procedureIdentifiers, fullHierarchy, includeSelves);
-    }
-
-    @Override
-    public Set<String> getParentFeatures(Set<String> featureIdentifiers, boolean fullHierarchy, boolean includeSelves) {
-        return getHierarchy(this.parentFeaturesForFeaturesOfInterest, featureIdentifiers, fullHierarchy, includeSelves);
     }
 
     @Override
@@ -979,6 +1035,11 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
+    public Set<String> getOfferingWithFeaturesOfInterest() {
+        return CollectionHelper.unionOfListOfLists(this.offeringsForFeaturesOfInterest.values());
+    }
+
+    @Override
     public void addAllowedObservationTypeForOffering(String offering, String allowedObservationType) {
         notNullOrEmpty(OFFERING, offering);
         notNullOrEmpty(ALLOWED_OBSERVATION_TYPE, allowedObservationType);
@@ -1002,6 +1063,8 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Adding featureOfInterest {} to Offering {}", featureOfInterest, offering);
         this.featuresOfInterestForOfferings.computeIfAbsent(offering, createSynchronizedSet()).add(featureOfInterest);
+        this.offeringsForFeaturesOfInterest.computeIfAbsent(featureOfInterest, createSynchronizedSet())
+            .add(offering);
     }
 
     @Override
@@ -1171,6 +1234,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
         notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Removing featureOfInterest {} from offering {}", featureOfInterest, offering);
         this.featuresOfInterestForOfferings.getOrDefault(offering, Collections.emptySet()).remove(featureOfInterest);
+        this.offeringsForFeaturesOfInterest.getOrDefault(featureOfInterest, Collections.emptySet()).remove(offering);
     }
 
     @Override
@@ -1186,6 +1250,9 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public void removeFeaturesOfInterestForOffering(String offering) {
         notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing featuresOfInterest for offering {}", offering);
+        for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
+            removeFeatureOfInterestForOffering(offering, featureOfInterest);
+        }
         this.featuresOfInterestForOfferings.remove(offering);
     }
 
@@ -1450,6 +1517,17 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
+    public void addOfferingForFeaturesOfInterest(final String offering, final Collection<String> featuresOfInterest) {
+        notNullOrEmpty(OFFERING, offering);
+        noNullOrEmptyValues(FEATURES_OF_INTEREST, featuresOfInterest);
+        LOG.trace("Adding offering {} to featureOfInterest {}", offering, featuresOfInterest);
+        for (final String featureOfInterest : featuresOfInterest) {
+            this.offeringsForFeaturesOfInterest.computeIfAbsent(featureOfInterest, createSynchronizedSet())
+            .add(offering);
+        }
+    }
+
+    @Override
     public void setObservablePropertiesForResultTemplate(String resultTemplate,
                                                          Collection<String> observableProperties) {
         notNullOrEmpty(RESULT_TEMPLATE, resultTemplate);
@@ -1503,7 +1581,27 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
-    public void updateEnvelopeForOffering(String offering, Envelope envelope) {
+    public void addParentOffering(final String offering, final String parentOffering) {
+        notNullOrEmpty(OFFERING, offering);
+        notNullOrEmpty(PARENT_OFFERING, parentOffering);
+        LOG.trace("Adding parentOffering {} to offering {}", parentOffering, offering);
+        this.parentOfferingsForOfferings.computeIfAbsent(offering, createSynchronizedSet()).add(parentOffering);
+        this.childOfferingsForOfferings.computeIfAbsent(parentOffering, createSynchronizedSet()).add(offering);
+    }
+
+    @Override
+    public void addParentOfferings(final String offering, final Collection<String> parentOfferings) {
+        notNullOrEmpty(OFFERING, offering);
+        noNullOrEmptyValues(PARENT_OFFERINGS, parentOfferings);
+        LOG.trace("Adding parentOfferings {} to offering {}", parentOfferings, offering);
+        this.parentOfferingsForOfferings.computeIfAbsent(offering, createSynchronizedSet()).addAll(parentOfferings);
+        parentOfferings.forEach((parentOffering)
+                -> this.childOfferingsForOfferings.computeIfAbsent(parentOffering, createSynchronizedSet())
+                        .add(offering));
+    }
+
+    @Override
+    public void updateEnvelopeForOffering(final String offering, final Envelope envelope) {
         notNullOrEmpty(OFFERING, offering);
         Objects.requireNonNull(envelope, ENVELOPE);
         if (hasEnvelopeForOffering(offering)) {
@@ -1783,6 +1881,12 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     }
 
     @Override
+    public void clearOfferingsForFeaturesOfInterest() {
+        LOG.trace("Clearing offerings for features of interest");
+        this.offeringsForFeaturesOfInterest.clear();
+    }
+
+    @Override
     public void clearMinPhenomenonTimeForOfferings() {
         LOG.trace("Clearing min phenomenon time for offerings");
         this.minPhenomenonTimeForOfferings.clear();
@@ -1991,28 +2095,47 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     @Override
     public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            featureOfInterestIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                featureOfInterestIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier, humanReadableName);
+            }
         }
     }
 
     @Override
     public void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            observablePropertyIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                observablePropertyIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                        humanReadableName);
+            }
         }
     }
 
     @Override
     public void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            procedureIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                procedureIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                        humanReadableName);
+            }
         }
     }
 
     @Override
     public void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName) {
         if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
-            offeringIdentifierHumanReadableName.put(identifier, humanReadableName);
+            try {
+                offeringIdentifierHumanReadableName.put(identifier, humanReadableName);
+            } catch (IllegalArgumentException iae) {
+                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                        humanReadableName);
+            }
         }
     }
 
@@ -2343,7 +2466,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
                 .collect(toSet());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Set<String> getTransactionalObservationProcedures() {
         return CollectionHelper.union(
@@ -2358,7 +2480,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
 
     @Override
     public Set<String> getQueryableProcedures() {
-        Set<String> procedures = getProcedures();
+        Set<String> procedures = getPublishedProcedures();
         // allowQueryingForInstancesOnly
         if (isAllowQueryingForInstancesOnly()) {
             procedures = CollectionHelper
@@ -2525,6 +2647,219 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     protected void logClearing(String type) {
         LOG.trace("Clearing '{}'", type);
     }
+
+
+    @Override
+    public void addProcedureDescriptionFormatsForProcedure(String procedure, Set<String> formats) {
+        this.procedureProcedureDescriptionFormats.computeIfAbsent(procedure, createSynchronizedSet())
+        .addAll(formats);
+    }
+
+
+    @Override
+    public void removeProcedureDescriptionFormatsForProcedure(String procedure) {
+        procedureProcedureDescriptionFormats.remove(procedure);
+    }
+
+
+    @Override
+    public Set<String> getProcedureDescriptionFormatsForProcedure(String procedure) {
+        return procedureProcedureDescriptionFormats.get(procedure);
+    }
+
+
+    @Override
+    public Set<String> getPublishedFeatureOfInterest() {
+        return copyOf(publishedFeatureOfInterest);
+    }
+
+    @Override
+    public Set<String> getPublishedProcedures() {
+        return copyOf(publishedProcedure);
+    }
+
+    @Override
+    public Set<String> getPublishedOfferings() {
+        return copyOf(publishedOffering);
+    }
+
+    @Override
+    public Set<String> getPublishedObservableProperties() {
+        return copyOf(publishedObservableProperty);
+    }
+
+
+    @Override
+    public void addPublishedFeatureOfInterest(String featureOfInterest) {
+        notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
+        LOG.trace("Adding published FeatureOfInterest {}", featureOfInterest);
+        publishedFeatureOfInterest.add(featureOfInterest);
+    }
+
+    @Override
+    public void addPublishedFeaturesOfInterest(Collection<String> featuresOfInterest) {
+        noNullValues(PUBLISHED_FEATURES_OF_INTEREST, featuresOfInterest);
+        for (final String featureOfInterest : featuresOfInterest) {
+            addPublishedFeatureOfInterest(featureOfInterest);
+        }
+    }
+
+    @Override
+    public void setPublishedFeaturesOfInterest(final Collection<String> featuresOfInterest) {
+        LOG.trace("Setting published FeaturesOfInterest");
+        clearPublishedFeaturesOfInterest();
+        addPublishedFeaturesOfInterest(featuresOfInterest);
+    }
+
+    @Override
+    public void clearPublishedFeaturesOfInterest() {
+        LOG.trace("Clearing published features of interest");
+        publishedFeatureOfInterest.clear();
+    }
+
+    @Override
+    public void removePublishedFeatureOfInterest(final String featureOfInterest) {
+        notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
+        LOG.trace("Removing published FeatureOfInterest {}", featureOfInterest);
+        publishedFeatureOfInterest.remove(featureOfInterest);
+    }
+
+    @Override
+    public void removePublishedFeaturesOfInterest(final Collection<String> featuresOfInterest) {
+        noNullValues(PUBLISHED_FEATURES_OF_INTEREST, featuresOfInterest);
+        for (final String featureOfInterest : featuresOfInterest) {
+            removePublishedFeatureOfInterest(featureOfInterest);
+        }
+    }
+
+   @Override
+   public void addPublishedProcedure(String procedure) {
+       notNullOrEmpty(PUBLISHED_PROCEDURE, procedure);
+       LOG.trace("Adding published procedure {}", procedure);
+       publishedProcedure.add(procedure);
+   }
+
+   @Override
+   public void addPublishedProcedures(Collection<String> procedures) {
+       noNullValues(PUBLISHED_PROCEDURES, procedures);
+       for (final String procedure : procedures) {
+           addPublishedProcedure(procedure);
+       }
+   }
+
+   @Override
+   public void setPublishedProcedures(final Collection<String> procedures) {
+       LOG.trace("Setting published procedure");
+       clearPublishedProcedure();
+       addPublishedProcedures(procedures);
+   }
+
+   @Override
+   public void clearPublishedProcedure() {
+       LOG.trace("Clearing published procedure");
+       publishedProcedure.clear();
+   }
+
+   @Override
+   public void removePublishedProcedure(final String procedure) {
+       notNullOrEmpty(PUBLISHED_PROCEDURE, procedure);
+       LOG.trace("Removing published procedure {}", procedure);
+       publishedProcedure.remove(procedure);
+   }
+
+   @Override
+   public void removePublishedProcedures(final Collection<String> procedures) {
+       noNullValues(PUBLISHED_PROCEDURES, procedures);
+       for (final String procedure : procedures) {
+           removePublishedProcedure(procedure);
+       }
+   }
+
+   @Override
+   public void addPublishedOffering(String offering) {
+       notNullOrEmpty(PUBLISHED_OFFERING, offering);
+       LOG.trace("Adding published offering {}", offering);
+       publishedOffering.add(offering);
+   }
+
+   @Override
+   public void addPublishedOfferings(Collection<String> offerings) {
+       noNullValues(PUBLISHED_OFFERINGS, offerings);
+       for (final String offering : offerings) {
+           addPublishedOffering(offering);
+       }
+   }
+
+   @Override
+   public void setPublishedOfferings(final Collection<String> offerings) {
+       LOG.trace("Setting published offering");
+       clearPublishedOffering();
+       addPublishedOfferings(offerings);
+   }
+
+   @Override
+   public void clearPublishedOffering() {
+       LOG.trace("Clearing published offering");
+       publishedOffering.clear();
+   }
+
+   @Override
+   public void removePublishedOffering(final String offering) {
+       notNullOrEmpty(PUBLISHED_OFFERING, offering);
+       LOG.trace("Removing published offering {}", offering);
+       publishedOffering.remove(offering);
+   }
+
+   @Override
+   public void removePublishedOfferings(final Collection<String> offerings) {
+       noNullValues(PUBLISHED_OFFERINGS, offerings);
+       for (final String offering : offerings) {
+           removePublishedOffering(offering);
+       }
+   }
+
+   @Override
+   public void addPublishedObservableProperty(String observableProperty) {
+       notNullOrEmpty(PUBLISHED_OBSERVABLE_PROPERTY, observableProperty);
+       LOG.trace("Adding published observableProperty {}", observableProperty);
+       publishedObservableProperty.add(observableProperty);
+   }
+
+   @Override
+   public void addPublishedObservableProperties(Collection<String> observableProperties) {
+       noNullValues(PUBLISHED_OBSERVABLE_PROPERTIES, observableProperties);
+       for (final String observableProperty : observableProperties) {
+           addPublishedObservableProperty(observableProperty);
+       }
+   }
+
+   @Override
+   public void setPublishedObservableProperties(final Collection<String> observableProperties) {
+       LOG.trace("Setting published observableProperties");
+       clearPublishedFeaturesOfInterest();
+       addPublishedObservableProperties(observableProperties);
+   }
+
+   @Override
+   public void clearPublishedObservableProperty() {
+       LOG.trace("Clearing published observableProperties");
+       publishedObservableProperty.clear();
+   }
+
+   @Override
+   public void removePublishedObservableProperty(final String observableProperty) {
+       notNullOrEmpty(PUBLISHED_OBSERVABLE_PROPERTY, observableProperty);
+       LOG.trace("Removing published observableProperty {}", observableProperty);
+       publishedObservableProperty.remove(observableProperty);
+   }
+
+   @Override
+   public void removePublishedObservableProperties(final Collection<String> observableProperties) {
+       noNullValues(PUBLISHED_OBSERVABLE_PROPERTIES, observableProperties);
+       for (final String observableProperty : observableProperties) {
+           removePublishedObservableProperty(observableProperty);
+       }
+   }
 
     @Override
     public int hashCode() {

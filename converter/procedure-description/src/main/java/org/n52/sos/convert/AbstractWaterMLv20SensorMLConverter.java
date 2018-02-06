@@ -32,10 +32,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.iceland.convert.Converter;
-import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
@@ -51,7 +50,6 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
 
 /**
  * Abstract converter for WaterML {@link ObservationProcess} and SensorML
@@ -62,9 +60,11 @@ import org.n52.shetland.ogc.om.series.wml.ObservationProcess;
  *
  */
 public abstract class AbstractWaterMLv20SensorMLConverter
-        implements Converter<AbstractFeature, AbstractFeature> {
+        extends
+        ProcedureDescriptionConverter {
 
-    protected AbstractProcess convertObservationProcessToAbstractProcess(ObservationProcess observationProcess, AbstractProcess abstractProcess) {
+    protected AbstractProcess convertObservationProcessToAbstractProcess(ObservationProcess observationProcess,
+            AbstractProcess abstractProcess) {
         abstractProcess.addIdentifier(createUniqueIDIdentifier(observationProcess.getIdentifier()));
         // duration is not valid for validTime element
         observationProcess.getAggregationDuration();
@@ -78,8 +78,8 @@ public abstract class AbstractWaterMLv20SensorMLConverter
         observationProcess.getOriginatingProcess();
         observationProcess.getParameters();
         if (observationProcess.isSetProcessReference()) {
-            abstractProcess.addDocumentation(convertProcessReferenceToDocumentation(observationProcess
-                    .getProcessReference()));
+            abstractProcess.addDocumentation(
+                    convertProcessReferenceToDocumentation(observationProcess.getProcessReference()));
         }
         observationProcess.getVerticalDatum();
         abstractProcess.setClassifications(convertProcessTypeToClassification(observationProcess.getProcessType()));
@@ -99,7 +99,8 @@ public abstract class AbstractWaterMLv20SensorMLConverter
 
     private List<SmlClassifier> convertProcessTypeToClassification(final ReferenceType processType) {
         final String definition = "urn:ogc:def:classifier:OGC:1.0:sensorType";
-        final SmlClassifier sosSMLClassifier = new SmlClassifier(processType.getTitle(), definition, null, processType.getHref());
+        final SmlClassifier sosSMLClassifier =
+                new SmlClassifier(processType.getTitle(), definition, null, processType.getHref());
         return Collections.singletonList(sosSMLClassifier);
     }
 
@@ -149,7 +150,8 @@ public abstract class AbstractWaterMLv20SensorMLConverter
     protected void convertAbstractSensorMLToObservationProcess(final ObservationProcess observationProcess,
             final AbstractSensorML abstractSensorML) {
         if (abstractSensorML.isSetCapabilities()) {
-            convertSMLCapabilitiesToObservationProcessParameter(observationProcess, abstractSensorML.getCapabilities());
+            convertSMLCapabilitiesToObservationProcessParameter(observationProcess,
+                    abstractSensorML.getCapabilities());
         }
         if (abstractSensorML.isSetCharacteristics()) {
             convertSMLCharacteristicsToObservationProcessParameter(observationProcess,
@@ -160,7 +162,8 @@ public abstract class AbstractWaterMLv20SensorMLConverter
                     abstractSensorML.getClassifications());
         }
         if (abstractSensorML.isSetDocumentation()) {
-            convertSMLDocumentationToObservationProcessComment(observationProcess, abstractSensorML.getDocumentation());
+            convertSMLDocumentationToObservationProcessComment(observationProcess,
+                    abstractSensorML.getDocumentation());
         }
         if (abstractSensorML.isSetIdentifications()) {
             convertSMLIdentificationsToObservationProcessParameter(observationProcess,
@@ -201,10 +204,8 @@ public abstract class AbstractWaterMLv20SensorMLConverter
         for (final SmlClassifier classifier : classifications) {
             final NamedValue<String> namedValueProperty = new NamedValue<String>();
             // TODO What to do if optional value is not available?
-            final ReferenceType refType = new ReferenceType(
-                    classifier.isSetDefinition()?
-                            classifier.getDefinition():
-                                "http://example.com/error/classfier_definition_not_set");
+            final ReferenceType refType = new ReferenceType(classifier.isSetDefinition() ? classifier.getDefinition()
+                    : "http://example.com/error/classfier_definition_not_set");
             refType.setTitle(classifier.getName());
             namedValueProperty.setName(refType);
             namedValueProperty.setValue(new TextValue(classifier.getValue()));
@@ -220,11 +221,11 @@ public abstract class AbstractWaterMLv20SensorMLConverter
             final ReferenceType refType = new ReferenceType(identifier.getDefinition());
             refType.setTitle(identifier.getName());
             // TODO uncomment if supported
-//            if (identifier.getDefinition().contains("name")) {
-//                CodeType codeType = new CodeType(identifier.getValue());
-//                codeType.setCodeSpace(identifier.getDefinition());
-//                observationProcess.addName(codeType);
-//            }
+            // if (identifier.getDefinition().contains("name")) {
+            // CodeType codeType = new CodeType(identifier.getValue());
+            // codeType.setCodeSpace(identifier.getDefinition());
+            // observationProcess.addName(codeType);
+            // }
             namedValueProperty.setName(refType);
             namedValueProperty.setValue(new TextValue(identifier.getValue()));
             observationProcess.addParameter(namedValueProperty);
@@ -278,15 +279,16 @@ public abstract class AbstractWaterMLv20SensorMLConverter
 
     private NamedValue<String> convertSMLFieldToNamedValuePair(final SweField field) {
         if (field.getElement() instanceof SweAbstractSimpleType) {
-            final NamedValue<String> namedValueProperty =
-                    getNamedValuePairForSosSweAbstractSimpleType((SweAbstractSimpleType<?>) field.getElement(), field.getName().getValue());
+            final NamedValue<String> namedValueProperty = getNamedValuePairForSosSweAbstractSimpleType(
+                    (SweAbstractSimpleType<?>) field.getElement(), field.getName().getValue());
             namedValueProperty.getName().setTitle(field.getName().getValue());
             return namedValueProperty;
         }
         return null;
     }
 
-    private NamedValue<String> getNamedValuePairForSosSweAbstractSimpleType(final SweAbstractSimpleType<?> element, String name) {
+    private NamedValue<String> getNamedValuePairForSosSweAbstractSimpleType(final SweAbstractSimpleType<?> element,
+            String name) {
         final NamedValue<String> namedValueProperty = new NamedValue<String>();
         final ReferenceType refType;
         if (element.isSetDefinition()) {

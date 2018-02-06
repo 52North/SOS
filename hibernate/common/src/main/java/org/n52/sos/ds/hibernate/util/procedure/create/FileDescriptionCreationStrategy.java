@@ -33,51 +33,62 @@ import java.io.InputStream;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.StringHelper;
-import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
 /**
  * Strategy to create the {@link SosProcedureDescription} from a file.
  */
-public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreationStrategy {
+public class FileDescriptionCreationStrategy
+        extends XmlStringDescriptionCreationStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
-    public SosProcedureDescription<?> create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
         try {
-            SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(read(p.getDescriptionFile())));
+            SosProcedureDescription<?> desc =
+                    new SosProcedureDescription<>(readXml(read(p.getDescriptionFile(), ctx), ctx));
             desc.setIdentifier(p.getIdentifier());
-            desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
+            desc.setDescriptionFormat(p.getFormat().getFormat());
             return desc;
         } catch (IOException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
     }
 
-    private InputStream getDocumentAsStream(String filename) {
-        // check if filename contains placeholder for configured sensor directory
+    private InputStream getDocumentAsStream(String filename, HibernateProcedureCreationContext ctx) {
+        final StringBuilder builder = new StringBuilder();
+        // check if filename contains placeholder for configured
+        // sensor directory
+        if (filename.startsWith("standard")) {
+            filename = filename.replace("standard", "");
+            builder.append(ctx.getSensorDirectory());
+            builder.append("/");
+        }
+        builder.append(filename);
         LOGGER.debug("Procedure description file name '{}'!", filename);
-        return FileDescriptionCreationStrategy.class.getResourceAsStream(filename);
+        return this.getClass().getResourceAsStream(builder.toString());
     }
 
-    private String read(String path)
+    private String read(String path, HibernateProcedureCreationContext ctx)
             throws IOException {
-        InputStream stream = getDocumentAsStream(path);
+        InputStream stream = getDocumentAsStream(path, ctx);
         return StringHelper.convertStreamToString(stream);
     }
 
     @Override
-    public boolean apply(Procedure p) {
+    public boolean apply(ProcedureEntity p) {
         return !Strings.isNullOrEmpty(p.getDescriptionFile());
     }
 }

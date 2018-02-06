@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ifoi:InsertFeatureOfInterest service="SOS" version="2.0.0" xmlns:ifoi="http://www.opengis.net/ifoi/1.0"  xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:om="http://www.opengis.net/om/2.0" xmlns:sams="http://www.opengis.net/samplingSpatial/2.0" xmlns:sf="http://www.opengis.net/sampling/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ifoi/1.0 http://52north.org/schema/ifoi/1.0/InsertFeatureOfInterest.xsd http://www.opengis.net/gml/3.2 http://schemas.opengis.net/gml/3.2.1/gml.xsd http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd http://www.opengis.net/sampling/2.0 http://schemas.opengis.net/sampling/2.0/samplingFeature.xsd">
+  <ifoi:featureMember>
+    <sams:SF_SpatialSamplingFeature gml:id="ssf_test_feature_99">
+      <gml:identifier codeSpace="">http://www.52north.org/test/featureOfInterest/99</gml:identifier>
+      <gml:name>52°North 99</gml:name>
+      <sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/>
+      <sf:sampledFeature xlink:href="http://www.52north.org/test/featureOfInterest/1"/>
+      <sams:shape>
+        <gml:Point gml:id="test_feature_99">
+          <gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">51.935101100104916 7.651968812254194</gml:pos>
+        </gml:Point>
+      </sams:shape>
+    </sams:SF_SpatialSamplingFeature>
+  </ifoi:featureMember>
+</ifoi:InsertFeatureOfInterest>

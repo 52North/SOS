@@ -29,7 +29,10 @@
 package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +48,7 @@ import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 
@@ -69,6 +73,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         startStopwatch();
         ObservablePropertyDAO observablePropertyDAO = daoFactory.getObservablePropertyDAO();
         Map<ObservableProperty, Collection<ObservableProperty>> observablePropertyHierarchy = observablePropertyDAO.getObservablePropertyHierarchy(getSession());
+        List<ObservableProperty> ops = observablePropertyDAO.getObservablePropertyObjects(getSession());
 //        Set<String> childObservableProperties = new HashSet<>(observablePropertyHierarchy.size());
 //
 //        for (Collection<ObservableProperty> children1: observablePropertyHierarchy.values()) {
@@ -118,15 +123,37 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 try {
                     getCache().setOfferingsForObservableProperty(observableProperty, offeringDAO.getOfferingIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport e) {
-                    getErrors().add(e);
+                    getErrors().copy(e);
                 }
                 try {
                     getCache().setProceduresForObservableProperty(observableProperty, procedureDAO.getProcedureIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport owse) {
-                    getErrors().add(owse);
+                    getErrors().copy(owse);
                 }
             }
         }
+        
+        try {
+            for (ObservableProperty observableProperty : observablePropertyDAO.getPublishedObservableProperty(getSession())) {
+                String identifier = observableProperty.getIdentifier();
+                getCache().addPublishedObservableProperty(identifier);
+                Set<String> parents = new HashSet<>();
+                getParents(parents, observableProperty);
+                getCache().addPublishedObservableProperties(parents);
+            }
+        } catch (CodedException e) {
+           getErrors().copy(e);
+        }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());
     }
+    
+    private void getParents(Set<String> parents, ObservableProperty observableProperty) {
+        if (observableProperty instanceof TObservableProperty && ((TObservableProperty)observableProperty).getParents() != null) {
+            for (ObservableProperty parent : ((TObservableProperty)observableProperty).getParents()) {
+                parents.copy(parent.getIdentifier());
+                getParents(parents, parent);
+            }
+        }
+    }
+    
 }

@@ -29,6 +29,7 @@
 package org.n52.sos.profile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,9 +40,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.Json;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -50,6 +48,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.service.profile.DefaultProfile;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -57,7 +57,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @since 4.0.0
  *
  */
-public class ProfileHandlerImpl extends ProfileHandler implements Constructable {
+public class ProfileHandlerImpl implements ProfileHandler, Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileHandlerImpl.class);
     private static final String PROFILES = "profiles";
@@ -66,7 +66,6 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
 
     @Override
     public void init() {
-        super.init();
         setActiveProfile(new DefaultProfile());
         addAvailableProfile(getActiveProfile());
         try {
@@ -95,27 +94,30 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
     }
 
     private void loadProfiles() throws OwsExceptionReport {
-        IOFileFilter fileFilter = new WildcardFileFilter("profiles.json");
-        File folder = FileUtils.toFile(ProfileHandlerImpl.class.getResource("/"));
-        Collection<File> listFiles = FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
-        for (File file : listFiles) {
+        for (File file : loadFiles()) {
             try {
                 JsonNode profiles = Json.loadFile(file);
                 ProfileParser pp = new ProfileParser();
                 JsonNode pNode = profiles.path(PROFILES);
                 if (pNode.isArray()) {
                     for (int i = 0; i < pNode.size(); i++) {
-                        Profile profile =  pp.parseSosProfile(pNode.get(i));
+                        Profile profile =  pp.parseProfile(pNode.get(i));
                         addProfile(profile);
                     }
                 } else {
-                    Profile profile = pp.parseSosProfile(pNode);
+                    Profile profile = pp.parseProfile(pNode);
                     addProfile(profile);
                 }
             } catch (IOException ioe) {
                 throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while loading profies file.");
             }
         }
+    }
+
+    private Collection<File> loadFiles() {
+        IOFileFilter fileFilter = new WildcardFileFilter("profiles.json");
+        File folder = FileUtils.toFile(ProfileHandlerImpl.class.getResource("/"));
+        return FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
     }
 
     private void addProfile(Profile profile) {
@@ -136,6 +138,42 @@ public class ProfileHandlerImpl extends ProfileHandler implements Constructable 
     @Override
     public boolean isSetActiveProfile() {
         return activeProfile != null;
+    }
+
+    @Override
+    public void activateProfile(String identifier) {
+        if (getAvailableProfiles().containsKey(identifier)) {
+            for (Profile profile : getAvailableProfiles().values()) {
+                if (profile.getIdentifier().equals(identifier)) {
+                    profile.setActiveProfile(true);
+                    setActiveProfile(profile);
+                } else {
+                    profile.setActiveProfile(false);
+                }
+            }
+            persist();
+        }
+    }
+
+    @Override
+    public void persist() {
+        ProfileWriter pw = new ProfileWriter();
+        for (File file : loadFiles()) {
+            try (FileOutputStream fio = new FileOutputStream(file)) {
+                Json.print(fio, pw.write(getAvailableProfiles().values()));
+            } catch (IOException e) {
+                LOGGER.error("Error while storing profile to file!", e);
+            }
+        }
+    }
+
+    @Override
+    public void reloadProfiles() {
+        try {
+            loadProfiles();
+        } catch (OwsExceptionReport e) {
+            throw new ConfigurationError("Error while loading profiles", e);
+        }
     }
 
 }

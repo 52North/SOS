@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import java.util.Set;
+
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -37,11 +39,14 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
@@ -51,7 +56,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
+    rivate static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;

@@ -92,6 +92,18 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
+    
+    /**
+     * Get the defined cache thread count or the maximum connection count minus
+     * one to avoid hanging threads during the cache update.
+     * 
+     * @return Defined cache thread count or the maximum connection count minus
+     *         one
+     */
+    public int getCacheThreadCount() {
+        int maxConnections = sessionHolder.getConnectionProvider().getMaxConnections();
+        return maxConnections > 0 && cacheThreadCount >= maxConnections ? maxConnections - 1 : cacheThreadCount;
+    }
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLocale(String defaultLocale) {

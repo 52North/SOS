@@ -68,7 +68,6 @@ public class WSDLFactory implements Producer<String> {
     private String getWSDL() throws Exception {
         final WSDLBuilder builder = new WSDLBuilder();
         if (isConfigured()) {
-            final Map<String, Binding> bindings = getBindingRepository().getBindingsByPath();
             final RequestOperatorRepository repo = getRequestOperatorRepository();
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();
             final String serviceUrl = getServiceURL();

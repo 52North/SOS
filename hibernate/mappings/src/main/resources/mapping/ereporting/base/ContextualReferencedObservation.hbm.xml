@@ -8,7 +8,7 @@
         <id name="observationId"
             type="long">
             <column name="observationId">
-            	<comment>Table primary key, used in relations</comment>
+                <comment>Table primary key, used in relations</comment>
             </column>
             <generator class="native">
                 <param name="sequence">observationId_seq</param>
@@ -16,14 +16,12 @@
         </id>
         <many-to-one name="series"
                      class="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="observationSeriesFk">
             <column index="obsSeriesIdx"
                     name="seriesId"
                     not-null="true">
-           		<comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
-           	</column>
+                   <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
+               </column>
         </many-to-one>
         <property name="phenomenonTimeStart"
                   type="timestamp" >
@@ -31,7 +29,7 @@
                     name="phenomenonTimeStart"
                     length="29"
                     not-null="true">
-            	<comment>Time stamp when the observation was started or phenomenon was observed</comment>
+                <comment>Time stamp when the observation was started or phenomenon was observed</comment>
             </column>
         </property>
         <property name="phenomenonTimeEnd"
@@ -40,7 +38,7 @@
                     name="phenomenonTimeEnd"
                     length="29"
                     not-null="true">
-            	<comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
+                <comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
             </column>
         </property>
         <property name="resultTime"
@@ -49,44 +47,39 @@
                     name="resultTime"
                     length="29"
                     not-null="true">
-            	<comment>Time stamp when the observation was published or result was published/available</comment>
+                <comment>Time stamp when the observation was published or result was published/available</comment>
             </column>
         </property>
         <property name="identifier"
                   type="string">
-            <column name="identifier"
-                    unique-key="obsIdentifierUK">
-            	<comment>The identifier of the observation, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            <column name="identifier" >
+                <comment>The identifier of the observation, gml:identifier. Used as parameter for queries. Optional but unique</comment>
             </column>
         </property>
         <many-to-one name="codespace"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="obsCodespaceIdentifierFk">
             <column name="codespace">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="name"
                   type="string">
             <column name="name">
-            	<comment>The name of the observation, gml:name. Optional</comment>
+                <comment>The name of the observation, gml:name. Optional</comment>
             </column>
         </property>
         <many-to-one name="codespaceName"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="obsCodespaceNameFk">
             <column name="codespaceName">
-            	<comment>The name of the observation, gml:name. Optional</comment>
+                <comment>The name of the observation, gml:name. Optional</comment>
             </column>
         </many-to-one>
         <property name="description"
                   type="string">
             <column name="description">
-            	<comment>Description of the observation, gml:description. Optional</comment>
+                <comment>Description of the observation, gml:description. Optional</comment>
             </column>
         </property>
         <property name="deleted"
@@ -95,7 +88,7 @@
                     not-null="true"
                     default="'F'"
                     check="deleted in ('T','F')">
-            	<comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
+                <comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
             </column>
         </property>
         <property name="child"
@@ -105,7 +98,7 @@
                     default="'F'"
                     length="1"
                     check="child in ('T','F')">
-            	<comment>Flag to indicate that this observation is a child observation for complex observation</comment>
+                <comment>Flag to indicate that this observation is a child observation for complex observation</comment>
             </column>
         </property>
         <property name="parent"
@@ -115,7 +108,7 @@
                     default="'F'"
                     length="1"
                     check="parent in ('T','F')">
-            	<comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
+                <comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
             </column>
         </property>
         <property name="validTimeStart"
@@ -124,7 +117,7 @@
                     length="29"
                     not-null="false"
                     default="NULL">
-            	<comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+                <comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
         <property name="validTimeEnd"
@@ -133,42 +126,44 @@
                     length="29"
                     not-null="false"
                     default="NULL">
-            	<comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+                <comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
         <set name="offerings"
-             table="observationHasOffering"
-             inverse="false"
-             fetch="select"
-             lazy="false" >
+             table="observationhasoffering"
+             inverse="false">
             <key>
                 <column name="observationId"
                         not-null="true"
                         index="obshasoffobservationidx">
-	            	<comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
                           foreign-key="observationOfferingFk">
                 <column name="offeringId"
                         not-null="true"
                         index="obshasoffofferingidx">
-	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
             </many-to-many>
         </set>
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType"
                   index="samplingGeomIdx" >
             <column name="samplingGeometry">
-            	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
+                <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select">
+        <set name="parameters"
+             table="parameter"
+             inverse="true"
+             cascade="delete-orphan">
             <key>
-                <column name="observationId" not-null="true" />
+                <column name="observationId"
+                        not-null="true" />
             </key>
-            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
         </set>
     </class>
 </hibernate-mapping>

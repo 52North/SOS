@@ -31,14 +31,9 @@ package org.n52.sos.web.client;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.HTTPException;
@@ -50,6 +45,10 @@ import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @since 4.0.0
@@ -57,7 +56,9 @@ import org.n52.sos.web.common.ControllerConstants;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.CLIENT)
-public class ClientController extends AbstractController {
+public class ClientController
+        extends
+        AbstractController {
     public static final String BINDINGS = "bindings";
     public static final String VERSIONS = "versions";
     public static final String OPERATIONS = "operations";
@@ -65,11 +66,11 @@ public class ClientController extends AbstractController {
     @Inject
     private ContextSwitcher contextSwitcher;
 
-    @Autowired(required = false)
-    private RequestOperatorRepository requestOperatorRepository;
+    @Inject
+    private Optional<RequestOperatorRepository> requestOperatorRepository = Optional.empty();
 
-    @Autowired(required = false)
-    private BindingRepository bindingRepository;
+    @Inject
+    private Optional<BindingRepository> bindingRepository = Optional.empty();
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get() {
@@ -82,35 +83,34 @@ public class ClientController extends AbstractController {
 
     private List<AvailableOperation> getAvailableOperations() {
         final List<AvailableOperation> ops = new LinkedList<>();
-
-
-
-        for (RequestOperatorKey rokt : this.requestOperatorRepository.getActiveRequestOperatorKeys()) {
-            String service = rokt.getServiceOperatorKey().getService();
-            String version = rokt.getServiceOperatorKey().getVersion();
-            String operation = rokt.getOperationName();
-            OwsOperationKey ok = new OwsOperationKey(service, version, operation);
-            this.bindingRepository.getBindingsByMediaType().forEach((mediaType, binding) -> {
-                try {
-                    if (binding.checkOperationHttpDeleteSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.DELETE));
+        if (this.requestOperatorRepository.isPresent() && this.bindingRepository.isPresent()) {
+            for (RequestOperatorKey rokt : this.requestOperatorRepository.get().getActiveRequestOperatorKeys()) {
+                String service = rokt.getServiceOperatorKey().getService();
+                String version = rokt.getServiceOperatorKey().getVersion();
+                String operation = rokt.getOperationName();
+                OwsOperationKey ok = new OwsOperationKey(service, version, operation);
+                this.bindingRepository.get().getBindingsByMediaType().forEach((mediaType, binding) -> {
+                    try {
+                        if (binding.checkOperationHttpDeleteSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.DELETE));
+                        }
+                        if (binding.checkOperationHttpGetSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.GET));
+                        }
+                        if (binding.checkOperationHttpOptionsSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.OPTIONS));
+                        }
+                        if (binding.checkOperationHttpPostSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.POST));
+                        }
+                        if (binding.checkOperationHttpPutSupported(ok)) {
+                            ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.PUT));
+                        }
+                    } catch (HTTPException ex) {
+                        /* ignore */
                     }
-                    if (binding.checkOperationHttpGetSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.GET));
-                    }
-                    if (binding.checkOperationHttpOptionsSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.OPTIONS));
-                    }
-                    if (binding.checkOperationHttpPostSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.POST));
-                    }
-                    if (binding.checkOperationHttpPutSupported(ok)) {
-                        ops.add(new AvailableOperation(ok, mediaType, HTTPMethods.PUT));
-                    }
-                } catch (HTTPException ex) {
-                    /* ignore */
-                }
-            });
+                });
+            }
         }
         return ops;
     }
@@ -122,7 +122,8 @@ public class ClientController extends AbstractController {
         private final String contentType;
         private final String method;
 
-        public AvailableOperation(String service, String version, String operation, String contentType, String method) {
+        public AvailableOperation(
+                String service, String version, String operation, String contentType, String method) {
             this.service = service;
             this.version = version;
             this.operation = operation;

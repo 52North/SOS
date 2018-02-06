@@ -36,8 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
+import org.hibernate.boot.Metadata;
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -63,8 +62,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getTransactionalDefiniton(),
-                getMulitLanguageDefiniton());
+        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getFeatureConceptDefinition(), getTransactionalDefiniton(),
+                getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
     }
 
     @Override
@@ -101,13 +100,14 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(JDBC_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(JDBC_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

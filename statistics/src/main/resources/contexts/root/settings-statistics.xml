@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
 	<bean id="statisticsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
 		<property name="title" value="Statistics" />
@@ -228,13 +228,4 @@
 			</map>
 		</property>
 	</bean>
-
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="statistics.counting-outputstream" />
-        <property name="title" value="Elasticsearch: The response document size is calculated" />
-        <property name="description" value="The size of the response document which is sent back to the client. This could result in a small performance degradation." />
-        <property name="order" value="26.0" />
-        <property name="group" ref="statisticsDefinitionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
 </beans>

@@ -28,11 +28,24 @@
  */
 package org.n52.sos.ds;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlObject;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * Abstract class for Result Handling operation Handlers to provide common methods
@@ -45,8 +58,15 @@ import org.n52.shetland.ogc.swe.SweDataRecord;
  */
 public abstract class AbstractResultHandlingHandler extends AbstractOperationHandler {
 
+    private DecoderRepository decodingRepository;
+
     public AbstractResultHandlingHandler(String service, String operationName) {
         super(service, operationName);
+    }
+
+    @Inject
+    public void setConnectionProvider(DecoderRepository decodingRepository) {
+        this.decodingRepository = decodingRepository;
     }
 
     /**
@@ -70,6 +90,37 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
             throw new NoApplicableCodeException().withMessage("Unsupported ResultStructure!");
         }
         return record;
+    }
+
+    protected SosResultStructure createSosResultStructure(String resultStructure) throws CodedException {
+        SweAbstractDataComponent abstractDataComponent =(SweAbstractDataComponent)decode(resultStructure);
+        if (abstractDataComponent != null) {
+            return new SosResultStructure(abstractDataComponent, resultStructure);
+        }
+        return new SosResultStructure(resultStructure);
+    }
+
+    protected SosResultEncoding createSosResultEncoding(String resultEncoding) throws CodedException {
+        SweAbstractEncoding abstractEncoding = (SweAbstractEncoding)decode(resultEncoding);
+        if (abstractEncoding != null) {
+            return new SosResultEncoding(abstractEncoding, resultEncoding);
+        }
+        return new SosResultEncoding(resultEncoding);
+    }
+
+    protected Object decode(String xml) throws CodedException {
+        try {
+            XmlObject xmlObject = XmlHelper.parseXmlString(xml);
+            DecoderKey decoderKey = CodingHelper.getDecoderKey(xmlObject);
+            Decoder<Object, Object> decoder = decodingRepository.getDecoder(decoderKey);
+            if (decoder != null) {
+                return decoder.decode(xmlObject);
+            } else {
+                throw new NoApplicableCodeException().withMessage("No decoder found for %s", xmlObject.getClass().getName());
+            }
+        } catch (DecodingException de) {
+           throw new NoApplicableCodeException().causedBy(de);
+        }
     }
 
 }

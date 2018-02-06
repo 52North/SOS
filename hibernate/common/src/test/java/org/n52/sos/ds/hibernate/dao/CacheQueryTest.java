@@ -38,30 +38,24 @@ import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.HibernateObservationBuilder;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
@@ -134,11 +128,11 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // new way using ObservationInfo class (excludes value table joins)
         Session session = getSession();
         long start = System.currentTimeMillis();
-        Criteria c = session.createCriteria(getContextualReferencedObservationClass()).add(Restrictions.eq(AbstractObservation.DELETED, false));
-        c.createCriteria(Observation.FEATURE_OF_INTEREST).setProjection(
-                Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-        c.createCriteria(Observation.OFFERINGS).add(
-                Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
+        Criteria c = session.createCriteria(getContextualReferencedObservationClass()).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
+//        c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
+//                Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
+//        c.createCriteria(DataEntity.OFFERINGS).add(
+//                Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
         c.list();
         long time = System.currentTimeMillis() - start;
         LOGGER.debug("QUERY get featureOfInterest identifiers for offering new way: {}",
@@ -151,11 +145,11 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // old way using full Observation class (includes value table joins)
         Session session = getSession();
         long start = System.currentTimeMillis();
-        final Criteria c = session.createCriteria(getObservationClass()).add(Restrictions.eq(AbstractObservation.DELETED, false));
-        c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).setProjection(
-                Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-        c.createCriteria(AbstractObservation.OFFERINGS).add(
-                Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
+        final Criteria c = session.createCriteria(getObservationClass()).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
+//        c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
+//                Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
+//        c.createCriteria(DataEntity.OFFERINGS).add(
+//                Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
         c.list();
         long time = System.currentTimeMillis() - start;
         LOGGER.debug("QUERY get featureOfInterest identifiers for offering old way: {}",
@@ -168,16 +162,16 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // hql method
         Session session = getSession();
         long start = System.currentTimeMillis();
-        Query query =
-                session.createQuery(
-                        "select distinct foi." + FeatureOfInterest.IDENTIFIER + " from Observation o" + " join o."
-                        + AbstractObservation.OFFERINGS + " offs " + " join o." + AbstractObservation.FEATURE_OF_INTEREST
-                        + " foi" + " where o.deleted = 'F' and offs." + Offering.IDENTIFIER + " = :offering")
-                        .setString("offering", HibernateObservationBuilder.OFFERING_1);
-        query.list();
+//        Query<?> query =
+//                session.createQuery(
+//                        "select distinct foi." + FeatureOfInterest.IDENTIFIER + " from Observation o" + " join o."
+//                        + AbstractObservation.OFFERINGS + " offs " + " join o." + AbstractObservation.FEATURE_OF_INTEREST
+//                        + " foi" + " where o.deleted = 'F' and offs." + Offering.IDENTIFIER + " = :offering")
+//                            .setParameter("offering", HibernateObservationBuilder.OFFERING_1);
+//        query.list();
         long time = System.currentTimeMillis() - start;
-        LOGGER.debug("QUERY get featureOfInterest identifiers for offering HQL way: {}",
-                     HibernateHelper.getSqlString(query, session));
+//        LOGGER.debug("QUERY get featureOfInterest identifiers for offering HQL way: {}",
+//                     HibernateHelper.getSqlString(query, session));
         return time;
     }
 
@@ -221,9 +215,9 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            try (ScrollableIterable<AbstractObservation<?>> i
+            try (ScrollableIterable<DataEntity<?>> i
                     = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
-                for (AbstractObservation<?> o : i) {
+                for (DataEntity<?> o : i) {
                     session.delete(o);
                 }
             }

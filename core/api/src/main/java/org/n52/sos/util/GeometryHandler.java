@@ -30,7 +30,6 @@ package org.n52.sos.util;
 
 import static java.util.stream.Collectors.toSet;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 
 import java.util.Collection;
 import java.util.Collections;

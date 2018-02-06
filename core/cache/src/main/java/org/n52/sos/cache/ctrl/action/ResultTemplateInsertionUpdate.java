@@ -79,11 +79,16 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         cache.addResultTemplate(resultTemplate);
         for (String offering : request.getObservationTemplate().getOfferings()) {
             cache.addOffering(offering);
+            cache.addPublishedOffering(offering);
             cache.addResultTemplateForOffering(offering, resultTemplate);
         }
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
             cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+            cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+            cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
         }
 
         AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();

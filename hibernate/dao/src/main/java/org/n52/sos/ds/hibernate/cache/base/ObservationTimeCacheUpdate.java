@@ -66,7 +66,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
                 getCache().setMaxResultTime(timeExtrema.getMaxResultTime());
             }
         } catch (OwsExceptionReport ce) {
-            getErrors().add(ce);
+            getErrors().copy(ce);
         }
         LOGGER.debug("Finished executing ObservationTimeCacheUpdate ({})", getStopwatchResult());
     }

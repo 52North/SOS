@@ -31,10 +31,10 @@ package org.n52.sos.statistics.sos.resolvers;
 import java.util.Map;
 
 import org.n52.iceland.event.events.RequestEvent;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.iceland.statistics.api.utils.EventHandlerFinder;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 
 public class SosRequestEventResolver implements StatisticsServiceEventResolver<RequestEvent> {
 

@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>core</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>api</artifactId>
@@ -75,17 +75,13 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>se.jiderhamn</groupId>
-            <artifactId>classloader-leak-prevention</artifactId>
+            <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+            <artifactId>classloader-leak-prevention-servlet3</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -139,7 +135,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -157,6 +153,7 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+    
     <build>
         <plugins>
             <plugin>
@@ -164,7 +161,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <ignoredUnusedDeclaredDependencies>
-                        <ignoredUnusedDeclaredDependency>org.n52.faroe:faroe:*:*</ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>org.n52.arctic-sea:faroe:*:*</ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
             </plugin>
@@ -178,6 +175,7 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
+                            <classifier>tests</classifier>
                             <excludes>
                                 <exclude>**/*Test.*</exclude>
                                 <exclude>**/*$.*</exclude>

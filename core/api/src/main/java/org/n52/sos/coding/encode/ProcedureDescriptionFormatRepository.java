@@ -41,7 +41,6 @@ import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
 import org.n52.iceland.util.activation.ActivationManager;
 import org.n52.iceland.util.activation.ActivationSource;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -59,14 +58,11 @@ public class ProcedureDescriptionFormatRepository
         implements ActivationManager<ProcedureDescriptionFormatKey>,
         ActivationSource<ProcedureDescriptionFormatKey> {
 
-    @Deprecated
-    private static ProcedureDescriptionFormatRepository instance;
     private final ActivationListeners<ProcedureDescriptionFormatKey> activation = new ActivationListeners<>(true);
     private final Map<String, Map<String, Set<String>>> procedureDescriptionFormats = Maps.newHashMap();
     private final Set<ProcedureDescriptionFormatKey> keys = new HashSet<>();
     private EncoderRepository encoderRepository;
     private ServiceOperatorRepository serviceOperatorRepository;
-
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
     /**
@@ -78,8 +74,6 @@ public class ProcedureDescriptionFormatRepository
      */
     public void init(ServiceOperatorRepository serviceOperatorRepository,
               EncoderRepository encoderRepository) {
-        ProcedureDescriptionFormatRepository.instance = this;
-
         this.serviceOperatorRepository = Objects.requireNonNull(serviceOperatorRepository);
         this.encoderRepository = Objects.requireNonNull(encoderRepository);
 
@@ -118,6 +112,7 @@ public class ProcedureDescriptionFormatRepository
     }
 
     protected void addProcedureDescriptionFormat(ProcedureDescriptionFormatKey key) {
+        isActive(key);
         this.keys.add(key);
         Map<String, Set<String>> byService = this.procedureDescriptionFormats.get(key.getService());
         if (byService == null) {
@@ -265,10 +260,5 @@ public class ProcedureDescriptionFormatRepository
     @Override
     public Set<ProcedureDescriptionFormatKey> getKeys() {
         return Collections.unmodifiableSet(this.keys);
-    }
-
-    @Deprecated
-    public static ProcedureDescriptionFormatRepository getInstance() {
-        return instance;
     }
 }

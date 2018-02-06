@@ -34,20 +34,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.OMHelper;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -56,6 +57,7 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.util.SosHelper;
+import org.opengis.parameter.InvalidParameterCardinalityException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -74,19 +76,11 @@ public class SosGetObservationOperatorV100 extends
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
 
-    private ResponseFormatRepository responseFormatRepository;
+    private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
+            new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     public SosGetObservationOperatorV100() {
         super(OPERATION_NAME, GetObservationRequest.class);
-    }
-
-    private ResponseFormatRepository getResponseFormatRepository() {
-        return this.responseFormatRepository;
-    }
-
-    @Inject
-    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
-        this.responseFormatRepository = responseFormatRepository;
     }
 
     @Override
@@ -141,7 +135,7 @@ public class SosGetObservationOperatorV100 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkProcedures(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
             // add child procedures to request
             if (sosRequest.isSetProcedure()) {
                 sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));
@@ -149,25 +143,27 @@ public class SosGetObservationOperatorV100 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        // TODO check foi param is ID
         try {
             checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(),
                     SosConstants.GetObservationParams.featureOfInterest.name());
+            if (sosRequest.isSetFeatureOfInterest()) {
+                sosRequest.setFeatureIdentifiers(addChildFeatures(sosRequest.getFeatureIdentifiers()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        // TODO spatial filter BBOX?
         try {
             checkSpatialFilter(sosRequest.getSpatialFilter(),
                     SosConstants.GetObservationParams.featureOfInterest.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        // TODO check for SOS 1.0.0 EventTime
         try {
             if (sosRequest.getTemporalFilters() != null && !sosRequest.getTemporalFilters().isEmpty()) {
                 checkTemporalFilter(sosRequest.getTemporalFilters(),
-                        Sos2Constants.GetObservationParams.temporalFilter.name());
+                        Sos1Constants.GetObservationParams.eventTime.name());
+            } else if (getActiveProfile().isReturnLatestValueIfTemporalFilterIsMissingInGetObservation()) {
+                sosRequest.setTemporalFilters(CollectionHelper.list(TEMPORAL_FILTER_LATEST));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
@@ -177,7 +173,6 @@ public class SosGetObservationOperatorV100 extends
             exceptions.add(new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.resultModel)
                     .withMessage("The value '%s' is invalid for the requested offering!", OMHelper.getEncodedResultModelFor(sosRequest.getResultModel())));
         }
-
         exceptions.throwIfNotEmpty();
     }
 
@@ -232,8 +227,13 @@ public class SosGetObservationOperatorV100 extends
             Map<String, String> ncOfferings = SosHelper.getNcNameResolvedOfferings(offerings);
             CompositeOwsException exceptions = new CompositeOwsException();
 
-            if (offeringIds.size() != 1) {
+            //SOS 1.0 GetObservation requires exactly one offering
+            if (offeringIds.isEmpty()) {
                 throw new MissingOfferingParameterException();
+            } else if (offeringIds.size() > 1) {
+                throw new InvalidParameterCardinalityException(
+                        "Exactly one offering is required",
+                        SosConstants.GetObservationParams.offering.name());
             }
 
             for (String offeringId : offeringIds) {

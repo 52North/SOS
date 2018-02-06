@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>5.0.0-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-session-factory</artifactId>
@@ -43,6 +43,10 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -53,10 +57,14 @@
             <artifactId>hibernate-c3p0</artifactId>
             <scope>runtime</scope>
        </dependency>
-       <dependency>
-           <groupId>org.hibernate</groupId>
-           <artifactId>hibernate-spatial</artifactId>
-           <scope>provided</scope>
-       </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -31,12 +31,12 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 
 public class EReportingValueDAO extends AbstractSeriesValueDAO implements EReportingDaoHelper {
 
@@ -60,12 +60,17 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO implements ERepor
 
     @Override
     protected Class<?> getSeriesValueClass() {
-        return AbstractValuedEReportingObservation.class;
+        return EReportingDataEntity.class;
     }
 
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
         addValidityAndVerificationRestrictions(c, request);
     }
+
+        @Override
+        protected ValuedObservationFactory getValuedObservationFactory() {
+            return EReportingValuedObservationFactory.getInstance();
+        }
 
 }

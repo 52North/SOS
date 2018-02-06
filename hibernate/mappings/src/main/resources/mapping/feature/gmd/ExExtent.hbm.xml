@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gmd.ExExtentEntity"
+           table="exextent">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">exExtentId_seq</param>
+            </generator>
+        </id>
+        <property name="id" column="id" type="string" />
+        <property name="uuid" column="uuid" type="string" />
+        <property name="description" column="description" type="string" />
+        <set name="verticalExtent" table="exextentverticalext">
+          <key column="exExtentId" not-null="true" foreign-key="exeexveFk"/>
+          <many-to-many column="exVerticalExtentId"
+                        class="org.n52.sos.ds.hibernate.entities.feature.gmd.ExVerticalExtentEntity" />
+        </set>
+    </class>
+</hibernate-mapping>

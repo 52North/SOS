@@ -28,6 +28,7 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
+import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
@@ -38,16 +39,21 @@ import org.n52.sos.ds.CacheFeederHandler;
  *
  * @since 4.0.0
  */
-public class CompleteCacheUpdate extends CacheFeederDAOCacheUpdate {
+public class CompleteCacheUpdate
+        extends CacheFeederDAOCacheUpdate {
 
-    public CompleteCacheUpdate(CacheFeederHandler cacheFeederDAO) {
+    private SupportedTypeRepository supportedTypeRepository;
+
+    public CompleteCacheUpdate(CacheFeederHandler cacheFeederDAO, SupportedTypeRepository supportedTypeRepository) {
         super(cacheFeederDAO);
+        this.supportedTypeRepository = supportedTypeRepository;
     }
 
     @Override
     public void execute() {
         try {
-            SosWritableContentCache cache = new InMemoryCacheImpl();
+            SosWritableContentCache cache = (SosWritableContentCache) new InMemoryCacheImpl()
+                    .setSupportedTypeRepository(supportedTypeRepository);
             getCacheFeederDAO().updateCache(cache);
             setCache(cache);
         } catch (OwsExceptionReport ex) {

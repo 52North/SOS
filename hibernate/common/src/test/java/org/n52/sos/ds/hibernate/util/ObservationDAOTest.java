@@ -37,18 +37,17 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -101,8 +100,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            try (ScrollableIterable<Observation<?>> i = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
-                for (Observation<?> o : i) {
+            try (ScrollableIterable<DataEntity<?>> i = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
+                for (DataEntity<?> o : i) {
                     session.delete(o);
                 }
             }

@@ -74,25 +74,25 @@ public class HibernateSQLiteDialect extends Dialect {
         sqliteUniqueDelegate = new SQLiteUniqueDelegate( this );
     }
 
-    @Override
-    public boolean supportsIdentityColumns() {
-        return true;
-    }
-
-    @Override
-    public boolean hasDataTypeInIdentityColumn() {
-        return false; // As specify in NHibernate dialect
-    }
-
-    @Override
-    public String getIdentityColumnString() {
-        return "bigint";
-    }
-
-    @Override
-    public String getIdentitySelectString() {
-        return "select last_insert_rowid()";
-    }
+//    @Override
+//    public boolean supportsIdentityColumns() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean hasDataTypeInIdentityColumn() {
+//        return false; // As specify in NHibernate dialect
+//    }
+//
+//    @Override
+//    public String getIdentityColumnString() {
+//        return "bigint";
+//    }
+//
+//    @Override
+//    public String getIdentitySelectString() {
+//        return "select last_insert_rowid()";
+//    }
 
     @Override
     @Deprecated
@@ -107,20 +107,20 @@ public class HibernateSQLiteDialect extends Dialect {
                 append(hasOffset ? " limit ? offset ?" : " limit ?").toString();
     }
 
-    @Override
-    public boolean supportsTemporaryTables() {
-        return true;
-    }
-
-    @Override
-    public String getCreateTemporaryTableString() {
-        return "create temporary table if not exists";
-    }
-
-    @Override
-    public boolean dropTemporaryTableAfterUse() {
-        return false;
-    }
+//    @Override
+//    public boolean supportsTemporaryTables() {
+//        return true;
+//    }
+//
+//    @Override
+//    public String getCreateTemporaryTableString() {
+//        return "create temporary table if not exists";
+//    }
+//
+//    @Override
+//    public boolean dropTemporaryTableAfterUse() {
+//        return false;
+//    }
 
     @Override
     public boolean supportsCurrentTimestampSelection() {

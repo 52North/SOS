@@ -35,8 +35,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.config.json.JsonActivationDao;
+import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
@@ -55,6 +57,8 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
     protected static final String PROCEDURE_DESCRIPTION_FORMATS = "procedureDescriptionFormats";
     protected static final String FORMAT = "format";
     protected static final String OFFERING_EXTENSIONS = "offeringExtensions";
+    protected static final String BINDINGS = "bindings";
+    protected static final String OPERATIONS = "operations";
 
     @Override
     public boolean isSosObservationOfferingExtensionActive(SosObservationOfferingExtensionKey key) {
@@ -103,6 +107,38 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
     public Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys() {
         return getKeys(PROCEDURE_DESCRIPTION_FORMATS, createFormatDecoder(ProcedureDescriptionFormatKey::new));
     }
+
+//    @Override
+//    public boolean isBindingActive(BindingKey key) {
+//        return isActive(BINDINGS, matches(key, BindingKey::ge, BindingKey::getBinding), true);
+//    }
+//
+//    @Override
+//    public void setBindingStatus(BindingKey key, boolean active) {
+//        setStatus(BINDINGS, matches(key, BindingKey::getServiceOperatorKey, BindingKey::getBinding),
+//                  s -> createFormatEncoder(s, key, BindingKey::getServiceOperatorKey, BindingKey::getBinding), active);
+//    }
+//
+//    @Override
+//    public Set<BindingKey> getBindingKeys() {
+//        return getKeys(BINDINGS, createFormatDecoder(BindingKey::new));
+//    }
+//
+//    @Override
+//    public boolean isOperationActive(OperationHandlerKey key) {
+//        return isActive(OPERATIONS, matches(key, OperationKey::getServiceOperatorKey, OperationKey::getOperation), true);
+//    }
+//
+//    @Override
+//    public void setOperationStatus(OperationHandlerKey key, boolean active) {
+//        setStatus(OPERATIONS, matches(key, OperationKey::getServiceOperatorKey, OperationKey::getOperation),
+//                  s -> createFormatEncoder(s, key, OperationKey::getServiceOperatorKey, OperationKey::getOperation), active);
+//    }
+//
+//    @Override
+//    public Set<OperationKey> getOperationKeys() {
+//        return getKeys(OPERATIONS, createFormatDecoder(OperationKey::new));
+//    }
 
     protected <K> Function<JsonNode, K> createFormatDecoder(BiFunction<OwsServiceKey, String, K> fun) {
         Objects.requireNonNull(fun);

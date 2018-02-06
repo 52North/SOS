@@ -62,6 +62,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private int currentRow;
 
     private boolean noChunk = false;
+    
+    private int valueCounter = 0;
 
     private int currentResultSize = 0;
 
@@ -74,10 +76,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @param duplicated 
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series) throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, series);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series, duplicated);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -85,10 +88,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
-            if (!noChunk) {
+            if (!noChunk && (valueCounter == 0 || valueCounter == chunkSize)) {
                 getNextResults();
-                if (chunkSize <= 0 || currentResultSize < chunkSize) {
+                if (chunkSize <= 0 || (valueCounter != 0 && valueCounter < chunkSize)) {
                     noChunk = true;
+                } else {
+                    valueCounter = 0;
                 }
             }
         }
@@ -105,15 +110,23 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     @Override
     public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
-        return (AbstractValuedLegacyObservation<?>) seriesValuesResult.next();
+        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) getNextValue();;
+        if (checkValue(resultObject)) {
+            return resultObject;
+        }
+        session.evict(resultObject);
+        return null;
     }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNext()) {
-                AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
-                TimeValuePair value = resultObject.createTimeValuePairFrom();
+                AbstractValuedLegacyObservation<?> resultObject = getNextValue();
+                TimeValuePair value = null;
+                if (checkValue(resultObject)) {
+                    value = resultObject.createTimeValuePairFrom();
+                }
                 session.evict(resultObject);
                 return value;
             }
@@ -126,13 +139,16 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public OmObservation next() throws OwsExceptionReport {
+    public OmObservation next(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
             if (hasNext()) {
                 OmObservation observation = getObservationTemplate().cloneTemplate();
-                AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
-                resultObject.addValuesToObservation(observation, getResponseFormat());
-                checkForModifications(observation);
+                AbstractValuedLegacyObservation<?> resultObject = getNextValue();
+                if (checkValue(resultObject)) {
+                    observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+                    resultObject.addValuesToObservation(observation, getResponseFormat());
+                    checkForModifications(observation);
+                }
                 session.evict(resultObject);
                 return observation;
             }
@@ -142,6 +158,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+    private AbstractValuedLegacyObservation<?> getNextValue() {
+        valueCounter++;
+        return seriesValuesResult.next();
     }
 
     /**
@@ -186,10 +207,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      */
     private void setSeriesValuesResult(Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {
-            this.currentResultSize = seriesValuesResult.size();
             this.seriesValuesResult = seriesValuesResult.iterator();
         }
-
     }
 
 }

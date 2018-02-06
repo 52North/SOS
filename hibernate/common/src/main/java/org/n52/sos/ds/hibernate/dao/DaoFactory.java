@@ -40,18 +40,20 @@ import javax.inject.Inject;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.EReportingSetting;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueTimeDAO;
-import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
@@ -59,14 +61,12 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.util.SweHelper;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 /**
  * Hibernate data access factory.
@@ -80,7 +80,12 @@ public class DaoFactory {
 
     private Set<Integer> validityFlags;
     private Set<Integer> verificationFlags;
+    private EncoderRepository encoderRepository;
+    private DecoderRepository decoderRepository;
+    private XmlOptionsHelper xmlOptionsHelper;
     private I18NDAORepository i18NDAORepository;
+    private GeometryHandler geometryHandler;
+    private SweHelper sweHelper;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -99,15 +104,48 @@ public class DaoFactory {
                 .map(Integer::parseInt).collect(toSet())).orElseGet(Collections::emptySet);
     }
 
-    public AbstractSeriesDAO getSeriesDAO() throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    @Inject
+    public void setXmlOptionsHelper(XmlOptionsHelper xmlOptionsHelper) {
+        this.xmlOptionsHelper = xmlOptionsHelper;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Inject
+    public void setSweHelper(SweHelper sweHelper) {
+        this.sweHelper = sweHelper;
+    }
+
+    public AbstractSeriesDAO getSeriesDAO() {
+        if (HibernateHelper.isEntitySupported(EReportingDatasetEntity.class)) {
             return new EReportingSeriesDAO(this);
-        } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
-            return new SeriesDAO(this);
+        }
+        return new SeriesDAO(this);
+    }
+
+    public boolean isSeriesDAO() {
+        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
+            return true;
+        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
+            return true;
         } else {
-            throw new NoApplicableCodeException().withMessage("Implemented series DAO is missing!");
+           return false;
         }
     }
+
 
     /**
      * Get the currently supported Hibernate Observation data access implementation
@@ -116,50 +154,36 @@ public class DaoFactory {
      *
      * @throws OwsExceptionReport If no Hibernate Observation data access is supported
      */
-    public AbstractObservationDAO getObservationDAO() throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
+    public AbstractSeriesObservationDAO getObservationDAO() {
+        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
             return new EReportingObservationDAO(this.verificationFlags, this.validityFlags, this);
-        } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
-            return new SeriesObservationDAO(this);
-        } else if (HibernateHelper.isEntitySupported(AbstractLegacyObservation.class)) {
-            return new LegacyObservationDAO(this);
-        } else {
-            throw new NoApplicableCodeException().withMessage("Implemented observation DAO is missing!");
         }
+        return new SeriesObservationDAO(this);
     }
 
-    public AbstractObservationTimeDAO getObservationTimeDAO() throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
+    public AbstractObservationTimeDAO getObservationTimeDAO() {
+        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
             return new EReportingObservationTimeDAO();
-        } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
-            return new SeriesObservationTimeDAO();
-        } else {
-            throw new NoApplicableCodeException().withMessage("Implemented observation time DAO is missing!");
         }
+        return new SeriesObservationTimeDAO();
     }
 
-    public AbstractSeriesValueDAO getValueDAO() throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(AbstractValuedEReportingObservation.class)) {
+    public AbstractSeriesValueDAO getValueDAO() {
+        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
             return new EReportingValueDAO(this.verificationFlags, this.validityFlags);
-        } else if (HibernateHelper.isEntitySupported(AbstractValuedSeriesObservation.class)) {
-            return new SeriesValueDAO();
-//        } else if (HibernateHelper.isEntitySupported(ObservationValue.class)) {
-//            return new ObserervationValueDAO();
-        } else {
-            throw new NoApplicableCodeException().withMessage("Implemented value DAO is missing!");
         }
+        return new SeriesValueDAO();
     }
 
-    public AbstractSeriesValueTimeDAO getValueTimeDAO() throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
+    public AbstractSeriesValueTimeDAO getValueTimeDAO() {
+        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
             return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags);
-        } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
-            return new SeriesValueTimeDAO();
-//        } else if (HibernateHelper.isEntitySupported(ObservationValueTime.class)) {
-//            return new ObservationValueTimeDAO();
-        } else {
-            throw new NoApplicableCodeException().withMessage("Implemented value time DAO is missing!");
         }
+        return new SeriesValueTimeDAO();
+    }
+
+    public AbstractFeatureOfInterestDAO getFeatureDAO() throws CodedException {
+        return getFeatureOfInterestDAO();
     }
 
     public ProcedureDAO getProcedureDAO() {
@@ -174,12 +198,9 @@ public class DaoFactory {
         return new FeatureOfInterestDAO(this);
     }
 
+    @Deprecated
     public ValidProcedureTimeDAO getValidProcedureTimeDAO() {
         return new ValidProcedureTimeDAO(this);
-    }
-
-    public ObservationConstellationDAO getObservationConstellationDAO() {
-        return new ObservationConstellationDAO(this);
     }
 
     public RelatedFeatureDAO getRelatedFeatureDAO() {
@@ -191,7 +212,7 @@ public class DaoFactory {
     }
 
     public ResultTemplateDAO getResultTemplateDAO() {
-        return new ResultTemplateDAO();
+        return new ResultTemplateDAO(encoderRepository, xmlOptionsHelper, decoderRepository);
     }
 
     public RelatedFeatureRoleDAO getRelatedFeatureRoleDAO() {
@@ -202,8 +223,12 @@ public class DaoFactory {
         return new CodespaceDAO();
     }
 
-    public ObservationTypeDAO getObservationTypeDAO() {
-        return new ObservationTypeDAO();
+    public FormatDAO getObservationTypeDAO() {
+        return new FormatDAO();
+    }
+
+    public FormatDAO getFeatureTypeDAO() {
+        return new FormatDAO();
     }
 
     public OfferingDAO getOfferingDAO() {
@@ -214,12 +239,20 @@ public class DaoFactory {
         return new ParameterDAO();
     }
 
-    public ProcedureDescriptionFormatDAO getProcedureDescriptionFormatDAO() {
-        return new ProcedureDescriptionFormatDAO();
+    public FormatDAO getProcedureDescriptionFormatDAO() {
+        return new FormatDAO();
     }
 
     public I18NDAORepository getI18NDAORepository() {
         return i18NDAORepository;
+    }
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    public SweHelper getSweHelper() {
+        return sweHelper;
     }
 
 }

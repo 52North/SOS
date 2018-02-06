@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -77,12 +78,13 @@ import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
+import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.values.HibernateChunkStreamingValue;
@@ -164,9 +166,9 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                  sosRequest.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();
         }
-        if (sosRequest.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
+//        if (sosRequest.isSetResultFilter()) {
+//            throw new NotYetSupportedException("result filtering");
+//        }
         final GetObservationResponse sosResponse = new GetObservationResponse();
         sosResponse.setService(sosRequest.getService());
         sosResponse.setVersion(sosRequest.getVersion());
@@ -180,7 +182,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             if (isForceDatasourceStreaming() && CollectionHelper.isEmpty(sosRequest.getFirstLatestTemporalFilter())) {
                 // TODO
                 if (isSeriesSupported()) {
-                    sosResponse.setObservationCollection(querySeriesObservationForStreaming(sosRequest, session));
+                    sosResponse.setObservationCollection(querySeriesObservationForStreaming(sosRequest, sosResponse, session));
                 } else {
                     sosResponse.setObservationCollection(queryObservationForStreaming(sosRequest, session));
                 }
@@ -221,11 +223,16 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        HashSet<String> set = Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF);
             if (isSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-            }
+            set.add(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
-        return super.getConformanceClasses(service, version);
+        return set;
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     @Override
@@ -249,9 +256,6 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     protected ObservationStream queryObservation(final GetObservationRequest request,
                                                    LegacyObservationDAO observationDAO, final Session session)
             throws OwsExceptionReport, ConverterException {
-        if (request.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
 
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
@@ -334,10 +338,6 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     protected ObservationStream querySeriesObservation(GetObservationRequest request,
                                                          AbstractSeriesObservationDAO observationDAO, Session session)
             throws OwsExceptionReport, ConverterException {
-        if (request.isSetResultFilter()) {
-            throw new NotYetSupportedException("result filtering");
-        }
-
         final long start = System.currentTimeMillis();
         // get valid featureOfInterest identifier
         final Set<String> features = getFeatures(request, session);
@@ -366,12 +366,14 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                     for (Series series : seriesDAO.getSeries(request, features, session)) {
                         seriesObservations.addAll(observationDAO.getSeriesObservationsFor(series, request,
                                                                                           sosIndeterminateTime, session));
+                        
                     }
+                    seriesObservations = checkObservationsForDuplicity(seriesObservations, request);
                 }
             }
         } // query without temporal or indeterminate filters
         else {
-            seriesObservations = observationDAO.getSeriesObservationsFor(request, features, session);
+            seriesObservations = checkObservationsForDuplicity(observationDAO.getSeriesObservationsFor(request, features, session), request);
         }
 
         // if active profile demands observation metadata for series without
@@ -498,6 +500,8 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         List<Series> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
+        checkSeriesOfferings(serieses, request);
+        Collection<Series> duplicated = checkAndGetDuplicatedtSeries(serieses, request);
         for (Series series : serieses) {
             Locale locale = getRequestedLocale(request);
             String service = request.getService();
@@ -506,13 +510,19 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             ObservationStream createSosObservationFromSeries = HibernateObservationUtilities
                     .createSosObservationFromSeries(series, request, serviceProviderFactory, locale, getProcedureDescriptionFormat(request.getResponseFormat()), daoFactory, session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
-            HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
+            HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId(), duplicated.contains(series));
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
             streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
             observationTemplate.setValue(streamingValue);
             result.add(observationTemplate);
+        }
+        // query global response values
+        
+        ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
+        if (timeExtrema.isSetPhenomenonTimes()) {
+            response.setGlobalValues(response.new GlobalGetObservationValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return ObservationStream.of(result);
@@ -528,6 +538,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
      * @param request GetObservation request
      * @param seriesId Series id
      *
+     * @param duplicated 
      * @return Streaming observation value
      *
      * @throws CodedException
@@ -536,9 +547,9 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             OwsExceptionReport {
         ConnectionProvider connectionProvider = getConnectionProvider();
         if (isChunkDatasourceStreaming()) {
-            return new HibernateChunkSeriesStreamingValue(connectionProvider, daoFactory, request, seriesId);
+            return new HibernateChunkSeriesStreamingValue(connectionProvider, daoFactory, request, seriesId, duplicated);
         } else {
-            return new HibernateScrollableSeriesStreamingValue(connectionProvider, daoFactory, request, seriesId);
+            return new HibernateScrollableSeriesStreamingValue(connectionProvider, daoFactory, request, seriesId, duplicated);
         }
     }
 
@@ -636,6 +647,70 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
      */
     protected boolean isChunkDatasourceStreaming() {
         return chunkDatasourceStreaming;
+    }
+
+    private void checkSeriesOfferings(List<Series> serieses, GetObservationRequest request) {
+        boolean allSeriesWithOfferings = true;
+        for (Series series : serieses) {
+            allSeriesWithOfferings = !series.isSetOffering() ?  false : allSeriesWithOfferings;
+        }
+        if (allSeriesWithOfferings) {
+            request.setOfferings(Lists.<String>newArrayList());
+        }
+    }
+
+    private Collection<Series> checkAndGetDuplicatedtSeries(List<Series> serieses, GetObservationRequest request) {
+        if (!request.isCheckForDuplicity()) {
+            return Sets.newHashSet();
+        }
+        Set<Series> single = Sets.newHashSet();
+        Set<Series> duplicated = Sets.newHashSet();
+        for (Series series : serieses) {
+            if (!single.isEmpty()) {
+                if (isDuplicatedSeries(series, single)) {
+                    duplicated.add(series);
+                }
+            } else {
+                single.add(series);
+            }
+        }
+        return duplicated;
+    }
+    
+    private boolean isDuplicatedSeries(Series series, Set<Series> serieses) {
+        for (Series s : serieses) {
+            if (series.hasSameObservationIdentifier(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private Collection<SeriesObservation<?>> checkObservationsForDuplicity(Collection<SeriesObservation<?>> seriesObservations, GetObservationRequest request) {
+        if (!request.isCheckForDuplicity()) {
+            return seriesObservations;
+        }
+        Collection<SeriesObservation<?>> checked = Lists.newArrayList();
+        Set<Series> serieses = Sets.newHashSet();
+        Set<Series> duplicated = Sets.newHashSet();
+        for (SeriesObservation<?> seriesObservation : seriesObservations) {
+            if (serieses.isEmpty()) {
+                serieses.add(seriesObservation.getSeries());
+            } else {
+                if (!serieses.contains(seriesObservation.getSeries()) && !duplicated.contains(seriesObservation)
+                        && isDuplicatedSeries(seriesObservation.getSeries(), serieses)) {
+                    duplicated.add(seriesObservation.getSeries());
+                } else {
+                    serieses.add(seriesObservation.getSeries());
+                }
+            }
+
+            if (serieses.contains(seriesObservation.getSeries()) || (duplicated.contains(seriesObservation.getSeries())
+                    && seriesObservation.getOfferings().size() == 1)) {
+                checked.add(seriesObservation);
+            }
+        }
+        return checked;
     }
 
 }

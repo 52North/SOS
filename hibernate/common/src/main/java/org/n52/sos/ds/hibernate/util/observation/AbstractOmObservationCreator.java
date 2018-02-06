@@ -30,22 +30,29 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
-import javax.inject.Inject;
-
+import org.hibernate.query.Query;
 import org.hibernate.Session;
-
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
-import org.n52.faroe.annotation.Setting;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.http.MediaType;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.DescribableEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.shetland.iso.gmd.CiOnlineResource;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GenericMetaData;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationStream;
@@ -65,22 +72,15 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
-import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.CodingSettings;
-import org.n52.svalbard.encode.EncoderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
-import org.locationtech.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc
@@ -89,113 +89,126 @@ import org.locationtech.jts.geom.Geometry;
  * @since 4.0.0
  */
 public abstract class AbstractOmObservationCreator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmObservationCreator.class);
+    protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES =
+            "getUnitForObservablePropertyProcedureSeries";
+    protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES =
+            "getUnitForObservablePropertySeries";
     private final AbstractObservationRequest request;
     private final Session session;
     private final Locale i18n;
-    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
-    private String tokenSeparator;
-    private String tupleSeparator;
-    private String decimalSeparator;
-    private EncoderRepository encoderRepository;
-    private String pdf;
-    private DaoFactory daoFactory;
+    private final String pdf;
+    private final OmObservationCreatorContext creatorContext;
 
-    public AbstractOmObservationCreator(AbstractObservationRequest request,
-                                        Locale i18n,
-                                        LocalizedProducer<OwsServiceProvider> serviceProvider,
-                                        String pdf,
-                                        DaoFactory daoFactory,
-                                        Session session) {
+    public AbstractOmObservationCreator(
+            AbstractObservationRequest request, Locale i18n, String pdf, OmObservationCreatorContext creatorContext,
+            Session session) {
+        this.creatorContext = creatorContext;
         this.request = request;
         this.session = session;
-        this.i18n = i18n == null ? ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
-        this.serviceProvider = serviceProvider;
+        this.i18n = i18n == null ? creatorContext.getDefaultLanguage() : i18n;
         this.pdf = pdf;
-        this.daoFactory = daoFactory;
     }
 
-    @Inject
-    public void setEncoderRepository(EncoderRepository encoderRepository) {
-        this.encoderRepository = encoderRepository;
-    }
-
-    @Setting(CodingSettings.TOKEN_SEPARATOR)
-    public void setTokenSeparator(final String separator) throws ConfigurationError {
-        Validation.notNullOrEmpty("Token separator", separator);
-        tokenSeparator = separator;
-    }
-
-    @Setting(CodingSettings.TUPLE_SEPARATOR)
-    public void setTupleSeparator(final String separator) throws ConfigurationError {
-        Validation.notNullOrEmpty("Tuple separator", separator);
-        tupleSeparator = separator;
-    }
-
-    @Setting(CodingSettings.DECIMAL_SEPARATOR)
-    public void setDecimalSeparator(final String separator) throws ConfigurationError {
-        Validation.notNullOrEmpty("Decimal separator", separator);
-        decimalSeparator = separator;
+    protected OmObservationCreatorContext getCreatorContext() {
+        return creatorContext;
     }
 
     public DaoFactory getDaoFactory() {
-        return daoFactory;
+        return getCreatorContext().getDaoFactory();
     }
 
     protected SosContentCache getCache() {
-        return Configurator.getInstance().getCache();
+        return getCreatorContext().getCache();
     }
 
     protected FeatureQueryHandler getFeatureQueryHandler() {
-        return Configurator.getInstance().getFeatureQueryHandler();
+        return getCreatorContext().getFeatureQueryHandler();
     }
 
     protected AdditionalObservationCreatorRepository getAdditionalObservationCreatorRepository() {
-        return AdditionalObservationCreatorRepository.getInstance();
+        return getCreatorContext().getAdditionalObservationCreatorRepository();
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return getCreatorContext().getProfileHandler().getActiveProfile();
     }
 
     protected String getTokenSeparator() {
-        return tokenSeparator;
+        return getCreatorContext().getTokenSeparator();
     }
 
     protected String getTupleSeparator() {
-        return tupleSeparator;
+        return getCreatorContext().getTupleSeparator();
     }
 
     protected String getDecimalSeparator() {
-        return decimalSeparator;
+        return getCreatorContext().getDecimalSeparator();
     }
 
-    private ConverterRepository getConverterRepository() {
-        return ConverterRepository.getInstance();
+    protected ConverterRepository getConverterRepository() {
+        return getCreatorContext().getConverterRepository();
     }
 
-    private HibernateProcedureDescriptionGeneratorFactoryRepository getProcedureDescriptionGeneratorFactoryRepository() {
-        return HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance();
+    protected HibernateProcedureDescriptionGeneratorFactoryRepository getProcedureDescriptionGeneratorFactoryRepository() {
+        return getCreatorContext().getProcedureDescriptionGeneratorFactoryRepository();
     }
 
-    private GeometryHandler getGeometryHandler() {
-        return GeometryHandler.getInstance();
+    protected GeometryHandler getGeometryHandler() {
+        return getCreatorContext().getGeometryHandler();
+    }
+
+    protected LocalizedProducer<OwsServiceProvider> getServiceProvider() {
+        return getCreatorContext().getServiceProvider(getService());
     }
 
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
     }
 
-    public abstract ObservationStream create() throws OwsExceptionReport,
-                                                      ConverterException;
+    protected void addDefaultValuesToObservation(OmObservation o) {
+        o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
+        o.setNoDataValue(getNoDataValue());
+        o.setTokenSeparator(getTokenSeparator());
+        o.setTupleSeparator(getTupleSeparator());
+        o.setDecimalSeparator(getDecimalSeparator());
+        addMetadata(o);
+    }
+
+    public abstract ObservationStream create()
+            throws OwsExceptionReport, ConverterException;
+
+    private void addMetadata(OmObservation o) {
+        if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
+            CiOnlineResource ciOnlineResource = new CiOnlineResource(getServiceURL());
+            ciOnlineResource.setProtocol("OGC:SOS-2.0.0");
+            o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
+        }
+    }
+
+    protected URI getServiceURL() {
+        return getCreatorContext().getServiceURL();
+    }
 
     public String getVersion() {
         return request.getVersion();
     }
 
+    public String getService() {
+        return request.getService();
+    }
+
     public String getResponseFormat() {
-        return request.isSetResponseFormat()
-                       ? request.getResponseFormat()
-                       : getActiveProfile().getObservationResponseFormat();
+        return request.isSetResponseFormat() ? request.getResponseFormat()
+                : getActiveProfile().getObservationResponseFormat();
+    }
+
+    public List<MediaType> getAcceptType() {
+        return request.getRequestContext().getAcceptType().get();
+    }
+
+    public boolean checkAcceptType() {
+        return request.getRequestContext() != null && request.getRequestContext().getAcceptType().isPresent();
     }
 
     public Session getSession() {
@@ -206,6 +219,10 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
+    public I18NDAORepository getI18NDAORepository() {
+        return getCreatorContext().getI18nr();
+    }
+
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<>();
@@ -213,12 +230,13 @@ public abstract class AbstractOmObservationCreator {
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(getGeometryHandler()
-                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+        namedValue.setValue(
+                new GeometryValue(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
 
-    protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) throws CodedException {
+    protected OmObservableProperty createObservableProperty(PhenomenonEntity observableProperty)
+            throws CodedException {
         String phenID = observableProperty.getIdentifier();
         String description = observableProperty.getDescription();
         OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
@@ -234,22 +252,42 @@ public abstract class AbstractOmObservationCreator {
      *
      * @param identifier
      *
-     * @return Procedure object
-     *
-     * @throws ConverterException If an error occurs sensor description creation
-     * @throws OwsExceptionReport If an error occurs
+     * @return Procedure identifier
+     * @throws ConverterException
+     *             If an error occurs sensor description creation
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     protected SosProcedureDescription<?> createProcedure(String identifier)
             throws ConverterException, OwsExceptionReport {
-        Procedure hProcedure = getDaoFactory().getProcedureDAO().getProcedureForIdentifier(identifier, getSession());
+        return createProcedure(new ProcedureDAO(getDaoFactory()).getProcedureForIdentifier(identifier, getSession()));
+    }
+
+    /**
+     * Get procedure object from series
+     *
+     * @param identifier
+     *
+     * @return Procedure object
+     *
+     * @throws ConverterException
+     *             If an error occurs sensor description creation
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected SosProcedureDescription<?> createProcedure(ProcedureEntity hProcedure)
+            throws ConverterException, OwsExceptionReport {
+        // Procedure hProcedure =
+        // getDaoFactory().getProcedureDAO().getProcedureForIdentifier(identifier,
+        // getSession());
         String pdf = !Strings.isNullOrEmpty(this.pdf) ? this.pdf
-                             : hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
+                : hProcedure.getFormat().getFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
-            return new HibernateProcedureConverter(this.serviceProvider, getDaoFactory(), getConverterRepository(), getProcedureDescriptionGeneratorFactoryRepository())
-                    .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
+            return getCreatorContext().getProcedureConverter().createSosProcedureDescription(hProcedure, pdf,
+                    getVersion(), i18n, getSession());
         } else {
-            SosProcedureDescriptionUnknownType sosProcedure
-                    = new SosProcedureDescriptionUnknownType(identifier, pdf, null);
+            SosProcedureDescriptionUnknownType sosProcedure =
+                    new SosProcedureDescriptionUnknownType(hProcedure.getIdentifier(), pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
                 addName(sosProcedure, hProcedure);
@@ -261,19 +299,31 @@ public abstract class AbstractOmObservationCreator {
     /**
      * @param abstractFeature
      * @param hAbstractFeature
+     */
+    protected void addIdentifier(AbstractFeature abstractFeature,
+            DescribableEntity hAbstractFeature) {
+        if (hAbstractFeature.isSetIdentifierCodespace()) {
+            abstractFeature.setIdentifier(new CodeWithAuthority(hAbstractFeature.getIdentifier(),
+                    hAbstractFeature.getIdentifierCodespace().getName()));
+        }
+        abstractFeature.setIdentifier(new CodeWithAuthority(hAbstractFeature.getIdentifier()));
+    }
+
+    /**
+     * @param abstractFeature
+     * @param hAbstractFeature
      *
      * @throws CodedException
      */
-    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature)
+    protected void addName(AbstractFeature abstractFeature, DescribableEntity hAbstractFeature)
             throws CodedException {
-        if (hAbstractFeature.isSetCodespaceName()) {
+        if (hAbstractFeature.isSetNameCodespace()) {
             try {
-                abstractFeature.addName(hAbstractFeature.getName(), new URI(hAbstractFeature.getCodespaceName()
-                                        .getCodespace()));
+                abstractFeature.addName(hAbstractFeature.getName(),
+                        new URI(hAbstractFeature.getNameCodespace().getName()));
             } catch (URISyntaxException e) {
-                throw new NoApplicableCodeException().causedBy(e)
-                        .withMessage("Error while creating URI from '{}'", hAbstractFeature.getCodespaceName()
-                                     .getCodespace());
+                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
+                        hAbstractFeature.getNameCodespace().getName());
             }
         }
         abstractFeature.addName(hAbstractFeature.getName());
@@ -287,33 +337,35 @@ public abstract class AbstractOmObservationCreator {
      *
      * @return FeatureOfInerest object
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    protected AbstractFeature createFeatureOfInterest(FeatureOfInterest foi) throws OwsExceptionReport {
+    protected AbstractFeature createFeatureOfInterest(AbstractFeatureEntity foi)
+            throws OwsExceptionReport {
         if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
-            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-            queryObject.addFeatureIdentifier(foi.getIdentifier()).setConnection(getSession()).setVersion(getVersion());
+            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
+            queryObject.setFeatureObject(foi).addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
             final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
-            if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null &&
-                     !feature.getDefaultElementEncoding()
-                        .equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
+            if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null
+                    && !feature.getDefaultElementEncoding()
+                            .equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
                 feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
             }
             return feature;
         } else {
             SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(foi.getIdentifier()));
-            if (foi.isSetCodespace()) {
-                samplingFeature.getIdentifierCodeWithAuthority().setCodeSpace(foi.getCodespace().getCodespace());
+            if (foi.isSetIdentifierCodespace()) {
+                samplingFeature.getIdentifierCodeWithAuthority().setCodeSpace(foi.getIdentifierCodespace().getName());
             }
             if (foi.isSetName()) {
                 CodeType codeType = new CodeType(foi.getName());
-                if (foi.isSetCodespaceName()) {
+                if (foi.isSetNameCodespace()) {
                     try {
-                        codeType.setCodeSpace(new URI(foi.getCodespaceName().getCodespace()));
+                        codeType.setCodeSpace(new URI(foi.getNameCodespace().getName()));
                     } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e)
-                                .withMessage("The codespace '{}' of the name is not an URI!", foi.getCodespaceName()
-                                             .getCodespace());
+                        throw new NoApplicableCodeException().causedBy(e).withMessage(
+                                "The codespace '{}' of the name is not an URI!",
+                                foi.getNameCodespace().getName());
                     }
                 }
                 samplingFeature.setName(codeType);
@@ -322,24 +374,89 @@ public abstract class AbstractOmObservationCreator {
         }
     }
 
-    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation)
-            throws CodedException {
-        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation
-                                                                                  .getClass());
+    /**
+     * Get featureOfInterest object from series
+     *
+     * @param identifier
+     * @return FeatureOfInerest object
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected AbstractFeature createFeatureOfInterest(String featureOfInterest)
+            throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
+        queryObject.setFeatureObject(featureOfInterest).setVersion(getVersion());
+        final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
+        return feature;
+    }
 
-        if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key);
-            creator.create(sosObservation, hObservation);
-        } else {
-            AdditionalObservationCreatorKey key2 = new AdditionalObservationCreatorKey(null, hObservation.getClass());
-            if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key2)) {
-                AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key2);
-                creator.add(sosObservation, hObservation);
+    protected void checkForAdditionalObservationCreator(DataEntity<?> hObservation, OmObservation sosObservation)
+            throws CodedException {
+        for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(hObservation)) {
+            if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {
+                AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key);
+                creator.create(sosObservation, hObservation, getSession());
+                break;
+            }
+        }
+        if (checkAcceptType()) {
+            for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(getAcceptType(),
+                    hObservation)) {
+                if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {
+                    AdditionalObservationCreator creator = getAdditionalObservationCreatorRepository().get(key);
+                    creator.create(sosObservation, hObservation, getSession());
+                    break;
+                }
             }
         }
     }
 
+    private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(DataEntity<?> hObservation) {
+        List<AdditionalObservationCreatorKey> keys = new LinkedList<>();
+        keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass()));
+        keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass().getSuperclass()));
+        keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass()));
+        keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass().getSuperclass()));
+        return keys;
+    }
+
+    private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(List<MediaType> acceptType,
+            DataEntity<?> hObservation) {
+        List<AdditionalObservationCreatorKey> keys = new LinkedList<>();
+        for (MediaType mediaType : acceptType) {
+            keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
+                    hObservation.getClass()));
+            keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
+                    hObservation.getClass().getSuperclass()));
+        }
+        return keys;
+    }
+
     public static String checkVersion(AbstractObservationRequest request) {
         return request != null ? request.getVersion() : null;
+    }
+
+    protected String queryUnit(DatasetEntity series) {
+        if (series.hasUnit()) {
+            return series.getUnit().getUnit();
+        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
+                getSession())) {
+            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, series.getObservableProperty().getIdentifier());
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PROCEDURE, series.getProcedure().getIdentifier());
+            LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}",
+                    series.getObservableProperty().getIdentifier(), series.getProcedure().getIdentifier(),
+                    SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, namedQuery.getQueryString());
+            return (String) namedQuery.uniqueResult();
+        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES,
+                getSession())) {
+            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
+            namedQuery.setParameter(DatasetEntity.PROPERTY_PHENOMENON, series.getObservableProperty().getIdentifier());
+            LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}",
+                    series.getObservableProperty().getIdentifier(), SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES,
+                    namedQuery.getQueryString());
+            return (String) namedQuery.uniqueResult();
+        }
+        return null;
     }
 }

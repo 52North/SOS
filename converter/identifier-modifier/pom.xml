@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>converter</artifactId>
-         <version>5.0.0-SNAPSHOT</version>
+         <version>5.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>identifier-modifier</artifactId>
     <packaging>pom</packaging>
@@ -14,5 +14,6 @@
     	<module>abstract-identifier</module>
         <module>flexible-identifier</module>
         <module>prefixed-identifier</module>
+        <module>ereporting-identifier</module>
     </modules>
 </project>

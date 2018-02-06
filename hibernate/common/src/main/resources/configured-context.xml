@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <bean class="org.n52.sos.ds.hibernate.util.ObservationSettingProvider" />
     <bean class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
@@ -9,12 +9,18 @@
     <bean class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>
     <bean class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
     <bean class="org.n52.sos.ds.hibernate.dao.DaoFactory"/>
-    <bean class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
 
+    <bean class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
+    <bean class="org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext"/>
+    <bean class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+
+    <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext"/>
+    <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter"/>
     <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
     <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml101"/>
     <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml20"/>
     <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryWml20"/>
+    <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30"/>
     <!--
     <bean class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
     <bean class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
@@ -25,7 +31,5 @@
     <bean class="org.n52.sos.ds.hibernate.InsertResultDAO"/>
     <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
     -->
-    <bean class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
-    <bean class="org.n52.sos.ds.hibernate.entities.EntitiyHelper" />
 
 </beans>

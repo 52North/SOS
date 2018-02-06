@@ -1,6 +1,6 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
 
     <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger" />
@@ -9,6 +9,7 @@
     <bean id="poxBinding" class="org.n52.iceland.binding.pox.PoxBinding" />
     <bean id="jsonBinding" class="org.n52.iceland.binding.json.JSONBinding" />
     <bean id="soapBinding" class="org.n52.iceland.binding.soap.SoapBinding" />
+    <bean id="exiBinding" class="org.n52.iceland.binding.exi.EXIBinding"/>
 
     <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl" />
 
@@ -17,10 +18,11 @@
 	<bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
 	<bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
 	<bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository" />
+    <bean id="supportedTypeRepositoryInitializer" class="org.n52.iceland.coding.SupportedTypeRepositoryInitializer" />
 	<bean id="owsOperationMetadataExtensionProviderRepository" class="org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository" />
 	<bean id="sosObservationOfferingExtensionRepository" class="org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository" />
 	<bean id="owsCapabilitiesExtensionRepository" class="org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository" />
-	<bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
+	<bean id="i18NDAORepository" class="org.n52.iceland.i18n.I18NDAORepository" />
 	<bean id="schemaRepository" class="org.n52.svalbard.encode.SchemaRepository" />
 	<bean id="operationHandlerRepository" class="org.n52.iceland.request.handler.OperationHandlerRepository" />
 	<bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
@@ -38,7 +40,10 @@
 		<description>Used to decouple EventListener and EventBus creation.</description>
 	</bean>
 
+    <!-- ResponseWriterFactory implementations from coding/json -->
+    <bean id="jsonResponseWriterFactory" class="org.n52.iceland.response.JSONResponseWriterFactory"/>
     <bean id="xmlResponseWriterFactory" class="org.n52.iceland.response.XmlResponseWriterFactory" />
+    <bean id="exiResponseWriterFactory" class="org.n52.iceland.response.EXIResponseWriterFactory"/>
 
 	<bean class="org.n52.iceland.util.activation.ActivationRegistrator">
 		<description>Used to wire up activation persistence.</description>

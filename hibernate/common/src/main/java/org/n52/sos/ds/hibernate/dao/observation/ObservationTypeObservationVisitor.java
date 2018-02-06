@@ -28,17 +28,20 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.data.Data.BlobData;
+import org.n52.series.db.beans.data.Data.BooleanData;
+import org.n52.series.db.beans.data.Data.CategoryData;
+import org.n52.series.db.beans.data.Data.ComplexData;
+import org.n52.series.db.beans.data.Data.CountData;
+import org.n52.series.db.beans.data.Data.DataArrayData;
+import org.n52.series.db.beans.data.Data.GeometryData;
+import org.n52.series.db.beans.data.Data.ProfileData;
+import org.n52.series.db.beans.data.Data.QuantityData;
+import org.n52.series.db.beans.data.Data.ReferencedData;
+import org.n52.series.db.beans.data.Data.TextData;
 import org.n52.shetland.ogc.om.OmConstants;
-import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.util.observation.ObservationVisitor;
 
 /**
  * TODO JavaDoc
@@ -50,49 +53,84 @@ public class ObservationTypeObservationVisitor implements ObservationVisitor<Str
     private ObservationTypeObservationVisitor() {
     }
 
+    public String visit(Data o) {
+       if (o instanceof QuantityData) {
+           return visit((QuantityData)o);
+       } else if (o instanceof BlobData) {
+           return visit((BlobData)o);
+       } else if (o instanceof BooleanData) {
+           return visit((BooleanData)o);
+       } else if (o instanceof CategoryData) {
+           return visit((CategoryData)o);
+       } else if (o instanceof ComplexData) {
+           return visit((ComplexData)o);
+       } else if (o instanceof CountData) {
+           return visit((CountData)o);
+       } else if (o instanceof GeometryData) {
+           return visit((GeometryData)o);
+       } else if (o instanceof TextData) {
+           return visit((TextData)o);
+       } else if (o instanceof ProfileData) {
+           return visit((ProfileData)o);
+       } else if (o instanceof ReferencedData) {
+           return visit((ReferencedData)o);
+       }
+       return null;
+    }
+
     @Override
-    public String visit(NumericObservation o) {
+    public String visit(QuantityData o) {
         return OmConstants.OBS_TYPE_MEASUREMENT;
     }
 
     @Override
-    public String visit(BlobObservation o) {
+    public String visit(BlobData o) {
         return OmConstants.OBS_TYPE_UNKNOWN;
     }
 
     @Override
-    public String visit(BooleanObservation o) {
+    public String visit(BooleanData o) {
         return OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
     }
 
     @Override
-    public String visit(CategoryObservation o) {
+    public String visit(CategoryData o) {
         return OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
     }
 
     @Override
-    public String visit(ComplexObservation o) {
+    public String visit(ComplexData o) {
         return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION;
     }
 
     @Override
-    public String visit(CountObservation o) {
+    public String visit(CountData o) {
         return OmConstants.OBS_TYPE_COUNT_OBSERVATION;
     }
 
     @Override
-    public String visit(GeometryObservation o) {
+    public String visit(GeometryData o) {
         return OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION;
     }
 
     @Override
-    public String visit(TextObservation o) {
+    public String visit(TextData o) {
         return OmConstants.OBS_TYPE_TEXT_OBSERVATION;
     }
 
     @Override
-    public String visit(SweDataArrayObservation o) {
+    public String visit(DataArrayData o) {
         return OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
+    }
+
+    @Override
+    public String visit(ProfileData o) {
+        return OmConstants.OBS_TYPE_PROFILE_OBSERVATION;
+    }
+
+    @Override
+    public String visit(ReferencedData o)  {
+        return OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
     }
 
     public static ObservationTypeObservationVisitor getInstance() {

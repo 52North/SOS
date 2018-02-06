@@ -29,8 +29,11 @@
 package org.n52.sos.cache;
 
 
+import javax.inject.Inject;
+
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.cache.ctrl.ContentCacheFactory;
+import org.n52.iceland.coding.SupportedTypeRepository;
 
 /**
  * TODO JavaDoc
@@ -39,9 +42,20 @@ import org.n52.iceland.cache.ctrl.ContentCacheFactory;
  */
 public class ContentCacheFactoryImpl implements ContentCacheFactory {
 
+    private SupportedTypeRepository supportedTypeRepository;
+
+    @Inject
+    public void setSupportedTypeRepository(SupportedTypeRepository supportedTypeRepository) {
+        this.supportedTypeRepository = supportedTypeRepository;
+    }
+
+    public SupportedTypeRepository getSupportedTypeRepository() {
+        return supportedTypeRepository;
+    }
+
     @Override
     public WritableContentCache get() {
-        return new InMemoryCacheImpl();
+        return (InMemoryCacheImpl) new InMemoryCacheImpl().setSupportedTypeRepository(getSupportedTypeRepository());
     }
 
 }

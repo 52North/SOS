@@ -196,84 +196,9 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                 seriesDAO.checkOrInsertSeries(hProcedure,
                                         hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
-                                    AbstractFeature sosFeatureOfInterest = request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
-                                    AbstractFeatureEntity hFeature = daoFactory.getFeatureDAO().insertFeature(
-                                            sosFeatureOfInterest, session);
-                                    for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription().getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
-                                        if (!(referenceValue.getAbstractDataComponent() instanceof SweQuantity)) {
-                                            throw new NoApplicableCodeException().withMessage(
-                                                    "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
-                                                    referenceValue.getAbstractDataComponent().getDataComponentType());
-                                        }
-                                        SweQuantity referenceValueValue = (SweQuantity) referenceValue.getAbstractDataComponent();
-                                        String identifier = hProcedure.getIdentifier() + "_referencevalue";
-                                        SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknownType(identifier,
-                                                procedureDescriptionFormat.getFormat(), "");
-                                        procedureReferenceSeries.setReference(true);
-                                        procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
-                                        ProcedureEntity hProcedureReferenceSeries = daoFactory.getProcedureDAO().getOrInsertProcedure(
-                                                identifier,
-                                                procedureDescriptionFormat,
-                                                procedureReferenceSeries,
-                                                false,
-                                                session);
-                                        OfferingEntity hOfferingReferenceSeries = daoFactory.getOfferingDAO().getAndUpdateOrInsert(
-                                                new SosOffering(
-                                                        hOffering.getIdentifier() + "_referencevalue",
-                                                        hOffering.getName() + "_referencevalue"),
-                                                hRelatedFeatures,
-                                                observationTypes,
-                                                featureOfInterestTypes,
-                                                session);
-                                        TimeInstant time = new TimeInstant(new DateTime(0));
-                                        SingleObservationValue<BigDecimal> sosValue = new SingleObservationValue<>(new QuantityValue(referenceValueValue.getValue(), referenceValueValue.getUom()));
-
-                                        OmObservation sosObservation = new OmObservation();
-                                        sosValue.setPhenomenonTime(time);
-                                        sosObservation.setResultTime(time);
-                                        sosObservation.setValue(sosValue);
-                                        sosObservation.setObservationConstellation(new OmObservationConstellation(procedureReferenceSeries,
-                                                new OmObservableProperty(hObservableProperty.getIdentifier()),
-                                                sosFeatureOfInterest));
-
-                                        DatasetEntity hObservationConstellationReferenceSeries = new DatasetEntity();
-                                        hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
-                                        hObservationConstellationReferenceSeries.setOffering(hOfferingReferenceSeries);
-                                        hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
-                                        Map<String, CodespaceEntity> codespaceCache = CollectionHelper.synchronizedMap();
-                                        Map<UoM, UnitEntity> unitCache = CollectionHelper.synchronizedMap();
-                                        ObservationPersister persister = new ObservationPersister(
-                                                getGeometryHandler(),
-                                                daoFactory.getObservationDAO(),
-                                                daoFactory,
-                                                sosObservation,
-                                                hObservationConstellationReferenceSeries,
-                                                hFeature,
-                                                codespaceCache,
-                                                unitCache,
-                                                Collections.singleton(hOfferingReferenceSeries),
-                                                session
-                                                );
-                                        Data<?> observation = sosValue.getValue().accept(persister);
-                                        DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
-                                                hObservableProperty.getIdentifier(),
-                                                hOfferingReferenceSeries.getIdentifier(),
-                                                Collections.singleton(hFeature.getIdentifier()),
-                                                session).get(0);
-                                        hReferenceSeries.setPublished(false);
-                                        session.update(hReferenceSeries);
-                                        ObservationContext ctxReferenced = new ObservationContext();
-                                        ctxReferenced.setPhenomenon(hObservableProperty);
-                                        ctxReferenced.setFeatureOfInterest(hFeature);
-                                        ctxReferenced.setProcedure(hProcedure);
-                                        ctxReferenced.setOffering(hOffering);
-                                        ctxReferenced.setPublish(false);
-                                        DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
-                                        if (hSeries instanceof QuantityDataset) {
-                                            ((QuantityDataset)hSeries).setReferenceValues(Sets.newHashSet(hReferenceSeries));
-                                        }
-                                        session.update(hSeries);
-                                    }
+                                    addStaticReferenceValues(request, session, procedureDescriptionFormat, hProcedure,
+                                            observationTypes, featureOfInterestTypes, hRelatedFeatures, hOffering,
+                                            hObservableProperty, seriesDAO);
                                 }
                             }
                         }
@@ -310,6 +235,91 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                     .isPresent() &&
                     !request.getProcedureDescription().getFeaturesOfInterestMap().isEmpty() &&
                     request.getProcedureDescription().getFeaturesOfInterestMap().size() == 1;
+    }
+
+    private void addStaticReferenceValues(InsertSensorRequest request, Session session,
+            FormatEntity procedureDescriptionFormat, ProcedureEntity hProcedure,
+            List<FormatEntity> observationTypes, List<FormatEntity> featureOfInterestTypes,
+            List<RelatedFeatureEntity> hRelatedFeatures, OfferingEntity hOffering,
+            PhenomenonEntity hObservableProperty, AbstractSeriesDAO seriesDAO) throws OwsExceptionReport {
+        AbstractFeature sosFeatureOfInterest = request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
+        AbstractFeatureEntity hFeature = daoFactory.getFeatureDAO().insertFeature(
+                sosFeatureOfInterest, session);
+        for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription().getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
+            if (!(referenceValue.getAbstractDataComponent() instanceof SweQuantity)) {
+                throw new NoApplicableCodeException().withMessage(
+                        "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
+                        referenceValue.getAbstractDataComponent().getDataComponentType());
+            }
+            SweQuantity referenceValueValue = (SweQuantity) referenceValue.getAbstractDataComponent();
+            String identifier = hProcedure.getIdentifier() + "_referencevalue";
+            SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknownType(identifier,
+                    procedureDescriptionFormat.getFormat(), "");
+            procedureReferenceSeries.setReference(true);
+            procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
+            ProcedureEntity hProcedureReferenceSeries = daoFactory.getProcedureDAO().getOrInsertProcedure(
+                    identifier,
+                    procedureDescriptionFormat,
+                    procedureReferenceSeries,
+                    false,
+                    session);
+            OfferingEntity hOfferingReferenceSeries = daoFactory.getOfferingDAO().getAndUpdateOrInsert(
+                    new SosOffering(
+                            hOffering.getIdentifier() + "_referencevalue",
+                            hOffering.getName() + "_referencevalue"),
+                    hRelatedFeatures,
+                    observationTypes,
+                    featureOfInterestTypes,
+                    session);
+            TimeInstant time = new TimeInstant(new DateTime(0));
+            SingleObservationValue<BigDecimal> sosValue = new SingleObservationValue<>(new QuantityValue(referenceValueValue.getValue(), referenceValueValue.getUom()));
+
+            OmObservation sosObservation = new OmObservation();
+            sosValue.setPhenomenonTime(time);
+            sosObservation.setResultTime(time);
+            sosObservation.setValue(sosValue);
+            sosObservation.setObservationConstellation(new OmObservationConstellation(procedureReferenceSeries,
+                    new OmObservableProperty(hObservableProperty.getIdentifier()),
+                    sosFeatureOfInterest));
+
+            DatasetEntity hObservationConstellationReferenceSeries = new DatasetEntity();
+            hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
+            hObservationConstellationReferenceSeries.setOffering(hOfferingReferenceSeries);
+            hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
+            Map<String, CodespaceEntity> codespaceCache = CollectionHelper.synchronizedMap();
+            Map<UoM, UnitEntity> unitCache = CollectionHelper.synchronizedMap();
+            ObservationPersister persister = new ObservationPersister(
+                    getGeometryHandler(),
+                    daoFactory.getObservationDAO(),
+                    daoFactory,
+                    sosObservation,
+                    hObservationConstellationReferenceSeries,
+                    hFeature,
+                    codespaceCache,
+                    unitCache,
+                    Collections.singleton(hOfferingReferenceSeries),
+                    session
+                    );
+            Data<?> observation = sosValue.getValue().accept(persister);
+            DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
+                    hObservableProperty.getIdentifier(),
+                    hOfferingReferenceSeries.getIdentifier(),
+                    Collections.singleton(hFeature.getIdentifier()),
+                    session).get(0);
+            hReferenceSeries.setPublished(false);
+            session.update(hReferenceSeries);
+            ObservationContext ctxReferenced = new ObservationContext();
+            ctxReferenced.setPhenomenon(hObservableProperty);
+            ctxReferenced.setFeatureOfInterest(hFeature);
+            ctxReferenced.setProcedure(hProcedure);
+            ctxReferenced.setOffering(hOffering);
+            ctxReferenced.setPublish(false);
+            DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
+            if (hSeries instanceof QuantityDataset) {
+                ((QuantityDataset)hSeries).setReferenceValues(Sets.newHashSet(hReferenceSeries));
+            }
+            session.update(hSeries);
+        }
     }
 
     /**

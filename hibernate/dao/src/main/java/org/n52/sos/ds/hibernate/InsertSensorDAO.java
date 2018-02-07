@@ -259,7 +259,6 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                                 hOfferingReferenceSeries.getIdentifier(),
                                                 Collections.singleton(hFeature.getIdentifier()),
                                                 session).get(0);
-                                        hReferenceSeries.setPublished(false);
                                         session.update(hReferenceSeries);
                                         ObservationContext ctx = new ObservationContext();
                                         ctx.setObservableProperty(hObservableProperty);

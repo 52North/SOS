@@ -52,7 +52,7 @@ import org.n52.series.db.beans.ereporting.EReportingQuantityDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingReferencedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.series.db.beans.ereporting.EReportingTextDatasetEntity;
-import org.n52.series.db.beans.ereporting.NotDefinedEReportingDatasetEntity;
+import org.n52.series.db.beans.ereporting.NotInitializedEReportingDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -82,8 +82,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Class<?> getNotDefinedDatasetClass() {
-        return NotDefinedEReportingDatasetEntity.class;
+    public Class<?> getNotInitializedDatasetClass() {
+        return NotInitializedEReportingDatasetEntity.class;
     }
 
     @Override
@@ -350,8 +350,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         }
 
         @Override
-        public Class<? extends NotDefinedEReportingDatasetEntity> notDefinedClass() {
-            return NotDefinedEReportingDatasetEntity.class;
+        public Class<? extends NotInitializedEReportingDatasetEntity> notInitializedClass() {
+            return NotInitializedEReportingDatasetEntity.class;
         }
 
         public static EReportingDatasetFactory getInstance() {

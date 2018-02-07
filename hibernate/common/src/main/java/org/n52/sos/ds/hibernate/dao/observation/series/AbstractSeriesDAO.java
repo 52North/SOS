@@ -51,13 +51,12 @@ import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
-import org.n52.series.db.beans.NotDefinedDatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.NotDefinedDataset;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -101,7 +100,7 @@ public abstract class AbstractSeriesDAO
 
     public abstract Class<?> getSeriesClass();
 
-    public abstract Class<?> getNotDefinedDatasetClass();
+    public abstract Class<?> getNotInitializedDatasetClass();
 
     /**
      * Get series for GetObservation request and featuresOfInterest
@@ -267,7 +266,7 @@ public abstract class AbstractSeriesDAO
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure, offering): {}",
                 HibernateHelper.getSqlString(criteria));
         DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
-        if (series == null || series instanceof NotDefinedDataset) {
+        if (series == null || series instanceof NotInitializedDataset) {
             series = preCheckDataset(ctx, observation, series, session);
         }
         if (series == null || (series.isSetFeature() && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
@@ -705,7 +704,7 @@ public abstract class AbstractSeriesDAO
 
 
     public Criteria getDefaultNotDefinedDatasetCriteria(Session session) {
-        return session.createCriteria(getNotDefinedDatasetClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return session.createCriteria(getNotInitializedDatasetClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**

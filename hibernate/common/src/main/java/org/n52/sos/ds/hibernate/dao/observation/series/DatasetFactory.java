@@ -52,7 +52,7 @@ import org.n52.series.db.beans.dataset.CountDataset;
 import org.n52.series.db.beans.dataset.DataArrayDataset;
 import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.GeometryDataset;
-import org.n52.series.db.beans.dataset.NotDefinedDataset;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.series.db.beans.dataset.ProfileDataset;
 import org.n52.series.db.beans.dataset.QuantityDataset;
 import org.n52.series.db.beans.dataset.ReferencedDataset;
@@ -70,11 +70,11 @@ public abstract class DatasetFactory {
         return instantiate(datasetClass());
     }
 
-    public abstract Class<? extends NotDefinedDataset> notDefinedClass();
+    public abstract Class<? extends NotInitializedDataset> notInitializedClass();
 
-    private NotDefinedDataset notDefined()
+    private NotInitializedDataset notInitialized()
             throws OwsExceptionReport {
-        return instantiate(notDefinedClass());
+        return instantiate(notInitializedClass());
     }
 
     public abstract Class<? extends BlobDataset> blobClass();
@@ -259,6 +259,6 @@ public abstract class DatasetFactory {
             }
         }
 
-        return notDefined();
+        return notInitialized();
     }
 }

@@ -43,7 +43,7 @@ import org.n52.series.db.beans.CountDatasetEntity;
 import org.n52.series.db.beans.DataArrayDatasetEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.GeometryDatasetEntity;
-import org.n52.series.db.beans.NotDefinedDatasetEntity;
+import org.n52.series.db.beans.NotInitializedDatasetEntity;
 import org.n52.series.db.beans.ProfileDatasetEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.series.db.beans.QuantityProfileDatasetEntity;
@@ -188,8 +188,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Class<?> getNotDefinedDatasetClass() {
-        return NotDefinedDatasetEntity.class;
+    public Class<?> getNotInitializedDatasetClass() {
+        return NotInitializedDatasetEntity.class;
     }
 
     @Override
@@ -289,8 +289,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
         }
 
         @Override
-        public Class<? extends NotDefinedDatasetEntity> notDefinedClass() {
-            return NotDefinedDatasetEntity.class;
+        public Class<? extends NotInitializedDatasetEntity> notInitializedClass() {
+            return NotInitializedDatasetEntity.class;
         }
 
         public static DefaultDatasetFactory getInstance() {

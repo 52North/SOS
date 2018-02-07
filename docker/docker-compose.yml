@@ -36,8 +36,7 @@ services:
     links:
       - db:postgres
     volumes:
-      - "../webapp-bundle/target/52n-sos-webapp.war:/usr/local/tomcat/webapps/52n-sos-webapp.war"
-      - "../webapp-bundle/target/52n-sos-webapp:/usr/local/tomcat/webapps/52n-sos-webapp"
+      - "../webapp/target/52n-sos-webapp:/usr/local/tomcat/webapps/52n-sos-webapp"
       - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
     depends_on:
       - db

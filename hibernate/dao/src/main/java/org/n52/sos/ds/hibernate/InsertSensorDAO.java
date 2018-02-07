@@ -192,85 +192,12 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                     offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering, hRelatedFeatures,
                                             observationTypes, featureOfInterestTypes, session);
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
-                                ObservationConstellation hObservationConstellation = observationConstellationDAO
-                                        .checkOrInsertObservationConstellation(hProcedure, hObservableProperty,
-                                                hOffering, assignedOffering.isParentOffering(), session);
+                                observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
+                                        hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
-                                    AbstractFeature sosFeatureOfInterest = request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
-                                    AbstractFeatureOfInterest hFeature = new FeatureOfInterestDAO().checkOrInsertFeatureOfInterest(
-                                            sosFeatureOfInterest, session);
-                                    for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
-                                        if (!(referenceValue.getAbstractDataComponent() instanceof SweQuantity)) {
-                                            throw new NoApplicableCodeException().withMessage(
-                                                    "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
-                                                    referenceValue.getAbstractDataComponent().getDataComponentType());
-                                        }
-                                        SweQuantity referenceValueValue = (SweQuantity) referenceValue.getAbstractDataComponent();
-                                        String identifier = hProcedure.getIdentifier() + "_referencevalue";
-                                        SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknowType(identifier,
-                                                procedureDescriptionFormat.getProcedureDescriptionFormat(), "");
-                                        procedureReferenceSeries.setReference(true);
-                                        procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
-                                        Procedure hProcedureReferenceSeries = new ProcedureDAO().getOrInsertProcedure(
-                                                identifier,
-                                                procedureDescriptionFormat,
-                                                procedureReferenceSeries,
-                                                false,
-                                                session);
-                                        Offering hOfferingReferenceSeries = new OfferingDAO().getAndUpdateOrInsertNewOffering(
-                                                new SosOffering(
-                                                        hOffering.getIdentifier() + "_referencevalue",
-                                                        hOffering.getName() + "_referencevalue"),
-                                                hRelatedFeatures,
-                                                observationTypes,
-                                                featureOfInterestTypes,
-                                                session);
-                                        TimeInstant time = new TimeInstant(new DateTime(0));
-                                        SingleObservationValue<Double> sosValue = new SingleObservationValue<>(new QuantityValue(referenceValueValue.getValue(), referenceValueValue.getUom()));
-
-                                        OmObservation sosObservation = new OmObservation();
-                                        sosValue.setPhenomenonTime(time);
-                                        sosObservation.setResultTime(time);
-                                        sosObservation.setValue(sosValue);
-                                        sosObservation.setObservationConstellation(new OmObservationConstellation(procedureReferenceSeries,
-                                                new OmObservableProperty(hObservableProperty.getIdentifier()),
-                                                sosFeatureOfInterest));
-
-                                        ObservationConstellation hObservationConstellationReferenceSeries = new ObservationConstellation();
-                                        hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
-                                        hObservationConstellationReferenceSeries.setOffering(hOfferingReferenceSeries);
-                                        hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
-                                        Map<String, Codespace> codespaceCache = CollectionHelper.synchronizedMap();
-                                        Map<UoM, Unit> unitCache = CollectionHelper.synchronizedMap();
-                                        ObservationPersister persister = new ObservationPersister(
-                                                new SeriesObservationDAO(),
-                                                sosObservation,
-                                                hObservationConstellationReferenceSeries,
-                                                hFeature,
-                                                codespaceCache,
-                                                unitCache,
-                                                Collections.singleton(hOfferingReferenceSeries),
-                                                session
-                                                );
-                                        sosValue.getValue().accept(persister);
-                                        SeriesDAO seriesDAO = new SeriesDAO();
-                                        Series hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
-                                                hObservableProperty.getIdentifier(),
-                                                hOfferingReferenceSeries.getIdentifier(),
-                                                Collections.singleton(hFeature.getIdentifier()),
-                                                session).get(0);
-                                        hReferenceSeries.setPublished(false);
-                                        session.update(hReferenceSeries);
-                                        ObservationContext ctx = new ObservationContext();
-                                        ctx.setObservableProperty(hObservableProperty);
-                                        ctx.setFeatureOfInterest(hFeature);
-                                        ctx.setProcedure(hProcedure);
-                                        ctx.setOffering(hOffering);
-                                        ctx.setPublish(false);
-                                        Series hSeries = seriesDAO.getOrInsertSeries(ctx, session);
-                                        hSeries.setReferenceValues(Collections.singletonList(hReferenceSeries));
-                                        session.update(hSeries);
-                                    }
+                                    addStaticReferenceValues(request, session, procedureDescriptionFormat, hProcedure,
+                                            observationTypes, featureOfInterestTypes, hRelatedFeatures, hOffering,
+                                            hObservableProperty);
                                 }
                             }
                         }
@@ -307,6 +234,92 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                     .isPresent() &&
                     !request.getProcedureDescription().getFeaturesOfInterestMap().isEmpty() &&
                     request.getProcedureDescription().getFeaturesOfInterestMap().size() == 1;
+    }
+
+    private void addStaticReferenceValues(final InsertSensorRequest request, Session session,
+            final ProcedureDescriptionFormat procedureDescriptionFormat, final Procedure hProcedure,
+            final List<ObservationType> observationTypes, final List<FeatureOfInterestType> featureOfInterestTypes,
+            final List<RelatedFeature> hRelatedFeatures, final Offering hOffering,
+            final ObservableProperty hObservableProperty) throws OwsExceptionReport, CodedException {
+        // We support only ONE feature of interest atm. -> check method
+        AbstractFeature sosFeatureOfInterest = request.getProcedureDescription().getFeaturesOfInterestMap().entrySet()
+                .iterator().next().getValue();
+        AbstractFeatureOfInterest hFeature = new FeatureOfInterestDAO().checkOrInsertFeatureOfInterest(
+                sosFeatureOfInterest, session);
+        for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription())
+                .findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
+            if (!(referenceValue.getAbstractDataComponent() instanceof SweQuantity)) {
+                // FIXME clarify if abort or just log error message?
+                throw new NoApplicableCodeException().withMessage(
+                        "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
+                        referenceValue.getAbstractDataComponent().getDataComponentType());
+            }
+            String identifier = hProcedure.getIdentifier() + "_referencevalue";
+            SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknowType(identifier,
+                    procedureDescriptionFormat.getProcedureDescriptionFormat(), "");
+            procedureReferenceSeries.setReference(true);
+            procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
+            Procedure hProcedureReferenceSeries = new ProcedureDAO().getOrInsertProcedure(
+                    identifier,
+                    procedureDescriptionFormat,
+                    procedureReferenceSeries,
+                    false,
+                    session);
+            Offering hOfferingReferenceSeries = new OfferingDAO().getAndUpdateOrInsertNewOffering(
+                    new SosOffering(
+                            hOffering.getIdentifier() + "_referencevalue",
+                            hOffering.getName() + "_referencevalue"),
+                    hRelatedFeatures,
+                    observationTypes,
+                    featureOfInterestTypes,
+                    session);
+            TimeInstant time = new TimeInstant(new DateTime(0));
+            SweQuantity referenceValueValue = (SweQuantity) referenceValue.getAbstractDataComponent();
+            SingleObservationValue<Double> sosValue = new SingleObservationValue<>(new QuantityValue(
+                    referenceValueValue.getValue(), referenceValueValue.getUom()));
+
+            OmObservation sosObservation = new OmObservation();
+            sosValue.setPhenomenonTime(time);
+            sosObservation.setResultTime(time);
+            sosObservation.setValue(sosValue);
+            sosObservation.setObservationConstellation(new OmObservationConstellation(procedureReferenceSeries,
+                    new OmObservableProperty(hObservableProperty.getIdentifier()),
+                    sosFeatureOfInterest));
+
+            ObservationConstellation hObservationConstellationReferenceSeries = new ObservationConstellation();
+            hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
+            hObservationConstellationReferenceSeries.setOffering(hOfferingReferenceSeries);
+            hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
+            Map<String, Codespace> codespaceCache = CollectionHelper.synchronizedMap();
+            Map<UoM, Unit> unitCache = CollectionHelper.synchronizedMap();
+            ObservationPersister persister = new ObservationPersister(
+                    new SeriesObservationDAO(),
+                    sosObservation,
+                    hObservationConstellationReferenceSeries,
+                    hFeature,
+                    codespaceCache,
+                    unitCache,
+                    Collections.singleton(hOfferingReferenceSeries),
+                    session
+                    );
+            sosValue.getValue().accept(persister);
+            SeriesDAO seriesDAO = new SeriesDAO();
+            Series hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
+                    hObservableProperty.getIdentifier(),
+                    hOfferingReferenceSeries.getIdentifier(),
+                    Collections.singleton(hFeature.getIdentifier()),
+                    session).get(0);
+            session.update(hReferenceSeries);
+            ObservationContext ctx = new ObservationContext();
+            ctx.setObservableProperty(hObservableProperty);
+            ctx.setFeatureOfInterest(hFeature);
+            ctx.setProcedure(hProcedure);
+            ctx.setOffering(hOffering);
+            ctx.setPublish(false);
+            Series hSeries = seriesDAO.getOrInsertSeries(ctx, session);
+            hSeries.setReferenceValues(Collections.singletonList(hReferenceSeries));
+            session.update(hSeries);
+        }
     }
 
     /**

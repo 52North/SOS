@@ -96,7 +96,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             ObservationTimeExtrema ote = new ObservationTimeExtrema();
             for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
-                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, new StringBuilder());
                 addMinMaxTimeProjection(c);
                 ote.expand(parseMinMaxTime((Object[]) c.uniqueResult()));
             }
@@ -132,7 +132,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             ObservationTimeExtrema ote = new ObservationTimeExtrema();
             for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
-                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, new StringBuilder());
                 addMinMaxTimeProjection(c);
                 ote.expand(parseMinMaxTime((Object[]) c.uniqueResult()));
             }
@@ -308,28 +308,28 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(TemporalReferencedSeriesObservation.SERIES, "s");
         c.add(Restrictions.eq("s." + Series.ID, series));
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
-            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
-            checkAndAddResultFilterCriterion(c, getObsReq, null, session);
+            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session, logArgs);
+            checkAndAddResultFilterCriterion(c, getObsReq, null, session, logArgs);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                         Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
             }
     
-            logArgs += ", offerings";
+            logArgs.append(", offerings");
             if (temporalFilterCriterion != null) {
-                logArgs += ", filterCriterion";
+                logArgs.append(", filterCriterion");
                 c.add(temporalFilterCriterion);
             }
             if (sosIndeterminateTime != null) {
-                logArgs += ", sosIndeterminateTime";
+                logArgs.append(", sosIndeterminateTime");
                 addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             }
-            addSpecificRestrictions(c, getObsReq);
+            addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -337,27 +337,27 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             Criterion temporalFilterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(TemporalReferencedSeriesObservation.SERIES, "s");
         c.add(Restrictions.in("s." + Series.ID, series));
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
-            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session, logArgs);
             if (CollectionHelper.isNotEmpty(getObsReq.getOfferings())) {
                 c.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
                         Restrictions.in(Offering.IDENTIFIER, getObsReq.getOfferings()));
             }
     
-            logArgs += ", offerings";
+            logArgs.append(", offerings");
             if (temporalFilterCriterion != null) {
-                logArgs += ", filterCriterion";
+                logArgs.append(", filterCriterion");
                 c.add(temporalFilterCriterion);
             }
             if (sosIndeterminateTime != null) {
-                logArgs += ", sosIndeterminateTime";
+                logArgs.append(", sosIndeterminateTime");
                 addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             }
-            addSpecificRestrictions(c, getObsReq);
+            addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        LOGGER.debug("QUERY getSeriesValueCriteriaFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getSeriesValueCriteriaFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
     
@@ -369,10 +369,10 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
         c.add(QueryHelper.getCriterionForObjects(SeriesObservation.SERIES, series));
 
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
     
@@ -383,10 +383,10 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
         c.add(QueryHelper.getCriterionForObjects("s." + Series.ID, series));
 
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
     

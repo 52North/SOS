@@ -56,7 +56,7 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueTimeDAO.class);
 
     @Override
-        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
             // nothing  to add
     }
 

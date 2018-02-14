@@ -44,7 +44,7 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO {
 	}
 	
         @Override
-        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
             // add quality restrictions
             EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
         }

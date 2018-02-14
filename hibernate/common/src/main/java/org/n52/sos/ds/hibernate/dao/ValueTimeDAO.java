@@ -293,9 +293,9 @@ public class ValueTimeDAO extends AbstractValueDAO {
             Session session) throws OwsExceptionReport {
         final Criteria c =
                 getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session);
-
-        checkAndAddSpatialFilteringProfileCriterion(c, request, session);
-        checkAndAddResultFilterCriterion(c, request, null, session);
+        StringBuilder logArgs = new StringBuilder("request, series, offerings");
+        checkAndAddSpatialFilteringProfileCriterion(c, request, session, logArgs);
+        checkAndAddResultFilterCriterion(c, request, null, session, logArgs);
 
         if (CollectionHelper.isNotEmpty(procedure)) {
             c.createAlias(TemporalReferencedLegacyObservation.PROCEDURE, "p");
@@ -319,11 +319,10 @@ public class ValueTimeDAO extends AbstractValueDAO {
             c.createCriteria(TemporalReferencedLegacyObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
-        String logArgs = "request, series, offerings";
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        addSpecificRestrictions(c, request);
-        LOGGER.debug("QUERY getObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        addSpecificRestrictions(c, request, logArgs);
+        LOGGER.debug("QUERY getObservationFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -342,7 +341,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
     }
     
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
         // nothing  to add
     }
 

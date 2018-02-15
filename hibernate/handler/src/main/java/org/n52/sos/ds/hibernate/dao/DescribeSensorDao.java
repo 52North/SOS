@@ -39,6 +39,7 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
@@ -57,10 +58,12 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.springframework.context.annotation.Conditional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@Configurable
 public class DescribeSensorDao
         implements org.n52.sos.ds.dao.DescribeSensorDao {
 
@@ -169,7 +172,9 @@ public class DescribeSensorDao
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
             if (procedure.hasProcedureHistory()) {
-                for (ProcedureHistoryEntity validProcedureTime : procedure.getProcedureHistory()) {
+                for (ProcedureHistoryEntity validProcedureTime : daoFactory.getValidProcedureTimeDAO()
+                        .getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats, request.getValidTime(),
+                                session)) {
                     SosProcedureDescription<?> sosProcedureDescription =
                             procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,
                                     request.getProcedureDescriptionFormat(), validProcedureTime, request.getVersion(),

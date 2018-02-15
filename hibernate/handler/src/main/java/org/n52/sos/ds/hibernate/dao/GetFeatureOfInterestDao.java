@@ -35,6 +35,7 @@ import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
@@ -48,6 +49,7 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 
+@Configurable
 public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
 
     private HibernateSessionHolder sessionHolder;

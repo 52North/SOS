@@ -40,6 +40,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
@@ -70,6 +71,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+@Configurable
 public class GetObservationByIdDao
         implements org.n52.sos.ds.dao.GetObservationByIdDao {
 

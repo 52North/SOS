@@ -44,6 +44,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
@@ -70,7 +71,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-
+@Configurable
 public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDao.class);

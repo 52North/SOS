@@ -69,6 +69,15 @@
     <bean id="insertObservationHandler"
           class="org.n52.sos.ds.hibernate.InsertObservationHandler"/>
 
+    <bean id="insertFeatureOfInterestHandler"
+          class="org.n52.sos.ds.hibernate.InsertFeatureOfInterestHandler"/>
+
+    <bean id="deleteObservationHandler"
+          class="org.n52.sos.ds.hibernate.DeleteObservationHandler"/>
+
+    <bean id="deleteResultTemplateHandler"
+          class="org.n52.sos.ds.hibernate.DeleteResultTemplateHandler"/>
+
     <bean id="deleteDeletedObservationsHandler"
           class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
 

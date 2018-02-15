@@ -36,6 +36,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.PhenomenonDao;
@@ -61,12 +62,10 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         try {
             Collection<PhenomenonEntity> observableProperties =
                     new PhenomenonDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
-            List<PhenomenonEntity> publishedObservableProperty =  new PhenomenonDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {
+                Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
                 String identifier = observableProperty.getIdentifier();
-                if (publishedObservableProperty.contains(observableProperty)) {
-                    getCache().addPublishedObservableProperty(identifier);
-                }
+
                 if (observableProperty.isSetName()) {
                     getCache().addObservablePropertyIdentifierHumanReadableName(identifier,
                             observableProperty.getName());
@@ -78,9 +77,12 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                     }
                 }
 
-                List<DatasetEntity> datasets = new DatasetDao<>(getSession()).getAllInstances(createDatasetDbQuery(observableProperty));
+
 
                 if (datasets != null && !datasets.isEmpty()) {
+                    if (datasets.stream().anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
+                        getCache().addPublishedObservableProperty(identifier);
+                    }
                     getCache().setOfferingsForObservableProperty(identifier,
                             DatasourceCacheUpdateHelper
                                     .getAllOfferingIdentifiersFromDatasets(datasets));
@@ -89,8 +91,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                                     .getAllProcedureIdentifiersFromDatasets(datasets));
                 }
             }
-        } catch (HibernateException | DataAccessException dae) {
-            getErrors().add(new NoApplicableCodeException().causedBy(dae)
+        } catch (HibernateException he) {
+            getErrors().add(new NoApplicableCodeException().causedBy(he)
                     .withMessage("Error while updating featureOfInterest cache!"));
         }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());

@@ -47,6 +47,7 @@ import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -107,7 +108,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // since they are performed once per offering
 
         getCache().addOffering(identifier);
-        if (datasets != null && !datasets.isEmpty() && datasets.stream().anyMatch(d -> d.isPublished())) {
+        if (datasets != null && !datasets.isEmpty() && datasets.stream()
+                .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
             getCache().addPublishedOffering(identifier);
         }
         addOfferingNamesAndDescriptionsToCache(identifier, session);

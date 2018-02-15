@@ -176,7 +176,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         XmlObject xml = create(response);
         setSchemaLocations(xml);
         if (validationEnabled) {
-            if (LOGGER.isDebugEnabled()) {
+            if (LOGGER.isTraceEnabled()) {
                 LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
                         XmlHelper.validateDocument(xml));
             } else {

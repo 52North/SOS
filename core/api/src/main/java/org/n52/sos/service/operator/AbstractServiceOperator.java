@@ -54,9 +54,7 @@ public class AbstractServiceOperator implements ServiceOperator {
 
     @Override
     public AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
-        RequestOperator ro =
-                RequestOperatorRepository.getInstance().getRequestOperator(getServiceOperatorKey(),
-                        request.getOperationName());
+        RequestOperator ro = getRequestOperator(request);
         if (ro != null) {
             AbstractServiceResponse response = ro.receiveRequest(request);
             if (response != null) {
@@ -64,5 +62,10 @@ public class AbstractServiceOperator implements ServiceOperator {
             }
         }
         throw new OperationNotSupportedException(request.getOperationName());
+    }
+
+    private RequestOperator getRequestOperator(AbstractServiceRequest<?> request) {
+        return RequestOperatorRepository.getInstance().getRequestOperator(getServiceOperatorKey(),
+                request.getOperationName());
     }
 }

@@ -223,7 +223,7 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         // } catch (final XmlException xmle) {
         // throw new NoApplicableCodeException().causedBy(xmle);
         // }
-        if (LOGGER.isDebugEnabled() && encodedObject != null) {
+        if (LOGGER.isTraceEnabled() && encodedObject != null) {
             LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }

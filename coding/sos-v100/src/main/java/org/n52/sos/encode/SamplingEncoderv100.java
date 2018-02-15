@@ -136,7 +136,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     public XmlObject encode(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = createFeature(abstractFeature);
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }

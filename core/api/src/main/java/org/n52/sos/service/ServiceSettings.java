@@ -36,6 +36,7 @@ import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
+import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 
@@ -76,6 +77,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
 
     public static final String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
+    
+    public static final String REQUEST_TIMEOUT = "service.requestTimeout";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -217,6 +220,13 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setDescription(
                             "Whether the SOS should if the response contains duplicated observations. Only necessary if you have inserted an observation for multiple offerings!");
       
+     public static final IntegerSettingDefinition REQUEST_TIMEOUT_DEFINITION =
+             new IntegerSettingDefinition()
+                     .setGroup(GROUP)
+                     .setKey(REQUEST_TIMEOUT)
+                     .setDefaultValue(0)
+                     .setTitle("Request timeout value in seconds")
+                     .setDescription("Set the request timeout value in seconds. Set to <code>0</code> (zero) for no timeout.");
     
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
@@ -231,7 +241,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION,
             ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE_DEFINITION,
             INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION,
-            CHECK_FOR_DUPLICITY_DEFINITION);
+            CHECK_FOR_DUPLICITY_DEFINITION,
+            REQUEST_TIMEOUT_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

@@ -128,7 +128,7 @@ public class RegisterBinding extends SimpleBinding {
     private AbstractServiceRequest<?> parseRequest(HttpServletRequest req) throws OwsExceptionReport {
         Map<String, String> parameterValueMap = KvpHelper.getKvpParameterValueMap(req);
         XmlObject doc = XmlHelper.parseXmlSosRequest(req);
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             LOGGER.debug("REGISTER-REQUEST: {}", doc.xmlText());
         }
         Object object = getDecoder(CodingHelper.getDecoderKey(doc)).decode(doc);

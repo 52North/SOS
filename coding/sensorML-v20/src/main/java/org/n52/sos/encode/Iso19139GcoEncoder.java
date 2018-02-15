@@ -103,7 +103,7 @@ public class Iso19139GcoEncoder extends AbstractIso19139GcoEncoder {
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }

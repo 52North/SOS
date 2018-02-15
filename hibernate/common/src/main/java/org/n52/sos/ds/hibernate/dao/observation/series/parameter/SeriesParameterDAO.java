@@ -53,7 +53,7 @@ public class SeriesParameterDAO {
         if (HibernateHelper.isEntitySupported(SeriesParameter.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Restrictions.eq(SeriesParameter.SERIES_ID, series));
-            LOGGER.debug("QUERY getSeriesParameter(): {series}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getSeriesParameter(): {series}", HibernateHelper.getSqlString(c));
             return c.list();
         }
         return Collections.EMPTY_LIST;

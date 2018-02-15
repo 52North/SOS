@@ -237,7 +237,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }

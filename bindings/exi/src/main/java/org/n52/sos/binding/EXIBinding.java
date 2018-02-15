@@ -140,7 +140,7 @@ public class EXIBinding extends SimpleBinding {
      */
     protected AbstractServiceRequest<?> parseRequest(HttpServletRequest request) throws OwsExceptionReport {
         XmlObject doc = decode(request);
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             LOGGER.debug("EXI-REQUEST: {}", doc.xmlText());
         }
         Decoder<AbstractServiceRequest<?>, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));

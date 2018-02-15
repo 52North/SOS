@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 4.0.0
  */
-public abstract class SimpleBinding extends Binding {
+public abstract class SimpleBinding implements Binding {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleBinding.class);
     public static final String QUALITY = "q";
 

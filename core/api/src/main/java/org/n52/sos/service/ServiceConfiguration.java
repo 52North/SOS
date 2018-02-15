@@ -164,6 +164,8 @@ public class ServiceConfiguration {
     
     private boolean convertComplexProfileToSingleProfiles = true;
 
+    private Integer requestTimeout = 0;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -525,6 +527,17 @@ public class ServiceConfiguration {
 
     public boolean isConvertComplexProfileToSingleProfiles() {
         return this.convertComplexProfileToSingleProfiles;
+    }
+    
+    @Setting(ServiceSettings.REQUEST_TIMEOUT)
+    public void setRequestTimeout(Integer requestTimeout) {
+        if (requestTimeout != null) {
+            this.requestTimeout = requestTimeout;
+        }
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
     }
 
     /*

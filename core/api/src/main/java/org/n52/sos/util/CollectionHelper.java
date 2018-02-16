@@ -55,6 +55,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public final class CollectionHelper {
+
     private CollectionHelper() {
     }
 
@@ -545,6 +546,5 @@ public final class CollectionHelper {
 		}
 		return split;
 	}
-    
 
 }

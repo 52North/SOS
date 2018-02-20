@@ -109,7 +109,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         getCache().addOffering(identifier);
         if (datasets != null && !datasets.isEmpty() && datasets.stream()
-                .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
+                .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset && !d.isDeleted())) {
             getCache().addPublishedOffering(identifier);
         }
         addOfferingNamesAndDescriptionsToCache(identifier, session);

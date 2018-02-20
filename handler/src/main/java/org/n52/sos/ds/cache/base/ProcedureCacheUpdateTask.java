@@ -80,7 +80,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             String identifier = procedure.getIdentifier();
             getCache().addProcedure(identifier);
             if (datasets != null && !datasets.isEmpty() && datasets.stream()
-                    .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
+                    .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset && !d.isDeleted())) {
                 getCache().addPublishedProcedure(identifier);
             }
             if (procedure.isSetName()) {

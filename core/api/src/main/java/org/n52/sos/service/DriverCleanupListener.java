@@ -34,12 +34,11 @@ import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Set;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.janmayen.lifecycle.Destroyable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.service.ServiceSettings;
-import org.n52.janmayen.lifecycle.Destroyable;
 
 import com.google.common.collect.Sets;
 
@@ -48,8 +47,10 @@ import com.google.common.collect.Sets;
  *
  * @author Christian Autermann
  */
+@Configurable
 public class DriverCleanupListener implements Destroyable {
 
+    public static final String DEREGISTER_JDBC_DRIVER = "service.jdbc.deregister";
     private static final Logger LOGGER = LoggerFactory
             .getLogger(DriverCleanupListener.class);
 
@@ -73,7 +74,7 @@ public class DriverCleanupListener implements Destroyable {
         }
     }
 
-    @Setting(ServiceSettings.DEREGISTER_JDBC_DRIVER)
+    @Setting(DEREGISTER_JDBC_DRIVER)
     public void setDeregisterJDBCDriver(boolean deregisterJDBCDriver) {
         this.deregisterJDBCDriver = deregisterJDBCDriver;
     }

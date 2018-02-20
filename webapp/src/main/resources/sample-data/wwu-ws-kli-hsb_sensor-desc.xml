@@ -63,7 +63,7 @@
         <sml:CapabilityList>
             <sml:capability name="offeringID">
                 <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
-                    <swe:label>offeringID</swe:label>
+                    <swe:label>WWU clima weather station, Heisenbergstrasse</swe:label>
                     <swe:value>wwu-ws-kli-hsb</swe:value>
                 </swe:Text>
             </sml:capability>

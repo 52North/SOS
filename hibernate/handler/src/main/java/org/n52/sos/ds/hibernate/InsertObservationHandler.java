@@ -30,8 +30,10 @@ package org.n52.sos.ds.hibernate;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
@@ -50,6 +52,7 @@ import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.MultiObservationValues;
@@ -78,6 +81,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 
 @Configurable
 public class InsertObservationHandler extends AbstractInsertObservationHandler  {
@@ -149,6 +153,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
                 if (++obsCount % FLUSH_THRESHOLD == 0) {
                     session.flush();
                     session.clear();
+                    cache.clearConstellation();
                 }
             }
 
@@ -342,6 +347,17 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         }
         public void putConstellation(OmObservationConstellation soc, String offering, DatasetEntity hoc) {
             this.obsConstOfferingHibernateObsConstTable.put(soc, offering, hoc);
+        }
+        public void clearConstellation() {
+            Set<Cell<OmObservationConstellation, String, DatasetEntity>> removable = new HashSet<>();
+            for (Cell<OmObservationConstellation, String, DatasetEntity> cell : this.obsConstOfferingHibernateObsConstTable.cellSet()) {
+                if (cell.getValue() instanceof NotInitializedDataset) {
+                    removable.add(cell);
+                }
+            }
+            for (Cell<OmObservationConstellation, String, DatasetEntity> cell : removable) {
+                this.obsConstOfferingHibernateObsConstTable.remove(cell.getRowKey(), cell.getColumnKey());
+            }
         }
         public boolean isChecked(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingCheckedMap.containsEntry(oc, offering);

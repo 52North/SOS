@@ -2098,7 +2098,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             try {
                 featureOfInterestIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier, humanReadableName);
+                LOG.warn("Duplicate entry for feature with identifier '{}' and humanReadableName '{}'!", identifier, humanReadableName);
             }
         }
     }
@@ -2109,7 +2109,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             try {
                 observablePropertyIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                LOG.warn("Duplicate entry for feature with identifier '{}' and humanReadableName '{}'!", identifier,
                         humanReadableName);
             }
         }
@@ -2121,7 +2121,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             try {
                 procedureIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                LOG.warn("Duplicate entry for feature with identifier '{}' and humanReadableName '{}'!", identifier,
                         humanReadableName);
             }
         }
@@ -2133,7 +2133,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
             try {
                 offeringIdentifierHumanReadableName.put(identifier, humanReadableName);
             } catch (IllegalArgumentException iae) {
-                LOG.warn("Duplicate entry for eature with identifier '{}' and humanReadableName '{}'!", identifier,
+                LOG.warn("Duplicate entry for feature with identifier '{}' and humanReadableName '{}'!", identifier,
                         humanReadableName);
             }
         }

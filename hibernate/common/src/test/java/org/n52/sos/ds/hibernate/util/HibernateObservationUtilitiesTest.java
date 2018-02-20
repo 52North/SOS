@@ -90,7 +90,7 @@ public class HibernateObservationUtilitiesTest
     public void returnEmptyCollectionIfCalledWithoutAnyParameters()
             throws OwsExceptionReport, ConverterException {
         ObservationStream resultList = HibernateObservationUtilities
-                .createSosObservationFromObservationConstellation(null, null, null, null, null, null, null);
+                .createSosObservationFromObservationConstellation(null, null, null, null, null, new OmObservationCreatorContext(null, null, null, null, null, null, null, null, null, null, null, null), null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.hasNext(), is(false));
     }

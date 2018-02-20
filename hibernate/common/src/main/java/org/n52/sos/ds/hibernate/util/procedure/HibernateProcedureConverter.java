@@ -327,6 +327,7 @@ public class HibernateProcedureConverter
         } else {
             enrichments.enrichAll();
         }
+        desc.setValidTime(validTime);
     }
 
     /**

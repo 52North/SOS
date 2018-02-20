@@ -39,6 +39,18 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingType;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingValueFactory;
+import org.n52.faroe.SettingsService;
+import org.n52.faroe.json.JsonSettingsEncoder;
+import org.n52.iceland.exception.JSONException;
+import org.n52.janmayen.Json;
+import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.service.DriverCleanupListener;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,16 +58,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.SettingDefinition;
-import org.n52.faroe.SettingValue;
-import org.n52.faroe.SettingValueFactory;
-import org.n52.faroe.json.JsonSettingsEncoder;
-import org.n52.iceland.exception.JSONException;
-import org.n52.janmayen.Json;
-import org.n52.sos.context.ContextSwitcher;
-import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -76,6 +78,9 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
 
     @Inject
     private SettingValueFactory settingValueFactory;
+
+    @Inject
+    private SettingsService settingsManager;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
@@ -116,8 +121,17 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         Properties datasourceProperties = getDatasource().getDatasourceProperties(settings, newSettings);
         getDatabaseSettingsHandler().saveAll(datasourceProperties);
 
+        SettingValue<Object> deregisterJdbcDriverSetting = getDeregisterJdbcDriverSetting();
+        boolean changed = false;
+        if (deregisterJdbcDriverSetting != null && deregisterJdbcDriverSetting.getType().equals(SettingType.BOOLEAN)
+                && ((Boolean) deregisterJdbcDriverSetting.getValue()) != false) {
+            changed = true;
+            switchDeregisterJdbcDriverSettingValue(deregisterJdbcDriverSetting);
+        }
         this.contextSwitcher.reloadContext();
-
+        if (changed) {
+            switchDeregisterJdbcDriverSettingValue(deregisterJdbcDriverSetting);
+        }
         return new ModelAndView(new RedirectView(ControllerConstants.Paths.ADMIN_DATABASE_SETTINGS, true));
     }
 
@@ -218,5 +232,14 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
                 break;
             }
         }
+    }
+
+    private void switchDeregisterJdbcDriverSettingValue(SettingValue<Object> sv) {
+        sv.setValue(!((Boolean) sv.getValue()));
+        settingsManager.changeSetting(sv);
+    }
+
+    private SettingValue<Object> getDeregisterJdbcDriverSetting() {
+       return settingsManager.getSetting(DriverCleanupListener.DEREGISTER_JDBC_DRIVER);
     }
 }

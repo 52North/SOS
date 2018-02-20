@@ -1892,10 +1892,10 @@
                          <failOnViolation>false</failOnViolation>
                     </configuration>
                  </plugin>
-                 <!-- FIXME remove this once all problems are resolved -->
-                 <plugin>
+                 <!-- FIXME remove this once all problems are resolved --><plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.20</version>
                     <configuration>
                         <testFailureIgnore>true</testFailureIgnore>
                     </configuration>
@@ -1948,11 +1948,7 @@
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <version>1.6.5</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20</version>
-                </plugin>
+                
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>

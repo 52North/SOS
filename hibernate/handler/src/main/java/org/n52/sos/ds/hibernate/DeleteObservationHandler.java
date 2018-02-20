@@ -39,6 +39,8 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.CompositeDataEntity;
@@ -64,6 +66,7 @@ import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 
 import com.google.common.base.Joiner;
 
+@Configurable
 public class DeleteObservationHandler
         extends AbstractDeleteObservationHandler {
 
@@ -72,6 +75,8 @@ public class DeleteObservationHandler
     private DaoFactory daoFactory;
 
     private OmObservationCreatorContext observationCreatorContext;
+
+    private Boolean deletePhysically = false;
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -86,6 +91,11 @@ public class DeleteObservationHandler
     @Inject
     public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
+    }
+
+    @Setting("service.transactional.DeletePhysically")
+    public void setDeletePhysically(Boolean deletePhysically) {
+        this.deletePhysically = deletePhysically;
     }
 
     @Override
@@ -178,6 +188,9 @@ public class DeleteObservationHandler
             observation.setDeleted(true);
             session.saveOrUpdate(observation);
             checkSeriesForFirstLatest(observation, session);
+            if (deletePhysically) {
+                session.delete(observation);
+            }
             session.flush();
         }
     }

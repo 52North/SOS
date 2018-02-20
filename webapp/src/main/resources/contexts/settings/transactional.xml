@@ -42,5 +42,12 @@
         <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.transactional.DeletePhysically" />
+        <property name="title" value="Delete observation or procedure physically" />
+        <property name="description" value="Should the SOS delete the observation or procedure physically or only set deleted flag." />
+        <property name="order" value="6.0" />
+        <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
 </beans>

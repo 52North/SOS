@@ -50,6 +50,7 @@ import java.util.concurrent.Executors;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.request.operator.RequestOperator;
+import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.janmayen.GroupedAndNamedThreadFactory;
 import org.n52.janmayen.http.HTTPStatus;
@@ -166,19 +167,19 @@ public class SampleDataInserter implements Sos2Constants {
     private void checkRequestOperators() throws MissingServiceOperatorException {
         final String insertSensor = Sos2Constants.Operations.InsertSensor.name();
         insertSensorOperator = requestOperatorRepository
-                .getRequestOperator(SERVICE_OPERATOR_KEY, insertSensor);
+                .getRequestOperator(new RequestOperatorKey(SERVICE_OPERATOR_KEY, insertSensor, false));
         if (insertSensorOperator == null) {
             missingServiceOperator(SOS, SERVICEVERSION, insertSensor);
         }
         final String insertObservation = SosConstants.Operations.InsertObservation.name();
         insertObservationOperator = requestOperatorRepository
-                .getRequestOperator(SERVICE_OPERATOR_KEY, insertObservation);
+                .getRequestOperator(new RequestOperatorKey(SERVICE_OPERATOR_KEY, insertObservation, false));
         if (insertObservationOperator == null) {
             missingServiceOperator(SOS, SERVICEVERSION, insertObservation);
         }
         final String insertFeature = "InsertFeatureOfInterest";
         insertFeatureOperator = requestOperatorRepository
-                .getRequestOperator(SERVICE_OPERATOR_KEY, insertFeature);
+                .getRequestOperator(new RequestOperatorKey(SERVICE_OPERATOR_KEY, insertFeature, false));
         if (insertFeatureOperator == null) {
             missingServiceOperator(SOS, SERVICEVERSION, insertFeature);
         }

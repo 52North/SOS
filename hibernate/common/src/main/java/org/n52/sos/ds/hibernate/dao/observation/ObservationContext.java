@@ -228,8 +228,9 @@ public class ObservationContext {
        contextual.setHiddenChild(isHiddenChild());
     }
 
-    public void setHiddenChild(boolean hiddenChild) {
+    public ObservationContext setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
+        return this;
     }
 
     public boolean isHiddenChild() {

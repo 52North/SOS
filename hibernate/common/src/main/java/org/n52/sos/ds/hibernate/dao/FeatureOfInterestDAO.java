@@ -78,6 +78,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,6 +118,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
         FeatureOfInterestPersister persister = new FeatureOfInterestPersister(
                 this,
+                getDaoFactory().getGeometryHandler(),
                 session
         );
         return abstractFeature.accept(persister);
@@ -359,15 +361,19 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      *             If SOS feature type is not supported (with status
      *             {@link HTTPStatus}.BAD_REQUEST
      */
-    public AbstractFeatureEntity checkOrInsert(AbstractFeature featureOfInterest, Session session) throws OwsExceptionReport {
+    public AbstractFeatureEntity checkOrInsert(AbstractFeature featureOfInterest, Session session)
+            throws OwsExceptionReport {
+        AbstractFeatureEntity feature = getFeature(featureOfInterest.getIdentifier(), session);
+        if (feature != null) {
+            return feature;
+        }
         if (featureOfInterest instanceof AbstractSamplingFeature) {
             AbstractSamplingFeature sf = (AbstractSamplingFeature) featureOfInterest;
             String featureIdentifier = getFeatureQueryHandler().insertFeature(sf, session);
-            return getOrInsert(featureIdentifier, sf.getUrl(), session);
+            return getFeature(featureOfInterest.getIdentifier(), session);
         } else {
             Object type = featureOfInterest != null ? featureOfInterest.getClass().getName() : featureOfInterest;
-            throw new NoApplicableCodeException()
-                    .withMessage("The used feature type '%s' is not supported.", type)
+            throw new NoApplicableCodeException().withMessage("The used feature type '%s' is not supported.", type)
                     .setStatus(BAD_REQUEST);
         }
     }
@@ -376,10 +382,12 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
         private FeatureOfInterestDAO dao;
         private Session session;
+        private GeometryHandler geometryHandler;
 
-        public FeatureOfInterestPersister(FeatureOfInterestDAO dao, Session sesion) {
+        public FeatureOfInterestPersister(FeatureOfInterestDAO dao, GeometryHandler geometryHandler, Session sesion) {
            this.dao = dao;
            this.session = sesion;
+           this.geometryHandler = geometryHandler;
         }
 
         @Override
@@ -435,7 +443,9 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 dao.addIdentifierNameDescription(abstractFeature, feature, session);
                 if (abstractFeature instanceof FeatureWithGeometry) {
                     if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
-                        feature.setGeometry(JTSConverter.convert(((FeatureWithGeometry) abstractFeature).getGeometry()));
+                        feature.setGeometry(
+                                JTSConverter.convert(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                                        ((FeatureWithGeometry) abstractFeature).getGeometry())));
                     }
                 }
                 if (abstractFeature.isSetXml()) {

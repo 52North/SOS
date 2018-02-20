@@ -552,10 +552,10 @@ public class ObservationUnfolder {
         }
         if (parameterHolder.isSetHeightDepthParameter()) {
             if (parameterHolder.isSetHeightParameter()) {
-                profileLevel.setLevelStart(toQuantityValue(parameterHolder.getHeightParameter()));
+                profileLevel.setLevelEnd(toQuantityValue(parameterHolder.getHeightParameter()));
             }
             if (parameterHolder.isSetDepthParameter()) {
-                profileLevel.setLevelStart(toQuantityValue(parameterHolder.getDepthParameter()));
+                profileLevel.setLevelEnd(toQuantityValue(parameterHolder.getDepthParameter()));
             }
         } else if (parameterHolder.isSetFromToParameter()) {
             profileLevel.setLevelStart(toQuantityValue(parameterHolder.getFromParameter()));

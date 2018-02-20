@@ -316,6 +316,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
                 if (value.isSetLevelEnd()) {
                     d.setVerticalTo(value.getLevelEnd().getValue());
                 }
+                session.saveOrUpdate(d);
                 childObservations.add(d);
             }
         }
@@ -349,13 +350,13 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         Set<Data<?>> children = new TreeSet<>();
         for (ProfileLevel level : values) {
             if (level.isSetValue()) {
-                for (Value<?> v : level.getValue()) {
-                    if (v instanceof SweAbstractDataComponent && ((SweAbstractDataComponent) v).isSetDefinition()) {
-                        children.add(v.accept(createChildPersister(level, ((SweAbstractDataComponent) v).getDefinition())));
-                    } else {
-                        children.add(v.accept(createChildPersister(level)));
-                    }
-                }
+//                for (Value<?> v : level.getValue()) {
+//                    if (v instanceof SweAbstractDataComponent && ((SweAbstractDataComponent) v).isSetDefinition()) {
+//                        children.add(v.accept(createChildPersister(level, ((SweAbstractDataComponent) v).getDefinition())));
+//                    } else {
+                        children.addAll(level.accept(createChildPersister(level)));
+//                    }
+//                }
             }
         }
         session.flush();
@@ -483,6 +484,9 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
             observation.setParameters(insertParameter);
         }
         session.saveOrUpdate(observation);
+        session.flush();
+        session.refresh(observation);
+        daos.dataset.updateSeriesWithFirstLatestValues(dataset, (DataEntity<?>) observation, session);
 
         return observation;
     }

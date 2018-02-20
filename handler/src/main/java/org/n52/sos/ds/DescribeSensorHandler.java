@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -108,9 +109,9 @@ public class DescribeSensorHandler
             response.setVersion(request.getVersion());
             response.setOutputFormat(request.getProcedureDescriptionFormat());
 
-            ProcedureEntity entity =
-                    new ProcedureDao(session).getInstance(request.getProcedure(), createDbQuery(request));
-            if (entity == null) {
+            Collection<ProcedureEntity> entities =
+                    new ProcedureDao(session).get(createDbQuery(request));
+            if (entities == null || entities.isEmpty()) {
                 throw new NoApplicableCodeException()
                         .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
                         .setStatus(INTERNAL_SERVER_ERROR);
@@ -118,7 +119,7 @@ public class DescribeSensorHandler
             if (dao != null) {
                 response.setSensorDescriptions(dao.querySensorDescriptions(request));
             } else {
-                response.addSensorDescription(createSensorDescription(entity, request, session));
+                response.addSensorDescription(createSensorDescription(entities.iterator().next(), request, session));
             }
             return response;
         } catch (final HibernateException e) {

@@ -139,10 +139,11 @@ public class DeleteResultTemplateHandler
                     daoFactory.getResultTemplateDAO().getResultTemplateObject(offering, observedProperty, session);
             if (resultTemplateObject == null) {
                 exceptions.add(new DeleteResultTemplateInvalidParameterValueException(offering, observedProperty));
+            } else {
+                final String resultTemplateId = resultTemplateObject.getIdentifier();
+                session.delete(resultTemplateObject);
+                deletedResultTemplates.add(resultTemplateId);
             }
-            final String resultTemplateId = resultTemplateObject.getIdentifier();
-            session.delete(resultTemplateObject);
-            deletedResultTemplates.add(resultTemplateId);
         }
         exceptions.throwIfNotEmpty();
         return deletedResultTemplates;

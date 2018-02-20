@@ -96,7 +96,6 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         DatasetEntity series = seriesDAO.getOrInsertSeries(ctx, observation, session);
         ((DataEntity) observation).setDataset(series);
-        seriesDAO.updateSeriesWithFirstLatestValues(series, (DataEntity) observation, session);
 
         OfferingDAO offeringDAO = getDaoFactory().getOfferingDAO();
         offeringDAO.updateOfferingMetadata(series.getOffering(), observation, session);

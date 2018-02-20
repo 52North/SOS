@@ -55,6 +55,7 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
@@ -255,7 +256,7 @@ public abstract class AbstractSeriesDAO
 
     public abstract DatasetFactory getDatasetFactory();
 
-    protected DatasetEntity getOrInsert(ObservationContext ctx, final Session session) throws OwsExceptionReport {
+    public DatasetEntity getOrInsert(ObservationContext ctx, final Session session) throws OwsExceptionReport {
         return getOrInsert(ctx, null, session);
     }
 
@@ -273,13 +274,13 @@ public abstract class AbstractSeriesDAO
             series = (DatasetEntity) getDatasetFactory().visit(observation);
             ctx.addValuesToSeries(series);
             series.setDeleted(false);
-            series.setPublished(true);
+            series.setPublished(ctx.isPublish());
         } else if (!series.isSetFeature()) {
             ctx.addValuesToSeries(series);
             series.setDeleted(false);
-            series.setPublished(true);
+            series.setPublished(ctx.isPublish());
         } else if (ctx.isPublish() && !series.isPublished()) {
-            series.setPublished(true);
+            series.setPublished(ctx.isPublish());
         } else if (series.isDeleted()) {
             series.setDeleted(false);
         } else {
@@ -294,7 +295,7 @@ public abstract class AbstractSeriesDAO
         if (dataset == null) {
             Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
             ctx.addIdentifierRestrictionsToCritera(criteria, false);
-            LOGGER.debug("QUERY getOrInsertSeries(observableProperty, procedure, offering): {}",
+            LOGGER.debug("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
                     HibernateHelper.getSqlString(criteria));
             dataset = (DatasetEntity) criteria.uniqueResult();
         }
@@ -728,9 +729,18 @@ public abstract class AbstractSeriesDAO
         List<DatasetEntity> hSeries = criteria.list();
         for (DatasetEntity series : hSeries) {
             series.setDeleted(deleteFlag);
+            series.setPublished(deleteFlag);
+            series.setFirstObservation(null);
+            series.setFirstValueAt(null);
+            series.setLastObservation(null);
+            series.setLastValueAt(null);
+            if (series instanceof QuantityDatasetEntity) {
+                series.setFirstQuantityValue(null);
+                series.setLastQuantityValue(null);
+            }
             session.saveOrUpdate(series);
-            session.flush();
         }
+        session.flush();
         return hSeries;
     }
 
@@ -769,6 +779,7 @@ public abstract class AbstractSeriesDAO
             }
         }
         session.saveOrUpdate(series);
+        session.flush();
     }
 
     /**
@@ -795,6 +806,7 @@ public abstract class AbstractSeriesDAO
                 series.setFirstObservation(firstDataEntity);
             } else {
                 series.setFirstValueAt(null);
+                series.setFirstObservation(null);
                 if (observation instanceof QuantityDataEntity) {
                     series.setFirstQuantityValue(null);
                 }
@@ -810,6 +822,7 @@ public abstract class AbstractSeriesDAO
                 series.setLastObservation(latestDataEntity);
             } else {
                 series.setLastValueAt(null);
+                series.setLastObservation(null);
                 if (observation instanceof QuantityDataEntity) {
                     series.setLastQuantityValue(null);
                 }

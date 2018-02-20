@@ -192,9 +192,9 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                 CategoryEntity hCategory = daoFactory.getObservablePropertyDAO().getOrInsertCategory(hObservableProperty, session);
                                 ObservationContext ctx =
                                         new ObservationContext().setCategory(hCategory).setOffering(hOffering)
-                                                .setPhenomenon(hObservableProperty).setProcedure(hProcedure);
-                                seriesDAO.checkOrInsertSeries(hProcedure,
-                                        hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
+                                                .setPhenomenon(hObservableProperty).setProcedure(hProcedure)
+                                                .setPublish(false).setHiddenChild(assignedOffering.isParentOffering());
+                                seriesDAO.getOrInsert(ctx, session);
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
                                     addStaticReferenceValues(request, session, procedureDescriptionFormat, hProcedure,
                                             observationTypes, featureOfInterestTypes, hRelatedFeatures, hOffering,

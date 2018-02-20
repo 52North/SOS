@@ -134,13 +134,16 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
 
     protected AbstractFeatureEntity getFeatureOfInterest(final String identifier, final Geometry geometry,
             final Session session) throws OwsExceptionReport {
+        Criteria c = getDefaultCriteria(session);
         if (!identifier.startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
-            return (AbstractFeatureEntity) getDefaultCriteria(session)
-                    .add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, identifier)).uniqueResult();
+             c.add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, identifier));
+            LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(c));
+            return (AbstractFeatureEntity) c.uniqueResult();
         } else {
-            return (AbstractFeatureEntity) getDefaultCriteria(session)
-                    .add(SpatialRestrictions.eq(AbstractFeatureEntity.GEOMETRY, GeometryHandler.getInstance()
-                            .switchCoordinateAxisFromToDatasourceIfNeeded(geometry))).uniqueResult();
+            c.add(SpatialRestrictions.eq(AbstractFeatureEntity.GEOMETRY, GeometryHandler.getInstance()
+                            .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+            LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(c));
+            return (AbstractFeatureEntity) c.uniqueResult();
         }
     }
 

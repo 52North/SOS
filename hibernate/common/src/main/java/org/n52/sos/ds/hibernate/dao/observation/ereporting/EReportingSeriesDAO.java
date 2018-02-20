@@ -47,12 +47,12 @@ import org.n52.series.db.beans.ereporting.EReportingCountDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingDataArrayDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingGeometryDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingNotInitializedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingQuantityDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingReferencedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.series.db.beans.ereporting.EReportingTextDatasetEntity;
-import org.n52.series.db.beans.ereporting.NotInitializedEReportingDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -83,7 +83,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     public Class<?> getNotInitializedDatasetClass() {
-        return NotInitializedEReportingDatasetEntity.class;
+        return EReportingNotInitializedDatasetEntity.class;
     }
 
     @Override
@@ -350,8 +350,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         }
 
         @Override
-        public Class<? extends NotInitializedEReportingDatasetEntity> notInitializedClass() {
-            return NotInitializedEReportingDatasetEntity.class;
+        public Class<? extends EReportingNotInitializedDatasetEntity> notInitializedClass() {
+            return EReportingNotInitializedDatasetEntity.class;
         }
 
         public static EReportingDatasetFactory getInstance() {

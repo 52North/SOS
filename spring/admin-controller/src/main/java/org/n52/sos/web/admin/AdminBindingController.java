@@ -52,6 +52,7 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.janmayen.Json;
 import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
 
@@ -113,10 +114,19 @@ public class AdminBindingController extends AbstractAdminController {
     public void change(@RequestBody String request) throws IOException {
         JsonNode json = Json.loadString(request);
         if (json.has(JSONConstants.BINDING_KEY)) {
-            BindingKey key = new PathBindingKey(json.path(JSONConstants.BINDING_KEY).asText());
+            BindingKey key = getKey(json.path(JSONConstants.BINDING_KEY).asText());
             this.bindingRepository.setActive(key, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
+    }
+
+    private BindingKey getKey(String keyString) {
+        try {
+            return new MediaTypeBindingKey(MediaType.parse(keyString));
+        } catch (IllegalArgumentException e) {
+            // nothing to do!!!
+        }
+        return new PathBindingKey(keyString);
     }
 }

@@ -195,8 +195,6 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     @Override
     protected void getCommonRequestParameterDefinitions(Builder<R> builder) {
         super.getCommonRequestParameterDefinitions(builder);
-        builder.add(OWSConstants.AdditionalRequestParams.language, OwsServiceRequest::addSweTextExtension);
-        builder.add(OWSConstants.AdditionalRequestParams.crs, OwsServiceRequest::addSweTextExtension);
 //        builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier, OwsServiceRequest::addSweBooleanExtension);
     }
 
@@ -376,7 +374,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         return new SpatialFilter(SpatialOperator.BBOX, geometry, valueReference);
     }
 
-    protected boolean parseODataFes(OwsServiceRequest request, String parameterValues, String parameterName) throws DecodingException {
+    protected boolean parseODataFes(OwsServiceRequest request, String parameterName, String parameterValues) throws DecodingException {
         try {
             List<Filter<?>> filters = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
             for (Filter<?> f : filters) {

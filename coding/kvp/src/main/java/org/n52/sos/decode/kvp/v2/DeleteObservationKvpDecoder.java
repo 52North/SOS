@@ -53,11 +53,9 @@ public class DeleteObservationKvpDecoder extends AbstractSosKvpDecoder<DeleteObs
         builder.add(DeleteObservationConstants.PARAM_OBSERVATION, decodeList(DeleteObservationRequest::setObservationIdentifiers));
         builder.add(DeleteObservationConstants.PARAM_OFFERING, decodeList(DeleteObservationRequest::setOfferings));
         builder.add(DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, decodeList(DeleteObservationRequest::setObservedProperties));
-        builder.add(DeleteObservationConstants.PARAM_PROCEDURE, decodeList(DeleteObservationRequest::setObservationIdentifiers));
-        builder.add(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST, decodeList(DeleteObservationRequest::setProcedures));
-        builder.add(DeleteObservationConstants.PARAM_OBSERVATION, decodeList(DeleteObservationRequest::setFeatureIdentifiers));
+        builder.add(DeleteObservationConstants.PARAM_PROCEDURE, decodeList(DeleteObservationRequest::setProcedures));
+        builder.add(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST, decodeList(DeleteObservationRequest::setFeatureIdentifiers));
         builder.add(DeleteObservationConstants.PARAM_TEMPORAL_FILTER, decodeList(decodeTemporalFilter(asList(DeleteObservationRequest::setTemporalFilters))));
-
     }
 
 }

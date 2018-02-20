@@ -45,10 +45,6 @@
     <bean id="transactionalSecurityConfiguration"
           class="org.n52.sos.service.TransactionalSecurityConfiguration" />
 
-    <bean id="driverCleanupListener"
-          class="org.n52.sos.service.DriverCleanupListener" />
-
-
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>
 

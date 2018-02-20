@@ -3,7 +3,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <bean class="org.n52.sos.ds.hibernate.SessionFactoryProvider" />
+    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
+
+    <bean id="sessionFactoryProvider" class="org.n52.sos.ds.hibernate.SessionFactoryProvider" scope="singleton" />
 
     <bean id="sessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
 

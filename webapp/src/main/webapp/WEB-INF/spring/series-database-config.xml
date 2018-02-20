@@ -21,6 +21,8 @@
 
     <!-- ############################## JDBC MANAGED DATASOURCE ####################################### -->
 
-    <bean id="hibernateSessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
+    <import resource="../classes/contexts/configured/sessionFactory.xml"/>
+
+    <!-- <bean id="hibernateSessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" /> -->
 
 </beans>

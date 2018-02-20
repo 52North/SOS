@@ -62,8 +62,8 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
-    private SessionFactory sessionFactory = null;
-    private Configuration configuration = null;
+    private static SessionFactory sessionFactory = null;
+    private static Configuration configuration = null;
     private DriverCleanupListener driverCleanupListener;
     private DatabaseSettingsHandler databaseSettingsHandler;
 
@@ -83,7 +83,7 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     @Override
     protected SessionFactory getSessionFactory() {
-        return this.sessionFactory;
+        return UnspecifiedSessionFactoryProvider.sessionFactory;
     }
 
     @Override
@@ -161,8 +161,8 @@ public abstract class UnspecifiedSessionFactoryProvider
             registerTimestampMapping(configuration, properties);
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            Session s = this.sessionFactory.openSession();
+            UnspecifiedSessionFactoryProvider.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            Session s = UnspecifiedSessionFactoryProvider.sessionFactory.openSession();
             try {
                 HibernateMetadataCache.init(s);
                 s.doWork(datasourceCallback::onFirstConnection);

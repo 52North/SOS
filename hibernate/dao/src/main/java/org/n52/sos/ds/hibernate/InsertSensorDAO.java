@@ -300,6 +300,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                     codespaceCache,
                     unitCache,
                     Collections.singleton(hOfferingReferenceSeries),
+                    true,
                     session
                     );
             sosValue.getValue().accept(persister);

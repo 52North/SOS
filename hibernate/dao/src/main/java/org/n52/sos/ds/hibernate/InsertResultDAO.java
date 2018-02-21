@@ -198,10 +198,10 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 }
                 if (observation.getValue() instanceof SingleObservationValue) {
                     observationDAO.insertObservationSingleValue(obsConst, feature,
-                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), session);
+                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), checkForDuplicatedObservations(), session);
                 } else if (observation.getValue() instanceof MultiObservationValues) {
                     observationDAO.insertObservationMultiValue(obsConst, feature,
-                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), session);
+                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), checkForDuplicatedObservations(), session);
                 }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {
                     session.flush();
@@ -590,6 +590,10 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+    
+    private boolean checkForDuplicatedObservations() {
+        return ServiceConfiguration.getInstance().isCheckForDuplicatedObservations();
     }
 
 }

@@ -231,11 +231,11 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 if (sosObservation.getValue() instanceof SingleObservationValue) {
                     observationDAO.insertObservationSingleValue(
                             hObservationConstellation, hFeature, sosObservation,
-                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), session);
+                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), checkForDuplicatedObservations(), session);
                 } else if (sosObservation.getValue() instanceof MultiObservationValues) {
                     observationDAO.insertObservationMultiValue(
                             hObservationConstellation, hFeature, sosObservation,
-                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), session);
+                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), checkForDuplicatedObservations(), session);
                 }
             }
         }
@@ -331,6 +331,10 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             featureOfInterestDAO.updateFeatureOfInterest(hFeature, abstractFeature, session);
         }
         return hFeature;
+    }
+    
+    private boolean checkForDuplicatedObservations() {
+        return ServiceConfiguration.getInstance().isCheckForDuplicatedObservations();
     }
     
     @Override

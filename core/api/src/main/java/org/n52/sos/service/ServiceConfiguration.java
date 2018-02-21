@@ -166,6 +166,8 @@ public class ServiceConfiguration {
 
     private Integer requestTimeout = 0;
 
+    private boolean checkForDuplicatedObservations = true;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -538,6 +540,17 @@ public class ServiceConfiguration {
 
     public int getRequestTimeout() {
         return requestTimeout;
+    }
+    
+    @Setting(ServiceSettings.CHECK_FOR_REQUEST_DUPLICITY)
+    public void setCheckForDuplicatedObservations(Boolean checkForDuplicatedObservations) {
+        if (checkForDuplicatedObservations != null) {
+            this.checkForDuplicatedObservations = checkForDuplicatedObservations;
+        }
+    }
+
+    public boolean isCheckForDuplicatedObservations() {
+        return checkForDuplicatedObservations;
     }
 
     /*

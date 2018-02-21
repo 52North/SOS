@@ -78,6 +78,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     public static final String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
     
+    public static final String CHECK_FOR_REQUEST_DUPLICITY = "service.checkForRequestDuplicity";
+    
     public static final String REQUEST_TIMEOUT = "service.requestTimeout";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
@@ -220,6 +222,18 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setDescription(
                             "Whether the SOS should if the response contains duplicated observations. Only necessary if you have inserted an observation for multiple offerings!");
       
+     
+     public static final BooleanSettingDefinition CHECK_FOR_REQUEST_DUPLICITY_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(24)
+                     .setKey(CHECK_FOR_REQUEST_DUPLICITY)
+                     .setDefaultValue(true)
+                     .setTitle("Should this SOS check for duplicated observations in the request?")
+                     .setDescription(
+                            "Whether the SOS should check if the request contains duplicated observations. Consider that this may lead to duplicated observation in the database!!!");
+      
+     
      public static final IntegerSettingDefinition REQUEST_TIMEOUT_DEFINITION =
              new IntegerSettingDefinition()
                      .setGroup(GROUP)
@@ -242,7 +256,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE_DEFINITION,
             INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION,
             CHECK_FOR_DUPLICITY_DEFINITION,
-            REQUEST_TIMEOUT_DEFINITION);
+            REQUEST_TIMEOUT_DEFINITION,
+            CHECK_FOR_REQUEST_DUPLICITY_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

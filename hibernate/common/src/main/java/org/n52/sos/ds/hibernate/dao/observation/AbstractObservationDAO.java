@@ -521,6 +521,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Map based codespace object cache to prevent redundant queries
      * @param unitCache
      *            Map based unit object cache to prevent redundant queries
+     * @param checkForDuplicatedObservations 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -528,11 +529,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void insertObservationMultiValue(ObservationConstellation observationConstellation,
             AbstractFeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
+            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
             insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
-                    hOfferings, session);
+                    hOfferings, checkForDuplicatedObservations, session);
         }
     }
 
@@ -551,8 +552,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      */
     public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, session);
+            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session) throws OwsExceptionReport {
+        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, checkForDuplicatedObservations, session);
     }
 
     /**
@@ -570,6 +571,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            querying)
      * @param unitCache
      *            Map cache for unit objects (to prevent redundant querying)
+     * @param b 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -578,7 +580,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
             AbstractFeatureOfInterest hFeature, OmObservation sosObservation,
             Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session)
+            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session)
             throws OwsExceptionReport {
         SingleObservationValue<?> value
                 = (SingleObservationValue) sosObservation.getValue();
@@ -590,6 +592,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 codespaceCache,
                 unitCache,
                 hOfferings,
+                checkForDuplicatedObservations,
                 session
         );
         value.getValue().accept(persister);

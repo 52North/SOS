@@ -165,7 +165,7 @@
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.request.timeout" />
         <property name="title" value="Request timeout value in seconds" />
-        <property name="description" value="Set the request timeout value in seconds. Set to <code>0</code> (zero) for no timeout." />
+        <property name="description" value="Set the request timeout value in seconds. Set to &lt;code&gt;0&lt;/code&gt; (zero) for no timeout." />
         <property name="order" value="25.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="0" />

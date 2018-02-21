@@ -127,7 +127,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
     @Override
     protected Configuration getConfiguration(Properties properties) throws ConfigurationError {
         try {
-            Configuration configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
+            Configuration configuration = new Configuration().configure("/hibernate.cfg.xml");
             if (properties.containsKey(HibernateConstants.C3P0_MAX_SIZE)) {
                 this.maxConnections = Integer.parseInt(properties.getProperty(HibernateConstants.C3P0_MAX_SIZE, "-1"));
             }

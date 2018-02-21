@@ -64,8 +64,8 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO implements ERepor
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
-        addValidityAndVerificationRestrictions(c, request);
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport {
+        addValidityAndVerificationRestrictions(c, request, logArgs);
     }
 
         @Override

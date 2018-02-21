@@ -65,9 +65,9 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport {
         // add quality restrictions
-        addValidityAndVerificationRestrictions(c, request);
+        addValidityAndVerificationRestrictions(c, request, logArgs);
     }
 
     @Override

@@ -94,7 +94,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             ObservationTimeExtrema ote = new ObservationTimeExtrema();
             for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
-                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, new StringBuilder());
                 addMinMaxTimeProjection(c);
                 ote.expand(parseMinMaxTime((Object[]) c.uniqueResult()));
             }
@@ -130,7 +130,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             ObservationTimeExtrema ote = new ObservationTimeExtrema();
             for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
-                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session);
+                checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, new StringBuilder());
                 addMinMaxTimeProjection(c);
                 ote.expand(parseMinMaxTime((Object[]) c.uniqueResult()));
             }
@@ -342,22 +342,22 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
         c.add(Restrictions.eq("s." + DatasetEntity.PROPERTY_ID, series));
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
-            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
-            checkAndAddResultFilterCriterion(c, getObsReq, null, session);
+            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session, logArgs);
+            checkAndAddResultFilterCriterion(c, getObsReq, null, session, logArgs);
             if (temporalFilterCriterion != null) {
-                logArgs += ", filterCriterion";
+                logArgs.append(", filterCriterion");
                 c.add(temporalFilterCriterion);
             }
             if (sosIndeterminateTime != null) {
-                logArgs += ", sosIndeterminateTime";
+                logArgs.append(", sosIndeterminateTime");
                 addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             }
-            addSpecificRestrictions(c, getObsReq);
+            addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -365,22 +365,22 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             Criterion temporalFilterCriterion, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
         c.add(Restrictions.in("s." + DatasetEntity.PROPERTY_ID, series));
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         if (request instanceof GetObservationRequest) {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
-            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session);
+            checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session, logArgs);
 
             if (temporalFilterCriterion != null) {
-                logArgs += ", filterCriterion";
+                logArgs.append(", filterCriterion");
                 c.add(temporalFilterCriterion);
             }
             if (sosIndeterminateTime != null) {
-                logArgs += ", sosIndeterminateTime";
+                logArgs.append(", sosIndeterminateTime");
                 addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             }
-            addSpecificRestrictions(c, getObsReq);
+            addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        LOGGER.debug("QUERY getSeriesValueCriteriaFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getSeriesValueCriteriaFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -391,10 +391,10 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
         c.add(QueryHelper.getCriterionForObjects(DataEntity.PROPERTY_DATASET, series));
 
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -405,10 +405,10 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
         c.add(QueryHelper.getCriterionForObjects("s." + DatasetEntity.PROPERTY_ID, series));
 
-        String logArgs = "request, series";
+        StringBuilder logArgs = new StringBuilder("request, series");
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 

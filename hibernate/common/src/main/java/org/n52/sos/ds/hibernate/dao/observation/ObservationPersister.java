@@ -90,7 +90,6 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -154,21 +153,9 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         this.observationFactory = daos.observation().getObservationFactory();
         this.childObservation = childObservation;
         this.offerings = hOfferings;
-
-//        checkForDuplicity();
+;
     }
 
-//    private void checkForDuplicity()
-//            throws OwsExceptionReport {
-//        /*
-//         * TODO check if observation exists in database for - series,
-//         * phenTimeStart, phenTimeEnd, resultTime - series, phenTimeStart,
-//         * phenTimeEnd, resultTime, depth/height parameter (same observation
-//         * different depth/height)
-//         */
-//        daos.observation.checkForDuplicatedObservations(omObservation, datasets.iterator().next(), session);
-//
-//    }
 
 
     @Override

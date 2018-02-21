@@ -213,7 +213,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
        // nothing to add
     }
 

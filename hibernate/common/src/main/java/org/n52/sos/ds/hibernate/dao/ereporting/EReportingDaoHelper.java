@@ -42,16 +42,18 @@ import org.n52.shetland.util.CollectionHelper;
 
 public interface EReportingDaoHelper {
 
-    default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request)
+    default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request, StringBuilder logArgs)
             throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 if (isSetValidityFlags()) {
                     c.add(Restrictions.in(EReportingDataEntity.VALIDATION, getValidityFlags()));
+                    logArgs.append(", validationFlag");
                 }
                 if (isSetVerificationFlags()) {
                     c.add(Restrictions.in(EReportingDataEntity.VERIFICATION, getVerificationFlags()));
+                    logArgs.append(", verification");
                 }
             }
         }

@@ -301,6 +301,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                     codespaceCache,
                     unitCache,
                     Collections.singleton(hOfferingReferenceSeries),
+                    true,
                     session
                     );
             sosValue.getValue().accept(persister);

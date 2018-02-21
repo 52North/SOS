@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -102,7 +103,6 @@ import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
-import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
@@ -539,6 +539,7 @@ public abstract class AbstractObservationDAO
             criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
         }
 
+        criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -1463,7 +1464,10 @@ public abstract class AbstractObservationDAO
     }
 
     protected boolean isIncludeChildObservableProperties() {
-        return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
+        if (ObservationSettingProvider.getInstance() != null) {
+            return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
+        }
+        return true;
     }
 
     private GeometryHandler getGeometryHandler() {

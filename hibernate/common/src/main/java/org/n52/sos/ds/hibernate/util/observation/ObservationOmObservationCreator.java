@@ -122,7 +122,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     public ObservationStream create() throws OwsExceptionReport, ConverterException {
         if (getObservations() == null) {
             return ObservationStream.empty();
-        } else if (this.observationCollection == null) {
+        }
+        else if (this.observationCollection == null) {
             this.observationCollection = Lists.newLinkedList();
             // now iterate over resultset and create Measurement for each row
             for (DataEntity<?> hObservation : getObservations()) {
@@ -145,6 +146,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     protected OmObservation createObservation(DataEntity<?> hObservation) throws OwsExceptionReport, ConverterException {
+        long start = System.currentTimeMillis();
         LOGGER.trace("Creating Observation...");
         SosHelper.checkFreeMemory();
         String procedureId = createProcedure(hObservation);
@@ -172,7 +174,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // + setFirstResult
         }
         getSession().evict(hObservation);
-        LOGGER.trace("Creating Observation done.");
+        LOGGER.trace("Creating Observation done in {} ms.", System.currentTimeMillis() - start);
         return sosObservation;
     }
 
@@ -181,6 +183,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private void addParameter(OmObservation observation, DataEntity<?> hObservation) throws OwsExceptionReport {
+        long start = System.currentTimeMillis();
+        LOGGER.trace("Creating Parameter...");
         if (hObservation instanceof DataEntity) {
             DatasetEntity series = ((DataEntity) hObservation).getDataset();
             if (!seriesParameter.containsKey(series.getId()) && series.hasParameters()) {
@@ -191,6 +195,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             }
         }
         new ParameterAdder(observation, hObservation).add();
+        LOGGER.trace("Creating Parameter done in {} ms.", System.currentTimeMillis() - start);
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {
@@ -235,47 +240,55 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private String createPhenomenon(final DataEntity<?> hObservation) throws CodedException {
+        long start = System.currentTimeMillis();
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getDataset().getPhenomenon().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
             OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getDataset().getPhenomenon());
             observedProperties.put(phenID, omObservableProperty);
         }
-        LOGGER.trace("Creating Phenomenon done.");
+        LOGGER.trace("Creating Phenomenon done in {} ms.", System.currentTimeMillis() - start);
         return phenID;
     }
 
     private String createProcedure(final DataEntity<?> hObservation) throws OwsExceptionReport,
             ConverterException {
         // TODO sfp full description
+        long start = System.currentTimeMillis();
         LOGGER.trace("Creating Procedure...");
         final String procedureId = hObservation.getDataset().getProcedure().getIdentifier();
         if (!procedures.containsKey(procedureId)) {
             final SosProcedureDescription<?> procedure = createProcedure(hObservation.getDataset().getProcedure());
             procedures.put(procedureId, procedure);
         }
-        LOGGER.trace("Creating Procedure done.");
+        LOGGER.trace("Creating Procedure done in {} ms.", System.currentTimeMillis() - start);
         return procedureId;
     }
 
     private String createFeatureOfInterest(final DataEntity<?> hObservation) throws OwsExceptionReport {
+        long start = System.currentTimeMillis();
         LOGGER.trace("Creating Feature...");
         final String foiID = hObservation.getDataset().getFeature().getIdentifier();
         if (!features.containsKey(foiID)) {
             final AbstractFeature featureByID = createFeatureOfInterest(hObservation.getDataset().getFeature());
             features.put(foiID, featureByID);
         }
-        LOGGER.trace("Creating Feature done.");
+        LOGGER.trace("Creating Feature done in {} ms.", System.currentTimeMillis() - start);
         return foiID;
     }
 
     private Set<String> createOfferingSet(DataEntity<?> hObservation, String procedure, String observedProperty) {
+        long start = System.currentTimeMillis();
+        LOGGER.trace("Creating Offerings...");
         Set<String> offerings = Sets.newHashSet();
         offerings.add(hObservation.getDataset().getOffering().getIdentifier());
+        LOGGER.trace("Creating Offerings done in {} ms.", System.currentTimeMillis() - start);
         return offerings;
     }
     private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation,
             String procedureId, String phenomenonId, String featureId, Set<String> offerings) throws CodedException {
+        long start = System.currentTimeMillis();
+        LOGGER.trace("Creating ObservationConstellation...");
         OmObservationConstellation obsConst =
                 new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
                         getFeature(featureId), offerings);
@@ -303,6 +316,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 obsConst.setDescription(series.getDescription());
             }
         }
+        LOGGER.trace("Creating ObservationConstellation done in {} ms.", System.currentTimeMillis() - start);
         return obsConst;
     }
 }

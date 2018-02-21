@@ -167,7 +167,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request)
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
             throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
@@ -189,7 +189,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                 }
             }
             // add quality restrictions
-            addValidityAndVerificationRestrictions(c, request);
+            addValidityAndVerificationRestrictions(c, request, logArgs);
         }
     }
 

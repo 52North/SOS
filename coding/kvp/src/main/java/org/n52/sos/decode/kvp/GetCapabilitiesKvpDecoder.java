@@ -29,7 +29,6 @@
 package org.n52.sos.decode.kvp;
 
 
-import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
@@ -43,7 +42,7 @@ import org.n52.svalbard.decode.OperationDecoderKey;
  * @since 4.0.0
  *
  */
-public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder<GetCapabilitiesRequest> {
+public class GetCapabilitiesKvpDecoder extends AbstractSosKvpDecoder<GetCapabilitiesRequest> {
 
     public GetCapabilitiesKvpDecoder() {
         super(GetCapabilitiesRequest::new,

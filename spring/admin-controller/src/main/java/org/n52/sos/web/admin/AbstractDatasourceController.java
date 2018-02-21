@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public class AbstractDatasourceController extends AbstractAdminController {
+public class AbstractDatasourceController extends AbstractReloadContextController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDatasourceController.class);
 
     private Datasource datasource;

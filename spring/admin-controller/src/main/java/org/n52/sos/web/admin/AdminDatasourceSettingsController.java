@@ -74,13 +74,7 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     public static final String SETTINGS = "settings";
 
     @Inject
-    private ContextSwitcher contextSwitcher;
-
-    @Inject
     private SettingValueFactory settingValueFactory;
-
-    @Inject
-    private SettingsService settingsManager;
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
@@ -121,17 +115,8 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         Properties datasourceProperties = getDatasource().getDatasourceProperties(settings, newSettings);
         getDatabaseSettingsHandler().saveAll(datasourceProperties);
 
-        SettingValue<Object> deregisterJdbcDriverSetting = getDeregisterJdbcDriverSetting();
-        boolean changed = false;
-        if (deregisterJdbcDriverSetting != null && deregisterJdbcDriverSetting.getType().equals(SettingType.BOOLEAN)
-                && ((Boolean) deregisterJdbcDriverSetting.getValue()) != false) {
-            changed = true;
-            switchDeregisterJdbcDriverSettingValue(deregisterJdbcDriverSetting);
-        }
-        this.contextSwitcher.reloadContext();
-        if (changed) {
-            switchDeregisterJdbcDriverSettingValue(deregisterJdbcDriverSetting);
-        }
+        reloadContext();
+
         return new ModelAndView(new RedirectView(ControllerConstants.Paths.ADMIN_DATABASE_SETTINGS, true));
     }
 
@@ -234,12 +219,5 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
         }
     }
 
-    private void switchDeregisterJdbcDriverSettingValue(SettingValue<Object> sv) {
-        sv.setValue(!((Boolean) sv.getValue()));
-        settingsManager.changeSetting(sv);
-    }
 
-    private SettingValue<Object> getDeregisterJdbcDriverSetting() {
-       return settingsManager.getSetting(DriverCleanupListener.DEREGISTER_JDBC_DRIVER);
-    }
 }

@@ -52,7 +52,7 @@ import org.n52.sos.web.common.ControllerConstants;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_RESET)
-public class AdminResetController extends AbstractAdminController {
+public class AdminResetController extends AbstractReloadContextController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminResetController.class);
 
     @Inject
@@ -84,7 +84,7 @@ public class AdminResetController extends AbstractAdminController {
             persistenceStrategy.remove();
         }
 
-        this.contextSwitcher.reloadContext();
+        reloadContext();
 
         return new RedirectView(ControllerConstants.Paths.ROOT, true);
     }

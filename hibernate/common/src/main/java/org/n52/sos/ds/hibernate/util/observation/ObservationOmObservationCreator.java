@@ -183,10 +183,10 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private void addParameter(OmObservation observation, DataEntity<?> hObservation) throws OwsExceptionReport {
         if (hObservation instanceof DataEntity) {
             DatasetEntity series = ((DataEntity) hObservation).getDataset();
-            if (!seriesParameter.containsKey(series.getId())) {
+            if (!seriesParameter.containsKey(series.getId()) && series.hasParameters()) {
                 seriesParameter.put(series.getId(), series.getParameters());
             }
-            if (!seriesParameter.get(series.getId()).isEmpty()) {
+            if (seriesParameter.get(series.getId()) != null && !seriesParameter.get(series.getId()).isEmpty()) {
                 new DatasetParameterAdder(observation, seriesParameter.get(series.getId())).add();
             }
         }

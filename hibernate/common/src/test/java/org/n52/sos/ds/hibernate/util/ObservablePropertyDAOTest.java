@@ -97,13 +97,21 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         OmObservableProperty simpleObservableProperty = new OmObservableProperty("single");
 
         Session session = getSession();
+        Transaction transaction = null;
         try {
+            transaction = session.beginTransaction();
             List<AbstractPhenomenon> abstractPhenomenons
                     = Arrays.asList(compositePhenomenon, simpleObservableProperty);
 
             check(save(abstractPhenomenons, session));
+            session.flush();
+            transaction.commit();
             check(load(session));
-
+        } catch (HibernateException ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw ex;
         } finally {
             returnSession(session);
         }

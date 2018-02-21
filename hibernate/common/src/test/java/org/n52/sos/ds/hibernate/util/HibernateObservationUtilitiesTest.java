@@ -33,8 +33,11 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.joda.time.DateTime;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.series.db.beans.CodespaceEntity;
@@ -54,8 +57,10 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
+import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.service.profile.DefaultProfileHandler;
 
 /**
  * The class <code>HibernateObservationUtilitiesTest</code> contains tests for
@@ -103,7 +108,9 @@ public class HibernateObservationUtilitiesTest
             throws OwsExceptionReport, ConnectionProviderException, ConverterException {
         // PREPARE
         Session session = getSession();
+
         try {
+            Transaction transaction = session.beginTransaction();
             GetObservationByIdRequest request = new GetObservationByIdRequest();
             request.setVersion(Sos2Constants.SERVICEVERSION);
 
@@ -133,6 +140,7 @@ public class HibernateObservationUtilitiesTest
             hObservationConstellation.setOffering(hOffering);
             hObservationConstellation.setObservableProperty(hObservableProperty);
             hObservationConstellation.setObservationType(hObservationType);
+            hObservationConstellation.setFeature(hFeatureOfInterest);
             hObservationConstellation.setDeleted(false);
             hObservationConstellation.setHiddenChild(false);
 
@@ -149,15 +157,22 @@ public class HibernateObservationUtilitiesTest
             session.flush();
 
             hObservation.setValue(new BigDecimal(1.0));
+            hObservation.setSamplingTimeStart(DateTime.now().toDate());
+            hObservation.setSamplingTimeEnd(hObservation.getSamplingTimeStart());
+            hObservation.setResultTime(hObservation.getSamplingTimeStart());
             hObservation.setDataset(hObservationConstellation);
             hObservation.setDeleted(false);
+            session.save(hObservation);
+            transaction.commit();
 
             ArrayList<DataEntity<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
             // CALL
             ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(
-                    observationsFromDataBase, request, Locale.ENGLISH, null, new OmObservationCreatorContext(null,
-                            null, null, null, null, null, null, null, null, null, null, null),
+                    observationsFromDataBase, request, Locale.ENGLISH, null,
+                    new OmObservationCreatorContext(null, null, null, new DefaultProfileHandler(),
+                            Mockito.mock(AdditionalObservationCreatorRepository.class), null,
+                            new FeatureQueryHandlerMock(), null, null, null, null, null),
                     session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));

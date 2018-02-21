@@ -66,7 +66,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
     @Before
     public void fillObservations() throws OwsExceptionReport {
         Session session = getSession();
-
+        HibernateMetadataCache.init(session);
         Transaction transaction = null;
         try {
             I18NDAORepository i18NDAORepository = new I18NDAORepository();

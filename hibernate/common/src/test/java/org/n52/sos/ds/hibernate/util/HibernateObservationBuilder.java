@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.series.db.beans.CodespaceEntity;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.FormatEntity;
@@ -100,7 +101,7 @@ public class HibernateObservationBuilder {
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
         List<Data<?>> observations = Lists.newArrayList();
         for (OfferingEntity offering : getOfferings()) {
-             observations.add(createObservation(createObservation(offering), id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
+             observations.add(createObservation(createObservation(offering), offering.getIdentifier() + "_" + id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
                     phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
                     resultTime != null ? resultTime.toDate() : null, validTimeStart != null ? validTimeStart.toDate()
                             : null, validTimeEnd != null ? validTimeEnd.toDate() : null));
@@ -135,7 +136,7 @@ public class HibernateObservationBuilder {
         ObservationFactory observationFactory = observationDAO.getObservationFactory();
         BooleanData observation = observationFactory.truth();
         observation.setValue(true);
-        observation.setDataset(getSeries(offering));
+        observation.setDataset(getSeries(offering, observation));
         if (observation instanceof EReportingDataEntity) {
             EReportingDataEntity abstractEReportingObservation =
                     (EReportingDataEntity) observation;
@@ -243,7 +244,7 @@ public class HibernateObservationBuilder {
         return codespace;
     }
 
-    protected DatasetEntity getSeries(OfferingEntity offering) throws OwsExceptionReport {
+    protected DatasetEntity getSeries(OfferingEntity offering, Data o) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
 
         SeriesObservationFactory observationFactory = (SeriesObservationFactory) observationDAO.getObservationFactory();
@@ -256,7 +257,7 @@ public class HibernateObservationBuilder {
                         .add(Restrictions.eq( DatasetEntity.PROPERTY_OFFERING, offering));
         DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
         if (series == null) {
-            series = observationFactory.series();
+            series = (DatasetEntity) daoFactory.getSeriesDAO().getDatasetFactory().visit(o);
             series.setObservableProperty(getObservableProperty());
             series.setProcedure(getProcedure());
             series.setFeature(getFeatureOfInterest());

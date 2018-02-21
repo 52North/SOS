@@ -121,6 +121,7 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
 
     @Override
     protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
+        super.getRequestParameterDefinitions(builder);
         builder.add(SosConstants.GetObservationParams.offering,
                     decodeList(GetObservationRequest::setOfferings));
         builder.add(SosConstants.GetObservationParams.procedure,

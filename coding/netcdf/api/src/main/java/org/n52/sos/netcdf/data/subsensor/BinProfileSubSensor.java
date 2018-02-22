@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,7 +31,7 @@ package org.n52.sos.netcdf.data.subsensor;
 /**
  * Implementation of {@link ProfileSubSensor} for bin profile sub sensors. From
  * a line string geometry.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -77,20 +77,19 @@ public class BinProfileSubSensor extends ProfileSubSensor {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this != obj) {
+        } else {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         BinProfileSubSensor other = (BinProfileSubSensor) obj;
-        if (Double.doubleToLongBits(bottomHeight) != Double
-                .doubleToLongBits(other.bottomHeight))
-            return false;
-        if (Double.doubleToLongBits(topHeight) != Double
-                .doubleToLongBits(other.topHeight))
-            return false;
-        return true;
+        return Double.doubleToLongBits(bottomHeight) == Double.doubleToLongBits(other.bottomHeight) &&
+               Double.doubleToLongBits(topHeight) == Double.doubleToLongBits(other.topHeight);
     }
 
     @Override

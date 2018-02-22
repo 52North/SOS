@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,12 +28,16 @@
  */
 package org.n52.sos.encode;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import org.junit.Test;
 
+import org.n52.svalbard.encode.XmlEncoderKey;
+
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
 public class XmlEncoderKeyTest {

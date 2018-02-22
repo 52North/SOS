@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,18 +31,15 @@ package org.n52.sos.web.admin;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import org.n52.sos.service.AbstractLoggingConfigurator;
-import org.n52.sos.web.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -52,25 +49,14 @@ import org.n52.sos.web.ControllerConstants;
 @RequestMapping(value = ControllerConstants.Paths.ADMIN_LOGGING_FILE_DOWNLOAD)
 public class AdminLogFileDownloadController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminLogFileDownloadController.class);
+    @Inject
+    private AbstractLoggingConfigurator loggingConfigurator;
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(method = RequestMethod.GET,
+                    produces = MediaType.TEXT_PLAIN_VALUE)
     public void downloadFile(HttpServletResponse response) throws IOException {
-        InputStream is = null;
-        try {
-            is = AbstractLoggingConfigurator.getInstance().getLogFile();
-            if (is == null) {
-                throw new RuntimeException("Could not read log file.");
-            }
+        try (InputStream is = this.loggingConfigurator.getLogFile()) {
             IOUtils.copy(is, response.getOutputStream());
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    LOG.error("Can not close InputStream", e);
-                }
-            }
         }
     }
 }

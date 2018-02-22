@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="settingsDao" class="org.n52.faroe.json.JsonSettingsDao" />
+    <bean id="jsonConfiguration" class="org.n52.faroe.json.JsonConfiguration" init-method="init">
+        <property name="fileName" value="configuration.json" />
+        <property name="writeTimeout" value="1000" />
+        <property name="configLocationProvider" ref="configLocationProvider"/>
+    </bean>
+
+
+    <bean id="activationDao" class="org.n52.sos.config.json.SosJsonActivationDao" />
+    <bean id="adminUserDao" class="org.n52.iceland.config.json.JsonAdminUserDao" />
+    <bean id="settingValueFactory" class="org.n52.faroe.json.JsonSettingValueFactory" />
+
+</beans>

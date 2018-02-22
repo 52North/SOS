@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,6 +32,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -40,24 +43,29 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.I18NDAO;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NDAO;
+import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
+import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.series.db.beans.DescribableEntity;
+import org.n52.series.db.beans.i18n.I18nEntity;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
-public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameDescriptionEntity,
+public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
                                                S extends AbstractI18NMetadata,
-                                               H extends AbstractHibernateI18NMetadata>
+                                               H extends I18nEntity>
         implements I18NDAO<S>, HibernateI18NDAO<S> {
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public S getMetadata(String id)
@@ -148,7 +156,7 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     public Collection<Locale> getAvailableLocales(Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.setProjection(Projections.distinct(Projections.property(AbstractHibernateI18NMetadata.LOCALE)));
+        criteria.setProjection(Projections.distinct(Projections.property(I18nEntity.PROPERTY_LOCALE)));
         return criteria.list();
     }
 
@@ -157,8 +165,8 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     public S getMetadata(String id, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(AbstractHibernateI18NMetadata.OBJECT_ID)
-                .add(Restrictions.eq(AbstractIdentifierNameDescriptionEntity.IDENTIFIER, id));
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
         List<H> list = criteria.list();
         return createSosObject(id, list);
     }
@@ -168,8 +176,8 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     public Collection<S> getMetadata(Collection<String> id, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(AbstractHibernateI18NMetadata.OBJECT_ID)
-                .add(Restrictions.in(AbstractIdentifierNameDescriptionEntity.IDENTIFIER, id));
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
         List<H> list = criteria.list();
         return createSosObject(list);
     }
@@ -179,9 +187,9 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     public S getMetadata(String id, Locale locale, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(AbstractHibernateI18NMetadata.OBJECT_ID)
-                .add(Restrictions.eq(AbstractIdentifierNameDescriptionEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(AbstractHibernateI18NMetadata.LOCALE, locale));
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
+        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale.toString()));
         List<H> list = criteria.list();
         return createSosObject(id, list);
     }
@@ -191,9 +199,9 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     public Collection<S> getMetadata(Collection<String> id, Locale locale, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(AbstractHibernateI18NMetadata.OBJECT_ID)
-                .add(Restrictions.in(AbstractIdentifierNameDescriptionEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(AbstractHibernateI18NMetadata.LOCALE, locale));
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
+        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale.toString()));
         List<H> list = criteria.list();
         return createSosObject(list);
     }
@@ -217,8 +225,8 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
             T entity = getEntity(i18n.getIdentifier(), session);
             for (Locale locale : i18n.getLocales()) {
                 H h18n = createHibernateObject();
-                h18n.setObjectId(entity);
-                h18n.setLocale(locale);
+                h18n.setEntity(entity);
+                h18n.setLocale(locale.toString());
                 fillHibernateObject(i18n, h18n);
                 session.save(h18n);
             }
@@ -240,7 +248,7 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     protected Collection<S> createSosObject(List<H> hi18ns) {
         Map<String, S> map = Maps.newHashMap();
         for (H h18n : hi18ns) {
-            String id = h18n.getObjectId().getIdentifier();
+            String id = h18n.getEntity().getIdentifier();
             S i18n = map.get(id);
             if (i18n == null) {
                 i18n = createSosObject(id);
@@ -254,16 +262,14 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
 
     protected S createSosObject(String id, List<H> h18ns) {
         S i18n = createSosObject(id);
-        for (H h18n : h18ns) {
-            fillSosObject(h18n, i18n);
-        }
+        h18ns.forEach(h18n -> fillSosObject(h18n, i18n));
         return i18n;
     }
 
     protected void deleteOldValues(String id, Session session) {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.createCriteria(AbstractHibernateI18NMetadata.OBJECT_ID)
-                .add(Restrictions.eq(AbstractIdentifierNameDescriptionEntity.IDENTIFIER, id));
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
         ScrollableResults scroll = null;
         try {
             scroll = criteria.scroll();
@@ -281,11 +287,11 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
     }
 
     protected void fillSosObject(H h18n, S i18n) {
-        if (h18n.isSetName()) {
+        if (h18n.hasName()) {
             i18n.getName().addLocalization(h18n.getLocale(),
                                            h18n.getName());
         }
-        if (h18n.isSetDescription()) {
+        if (h18n.hasDescription()) {
             i18n.getDescription()
                     .addLocalization(h18n.getLocale(),
                                      h18n.getDescription());
@@ -294,12 +300,12 @@ public abstract class AbstractHibernateI18NDAO<T extends AbstractIdentifierNameD
 
     protected void fillHibernateObject(S i18n, H h18n) {
         Optional<LocalizedString> name = i18n.getName()
-                .getLocalization(h18n.getLocale());
+                .getLocalization(new Locale(h18n.getLocale()));
         if (name.isPresent()) {
             h18n.setName(name.get().getText());
         }
         Optional<LocalizedString> description = i18n.getDescription()
-                .getLocalization(h18n.getLocale());
+                .getLocalization(new Locale(h18n.getLocale()));
         if (description.isPresent()) {
             h18n.setDescription(description.get().getText());
         }

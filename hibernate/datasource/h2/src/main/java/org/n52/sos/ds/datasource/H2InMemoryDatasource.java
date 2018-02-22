@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,9 +36,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-
-import org.n52.sos.config.SettingDefinition;
+import org.hibernate.boot.Metadata;
+import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -62,8 +61,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?, ?>> of(getDatabaseConceptDefinition(), getFeatureConceptDefinition(), getTransactionalDefiniton(),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getFeatureConceptDefinition(), getTransactionalDefiniton(),
                 getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
     }
 
@@ -81,6 +80,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
         p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         p.put(HibernateConstants.HBM2DDL_AUTO, HibernateConstants.HBM2DDL_CREATE);
+        p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -92,13 +92,15 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<>(2);
+        Map<String, Object> settings = new HashMap<>(4);
         settings.put(getTransactionalDefiniton().getKey(), isTransactional(current));
+        settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
+        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         return settings;
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override

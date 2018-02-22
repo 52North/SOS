@@ -169,6 +169,7 @@
                                                                     <span class="menu-title">Profiles</span>
                                                                 </a>
                                                             </li>
+                                                            <%--
                                                             <c:if test="${sos:supportsI18N()}">
 	                                                            <li>
 	                                                                <a href="<c:url value="/admin/i18n" />">
@@ -176,6 +177,7 @@
 	                                                                </a>
 	                                                            </li>
                                                             </c:if>
+                                                            --%>
                                                             <c:if test="${sos:hasClass('org.n52.sos.web.admin.AdminEReportingHeaderController')}">
                                                                 <li>
                                                                     <a href="<c:url value="/admin/ereporting" />">

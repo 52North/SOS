@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

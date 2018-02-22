@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,25 +28,28 @@
  */
 package org.n52.sos.web.admin;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.Optional;
+
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.xmlbeans.XmlException;
-import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.exception.MissingServiceOperatorException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.RequestContext;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -59,12 +62,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Maps;
+
 /**
  * @since 4.0.0
  *
  */
 @Controller
-public class AdminDatasourceController extends AbstractDatasourceController {
+public class AdminDatasourceController
+        extends AbstractDatasourceController {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceController.class);
 
@@ -76,14 +84,20 @@ public class AdminDatasourceController extends AbstractDatasourceController {
 
     private static final String SUPPORTS_DELETE_DELETED = "supportsDeleteDeleted";
 
-    private ServiceLoader<GeneralQueryDAO> daoServiceLoader = ServiceLoader.load(GeneralQueryDAO.class);
+    @Inject
+    private Optional<GeneralQueryDAO> generalQueryDAO;
+
+    @Inject
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    private RequestOperatorRepository requestOperatorRepository;
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE)
     public ModelAndView index() throws SQLException, OwsExceptionReport {
         Map<String, Object> model = Maps.newHashMap();
         model.put(SUPPORTS_CLEAR, getDatasource().supportsClear());
-        model.put(SUPPORTS_DELETE_DELETED, daoServiceLoader.iterator().hasNext());
-
+        model.put(SUPPORTS_DELETE_DELETED, generalQueryDAO != null);
         return new ModelAndView(ControllerConstants.Views.ADMIN_DATASOURCE, model);
     }
 
@@ -91,25 +105,27 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_EXECUTE, method = RequestMethod.POST)
     public String processQuery(@RequestBody String querySQL) {
         try {
-            String q = URLDecoder.decode(querySQL, "UTF-8");
-            LOG.info("Query: {}", q);
-            GeneralQueryDAO dao = daoServiceLoader.iterator().next();
-            GeneralQueryDAO.QueryResult rs = dao.query(q);
-            ObjectNode j = JSONUtils.nodeFactory().objectNode();
-            if (rs.getMessage() != null) {
-                j.put(rs.isError() ? "error" : "message", rs.getMessage());
-                return JSONUtils.print(j);
+            if (this.generalQueryDAO.isPresent()) {
+                String q = URLDecoder.decode(querySQL, "UTF-8");
+                LOG.info("Query: {}", q);
+                GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.get().query(q);
+                ObjectNode j = Json.nodeFactory().objectNode();
+                if (rs.getMessage() != null) {
+                    j.put(rs.isError() ? "error" : "message", rs.getMessage());
+                    return Json.print(j);
+                }
+                j.putArray(ROWS).addAll(Json.toJSON(rs.getColumnNames()));
+                ArrayNode names = j.putArray(NAMES);
+                for (GeneralQueryDAO.Row row : rs.getRows()) {
+                    names.addArray().addAll(Json.toJSON(row.getValues()));
+                }
+                return Json.print(j);
             }
-            j.putArray(ROWS).addAll(JSONUtils.toJSON(rs.getColumnNames()));
-            ArrayNode names = j.putArray(NAMES);
-            for (GeneralQueryDAO.Row row : rs.getRows()) {
-                names.addArray().addAll(JSONUtils.toJSON(row.getValues()));
-            }
-            return JSONUtils.print(j);
+            return "No general query dao available!";
         } catch (UnsupportedEncodingException ex) {
             LOG.error("Could not decode String", ex);
             return "Could not decode String: " + ex.getMessage();
-        } catch (Exception ex) {
+        } catch (SQLException | IOException ex) {
             LOG.error("Query unsuccesfull.", ex);
             return "Query unsuccesful. Cause: " + ex.getMessage();
         }
@@ -136,25 +152,21 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         }
         updateCache();
     }
-    
+
     @ResponseBody
     @ExceptionHandler(MissingServiceOperatorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String onConnectionMissingServiceOperatorException(MissingServiceOperatorException e) {
         return e.getMessage();
     }
-    
-    @ResponseBody
-    @RequestMapping(
-            value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA,
-            method = RequestMethod.POST)
-    public String addSampledata(HttpServletRequest request) throws OwsExceptionReport,
-            ConnectionProviderException, IOException, URISyntaxException,
-            XmlException, MissingServiceOperatorException {
 
-        boolean sampledataAdded = new SampleDataInserter(
-                RequestContext.fromRequest(request))
-                .insertSampleData();
+    @ResponseBody
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA, method = RequestMethod.POST)
+    public String addSampledata(HttpServletRequest request) throws OwsExceptionReport, ConnectionProviderException,
+            IOException, URISyntaxException, XmlException, MissingServiceOperatorException, DecodingException {
+
+        boolean sampledataAdded = new SampleDataInserter(OwsServiceRequestContext.fromRequest(request),
+                decoderRepository, requestOperatorRepository).insertSampleData();
         if (sampledataAdded) {
             updateCache();
         }

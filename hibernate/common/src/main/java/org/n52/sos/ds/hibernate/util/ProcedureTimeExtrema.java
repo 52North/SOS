@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,15 +31,15 @@ package org.n52.sos.ds.hibernate.util;
 import com.google.common.base.Strings;
 
 /**
- * Hold min and max obs time for procedure 
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * Hold min and max obs time for procedure
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */
 public class ProcedureTimeExtrema extends TimeExtrema {
     private String procedure;
-    
+
     /**
      * @return the procedure
      */
@@ -54,7 +54,7 @@ public class ProcedureTimeExtrema extends TimeExtrema {
     public void setProcedure(String procedure) {
         this.procedure = procedure;
     }
-    
+
     public boolean isSetProcedure() {
         return !Strings.isNullOrEmpty(getProcedure());
     }

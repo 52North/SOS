@@ -5,21 +5,21 @@
 	<swes:procedure>http://www.52north.org/test/procedure/9</swes:procedure>
 	<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
 	<!-- optional validTime: not set, latest sensor description is returned. -->
-	<!-- 
+	<!--
 	<swes:validTime>
 		<gml:TimeInstant gml:id="validTime">
 			<gml:timePosition>2013-08-14T15:02:43.219</gml:timePosition>
 		</gml:TimeInstant>
 	</swes:validTime>
 	 -->
-	<!-- 	
+	<!--
 	<swes:validTime>
 		<gml:TimeInstant gml:id="validTime">
 			<gml:timePosition indeterminatePosition="after">2013-08-14T15:00:00</gml:timePosition>
 		</gml:TimeInstant>
 	</swes:validTime>
 	 -->
-	<!-- 
+	<!--
 	<swes:validTime>
 		<gml:TimePeriod gml:id="validTime">
 			<gml:beginPosition>2013-08-14T15:02:43.219</gml:beginPosition>

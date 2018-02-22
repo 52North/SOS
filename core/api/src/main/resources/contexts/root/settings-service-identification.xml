@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="serviceIdentificationSettingsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+        <property name="title" value="Service Identification" />
+        <property name="order" value="1.0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.FileSettingDefinition">
+        <property name="key" value="serviceIdentification.file" />
+        <property name="title" value="Service Identification File" />
+        <property name="description" value="The path to a file containing an ows:ServiceIdentification overriding the above settings. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/identification.xml&lt;/code&gt;) or a path relative to the web application directory (e.g. &lt;code&gt;WEB-INF/identification.xml&lt;/code&gt;)." />
+        <property name="order" value="8.0" />
+        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.faroe.settings.MultilingualStringSettingDefinition">
+        <property name="key" value="serviceIdentification.abstract" />
+        <property name="title" value="SOS Abstract" />
+        <property name="description" value="SOS service abstract." />
+        <property name="order" value="3.0" />
+        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
+        <property name="defaultValue">
+            <bean class="org.n52.janmayen.i18n.MultilingualString">
+                <property name="localizations">
+                    <map>
+                        <entry key="en" value="52North Sensor Observation Service - Data Access for the Sensor Web" />
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceIdentification.fees" />
+        <property name="title" value="Fees" />
+        <property name="description" value="SOS Service Fees." />
+        <property name="order" value="5.0" />
+        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
+        <property name="defaultValue" value="NONE" />
+    </bean>
+    <bean class="org.n52.faroe.settings.MultilingualStringSettingDefinition">
+        <property name="key" value="serviceIdentification.title" />
+        <property name="title" value="Title" />
+        <property name="description" value="SOS Service Title." />
+        <property name="order" value="1.0" />
+        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
+        <property name="defaultValue">
+            <bean class="org.n52.janmayen.i18n.MultilingualString">
+                <property name="localizations">
+                    <map>
+                        <entry key="en" value="52N SOS" />
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceIdentification.keywords" />
+        <property name="title" value="Keywords" />
+        <property name="description" value="Comma separated SOS service keywords." />
+        <property name="order" value="2.0" />
+        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
+        <property name="optional" value="true"/>
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceIdentification.accessConstraints" />
+        <property name="title" value="Access Constraints" />
+        <property name="description" value="Service access constraints." />
+        <property name="order" value="4.0" />
+        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
+        <property name="defaultValue" value="NONE" />
+    </bean>
+
+</beans>

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,17 +41,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialectSpatialIndex;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +63,8 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
-	
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
+
     private static final int INSTANCE = 3;
 
     private static final int DATABASE = 4;
@@ -132,25 +130,31 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        Set<SettingDefinition<?, ?>> settingDefinitions = super.getSettingDefinitions();
-        return CollectionHelper.union(Sets.<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition(null)),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        Set<SettingDefinition<?>> settingDefinitions = super.getSettingDefinitions();
+        return CollectionHelper.union(Sets.<SettingDefinition<?>> newHashSet(createInstanceDefinition(null)),
                 settingDefinitions);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(final Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(final Properties current) {
         final Map<String, Object> settings = parseDatasourceProperties(current);
         return CollectionHelper.union(Sets
-                .<SettingDefinition<?, ?>> newHashSet(createInstanceDefinition((String) settings.get(INSTANCE_KEY))),
+                .<SettingDefinition<?>> newHashSet(createInstanceDefinition((String) settings.get(INSTANCE_KEY))),
                 super.getChangableSettingDefinitions(current));
     }
 
     protected StringSettingDefinition createInstanceDefinition(String instanceValue) {
-        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(INSTANCE_KEY).setTitle(INSTANCE_TITLE).setDescription(INSTANCE_DESCRIPTION)
-                .setDefaultValue(instanceValue == null ? "" : instanceValue).setOptional(true);
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setGroup(BASE_GROUP);
+        def.setOrder(2);
+        def.setKey(INSTANCE_KEY);
+        def.setTitle(INSTANCE_TITLE);
+        def.setDescription(INSTANCE_DESCRIPTION);
+        def.setDefaultValue(instanceValue == null ? "" : instanceValue);
+        def.setOptional(true);
+        return def;
     }
 
     @Override
@@ -187,15 +191,15 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
         checkClasspath();
     }
 
-    private void checkClasspath() throws ConfigurationException {
+    private void checkClasspath() throws ConfigurationError {
         try {
             Class.forName(SQL_SERVER_DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("SQL Server jar file (sqljdbc.jar) must be "
+            throw new ConfigurationError("SQL Server jar file (sqljdbc.jar) must be "
                     + "included in the server classpath. ", e);
         }
     }
@@ -203,7 +207,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     /*
      * SQL-Server JDBC String specification:
      * https://msdn.microsoft.com/en-us/library/ms378428%28v=sql.110%29.aspx
-     * 
+     *
      * String url =
      * String.format("jdbc:sqlserver://%s:%d;instance=%s;databaseName=%s",
      * settings.get(HOST_KEY), settings.get(PORT_KEY),
@@ -212,11 +216,13 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     @Override
     protected String toURL(Map<String, Object> settings) {
         StringBuilder builder = new StringBuilder("jdbc:sqlserver://");
-        builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
-        builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
-        if (settings.containsKey(INSTANCE_KEY) && settings.get(INSTANCE_KEY) != null
-                && settings.get(INSTANCE_KEY) instanceof String && !((String) settings.get(INSTANCE_KEY)).isEmpty()) {
-            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+        builder.append(settings.get(HOST_KEY)).append(':');
+        builder.append(settings.get(PORT_KEY)).append(';');
+        if (settings.containsKey(INSTANCE_KEY) &&
+                settings.get(INSTANCE_KEY) != null &&
+                settings.get(INSTANCE_KEY) instanceof String &&
+                !((String)settings.get(INSTANCE_KEY)).isEmpty()) {
+            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(';');
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
         return builder.toString();
@@ -241,7 +247,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         final String[] parsed = parseURL(current.getProperty(HibernateConstants.CONNECTION_URL));
         // TODO what happens here
         if (parsed.length == 4) {
-            settings.put(INSTANCE_KEY, (String) parsed[3]);
+            settings.put(INSTANCE_KEY, parsed[3]);
         }
         return settings;
     }
@@ -255,40 +261,40 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                names.add(table.getName());
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
+            List<String> names = new LinkedList<>();
+            while (tables.hasNext()) {
+                Table table = tables.next();
+                if (table.isPhysicalTable()) {
+                    names.add(table.getName());
+                }
             }
-        }
-        if (!names.isEmpty()) {
-            Connection conn = null;
-            Statement stmt = null;
-            try {
-                conn = openConnection(settings);
+            if (!names.isEmpty()) {
                 stmt = conn.createStatement();
                 StringBuffer statement = new StringBuffer();
                 // alter table MyOtherTable nocheck constraint all
                 for (String table : names) {
                     statement = statement.append("ALTER TABLE \"")
-                    		.append(table)
-                    		.append("\" NOCHECK CONSTRAINT ALL; ");
+                            .append(table)
+                            .append("\" NOCHECK CONSTRAINT ALL; ");
                 }
                 // delete from MyTable
                 for (String table : names) {
                     statement = statement.append("DELETE from \"")
-                    		.append(table)
-                    		.append("\"; DBCC CHECKIDENT(\"")
+                            .append(table)
+                            .append("\"; DBCC CHECKIDENT(\"")
                             .append(table)
                             .append("\", RESEED, 0); ");
                 }
                 // alter table MyOtherTable check constraint all
                 for (String table : names) {
                     statement = statement.append("ALTER TABLE \"")
-                    		.append(table)
-                    		.append("\" CHECK CONSTRAINT ALL; ");
+                            .append(table)
+                            .append("\" CHECK CONSTRAINT ALL; ");
                 }
                 statement =
                         statement.append("DBCC SHRINKDATABASE (")
@@ -296,12 +302,12 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                         .append(");");
                 LOGGER.debug("Executed clear datasource SQL statement: {}", statement);
                 stmt.execute(statement.toString());
-            } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
-            } finally {
-                close(stmt);
-                close(conn);
             }
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(stmt);
+            close(conn);
         }
     }
 

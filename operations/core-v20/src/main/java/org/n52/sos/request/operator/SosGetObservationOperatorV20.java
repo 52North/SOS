@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,39 +30,44 @@ package org.n52.sos.request.operator;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.ds.AbstractGetObservationDAO;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
+import javax.inject.Inject;
+
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationType;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
+import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.ObservationEncoder;
 
-import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * class and forwards requests to the GetObservationDAO; after query of
@@ -72,13 +77,13 @@ import com.google.common.base.Strings;
  */
 @Configurable
 public class SosGetObservationOperatorV20 extends
-        AbstractV2RequestOperator<AbstractGetObservationDAO, GetObservationRequest, GetObservationResponse> {
+        AbstractV2RequestOperator<AbstractGetObservationHandler, GetObservationRequest, GetObservationResponse> {
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
 
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
-            new TimeInstant(SosIndeterminateTime.latest), OmConstants.EN_PHENOMENON_TIME);
+            new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     private boolean blockRequestsWithoutRestriction;
 
@@ -87,19 +92,22 @@ public class SosGetObservationOperatorV20 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
-    public GetObservationResponse receive(final GetObservationRequest sosRequest) throws OwsExceptionReport {
-        final GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
-        setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
+    public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
+        final GetObservationResponse sosResponse = getOperationHandler().getObservation(request);
+        setObservationResponseResponseFormatAndContentType(request, sosResponse);
         return sosResponse;
     }
 
     @Override
-    protected void checkParameters(final GetObservationRequest request) throws OwsExceptionReport {
+    protected void checkParameters(GetObservationRequest request) throws OwsExceptionReport {
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -136,7 +144,7 @@ public class SosGetObservationOperatorV20 extends
             if (request.isSetProcedure()) {
                 request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
             }
-           
+
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -171,19 +179,19 @@ public class SosGetObservationOperatorV20 extends
             if (!request.isSetResponseFormat()) {
                 request.setResponseFormat(getActiveProfile().getObservationResponseFormat());
             }
-            SosHelper.checkResponseFormat(request.getResponseFormat(), request.getService(),
+            checkResponseFormat(request.getResponseFormat(), request.getService(),
                     request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        
+
         try {
             if (request.isSetResultModel()) {
-                if (Strings.isNullOrEmpty(request.getResultModel())) {
+                if (request.getResultModel() != null && !request.getResultModel().isEmpty()) {
                     throw new MissingParameterValueException(SosConstants.GetObservationParams.resultType);
                 } else {
-                    if (!CodingRepository
-                            .getInstance().getResponseFormatsForObservationType(request.getResultModel(),
+
+                    if (!getResponseFormatsForObservationType(request.getResultModel(),
                                     request.getService(), request.getVersion())
                             .contains(request.getResponseFormat())) {
                         throw new InvalidParameterValueException().withMessage(
@@ -196,14 +204,14 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
 
-        if (Configurator.getInstance().getProfileHandler().getActiveProfile().isMergeValues()) {
-            if (request.isSetExtensions() && !request.getExtensions()
+        if (getActiveProfile().isMergeValues()) {
+            if (!request.getExtensions()
                     .containsExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray)) {
                 SwesExtensions extensions = new SwesExtensions();
-                extensions.addSwesExtension(new SwesExtensionImpl<SweBoolean>()
+                extensions.addExtension(new SwesExtension<SweBoolean>()
                         .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())
                         .setValue((SweBoolean) new SweBoolean()
-                                .setValue(Configurator.getInstance().getProfileHandler().getActiveProfile()
+                                .setValue(getProfileHandler().getActiveProfile()
                                         .isMergeValues())
                                 .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())));
                 request.setExtensions(extensions);
@@ -235,34 +243,6 @@ public class SosGetObservationOperatorV20 extends
         this.blockRequestsWithoutRestriction = flag;
     }
 
-//    /**
-//     * checks if mandatory parameter observed property is correct
-//     * 
-//     * @param observedProperties
-//     *            list containing the observed properties of the request
-//     * 
-//     * @throws OwsExceptionReport
-//     *             if the parameter does not containing any matching
-//     *             observedProperty for the requested offering
-//     */
-//    private void checkObservedProperties(final List<String> observedProperties) throws OwsExceptionReport {
-//        if (observedProperties != null) {
-//            final CompositeOwsException exceptions = new CompositeOwsException();
-//            final Collection<String> validObservedProperties =
-//                    Configurator.getInstance().getCache().getPublishedObservableProperties();
-//            for (final String obsProp : observedProperties) {
-//                if (obsProp.isEmpty()) {
-//                    exceptions.add(new MissingObservedPropertyParameterException());
-//                } else {
-//                    if (!validObservedProperties.contains(obsProp)) {
-//                        exceptions.add(new InvalidObservedPropertyParameterException(obsProp));
-//                    }
-//                }
-//            }
-//            exceptions.throwIfNotEmpty();
-//        }
-//    }
-
     /**
      * checks if the passed offeringId is supported
      *
@@ -275,26 +255,48 @@ public class SosGetObservationOperatorV20 extends
      */
     private void checkOfferingId(final List<String> offeringIds) throws OwsExceptionReport {
         if (offeringIds != null) {
-            final Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String offeringId : offeringIds) {
+            Set<String> offerings = getCache().getOfferings();
+            CompositeOwsException exceptions = new CompositeOwsException();
+            offeringIds.forEach((offeringId) -> {
                 if (offeringId == null || offeringId.isEmpty()) {
                     exceptions.add(new MissingOfferingParameterException());
                 } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
                     final String[] offArray = offeringId.split(SosConstants.SEPARATOR_4_OFFERINGS);
                     if (!offerings.contains(offArray[0])
-                            || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
+                        || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
                         exceptions.add(new InvalidOfferingParameterException(offeringId));
                     }
 
                 } else if (!offerings.contains(offeringId)) {
                     exceptions.add(new InvalidOfferingParameterException(offeringId));
                 }
-            }
+            });
             exceptions.throwIfNotEmpty();
         }
     }
 
+    protected Set<String> getResponseFormatsForObservationType(String observationType, String service,
+            String version) {
+        Set<String> responseFormats = Sets.newHashSet();
+        for (Encoder<?, ?> e : getEncoderRepository().getEncoders()) {
+            if (e instanceof ObservationEncoder) {
+                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+                Map<String, Set<SupportedType>> supportedResponseFormatObservationTypes =
+                        oe.getSupportedResponseFormatObservationTypes();
+                if (supportedResponseFormatObservationTypes != null
+                        && !supportedResponseFormatObservationTypes.isEmpty()) {
+                    for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
+                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
+                            if (st instanceof ObservationType && observationType.equals(((ObservationType) st).getValue())) {
+                                responseFormats.add(responseFormat);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return responseFormats;
+    }
 
     @Override
     public WSDLOperation getSosOperationDefinition() {

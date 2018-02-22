@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import static org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator.PropertyIsEqualTo;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -35,30 +37,28 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
-import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
-import org.n52.sos.ds.hibernate.entities.parameter.observation.TextValuedParameter;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.filter.BinaryLogicFilter;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.sos.ogc.filter.FilterConstants.BinaryLogicOperator;
-import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.util.CollectionHelper;
-import org.opengis.filter.PropertyIsEqualTo;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterText;
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * Class that creates and adds a {@link Criteria} for om:parameter to the query.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -67,7 +67,7 @@ public class ExtensionFesFilterCriteriaAdder {
 
     private Criteria c;
 
-    private Set<SwesExtension<?>> fesFilterExtensions;
+    private Set<Extension<?>> fesFilterExtensions;
 
     public static final String OM_PARAMETER = "om:parameter";
 
@@ -81,7 +81,7 @@ public class ExtensionFesFilterCriteriaAdder {
 
     public static final String XPATH_OM_PARAMETER_NAMED_VALUE_VALUE = XPATH_OM_PARAMETER_NAMED_VALUE + "/" + OM_VALUE;
 
-    public ExtensionFesFilterCriteriaAdder(Criteria c, Set<SwesExtension<?>> fesFilterExtensions) {
+    public ExtensionFesFilterCriteriaAdder(Criteria c, Set<Extension<?>> fesFilterExtensions) {
         this.c = c;
         this.fesFilterExtensions = fesFilterExtensions;
     }
@@ -89,7 +89,7 @@ public class ExtensionFesFilterCriteriaAdder {
     /**
      * Creates and adds the {@link Criteria} to the {@link Criteria} from the
      * constructor
-     * 
+     *
      * @return Hibernate {@link Criteria}
      * @throws CodedException
      *             If an error occurs or an unsupported filter is queried
@@ -97,7 +97,7 @@ public class ExtensionFesFilterCriteriaAdder {
     public Criteria add() throws CodedException {
         if (fesFilterExtensions.size() > 1) {
             Conjunction conj = new Conjunction();
-            for (SwesExtension<?> swesExtension : fesFilterExtensions) {
+            for (Extension<?> swesExtension : fesFilterExtensions) {
                 Criterion filter = getFilter((Filter<?>) swesExtension.getValue());
                 if (filter != null) {
                     conj.add(getFilter((Filter<?>) swesExtension.getValue()));
@@ -120,7 +120,7 @@ public class ExtensionFesFilterCriteriaAdder {
             Map<NameValue, Set<String>> map =
                     mergeNamesValues((BinaryLogicFilter) filter, Maps.<NameValue, Set<String>> newHashMap(), 0);
             checkMap(map);
-            return Subqueries.propertyIn(AbstractBaseObservation.OBS_ID,
+            return Subqueries.propertyIn(DataEntity.PROPERTY_ID,
                     getDetachedCriteria(getClassFor(null, null), map));
             // current implementation, maybe change in the future
             // return getBinaryLogicFilterCriterion((BinaryLogicFilter) filter);
@@ -133,7 +133,7 @@ public class ExtensionFesFilterCriteriaAdder {
                     addValue(NameValue.VALUE, (ComparisonFilter) filter, map);
                 }
                 checkMap(map);
-                return Subqueries.propertyIn(AbstractBaseObservation.OBS_ID,
+                return Subqueries.propertyIn(DataEntity.PROPERTY_ID,
                         getDetachedCriteria(getClassFor(null, null), map));
             }
             throw new NoApplicableCodeException().withMessage(
@@ -145,23 +145,6 @@ public class ExtensionFesFilterCriteriaAdder {
                 filter.getClass().getSimpleName());
     }
 
-    private Criterion getBinaryLogicFilterCriterion(BinaryLogicFilter filter) {
-        switch (((BinaryLogicFilter) filter).getOperator()) {
-        case And:
-            Conjunction conj = Restrictions.conjunction();
-
-            return conj;
-        case Or:
-            Disjunction disj = Restrictions.disjunction();
-
-            return disj;
-        default:
-            // TODO throw exception
-            return null;
-
-        }
-    }
-
     private DetachedCriteria getDetachedCriteria(Class<?> clazz, Map<NameValue, Set<String>> map) {
         DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
         if (map.containsKey(NameValue.NAME)) {
@@ -170,13 +153,13 @@ public class ExtensionFesFilterCriteriaAdder {
         if (map.containsKey(NameValue.VALUE)) {
             detachedCriteria.add(getRestrictionIn(Parameter.VALUE, map.get(NameValue.VALUE)));
         }
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.OBS_ID)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.PROPERTY_ID)));
         return detachedCriteria;
     }
 
     private Class<?> getClassFor(String value, ComparisonOperator operator) {
         // TODO check for other types
-        return TextValuedParameter.class;
+        return ParameterText.class;
     }
 
     private Criterion getRestrictionIn(String name, Set<String> values) {
@@ -248,7 +231,7 @@ public class ExtensionFesFilterCriteriaAdder {
             return map;
         default:
             throw new NoApplicableCodeException().withMessage("Currently only the operator '{}' is supported!",
-                    PropertyIsEqualTo.NAME);
+                    PropertyIsEqualTo.toString());
         }
     }
 

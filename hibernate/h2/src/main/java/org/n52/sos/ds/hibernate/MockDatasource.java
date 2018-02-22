@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.ds.Datasource;
-import org.n52.sos.ds.DatasourceCallback;
+import org.n52.faroe.SettingDefinition;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 
 public class MockDatasource implements Datasource {
@@ -56,13 +56,13 @@ public class MockDatasource implements Datasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -205,10 +205,10 @@ public class MockDatasource implements Datasource {
 
     }
 
-	@Override
-	public Map<String, Object> parseDatasourceProperties(Properties current) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

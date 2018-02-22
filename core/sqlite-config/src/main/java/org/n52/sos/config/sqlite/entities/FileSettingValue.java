@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,27 +32,35 @@ import java.io.File;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
+import org.n52.faroe.SettingType;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "file_settings")
 public class FileSettingValue extends AbstractSettingValue<File> {
     private static final long serialVersionUID = -5521753638275336043L;
 
     private File value;
-    
+
+    public FileSettingValue(String identifier, File value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public FileSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public File getValue() {
         return this.value;
     }
 
     @Override
-    public FileSettingValue setValue(File value) {
+    public void setValue(File value) {
         this.value = value;
-        return this;
     }
 
     @Override

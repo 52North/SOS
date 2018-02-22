@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,12 +48,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.OfferingExtension;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -64,83 +64,83 @@ import com.google.common.collect.Lists;
 @RequestMapping(ControllerConstants.Paths.OFFERING_EXTENSIONS_AJAX_ENDPOINT)
 public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(OfferingExtensionAjaxEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OfferingExtensionAjaxEndpoint.class);
 
-	private ObjectNode toJson(final Collection<OfferingExtension> extensionsForOffering) {
-        ObjectNode jsonOffering = JSONUtils.nodeFactory().objectNode();
-		if (extensionsForOffering != null) {
-			for (final OfferingExtension e : extensionsForOffering) {
-				jsonOffering.put(e.getIdentifier(), toJson(e));
-			}
-		}
-		return jsonOffering;
-	}
+    private ObjectNode toJson(final Collection<SosObservationOfferingExtension> extensionsForOffering) {
+        ObjectNode jsonOffering = Json.nodeFactory().objectNode();
+        if (extensionsForOffering != null) {
+            for (final SosObservationOfferingExtension e : extensionsForOffering) {
+                jsonOffering.set(e.getIdentifier(), toJson(e));
+            }
+        }
+        return jsonOffering;
+    }
 
-	private ObjectNode toJson(final OfferingExtension extensionForOffering) {
-		return JSONUtils.nodeFactory().objectNode()
+    private ObjectNode toJson(final SosObservationOfferingExtension extensionForOffering) {
+        return Json.nodeFactory().objectNode()
             .put(IDENTIFIER_PROPERTY, extensionForOffering.getIdentifier())
             .put(DISABLED_PROPERTY, extensionForOffering.isDisabled())
             .put(EXTENSION_PROPERTY, extensionForOffering.getExtension())
             .put(OFFERING, extensionForOffering.getOfferingName());
-	}
+    }
 
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getOfferingExtensions() throws OwsExceptionReport {
-		final Map<String, List<OfferingExtension>> offeringExtensions = getDao().getOfferingExtensions();
-		final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
-		Collections.sort(offerings);
-        ObjectNode response = JSONUtils.nodeFactory().objectNode();
-		for (final String offering : offerings) {
-			response.put(offering, toJson(offeringExtensions.get(offering)));
-		}
-		return response.toString();
-	}
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getOfferingExtensions() throws OwsExceptionReport {
+        final Map<String, List<SosObservationOfferingExtension>> offeringExtensions = getCapabilitiesExtensionService().getOfferingExtensions();
+        final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
+        Collections.sort(offerings);
+        ObjectNode response = Json.nodeFactory().objectNode();
+        for (final String offering : offerings) {
+            response.set(offering, toJson(offeringExtensions.get(offering)));
+        }
+        return response.toString();
+    }
 
-	private void checkOffering(final String offering) throws NoSuchOfferingException {
-		LOGGER.trace("checkOffering('{}')",offering);
-		LOGGER.trace("Offerings im Cache: {}",Arrays.toString(getCache().getOfferings().toArray()));
-		if (!getCache().getOfferings().contains(offering)) {
-			throw new NoSuchOfferingException(offering);
-		}
-	}
+    private void checkOffering(final String offering) throws NoSuchOfferingException {
+        LOGGER.trace("checkOffering('{}')",offering);
+        LOGGER.trace("Offerings im Cache: {}",Arrays.toString(getCache().getOfferings().toArray()));
+        if (!getCache().getOfferings().contains(offering)) {
+            throw new NoSuchOfferingException(offering);
+        }
+    }
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value="/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void saveOfferingExtension(@RequestBody final String extensionJson)
-			throws XmlException, NoSuchOfferingException, OwsExceptionReport, IOException {
-        JsonNode request = JSONUtils.loadString(extensionJson);
-		final String offeringId = request.path(OFFERING).asText();
-		final String extensionId = request.path(IDENTIFIER).asText();
-		final String extensionContent = request.path(EXTENSION_PROPERTY).asText();
-		checkOffering(offeringId);
-		XmlObject.Factory.parse(extensionContent);
-		getDao().saveOfferingExtension(offeringId, extensionId, extensionContent);
-	}
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value="/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void saveOfferingExtension(@RequestBody final String extensionJson)
+            throws XmlException, NoSuchOfferingException, OwsExceptionReport, IOException {
+        JsonNode request = Json.loadString(extensionJson);
+        final String offeringId = request.path(OFFERING).asText();
+        final String extensionId = request.path(IDENTIFIER).asText();
+        final String extensionContent = request.path(EXTENSION_PROPERTY).asText();
+        checkOffering(offeringId);
+        XmlObject.Factory.parse(extensionContent);
+        getCapabilitiesExtensionService().saveOfferingExtension(offeringId, extensionId, extensionContent);
+    }
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value="/edit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void setOfferingExtensionSettings(
-			@RequestBody final String settings) throws NoSuchExtensionException, NoSuchOfferingException,
-			OwsExceptionReport, IOException {
-        JsonNode request = JSONUtils.loadString(settings);
-		final String offeringId = request.path(OFFERING).asText();
-		final String extensionId = request.path(IDENTIFIER).asText();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value="/edit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void setOfferingExtensionSettings(
+            @RequestBody final String settings) throws NoSuchExtensionException, NoSuchOfferingException,
+            OwsExceptionReport, IOException {
+        JsonNode request = Json.loadString(settings);
+        final String offeringId = request.path(OFFERING).asText();
+        final String extensionId = request.path(IDENTIFIER).asText();
 
-		if (request.has(DISABLED_PROPERTY)) {
-			getDao().disableOfferingExtension(offeringId, extensionId, request.path(DISABLED_PROPERTY).asBoolean());
-		}
-	}
+        if (request.has(DISABLED_PROPERTY)) {
+            getCapabilitiesExtensionService().disableOfferingExtension(offeringId, extensionId, request.path(DISABLED_PROPERTY).asBoolean());
+        }
+    }
 
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@RequestMapping(value="/delete", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public void deleteOfferingExtension(
-			@RequestBody final String requestJson) throws NoSuchExtensionException, NoSuchOfferingException,
-			OwsExceptionReport, IOException {
-        JsonNode request = JSONUtils.loadString(requestJson);
-		final String offeringId = request.path(OFFERING).asText();
-		final String extensionId = request.path(IDENTIFIER).asText();
-		getDao().deleteOfferingExtension(offeringId, extensionId);
-	}
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value="/delete", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteOfferingExtension(
+            @RequestBody final String requestJson) throws NoSuchExtensionException, NoSuchOfferingException,
+            OwsExceptionReport, IOException {
+        JsonNode request = Json.loadString(requestJson);
+        final String offeringId = request.path(OFFERING).asText();
+        final String extensionId = request.path(IDENTIFIER).asText();
+        getCapabilitiesExtensionService().deleteOfferingExtension(offeringId, extensionId);
+    }
 }

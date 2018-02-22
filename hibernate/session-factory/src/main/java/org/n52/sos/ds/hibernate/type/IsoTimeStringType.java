@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,15 +41,15 @@ public class IsoTimeStringType extends AbstractSingleColumnStandardBasicType<Dat
     private static final long serialVersionUID = 1578546594599136420L;
     public static final IsoTimeStringType INSTANCE = new IsoTimeStringType();
     private String name = "iso_string";
-    
+
     public IsoTimeStringType() {
         super(new IsoTimeStringTypeDescriptor(), JdbcTimestampTypeDescriptor.INSTANCE);
     }
-    
+
     public IsoTimeStringType(String timeZone, String dateFormat) {
         super(new IsoTimeStringTypeDescriptor(timeZone, dateFormat), JdbcTimestampTypeDescriptor.INSTANCE);
     }
-    
+
     public IsoTimeStringType(String timeZone, String dateFormat, boolean useZAsOffset) {
         super(new IsoTimeStringTypeDescriptor(timeZone, dateFormat, useZAsOffset), JdbcTimestampTypeDescriptor.INSTANCE);
     }

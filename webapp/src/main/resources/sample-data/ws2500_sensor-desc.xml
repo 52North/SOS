@@ -61,7 +61,7 @@
         <sml:CapabilityList>
             <sml:capability name="offeringID">
                 <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
-                    <swe:label>offeringID</swe:label>
+                    <swe:label>WS2500</swe:label>
                     <swe:value>ws2500</swe:value>
                 </swe:Text>
             </sml:capability>

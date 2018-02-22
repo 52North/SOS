@@ -2,12 +2,12 @@
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
 	<env:Body>
-		<sos:GetFeatureOfInterest service="SOS" version="2.0.0" 
-			xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:fes="http://www.opengis.net/fes/2.0" 
-			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:swe="http://www.opengis.net/swe/2.0" 
+		<sos:GetFeatureOfInterest service="SOS" version="2.0.0"
+			xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:fes="http://www.opengis.net/fes/2.0"
+			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:swe="http://www.opengis.net/swe/2.0"
 			xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:swes="http://www.opengis.net/swes/2.0"
 			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
-			<!-- 
+			<!--
 			<swes:extension xsi:type="swe:BooleanPropertyType">
 				<swe:Boolean>
 					<swe:identifier>returnHumanReadableIdentifier</swe:identifier>

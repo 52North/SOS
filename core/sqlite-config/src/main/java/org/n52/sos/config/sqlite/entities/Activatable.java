@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.shetland.ogc.ows.extension.AbstractExtension;
+import org.n52.shetland.ogc.ows.extension.Extension;
 
 /**
  * @param <K> the key type
@@ -43,17 +44,20 @@ import org.n52.sos.ogc.swes.SwesExtensionImpl;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 @MappedSuperclass
-public class Activatable<K extends Serializable, T extends Activatable<K, T>> extends SwesExtensionImpl<String> implements Serializable{
+public class Activatable<K extends Serializable, T extends Activatable<K, T>>
+        extends AbstractExtension<String> implements Serializable {
     private static final long serialVersionUID = -1470828735015412115L;
-	
-	public static final String ACTIVE = "active";
-	public static final String COMPOSITE_KEY = "id";
-	
+
+    public static final String ACTIVE = "active";
+    public static final String COMPOSITE_KEY = "id";
+
     @Id
     private K key;
-	
-	@Column(name = ACTIVE)
+
+    @Column(name = ACTIVE)
     private boolean active;
+
+    private String value;
 
     public Activatable(final K key) {
         this.key = key;
@@ -77,6 +81,17 @@ public class Activatable<K extends Serializable, T extends Activatable<K, T>> ex
     public T setKey(final K encodingKey) {
         this.key = encodingKey;
         return (T) this;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public Activatable<?, ?> setValue(String value) {
+        this.value = value;
+        return this;
     }
 
     @Override

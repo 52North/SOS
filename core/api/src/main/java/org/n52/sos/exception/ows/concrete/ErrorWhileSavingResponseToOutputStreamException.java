@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -27,18 +27,17 @@
  * Public License for more details.
  */
 package org.n52.sos.exception.ows.concrete;
-
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.IOException;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class ErrorWhileSavingResponseToOutputStreamException extends NoApplicableCodeException {

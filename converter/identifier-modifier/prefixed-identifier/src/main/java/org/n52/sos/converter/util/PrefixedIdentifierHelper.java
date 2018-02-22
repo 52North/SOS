@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,47 +28,45 @@
  */
 package org.n52.sos.converter.util;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.converter.PrefixedIdentifierModifier;
-import org.n52.sos.util.StringHelper;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.janmayen.lifecycle.Constructable;
+
+import com.google.common.base.Strings;
 
 /**
  * Helper class for the {@link PrefixedIdentifierModifier}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 @Configurable
-public class PrefixedIdentifierHelper {
-    
+public class PrefixedIdentifierHelper implements Constructable {
+    @Deprecated
     private static PrefixedIdentifierHelper instance;
-    
+
     private String globalPrefix;
-    
+
     private String offeringPrefix;
-    
+
     private String procedurePrefix;
-    
+
     private String observablePropertyPrefix;
-    
+
     private String featureOfInterestPrefix;
-    
+
+    @Override
+    public void init() {
+        PrefixedIdentifierHelper.instance = this;
+    }
+
     /**
      * @return Returns a singleton instance of the PrefixedIdentifierHelper.
      */
-    public static synchronized PrefixedIdentifierHelper getInstance() {
-        if (instance == null) {
-            instance = new PrefixedIdentifierHelper();
-            SettingsManager.getInstance().configure(instance);
-        }
+    @Deprecated
+    public static PrefixedIdentifierHelper getInstance() {
         return instance;
-    }
-
-    private PrefixedIdentifierHelper() {
-
     }
 
     /**
@@ -85,9 +83,9 @@ public class PrefixedIdentifierHelper {
     public void setGlobalPrefix(String globalPrefix) {
         this.globalPrefix = globalPrefix;
     }
-    
+
     public boolean isSetGlobalPrefix() {
-        return StringHelper.isNotEmpty(getGlobalPrefix());
+        return !Strings.isNullOrEmpty(getGlobalPrefix());
     }
 
     /**
@@ -106,10 +104,10 @@ public class PrefixedIdentifierHelper {
     }
 
     public boolean isSetOfferingPrefix() {
-        return StringHelper.isNotEmpty(getOfferingPrefix());
+        return !Strings.isNullOrEmpty(getOfferingPrefix());
     }
-    
-    
+
+
     /**
      * @return the procedurePrefix
      */
@@ -124,9 +122,9 @@ public class PrefixedIdentifierHelper {
     public void setProcedurePrefix(String procedurePrefix) {
         this.procedurePrefix = procedurePrefix;
     }
-    
+
     public boolean isSetProcedurePrefix() {
-        return StringHelper.isNotEmpty(getProcedurePrefix());
+        return !Strings.isNullOrEmpty(getProcedurePrefix());
     }
 
     /**
@@ -145,9 +143,9 @@ public class PrefixedIdentifierHelper {
     }
 
     public boolean isSetObservablePropertyPrefix() {
-        return StringHelper.isNotEmpty(getObservablePropertyPrefix());
+        return !Strings.isNullOrEmpty(getObservablePropertyPrefix());
     }
-    
+
     /**
      * @return the featureOfInterestPrefix
      */
@@ -162,9 +160,9 @@ public class PrefixedIdentifierHelper {
     public void setFeatureOfInterestPrefix(String featureOfInterestPrefix) {
         this.featureOfInterestPrefix = featureOfInterestPrefix;
     }
-    
+
     public boolean isSetFeatureOfInterestPrefix() {
-        return StringHelper.isNotEmpty(getFeatureOfInterestPrefix());
+        return !Strings.isNullOrEmpty(getFeatureOfInterestPrefix());
     }
 
     public boolean isSetAnyPrefix() {

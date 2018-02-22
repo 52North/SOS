@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,7 @@ package org.n52.sos.cache;
 
 import org.joda.time.DateTime;
 
-import org.n52.sos.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.Time;
 
 /**
  * TODO JavaDoc

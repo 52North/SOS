@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,23 +28,25 @@
  */
 package org.n52.sos.convert;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.convert.RequestResponseModifier;
+import org.n52.iceland.convert.RequestResponseModifierFacilitator;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public abstract class AbstractRequestResponseModifier<T extends AbstractServiceRequest<?>, S extends AbstractServiceResponse> implements RequestResponseModifier<T, S> {
+public abstract class AbstractRequestResponseModifier implements RequestResponseModifier {
 
     @Override
-    public T modifyRequest(T request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
         return request;
     }
 
     @Override
-    public S modifyResponse(T request, S response) throws OwsExceptionReport {
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response) throws OwsExceptionReport {
         return response;
     }
 

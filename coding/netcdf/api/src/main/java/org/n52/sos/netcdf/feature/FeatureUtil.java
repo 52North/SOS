@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,15 +31,15 @@ package org.n52.sos.netcdf.feature;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 /**
  * Utility class for features in netCDF encoding
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -47,15 +47,15 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class FeatureUtil {
     public static Set<Point> getFeaturePoints( Set<AbstractSamplingFeature> features ){
-    	Set<Point> featurePoints = new HashSet<Point>();
-    	
-        for( AbstractSamplingFeature feature : features ){            
+        Set<Point> featurePoints = new HashSet<Point>();
+
+        for(AbstractSamplingFeature feature : features ){
             featurePoints.addAll(getFeaturePoints( feature ));
         }
 
         return featurePoints;
     }
-    
+
     public static Set<Point> getFeaturePoints( AbstractSamplingFeature feature ){
         Set<Point> points = new HashSet<Point>();
         if( feature != null && feature.isSetGeometry()){
@@ -63,7 +63,7 @@ public class FeatureUtil {
         }
         return points;
     }
-    
+
     public static Set<Point> getPoints(Geometry geom){
         Set<Point> points = new HashSet<Point>();
         if( geom != null ){
@@ -80,11 +80,11 @@ public class FeatureUtil {
         }
         return points;
     }
-    
+
     public static Set<Double> getFeatureHeights( AbstractSamplingFeature feature ){
         return getHeights(getFeaturePoints( feature ));
     }
-    
+
     public static Set<Double> getHeights(Set<Point> points){
         Set<Double> heights = new HashSet<Double>();
         for (Point point : points) {
@@ -93,23 +93,23 @@ public class FeatureUtil {
             } else {
                 heights.add(0.0);
             }
-        }                
+        }
         return heights;
     }
 
     public static Point clonePoint2d( Point point ){
-    	if( point == null ){
-    		return null;
-    	}
-    	if( Double.isNaN( point.getCoordinate().z ) ){
-    		return point;
-    	}
-    	Point clonedPoint = (Point) point.clone();
-    	clonedPoint.getCoordinate().z = Double.NaN;
-    	return clonedPoint;
+        if( point == null ){
+            return null;
+        }
+        if( Double.isNaN( point.getCoordinate().z ) ){
+            return point;
+        }
+        Point clonedPoint = (Point) point.clone();
+        clonedPoint.getCoordinate().z = Double.NaN;
+        return clonedPoint;
     }
 
     public static boolean equal2d(Point a, Point b){
         return a.getX() == b.getX() && a.getY() == b.getY();
-    }    
+    }
 }

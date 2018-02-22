@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,29 +28,28 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
-import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.shetland.ogc.om.ObservationStream;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
-
-    public EReportingSeriesOmObservationCreator(EReportingSeries series, AbstractObservationRequest request, Session session) {
-        super(series, request, session);
-    }
-
-    public EReportingSeriesOmObservationCreator(EReportingSeries series, AbstractObservationRequest request, Locale language, Session session) {
-        super(series, request, language, session);
+    public EReportingSeriesOmObservationCreator(EReportingDatasetEntity series,
+                                                AbstractObservationRequest request,
+                                                Locale i18n,
+                                                String pdf,
+                                                OmObservationCreatorContext creatorContext,
+                                                Session session) {
+        super(series, request, i18n, pdf, creatorContext, session);
     }
 
     @Override
-    public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
+    public ObservationStream create() throws OwsExceptionReport, ConverterException {
         return super.create();
     }
 }

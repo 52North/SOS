@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,28 +31,25 @@ package org.n52.sos.ds.datasource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import oracle.jdbc.OracleDriver;
-
 import org.hibernate.HibernateException;
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.n52.sos.ds.Datasource;
+import org.hibernate.internal.util.config.ConfigurationException;
+import org.hibernate.spatial.HibernateSpatialConfigurationSettings;
+import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.n52.iceland.ds.Datasource;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
+import oracle.jdbc.OracleDriver;
 
 
 /**
@@ -62,14 +59,14 @@ import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
  *
  */
 public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDatasource {
-	
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
 
     protected static final String ORACLE_DRIVER_CLASS = "oracle.jdbc.OracleDriver";
 
     protected static final Pattern JDBC_THIN_URL_PATTERN = Pattern
             .compile("^jdbc:oracle:thin:@//([^:]+):([0-9]+)/(.*)$");
-    
+
     protected static final Pattern JDBC_THIN_SID_URL_PATTERN = Pattern
             .compile("^jdbc:oracle:thin:@([^:]+):([0-9]+):(.*)$");
 
@@ -106,7 +103,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     }
 
     private Mode mode = Mode.OCI;
-    
+
     private Syntax syntax = Syntax.SERVICE;
 
     public AbstractOracleDatasource() {
@@ -124,11 +121,11 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         setSchemaDescription(SCHEMA_DESCRIPTION);
         setProvidedJdbcDefault(PROVIDED_JDBC_DEFAULT_VALUE);
     }
-    
+
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
          Properties p = super.getDatasourceProperties(settings);
-         p.put(HibernateConstants.CONNECION_FINDER, OracleC3P0ConnectionFinder.class.getName());
+         p.put(HibernateSpatialConfigurationSettings.CONNECTION_FINDER, OracleC3P0ConnectionFinder.class.getName());
          return p;
     }
 
@@ -159,8 +156,8 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
      * {@link Datasource#checkSchemaCreation(Map)} for testing
      */
     void doCheckSchemaCreation(String schema, Statement stmt) throws SQLException {
-        final String schemaPrefix = schema == null ? "" : "" + schema + "."; 
-        final String testTable = schemaPrefix + "sos_test"; 
+        final String schemaPrefix = schema == null ? "" : "" + schema + ".";
+        final String testTable = schemaPrefix + "sos_test";
         final String command =
                 String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n"
                         + "  EXCEPTION\n" + "    WHEN OTHERS THEN\n" + "      IF SQLCODE != -942 THEN\n"
@@ -212,26 +209,24 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings)
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings)
             throws ConfigurationException {
         checkClasspath();
     }
-    
+
     @Override
     public void validateSchema(Map<String,Object> settings) {
         Connection conn = null;
         String schema = null;
         try {
             conn = openConnection(settings);
-            DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
+            Metadata metadata = getMetadata(conn, settings);
             // fix problem with quoted tables
             schema = (String)settings.get(SCHEMA_KEY);
             settings.put(SCHEMA_KEY, null);
-            getConfig(settings).validateSchema(getDialectInternal(), metadata);
-        } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
-        } catch (HibernateException ex) {
-            throw new ConfigurationException(ex);
+            new SchemaValidator().validate(metadata);
+        } catch (HibernateException | SQLException ex) {
+            throw new ConfigurationException(ex.getMessage(), ex);
         } finally {
             close(conn);
             settings.put(SCHEMA_KEY, schema);
@@ -262,15 +257,12 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         if (mode == Mode.OCI) {
             try {
                 return driver.connect(toOciUrl(settings), props);
-            } catch (UnsatisfiedLinkError e) {
-                LOG.error("Failed to use OCI driver. Falling back to thin.", e);
-                mode = Mode.THIN;
-            } catch (SQLException e) {
+            } catch (SQLException | UnsatisfiedLinkError e) {
                 LOG.error("Failed to use OCI driver. Falling back to thin.", e);
                 mode = Mode.THIN;
             }
         }
-        
+
         try {
             return driver.connect(toThinUrl(settings), props);
         } catch (SQLException e) {

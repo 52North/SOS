@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,78 +28,67 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.create;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlHelper;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.util.StringHelper;
+import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 
 /**
  * Strategy to create the {@link SosProcedureDescription} from a file.
  */
-public class FileDescriptionCreationStrategy implements
-        DescriptionCreationStrategy {
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(FileDescriptionCreationStrategy.class);
+public class FileDescriptionCreationStrategy
+        extends XmlStringDescriptionCreationStrategy {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileDescriptionCreationStrategy.class);
 
     @Override
-    public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
+    public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s)
             throws OwsExceptionReport {
-        XmlObject xml = read(p.getDescriptionFile());
-        SosProcedureDescription desc = decode(xml);
-        desc.setIdentifier(p.getIdentifier());
-        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
-        return desc;
+        try {
+            SosProcedureDescription<?> desc =
+                    new SosProcedureDescription<>(readXml(read(p.getDescriptionFile(), ctx), ctx));
+            desc.setIdentifier(p.getIdentifier());
+            desc.setDescriptionFormat(p.getFormat().getFormat());
+            return desc;
+        } catch (IOException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
+        }
     }
 
-    private InputStream getDocumentAsStream(String filename) {
+    private InputStream getDocumentAsStream(String filename, HibernateProcedureCreationContext ctx) {
         final StringBuilder builder = new StringBuilder();
         // check if filename contains placeholder for configured
         // sensor directory
         if (filename.startsWith("standard")) {
             filename = filename.replace("standard", "");
-            builder.append(getServiceConfig().getSensorDir());
+            builder.append(ctx.getSensorDirectory());
             builder.append("/");
         }
         builder.append(filename);
         LOGGER.debug("Procedure description file name '{}'!", filename);
-        return Configurator.getInstance().getClass().
-                getResourceAsStream(builder.toString());
+        return this.getClass().getResourceAsStream(builder.toString());
     }
 
-    private SosProcedureDescription decode(XmlObject xml)
-            throws OwsExceptionReport {
-        return (SosProcedureDescription) CodingHelper.decodeXmlElement(xml);
-    }
-
-    private XmlObject read(String path)
-            throws OwsExceptionReport {
-        InputStream stream = getDocumentAsStream(path);
-        String string = StringHelper.convertStreamToString(stream);
-        XmlObject xml = XmlHelper.parseXmlString(string);
-        return xml;
+    private String read(String path, HibernateProcedureCreationContext ctx)
+            throws IOException {
+        InputStream stream = getDocumentAsStream(path, ctx);
+        return StringHelper.convertStreamToString(stream);
     }
 
     @Override
-    public boolean apply(Procedure p) {
+    public boolean apply(ProcedureEntity p) {
         return !Strings.isNullOrEmpty(p.getDescriptionFile());
-    }
-
-    @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
     }
 }

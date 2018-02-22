@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,18 +28,20 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.series.db.beans.UnitEntity;
+import org.n52.shetland.ogc.UoM;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.UoM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for unit
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -47,62 +49,68 @@ public class UnitDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitDAO.class);
 
-    /**
-     * Get unit object for unit
-     * 
-     * @param unit
-     *            Unit
-     * @param session
-     *            Hibernate session
-     * @return Unit object
-     */
-    public Unit getUnit(String unit, Session session) {
-        Criteria criteria = session.createCriteria(Unit.class).add(Restrictions.eq(Unit.UNIT, unit));
-        LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
-        return (Unit) criteria.uniqueResult();
+    public List<UnitEntity> getUnits(Session session) {
+        Criteria criteria = session.createCriteria(UnitEntity.class);
+        LOGGER.debug("QUERY getUnits(): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
     }
-    
+
     /**
      * Get unit object for unit
-     * 
+     *
      * @param unit
      *            Unit
      * @param session
      *            Hibernate session
      * @return Unit object
      */
-    public Unit getUnit(UoM unit, Session session) {
-        Criteria criteria = session.createCriteria(Unit.class).add(Restrictions.eq(Unit.UNIT, unit.getUom()));
+    public UnitEntity getUnit(String unit, Session session) {
+        Criteria criteria = session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit));
         LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
-        return (Unit) criteria.uniqueResult();
+        return (UnitEntity) criteria.uniqueResult();
+    }
+
+    /**
+     * Get unit object for unit
+     *
+     * @param unit
+     *            Unit
+     * @param session
+     *            Hibernate session
+     * @return Unit object
+     */
+    public UnitEntity getUnit(UoM unit, Session session) {
+        Criteria criteria = session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit.getUom()));
+        LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
+        return (UnitEntity) criteria.uniqueResult();
     }
 
     /**
      * Insert and get unit object
-     * 
+     *
      * @param unit
      *            Unit
      * @param session
      *            Hibernate session
      * @return Unit object
      */
-    public Unit getOrInsertUnit(String unit, Session session) {
+    public UnitEntity getOrInsertUnit(String unit, Session session) {
         return getOrInsertUnit(new UoM(unit), session);
     }
-    
+
     /**
      * Insert and get unit object
-     * 
+     *
      * @param unit
      *            Unit
      * @param session
      *            Hibernate session
      * @return Unit object
      */
-    public Unit getOrInsertUnit(UoM unit, Session session) {
-        Unit result = getUnit(unit.getUom(), session);
+    public UnitEntity getOrInsertUnit(UoM unit, Session session) {
+        UnitEntity result = getUnit(unit.getUom(), session);
         if (result == null) {
-            result = new Unit();
+            result = new UnitEntity();
             result.setUnit(unit.getUom());
             if (unit.isSetName()) {
                 result.setName(unit.getName());

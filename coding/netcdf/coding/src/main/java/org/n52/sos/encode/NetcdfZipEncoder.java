@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,18 +40,20 @@ import java.util.zip.ZipOutputStream;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.response.BinaryAttachmentResponse;
-import org.n52.sos.util.http.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -63,7 +65,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
 /**
  * Implementation of {@link AbstractBasicNetcdfEncoder} for OceanSITE netCDF
  * encoding with multiple files as ZIP.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -85,17 +87,17 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
                     .put(Sos1Constants.SERVICEVERSION, MEDIA_TYPES).put(Sos2Constants.SERVICEVERSION, MEDIA_TYPES)
                     .build());
 
-    private final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet((EncoderKey) new OperationEncoderKey(
+    private final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet((EncoderKey) new OperationResponseEncoderKey(
             SosConstants.SOS, Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetObservation,
-            NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP), (EncoderKey) new OperationEncoderKey(SosConstants.SOS,
+            NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP), (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS,
             Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetObservation,
-            NetcdfConstants.CONTENT_TYPE_NETCDF_3_ZIP), (EncoderKey) new OperationEncoderKey(SosConstants.SOS,
+            NetcdfConstants.CONTENT_TYPE_NETCDF_3_ZIP), (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS,
             Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetObservation,
-            NetcdfConstants.CONTENT_TYPE_NETCDF_4_ZIP), (EncoderKey) new OperationEncoderKey(SosConstants.SOS,
+            NetcdfConstants.CONTENT_TYPE_NETCDF_4_ZIP), (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation,
-            NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP), (EncoderKey) new OperationEncoderKey(SosConstants.SOS,
+            NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP), (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation,
-            NetcdfConstants.CONTENT_TYPE_NETCDF_3_ZIP), (EncoderKey) new OperationEncoderKey(SosConstants.SOS,
+            NetcdfConstants.CONTENT_TYPE_NETCDF_3_ZIP), (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation,
             NetcdfConstants.CONTENT_TYPE_NETCDF_4_ZIP));
 
@@ -110,7 +112,7 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
@@ -124,14 +126,19 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
         return Collections.emptySet();
     }
 
+    @Override
     protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version)
-            throws OwsExceptionReport {
+            throws EncodingException {
         File tempDir = Files.createTempDir();
 
         for (NetCDFObservation netCDFObs : netCDFObsList) {
             for (AbstractSensorDataset sensorDataset : netCDFObs.getSensorDatasets()) {
-                File netcdfFile = new File(tempDir, getFilename(sensorDataset));
-                encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
+                try {
+                    File netcdfFile = new File(tempDir, getFilename(sensorDataset));
+                    encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
+                } catch (IOException ex) {
+                    throw new EncodingException(ex);
+                }
             }
         }
 
@@ -141,7 +148,7 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
                     new BinaryAttachmentResponse(zipBoas.toByteArray(), getContentType(), String.format(
                             DOWNLOAD_FILENAME_FORMAT, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } catch (IOException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage("Couldn't create netCDF zip file");
+            throw new EncodingException("Couldn't create netCDF zip file", e);
         } finally {
             tempDir.delete();
         }

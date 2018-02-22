@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,26 +28,45 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.request.GetObservationRequest;
 
-public class EReportingValueDAO extends AbstractSeriesValueDAO {
+public class EReportingValueDAO extends AbstractSeriesValueDAO implements EReportingDaoHelper {
 
-	@Override
-	protected Class<?> getSeriesValueClass() {
-		return AbstractValuedEReportingObservation.class;
-	}
-	
-        @Override
-        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
-            // add quality restrictions
-            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
-        }
+    private final Set<Integer> verificationFlags;
+    private final Set<Integer> validityFlags;
+
+    public EReportingValueDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
+        this.verificationFlags = verificationFlags;
+        this.validityFlags = validityFlags;
+    }
+
+    @Override
+    public Set<Integer> getVerificationFlags() {
+        return this.verificationFlags;
+    }
+
+    @Override
+    public Set<Integer> getValidityFlags() {
+        return this.validityFlags;
+    }
+
+    @Override
+    protected Class<?> getSeriesValueClass() {
+        return EReportingDataEntity.class;
+    }
+
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport {
+        addValidityAndVerificationRestrictions(c, request, logArgs);
+    }
 
         @Override
         protected ValuedObservationFactory getValuedObservationFactory() {

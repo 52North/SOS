@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,25 +31,24 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractGetObservationByIdDAO;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetObservationByIdOperatorV20
-        extends
-        AbstractV2RequestOperator<AbstractGetObservationByIdDAO, GetObservationByIdRequest, GetObservationByIdResponse> {
+        extends AbstractV2RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_OBSERVATION_BY_ID_RETRIEVAL);
@@ -59,8 +58,11 @@ public class SosGetObservationByIdOperatorV20
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
@@ -68,7 +70,7 @@ public class SosGetObservationByIdOperatorV20
         if (!sosRequest.isSetResponseFormat()) {
             sosRequest.setResponseFormat(getActiveProfile().getObservationResponseFormat());
         }
-        GetObservationByIdResponse response = getDao().getObservationById(sosRequest);
+        GetObservationByIdResponse response = getOperationHandler().getObservationById(sosRequest);
         if (response.getResponseFormat() == null) {
             throw new MissingResponseFormatParameterException();
         }

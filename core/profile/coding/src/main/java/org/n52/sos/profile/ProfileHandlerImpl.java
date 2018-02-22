@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,52 +29,49 @@
 package org.n52.sos.profile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.faroe.ConfigurationError;
+import org.n52.janmayen.Json;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.service.profile.DefaultProfile;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.x52North.sensorweb.sos.profile.SosProfileDocument;
 
-import com.google.common.collect.Lists;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class ProfileHandlerImpl implements ProfileHandler {
+public class ProfileHandlerImpl implements ProfileHandler, Constructable {
 
-    /**
-     * logger
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileHandlerImpl.class);
-
+    private static final String PROFILES = "profiles";
     private Profile activeProfile;
+    private final Map<String, Profile> availableProfiles = new HashMap<>(1);
 
-    private Map<String, Profile> availableProfiles = new HashMap<String, Profile>(1);
-
-    public ProfileHandlerImpl() throws ConfigurationException {
+    @Override
+    public void init() {
         setActiveProfile(new DefaultProfile());
-        addAvailableProvile(getActiveProfile());
+        addAvailableProfile(getActiveProfile());
         try {
-            addProfile(loadProfiles());
+            loadProfiles();
         } catch (OwsExceptionReport e) {
-            throw new ConfigurationException("Error while loading profiles", e);
+            throw new ConfigurationError("Error while loading profiles", e);
         }
     }
 
@@ -85,10 +82,10 @@ public class ProfileHandlerImpl implements ProfileHandler {
 
     private void setActiveProfile(Profile profile) {
         this.activeProfile = profile;
-        addAvailableProvile(profile);
+        addAvailableProfile(profile);
     }
 
-    private void addAvailableProvile(Profile profile) {
+    private void addAvailableProfile(Profile profile) {
         if (availableProfiles.containsKey(profile.getIdentifier())) {
             LOGGER.warn("Profile with the identifier {} still exist! Existing profile is overwritten!",
                     profile.getIdentifier());
@@ -96,30 +93,31 @@ public class ProfileHandlerImpl implements ProfileHandler {
         availableProfiles.put(profile.getIdentifier(), profile);
     }
 
-    private List<Profile> loadProfiles() throws OwsExceptionReport {
-        Collection<File> listFiles = loadFiles();
-        List<Profile> profiles = Lists.newArrayList();
-        for (File file : listFiles) {
-            XmlObject xmlDocument = XmlHelper.loadXmlDocumentFromFile(file);
-            if (xmlDocument instanceof SosProfileDocument) {
-                profiles.add(ProfileParser.parseSosProfile((SosProfileDocument) xmlDocument));
-                
+    private void loadProfiles() throws OwsExceptionReport {
+        for (File file : loadFiles()) {
+            try {
+                JsonNode profiles = Json.loadFile(file);
+                ProfileParser pp = new ProfileParser();
+                JsonNode pNode = profiles.path(PROFILES);
+                if (pNode.isArray()) {
+                    for (int i = 0; i < pNode.size(); i++) {
+                        Profile profile =  pp.parseProfile(pNode.get(i));
+                        addProfile(profile);
+                    }
+                } else {
+                    Profile profile = pp.parseProfile(pNode);
+                    addProfile(profile);
+                }
+            } catch (IOException ioe) {
+                throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while loading profies file.");
             }
         }
-        return profiles;
     }
-    
+
     private Collection<File> loadFiles() {
-        IOFileFilter fileFilter = new WildcardFileFilter("*-profile.xml");
+        IOFileFilter fileFilter = new WildcardFileFilter("profiles.json");
         File folder = FileUtils.toFile(ProfileHandlerImpl.class.getResource("/"));
         return FileUtils.listFiles(folder, fileFilter, DirectoryFileFilter.DIRECTORY);
-    }
-    
-
-    private void addProfile(List<Profile> profiles) {
-       for (Profile profile : profiles) {
-           addProfile(profile);
-       }
     }
 
     private void addProfile(Profile profile) {
@@ -127,7 +125,7 @@ public class ProfileHandlerImpl implements ProfileHandler {
             if (profile.isActiveProfile()) {
                 setActiveProfile(profile);
             } else {
-                addAvailableProvile(profile);
+                addAvailableProfile(profile);
             }
         }
     }
@@ -159,17 +157,10 @@ public class ProfileHandlerImpl implements ProfileHandler {
 
     @Override
     public void persist() {
-        Collection<File> listFiles = loadFiles();
-        for (File file : listFiles) {
-            try {
-                XmlObject xmlDocument = XmlHelper.loadXmlDocumentFromFile(file);
-                if (xmlDocument instanceof SosProfileDocument) {
-                    SosProfileDocument doc = (SosProfileDocument) xmlDocument;
-                    doc.getSosProfile().setActiveProfile(checkActive(doc.getSosProfile().getIdentifier()));
-                    doc.save(file);
-                }
-            } catch (OwsExceptionReport e) {
-                LOGGER.error("Error while loading profile from file!", e);
+        ProfileWriter pw = new ProfileWriter();
+        for (File file : loadFiles()) {
+            try (FileOutputStream fio = new FileOutputStream(file)) {
+                Json.print(fio, pw.write(getAvailableProfiles().values()));
             } catch (IOException e) {
                 LOGGER.error("Error while storing profile to file!", e);
             }
@@ -179,13 +170,10 @@ public class ProfileHandlerImpl implements ProfileHandler {
     @Override
     public void reloadProfiles() {
         try {
-            addProfile(loadProfiles());
+            loadProfiles();
         } catch (OwsExceptionReport e) {
-            throw new ConfigurationException("Error while loading profiles", e);
+            throw new ConfigurationError("Error while loading profiles", e);
         }
     }
 
-    private boolean checkActive(String identifier) {
-        return getAvailableProfiles().get(identifier).isActiveProfile();
-    }
 }

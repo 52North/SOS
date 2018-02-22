@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beansProjectDescription>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.9.2.201712210913-RELEASE]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[false]]></enableImports>
+	<configs>
+	</configs>
+	<autoconfigs>
+		<config>src/main/resources/contexts/settings/uvf.xml</config>
+		<config>src/main/resources/contexts/settings/exi.xml</config>
+		<config>src/main/resources/contexts/settings/flexible-identifier.xml</config>
+		<config>src/main/resources/contexts/settings/identifier-prefix.xml</config>
+		<config>src/main/resources/contexts/settings/metadata.xml</config>
+		<config>src/main/resources/contexts/settings/transactional.xml</config>
+		<config>src/main/resources/contexts/settings/crs.xml</config>
+		<config>src/main/resources/contexts/settings/procedure-description.xml</config>
+		<config>src/main/resources/contexts/settings/aqd-ereporting.xml</config>
+		<config>src/main/resources/contexts/settings/inspire-definition.xml</config>
+		<config>src/main/resources/contexts/settings/streaming.xml</config>
+	</autoconfigs>
+	<configSets>
+	</configSets>
+</beansProjectDescription>

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,13 +41,16 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.iceland.coding.SupportedTypeRepository;
+import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,7 +69,32 @@ public class InMemoryCacheImplTest {
 
     @Before
     public void initInstance() {
-        instance = new InMemoryCacheImpl();
+        // overwrite these methods as these are doing getInstance()-calls
+        instance = new InMemoryCacheImpl() {
+            private static final long serialVersionUID = -2571450058666530166L;
+            @Override
+            boolean isAllowQueryingForInstancesOnly() {
+                return false;
+            }
+
+            @Override
+            boolean isShowOnlyAggregatedProcedures() {
+                return false;
+            }
+
+            @Override
+            public Set<String> getFeatureOfInterestTypes() {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public Set<String> getObservationTypes() {
+                return Collections.emptySet();
+            }
+        };
+        SupportedTypeRepository supportedTypeRepository = new SupportedTypeRepository();
+        supportedTypeRepository.init(new DecoderRepository(), new EncoderRepository());
+        instance.setSupportedTypeRepository(supportedTypeRepository);
     }
 
     @After
@@ -83,8 +111,7 @@ public class InMemoryCacheImplTest {
 
     @Test
     public void equalsWithNewInstances() {
-        InMemoryCacheImpl anotherInstance = new InMemoryCacheImpl();
-        assertEquals("equals failed", instance, anotherInstance);
+        assertEquals("equals failed", new InMemoryCacheImpl(), new InMemoryCacheImpl());
     }
 
     @Test
@@ -112,10 +139,10 @@ public class InMemoryCacheImplTest {
     @Test
     public void should_return_empty_global_envelope_when_setEnvelope_is_called_with_null_parameter() {
         instance.setGlobalEnvelope(null);
-        final SosEnvelope emptySosEnvelope = new SosEnvelope(null, instance.getDefaultEPSGCode());
+        final ReferencedEnvelope emptyReferencedEnvelope = new ReferencedEnvelope(null, instance.getDefaultEPSGCode());
 
         assertThat(instance.getGlobalEnvelope(), not(nullValue()));
-        assertThat(instance.getGlobalEnvelope(), is(emptySosEnvelope));
+        assertThat(instance.getGlobalEnvelope(), is(emptyReferencedEnvelope));
     }
 
     @Test
@@ -149,7 +176,7 @@ public class InMemoryCacheImplTest {
     public void should_return_false_if_relatedFeature_has_no_children() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
         final String relatedFeature = "test-feature";
-        ((WritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
 
         assertThat(readCache.isRelatedFeatureSampled(null), is(FALSE));
         assertThat(readCache.isRelatedFeatureSampled(""), is(FALSE));
@@ -162,9 +189,9 @@ public class InMemoryCacheImplTest {
         final String relatedFeature = "test-feature";
         final String relatedFeature2 = "test-feature-2";
         final String offering = "test-offering";
-        ((WritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature);
-        ((WritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
-        ((WritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature);
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
+        ((SosWritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
 
         assertThat(readCache.isRelatedFeatureSampled(relatedFeature), is(TRUE));
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,19 +35,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ds.AbstractInsertResultDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -63,45 +89,14 @@ import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.CapabilitiesExtension;
-import org.n52.sos.ogc.sos.CapabilitiesExtensionKey;
-import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosInsertionCapabilities;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
-import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
+import org.n52.svalbard.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,15 +106,19 @@ import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertResultDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class InsertResultDAO extends AbstractInsertResultDAO implements CapabilitiesExtensionProvider {
+public class InsertResultDAO extends AbstractInsertResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
     private static final int FLUSH_THRESHOLD = 50;
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
+    private DecoderRepository decoderRepository;
+    private DaoFactory daoFactory;
+
     private ResultHandlingHelper helper = new  ResultHandlingHelper();
 
     /**
@@ -128,10 +127,29 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     public InsertResultDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    protected DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -141,10 +159,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         response.setVersion(request.getVersion());
         Session session = null;
         Transaction transaction = null;
-        
+
         Map<String, Codespace> codespaceCache = Maps.newHashMap();
         Map<UoM, Unit> unitCache = Maps.newHashMap();
-        
+
+
         try {
             session = sessionHolder.getSession();
             final ResultTemplate resultTemplate =
@@ -166,7 +185,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
             int insertion = 0;
             final int size = observations.size();
-            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            final AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             LOGGER.debug("Start saving {} observations.", size);
             Map<String, AbstractFeatureOfInterest> featureEntityMap = new HashMap<>();
             for (final OmObservation observation : observations) {
@@ -223,9 +242,14 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         return response;
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+
     /**
      * Create OmObservation from result values
-     * 
+     *
      * @param version
      *            Service version
      * @param resultTemplate
@@ -252,32 +276,12 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         return singleObservation;
     }
 
-//    /**
-//     * Get internal feature from FeatureOfInterest entity
-//     * 
-//     * @param featureOfInterest
-//     * @param version
-//     *            Service version
-//     * @param session
-//     *            Hibernate session
-//     * @return Internal feature representation
-//     * @throws OwsExceptionReport
-//     *             If an error occurs during requesting
-//     */
-//    protected AbstractFeature getSosAbstractFeature(final AbstractFeatureOfInterest featureOfInterest, final String version,
-//            final Session session) throws OwsExceptionReport {
-//        final FeatureQueryHandler featureQueryHandler = Configurator.getInstance().getFeatureQueryHandler();
-//        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
-//            .addFeatureIdentifier(featureOfInterest.getIdentifier())
-//            .setConnection(session)
-//            .setVersion(version);
-//        return featureQueryHandler.getFeatureByID(queryObject);
-//    }
+
 
     /**
      * Unfold internal observation from result values to single internal
      * observations
-     * 
+     *
      * @param observation
      *            Internal observaiton to unfold
      * @return List with single interal observations
@@ -288,7 +292,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             throws OwsExceptionReport {
         try {
             
-            return HibernateObservationUtilities.unfoldObservation(observation, isConvertComplexProfileToSingleProfiles());
+            return new ObservationUnfolder(observation, null).unfold(isConvertComplexProfileToSingleProfiles());
         } catch (final Exception e) {
             throw new InvalidParameterValueException()
                     .causedBy(e)
@@ -298,9 +302,32 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         }
     }
 
+
+    protected <T> T decode(String xml) throws DecodingException {
+        try {
+            return decode(XmlObject.Factory.parse(xml));
+        } catch (XmlException ex) {
+            throw new DecodingException(ex);
+        }
+    }
+
+    protected <T> T decode(XmlObject xbObject) throws DecodingException {
+        final DecoderKey key = getDecoderKey(xbObject);
+        final Decoder<T, XmlObject> decoder = getDecoderRepository().getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xbObject);
+    }
+
+    protected DecoderKey getDecoderKey(XmlObject doc) {
+        return new XmlNamespaceDecoderKey(XmlHelper.getNamespace(doc), doc.getClass());
+    }
+
+
     /**
      * Get internal ObservationConstellation from result template
-     * 
+     *
      * @param resultTemplate
      * @param session
      *            Hibernate session
@@ -335,20 +362,20 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
     /**
      * Create internal ProcedureDescription from Procedure entity
-     * 
+     *
      * @param hProcedure
      *            Procedure entity
      * @return Internal ProcedureDescription
      */
-    private SosProcedureDescription createProcedure(final Procedure hProcedure) {
+    private SosProcedureDescription<?> createProcedure(final Procedure hProcedure) {
         final SensorML procedure = new SensorML();
         procedure.setIdentifier(hProcedure.getIdentifier());
-        return procedure;
+        return new SosProcedureDescription<AbstractFeature>(procedure);
     }
 
     /**
      * Get internal observation
-     * 
+     *
      * @param resultTemplate
      *            Associated ResultTemplate
      * @param blockValues
@@ -371,8 +398,8 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
         final SweDataRecord record = setRecordFrom(resultStructure);
 
-        final Map<Integer, String> observedProperties = new HashMap<Integer, String>(record.getFields().size() - 1);
-        final Map<Integer, String> units = new HashMap<Integer, String>(record.getFields().size() - 1);
+        final Map<Integer, String> observedProperties = new HashMap<>(record.getFields().size() - 1);
+        final Map<Integer, String> units = new HashMap<>(record.getFields().size() - 1);
         final Map<Integer, String> featureOfInterest = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> procedure = new HashMap<Integer, String>(record.getFields().size() - 1);
 
@@ -388,7 +415,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         observation.setValue(sosValues);
         return observation;
     }
-    
+
     /*
      * TODO: Check if this mehtod is still required!?!
      */
@@ -402,8 +429,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             HashSet<Integer> reserved)
                     throws CodedException {
         for (final SweField swefield : record.getFields()) {
-            if (!reserved.contains(j)) {
-                final Integer index = Integer.valueOf(j);
+            if (!reserved.contains(index)) {
                 if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
                     final SweAbstractSimpleType<?> sweAbstractSimpleType =
                             (SweAbstractSimpleType<?>) swefield.getElement();
@@ -430,13 +456,13 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                             swefield.getElement().getClass().getName());
                 }
             }
-            ++j;
+            ++index;
         }
     }
 
     /**
      * Create internal observation value
-     * 
+     *
      * @param blockValues
      *            Block values from result values
      * @param recordFromResultStructure
@@ -467,14 +493,14 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 dataArrayValue.addBlock(Arrays.asList(singleValues));
             }
         }
-        final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<SweDataArray>();
+        final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<>();
         sosValues.setValue(dataArrayValue);
         return sosValues;
     }
 
     /**
      * Get single values from a block value
-     * 
+     *
      * @param block
      *            Block value
      * @param encoding
@@ -491,7 +517,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
     /**
      * Get block values from result values
-     * 
+     *
      * @param resultValues
      *            Result values
      * @param encoding
@@ -510,7 +536,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     /**
      * Check if the block values from result values contains a preceding count
      * value
-     * 
+     *
      * @param blockValues
      *            Block values from result values
      * @param tokenSeparator
@@ -532,7 +558,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
     /**
      * Separate values from String with separator
-     * 
+     *
      * @param values
      *            Value String
      * @param separator

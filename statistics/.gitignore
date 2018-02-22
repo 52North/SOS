@@ -1,0 +1,5 @@
+*geolite/
+/data/
+/target/
+/elasticsearch/
+/target/

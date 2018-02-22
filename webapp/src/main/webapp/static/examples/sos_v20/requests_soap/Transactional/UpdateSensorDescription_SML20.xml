@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd
 			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
 	<env:Body>
 		<swes:UpdateSensorDescription service="SOS" version="2.0.0"
@@ -9,12 +9,12 @@
 			xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:sml="http://www.opengis.net/sensorml/2.0"
 			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
 			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" 
+			xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd"
 			xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
 			<swes:procedure>http://www.52north.org/test/procedure/9</swes:procedure>
 			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
 			<swes:description>
-				<swes:SensorDescription>	
+				<swes:SensorDescription>
 					<swes:data>
 						<sml:PhysicalSystem gml:id="sensor9">
 							<!--Unique identifier -->
@@ -40,7 +40,7 @@
 			                <sml:capabilities name="offerings">
 		                      <sml:CapabilityList>
 				                 <!-- Special capabilities used to specify offerings. -->
-				                 <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+				                 <!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 					                 added during DescribeSensor. -->
 				                 <!-- Offering is generated if not specified. -->
 		                         <sml:capability name="offeringID">
@@ -145,4 +145,4 @@
 		</swes:UpdateSensorDescription>
 	</env:Body>
 </env:Envelope>
-		
+

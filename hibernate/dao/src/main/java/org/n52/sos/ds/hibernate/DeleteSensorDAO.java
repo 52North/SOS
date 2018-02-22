@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,13 +30,19 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.n52.sos.ds.AbstractDeleteSensorDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
+import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -45,33 +51,32 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservation
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.response.DeleteSensorResponse;
 
 /**
- * Implementation of the abstract class AbstractDeleteSensorDAO
+ * Implementation of the abstract class AbstractDeleteSensorHandler
  * @since 4.0.0
- * 
+ *
  */
-public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
-    /**
-     * constructor
-     */
     public DeleteSensorDAO() {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -85,7 +90,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
             setDeleteSensorFlag(request.getProcedureIdentifier(), true, session);
-            new ValidProcedureTimeDAO().setValidProcedureDescriptionEndTime(request.getProcedureIdentifier(), session);
+            new ValidProcedureTimeDAO(daoFactory).setValidProcedureDescriptionEndTime(request.getProcedureIdentifier(), session);
             transaction.commit();
             response.setDeletedProcedure(request.getProcedureIdentifier());
         } catch (HibernateException he) {
@@ -100,10 +105,15 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
         return response;
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+    }
+
     /**
      * Set the deleted flag of the procedure and corresponding entities
      * (observations, series, obervationConstellation) to <code>true</code>
-     * 
+     *
      * @param identifier
      *            Procedure identifier
      * @param deleteFlag
@@ -114,34 +124,34 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
      *             If the procedure is not contained in the database
      */
     private void setDeleteSensorFlag(String identifier, boolean deleteFlag, Session session) throws OwsExceptionReport {
-        Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(identifier, session);
+        Procedure procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(identifier, session);
         if (procedure != null) {
             procedure.setDeleted(deleteFlag);
             session.saveOrUpdate(procedure);
             session.flush();
             // set deleted flag in ObservationConstellation table to true
             if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-                new ObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
+                daoFactory.getObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
                         deleteFlag, session);
             }
             // set deleted flag in Series and Observation table for series concept to true
             if (EntitiyHelper.getInstance().isSeriesSupported()) {
                 List<Series> series =
-                        DaoFactory.getInstance().getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
+                        daoFactory.getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                                 session);
                 getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
-            } 
+            }
             // set deleted flag in Observation table for old concept to true
             else {
-                new LegacyObservationDAO().updateObservationSetAsDeletedForProcedure(identifier, deleteFlag, session);
+                new LegacyObservationDAO(daoFactory).updateObservationSetAsDeletedForProcedure(identifier, deleteFlag, session);
             }
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }
     }
-    
+
     protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         if (observationDAO instanceof AbstractSeriesObservationDAO) {
             return (AbstractSeriesObservationDAO) observationDAO;
         } else {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,10 +48,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlHelper.LaxValidationCase;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.svalbard.util.XmlHelper;
+import org.n52.svalbard.util.XmlHelper.LaxValidationCase;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -60,16 +60,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping(ControllerConstants.Paths.VALIDATION_AJAX_ENDPOINT)
 public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String validate(@RequestBody String xml) {
-    	LOGGER.trace("Starting validation");
-        ObjectNode result = JSONUtils.nodeFactory().objectNode();
+        LOGGER.trace("Starting validation");
+        ObjectNode result = Json.nodeFactory().objectNode();
         ArrayNode resultErrors = result.putArray(ERRORS_PROPERTY);
-        LinkedList<XmlError> xmlErrors = new LinkedList<XmlError>();
+        LinkedList<XmlError> xmlErrors = new LinkedList<>();
         XmlOptions options = new XmlOptions().setErrorListener(xmlErrors).setLoadLineNumbers(XmlOptions.LOAD_LINE_NUMBERS_END_ELEMENT);
         try {
             XmlObject x = XmlObject.Factory.parse(xml, options);
@@ -83,14 +83,13 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
          * does not return errors and does not provide any means to access errors after validation
          */
         // START of BLOCK
-        final Iterator<XmlError> iter = xmlErrors.iterator();
-        final List<XmlError> shouldPassErrors = new LinkedList<XmlError>();
-        final List<XmlError> errors = new LinkedList<XmlError>();
+        Iterator<XmlError> iter = xmlErrors.iterator();
+        List<XmlError> errors = new LinkedList<>();
         while (iter.hasNext()) {
-            final XmlError error = iter.next();
+            XmlError error = iter.next();
             boolean shouldPass = false;
             if (error instanceof XmlValidationError) {
-                for (final LaxValidationCase lvc : LaxValidationCase.values()) {
+                for (LaxValidationCase lvc : LaxValidationCase.values()) {
                     if (lvc.shouldPass((XmlValidationError) error)) {
                         shouldPass = true;
                         LOGGER.debug("Lax validation case found for XML validation error: {}", error);
@@ -98,18 +97,14 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
                     }
                 }
             }
-            if (shouldPass) {
-                shouldPassErrors.add(error);
-            } else {
+            if (!shouldPass) {
                 errors.add(error);
             }
         }
-        if (errors.size() > 0) {
-        	for (XmlError e : errors) {
-                resultErrors.add(e.toString());
-            }
-        } else if (errors.size() == 0) {
-        	result.put(VALID_PROPERTY, true);
+        if (!errors.isEmpty()) {
+            errors.stream().map(XmlError::toString).forEach(resultErrors::add);
+        } else {
+            result.put(VALID_PROPERTY, true);
         }
         // END of BLOCK
         // uncomment next lines if BLOCK is removed

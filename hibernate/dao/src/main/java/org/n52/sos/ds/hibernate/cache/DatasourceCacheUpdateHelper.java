@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,11 +28,16 @@
  */
 package org.n52.sos.ds.hibernate.cache;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import static java.util.stream.Collectors.toSet;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.function.Predicate;
+
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 
 /**
@@ -42,78 +47,34 @@ import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 public class DatasourceCacheUpdateHelper {
 
     private DatasourceCacheUpdateHelper() {
-
     }
 
-    public static Set<String> getAllOfferingIdentifiersFrom(
-            Collection<ObservationConstellation> observationConstellations) {
-        Set<String> offerings = new HashSet<String>(observationConstellations.size());
-        for (ObservationConstellation oc : observationConstellations) {
-            offerings.add(oc.getOffering().getIdentifier());
-        }
-        return offerings;
+    public static Set<String> getAllOfferingIdentifiersFrom(Collection<ObservationConstellation> oc) {
+        return oc.stream().map(ObservationConstellation::getOffering).map(Offering::getIdentifier).collect(toSet());
     }
 
-    public static Set<String> getAllOfferingIdentifiersFromObservationConstellationInfos(
-            Collection<ObservationConstellationInfo> observationConstellationInfos) {
-        Set<String> offerings = new HashSet<String>(observationConstellationInfos.size());
-        for (ObservationConstellationInfo oci : observationConstellationInfos) {
-            offerings.add(oci.getOffering());
-        }
-        return offerings;
+    public static Set<String> getAllOfferingIdentifiersFromObservationConstellationInfos(Collection<ObservationConstellationInfo> oci) {
+        return oci.stream().map(ObservationConstellationInfo::getOffering).collect(toSet());
     }
 
-    public static Set<String> getAllProcedureIdentifiersFrom(
-            Collection<ObservationConstellation> observationConstellations) {
-        Set<String> procedures = new HashSet<String>(observationConstellations.size());
-        for (ObservationConstellation oc : observationConstellations) {
-            procedures.add(oc.getProcedure().getIdentifier());
-        }
-        return procedures;
+    public static Set<String> getAllProcedureIdentifiersFrom(Collection<ObservationConstellation> oc) {
+        return oc.stream().map(ObservationConstellation::getProcedure).map(Procedure::getIdentifier).collect(toSet());
     }
 
-    public static Set<String> getAllProcedureIdentifiersFromObservationConstellationInfos(
-            Collection<ObservationConstellationInfo> observationConstellationInfos) {
-        return getAllProcedureIdentifiersFromObservationConstellationInfos(observationConstellationInfos, null);
+    public static Set<String> getAllProcedureIdentifiersFromObservationConstellationInfos(Collection<ObservationConstellationInfo> oci) {
+        return getAllProcedureIdentifiersFromObservationConstellationInfos(oci, null);
     }
 
-    public static Set<String> getAllProcedureIdentifiersFromObservationConstellationInfos(
-            Collection<ObservationConstellationInfo> observationConstellationInfos, ProcedureFlag procedureFlag) {
-        Set<String> procedures = new HashSet<String>(observationConstellationInfos.size());
-        for (ObservationConstellationInfo oci : observationConstellationInfos) {
-            boolean addProcedure = false;
-            if (procedureFlag == null) {
-                //add all procedures
-                addProcedure = true;
-            } else {
-                if (procedureFlag.equals(ProcedureFlag.PARENT) && !oci.isHiddenChild()) {
-                    addProcedure = true;
-                } else if (procedureFlag.equals(ProcedureFlag.HIDDEN_CHILD) && oci.isHiddenChild()) {
-                    addProcedure = true;
-                }
-            }
-            if (addProcedure) {
-                procedures.add(oci.getProcedure());
-            }
-        }
-        return procedures;
+    public static Set<String> getAllProcedureIdentifiersFromObservationConstellationInfos(Collection<ObservationConstellationInfo> oci, ProcedureFlag flag) {
+        Predicate<ObservationConstellationInfo> pred = x -> flag == null || (flag.equals(ProcedureFlag.PARENT) && !x.isHiddenChild()) || (flag.equals(ProcedureFlag.HIDDEN_CHILD) && x.isHiddenChild());
+        return oci.stream().filter(pred).map(ObservationConstellationInfo::getProcedure).collect(toSet());
     }
 
-    public static Set<String> getAllObservablePropertyIdentifiersFrom(
-            Collection<ObservationConstellation> observationConstellations) {
-        Set<String> observableProperties = new HashSet<String>(observationConstellations.size());
-        for (ObservationConstellation oc : observationConstellations) {
-            observableProperties.add(oc.getObservableProperty().getIdentifier());
-        }
-        return observableProperties;
+    public static Set<String> getAllObservablePropertyIdentifiersFrom(Collection<ObservationConstellation> oc) {
+        return oc.stream().map(ObservationConstellation::getObservableProperty).map(ObservableProperty::getIdentifier).collect(toSet());
     }
 
-    public static Set<String> getAllObservablePropertyIdentifiersFromObservationConstellationInfos(
-            Collection<ObservationConstellationInfo> observationConstellationInfos) {
-        Set<String> observableProperties = new HashSet<>(observationConstellationInfos.size());
-        for (ObservationConstellationInfo oci : observationConstellationInfos) {
-            observableProperties.add(oci.getObservableProperty());
-        }
-        return observableProperties;
+    public static Set<String> getAllObservablePropertyIdentifiersFromObservationConstellationInfos(Collection<ObservationConstellationInfo> oci) {
+        return oci.stream().map(ObservationConstellationInfo::getObservableProperty).collect(toSet());
     }
 }

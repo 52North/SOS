@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,11 +28,14 @@
  */
 package org.n52.sos.util.builder;
 
+import java.math.BigDecimal;
+
 import org.joda.time.DateTime;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.Value;
+
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.Value;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -45,7 +48,7 @@ public class QuantityObservationValueBuilder {
         return new QuantityObservationValueBuilder();
     }
 
-    private Value<Double> quantity;
+    private Value<BigDecimal> quantity;
 
     private long phenomenonTime;
 
@@ -59,8 +62,8 @@ public class QuantityObservationValueBuilder {
         return this;
     }
 
-    public SingleObservationValue<Double> build() {
-        SingleObservationValue<Double> value = new SingleObservationValue<Double>();
+    public SingleObservationValue<BigDecimal> build() {
+        SingleObservationValue<BigDecimal> value = new SingleObservationValue<BigDecimal>();
         value.setValue(quantity);
         value.setPhenomenonTime(new TimeInstant(new DateTime(phenomenonTime)));
         return value;

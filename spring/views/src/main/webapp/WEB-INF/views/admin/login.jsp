@@ -69,7 +69,7 @@
 			$("input[type=text], input[type=password]").each(function(i,e) {
 				if ($(e).val() === "") { empty = true; }
 			});
-			$("button[type=submit]").attr("disabled", empty);	
+			$("button[type=submit]").attr("disabled", empty);
 		}).trigger("input");
 		$("input[name=username]").focus();
 	});

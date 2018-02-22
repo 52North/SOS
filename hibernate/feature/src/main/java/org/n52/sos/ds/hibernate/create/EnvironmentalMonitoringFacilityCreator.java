@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,63 +28,52 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ds.hibernate.entities.feature.inspire.MediaMonitored;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.inspire.MediaMonitored;
+import org.n52.shetland.inspire.base.Identifier;
+import org.n52.shetland.inspire.ef.ObservingCapability;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
-import org.n52.svalbard.inspire.base.Identifier;
-import org.n52.svalbard.inspire.ef.ObservingCapability;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
-public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacility> {
+public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacilityEntity> {
 
-    public EnvironmentalMonitoringFacilityCreator(int storageEPSG, int storage3DEPSG) {
-        super(storageEPSG, storage3DEPSG);
+    public EnvironmentalMonitoringFacilityCreator(FeatureVisitorContext context) {
+       super(context);
     }
 
     @Override
-    public AbstractFeature create(EnvironmentalMonitoringFacility f, Locale i18n, String version, Session s)
+    public AbstractFeature create(EnvironmentalMonitoringFacilityEntity f)
             throws OwsExceptionReport {
-        if (f.isSetUrl()) {
-            return new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(
-                    new SimpleAttrs().setHref(f.getUrl()));
-        }
-        if (f instanceof EnvironmentalMonitoringFacility) {
-            EnvironmentalMonitoringFacility emf = (EnvironmentalMonitoringFacility) f;
-            FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
-            final CodeWithAuthority identifier = featureDAO.getIdentifier(emf);
-            if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), version)) {
+//        if (f.isSetUrl()) {
+//            return new org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(
+//                    new SimpleAttrs().setHref(f.getUrl()));
+//        }
+        if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            EnvironmentalMonitoringFacilityEntity emf = (EnvironmentalMonitoringFacilityEntity) f;
+            final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(emf);
+            if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), getContext().getVersion())) {
                 identifier.setValue(null);
             }
-            final org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature =
-                    new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
+            final org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature =
+                    new org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
                             getMediaMonitored(emf.getMediaMonitored()));
-            addNameAndDescription(i18n, emf, emFeature, featureDAO);
-            emFeature.setGeometry(createGeometry(emf, s));
+            addNameAndDescription(getContext().getRequestedLanguage(), emf, emFeature);
+            emFeature.setGeometry(createGeometry(emf));
             // add measurementRegime, mobile, operationalActivityPeriod(Set)
             emFeature.setMeasurementRegime(new ReferenceType(emf.getMeasurementRegime()));
             emFeature.setMobile(emf.isMobile());
@@ -93,7 +82,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
             // emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
 
             addObservingCapabilities(emFeature, f);
-            addHasObservations(emFeature, f);
+//            addHasObservations(emFeature, f);
 
             // final Set<FeatureOfInterest> parentFeatures = emf.getParents();
             // if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -110,9 +99,9 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     }
 
     @Override
-    public Geometry createGeometry(EnvironmentalMonitoringFacility feature, Session session)
+    public Geometry createGeometry(EnvironmentalMonitoringFacilityEntity feature)
             throws OwsExceptionReport {
-        return createGeometryFrom(feature, session);
+        return createGeometryFrom(feature);
     }
 
     private Set<ReferenceType> getMediaMonitored(MediaMonitored mediaMonitored) {
@@ -123,11 +112,11 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
         return referenceTypes;
     }
 
-    private void addObservingCapabilities(org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-            FeatureOfInterest feature) {
+    private void addObservingCapabilities(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
+            FeatureEntity feature) {
         emFeature.addObservingCapability(createObservingCapability(feature.getIdentifier()));
-        if (feature.hasChilds()) {
-            for (AbstractFeatureOfInterest child : feature.getChilds()) {
+        if (feature.hasChildren()) {
+            for (AbstractFeatureEntity child : feature.getChildren()) {
                 emFeature.addObservingCapability(createObservingCapability(child.getIdentifier()));
             }
         }
@@ -138,49 +127,49 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
         return new ObservingCapability(addParameter(getGetDataAvailabilityUrl(), "featureOfInterest", identifier));
     }
 
-    private void addHasObservations(org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-            FeatureOfInterest feature) {
-        Map<String, Set<String>> featureOfferings = Maps.newHashMap();
-        featureOfferings.put(feature.getIdentifier(),
-                getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
-        // check for child features
-        if (feature.hasChilds()) {
-            for (AbstractFeatureOfInterest child : feature.getChilds()) {
-                Set<String> childOfferings = getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
-                if (CollectionHelper.isNotEmpty(childOfferings)) {
-                    featureOfferings.put(child.getIdentifier(), childOfferings);
-                }
-            }
-        }
-        createHasObservations(emFeature, featureOfferings);
-    }
-
-    private void createHasObservations(org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-            Map<String, Set<String>> featureOfferings) {
-        if (featureOfferings != null) {
-            for (Entry<String, Set<String>> entry : featureOfferings.entrySet()) {
-                emFeature.addHasObservation(createObservation(entry.getKey(), entry.getValue()));
-            }
-        }
-    }
-
-    private OmObservation createObservation(String feature, Set<String> offerings) {
-        String getObservationUrl = getGetObservationUrl();
-        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.featureOfInterest.name(), feature);
-        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.offering.name(), offerings);
-        SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(getObservationUrl);
-        OmObservation omObservation = new OmObservation();
-        omObservation.setSimpleAttrs(simpleAttrs);
-        return omObservation;
-    }
-
-    private OmObservation createObservation(String featureOfInterest, String offering) {
-        SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(
-                addParameter(getGetObservationUrl(), SosConstants.GetObservationParams.offering.name(), offering));
-        OmObservation omObservation = new OmObservation();
-        omObservation.setSimpleAttrs(simpleAttrs);
-        return omObservation;
-    }
+//    private void addHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
+//            FeatureOfInterest feature) {
+//        Map<String, Set<String>> featureOfferings = Maps.newHashMap();
+//        featureOfferings.put(feature.getIdentifier(),
+//                getContext().getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
+//        // check for child features
+//        if (feature.hasChilds()) {
+//            for (AbstractFeatureOfInterest child : feature.getChilds()) {
+//                Set<String> childOfferings = getContext().getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
+//                if (CollectionHelper.isNotEmpty(childOfferings)) {
+//                    featureOfferings.put(child.getIdentifier(), childOfferings);
+//                }
+//            }
+//        }
+//        createHasObservations(emFeature, featureOfferings);
+//    }
+//
+//    private void createHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
+//            Map<String, Set<String>> featureOfferings) {
+//        if (featureOfferings != null) {
+//            for (Entry<String, Set<String>> entry : featureOfferings.entrySet()) {
+//                emFeature.addHasObservation(createObservation(entry.getKey(), entry.getValue()));
+//            }
+//        }
+//    }
+//
+//    private OmObservation createObservation(String feature, Set<String> offerings) {
+//        String getObservationUrl = getGetObservationUrl();
+//        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.featureOfInterest.name(), feature);
+//        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.offering.name(), offerings);
+//        SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(getObservationUrl);
+//        OmObservation omObservation = new OmObservation();
+//        omObservation.setSimpleAttrs(simpleAttrs);
+//        return omObservation;
+//    }
+//
+//    private OmObservation createObservation(String featureOfInterest, String offering) {
+//        SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(
+//                addParameter(getGetObservationUrl(), SosConstants.GetObservationParams.offering.name(), offering));
+//        OmObservation omObservation = new OmObservation();
+//        omObservation.setSimpleAttrs(simpleAttrs);
+//        return omObservation;
+//    }
 
     private String getGetDataAvailabilityUrl() {
         return new StringBuilder(getBaseGetUrl()).append(getRequest("GetDataAvailability")).toString();
@@ -206,7 +195,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     }
 
     private String getRequest(String requestName) {
-        return new StringBuilder().append('&').append(RequestParams.request.name()).append('=').append(requestName)
+        return new StringBuilder().append('&').append(OWSConstants.RequestParams.request.name()).append('=').append(requestName)
                 .toString();
     }
 

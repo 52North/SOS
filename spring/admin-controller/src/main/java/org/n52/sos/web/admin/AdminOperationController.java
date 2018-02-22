@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,6 +30,8 @@ package org.n52.sos.web.admin;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,25 +41,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.request.operator.RequestOperatorKey;
-import org.n52.sos.request.operator.RequestOperatorRepository;
-import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.JSONConstants;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 @Controller
 public class AdminOperationController extends AbstractAdminController {
+
+    @Inject
+    private RequestOperatorRepository requestOperatorRepository;
 
     @ResponseBody
     @ExceptionHandler(JSONException.class)
@@ -66,42 +71,49 @@ public class AdminOperationController extends AbstractAdminController {
         return e.getMessage();
     }
 
-    @ResponseBody
-    @ExceptionHandler(ConnectionProviderException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String onConnectionProviderException(ConnectionProviderException e) {
-        return e.getMessage();
-    }
-
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_OPERATIONS, method = RequestMethod.GET)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_OPERATIONS,
+                    method = RequestMethod.GET)
     public String view() throws ConnectionProviderException {
         return ControllerConstants.Views.ADMIN_OPERATIONS;
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_OPERATIONS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public String getAll() throws JSONException, ConnectionProviderException {
-        ObjectNode json = JSONUtils.nodeFactory().objectNode();
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_OPERATIONS_JSON_ENDPOINT,
+                    method = RequestMethod.GET,
+                    produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    public String getAll() throws JSONException {
+        ObjectNode json = Json.nodeFactory().objectNode();
         ArrayNode array = json.putArray(JSONConstants.OPERATIONS_KEY);
-        for (RequestOperatorKey key : RequestOperatorRepository.getInstance().getAllRequestOperatorKeys()) {
+
+        for (RequestOperatorKey key : this.requestOperatorRepository.getKeys()) {
+            String service = key.getServiceOperatorKey().getService();
+            String version = key.getServiceOperatorKey().getVersion();
+            String operation = key.getOperationName();
+            boolean active = this.requestOperatorRepository.isActive(key);
+
             array.addObject()
-                    .put(JSONConstants.SERVICE_KEY, key.getServiceOperatorKey().getService())
-                    .put(JSONConstants.VERSION_KEY, key.getServiceOperatorKey().getVersion())
-                    .put(JSONConstants.OPERATION_KEY, key.getOperationName())
-                    .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(key));
+                    .put(JSONConstants.SERVICE_KEY, service)
+                    .put(JSONConstants.VERSION_KEY, version)
+                    .put(JSONConstants.OPERATION_KEY, operation)
+                    .put(JSONConstants.ACTIVE_KEY, active);
         }
 
-        return JSONUtils.print(json);
+        return Json.print(json);
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_OPERATIONS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public void change(@RequestBody String request) throws JSONException, ConnectionProviderException, IOException {
-        JsonNode json = JSONUtils.loadString(request);
-        ServiceOperatorKey sokt =
-                new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
-                        json.path(JSONConstants.VERSION_KEY).asText());
-        RequestOperatorKey rokt = new RequestOperatorKey(sokt, json.path(JSONConstants.OPERATION_KEY).asText());
-        getSettingsManager().setActive(rokt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_OPERATIONS_JSON_ENDPOINT,
+                    method = RequestMethod.POST,
+                    consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    public void change(@RequestBody String request) throws JSONException, IOException {
+        JsonNode json = Json.loadString(request);
+        String service = json.path(JSONConstants.SERVICE_KEY).asText();
+        String version = json.path(JSONConstants.VERSION_KEY).asText();
+        String operation = json.path(JSONConstants.OPERATION_KEY).asText();
+        boolean active = json.path(JSONConstants.ACTIVE_KEY).asBoolean();
+
+        OwsServiceKey sokt = new OwsServiceKey(service, version);
+        RequestOperatorKey rokt = new RequestOperatorKey(sokt, operation);
+        this.requestOperatorRepository.setActive(rokt, active);
     }
 }

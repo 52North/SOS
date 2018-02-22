@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.web.admin;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -36,11 +38,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
-import org.n52.sos.cache.ContentCachePersistenceStrategy;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.faroe.ConfigurationError;
+import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -48,8 +52,17 @@ import org.n52.sos.web.ControllerConstants;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_RESET)
-public class AdminResetController extends AbstractAdminController {
+public class AdminResetController extends AbstractReloadContextController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminResetController.class);
+
+    @Inject
+    private ContextSwitcher contextSwitcher;
+
+    @Inject
+    private SettingsService settingsManager;
+
+    @Inject
+    private ContentCacheController contentCacheController;
 
     @RequestMapping(method = RequestMethod.GET)
     public String get() {
@@ -57,24 +70,21 @@ public class AdminResetController extends AbstractAdminController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public View post() throws ConfigurationException, ConnectionProviderException {
+    public View post() throws ConfigurationError, ConnectionProviderException {
         LOG.debug("Resetting Service.");
-        ContentCachePersistenceStrategy persistenceStrategy = null;
-        if (Configurator.getInstance() != null) {
-            persistenceStrategy = Configurator.getInstance()
-                    .getCacheController().getContentCachePersistenceStrategy();
-            LOG.debug("Resetting configurator.");
-            // this one also will persist the cache file
-            Configurator.getInstance().cleanup();
-        }
-        getDatabaseSettingsHandler().delete();
 
-        getSettingsManager().deleteAll();
+        getDatabaseSettingsHandler().delete();
+        this.settingsManager.deleteAll();
+
+        ContentCachePersistenceStrategy persistenceStrategy
+                = contentCacheController.getContentCachePersistenceStrategy();
 
         // delete a cache file if present
         if (persistenceStrategy != null) {
-            persistenceStrategy.cleanup();
+            persistenceStrategy.remove();
         }
+
+        reloadContext();
 
         return new RedirectView(ControllerConstants.Paths.ROOT, true);
     }

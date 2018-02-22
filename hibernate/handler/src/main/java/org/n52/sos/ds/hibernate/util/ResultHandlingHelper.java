@@ -1,0 +1,513 @@
+/*
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+package org.n52.sos.ds.hibernate.util;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.io.WKTWriter;
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweCoordinate;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweVector;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.IncDecInteger;
+import org.n52.sos.util.JTSConverter;
+import org.n52.svalbard.util.SweHelper;
+
+import com.google.common.base.Strings;
+
+/**
+ * @since 4.0.0
+ *
+ */
+public class ResultHandlingHelper {
+
+    private final String RESULT_TIME = OmConstants.RESULT_TIME;
+    private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
+    public final String OM_PROCEDURE = "om:procedure";
+    public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
+    private final SweHelper helper;
+    private GeometryHandler geometryHandler;
+
+    public ResultHandlingHelper(GeometryHandler geometryHandler, SweHelper sweHelper) {
+        this.geometryHandler = geometryHandler;
+        this.helper = sweHelper;
+    }
+
+    /**
+     * Create result values from observation according to ResultEncoding and
+     * ResultStructure
+     *
+     * @param observations
+     *            Observation to create result values from
+     * @param sosResultEncoding
+     *            The ResultEncoding
+     * @param sosResultStructure
+     *            The ResultStructure
+     * @return Result values String from observation according to ResultEncoding
+     *         and ResultStructure
+     * @throws OwsExceptionReport
+     *             If creation fails
+     */
+    public String createResultValuesFromObservations(final List<DataEntity<?>> observations,
+            final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure, String noDataPlaceholder)
+            throws OwsExceptionReport {
+        final StringBuilder builder = new StringBuilder();
+        if (CollectionHelper.isNotEmpty(observations)) {
+            final String tokenSeparator = getTokenSeparator(sosResultEncoding.get().get());
+            final String blockSeparator = getBlockSeparator(sosResultEncoding.get().get());
+            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.get().get());
+            addElementCount(builder, observations.size(), blockSeparator);
+            for (final DataEntity<?> observation : observations) {
+                for (final Integer intger : valueOrder.keySet()) {
+                    final String definition = valueOrder.get(intger);
+                    switch (definition) {
+                        case PHENOMENON_TIME:
+                            builder.append(getTimeStringForPhenomenonTime(observation.getSamplingTimeStart(),
+                                                                          observation.getSamplingTimeEnd(), noDataPlaceholder));
+                            break;
+                        case RESULT_TIME:
+                            builder.append(getTimeStringForResultTime(observation.getResultTime(), noDataPlaceholder));
+                            break;
+                        case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
+                            builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.get().get(), noDataPlaceholder));
+                            break;
+                        case OM_PROCEDURE:
+                            if (observation.getDataset().getProcedure() != null && observation.getDataset().getProcedure().isSetIdentifier()) {
+                                builder.append(observation.getDataset().getProcedure().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        case OM_FEATURE_OF_INTEREST:
+                            if (observation.getDataset().getFeature() != null && observation.getDataset().getFeature().isSetIdentifier()) {
+                                builder.append(observation.getDataset().getFeature().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        default:
+                            builder.append(getValueAsStringForObservedProperty(observation, definition));
+                            break;
+                    }
+                    builder.append(tokenSeparator);
+                }
+                builder.delete(builder.lastIndexOf(tokenSeparator), builder.length());
+                builder.append(blockSeparator);
+            }
+            if (builder.length() > 0) {
+                builder.delete(builder.lastIndexOf(blockSeparator), builder.length());
+            }
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Get token separator from encoding
+     *
+     * @param encoding
+     *            Abstract encoding
+     * @return Token separator
+     */
+    public String getTokenSeparator(final SweAbstractEncoding encoding) {
+        if (encoding instanceof SweTextEncoding) {
+            return ((SweTextEncoding) encoding).getTokenSeparator();
+        }
+        return null;
+    }
+
+    /**
+     * Get block separator from encoding
+     *
+     * @param encoding
+     *            Abstract encoding
+     * @return Block separator
+     */
+    public String getBlockSeparator(final SweAbstractEncoding encoding) {
+        if (encoding instanceof SweTextEncoding) {
+            return ((SweTextEncoding) encoding).getBlockSeparator();
+        }
+        return null;
+    }
+
+    /**
+     * Check if data component has a result time element and return the position
+     *
+     * @param sweDataElement
+     *            Data component
+     * @return Position of the result time element or -1 if it is not contained
+     */
+    public int hasResultTime(final SweAbstractDataComponent sweDataElement) {
+        if (sweDataElement instanceof SweDataArray
+                && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
+            final SweDataArray dataArray = (SweDataArray) sweDataElement;
+            return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), RESULT_TIME);
+        } else if (sweDataElement instanceof SweDataRecord) {
+            final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
+            return checkFields(dataRecord.getFields(), RESULT_TIME);
+        }
+        return -1;
+    }
+
+    /**
+     * Check if data component has a phenomenon time element and return the
+     * position
+     *
+     * @param sweDataElement
+     *            Data component
+     * @return Position of the phenomenon time element or -1 if it is not
+     *         contained
+     */
+    public int hasPhenomenonTime(final SweAbstractDataComponent sweDataElement) {
+        if (sweDataElement instanceof SweDataArray
+                && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
+            final SweDataArray dataArray = (SweDataArray) sweDataElement;
+            return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), PHENOMENON_TIME);
+        } else if (sweDataElement instanceof SweDataRecord) {
+            final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
+            return checkFields(dataRecord.getFields(), PHENOMENON_TIME);
+        }
+        return -1;
+    }
+
+    /**
+     * Check fields for definition and return the position
+     *
+     * @param fields
+     *            Fields list to check
+     * @param definition
+     *            Definition to check
+     * @return Position of the element with the definition or -1 if it is not
+     *         contained
+     */
+    public int checkFields(final List<SweField> fields, final String definition) {
+        int i = 0;
+        for (final SweField f : fields) {
+            final SweAbstractDataComponent element = f.getElement();
+            if (element.isSetDefinition() && element.getDefinition().equals(definition)) {
+                return i;
+            }
+            ++i;
+        }
+        return -1;
+    }
+
+    private void addElementCount(final StringBuilder builder, final int size, final String blockSeparator) {
+        builder.append(String.valueOf(size));
+        builder.append(blockSeparator);
+    }
+
+    private Object getTimeStringForResultTime(final Date resultTime, String noDataPlaceholder) {
+        if (resultTime != null) {
+            return DateTimeHelper.formatDateTime2IsoString(new DateTime(resultTime, DateTimeZone.UTC));
+        }
+        return noDataPlaceholder;
+    }
+
+    private Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd, String noDataPlaceholder) {
+        if (phenomenonTimeStart == null) {
+            return noDataPlaceholder;
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        if (phenomenonTimeEnd == null || phenomenonTimeStart.equals(phenomenonTimeEnd)) {
+            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
+        } else {
+            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
+            builder.append('/');
+            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeEnd, DateTimeZone.UTC)));
+        }
+        return builder.toString();
+    }
+
+    private Map<Integer, String> getValueOrderMap(final SweAbstractDataComponent sweDataElement) {
+        final Map<Integer, String> valueOrder = new HashMap<>(0);
+        if (sweDataElement instanceof SweDataArray
+                && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
+            final SweDataArray dataArray = (SweDataArray) sweDataElement;
+            addOrderAndDefinitionToMap(((SweDataRecord) dataArray.getElementType()).getFields(), valueOrder, new IncDecInteger());
+        } else if (sweDataElement instanceof SweDataRecord) {
+            final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
+            addOrderAndDefinitionToMap(dataRecord.getFields(), valueOrder, new IncDecInteger());
+        }
+        return new TreeMap<>(valueOrder);
+    }
+
+    private void addOrderAndDefinitionToMap(final List<SweField> fields, final Map<Integer, String> valueOrder, IncDecInteger tokenIndex) {
+        for (SweField sweField : fields) {
+            final SweAbstractDataComponent element = sweField.getElement();
+            if (element instanceof SweAbstractSimpleType) {
+                final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
+                if (simpleType.isSetDefinition()) {
+                    addValueToValueOrderMap(valueOrder, tokenIndex, simpleType.getDefinition());
+                }
+                tokenIndex.increment();
+            } else if (element instanceof SweDataRecord) {
+                addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
+            } else if (element instanceof SweVector) {
+                if (element.isSetDefinition()) {
+                    addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
+                }
+//                addOrderAndVectorDefinitionToMap(((SweVector) element).getCoordinates(), valueOrder, tokenIndex);
+            }
+        }
+    }
+
+    private void addOrderAndVectorDefinitionToMap(List<? extends SweCoordinate<? extends Number>> coordinates, Map<Integer, String> valueOrder, IncDecInteger tokenIndex) {
+        for (SweCoordinate<?> sweCoordinate : coordinates) {
+            final SweAbstractDataComponent element = sweCoordinate.getValue();
+            if (element instanceof SweAbstractSimpleType) {
+                final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
+                if (simpleType.isSetDefinition()) {
+                    addValueToValueOrderMap(valueOrder, tokenIndex, simpleType.getDefinition());
+                }
+                tokenIndex.increment();
+            } else if (element instanceof SweDataRecord) {
+                addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
+            } else if (element instanceof SweVector) {
+                addOrderAndVectorDefinitionToMap(((SweVector) element).getCoordinates(), valueOrder, tokenIndex);
+            }
+        }
+    }
+
+    private void addValueToValueOrderMap(final Map<Integer, String> valueOrder, final IncDecInteger index,
+            final String value) {
+        if (index.get() >= 0) {
+            valueOrder.put(index.get(), value);
+        }
+    }
+
+    private String getValueAsStringForObservedProperty(final DataEntity<?> observation,
+            final String definition) {
+        final String observedProperty = observation.getDataset().getObservableProperty().getIdentifier();
+        if (observation instanceof ComplexDataEntity) {
+            for (DataEntity<?> contentObservation : ((ComplexDataEntity)observation).getValue()) {
+                String value = getValueAsStringForObservedProperty(contentObservation, definition);
+                if (!Strings.isNullOrEmpty(value)) {
+                    return value;
+                }
+            }
+        } else if (observedProperty.equals(definition)) {
+            if (observation instanceof QuantityDataEntity) {
+                return String.valueOf(((QuantityDataEntity) observation).getValue());
+            } else if (observation instanceof BooleanDataEntity) {
+                return String.valueOf(((BooleanDataEntity) observation).getValue());
+            } else if (observation instanceof CategoryDataEntity) {
+                return String.valueOf(((CategoryDataEntity) observation).getValue());
+            } else if (observation instanceof CountDataEntity) {
+                return String.valueOf(((CountDataEntity) observation).getValue());
+            } else if (observation instanceof TextDataEntity) {
+                return String.valueOf(((TextDataEntity) observation).getValue());
+            } else if (observation instanceof GeometryDataEntity) {
+                final WKTWriter writer = new WKTWriter();
+                return writer.write(JTSConverter.convert(((GeometryDataEntity) observation).getValue().getGeometry()));
+            } else if (observation instanceof BlobDataEntity) {
+                return String.valueOf(((BlobDataEntity) observation).getValue());
+            }
+        }
+        return "";
+    }
+
+    private String getSamplingGeometry(DataEntity<?> observation, String tokenSeparator,
+            SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder)
+            throws OwsExceptionReport {
+        SweVector vector = getVector(sweAbstractDataComponent);
+        if (vector != null && vector.isSetCoordinates()) {
+            final Map<Integer, String> valueOrder = new HashMap<>(0);
+            addOrderAndVectorDefinitionToMap(vector.getCoordinates(), valueOrder, new IncDecInteger());
+            final StringBuilder builder = new StringBuilder();
+            Geometry samplingGeometry = null;
+            if (observation.isSetGeometryEntity()) {
+                samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                        JTSConverter.convert(observation.getGeometryEntity().getGeometry()));
+            }
+            for (final Integer intger : valueOrder.keySet()) {
+                final String definition = valueOrder.get(intger);
+                if (samplingGeometry != null && samplingGeometry instanceof Point) {
+                    Coordinate coordinate = samplingGeometry.getCoordinate();
+                    if (helper.hasAltitudeName(definition) && checkCoordinate(coordinate.z)) {
+                        builder.append(coordinate.z);
+                    } else if (helper.hasNorthingName(definition)) {
+                        if (getGeomtryHandler().isNorthingFirstEpsgCode(samplingGeometry.getSRID())) {
+                            builder.append(coordinate.x);
+                        } else {
+                            builder.append(coordinate.y);
+                        }
+                    } else if (helper.hasEastingName(definition)) {
+                        if (getGeomtryHandler().isNorthingFirstEpsgCode(samplingGeometry.getSRID())) {
+                            builder.append(coordinate.y);
+                        } else {
+                            builder.append(coordinate.x);
+                        }
+                    } else {
+                        builder.append(noDataPlaceholder);
+                    }
+                } else {
+                    builder.append(noDataPlaceholder);
+                }
+                builder.append(tokenSeparator);
+            }
+            return builder.delete(builder.lastIndexOf(tokenSeparator), builder.length()).toString();
+        }
+        return noDataPlaceholder;
+    }
+
+    private boolean checkCoordinate(Double value) {
+        return value != null;
+    }
+
+    private SweVector getVector(SweAbstractDataComponent sweAbstractDataComponent) throws CodedException {
+        if (sweAbstractDataComponent instanceof SweDataArray
+                && ((SweDataArray) sweAbstractDataComponent).getElementType() instanceof SweDataRecord) {
+            final SweDataArray dataArray = (SweDataArray) sweAbstractDataComponent;
+            return getVector(((SweDataRecord) dataArray.getElementType()).getFields());
+        } else if (sweAbstractDataComponent instanceof SweDataRecord) {
+            final SweDataRecord dataRecord = (SweDataRecord) sweAbstractDataComponent;
+            return getVector(dataRecord.getFields());
+        } else if (sweAbstractDataComponent instanceof SweVector) {
+            return (SweVector)sweAbstractDataComponent;
+        }
+        return null;
+    }
+
+    private SweVector getVector(List<SweField> fields) throws CodedException {
+        for (SweField sweField : fields) {
+            if (isVector(sweField) && checkVectorForSamplingGeometry(sweField)) {
+                return (SweVector)sweField.getElement();
+            }
+        }
+        return null;
+    }
+
+    public boolean checkDataRecordForObservedProperty(SweField swefield, String observedProperty) throws CodedException {
+        if (isDataRecord(swefield) && !checkDefinition(swefield, observedProperty) && !checkDataRecordForParameter(swefield)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "The swe:DataRecord element is currently only supported for the definition of the observedProperty and om:parameter. "
+                            + "The definition should be '%s' or '%s'!",
+                            observedProperty, OmConstants.PARAMETER);
+        }
+        return true;
+    }
+
+    public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+            .withMessage(
+                    "The featureOfInterest is not defined in the observationTemplate and the swe:DataRecord does not contain a featureOfInterest definition with '%s'!",
+                    OM_FEATURE_OF_INTEREST);
+        }
+        return true;
+    }
+
+    public boolean checkForProcedure(SweField swefield) throws CodedException {
+        if (isText(swefield) && !checkDefinition(swefield, OM_PROCEDURE)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+            .withMessage(
+                    "The procedure is not defined in the observationTemplate and the swe:DataRecord does not contain a procedure definition with '%s'!",
+                    OM_PROCEDURE);
+        }
+        return true;
+    }
+
+    public boolean isText(SweField swefield) {
+        return swefield != null && swefield.getElement() != null && swefield.getElement() instanceof SweText;
+    }
+
+    public boolean checkVectorForSamplingGeometry(SweField swefield) throws CodedException {
+        if (isVector(swefield) && !checkDefinition(swefield, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "The swe:Vector element is currently only supported for the definition of the samplingGeometry with definition '%s'!",
+                            OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        }
+        return true;
+    }
+
+    public boolean checkDefinition(SweField sweField, String definition) {
+        if (sweField != null && sweField.getElement().isSetDefinition()) {
+            return definition.equals(sweField.getElement().getDefinition());
+        }
+        return false;
+    }
+
+    public boolean isDataRecord(SweField sweField) {
+        return sweField.getElement() instanceof SweDataRecord;
+    }
+
+    public boolean isVector(SweField sweField) {
+        return sweField.getElement() instanceof SweVector;
+    }
+
+    public boolean checkDataRecordForParameter(SweField swefield) throws CodedException {
+        if (isDataRecord(swefield) && !checkDefinition(swefield, OmConstants.OM_PARAMETER)) {
+            return false;
+        }
+        return true;
+
+    }
+
+    private GeometryHandler getGeomtryHandler() {
+        return geometryHandler;
+    }
+
+}

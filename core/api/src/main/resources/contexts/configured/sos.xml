@@ -1,0 +1,84 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="xmlResponseWriterFactory"
+          class="org.n52.iceland.response.XmlResponseWriterFactory" />
+
+    <bean id="abstractServiceResponseWriterFactory"
+          class="org.n52.sos.coding.encode.AbstractServiceResponseWriterFactory"/>
+
+    <bean id="binaryAttachmentResponseWriterFactory"
+          class="org.n52.sos.coding.encode.BinaryAttachmentResponseWriterFactory"/>
+
+    <bean id="batchOperationHandler"
+          class="org.n52.sos.ds.BatchOperationHandler"/>
+
+    <bean id="capabilitiesExtensionService"
+          class="org.n52.sos.config.json.JsonCapabilitiesExtensionService" />
+
+    <bean id="responseFormatRepository"
+          class="org.n52.sos.coding.encode.ResponseFormatRepository"/>
+
+    <bean id="responseFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ResponseFormatRepositoryInitializer"/>
+
+  <bean id="procedureDescriptionFormatRepository"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
+
+   <bean id="procedureDescriptionFormatRepositoryInitializer"
+          class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepositoryInitializer"/>
+
+    <bean id="geometryHandler"
+          class="org.n52.sos.util.GeometryHandler" />
+
+    <bean id="encoderRepository"
+          class="org.n52.sos.coding.encode.SosEncoderRepository" />
+
+    <bean id="configurator"
+          class="org.n52.sos.service.Configurator" />
+
+    <bean id="procedureDescriptionSettings"
+          class="org.n52.sos.service.ProcedureDescriptionSettings" />
+
+    <bean id="transactionalSecurityConfiguration"
+          class="org.n52.sos.service.TransactionalSecurityConfiguration" />
+
+    <bean id="batchRequestOperator"
+          class="org.n52.sos.request.operator.BatchRequestOperator"/>
+
+    <bean id="procedureRequestSettingProvider"
+          class="org.n52.sos.request.ProcedureRequestSettingProvider"/>
+
+    <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <description>Used to wire up SOS specific activation persistence.</description>
+        <property name="listeners">
+            <map>
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatListener}"/>
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatListener}" />
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="procedureDescriptionFormatRepository" value="#{activationService.procedureDescriptionFormatInitializer}" />
+                <entry key-ref="responseFormatRepository" value="#{activationService.responseFormatInitializer}" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="reportingHeaderSQLiteManager"
+          class="org.n52.sos.config.sqlite.ReportingHeaderSQLiteManager">
+        <property name="sessionFactory">
+            <bean class="org.n52.sos.config.sqlite.SQLiteSessionFactory">
+                <property name="databaseName" value="eReportingHeader" />
+                <property name="annotatedClasses">
+                    <array>
+                        <value>org.n52.sos.config.sqlite.entities.JSONFragment</value>
+                    </array>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

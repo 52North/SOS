@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,11 +30,11 @@ package org.n52.sos.util;
 
 /**
  * Interface for SQL constanst
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public interface SQLConstants extends Constants {
+public interface SQLConstants {
 
     String SELECT = "SELECT";
 

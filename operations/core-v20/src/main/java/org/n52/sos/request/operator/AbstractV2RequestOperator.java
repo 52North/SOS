@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,52 +28,42 @@
  */
 package org.n52.sos.request.operator;
 
+import java.util.Collections;
 import java.util.Map;
 
-import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.util.SosHelper;
-
-import com.google.common.base.Strings;
+import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
- * @param <D>
- *            The OperationDAO implementation class
- * @param <Q>
- *            the request type
- * @param <A>
- *            the response type
- * 
- * @author Christian Autermann <c.autermann@52north.org>
+ * @param <D> The OperationDAO implementation class
+ * @param <Q> the request type
+ * @param <A> the response type
+ *
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public abstract class AbstractV2RequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
+
     public AbstractV2RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);
     }
 
     @Override
     public Map<String, String> getAdditionalSchemaImports() {
-        return null;
+        return Collections.emptyMap();
     }
 
     @Override
     public Map<String, String> getAdditionalPrefixes() {
-        return null;
+        return Collections.emptyMap();
     }
-    
-    protected void checkExtensions(final AbstractServiceRequest<?> request, final CompositeOwsException exceptions) {
-        if (request.isSetExtensions()) {
-            // currently nothing to check
-        }
+
+    protected void checkExtensions(OwsServiceRequest request, CompositeOwsException exceptions) {
+        // currently nothing to check
     }
 }

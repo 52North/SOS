@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,39 +30,24 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.n52.sos.ds.AbstractFeatureQueryHandler;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.util.ReferencedEnvelope;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
-@Deprecated
-public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
-
-    @Override
-    public Collection<String> getFeatureIDs(SpatialFilter filter, Object connection) throws OwsExceptionReport {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection) throws
-            OwsExceptionReport {
-        return new SosEnvelope(null, getStorageEPSG());
-    }
+public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
     public String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
@@ -70,19 +55,6 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
             return samplingFeature.getIdentifier();
         }
         return UUID.randomUUID().toString();
-    }
-
-    @Override
-    public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
-            throws OwsExceptionReport {
-        return new SamplingFeature(new CodeWithAuthority("feature"));
-    }
-
-    @Override
-    public Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list,
-            Object connection, String version) throws OwsExceptionReport {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override
@@ -102,12 +74,22 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
     }
 
     @Override
-    public SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
-        return new SosEnvelope(null, getStorageEPSG());
+    public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        return new ReferencedEnvelope(null, getStorageEPSG());
     }
 
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
+
+    @Override
+    public int getStorageEPSG() {
+        return 0;
+    }
+
+    @Override
+    public int getStorage3DEPSG() {
+        return 0;
     }
 }

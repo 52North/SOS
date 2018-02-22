@@ -14,8 +14,8 @@
         </id>
        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.TProcedure"  foreign-key="validProcedureTimeProcedureFk">
             <column name="procedureId" not-null="true">
-                <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
-            </column>    
+				<comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
+			</column>
         </many-to-one>
         <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat"  foreign-key="validProcProcDescFormatFk">
             <column name="procedureDescriptionFormatId" not-null="true">

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,6 +38,8 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import org.n52.janmayen.i18n.LocaleHelper;
+
 /**
  * TODO JavaDoc
  *
@@ -51,8 +53,8 @@ public class LocaleHelperTest {
 
     @Test@Ignore
     public void testSerialization() {
-        String string = LocaleHelper.toString(Locale.GERMAN);
-        errors.checkThat(LocaleHelper.fromString(string), is(Locale.GERMAN));
+        String string = LocaleHelper.encode(Locale.GERMAN);
+        errors.checkThat(LocaleHelper.decode(string, null), is(Locale.GERMAN));
     }
 
     @Test@Ignore
@@ -60,15 +62,15 @@ public class LocaleHelperTest {
 
         //IETF BCP 47
         // ISO 639 alpha-2 or alpha-3
-        String string = LocaleHelper.toString(Locale.GERMAN);
+        String string = LocaleHelper.encode(Locale.GERMAN);
         //System.out.println(Locale.GERMAN.toLanguageTag());
-        errors.checkThat(LocaleHelper.fromString(string), is(Locale.GERMAN));
-        errors.checkThat(LocaleHelper.fromString("de_DE"), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.fromString("de_DE"), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.fromString("de DE"), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.fromString("de-DE"), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.fromString("de-de"), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.fromString("de-DE"), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.fromString("deu"), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode(string, null), is(Locale.GERMAN));
+        errors.checkThat(LocaleHelper.decode("de_DE", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de_DE", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de DE", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de-DE", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de-de", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de-DE", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("deu", null), is(Locale.GERMANY));
     }
 }

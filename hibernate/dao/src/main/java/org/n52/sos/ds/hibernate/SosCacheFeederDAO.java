@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,33 +32,44 @@ import static org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider.CACH
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
-import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Validation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.I18NSettings;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.CacheFeederHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
+import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
+
 /**
  * Implementation of the interface CacheFeederDAO
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
-public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFeederDAO {
+public class SosCacheFeederDAO implements CacheFeederHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosCacheFeederDAO.class);
 
@@ -67,7 +78,21 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
      * update executor service.
      */
     private int cacheThreadCount = 5;
+    private Locale defaultLocale;
+    private I18NDAORepository i18NDAORepository;
+    private FeatureQueryHandler featureQueryHandler;
+    private OwsServiceMetadataRepository serviceMetadataRepository;
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
+    @Inject
+    private ObservationSettingProvider observationSettingProvider;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+    
     /**
      * Get the defined cache thread count or the maximum connection count minus
      * one to avoid hanging threads during the cache update.
@@ -76,24 +101,56 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
      *         one
      */
     public int getCacheThreadCount() {
-        int maxConnections = getConnectionProvider().getMaxConnections();
+        int maxConnections = sessionHolder.getConnectionProvider().getMaxConnections();
         return maxConnections > 0 && cacheThreadCount >= maxConnections ? maxConnections - 1 : cacheThreadCount;
     }
 
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLocale(String defaultLocale) {
+        this.defaultLocale = new Locale(defaultLocale);
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     @Setting(CACHE_THREAD_COUNT)
-    public void setCacheThreadCount(int threads) throws ConfigurationException {
+    public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
         this.cacheThreadCount = threads;
     }
 
     @Override
-    public void updateCache(WritableContentCache cache) throws OwsExceptionReport {
+    public void updateCache(SosWritableContentCache cache) throws OwsExceptionReport {
         checkCacheNotNull(cache);
         List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
         Session session = null;
         try {
-            InitialCacheUpdate update = new InitialCacheUpdate(getCacheThreadCount());
-            session = getSession();
+            InitialCacheUpdate update = new InitialCacheUpdate(
+                    this.cacheThreadCount,
+                    this.defaultLocale,
+                    this.i18NDAORepository,
+                    this.featureQueryHandler,
+                    this.sessionHolder.getConnectionProvider(),
+                    this.serviceMetadataRepository,
+                    this.daoFactory);
+            session = this.sessionHolder.getSession();
             update.setCache(cache);
             update.setErrors(errors);
             update.setSession(session);
@@ -108,28 +165,34 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
             LOGGER.error("Error while updating ContentCache!", e);
             errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
-            returnSession(session);
+            this.sessionHolder.returnSession(session);
         }
         if (!errors.isEmpty()) {
             throw new CompositeOwsException(errors);
         }
-        
+
     }
 
     @Override
-    public void updateCacheOfferings(WritableContentCache cache, Collection<String> offeringsNeedingUpdate)
+    public void updateCacheOfferings(SosWritableContentCache cache, Collection<String> offeringsNeedingUpdate)
             throws OwsExceptionReport {
         checkCacheNotNull(cache);
         if (CollectionHelper.isEmpty(offeringsNeedingUpdate)) {
             return;
         }
         List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
-        Session session = getSession();
-        OfferingCacheUpdate update = new OfferingCacheUpdate(getCacheThreadCount(), offeringsNeedingUpdate);
+        Session session = this.sessionHolder.getSession();
+        OfferingCacheUpdate update = new OfferingCacheUpdate(
+                this.cacheThreadCount,
+                this.defaultLocale,
+                this.i18NDAORepository,
+                this.featureQueryHandler,
+                this.sessionHolder.getConnectionProvider(),
+                this.daoFactory);
         update.setCache(cache);
         update.setErrors(errors);
         update.setSession(session);
-        
+
         LOGGER.info("Starting offering cache update for {} offering(s)", offeringsNeedingUpdate.size());
         long cacheUpdateStartTime = System.currentTimeMillis();
 
@@ -139,7 +202,7 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
             LOGGER.error("Error while updating ContentCache!", e);
             errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
-            returnSession(session);
+            this.sessionHolder.returnSession(session);
         }
 
         logCacheLoadTime(cacheUpdateStartTime);
@@ -152,18 +215,13 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
     private void checkCacheNotNull(WritableContentCache cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
-        }        
+        }
     }
 
     private void logCacheLoadTime(long startTime) {
         Period cacheLoadPeriod = new Period(startTime, System.currentTimeMillis());
         LOGGER.info("Cache load finished in {} ({} seconds)",
                 PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
-                cacheLoadPeriod.toStandardSeconds());         
-    }
-
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+                cacheLoadPeriod.toStandardSeconds());
     }
 }

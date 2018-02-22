@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,21 +28,33 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.cache.ctrl.CacheFactory;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.coding.SupportedTypeRepository;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.InMemoryCacheImpl;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
-public class CompleteCacheUpdate extends CacheFeederDAOCacheUpdate {
+public class CompleteCacheUpdate
+        extends CacheFeederDAOCacheUpdate {
+
+    private SupportedTypeRepository supportedTypeRepository;
+
+    public CompleteCacheUpdate(CacheFeederHandler cacheFeederDAO, SupportedTypeRepository supportedTypeRepository) {
+        super(cacheFeederDAO);
+        this.supportedTypeRepository = supportedTypeRepository;
+    }
+
     @Override
     public void execute() {
         try {
-            WritableContentCache cache = CacheFactory.getInstance().create();
-            getDao().updateCache(cache);
+            SosWritableContentCache cache = (SosWritableContentCache) new InMemoryCacheImpl()
+                    .setSupportedTypeRepository(supportedTypeRepository);
+            getCacheFeederDAO().updateCache(cache);
             setCache(cache);
         } catch (OwsExceptionReport ex) {
             fail(ex);

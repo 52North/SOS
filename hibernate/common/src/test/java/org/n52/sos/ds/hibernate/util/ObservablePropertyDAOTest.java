@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,13 +42,15 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
 
 
 public class ObservablePropertyDAOTest extends HibernateTestCase {
@@ -60,10 +62,10 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         try {
             transaction = session.beginTransaction();
 
-            ScrollableIterable<ObservableProperty> iter
+            ScrollableIterable<PhenomenonEntity> iter
                     = ScrollableIterable.fromCriteria(session
-                            .createCriteria(ObservableProperty.class));
-            for (ObservableProperty observableProperty : iter) {
+                            .createCriteria(PhenomenonEntity.class));
+            for (PhenomenonEntity observableProperty : iter) {
                 session.delete(observableProperty);
             }
             session.flush();
@@ -95,73 +97,81 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         OmObservableProperty simpleObservableProperty = new OmObservableProperty("single");
 
         Session session = getSession();
+        Transaction transaction = null;
         try {
+            transaction = session.beginTransaction();
             List<AbstractPhenomenon> abstractPhenomenons
                     = Arrays.asList(compositePhenomenon, simpleObservableProperty);
 
             check(save(abstractPhenomenons, session));
+            session.flush();
+            transaction.commit();
             check(load(session));
-
+        } catch (HibernateException ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw ex;
         } finally {
             returnSession(session);
         }
     }
 
-    protected void check(Map<String, ObservableProperty> observableProperties) {
+    protected void check(Map<String, PhenomenonEntity> observableProperties) {
         assertThat(observableProperties, is(notNullValue()));
         errors.checkThat(observableProperties.keySet(), hasSize(5));
 
-        assertThat(observableProperties.get("parent"), is(instanceOf(ObservableProperty.class)));
-        assertThat(observableProperties.get("child1"), is(instanceOf(ObservableProperty.class)));
-        assertThat(observableProperties.get("child2"), is(instanceOf(ObservableProperty.class)));
-        assertThat(observableProperties.get("child3"), is(instanceOf(ObservableProperty.class)));
-        assertThat(observableProperties.get("single"), is(instanceOf(ObservableProperty.class)));
+        assertThat(observableProperties.get("parent"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get("child1"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get("child2"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get("child3"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get("single"), is(instanceOf(PhenomenonEntity.class)));
 
-        ObservableProperty parent = (ObservableProperty) observableProperties.get("parent");
-        ObservableProperty child1 = (ObservableProperty) observableProperties.get("child1");
-        ObservableProperty child2 = (ObservableProperty) observableProperties.get("child2");
-        ObservableProperty child3 = (ObservableProperty) observableProperties.get("child3");
-        ObservableProperty single = (ObservableProperty) observableProperties.get("single");
+        PhenomenonEntity parent = observableProperties.get("parent");
+        PhenomenonEntity child1 = observableProperties.get("child1");
+        PhenomenonEntity child2 = observableProperties.get("child2");
+        PhenomenonEntity child3 = observableProperties.get("child3");
+        PhenomenonEntity single = observableProperties.get("single");
 
         errors.checkThat(parent.isHiddenChild(), is(false));
         errors.checkThat(parent.getParents(), is(empty()));
-        errors.checkThat(parent.getChilds(), containsInAnyOrder(
-                         (ObservableProperty) child1,
-                         (ObservableProperty) child2,
-                         (ObservableProperty) child3));
+        errors.checkThat(parent.getChildren(), containsInAnyOrder(child1, child2, child3));
 
         errors.checkThat(child1.isHiddenChild(), is(true));
-        errors.checkThat(child1.getParents(), contains((ObservableProperty) parent));
-        errors.checkThat(child1.getChilds(), is(empty()));
+        errors.checkThat(child1.getParents(), contains(parent));
+        errors.checkThat(child1.getChildren(), is(empty()));
 
         errors.checkThat(child2.isHiddenChild(), is(true));
-        errors.checkThat(child2.getParents(), contains((ObservableProperty) parent));
-        errors.checkThat(child2.getChilds(), is(empty()));
+        errors.checkThat(child2.getParents(), contains(parent));
+        errors.checkThat(child2.getChildren(), is(empty()));
 
         errors.checkThat(child3.isHiddenChild(), is(true));
-        errors.checkThat(child3.getParents(), contains((ObservableProperty) parent));
-        errors.checkThat(child3.getChilds(), is(empty()));
+        errors.checkThat(child3.getParents(), contains(parent));
+        errors.checkThat(child3.getChildren(), is(empty()));
 
         errors.checkThat(single.isHiddenChild(), is(false));
         errors.checkThat(single.getParents(), is(empty()));
-        errors.checkThat(single.getChilds(), is(empty()));
+        errors.checkThat(single.getChildren(), is(empty()));
     }
 
-    protected Map<String, ObservableProperty> save(List<AbstractPhenomenon> abstractPhenomenons, Session session) {
-        ObservablePropertyDAO dao = new ObservablePropertyDAO();
-        Collection<ObservableProperty> savedObservableProperties
+    protected Map<String, PhenomenonEntity> save(List<AbstractPhenomenon> abstractPhenomenons, Session session) {
+        I18NDAORepository i18NDAORepository = new I18NDAORepository();
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(i18NDAORepository);
+        ObservablePropertyDAO dao = daoFactory.getObservablePropertyDAO();
+        Collection<PhenomenonEntity> savedObservableProperties
                 = dao.getOrInsertObservableProperty(abstractPhenomenons, false, session);
         return asMap(savedObservableProperties);
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, ObservableProperty> load(Session session) {
-        return asMap(session.createCriteria(ObservableProperty.class).list());
+    protected Map<String, PhenomenonEntity> load(Session session) {
+        return asMap(session.createCriteria(PhenomenonEntity.class).list());
     }
 
-    protected Map<String, ObservableProperty> asMap(Collection<ObservableProperty> collection) {
-        Map<String, ObservableProperty> observableProperties = new HashMap<>(collection.size());
-        for (ObservableProperty observableProperty : collection) {
+    protected Map<String, PhenomenonEntity> asMap(Collection<PhenomenonEntity> collection) {
+        Map<String, PhenomenonEntity> observableProperties = new HashMap<>(collection.size());
+        for (PhenomenonEntity observableProperty : collection) {
             observableProperties.put(observableProperty.getIdentifier(), observableProperty);
         }
         return observableProperties;

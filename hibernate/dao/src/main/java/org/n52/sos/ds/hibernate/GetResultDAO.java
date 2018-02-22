@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,21 +28,39 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.n52.sos.util.CollectionHelper.isEmpty;
-import static org.n52.sos.util.CollectionHelper.isNotEmpty;
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.shetland.util.CollectionHelper.isEmpty;
+import static org.n52.shetland.util.CollectionHelper.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.AbstractGetResultDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.AbstractGetResultHandler;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
@@ -59,63 +77,103 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.response.GetResultResponse;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.ConformanceClasses;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of the abstract class AbstractGetResultDAO
+ * Implementation of the abstract class AbstractGetResultHandler
  *
  * @since 4.0.0
  *
  */
-public class GetResultDAO extends AbstractGetResultDAO {
+public class GetResultDAO extends AbstractGetResultHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+    private FeatureQueryHandler featureQueryHandler;
+    private final EntitiyHelper entitiyHelper = new EntitiyHelper();
+    private DecoderRepository decoderRepository;
+    private DaoFactory daoFactory;
+    private GeometryHandler geometryHandler;
     private ResultHandlingHelper helper = new ResultHandlingHelper();
 
-    /**
-     * constructor
-     */
     public GetResultDAO() {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    protected DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    protected <T> T decode(String xml) throws DecodingException {
+        try {
+            return decode(XmlObject.Factory.parse(xml));
+        } catch (XmlException ex) {
+            throw new DecodingException(ex);
+        }
+    }
+
+    protected <T> T decode(XmlObject xbObject) throws DecodingException {
+        final DecoderKey key = getDecoderKey(xbObject);
+        final Decoder<T, XmlObject> decoder = getDecoderRepository().getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xbObject);
+    }
+
+    protected DecoderKey getDecoderKey(XmlObject doc) {
+        return new XmlNamespaceDecoderKey(XmlHelper.getNamespace(doc), doc.getClass());
     }
 
     @Override
-    public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
+    public GetResultResponse getResult(GetResultRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            final GetResultResponse response = new GetResultResponse();
-            response.setService(request.getService());
-            response.setVersion(request.getVersion());
-            final Set<String> featureIdentifier = QueryHelper.getFeatures(request, session);
-            final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
+            GetResultResponse response = new GetResultResponse(request.getService(), request.getVersion());
+            Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
+            List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
             if (isNotEmpty(resultTemplates)) {
                 final SosResultEncoding sosResultEncoding =
                         new SosResultEncoding(resultTemplates.get(0).getResultEncoding());
@@ -137,28 +195,29 @@ public class GetResultDAO extends AbstractGetResultDAO {
                         sosResultEncoding, sosResultStructure));
             }
             return response;
-        } catch (final HibernateException he) {
+        } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
                     .setStatus(INTERNAL_SERVER_ERROR);
+        } catch (DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
         } finally {
             sessionHolder.returnSession(session);
         }
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        try {
-            Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-            }
-            sessionHolder.returnSession(session);
-        } catch (OwsExceptionReport owse) {
-            LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
-        return super.getConformanceClasses();
+        return super.getConformanceClasses(service, version);
     }
     
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+
     @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(ResultTemplate.class);
@@ -191,15 +250,15 @@ public class GetResultDAO extends AbstractGetResultDAO {
             return null; // because no features where found regarding the
                          // filters
         } else if (isNotEmpty(featureIdentifiers)) {
-            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).add(
+            c.createCriteria(AbstractLegacyObservation.FEATURE_OF_INTEREST).copy(
                     Restrictions.in(FeatureOfInterest.IDENTIFIER, featureIdentifiers));
         }
         if (request.isSetObservedProperty()) {
-            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).add(
+            c.createCriteria(AbstractLegacyObservation.OBSERVABLE_PROPERTY).copy(
                     Restrictions.eq(ObservableProperty.IDENTIFIER, request.getObservedProperty()));
         }
         if (!Strings.isNullOrEmpty(procedure)) {
-            c.createCriteria(Observation.PROCEDURE).add(
+            c.createCriteria(Observation.PROCEDURE).copy(
                     Restrictions.eq(Procedure.IDENTIFIER, procedure));
         }
         if (request.isSetOffering()) {
@@ -237,11 +296,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
         final Criteria c = createCriteriaFor(AbstractSeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(procedure, request.getObservedProperty(), request.getOffering(), featureIdentifiers, session);
+        List<Series> series = daoFactory.getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(AbstractSeriesObservation.SERIES, series));
+            c.copy(Restrictions.in(AbstractSeriesObservation.SERIES, series));
         }
 
         if (request.isSetOffering()) {
@@ -284,7 +343,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
      *            Offering identifier ot add
      */
     private void addOfferingRestriction(Criteria c, String offering) {
-        c.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+        c.createCriteria(AbstractObservation.OFFERINGS).copy(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
 
     /**
@@ -303,7 +362,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
      */
     private void addTemporalFilter(Criteria c, List<TemporalFilter> temporalFilter) throws UnsupportedTimeException,
             UnsupportedValueReferenceException, UnsupportedOperatorException {
-        c.add(TemporalRestrictions.filter(temporalFilter));
+        c.add(SosTemporalRestrictions.filter(temporalFilter));
     }
 
     /**
@@ -320,7 +379,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
     @SuppressWarnings("rawtypes")
     private Criteria createCriteriaFor(Class clazz, Session session) {
         return session.createCriteria(clazz).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                .add(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
+                .copy(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
                 .addOrder(Order.asc(AbstractLegacyObservation.PHENOMENON_TIME_START));
     }
 
@@ -339,11 +398,10 @@ public class GetResultDAO extends AbstractGetResultDAO {
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             if (GeometryHandler.getInstance().isSpatialDatasource()) {
-                criteria.add(SpatialRestrictions.filter(
+                criteria.copy(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                request.getSpatialFilter().getGeometry())));
+                        geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
             } else {
                 // TODO add filter with lat/lon
                 LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
@@ -351,4 +409,6 @@ public class GetResultDAO extends AbstractGetResultDAO {
             
         }
     }
+
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,26 +34,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.SessionFactoryProvider;
-import org.n52.sos.util.StringHelper;
+import org.hibernate.boot.Metadata;
+
+import com.google.common.base.Strings;
 
 /**
  * MS SQL Server datasource
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
-    private static final String TN_FEATURE_OF_INTEREST = "featureOfInterest";
+    private static final String TN_FEATURE_OF_INTEREST = "feature";
 
     private static final String TN_OBSERVATION = "observation";
-    
+
     private static final String TN_SERIES = "series";
 
     private static final String CN_IDENTIFIER = "identifier";
+
+    private static final String CN_FROM_LEVEL_VALUE = "from_level";
+
+    private static final String CN_TO_LEVEL_VALUE = "to_level";
 
     private static final String CN_URL = "url";
 
@@ -77,7 +81,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
     @Override
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
-        List<String> statements = new ArrayList<String>();
+        List<String> statements = new ArrayList<>();
         for (TableColumn tableColumn : getTableColumns(databaseSettings)) {
             statements.add(getGetAndDropConstraint(tableColumn.getTable(), tableColumn.getColumn(), databaseSettings));
             statements
@@ -96,17 +100,13 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
     }
 
     private Set<TableColumn> getTableColumns(Map<String, Object> s) {
-        Set<TableColumn> tableColumns = new HashSet<SqlServerDatasource.TableColumn>();
+        Set<TableColumn> tableColumns = new HashSet<>();
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_IDENTIFIER));
         tableColumns.add(new TableColumn(TN_FEATURE_OF_INTEREST, CN_URL));
         tableColumns.add(new TableColumn(TN_OBSERVATION, CN_IDENTIFIER));
-        if (s.containsKey(SessionFactoryProvider.HIBERNATE_DIRECTORY)
-                && (((String) s.get(SessionFactoryProvider.HIBERNATE_DIRECTORY))
-                        .contains(HibernateDatasourceConstants.HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH)
-                        || ((String) s.get(SessionFactoryProvider.HIBERNATE_DIRECTORY)).contains(
-                                HibernateDatasourceConstants.HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH))) {
-            tableColumns.add(new TableColumn(TN_SERIES, CN_IDENTIFIER));
-        }
+        tableColumns.add(new TableColumn(TN_OBSERVATION, CN_FROM_LEVEL_VALUE));
+        tableColumns.add(new TableColumn(TN_OBSERVATION, CN_TO_LEVEL_VALUE));
+        tableColumns.add(new TableColumn(TN_SERIES, CN_IDENTIFIER));
         return tableColumns;
     }
 
@@ -143,10 +143,10 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
     private String getQualifiedTable(String database, String schema, String table) {
         StringBuilder builder = new StringBuilder();
-        if (StringHelper.isNotEmpty(database)) {
+        if (!Strings.isNullOrEmpty(database)) {
             builder.append(database).append(".");
         }
-        if (StringHelper.isNotEmpty(schema)) {
+        if (!Strings.isNullOrEmpty(schema)) {
             builder.append(schema);
         }
         builder.append(table);

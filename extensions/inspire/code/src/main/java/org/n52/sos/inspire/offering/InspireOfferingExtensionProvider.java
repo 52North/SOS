@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,57 +28,61 @@
  */
 package org.n52.sos.inspire.offering;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import org.n52.faroe.annotation.Setting;
+import org.n52.shetland.inspire.InspireConstants;
+import org.n52.shetland.inspire.InspireObject;
+import org.n52.shetland.ogc.ows.extension.CapabilitiesExtension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.inspire.AbstractInspireProvider;
-import org.n52.sos.inspire.InspireConstants;
-import org.n52.sos.inspire.InspireHelper;
-import org.n52.sos.inspire.InspireSupportedCRS;
-import org.n52.sos.inspire.InspireSupportedLanguages;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
-import org.n52.sos.ogc.swes.OfferingExtensionProvider;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
-
-import com.google.common.collect.Sets;
+import org.n52.sos.inspire.settings.InspireSettings;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionProvider;
 
 /**
- * Implementation of {@link OfferingExtensionProvider} for INSPIRE
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * Implementation of {@link SosObservationOfferingExtensionProvider} for INSPIRE
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
-public class InspireOfferingExtensionProvider extends AbstractInspireProvider implements OfferingExtensionProvider {
+public class InspireOfferingExtensionProvider extends AbstractInspireProvider
+        implements SosObservationOfferingExtensionProvider {
+    private static final Set<SosObservationOfferingExtensionKey> KEYS = Collections
+            .singleton(new SosObservationOfferingExtensionKey(SosConstants.SOS,
+                                                Sos2Constants.SERVICEVERSION,
+                                                InspireConstants.INSPIRE));
 
-    Set<OfferingExtensionKey> providerKeys = Sets.newHashSet(new OfferingExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE));
+    private boolean enabled;
 
-    public InspireOfferingExtensionProvider() {
+    @Setting(InspireSettings.INSPIRE_ENABLED_KEY)
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
-    public Set<OfferingExtensionKey> getOfferingExtensionKeyTypes() {
-        return providerKeys;
+    public Set<SosObservationOfferingExtensionKey> getKeys() {
+        return Collections.unmodifiableSet(KEYS);
     }
 
     @Override
-    public SwesExtensions getOfferingExtensions(String identifier) {
-        SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedLanguages>().setValue(
-                getSupportedLanguages()).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedCRS>().setValue(getSupportedCRS())
-                .setNamespace(InspireConstants.NS_INSPIRE_COMMON));
-        return extensions;
+    public Extensions getOfferingExtensions(String identifier) {
+        return Stream.of(getSupportedLanguages(), getSupportedCRS())
+                .map(o -> new CapabilitiesExtension<InspireObject>(o)
+                        .setNamespace(InspireConstants.NS_INSPIRE_COMMON))
+                .collect(Extensions::new,
+                         Extensions::addExtension,
+                         Extensions::addExtension);
     }
 
     @Override
     public boolean hasExtendedOfferingFor(String identifier) {
-    	if (InspireHelper.getInstance().isEnabled()) {
-    		 return getCache().getOfferings().contains(identifier);
-    	}
-        return false;
+        return this.enabled && getCache().getOfferings().contains(identifier);
     }
 
 }

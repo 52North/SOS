@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,26 +31,26 @@ package org.n52.sos.request.operator;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
 
 /**
  * @since 4.0.0
- * 
+ *
  * @param <D>
  *            The OperationDAO implementation class
  * @param <Q>
@@ -58,8 +58,9 @@ import org.n52.sos.response.AbstractServiceResponse;
  * @param <A>
  *            the response type
  */
-public abstract class AbstractV2TransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractTransactionalRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
+
     public AbstractV2TransactionalRequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operationName, requestType);
     }
@@ -73,7 +74,7 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     public Map<String, String> getAdditionalPrefixes() {
         return null;
     }
-    
+
     protected void checkForCompositeObservableProperty(AbstractPhenomenon observableProperty, Set<String> offerings,
             Enum<?> parameterName) throws InvalidParameterValueException {
         String observablePropertyIdentifier = observableProperty.getIdentifier();
@@ -82,23 +83,23 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
             throw new InvalidParameterValueException(parameterName, observablePropertyIdentifier);
         }
     }
-    
+
     private boolean hasObservations(String observableProperty, Set<String> offerings) {
-        if (offerings != null) {
-            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
-                    return true;
-                }
-            }
-        }
+//        if (offerings != null) {
+//            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
+//                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
-    
+
     protected void createCompositePhenomenon(OmObservation observation) {
         if (isComplexObservation(observation)) {
             OmObservationConstellation oc = observation.getObservationConstellation();
             AbstractPhenomenon observableProperty = oc.getObservableProperty();
-    
+
             if (!(observableProperty instanceof OmCompositePhenomenon)) {
                 final OmCompositePhenomenon parent;
                 parent = new OmCompositePhenomenon(observableProperty.getIdentifier());
@@ -107,7 +108,7 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
                 parent.setIdentifier(observableProperty.getIdentifierCodeWithAuthority());
                 parent.setDescription(observableProperty.getDescription());
                 parent.setName(observableProperty.getName());
-    
+
                 ComplexValue value = (ComplexValue) observation.getValue().getValue();
                 SweAbstractDataRecord dataRecord = value.getValue();
                 for (SweField field : dataRecord.getFields()) {
@@ -117,7 +118,7 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
                     child.setDescription(element.getDescription());
                     parent.addPhenomenonComponent(child);
                 }
-    
+
                 oc.setObservableProperty(parent);
             }
         }

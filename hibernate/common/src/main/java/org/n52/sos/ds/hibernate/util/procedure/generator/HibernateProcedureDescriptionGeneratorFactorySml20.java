@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,116 +28,90 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.Set;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
-import org.n52.sos.ogc.sensorML.v20.DescribedObject;
-import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.util.CollectionHelper;
+import javax.inject.Inject;
+
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.GeometryHandler;
 
 /**
- * Generator class for SensorML 2.0 procedure descriptions
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * Generator class for SensorML 1.0.1 procedure descriptions
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml20 implements HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactorySml20
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES = CollectionHelper.list(
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE), 
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
+    private final DaoFactory daoFactory;
+    private final SettingsService settingsService;
+    private final GeometryHandler geometryHandler;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final ProfileHandler profileHandler;
+
+    @Inject
+    public HibernateProcedureDescriptionGeneratorFactorySml20(DaoFactory daoFactory,
+                                                              SettingsService settingsService,
+                                                              GeometryHandler geometryHandler,
+                                                              I18NDAORepository i18NDAORepository,
+                                                              ContentCacheController cacheController,
+                                                              ProfileHandler profileHandler) {
+        this.daoFactory = daoFactory;
+        this.settingsService = settingsService;
+        this.geometryHandler = geometryHandler;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.profileHandler = profileHandler;
+    }
 
     @Override
-    public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {
-        return GENERATOR_KEY_TYPES;
+    public Set<HibernateProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(HibernateProcedureDescriptionGeneratorSml20.GENERATOR_KEY_TYPES);
     }
-    
+
     @Override
-    public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorSml20().generateProcedureDescription(procedure, i18n, session);
+    public HibernateProcedureDescriptionGenerator create(HibernateProcedureDescriptionGeneratorKey key) {
+        HibernateProcedureDescriptionGenerator generator
+                = new HibernateProcedureDescriptionGeneratorSml20(getProfileHandler(),
+                                                                  getGeometryHandler(),
+                                                                  getDaoFactory(),
+                                                                  getI18NDAORepository(),
+                                                                  getCacheController());
+        getSettingsService().configureOnce(key);
+        return generator;
     }
-        
-    private class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHibernateProcedureDescriptionGeneratorSml {
-        
-    
-        @Override
-        public SosProcedureDescription generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
-                throws OwsExceptionReport {
-            setLocale(i18n);
-            // 2 try to get position from entity
-            if (procedure.isSpatial()) {
-                // 2.1 if position is available -> system -> own class <- should
-                // be compliant with SWE lightweight profile
-                if (hasChildProcedure(procedure.getIdentifier())) {
-                    return createPhysicalSystem(procedure, session);
-                } else {
-                    return createPhysicalComponent(procedure, session);
-                }
-            } else {
-                // 2.2 if no position is available -> SimpleProcess -> own class
-//                if (hasChildProcedure(procedure.getIdentifier())) {
-//                    return createAggregateProcess(procedure, session);
-//                } else {
-                    return createSimpleProcess(procedure, session);
-//                }
-            }
-        }
 
-        private SosProcedureDescription createPhysicalComponent(Procedure procedure, Session session) throws OwsExceptionReport {
-            PhysicalComponent physicalComponent = new PhysicalComponent();
-            setIdentifier(physicalComponent, procedure);
-            setCommonValues(procedure, physicalComponent, session);
-            return physicalComponent;
-        }
-
-        private SosProcedureDescription createPhysicalSystem(Procedure procedure, Session session) throws OwsExceptionReport {
-            PhysicalSystem physicalSystem = new PhysicalSystem();
-            setIdentifier(physicalSystem, procedure);
-            setCommonValues(procedure, physicalSystem, session);
-            physicalSystem.setPosition(createPosition(procedure));
-            return physicalSystem;
-        }
-    
-        private SosProcedureDescription createSimpleProcess(Procedure procedure, Session session) throws OwsExceptionReport {
-            SimpleProcess simpleProcess = new SimpleProcess();
-            setIdentifier(simpleProcess, procedure);
-            setCommonValues(procedure, simpleProcess, session);
-            return simpleProcess;
-        }
-    
-        private SosProcedureDescription createAggregateProcess(Procedure procedure, Session session) throws OwsExceptionReport {
-            AggregateProcess aggregateProcess = new AggregateProcess();
-            setIdentifier(aggregateProcess, procedure);
-            setCommonValues(procedure, aggregateProcess, session);
-            return aggregateProcess;
-        }
-
-        private void setIdentifier(DescribedObject describedObject, Procedure procedure) {
-            CodeWithAuthority cwa = new CodeWithAuthority(procedure.getIdentifier());
-            if (procedure.isSetCodespace()) {
-                cwa.setCodeSpace(procedure.getCodespace().getCodespace());
-            } else {
-                cwa.setCodeSpace(OGCConstants.UNIQUE_ID);
-            }
-            describedObject.setIdentifier(cwa);
-        }
-
-        @Override
-        protected SweAbstractDataComponent getInputComponent(String observableProperty) {
-            return  new SweText().setDefinition(observableProperty);
-        }
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
+
+    public ContentCacheController getCacheController() {
+        return cacheController;
+    }
+
+    public ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
 }

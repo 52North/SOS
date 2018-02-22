@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,17 +29,17 @@
 package org.n52.sos.netcdf.data.dataset;
 
 public class IdentifierDatasetSensor extends DatasetSensor {
-    
-    private String identifier;
+
+    private final String identifier;
 
     public IdentifierDatasetSensor(String identifier) {
         this.identifier = identifier;
     }
-    
+
     @Override
     public String getSensorIdentifier() {
         return identifier;
     }
 
-   
+
 }

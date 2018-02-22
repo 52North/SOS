@@ -1,0 +1,18 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <!-- Decoder implementations from coding/kvp -->
+    <bean class="org.n52.sos.decode.kvp.GetCapabilitiesKvpDecoder"/>
+    <bean class="org.n52.sos.decode.kvp.v1.DescribeSensorKvpDecoderv100"/>
+    <bean class="org.n52.sos.decode.kvp.v1.GetObservationKvpDecoderv100"/>
+    <bean class="org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.DescribeSensorKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetFeatureOfInterestKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetObservationByIdKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetResultKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetResultTemplateKvpDecoderv20"/>
+
+</beans>

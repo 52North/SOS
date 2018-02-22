@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,14 +34,13 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Test;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Sets;
 
@@ -50,9 +49,9 @@ public class InsertResultDAOTest extends HibernateTestCase {
     private static final String OBS_PROP_1 = "obsProp_1";
     private static final String OBS_PROP_2 = "obsProp_2";
     private static final String OBS_PROP_3 = "obsProp_3";
-    
+
     private InsertResultDAO insertResultDAO = new InsertResultDAO();
-    
+
     @After
     public void tearDown() throws OwsExceptionReport, InterruptedException {
         H2Configuration.truncate();
@@ -74,7 +73,7 @@ public class InsertResultDAOTest extends HibernateTestCase {
         assertThat(observedProperties.size(), is(1));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
     }
-    
+
     @Test
     public void test_getIndexForObservedPropertyAndUnit_ComplexObservation() throws CodedException {
         final SweDataRecord record = createRecordWithComplexObservation();
@@ -94,7 +93,7 @@ public class InsertResultDAOTest extends HibernateTestCase {
         record.addField(new SweField("phenomenonTime", new SweTimeRange().setUom("test").setDefinition(OmConstants.PHENOMENON_TIME)));
         return record;
     }
-    
+
     private SweDataRecord createRecordWithSimpleObservation() {
         SweDataRecord record = createRecord();
         record.addField(new SweField("obsProp_1", new SweQuantity().setUom("test").setDefinition(OBS_PROP_1)));
@@ -106,7 +105,7 @@ public class InsertResultDAOTest extends HibernateTestCase {
         record.addField(new SweField("complexObservation", createComplexObservationRecord()));
         return record;
     }
-    
+
     private SweDataRecord createComplexObservationRecord() {
        SweDataRecord record = new SweDataRecord();
        record.setDefinition("complexObservation");

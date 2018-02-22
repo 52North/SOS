@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,9 +30,9 @@ package org.n52.sos.cache;
 
 import java.util.Collection;
 
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.util.ReferencedEnvelope;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc
@@ -56,7 +56,7 @@ public interface WritableSpatialCache {
      * @param envelope
      *                 the envelope
      */
-    void setEnvelopeForOffering(String offering, SosEnvelope envelope);
+    void setEnvelopeForOffering(String offering, ReferencedEnvelope envelope);
 
     /**
      * Sets the specified envelope for the specified offering.
@@ -67,7 +67,7 @@ public interface WritableSpatialCache {
      *                 the envelope
      */
     void setSpatialFilteringProfileEnvelopeForOffering(String offering,
-                                                       SosEnvelope envelope);
+                                                       ReferencedEnvelope envelope);
 
     /**
      * Updates the Spatial Filtering Profile envelope for the specified offering
@@ -130,7 +130,7 @@ public interface WritableSpatialCache {
      * @param globalEnvelope
      *                       the new spatial envelope
      */
-    void setGlobalEnvelope(SosEnvelope globalEnvelope);
+    void setGlobalEnvelope(ReferencedEnvelope globalEnvelope);
 
     /**
      * Updates the global spatial envelope to include the specified envelope.

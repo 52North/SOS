@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,18 +31,19 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetCapabilitiesOperatorV100 extends
-        AbstractV1RequestOperator<AbstractGetCapabilitiesDAO, GetCapabilitiesRequest, GetCapabilitiesResponse> {
+        AbstractV1RequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
     // TODO check for SOS 1.0.0
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
@@ -54,13 +55,16 @@ public class SosGetCapabilitiesOperatorV100 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public GetCapabilitiesResponse receive(GetCapabilitiesRequest sosRequest) throws OwsExceptionReport {
-        return getDao().getCapabilities(sosRequest);
+        return getOperationHandler().getCapabilities(sosRequest);
     }
 
     @Override

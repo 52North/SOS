@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,9 +42,9 @@ import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.netcdf.NetcdfConstants;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
 
 import com.sun.jna.Native;
 
@@ -55,7 +55,7 @@ public class ObservationNetCDFEncodingsTest extends AbstractObservationEncodings
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    
+
     @Test
     public void testSos2GetObsNetcdf() throws IOException {
         testGetObsNetcdf(Sos2Constants.SERVICEVERSION, NetcdfConstants.CONTENT_TYPE_NETCDF.toString(), false);

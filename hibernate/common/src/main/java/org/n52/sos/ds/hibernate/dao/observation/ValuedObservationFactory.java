@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,105 +28,105 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.data.Data.BlobData;
+import org.n52.series.db.beans.data.Data.BooleanData;
+import org.n52.series.db.beans.data.Data.CategoryData;
+import org.n52.series.db.beans.data.Data.ComplexData;
+import org.n52.series.db.beans.data.Data.CountData;
+import org.n52.series.db.beans.data.Data.DataArrayData;
+import org.n52.series.db.beans.data.Data.GeometryData;
+import org.n52.series.db.beans.data.Data.ProfileData;
+import org.n52.series.db.beans.data.Data.QuantityData;
+import org.n52.series.db.beans.data.Data.ReferencedData;
+import org.n52.series.db.beans.data.Data.TextData;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public abstract class ValuedObservationFactory {
-    
+
     @SuppressWarnings("rawtypes")
-    public abstract Class<? extends ValuedObservation> valuedObservationClass();
+    public abstract Class<? extends Data> valuedObservationClass();
 
-    public abstract Class<? extends BlobValuedObservation> blobClass();
+    public abstract Class<? extends BlobData> blobClass();
 
-    public BlobValuedObservation blob()
+    public BlobData blob()
             throws OwsExceptionReport {
         return instantiate(blobClass());
     }
 
-    public abstract Class<? extends BooleanValuedObservation> truthClass();
+    public abstract Class<? extends BooleanData> truthClass();
 
-    public BooleanValuedObservation truth()
+    public BooleanData truth()
             throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public abstract Class<? extends CategoryValuedObservation> categoryClass();
+    public abstract Class<? extends CategoryData> categoryClass();
 
-    public CategoryValuedObservation category()
+    public CategoryData category()
             throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public abstract Class<? extends CountValuedObservation> countClass();
+    public abstract Class<? extends CountData> countClass();
 
-    public CountValuedObservation count()
+    public CountData count()
             throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public abstract Class<? extends GeometryValuedObservation> geometryClass();
+    public abstract Class<? extends GeometryData> geometryClass();
 
-    public GeometryValuedObservation geometry()
+    public GeometryData geometry()
             throws OwsExceptionReport {
         return instantiate(geometryClass());
     }
 
-    public abstract Class<? extends NumericValuedObservation> numericClass();
+    public abstract Class<? extends QuantityData> numericClass();
 
-    public NumericValuedObservation numeric()
+    public QuantityData numeric()
             throws OwsExceptionReport {
         return instantiate(numericClass());
     }
 
-    public abstract Class<? extends SweDataArrayValuedObservation> sweDataArrayClass();
+    public abstract Class<? extends DataArrayData> sweDataArrayClass();
 
-    public SweDataArrayValuedObservation sweDataArray()
+    public DataArrayData sweDataArray()
             throws OwsExceptionReport {
         return instantiate(sweDataArrayClass());
     }
 
-    public abstract Class<? extends TextValuedObservation> textClass();
+    public abstract Class<? extends TextData> textClass();
 
-    public TextValuedObservation text()
+    public TextData text()
             throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
-    public abstract Class<? extends ComplexValuedObservation> complexClass();
+    public abstract Class<? extends ComplexData> complexClass();
 
-    public ComplexValuedObservation complex()
+    public ComplexData complex()
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
-    
-    public abstract Class<? extends ProfileValuedObservation> profileClass();
 
-    public ProfileValuedObservation profile()
+    public abstract Class<? extends ProfileData> profileClass();
+
+    public ProfileData profile()
             throws OwsExceptionReport {
         return instantiate(profileClass());
     }
-    
-    public abstract Class<? extends ReferenceValuedObservation> referenceClass();
 
-    public ReferenceValuedObservation reference()
+    public abstract Class<? extends ReferencedData> referenceClass();
+
+    public ReferencedData reference()
             throws OwsExceptionReport {
         return instantiate(referenceClass());
     }
 
-    private <T extends ValuedObservation<?>> T instantiate(Class<T> c)
+    private <T extends Data<?>> T instantiate(Class<T> c)
             throws OwsExceptionReport {
         try {
             return c.newInstance();
@@ -137,7 +137,7 @@ public abstract class ValuedObservationFactory {
     }
 
     @SuppressWarnings("rawtypes")
-    public Class<? extends ValuedObservation> classForValuedObservationType(
+    public Class<? extends Data> classForObservationType(
             String observationType) {
         if (observationType != null) {
             switch (observationType) {
@@ -166,9 +166,9 @@ public abstract class ValuedObservationFactory {
         return valuedObservationClass();
     }
 
-    public ValuedObservation<?> forValuedObservationType(String observationType)
+    public Data<?> forObservationType(String observationType)
             throws OwsExceptionReport {
-        return instantiate(classForValuedObservationType(observationType));
+        return instantiate(classForObservationType(observationType));
     }
 
 }

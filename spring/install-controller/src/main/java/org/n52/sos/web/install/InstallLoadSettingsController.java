@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,6 +31,7 @@ package org.n52.sos.web.install;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -45,12 +46,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.MultilingualStringSettingDefinition;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingsService;
+import org.n52.faroe.settings.MultilingualStringSettingDefinition;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -61,22 +63,25 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_LOAD_CONFIGURATION)
-public class InstallLoadSettingsController extends AbstractController {
+public class InstallLoadSettingsController extends AbstractInstallController {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstallLoadSettingsController.class);
 
+    @Inject
+    private SettingsService settingsManager;
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationException, IOException {
+    public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationError, IOException {
         final HttpSession session = req.getSession();
-        InstallationConfiguration c = AbstractInstallController.getSettings(session);
-        JsonNode settings = JSONUtils.loadString(config);
+        InstallationConfiguration c = getSettings(session);
+        JsonNode settings = Json.loadString(config);
         Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
             String value;
             String key = i.next();
             if (settings.path(key).isContainerNode()) {
-                value = JSONUtils.print(settings.path(key));
+                value = Json.print(settings.path(key));
             } else {
                 value = settings.path(key).asText();
             }
@@ -85,23 +90,23 @@ public class InstallLoadSettingsController extends AbstractController {
                 LOG.warn("Value for setting with key {} is null", key);
                 continue;
             }
-            SettingDefinition<?, ?> def = getSettingsManager().getDefinitionByKey(key);
+            SettingDefinition<?> def = settingsManager.getDefinitionByKey(key);
             if (def == null) {
                 LOG.warn("No definition for setting with key {}", key);
                 continue;
             }
             if (def instanceof MultilingualStringSettingDefinition) {
-                c.setSetting(def, getSettingsManager().getSettingFactory().newMultiLingualStringValue((MultilingualStringSettingDefinition)def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newMultiLingualStringSettingValue((MultilingualStringSettingDefinition)def, value));
             } else {
-                c.setSetting(def, getSettingsManager().getSettingFactory().newSettingValue(def, value));
+                c.setSetting(def, settingsManager.getSettingFactory().newSettingValue(def, value));
             }
         }
-        AbstractInstallController.setSettings(session, c);
+        setSettings(session, c);
     }
 
     @ResponseBody
-    @ExceptionHandler(ConfigurationException.class)
-    public String onConfigurationError(ConfigurationException e) {
+    @ExceptionHandler(ConfigurationError.class)
+    public String onConfigurationError(ConfigurationError e) {
         return e.getMessage();
     }
 }

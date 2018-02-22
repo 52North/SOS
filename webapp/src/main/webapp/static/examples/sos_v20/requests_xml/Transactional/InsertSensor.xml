@@ -4,7 +4,7 @@
 	xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
 	xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd
 	http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
 	<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
 	<swes:procedureDescription>
@@ -36,7 +36,7 @@
 
 					<sml:capabilities name="offerings">
 						<!-- Special capabilities used to specify offerings. -->
-						<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+						<!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 							added during DescribeSensor. -->
 						<!-- Offering is generated if not specified. -->
 						<swe:SimpleDataRecord>
@@ -51,7 +51,7 @@
 					</sml:capabilities>
 					<sml:capabilities name="parentProcedures">
 						<!-- Special capabilities used to specify parent procedures. -->
-						<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+						<!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 							added during DescribeSensor. -->
 						<swe:SimpleDataRecord>
 							<swe:field name="parentProcedure">
@@ -63,7 +63,7 @@
 					</sml:capabilities>
 					<sml:capabilities name="featuresOfInterest">
 						<!-- Special capabilities used to specify features of interest. -->
-						<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+						<!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 							added during DescribeSensor. -->
 						<swe:SimpleDataRecord>
 							<swe:field name="featureOfInterestID">

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,21 +31,21 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetFeatureOfInterestOperatorV100
         extends
-        AbstractV1RequestOperator<AbstractGetFeatureOfInterestDAO, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
+        AbstractV1RequestOperator<AbstractGetFeatureOfInterestHandler, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetFeatureOfInterest.name();
 
@@ -74,12 +74,15 @@ public class SosGetFeatureOfInterestOperatorV100
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     protected GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
-        return getDao().getFeatureOfInterest(request);
+        return getOperationHandler().getFeatureOfInterest(request);
     }
 }

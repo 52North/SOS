@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,11 +30,14 @@ package org.n52.sos.inspire;
 
 import java.util.Set;
 
-import org.n52.sos.cache.ContentCache;
+import javax.inject.Inject;
+
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.shetland.inspire.InspireSupportedCRS;
+import org.n52.shetland.inspire.InspireSupportedLanguages;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider;
 import org.n52.sos.inspire.offering.InspireOfferingExtensionProvider;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Sets;
@@ -43,16 +46,35 @@ import com.google.common.collect.Sets;
  * Abstract INSPIRE provider class provides methods used by
  * {@link InspireExtendedCapabilitiesProvider} and
  * {@link InspireOfferingExtensionProvider}.
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public abstract class AbstractInspireProvider {
 
+    private InspireHelper inspireHelper;
+    private ContentCacheController contentCacheController;
+    private GeometryHandler geometryHandler;
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Inject
+    public void setContentCacheController(ContentCacheController ctrl) {
+        this.contentCacheController = ctrl;
+    }
+
+    @Inject
+    public void setInspireHelper(InspireHelper inspireHelper) {
+        this.inspireHelper = inspireHelper;
+    }
+
     /**
      * Get the supported languages
-     * 
+     *
      * @return the supported languages
      */
     protected InspireSupportedLanguages getSupportedLanguages() {
@@ -64,7 +86,7 @@ public abstract class AbstractInspireProvider {
 
     /**
      * Get the supported languages
-     * 
+     *
      * @return the supported languages
      */
     protected InspireSupportedCRS getSupportedCRS() {
@@ -87,7 +109,7 @@ public abstract class AbstractInspireProvider {
 
     /**
      * Remove the default CRS from other CRS set
-     * 
+     *
      * @param defaultCRS
      *            Default CRS to remove
      * @param otherCRS
@@ -100,31 +122,31 @@ public abstract class AbstractInspireProvider {
             if (integer != defaultCRS) {
                 checkSet.add(integer);
             }
-            
+
         }
         return checkSet;
     }
 
     /**
      * Get the {@link InspireHelper} instance
-     * 
+     *
      * @return the {@link InspireHelper} instance
      */
     protected InspireHelper getInspireHelper() {
-        return InspireHelper.getInstance();
+        return this.inspireHelper;
     }
 
     /**
      * Get the {@link GeometryHandler} instance
-     * 
+     *
      * @return the {@link GeometryHandler} instance
      */
     protected GeometryHandler getGeometryHandler() {
-        return GeometryHandler.getInstance();
+        return this.geometryHandler;
     }
 
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,38 +28,23 @@
  */
 package org.n52.sos.service;
 
-import static java.lang.Boolean.TRUE;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.janmayen.lifecycle.Constructable;
 
-import java.util.Collections;
-import java.util.Set;
-
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingDefinitionGroup;
-import org.n52.sos.config.SettingDefinitionProvider;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
-import org.n52.sos.util.Validation;
-
-import com.google.common.collect.Sets;
 
 /**
  * This class provides all settings to configure the sensor description
  * generation.
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
-public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
-
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description Enrichment")
-            .setDescription("Settings to configure the procedure description generation and enrichment feature.")
-            .setOrder(4.2023f);
+public class ProcedureDescriptionSettings implements Constructable {
 
     public static final String IDENTIFIER_LONG_NAME_DEFINITION = "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION";
 
@@ -95,184 +80,8 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
     public static final String ENRICH_WITH_FEATURES = "procedureDesc.ENRICH_WITH_FEATURES";
 
     public static final String ENRICH_WITH_DISCOVERY_INFORMATION = "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION";
-
-    public static final BooleanSettingDefinition ENRICH_WITH_OFFERINGS_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_0)
-                    .setKey(ENRICH_WITH_OFFERINGS)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Enrich with offering information?")
-                    .setDescription(
-                            "If selected, the service enriches each procedure description with available offering information: "
-                                    + "listing all procedure related offering ids, for example. If disabled, the returned description of "
-                                    + "an DescribeSensor response might differ from the document used during the related InsertSensor call.");
-
-    public static final BooleanSettingDefinition ENRICH_WITH_FEATURES_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_1)
-                    .setKey(ENRICH_WITH_FEATURES)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Enrich with feature information?")
-                    .setDescription(
-                            "If selected, the service enriches each procedure description with available observed feature "
-                                    + "information: listing all features observed by this procedure, for example. If disabled, "
-                                    + "the returned description of an DescribeSensor response might differ from the document "
-                                    + " used during the related InsertSensor call.");
-
-    public static final BooleanSettingDefinition ENRICH_WITH_DISCOVERY_INFORMATION_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_2)
-                    .setKey(ENRICH_WITH_DISCOVERY_INFORMATION)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Enrich with discovery information?")
-                    .setDescription(
-                            "If selected, the service enriches each procedure description with discovery relevant information"
-                                    + " according to <a target=\"_blank\" href=\"https://portal.opengeospatial.org/files/?artifact_id=33284\">OGC#09-033 "
-                                    + "'SensorML Profile for Discovery'</a>.");
-
-    public static final StringSettingDefinition IDENTIFIER_LONG_NAME_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_3)
-                    .setKey(IDENTIFIER_LONG_NAME_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:identifier:OGC:1.0:longname")
-                    .setTitle("Identifier 'longname' definition")
-                    .setDescription(
-                            "The definition for the sml:identification holding the 'longname'. Used only if the procedure description is enriched according to OGC#09-033.");
-
-    public static final StringSettingDefinition IDENTIFIER_SHORT_NAME_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_4)
-                    .setKey(IDENTIFIER_SHORT_NAME_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:identifier:OGC:1.0:shortname")
-                    .setTitle("Identifier 'shortname' definition")
-                    .setDescription(
-                            "The definition for the sml:identification holding the 'shortname'. Used only if the sensor description is enriched according to OGC#09-033.");
-
-    public static final StringSettingDefinition DESCRIPTION_TEMPLATE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_5)
-                    .setKey(DESCRIPTION_TEMPLATE)
-                    .setDefaultValue("The '%s' with the id '%s' observes the following properties: '%s'.")
-                    .setTitle("Description template")
-                    .setDescription(
-                            "The template used to generate a description using the sensor identifier and the observed properties "
-                                    + "related. The template MUST contain '%s' three times. The first one will be replaced with 'sensor system' or "
-                                    + "'procedure' depending if it's spatial or non-spatial. The second one will be replaced with the sensor id and"
-                                    + " the third with a comma separated list of properties: e.g. <i>The %s with the id '%s' observes the following "
-                                    + "properties: '%s'.</i>.");
-
-    public static final BooleanSettingDefinition GENERATE_CLASSIFICATION_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_6)
-                    .setKey(GENERATE_CLASSIFICATION)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Generate classification")
-                    .setDescription(
-                            "Should the classifiers for 'intendedApplication' and/or 'sensorType' be generated using the values from the next two settings?");
-
-    public static final StringSettingDefinition CLASSIFIER_INTENDED_APPLICATION_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_7)
-                    .setKey(CLASSIFIER_INTENDED_APPLICATION_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:classifier:OGC:1.0:application")
-                    .setTitle("IntendedApplication definition")
-                    .setDescription(
-                            "The definition that will be used for all procedures/sensors of this SOS instance as definition for the classifier 'intendedApllication' if the classification generation is activated.");
-
-    public static final StringSettingDefinition CLASSIFIER_INTENDED_APPLICATION_VALUE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_8)
-                    .setKey(CLASSIFIER_INTENDED_APPLICATION_VALUE)
-                    .setDefaultValue("")
-                    .setOptional(true)
-                    .setTitle("IntendedApplication Value")
-                    .setDescription(
-                            "The value that will be used for all procedures/sensors of this SOS instance as term for the classifier 'intendedApllication' if the classification generation is activated. In addition, if this field is <b>empty</b>, the classifier 'intendedApplication' will <b>not</b> be added.");
-
-    public static final StringSettingDefinition CLASSIFIER_PROCEDURE_TYPE_DEFINITION_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_9)
-                    .setKey(CLASSIFIER_PROCEDURE_TYPE_DEFINITION)
-                    .setDefaultValue("urn:ogc:def:classifier:OGC:1.0:procedureType")
-                    .setTitle("ProcedureType definition")
-                    .setDescription(
-                            "The definition that will be used for all procedures/sensors of this SOS instance as definition for the classifier 'procedureType' if the classification generation is activated.");
-
-    public static final StringSettingDefinition CLASSIFIER_PROCEDURE_TYPE_VALUE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_10)
-                    .setKey(CLASSIFIER_PROCEDURE_TYPE_VALUE)
-                    .setDefaultValue("")
-                    .setOptional(true)
-                    .setTitle("ProcedureType Value")
-                    .setDescription(
-                            "The value that will be used for all procedures of this SOS instance as term for the classifier 'procedureType' if the classification generation is activated. In addition, if this field is <b>empty</b>, the classifier 'procedureType' will <b>not</b> be added.");
-
-    public static final BooleanSettingDefinition USE_SERVICE_CONTACT_AS_SENSOR_CONTACT_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_11)
-                    .setKey(USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT)
-                    .setDefaultValue(TRUE)
-                    .setTitle("Use service contact as procedure contact")
-                    .setDescription(
-                            "Should the service contact be encoded as procedure contact if procedure description enrichment is activated.");
-
-    public static final StringSettingDefinition LAT_LONG_UOM_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_12)
-                    .setOptional(false)
-                    .setKey(LAT_LONG_UOM)
-                    .setDefaultValue("degree")
-                    .setTitle("Latitude &amp; Longitude UOM")
-                    .setDescription(
-                            "The UOM for the latitude  &amp; longitude values of spatial procedures (e.g. sml:System). Something like 'degree', 'm'.");
-
-    public static final StringSettingDefinition ALTITUDE_UOM_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP)
-            .setOrder(ORDER_13)
-            .setOptional(false)
-            .setKey(ALTITUDE_UOM)
-            .setDefaultValue("m")
-            .setTitle("Altitude UOM")
-            .setDescription(
-                    "The UOM for the altitude value of spatial procedures (e.g. sml:System). Something like 'm'.");
-
-    public static final StringSettingDefinition PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE_DEFINITION =
-            new StringSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_14)
-                    .setKey(PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
-                    .setDefaultValue(
-                            "The procedure '%s' generates the following output(s): '%s'. The input(s) is/are unknown (this description is generated).")
-                    .setTitle("Description Template for the rules definition")
-                    .setDescription(
-                            "The template used to generate a description using the procedure identifier and the observed properties. "
-                                    + "The template MUST contain '%s' two times. The first one will be replaced with the sensor id and"
-                                    + " the second with a comma separated list of properties: e.g. <i>The procedure '%s' generates the following output(s): '%s'. The "
-                                    + "input(s) is/are unknown (this description is generated).</i>");
-
-    private static final Set<? extends SettingDefinition<?, ?>> DEFINITIONS = Sets
-            .<SettingDefinition<?, ?>> newHashSet(ENRICH_WITH_OFFERINGS_DEFINITION, ENRICH_WITH_FEATURES_DEFINITION,
-                    ENRICH_WITH_DISCOVERY_INFORMATION_DEFINITION, IDENTIFIER_LONG_NAME_DEFINITION_DEFINITION,
-                    IDENTIFIER_SHORT_NAME_DEFINITION_DEFINITION, DESCRIPTION_TEMPLATE_DEFINITION,
-                    GENERATE_CLASSIFICATION_DEFINITION, CLASSIFIER_INTENDED_APPLICATION_DEFINITION_DEFINITION,
-                    CLASSIFIER_INTENDED_APPLICATION_VALUE_DEFINITION, CLASSIFIER_PROCEDURE_TYPE_DEFINITION_DEFINITION,
-                    CLASSIFIER_PROCEDURE_TYPE_VALUE_DEFINITION, USE_SERVICE_CONTACT_AS_SENSOR_CONTACT_DEFINITION,
-                    LAT_LONG_UOM_DEFINITION, ALTITUDE_UOM_DEFINITION,
-                    PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE_DEFINITION);
+    @Deprecated
+    private static ProcedureDescriptionSettings instance = null;
 
     private String descriptionTemplate;
     private boolean generateClassification;
@@ -290,22 +99,15 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
     private boolean enrichWithFeatures;
     private boolean enrichWithDiscoveryInformation;
 
-    private static ProcedureDescriptionSettings instance = null;
 
-    public static synchronized ProcedureDescriptionSettings getInstance() {
-        if (instance == null) {
-            instance = new ProcedureDescriptionSettings();
-            SettingsManager.getInstance().configure(instance);
-        }
-        return instance;
-    }
-    
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Collections.unmodifiableSet(DEFINITIONS);
+    @Deprecated
+    public void init() {
+        ProcedureDescriptionSettings.instance = this;
     }
 
-    @Setting(DESCRIPTION_TEMPLATE)
+
+    @Setting(ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE)
     public void setDescriptionTemplate(final String descriptionTemplate) {
         Validation.notNullOrEmpty(DESCRIPTION_TEMPLATE, descriptionTemplate);
         this.descriptionTemplate = descriptionTemplate;
@@ -324,7 +126,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return generateClassification;
     }
 
-    @Setting(GENERATE_CLASSIFICATION)
+    @Setting(ProcedureDescriptionSettings.GENERATE_CLASSIFICATION)
     public void setGenerateClassification(final boolean generateClassification) {
         this.generateClassification = generateClassification;
     }
@@ -333,7 +135,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return classifierIntendedApplicationValue;
     }
 
-    @Setting(CLASSIFIER_INTENDED_APPLICATION_VALUE)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_INTENDED_APPLICATION_VALUE)
     public void setClassifierIntendedApplicationValue(final String classifierIntendedApplicationValue) {
         this.classifierIntendedApplicationValue =
                 (classifierIntendedApplicationValue == null) ? "" : classifierIntendedApplicationValue;
@@ -343,7 +145,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return classifierIntendedApplicationDefinition;
     }
 
-    @Setting(CLASSIFIER_INTENDED_APPLICATION_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_INTENDED_APPLICATION_DEFINITION)
     public void setClassifierIntendedApplicationDefinition(final String classifierIntendedApplicationDefinition) {
         Validation.notNull(CLASSIFIER_INTENDED_APPLICATION_DEFINITION, classifierIntendedApplicationDefinition);
         this.classifierIntendedApplicationDefinition = classifierIntendedApplicationDefinition;
@@ -353,7 +155,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return classifierProcedureTypeDefinition;
     }
 
-    @Setting(CLASSIFIER_PROCEDURE_TYPE_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_PROCEDURE_TYPE_DEFINITION)
     public void setClassifierProcedureTypeDefinition(final String classifierProcedureTypeDefinition) {
         Validation.notNull(CLASSIFIER_PROCEDURE_TYPE_DEFINITION, classifierProcedureTypeDefinition);
         this.classifierProcedureTypeDefinition = classifierProcedureTypeDefinition;
@@ -363,7 +165,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return classifierProcedureTypeValue;
     }
 
-    @Setting(CLASSIFIER_PROCEDURE_TYPE_VALUE)
+    @Setting(ProcedureDescriptionSettings.CLASSIFIER_PROCEDURE_TYPE_VALUE)
     public void setClassifierProcedureTypeValue(final String classifierProcedureTypeValue) {
         this.classifierProcedureTypeValue = (classifierProcedureTypeValue == null) ? "" : classifierProcedureTypeValue;
     }
@@ -372,13 +174,13 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return useServiceContactAsProcedureContact;
     }
 
-    @Setting(USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT)
+    @Setting(ProcedureDescriptionSettings.USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT)
     public void setUseServiceContactAsProcedureContact(final boolean useServiceContactAsProcedureContact) {
         Validation.notNull(USE_SERVICE_CONTACT_AS_PROCEDURE_CONTACT, useServiceContactAsProcedureContact);
         this.useServiceContactAsProcedureContact = useServiceContactAsProcedureContact;
     }
 
-    @Setting(IDENTIFIER_SHORT_NAME_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.IDENTIFIER_SHORT_NAME_DEFINITION)
     public void setIdentifierShortNameDefinition(final String identifierShortNameDefinition) {
         Validation.notNullOrEmpty(IDENTIFIER_SHORT_NAME_DEFINITION, identifierShortNameDefinition);
         this.identifierShortNameDefinition = identifierShortNameDefinition;
@@ -388,7 +190,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return identifierShortNameDefinition;
     }
 
-    @Setting(IDENTIFIER_LONG_NAME_DEFINITION)
+    @Setting(ProcedureDescriptionSettings.IDENTIFIER_LONG_NAME_DEFINITION)
     public void setIdentifierLongNameDefinition(final String identifierLongNameDefinition) {
         Validation.notNullOrEmpty(IDENTIFIER_LONG_NAME_DEFINITION, identifierLongNameDefinition);
         this.identifierLongNameDefinition = identifierLongNameDefinition;
@@ -398,7 +200,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return identifierLongNameDefinition;
     }
 
-    @Setting(LAT_LONG_UOM)
+    @Setting(ProcedureDescriptionSettings.LAT_LONG_UOM)
     public void setLatitudeUom(final String latLongUom) {
         this.latLongUom = latLongUom;
     }
@@ -407,7 +209,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return latLongUom;
     }
 
-    @Setting(ALTITUDE_UOM)
+    @Setting(ProcedureDescriptionSettings.ALTITUDE_UOM)
     public void setAltitudeUom(final String altitudeUom) {
         this.altitudeUom = altitudeUom;
     }
@@ -416,7 +218,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return altitudeUom;
     }
 
-    @Setting(PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
+    @Setting(ProcedureDescriptionSettings.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE)
     public void setProcessMethodRulesDefinitionDescriptionTemplate(
             final String processMethodRulesDefinitionDescriptionTemplate) {
         Validation.notNullOrEmpty(PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE,
@@ -432,7 +234,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return processMethodRulesDefinitionDescriptionTemplate;
     }
 
-    @Setting(ENRICH_WITH_OFFERINGS)
+    @Setting(ProcedureDescriptionSettings.ENRICH_WITH_OFFERINGS)
     public void setEnrichWithOfferings(final boolean enrichWithOfferings) {
         Validation.notNull(ENRICH_WITH_OFFERINGS, enrichWithOfferings);
         this.enrichWithOfferings = enrichWithOfferings;
@@ -442,7 +244,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return enrichWithOfferings;
     }
 
-    @Setting(ENRICH_WITH_FEATURES)
+    @Setting(ProcedureDescriptionSettings.ENRICH_WITH_FEATURES)
     public void setEnrichWithFeatures(final boolean enrichWithFeatures) {
         Validation.notNull(ENRICH_WITH_FEATURES, enrichWithFeatures);
         this.enrichWithFeatures = enrichWithFeatures;
@@ -452,7 +254,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         return enrichWithFeatures;
     }
 
-    @Setting(ENRICH_WITH_DISCOVERY_INFORMATION)
+    @Setting(ProcedureDescriptionSettings.ENRICH_WITH_DISCOVERY_INFORMATION)
     public void setEnrichWithDiscoveryInformation(final boolean enrichWithDiscoveryInformation) {
         Validation.notNull(ENRICH_WITH_DISCOVERY_INFORMATION, enrichWithDiscoveryInformation);
         this.enrichWithDiscoveryInformation = enrichWithDiscoveryInformation;
@@ -460,6 +262,11 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
 
     public boolean isEnrichWithDiscoveryInformation() {
         return enrichWithDiscoveryInformation;
+    }
+
+    @Deprecated
+    public static ProcedureDescriptionSettings getInstance() {
+        return instance;
     }
 
 }

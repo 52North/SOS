@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,26 +28,29 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+
 import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.valueOf;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -61,12 +64,12 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            ScrollableIterable<Observation<?>> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()));
-            for (Observation<?> o : i) {
-                session.delete(o);
+            Criteria criteria = session.createCriteria(getObservationClass());
+            try (ScrollableIterable<DataEntity<?>> iterable = ScrollableIterable.fromCriteria(criteria)) {
+                for (DataEntity<?> o : iterable) {
+                    session.delete(o);
+                }
             }
-            i.close();
             session.flush();
             transaction.commit();
         } catch (HibernateException he) {
@@ -92,15 +95,18 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     protected abstract Time createScenario(Session session) throws OwsExceptionReport;
 
     protected HibernateObservationBuilder getBuilder(Session session) throws OwsExceptionReport {
-        return new HibernateObservationBuilder(session);
+        I18NDAORepository i18NDAORepository = new I18NDAORepository();
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(i18NDAORepository);
+        return new HibernateObservationBuilder(session, daoFactory);
     }
 
     @SuppressWarnings("unchecked")
     private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
             throws OwsExceptionReport {
         List<String> list =
-                session.createCriteria(getObservationClass()).add(r.get(d, time))
-                        .setProjection(Projections.distinct(Projections.property(AbstractObservation.IDENTIFIER))).list();
+                session.createCriteria(getObservationClass()).add(r.getCriterion(d, time))
+                        .setProjection(Projections.distinct(Projections.property(DataEntity.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
             s.add(valueOf(id));
@@ -109,11 +115,11 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     }
 
     protected Set<Identifier> filterPhenomenonTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(TemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
+        return filter(SosTemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
     }
 
     protected Set<Identifier> filterResultTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(TemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
+        return filter(SosTemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
     }
 
     public enum Identifier {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,28 +30,45 @@ package org.n52.sos.ds.hibernate.admin;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
 public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
 
     @Override
     public Map<String, String> getProcedureFormatMap() throws OwsExceptionReport {
-        Session s = null;
-        Map<String,String> procedureFormatMap = null;
+        Session session = null;
+        Map<String, String> procedureFormatMap = null;
         try {
-            s = sessionHolder.getSession();
-            procedureFormatMap = new ProcedureDAO().getProcedureFormatMap(s);
+            session = this.sessionHolder.getSession();
+            procedureFormatMap = daoFactory.getProcedureDAO().getProcedureFormatMap(session);
         } finally {
-            sessionHolder.returnSession(s);
-        }        
+            this.sessionHolder.returnSession(session);
+        }
         return procedureFormatMap;
     }
+
 }

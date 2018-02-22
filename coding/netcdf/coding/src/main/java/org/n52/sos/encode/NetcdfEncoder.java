@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,21 +37,21 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.response.BinaryAttachmentResponse;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -62,15 +62,15 @@ import ucar.nc2.NetcdfFileWriter.Version;
 
 /**
  * Implementation of {@link AbstractBasicNetcdfEncoder} for netCDF encoding.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
-public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
+public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfEncoder.class);
-    
+
     private final Set<String> MEDIA_TYPES = Sets.newHashSet(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
             NetcdfConstants.CONTENT_TYPE_NETCDF_3.toString(), NetcdfConstants.CONTENT_TYPE_NETCDF_4.toString());
 
@@ -80,20 +80,21 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
             .put(Sos2Constants.SERVICEVERSION, MEDIA_TYPES)
             .build());
 
-    private final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+    private static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
+          (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+          (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_3),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
+          (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_4),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+          (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+          (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_3),
-          (EncoderKey) new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+          (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_4));
-    
+
+
     public NetcdfEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(ENCODER_KEYS));
@@ -105,10 +106,10 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
     }
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
-    
+
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
         if (SUPPORTED_RESPONSE_FORMATS.get(service) != null) {
@@ -118,10 +119,10 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
         }
         return Collections.emptySet();
     }
-    
-    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws OwsExceptionReport {
-        if (CollectionHelper.isEmpty(netCDFObsList)) {
-            throw new NoApplicableCodeException().withMessage("No feature types to encode");
+
+    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws EncodingException {
+        if (CollectionHelper.isEmptyOrNull(netCDFObsList)) {
+            throw new EncodingException("No feature types to encode");
         } else if (netCDFObsList.size() > 1) {
             throwTooManyFeatureTypesOrSensorsException(netCDFObsList, netCDFObsList.size(), null);
         }
@@ -129,7 +130,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
         NetCDFObservation netCDFObservation = netCDFObsList.get(0);
 
         if (CollectionHelper.isEmpty(netCDFObservation.getSensorDatasets())) {
-            throw new NoApplicableCodeException().withMessage("No sensors to encode");
+            throw new EncodingException("No sensors to encode");
         } else if (netCDFObservation.getSensorDatasets().size() > 1) {
             throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null, netCDFObservation.getSensorDatasets().size());
         }
@@ -138,35 +139,31 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
         File tempDir = Files.createTempDir();
         String filename = getFilename(sensorDataset);
         File netcdfFile = new File(tempDir, filename);
-        encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);                
-
-        BinaryAttachmentResponse response = null;
         try {
-            response = new BinaryAttachmentResponse(Files.toByteArray(netcdfFile), getContentType(),
+            encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
+            return new BinaryAttachmentResponse(Files.toByteArray(netcdfFile), getContentType(),
                     String.format(filename, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } catch (IOException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage("Couldn't create netCDF file");
+            throw new EncodingException("Couldn't create netCDF file", e);
         } finally {
             tempDir.delete();
         }
-
-        return response;
     }
 
     private void throwTooManyFeatureTypesOrSensorsException(List<NetCDFObservation> netCDFObsList,
-            Integer numFeatureTypes, Integer numSensors) throws CodedException {
+            Integer numFeatureTypes, Integer numSensors) throws EncodingException {
         StringBuilder sb = new StringBuilder();
-        sb.append("This encoder (" + NetcdfConstants.CONTENT_TYPE_NETCDF.toString() + ") can only encode a single feature type");
+        sb.append("This encoder (").append(NetcdfConstants.CONTENT_TYPE_NETCDF.toString()).append(") can only encode a single feature type");
         if (numFeatureTypes != null) {
-            sb.append(" (found " + numFeatureTypes + ")");
+            sb.append(" (found ").append(numFeatureTypes).append(")");
         }
         sb.append(" and a single sensor");
         if (numSensors != null) {
-            sb.append(" (found " + numSensors + ")");
+            sb.append(" (found ").append(numSensors).append(")");
         }
-        sb.append(". Change your request to only return a single feature type or use the zipped netCDF encoder ("
-                + NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP.toString() + ").");
-        throw new UnsupportedEncoderInputException(this, netCDFObsList).withMessage(sb.toString());
+        sb.append(". Change your request to only return a single feature type or use the zipped netCDF encoder (")
+                .append(NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP.toString()).append(").");
+        throw new EncodingException(sb.toString());
     }
-    
+
 }

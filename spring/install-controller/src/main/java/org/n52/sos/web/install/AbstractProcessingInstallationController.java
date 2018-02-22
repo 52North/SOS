@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,23 +39,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.exception.JSONException;
 
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author Christian Autermann
  *
  * @since 4.0.0
  */
 @Controller
-public abstract class AbstractProcessingInstallationController extends AbstractInstallController {
+public abstract class AbstractProcessingInstallationController extends AbstractInstallStepController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView get(HttpServletRequest req)
             throws InstallationRedirectError,
-                   ConfigurationException, JSONException {
+                   ConfigurationError, JSONException {
         return new ModelAndView(getStep().getView(), toModel(getSettings(checkPrevious(req))));
     }
 

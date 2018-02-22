@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.sos.util.ClassHelper;
-import org.n52.sos.util.Similar;
+import org.n52.janmayen.ClassHelper;
+import org.n52.janmayen.similar.Similar;
 
 import com.google.common.base.Objects;
 

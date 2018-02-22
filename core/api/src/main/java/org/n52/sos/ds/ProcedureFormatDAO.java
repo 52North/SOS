@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,10 +30,10 @@ package org.n52.sos.ds;
 
 import java.util.Map;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
 public interface ProcedureFormatDAO {
     Map<String,String> getProcedureFormatMap() throws OwsExceptionReport;

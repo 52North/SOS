@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,47 +30,55 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.ds.AbstractUpdateSensorDescriptionDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
+import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
+import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.response.UpdateSensorResponse;
 
 /**
- * Implementation of the abstract class AbstractUpdateSensorDescriptionDAO
+ * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
+ *
  * @since 4.0.0
- * 
+ *
  */
-public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionDAO {
+public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionHandler {
 
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
-    /**
-     * constructor
-     */
     public UpdateSensorDescriptionDAO() {
         super(SosConstants.SOS);
     }
-    
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -97,20 +105,20 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionD
                 procedure = procedureDAO.updateProcedure(procedure, procedureDescription, session);
                 
                 if (procedure instanceof TProcedure) {
-                    ProcedureDescriptionFormat procedureDescriptionFormat =
-                            new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormatObject(
+                    ProcedureDescriptionFormat procedureDescriptionFormat = new FormatDAO()
+                            .getProcedureDescriptionFormatObject(
                                     request.getProcedureDescriptionFormat(), session);
                     Set<ValidProcedureTime> validProcedureTimes = ((TProcedure) procedure).getValidProcedureTimes();
-                    ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO();
+                    ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO(daoFactory);
                     for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
-                        if (validProcedureTime.getProcedureDescriptionFormat().equals(procedureDescriptionFormat)
-                                && validProcedureTime.getEndTime() == null) {
+                        if (validProcedureTime.getProcedureDescriptionFormat().equals(procedureDescriptionFormat) &&
+                                 validProcedureTime.getEndTime() == null) {
                             validProcedureTime.setEndTime(currentTime.toDate());
                             validProcedureTimeDAO.updateValidProcedureTime(validProcedureTime, session);
                         }
                     }
                     validProcedureTimeDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
-                            procedureDescription.getSensorDescriptionXmlString(), currentTime, session);
+                                                                   procedureDescription.getXml(), currentTime, session);
                 }
             }
             session.flush();

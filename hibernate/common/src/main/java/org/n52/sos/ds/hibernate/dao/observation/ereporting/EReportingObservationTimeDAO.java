@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
 
 public class EReportingObservationTimeDAO extends SeriesObservationTimeDAO {
 
-	@Override
-	protected Class<?> getObservationTimeClass() {
-		return TemporalReferencedEReportingObservation.class;
-	}
+    @Override
+    protected Class<?> getObservationTimeClass() {
+        return EReportingDataEntity.class;
+    }
 }

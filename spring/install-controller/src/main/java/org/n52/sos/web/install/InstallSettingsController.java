@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,17 +31,18 @@ package org.n52.sos.web.install;
 import java.io.File;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingType;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsService;
+import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
 /**
@@ -53,6 +54,9 @@ import org.n52.sos.web.install.InstallConstants.Step;
 public class InstallSettingsController extends AbstractProcessingInstallationController {
     private static final Logger LOG = LoggerFactory.getLogger(InstallSettingsController.class);
 
+    @Inject
+    private SettingsService settingsManager;
+
     @Override
     protected Step getStep() {
         return Step.SETTINGS;
@@ -63,13 +67,12 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
                            InstallationConfiguration c)
             throws InstallationSettingsError {
         logSettings(parameters);
-        SettingsManager sm = getSettingsManager(c);
-        for (SettingDefinition<?, ?> def : sm.getSettingDefinitions()) {
+        for (SettingDefinition<?> def : this.settingsManager.getSettingDefinitions()) {
             SettingValue<?> val = null;
             if (parameters.containsKey(def.getKey())) {
-                val = createSettingValue(sm, def, parameters.get(def.getKey()), c);
+                val = createSettingValue(this.settingsManager, def, parameters.get(def.getKey()), c);
             } else if (def.getType() == SettingType.BOOLEAN) {
-                val = createSettingValue(sm, def, String.valueOf(false), c);
+                val = createSettingValue(this.settingsManager, def, String.valueOf(false), c);
             }
             if (val == null) {
                 LOG.warn("No value for setting {}. Ignoring.", def.getKey());
@@ -92,19 +95,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         }
     }
 
-    private SettingsManager getSettingsManager(InstallationConfiguration c)
-            throws InstallationSettingsError {
-        SettingsManager sm;
-        try {
-            sm = SettingsManager.getInstance();
-        } catch (ConfigurationException ex) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSTANTIATE_SETTINGS_MANAGER,
-                                                                 ex.getMessage()), ex);
-        }
-        return sm;
-    }
-
-    protected SettingValue<?> createSettingValue(SettingsManager sm, SettingDefinition<?, ?> def, String stringValue,
+    protected SettingValue<?> createSettingValue(SettingsService sm, SettingDefinition<?> def, String stringValue,
             InstallationConfiguration c) throws InstallationSettingsError {
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);
@@ -114,7 +105,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
     }
 
     @SuppressWarnings("unchecked")
-    protected void checkFileSetting(SettingDefinition<?, ?> def, SettingValue<?> val, InstallationConfiguration c)
+    protected void checkFileSetting(SettingDefinition<?> def, SettingValue<?> val, InstallationConfiguration c)
             throws InstallationSettingsError {
         if (val.getValue() instanceof File) {
             SettingValue<File> fileSetting = (SettingValue<File>) val;

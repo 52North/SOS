@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,11 +38,11 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.n52.faroe.ConfigurationError;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +50,7 @@ import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann
  */
 public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDatasource {
@@ -143,7 +143,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
 
             }
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(stmt);
             close(conn);
@@ -194,7 +194,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     }
 
     @Override
-    protected void validatePrerequisites(Connection arg0, DatabaseMetadata arg1, Map<String, Object> arg2) {
+    protected void validatePrerequisites(Connection arg0, Metadata arg1, Map<String, Object> arg2) {
     }
 
     @Override

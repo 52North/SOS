@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
+import org.n52.faroe.SettingType;
 
 /**
  *
@@ -41,16 +41,24 @@ public class NumericSettingValue extends AbstractSettingValue<Double> {
     private static final long serialVersionUID = 4952159387739109274L;
 
     private Double value;
-    
+
+    public NumericSettingValue(String identifier, Double value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public NumericSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public Double getValue() {
         return this.value;
     }
 
     @Override
-    public NumericSettingValue setValue(Double value) {
+    public void setValue(Double value) {
         this.value = value;
-        return this;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,25 +28,23 @@
  */
 package org.n52.sos.netcdf.oceansites;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
 import com.google.common.base.Strings;
 
 /**
  * Helper class for OceanSITES netCDF encoding. Holds the OceanSITES netCDF
  * setting values.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 @Configurable
-public class OceanSITESHelper {
-
-    private static OceanSITESHelper instance;
+public class OceanSITESHelper implements Constructable {
 
     private String siteDefinition;
 
@@ -80,19 +78,20 @@ public class OceanSITESHelper {
 
     private String areaDefinition;
 
+    @Deprecated
+    private static OceanSITESHelper instance;
+
     /**
      * @return Returns a singleton instance of the AqdHelper.
      */
+    @Deprecated
     public static synchronized OceanSITESHelper getInstance() {
-        if (instance == null) {
-            instance = new OceanSITESHelper();
-            SettingsManager.getInstance().configure(instance);
-        }
         return instance;
     }
 
-    private OceanSITESHelper() {
-
+    @Override
+    public void init() {
+        OceanSITESHelper.instance = this;
     }
 
     /**
@@ -106,7 +105,7 @@ public class OceanSITESHelper {
      * @param siteDefinition
      *            the siteDefinition to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_SITE_DEFINITON)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_SITE_DEFINITON)
     public void setSiteDefinition(String siteDefinition) {
         this.siteDefinition = siteDefinition;
     }
@@ -122,7 +121,7 @@ public class OceanSITESHelper {
      * @param platformDefinition
      *            the platformDefinition to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_PLATFORM_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_PLATFORM_DEFINITION)
     public void setPlatformDefinition(String platformDefinition) {
         this.platformDefinition = platformDefinition;
     }
@@ -138,7 +137,7 @@ public class OceanSITESHelper {
      * @param dataModeDefinition
      *            the dataModeDefinition to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_DATA_MODE_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_DATA_MODE_DEFINITION)
     public void setDataModeDefinition(String dataModeDefinition) {
         this.dataModeDefinition = dataModeDefinition;
     }
@@ -154,7 +153,7 @@ public class OceanSITESHelper {
      * @param dataMode
      *            the dataMode to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_DATA_MODE)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_DATA_MODE)
     public void setDataMode(String dataMode) {
         this.dataMode = OceanSITESConstants.DataMode.valueOf(dataMode);
     }
@@ -163,7 +162,7 @@ public class OceanSITESHelper {
         return getDataMode() != null;
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_LICENSE)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_LICENSE)
     public void setLicense(String license) {
         this.license = license;
     }
@@ -176,7 +175,7 @@ public class OceanSITESHelper {
         return !Strings.isNullOrEmpty(getLicense());
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_CITATION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_CITATION)
     public void setCitation(String citation) {
         this.citation = citation;
     }
@@ -192,7 +191,7 @@ public class OceanSITESHelper {
         return !Strings.isNullOrEmpty(getCitation());
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_ACKNOWLEDGEMENT)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_ACKNOWLEDGEMENT)
     public void setAcknowledgement(String acknowledgement) {
         this.acknowledgement = acknowledgement;
     }
@@ -204,7 +203,7 @@ public class OceanSITESHelper {
         return acknowledgement;
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_PROJECT)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_PROJECT)
     public void setProject(String project) {
         this.project = project;
     }
@@ -220,7 +219,7 @@ public class OceanSITESHelper {
         return !Strings.isNullOrEmpty(getProject());
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_PROJECT_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_PROJECT_DEFINITION)
     public void setProjectDefinition(String definition) {
         this.projectDefinition = definition;
     }
@@ -232,7 +231,7 @@ public class OceanSITESHelper {
         return projectDefinition;
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_ARRAY_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_ARRAY_DEFINITION)
     public void setArrayDefinition(String definition) {
         this.arrayDefinition = definition;
     }
@@ -244,7 +243,7 @@ public class OceanSITESHelper {
         return arrayDefinition;
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_NETWORK_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_NETWORK_DEFINITION)
     public void setNetworkDefinition(String definition) {
         this.networkDefinition = definition;
     }
@@ -256,7 +255,7 @@ public class OceanSITESHelper {
         return networkDefinition;
     }
 
-    @Setting(OceanSITESSettings.OCEANSITES_WMO_PLATFORM_CODE_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_WMO_PLATFORM_CODE_DEFINITION)
     public void setWmoPlatformCodeDefinition(String definition) {
         this.wmoPlatformCodeDefinition = definition;
     }
@@ -279,7 +278,7 @@ public class OceanSITESHelper {
      * @param formatVersion
      *            the formatVersion to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_FORMAT_VERSION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_FORMAT_VERSION)
     public void setFormatVersion(String formatVersion) {
         this.formatVersion = formatVersion;
     }
@@ -295,7 +294,7 @@ public class OceanSITESHelper {
      * @param principalInvestigator
      *            the principalInvestigator to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_PRINCIPAL_INVESTIGATOR)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_PRINCIPAL_INVESTIGATOR)
     public void setPrincipalInvestigator(String principalInvestigator) {
         this.principalInvestigator = CiRoleCodes.valueOf(principalInvestigator);
     }
@@ -311,7 +310,7 @@ public class OceanSITESHelper {
      * @param references
      *            the references to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_REFERENCES)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_REFERENCES)
     public void setReferences(String references) {
         this.references = references;
     }
@@ -331,7 +330,7 @@ public class OceanSITESHelper {
      * @param areaDefinition
      *            the area to set
      */
-    @Setting(OceanSITESSettings.OCEANSITES_AREA_DEFINITION)
+    @Setting(OceanSITESSettingsProvider.OCEANSITES_AREA_DEFINITION)
     public void setAreaDefinition(String areaDefinition) {
         this.areaDefinition = areaDefinition;
     }

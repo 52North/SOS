@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -35,18 +37,15 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.sos.convert.ConverterException;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
-
-import com.google.common.collect.Sets;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.shetland.ogc.om.ObservationStream;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 
 /**
  * @since 4.0.0
@@ -56,30 +55,25 @@ public class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
     }
 
-    public static List<OmObservation> createSosObservationsFromObservations(Collection<Observation<?>> o,
-            AbstractObservationRequest r, Session s) throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, r, s).create();
+    public static ObservationStream createSosObservationsFromObservations(Collection<DataEntity<?>> o,
+            AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx, Session s)
+            throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, s)
+                .create();
     }
 
-    public static List<OmObservation> createSosObservationsFromObservations(Collection<Observation<?>> o,
-             AbstractObservationRequest r, Locale l, Session s) throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, r, s).create();
+    public static ObservationStream createSosObservationsFromObservations(Collection<DataEntity<?>> o,
+            AbstractObservationRequest r, Locale l, String pdf, OmObservationCreatorContext ctx, Session s)
+            throws OwsExceptionReport, ConverterException {
+        return new ObservationOmObservationCreator(o, r, l, pdf, ctx, s).create();
     }
 
-    public static OmObservation createSosObservationFromObservation(Observation<?> o, AbstractObservationRequest r,
-            Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, s).create();
-        if (CollectionHelper.isNotEmpty(c)) {
-            return c.iterator().next();
-        }
-        return null;
-    }
-
-    public static OmObservation createSosObservationFromObservation(Observation<?> o, AbstractObservationRequest r,
-            Locale l, Session s) throws OwsExceptionReport, ConverterException {
-        List<OmObservation> c = new ObservationOmObservationCreator(Arrays.asList(o), r, s).create();
-        if (CollectionHelper.isNotEmpty(c)) {
-            return c.iterator().next();
+    public static OmObservation createSosObservationFromObservation(DataEntity<?> o, AbstractObservationRequest r,
+            Locale l, String pdf, OmObservationCreatorContext ctx, Session s)
+            throws OwsExceptionReport, ConverterException {
+        ObservationStream c = new ObservationOmObservationCreator(Arrays.asList(o), r, l, pdf, ctx, s).create();
+        if (c.hasNext()) {
+            return c.next();
         }
         return null;
     }
@@ -91,27 +85,29 @@ public class HibernateObservationUtilities {
      *            ObservationConstellation object
      * @param fois
      *            List of featureOfInterest identifiers
-     * @param request
-     *            The request
+     * @param pdf
+     * @param version
+     *            Service version
      * @param session
      *            Hibernate session
      * @return SOS internal observation
      * @throws OwsExceptionReport
-     *             If an error occurs
+     *             If an error octxurs
      * @throws ConverterException
      *             If procedure creation fails
      */
-    public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, Session session)
+    public static ObservationStream createSosObservationFromObservationConstellation(DatasetEntity oc,
+            List<String> fois, AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx, Session session)
             throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromObservationConstellation(oc, fois, request, ServiceConfiguration.getInstance()
-                .getDefaultLanguage(), session);
+        return createSosObservationFromObservationConstellation(oc, fois, r,
+                LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, session);
     }
 
-    public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
-            ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, Locale language, Session session)
+    public static ObservationStream createSosObservationFromObservationConstellation(DatasetEntity oc,
+            List<String> fois, AbstractObservationRequest request, Locale l, String pdf,
+            OmObservationCreatorContext ctx, Session session)
             throws OwsExceptionReport, ConverterException {
-        return new ObservationConstellationOmObservationCreator(oc, fois, request, language, session).create();
+        return new ObservationConstellationOmObservationCreator(oc, fois, request, l, pdf, ctx, session).create();
     }
 
     /**
@@ -125,66 +121,44 @@ public class HibernateObservationUtilities {
      *            Hibernate session
      * @return SOS internal observation
      * @throws OwsExceptionReport
-     *             If an error occurs
+     *             If an error octxurs
      * @throws ConverterException
      *             If procedure creation fails
      */
-    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, AbstractObservationRequest request,
-            Session session) throws OwsExceptionReport, ConverterException {
-        return createSosObservationFromSeries(series, request,
-                ServiceConfiguration.getInstance().getDefaultLanguage(), session);
-    }
-
-    public static Collection<? extends OmObservation> createSosObservationFromSeries(Series series, AbstractObservationRequest request,
-            Locale language, Session session) throws OwsExceptionReport, ConverterException {
-        if (series instanceof EReportingSeries) {
-            return createSosObservationFromEReportingSeries((EReportingSeries) series, request, ServiceConfiguration
-                    .getInstance().getDefaultLanguage(), session);
+    public static ObservationStream createSosObservationFromSeries(DatasetEntity series, AbstractObservationRequest r,
+            String pdf, OmObservationCreatorContext ctx, Session session)
+            throws OwsExceptionReport, ConverterException {
+        if (series instanceof EReportingDatasetEntity) {
+            return createSosObservationFromEReportingSeries((EReportingDatasetEntity) series, r,
+                    LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, session);
         } else {
-            return new SeriesOmObservationCreator(series, request, language, session).create();
+            return createSosObservationFromSeries(series, r,
+                    LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, session);
         }
     }
 
-    public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(EReportingSeries series,
-            AbstractObservationRequest r, Session session) throws OwsExceptionReport, ConverterException {
+    public static ObservationStream createSosObservationFromSeries(DatasetEntity series, AbstractObservationRequest r,
+            Locale l, String pdf, OmObservationCreatorContext ctx, Session session)
+            throws OwsExceptionReport, ConverterException {
+        if (series instanceof EReportingDatasetEntity) {
+            return createSosObservationFromEReportingSeries((EReportingDatasetEntity) series, r, l, pdf, ctx, session);
+        }
+        return new SeriesOmObservationCreator(series, r, l, pdf, ctx, session).create();
+    }
+
+    public static ObservationStream createSosObservationFromEReportingSeries(EReportingDatasetEntity series,
+            AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx, Session session)
+            throws OwsExceptionReport, ConverterException {
         return createSosObservationFromEReportingSeries(series, r,
-                ServiceConfiguration.getInstance().getDefaultLanguage(), session);
+                LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, session);
     }
 
-    public static Collection<? extends OmObservation> createSosObservationFromEReportingSeries(EReportingSeries series,
-            AbstractObservationRequest r, Locale language, Session session) throws OwsExceptionReport, ConverterException {
-        return new EReportingSeriesOmObservationCreator(series, r, language, session).create();
+    public static ObservationStream createSosObservationFromEReportingSeries(EReportingDatasetEntity series,
+            AbstractObservationRequest r, Locale l, String pdf, OmObservationCreatorContext ctx, Session session)
+            throws OwsExceptionReport, ConverterException {
+        return new EReportingSeriesOmObservationCreator(series, r, l, pdf, ctx, session).create();
     }
 
-    /**
-     * Unfold observation with MultiObservationValue to multiple observations
-     * with SingleObservationValue
-     *
-     * @param o
-     *            OmObservation to unfold
-     * @return OmObservation list
-     * @throws OwsExceptionReport
-     *             If unfolding fails
-     */
-    public static List<OmObservation> unfoldObservation(OmObservation o) throws OwsExceptionReport {
-        return new ObservationUnfolder(o).unfold();
-    }
-    
-    /**
-     * Unfold observation with MultiObservationValue to multiple observations
-     * with SingleObservationValue
-     *
-     * @param o
-     *            OmObservation to unfold
-     * @param complexToSingleProfiles
-     *            If a complex value should be converted to single profile observations.
-     * @return OmObservation list
-     * @throws OwsExceptionReport
-     *             If unfolding fails
-     */
-    public static List<OmObservation> unfoldObservation(OmObservation o, boolean complexToSingleProfiles) throws OwsExceptionReport {
-        return new ObservationUnfolder(o).unfold(complexToSingleProfiles);
-    }
 
     /**
      * Get observation ids from observation objects
@@ -193,11 +167,8 @@ public class HibernateObservationUtilities {
      *            Collection of observation objects
      * @return Observation ids as Set
      */
-    public static Set<Long> getObservationIds(Collection<Observation<?>> observations) {
-        Set<Long> observationIds = Sets.newHashSet();
-        for (Observation<?> observation : observations) {
-            observationIds.add(observation.getObservationId());
-        }
-        return observationIds;
+    public static Set<Long> getObservationIds(Collection<DataEntity<?>> observations) {
+        return observations.stream().map(DataEntity::getId).collect(toSet());
     }
+
 }

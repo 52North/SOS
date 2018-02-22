@@ -1,0 +1,20 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="contentCacheController"
+          class="org.n52.sos.cache.ctrl.SosContentCacheControllerImpl"/>
+    <!--
+    <bean id="contentCacheController"
+          class="org.n52.iceland.cache.ctrl.ContentCacheControllerImpl"/>
+    -->
+    <bean id="cachePersistenceStrategy"
+          class="org.n52.iceland.cache.ctrl.persistence.AsyncCachePersistenceStrategy" />
+    <bean id="contentCacheFactory"
+          class="org.n52.sos.cache.ContentCacheFactoryImpl"/>
+    <bean id="completeCacheUpdateFactory"
+          class="org.n52.sos.cache.ctrl.CompleteCacheUpdateFactoryImpl"/>
+    <bean id="contentModificationListener"
+          class="org.n52.sos.cache.ctrl.DefaultContentModificationListener" />
+</beans>

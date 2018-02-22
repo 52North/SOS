@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,17 +33,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.StaticCapabilities;
+import javax.inject.Inject;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,7 +51,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 
 @Controller
@@ -60,10 +58,19 @@ import com.google.common.collect.Lists;
 public class AdminProfileController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminProfileController.class);
-
     private static final String ACTIVE = "active";
-
     private static final String PROFILES = "profiles";
+    private ProfileHandler profileHandler;
+
+    protected ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -87,7 +94,7 @@ public class AdminProfileController {
     public void activateProfile(@RequestParam("identifier") String identifier) throws OwsExceptionReport {
         getProfileHandler().activateProfile(identifier);
     }
-    
+
 //    @ResponseStatus(HttpStatus.OK)
 //    @RequestMapping(value = "/description", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 //    public String getProfileDefinition(@RequestParam("identifier") String identifier) throws OwsExceptionReport {
@@ -96,18 +103,15 @@ public class AdminProfileController {
 //        staticCapabilities.put(identifier, getProfileHandler().getAvailableProfiles().get(identifier).getDefinition());
 //        return response.toString();
 //    }
-    
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/reload", method = RequestMethod.GET)
     public void reloadProfiles() {
         getProfileHandler().reloadProfiles();
     }
-    
+
     protected String getSelectedProfile() {
         return getProfileHandler().getActiveProfile().getIdentifier();
     }
 
-    protected ProfileHandler getProfileHandler() {
-        return Configurator.getInstance().getProfileHandler();
-    }
 }

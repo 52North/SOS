@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,35 +31,35 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.BatchOperationDAO;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.BatchRequest;
-import org.n52.sos.response.BatchResponse;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.BatchConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.response.BatchResponse;
+import org.n52.sos.ds.BatchOperationHandler;
 
 /**
  * TODO JavaDoc
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
-public class BatchRequestOperator extends AbstractRequestOperator<BatchOperationDAO, BatchRequest, BatchResponse> {
+public class BatchRequestOperator extends AbstractRequestOperator<BatchOperationHandler, BatchRequest, BatchResponse> {
     public BatchRequestOperator() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, BatchConstants.OPERATION_NAME, BatchRequest.class);
     }
 
     @Override
     protected BatchResponse receive(BatchRequest request) throws OwsExceptionReport {
-        for (AbstractServiceRequest<?> r : request) {
+        for (OwsServiceRequest r : request) {
             r.setRequestContext(request.getRequestContext());
         }
-        return getDao().executeRequests(request);
+        return getOperationHandler().executeRequests(request);
     }
 
     @Override
@@ -82,7 +82,8 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
     }
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.encode.ResponseFormatKey;
+import org.n52.iceland.coding.encode.ResponseFormatKey;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

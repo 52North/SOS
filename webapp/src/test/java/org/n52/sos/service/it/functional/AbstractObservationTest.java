@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,54 +43,47 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.junit.rules.ErrorCollector;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingValueFactory;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.concrete.InvalidSridException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.JTSHelper;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.util.http.MediaTypes;
-import org.n52.sos.w3c.W3CConstants;
+import org.n52.svalbard.util.XmlOptionsHelper;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.InsertObservationDocument;
@@ -146,7 +139,7 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
         insertSensor.addObservableProperty(observableProperty);
         insertSensor.setProcedureDescriptionFormat(SensorMLConstants.NS_SML);
         insertSensor.addNewMetadata().addNewInsertionMetadata().set(createSensorInsertionMetadata());
-        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, procedure));
+//        insertSensor.addNewProcedureDescription().set(CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, procedure));
         return document;
     }
 
@@ -162,11 +155,11 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
 
     protected SensorML createProcedure(String procedure, String offering, AbstractPhenomenon observableProperty) {
         SensorML wrapper = new SensorML();
-        org.n52.sos.ogc.sensorML.System sensorML = new org.n52.sos.ogc.sensorML.System();
+        org.n52.shetland.ogc.sensorML.System sensorML = new org.n52.shetland.ogc.sensorML.System();
         wrapper.addMember(sensorML);
         sensorML.addIdentifier(new SmlIdentifier(OGCConstants.UNIQUE_ID, OGCConstants.URN_UNIQUE_IDENTIFIER, procedure));
         sensorML.addCapabilities(createOfferingCapabilities(offering));
-        sensorML.addPhenomenon(observableProperty);
+//        sensorML.addPhenomenon(observableProperty);
         wrapper.setIdentifier(new CodeWithAuthority(procedure, CODESPACE));
         return wrapper;
     }
@@ -192,12 +185,12 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
         insertObservation.setService(SosConstants.SOS);
         insertObservation.setVersion(Sos2Constants.SERVICEVERSION);
         insertObservation.addNewOffering().setStringValue(offering);
-        if (observations != null) {
-            for (OmObservation observation : observations) {
-                insertObservation.addNewObservation().addNewOMObservation().set(CodingHelper
-                        .encodeObjectToXml(OmConstants.NS_OM_2, observation));
-            }
-        }
+//        if (observations != null) {
+//            for (OmObservation observation : observations) {
+//                insertObservation.addNewObservation().addNewOMObservation().set(CodingHelper
+//                        .encodeObjectToXml(OmConstants.NS_OM_2, observation));
+//            }
+//        }
         return document;
     }
 
@@ -242,16 +235,16 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
     }
 
     protected static void changeSetting(String setting, String value) {
-        SettingsManager sm = SettingsManager.getInstance();
-        SettingValueFactory sf = sm.getSettingFactory();
-        SettingDefinition<?, ?> sd = sm.getDefinitionByKey(setting);
-        SettingValue<?> sv = sf.newSettingValue(sd, value);
-        try {
-            sm.changeSetting(sv);
-        } catch (ConfigurationException |
-                 ConnectionProviderException ex) {
-            throw new RuntimeException(ex);
-        }
+//        SettingsManager sm = SettingsManager.getInstance();
+//        SettingValueFactory sf = sm.getSettingFactory();
+//        SettingDefinition<?> sd = sm.getDefinitionByKey(setting);
+//        SettingValue<?> sv = sf.newSettingValue(sd, value);
+//        try {
+//            sm.changeSetting(sv);
+//        } catch (ConfigurationException |
+//                 ConnectionProviderException ex) {
+//            throw new RuntimeException(ex);
+//        }
     }
 
     protected static XmlOptions getXmlOptions() {

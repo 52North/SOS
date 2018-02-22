@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,15 +44,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchIdentifierException;
 import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -64,17 +64,17 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getCapabilitiesExtensions() {
-        ObjectNode response = JSONUtils.nodeFactory().objectNode();
-        Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions = getDao()
-                .getActiveCapabilitiesExtensions();
+        ObjectNode response = Json.nodeFactory().objectNode();
+        Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions
+                = getCapabilitiesExtensionService().getActiveCapabilitiesExtensions();
         for (String id : capabilitiesExtensions.keySet()) {
-            response.put(id, toJson(capabilitiesExtensions.get(id)));
+            response.set(id, toJson(capabilitiesExtensions.get(id)));
         }
         return response.toString();
     }
 
     private JsonNode toJson(StringBasedCapabilitiesExtension capabilitiesExtension) {
-        return JSONUtils.nodeFactory().objectNode()
+        return Json.nodeFactory().objectNode()
                 .put(IDENTIFIER_PROPERTY, capabilitiesExtension.getSectionName())
                 .put(DISABLED_PROPERTY, capabilitiesExtension.isDisabled())
                 .put(EXTENSION_PROPERTY, capabilitiesExtension.getExtension());
@@ -85,7 +85,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(value="/{identifier}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public String getCapabilitiesExtension(@PathVariable("identifier") String identifier) throws NoSuchIdentifierException {
-        StringBasedCapabilitiesExtension ce = getDao().getActiveCapabilitiesExtensions().get(identifier);
+        StringBasedCapabilitiesExtension ce = getCapabilitiesExtensionService().getActiveCapabilitiesExtensions().get(identifier);
         if (ce == null) {
             throw new NoSuchIdentifierException(identifier);
         }
@@ -97,16 +97,15 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     public void setCapabilitiesExtensionSettings(
             @PathVariable("identifier") String identifier,
             @RequestBody String settings) throws NoSuchExtensionException, NoSuchOfferingException, IOException {
-        JsonNode request = JSONUtils.loadString(settings);
+        JsonNode request = Json.loadString(settings);
 
         if (request.has(DISABLED_PROPERTY)) {
-            getDao().disableCapabilitiesExtension(identifier, request.path(DISABLED_PROPERTY).asBoolean());
+            getCapabilitiesExtensionService().disableCapabilitiesExtension(identifier, request.path(DISABLED_PROPERTY).asBoolean());
         }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
-    @SuppressWarnings("unchecked")
     public void saveCapabilitiesExtension(
             @PathVariable("identifier") String identifier,
             @RequestBody String extension) throws XmlException, InvalidIdentifierException {
@@ -116,7 +115,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
         }
 
         XmlObject.Factory.parse(extension);
-        getDao().saveCapabilitiesExtension(identifier, extension);
+        getCapabilitiesExtensionService().saveCapabilitiesExtension(identifier, extension);
     }
 
     public boolean contains(String name) {
@@ -142,7 +141,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     @RequestMapping(value="/{identifier}", method = RequestMethod.DELETE)
     public void deleteCapabilitiesExtension(
             @PathVariable("identifier") String identifier) throws NoSuchExtensionException {
-        getDao().deleteCapabiltiesExtension(identifier);
+        getCapabilitiesExtensionService().deleteCapabiltiesExtension(identifier);
     }
 
     @ResponseBody

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,7 +31,7 @@ package org.n52.sos.config.sqlite.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 
 @Entity(name = "capabilities_extension")
 public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesExtensionImpl> implements
@@ -54,7 +54,7 @@ public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesE
     public boolean isDisabled() {
         return !isActive();
     }
-    
+
     @Override
     public String getExtension() {
         return extension;

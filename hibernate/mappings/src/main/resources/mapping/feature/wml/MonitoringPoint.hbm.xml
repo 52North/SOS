@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <subclass name="org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint" 
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.wml.MonitoringPoint"
     				 extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
                      discriminator-value="WmlMonitoringPoint">
         <join table="wmlmonitoringpoint">

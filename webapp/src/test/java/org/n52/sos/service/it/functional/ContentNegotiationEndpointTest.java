@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,21 +43,20 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.service.it.AbstractComplianceSuiteTest;
+import org.n52.sos.service.it.Response;
 import org.n52.sos.service.it.v2.XPaths;
-import org.n52.sos.util.http.HTTPStatus;
-import org.n52.sos.util.http.MediaTypes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.n52.sos.service.it.AbstractComplianceSuiteTest;
-import org.n52.sos.service.it.Response;
 
 /**
  * TODO JavaDoc
@@ -223,7 +222,7 @@ public class ContentNegotiationEndpointTest extends AbstractComplianceSuiteTest 
                 .response();
         errors.checkThat(response.getStatus(),
                          is(HTTPStatus.UNSUPPORTED_MEDIA_TYPE
-                .getCode()));
+                                 .getCode()));
     }
 
     @Test

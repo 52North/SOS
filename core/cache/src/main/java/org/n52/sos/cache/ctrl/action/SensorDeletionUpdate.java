@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,13 +30,15 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Set;
 
+import org.n52.sos.cache.InMemoryCacheImpl;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.iceland.util.action.Action;
+import org.n52.sos.ds.CacheFeederHandler;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.util.Action;
 
 import com.google.common.collect.Sets;
 
@@ -57,18 +59,19 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
 
     private final DeleteSensorRequest request;
 
-    public SensorDeletionUpdate(DeleteSensorRequest response) {
-        if (response == null) {
-            String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), response);
+    public SensorDeletionUpdate(CacheFeederHandler cacheFeederDAO, DeleteSensorRequest request) {
+        super(cacheFeederDAO);
+        if (request == null) {
+            String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), request);
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.request = response;
+        this.request = request;
     }
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final SosWritableContentCache cache = getCache();
         final String procedure = request.getProcedureIdentifier();
 
         cache.removeProcedure(procedure);
@@ -121,7 +124,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         }
 
         try {
-            getDao().updateCacheOfferings(cache, offeringsNeedingReload);
+            getCacheFeederDAO().updateCacheOfferings(cache, offeringsNeedingReload);
         } catch (OwsExceptionReport ex) {
             fail(ex);
         }
@@ -137,13 +140,13 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         }
 
         cache.clearCompositePhenomenonForProcedure(procedure);
-        
+
         // At the latest
         cache.removeOfferingsForProcedure(procedure);
         cache.recalculatePhenomenonTime();
         cache.recalculateResultTime();
         cache.recalculateGlobalEnvelope();
-        
+
         cache.removeComponentAggregationProcedure(procedure);
         cache.removeTypeInstanceProcedure(procedure);
         cache.removeTypeOfProcedure(procedure);

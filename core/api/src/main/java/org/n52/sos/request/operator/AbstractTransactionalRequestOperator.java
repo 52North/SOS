@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,12 +29,14 @@
 package org.n52.sos.request.operator;
 
 
-import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import javax.inject.Inject;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
 /**
@@ -44,31 +46,42 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
  * @param <Q>
  * @param <A>
  */
-public abstract class AbstractTransactionalRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
-	
+
     private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;
 
-	public AbstractTransactionalRequestOperator(String service,
-                                                String version,
-                                                String operationName,
+    private TransactionalSecurityConfiguration transactionalSecurityConfiguration;
+
+    public AbstractTransactionalRequestOperator(String service, String version, String operationName,
                                                 Class<Q> requestType) {
         super(service, version, operationName, TRANSACTIONAL_ACTIVATION_STATE, requestType);
     }
 
+    public AbstractTransactionalRequestOperator(String service, String version, Enum<?> operationName,
+                                                Class<Q> requestType) {
+        this(service, version, operationName.name(), requestType);
+    }
+
+    @Inject
+    public void setTransactionalSecurityConfiguration(TransactionalSecurityConfiguration config) {
+        this.transactionalSecurityConfiguration = config;
+    }
+
+    public TransactionalSecurityConfiguration getTransactionalSecurityConfiguration() {
+        return transactionalSecurityConfiguration;
+    }
+
     @Override
-    public AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request)
+    public OwsServiceResponse receiveRequest(OwsServiceRequest request)
             throws OwsExceptionReport {
         try {
-            new TransactionalRequestChecker(getConfig())
+            new TransactionalRequestChecker(getTransactionalSecurityConfiguration())
                     .check(request.getRequestContext());
-        } catch (ConfigurationException ce) {
+        } catch (ConfigurationError ce) {
             throw new NoApplicableCodeException().causedBy(ce);
         }
         return super.receiveRequest(request);
     }
 
-    private TransactionalSecurityConfiguration getConfig() {
-        return TransactionalSecurityConfiguration.getInstance();
-    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,25 +30,21 @@ package org.n52.sos.util.builder;
 
 import java.util.ArrayList;
 
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * J&uuml;rrens</a>
  * @since 4.0.0
  */
 public class ObservationConstellationBuilder {
 
-    public static ObservationConstellationBuilder anObservationConstellation() {
-        return new ObservationConstellationBuilder();
-    }
-
     private AbstractFeature featureOfInterest;
 
-    private SosProcedureDescription procedure;
+    private SosProcedureDescription<?> procedure;
 
     private String observationType;
 
@@ -61,7 +57,7 @@ public class ObservationConstellationBuilder {
         return this;
     }
 
-    public ObservationConstellationBuilder setProcedure(SosProcedureDescription procedure) {
+    public ObservationConstellationBuilder setProcedure(SosProcedureDescription<?> procedure) {
         this.procedure = procedure;
         return this;
     }
@@ -79,7 +75,7 @@ public class ObservationConstellationBuilder {
     public ObservationConstellationBuilder addOffering(String offeringIdentifier) {
         if (offeringIdentifier != null && !offeringIdentifier.isEmpty()) {
             if (offerings == null) {
-                offerings = new ArrayList<String>();
+                offerings = new ArrayList<>(1);
             }
             offerings.add(offeringIdentifier);
         }
@@ -96,6 +92,9 @@ public class ObservationConstellationBuilder {
             sosObservationConstellation.setOfferings(offerings);
         }
         return sosObservationConstellation;
+    }
+    public static ObservationConstellationBuilder anObservationConstellation() {
+        return new ObservationConstellationBuilder();
     }
 
 }

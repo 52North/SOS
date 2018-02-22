@@ -1,0 +1,12 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <!-- RequestOperator implementations from operations/extensions-v20 -->
+    <bean class="org.n52.sos.request.operator.DeleteObservationRequestOperator"/>
+    <bean class="org.n52.sos.request.operator.DeleteResultTemplateOperator"/>
+    <bean class="org.n52.sos.request.operator.GetDataAvailabilityOperator"/>
+    <bean class="org.n52.sos.request.operator.InsertFeatureOfInterestOperator"/>
+
+</beans>

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,26 +31,25 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractDeleteSensorDAO;
-import org.n52.sos.event.SosEventBus;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.response.DeleteSensorResponse;
-import org.n52.sos.service.Configurator;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0
  *
  */
-public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOperator<AbstractDeleteSensorDAO, DeleteSensorRequest, DeleteSensorResponse> {
+public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOperator<AbstractDeleteSensorHandler, DeleteSensorRequest, DeleteSensorResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.DeleteSensor.name();
     private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_SENSOR_DELETION);
@@ -60,14 +59,17 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public DeleteSensorResponse receive(DeleteSensorRequest request) throws OwsExceptionReport {
-        DeleteSensorResponse response = getDao().deleteSensor(request);
-        SosEventBus.fire(new SensorDeletion(request, response));
+        DeleteSensorResponse response = getOperationHandler().deleteSensor(request);
+        getServiceEventBus().submit(new SensorDeletion(request, response));
         return response;
     }
 
@@ -94,14 +96,14 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
 
     private void checkProcedureIdentifier(String procedureIdentifier) throws OwsExceptionReport {
         if (procedureIdentifier != null && !procedureIdentifier.isEmpty()) {
-            if (!Configurator.getInstance().getCache().getProcedures().contains(procedureIdentifier)) {
+            if (!getCache().getProcedures().contains(procedureIdentifier)) {
                 throw new InvalidProcedureParameterException(procedureIdentifier);
             }
         } else {
             throw new MissingProcedureParameterException();
         }
     }
-    
+
     @Override
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.DELETE_SENSOR;

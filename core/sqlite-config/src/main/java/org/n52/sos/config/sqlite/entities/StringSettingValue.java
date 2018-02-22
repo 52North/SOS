@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,26 +30,34 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
+import org.n52.faroe.SettingType;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "string_settings")
 public class StringSettingValue extends AbstractSettingValue<String>{
     private static final long serialVersionUID = -8232540483696284048L;
 
     private String value;
-    
+
+    public StringSettingValue(String value, String identifier) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public StringSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public String getValue() {
         return this.value;
     }
 
     @Override
-    public StringSettingValue setValue(String value) {
+    public void setValue(String value) {
         this.value = value;
-        return this;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,14 +30,19 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-
-import com.google.common.base.Strings;
+//import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
+//import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+//import org.n52.sos.ds.hibernate.entities.PhenomenonEntity;
+//import org.n52.sos.ds.hibernate.entities.Offering;
+//import org.n52.sos.ds.hibernate.entities.ProcedureEntity;
+//import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureEntity;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -49,14 +54,14 @@ import com.google.common.base.Strings;
  *
  */
 public class ObservationContext {
-
-    private AbstractFeatureOfInterest featureOfInterest;
-    private ObservableProperty observableProperty;
-    private Procedure procedure;
-    private Offering offering;
-    private String seriesType;
-    private boolean hiddenChild;
+    private AbstractFeatureEntity<?> featureOfInterest;
+    private PhenomenonEntity observableProperty;
+    private ProcedureEntity procedure;
+    private OfferingEntity offering;
+    private CategoryEntity category;
+    private boolean hiddenChild = false;
     private boolean publish = true;
+    private FormatEntity observationType;
 
     /**
      * Indicates that the series of the observation should be published
@@ -65,111 +70,167 @@ public class ObservationContext {
         return publish;
     }
 
-    public void setPublish(boolean publish) {
+    public ObservationContext setPublish(boolean publish) {
         this.publish = publish;
+        return this;
     }
 
-    public AbstractFeatureOfInterest getFeatureOfInterest() {
+    public AbstractFeatureEntity<?> getFeatureOfInterest() {
         return featureOfInterest;
     }
 
-    public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
+    public ObservationContext setFeatureOfInterest(AbstractFeatureEntity<?> featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
+        return this;
     }
 
-    public ObservableProperty getObservableProperty() {
+    public PhenomenonEntity getPhenomenon() {
         return observableProperty;
     }
 
-    public void setObservableProperty(ObservableProperty observableProperty) {
+    public ObservationContext setPhenomenon(PhenomenonEntity observableProperty) {
         this.observableProperty = observableProperty;
+        return this;
     }
 
-    public Procedure getProcedure() {
+    /**
+     * @return the category
+     */
+    public CategoryEntity getCategory() {
+        return category;
+    }
+
+    /**
+     * @param category the category to set
+     */
+    public ObservationContext setCategory(CategoryEntity category) {
+        this.category = category;
+        return this;
+    }
+
+    /**
+     * @return the offering
+     */
+    public OfferingEntity getOffering() {
+        return offering;
+    }
+
+    public ObservationContext setOffering(OfferingEntity offering) {
+        this.offering = offering;
+        return this;
+    }
+
+    public ProcedureEntity getProcedure() {
         return procedure;
     }
 
-    public void setProcedure(Procedure procedure) {
+
+    /**
+     * @param procedure
+     *                  the procedure to set
+     * @return
+     */
+    public ObservationContext setProcedure(ProcedureEntity procedure) {
         this.procedure = procedure;
+        return this;
+    }
+
+    public FormatEntity getObservationType() {
+        return observationType;
+    }
+
+    public ObservationContext setObservationType(FormatEntity observationType) {
+        this.observationType = observationType;
+        return this;
     }
 
     public boolean isSetFeatureOfInterest() {
         return getFeatureOfInterest() != null;
     }
 
-    public boolean isSetObservableProperty() {
-        return getObservableProperty() != null;
+    public boolean isSetPhenomenon() {
+        return getPhenomenon() != null;
     }
 
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
 
-    public Offering getOffering() {
-        return offering;
-    }
-
-    public void setOffering(Offering offering) {
-        this.offering = offering;
-    }
-
     public boolean isSetOffering() {
         return getOffering() != null;
     }
 
+    public boolean isSetCategory() {
+        return getCategory() != null;
+    }
+
+    public boolean isSetObservationType() {
+        return getObservationType() != null;
+    }
+
     public void addIdentifierRestrictionsToCritera(Criteria c) {
-        if (isSetFeatureOfInterest()) {
-            c.add(Restrictions
-                    .eq(HasWriteableObservationContext.FEATURE_OF_INTEREST,
-                        getFeatureOfInterest()));
+        addIdentifierRestrictionsToCritera(c, true);
+    }
+
+    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeature) {
+        if (includeFeature) {
+            if (isSetFeatureOfInterest()) {
+                c.add(Restrictions
+                        .eq(DatasetEntity.PROPERTY_FEATURE,
+                            getFeatureOfInterest()));
+
+            }
+        } else {
+            c.add(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE));
         }
-        if (isSetObservableProperty()) {
+        if (isSetPhenomenon()) {
             c.add(Restrictions
-                    .eq(HasWriteableObservationContext.OBSERVABLE_PROPERTY,
-                        getObservableProperty()));
+                    .eq(DatasetEntity.PROPERTY_PHENOMENON,
+                        getPhenomenon()));
         }
         if (isSetProcedure()) {
             c.add(Restrictions
-                    .eq(HasWriteableObservationContext.PROCEDURE,
+                    .eq(DatasetEntity.PROPERTY_PROCEDURE,
                         getProcedure()));
         }
         if (isSetOffering()) {
-            c.add(Restrictions.eq(HasWriteableObservationContext.OFFERING, offering));
+            c.add(Restrictions
+                    .eq(DatasetEntity.PROPERTY_OFFERING,
+                        getOffering()));
+        }
+
+        if (isSetCategory()) {
+            c.add(Restrictions
+                    .eq(DatasetEntity.PROPERTY_CATEGORY,
+                        getCategory()));
         }
     }
 
-    public void addValuesToSeries(HasWriteableObservationContext contextual) {
-        if (isSetFeatureOfInterest()) {
-            contextual.setFeatureOfInterest(getFeatureOfInterest());
+    public void addValuesToSeries(DatasetEntity contextual) {
+        if (!contextual.isSetFeature() && isSetFeatureOfInterest()) {
+            contextual.setFeature(getFeatureOfInterest());
         }
-        if (isSetObservableProperty()) {
-            contextual.setObservableProperty(getObservableProperty());
+        if (contextual.getPhenomenon() == null && isSetPhenomenon()) {
+            contextual.setPhenomenon(getPhenomenon());
         }
-        if (isSetProcedure()) {
+        if (contextual.getProcedure() == null && isSetProcedure()) {
             contextual.setProcedure(getProcedure());
         }
-        if (isSetOffering()) {
+        if (!contextual.isSetOffering() && isSetOffering()) {
             contextual.setOffering(getOffering());
         }
-        if (contextual instanceof HasSeriesType && isSetSeriesType()) {
-            ((HasSeriesType)contextual).setSeriesType(getSeriesType());
+        if (contextual.getCategory() == null && isSetCategory()) {
+            contextual.setCategory(getCategory());
         }
+        if (!contextual.isSetObservationType() && isSetObservationType()) {
+            contextual.setObservationType(getObservationType());
+        }
+       contextual.setHiddenChild(isHiddenChild());
     }
 
-    public void setSeriesType(String seriesType) {
-        this.seriesType = seriesType;
-    }
-
-    public String getSeriesType() {
-        return seriesType;
-    }
-
-    public boolean isSetSeriesType() {
-        return !Strings.isNullOrEmpty(getSeriesType());
-    }
-
-    public void setHiddenChild(boolean hiddenChild) {
+    public ObservationContext setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
+        return this;
     }
 
     public boolean isHiddenChild() {

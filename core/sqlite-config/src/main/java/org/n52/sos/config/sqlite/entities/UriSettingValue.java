@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,8 +32,7 @@ import java.net.URI;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
+import org.n52.faroe.SettingType;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -43,16 +42,24 @@ public class UriSettingValue extends AbstractSettingValue<URI> {
     private static final long serialVersionUID = -8771649328574485594L;
 
     private URI value;
-    
+
+    public UriSettingValue(String identifier, URI value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public UriSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public URI getValue() {
         return this.value;
     }
 
     @Override
-    public SettingValue<URI> setValue(URI value) {
+    public void setValue(URI value) {
         this.value = value;
-        return this;
     }
 
     @Override

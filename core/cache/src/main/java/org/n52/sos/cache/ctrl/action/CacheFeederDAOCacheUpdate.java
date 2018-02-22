@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,26 +28,22 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import org.n52.sos.cache.ContentCacheUpdate;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ds.CacheFeederDAORepository;
-import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.sos.cache.SosContentCacheUpdate;
+import org.n52.sos.ds.CacheFeederHandler;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
-public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
-    private CacheFeederDAO cacheFeederDAO;
+public abstract class CacheFeederDAOCacheUpdate extends SosContentCacheUpdate {
+    private final CacheFeederHandler cacheFeederDAO;
 
-    protected CacheFeederDAO getDao() throws NoImplementationFoundException {
-        if (this.cacheFeederDAO == null) {
-            this.cacheFeederDAO = CacheFeederDAORepository.getInstance().getCacheFeederDAO();
-            if (this.cacheFeederDAO == null) {
-                throw new NoImplementationFoundException(CacheFeederDAO.class);
-            }
-        }
-        return this.cacheFeederDAO;
+    public CacheFeederDAOCacheUpdate(CacheFeederHandler cacheFeederDAO) {
+        this.cacheFeederDAO = cacheFeederDAO;
+    }
+
+    public CacheFeederHandler getCacheFeederDAO() {
+        return cacheFeederDAO;
     }
 }

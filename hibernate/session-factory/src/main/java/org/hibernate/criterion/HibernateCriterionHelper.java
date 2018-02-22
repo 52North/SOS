@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,21 +28,19 @@
  */
 package org.hibernate.criterion;
 
-import org.n52.sos.util.Constants;
-
 /**
  * Helper class to create Hibernate LikeExpression
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * 
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateCriterionHelper {
 
     /**
      * Create Hibernate LikeExpression from values
-     * 
+     *
      * @param propertyName
      *            Property name
      * @param value
@@ -59,10 +57,10 @@ public class HibernateCriterionHelper {
             Character escapeChar, boolean ignoreCase) {
         return new LikeExpression(propertyName, value, matchMode, escapeChar, ignoreCase);
     }
-    
+
     /**
      * Create Hibernate LikeExpression from values
-     * 
+     *
      * @param propertyName
      *            Property name
      * @param value
@@ -72,10 +70,10 @@ public class HibernateCriterionHelper {
     public static LikeExpression getLikeExpression(String propertyName, String value) {
         return new LikeExpression(propertyName, value);
     }
-    
+
     /**
      * Create Hibernate LikeExpression from values
-     * 
+     *
      * @param propertyName
      *            Property name
      * @param value
@@ -90,7 +88,7 @@ public class HibernateCriterionHelper {
 
     /**
      * Create Hibernate LikeExpression from values
-     * 
+     *
      * @param propertyName
      *            Property name
      * @param value
@@ -105,10 +103,10 @@ public class HibernateCriterionHelper {
             Character escapeChar, boolean ignoreCase) {
         return new LikeExpression(propertyName, value, escapeChar, ignoreCase);
     }
-    
+
     /**
      * Create Hibernate LikeExpression from values
-     * 
+     *
      * @param propertyName
      *            Property name
      * @param value
@@ -129,5 +127,5 @@ public class HibernateCriterionHelper {
         }
         return new LikeExpression(propertyName, value, null, ignoreCase);
     }
-    
+
 }

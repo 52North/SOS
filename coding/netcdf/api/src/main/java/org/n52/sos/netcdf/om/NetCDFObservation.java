@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,19 +34,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmObservableProperty;
-
-import ucar.nc2.constants.CF;
 
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Envelope;
+import org.locationtech.jts.geom.Envelope;
+
+import ucar.nc2.constants.CF;
 
 /**
  * An netCDF compatible observation block containing all observations for a
  * feature type.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -61,7 +61,7 @@ public class NetCDFObservation {
 
     //for data block
     private Map<String, ? extends AbstractSensorDataset> sensorDatasetMap;
-    
+
     //constructor
     public NetCDFObservation(CF.FeatureType featureType, TimePeriod samplingTime,
             Map<String, ? extends AbstractSensorDataset> sensorDatasetMap, Set<OmObservableProperty> phenomena,
@@ -77,11 +77,11 @@ public class NetCDFObservation {
     public CF.FeatureType getFeatureType() {
         return featureType;
     }
-        
+
     public TimePeriod getSamplingTime() {
         return samplingTime;
     }
-        
+
     public Map<String, ? extends AbstractSensorDataset> getSensorDatasetMap() {
         return sensorDatasetMap;
     }
@@ -89,7 +89,7 @@ public class NetCDFObservation {
     public Set<OmObservableProperty> getPhenomena() {
         return phenomena;
     }
-        
+
     public Envelope getEnvelope() {
         return envelope;
     }
@@ -97,5 +97,5 @@ public class NetCDFObservation {
     public List<? extends AbstractSensorDataset> getSensorDatasets(){
         return Collections.unmodifiableList(Lists.newArrayList(sensorDatasetMap.values()));
     }
-  
+
 }

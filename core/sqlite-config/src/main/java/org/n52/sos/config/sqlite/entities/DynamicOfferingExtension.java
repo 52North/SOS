@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,14 +30,14 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  * Entity to store the active/inactive dynamic offering extensions
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Entity(name = "dynamic_offering_extension")
 public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensionKey, DynamicOfferingExtension> {
@@ -53,17 +53,17 @@ public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensi
 
     /**
      * constructor
-     * 
+     *
      * @param oek
-     *            the {@link OfferingExtensionKey} to set
+     *            the {@link SosObservationOfferingExtensionKey} to set
      */
-    public DynamicOfferingExtension(OfferingExtensionKey oek) {
+    public DynamicOfferingExtension(SosObservationOfferingExtensionKey oek) {
         super(new DynamicOfferingExtensionKey(oek));
     }
 
     /**
      * constructor
-     * 
+     *
      * @param key
      *            the {@link DynamicOfferingExtensionKey} to set
      */
@@ -73,7 +73,7 @@ public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensi
 
     /**
      * constructor
-     * 
+     *
      * @param service
      *            the service to set
      * @param version

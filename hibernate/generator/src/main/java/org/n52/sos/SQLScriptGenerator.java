@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,6 +34,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -58,10 +59,9 @@ import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
  * Class to generate the create and drop scripts for different databases.
  * Currently supported spatial databases to create scripts - PostgreSQL/PostGIS
  * - Oracle - H2/GeoDB
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
- * 
  */
 public class SQLScriptGenerator {
 
@@ -216,7 +216,7 @@ public class SQLScriptGenerator {
 
     private Set<String> checkSchema(Dialect dia, String[] create) {
         String hexStringToCheck =
-                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
+                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase(Locale.ROOT))
                         .toString();
         boolean duplicate = false;
         List<String> checkedSchema = Lists.newLinkedList();

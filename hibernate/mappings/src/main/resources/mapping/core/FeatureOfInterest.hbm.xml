@@ -61,7 +61,7 @@
             </column>
         </property>
         <!-- supports types double, big_decimal, and string -->
-        <!--  
+        <!--
         <property name="longitude" type="double">
            <column name="longitude" unique-key="featLonLatUk">
                 <comment>The longitude of the feature. Optional</comment>
@@ -81,7 +81,7 @@
             <column name="srid">
                 <comment>SRID of the longitude/latitude values. Optional</comment>
             </column>
-        </property> 
+        </property>
         -->
         <set name="childs" table="featurerelation" inverse="false">
             <comment>Relation table to store feature hierarchies. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TFeatureOfInterest.hbm.xml</comment>
@@ -111,19 +111,19 @@
             <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter" />
         </set>
     </class>
-    <subclass name="org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest" 
-              extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" 
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest"
+              extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
               discriminator-value="null">
     </subclass>
-    
+
     <sql-query name="getEpsgPostgis">
         <return-scalar column="srid" type="int"/>
         SELECT srid FROM spatial_ref_sys
     </sql-query>
-    
+
        <sql-query name="transformGeometryPostgis">
         <return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
         SELECT ST_Transform(:geometry, :srid) as geom
     </sql-query>
-    
+
 </hibernate-mapping>

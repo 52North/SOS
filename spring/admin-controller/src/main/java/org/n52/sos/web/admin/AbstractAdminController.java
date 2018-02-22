@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,33 +28,50 @@
  */
 package org.n52.sos.web.admin;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.AbstractController;
+import javax.inject.Inject;
+
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.web.common.AbstractController;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class AbstractAdminController extends AbstractController {
 
+    private ContentCacheController contentCacheController;
+
+    @Inject
+    public void setContentCacheController(ContentCacheController ctrl) {
+        this.contentCacheController = ctrl;
+    }
+
     protected boolean cacheIsLoading() {
-        return Configurator.getInstance().getCacheController().isUpdateInProgress();
-    }    
-    
-    protected void updateCache() throws OwsExceptionReport {
+        return contentCacheController.isUpdateInProgress();
+    }
+
+    protected void updateCache()
+            throws OwsExceptionReport {
         //don't wait for cache update to complete since it can take much longer than browser timeouts.
         //instead, start it and then check loading status from the client using cacheIsLoading().
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    Configurator.getInstance().getCacheController().update();
-                } catch (OwsExceptionReport e) {
-                    //NOOP
-                    //TODO should the last cache loading error be stored and accessible to the client?
-                }                
-            }            
-        }).start();        
+        new Thread(() -> {
+            try {
+                contentCacheController.update();
+            } catch (OwsExceptionReport e) {
+                //NOOP
+                //TODO should the last cache loading error be stored and accessible to the client?
+            }
+        }).start();
     }
+
+    public ContentCacheController getContentCacheController() {
+        return contentCacheController;
+    }
+
+    protected SosContentCache getCache() {
+        return (SosContentCache) this.contentCacheController.getCache();
+    }
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,9 +31,9 @@ package org.n52.sos.service.it.functional;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.n52.sos.ogc.series.wml.WaterMLConstants;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.sos.x20.GetObservationResponseDocument;

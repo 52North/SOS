@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,71 +28,98 @@
  */
 package org.n52.sos.binding;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.iceland.binding.AbstractXmlBinding;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.MediaTypeBindingKey;
+import org.n52.iceland.binding.PathBindingKey;
+import org.n52.iceland.coding.SupportedTypeRepository;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.janmayen.stream.Streams;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosInsertionMetadata;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.util.OMHelper;
 import org.n52.sos.exception.swes.InvalidRequestException;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.KvpHelper;
-import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * Binding to register a sensor without using the SOS-InsertSensor operation.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
-public class RegisterBinding extends SimpleBinding {
+public class RegisterBinding
+        extends AbstractXmlBinding<OwsServiceRequest> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterBinding.class);
+
+    private static final String URL_PATTERN = "/register";
 
     private static final String PROCEDURE = "procedure";
 
     private static final String OFFERING = "offering";
 
+    private static final Set<BindingKey> KEYS = ImmutableSet.<BindingKey> builder()
+            .add(new PathBindingKey(URL_PATTERN)).add(new MediaTypeBindingKey(MediaTypes.APPLICATION_XML)).build();
+
+    @Inject
+    private SupportedTypeRepository supportedTypeRepository;
+
     @Override
-    public Set<String> getConformanceClasses() {
+    public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();
+    }
+
+    @Override
+    public Set<BindingKey> getKeys() {
+        return Collections.unmodifiableSet(KEYS);
+    }
+
+    public String getUrlPattern() {
+        return URL_PATTERN;
     }
 
     @Override
@@ -101,23 +128,18 @@ public class RegisterBinding extends SimpleBinding {
     }
 
     @Override
-    public String getUrlPattern() {
-        return "/register";
-    }
-
-    @Override
-    public Set<MediaType> getSupportedEncodings() {
-        return Collections.emptySet();
+    protected boolean isUseHttpResponseCodes() {
+        return false;
     }
 
     @Override
     public void doPostOperation(HttpServletRequest req, HttpServletResponse res) throws HTTPException, IOException {
-        AbstractServiceRequest<?> serviceRequest = null;
+        OwsServiceRequest serviceRequest = null;
         try {
             serviceRequest = parseRequest(req);
             // add request context information
             serviceRequest.setRequestContext(getRequestContext(req));
-            AbstractServiceResponse response = getServiceOperator(serviceRequest).receiveRequest(serviceRequest);
+            OwsServiceResponse response = getServiceOperator(serviceRequest).receiveRequest(serviceRequest);
             writeResponse(req, res, response);
         } catch (OwsExceptionReport oer) {
             oer.setVersion(serviceRequest != null ? serviceRequest.getVersion() : null);
@@ -125,78 +147,87 @@ public class RegisterBinding extends SimpleBinding {
         }
     }
 
-    private AbstractServiceRequest<?> parseRequest(HttpServletRequest req) throws OwsExceptionReport {
-        Map<String, String> parameterValueMap = KvpHelper.getKvpParameterValueMap(req);
-        XmlObject doc = XmlHelper.parseXmlSosRequest(req);
-        if (LOGGER.isTraceEnabled()) {
-            LOGGER.debug("REGISTER-REQUEST: {}", doc.xmlText());
-        }
-        Object object = getDecoder(CodingHelper.getDecoderKey(doc)).decode(doc);
-        if (object != null && object instanceof SosProcedureDescription) {
+    private OwsServiceRequest parseRequest(HttpServletRequest req) throws OwsExceptionReport {
+        Map<String, String> parameters = Streams.stream(req.getParameterNames())
+                .collect(toMap(name -> name.replace("amp;", "").toLowerCase(Locale.ROOT), req::getParameter));
+        Object object = decode(req);
+        if (object != null) {
+            SosProcedureDescription<?> procDesc = null;
+            if (object instanceof SosProcedureDescription<?>) {
+                procDesc = (SosProcedureDescription<?>) object;
+            } else if (object instanceof AbstractFeature) {
+                procDesc = new SosProcedureDescription<AbstractFeature>((AbstractFeature) object);
+            } else {
+                throw new NoApplicableCodeException().withMessage("The requested type '{}' is not supported!",
+                        object.getClass().getName());
+            }
 
-            SosProcedureDescription procDesc = (SosProcedureDescription) object;
             InsertSensorRequest request = new InsertSensorRequest();
+            request.setRequestContext(getRequestContext(req));
             // isType extension
-            String isType = KvpHelper.getParameterValue("isType", parameterValueMap);
+            String isType = getParameterValue("isType", parameters);
             boolean isTypeRequest = false;
             if (!Strings.isNullOrEmpty(isType) && Boolean.parseBoolean(isType)) {
-                SwesExtensionImpl<SweBoolean> extension = new SwesExtensionImpl<SweBoolean>();
+                SwesExtension<SweBoolean> extension = new SwesExtension<SweBoolean>();
                 extension.setDefinition("isType").setValue(new SweBoolean().setValue(true));
                 request.addExtension(extension);
                 isTypeRequest = true;
             }
             // check for procedure and offering identifier
             // parameterValueMap
-            checkForProcedureParameter(procDesc, parameterValueMap);
-            checkForOfferingParameter(procDesc, parameterValueMap);
+            checkForProcedureParameter(procDesc, parameters);
+            checkForOfferingParameter(procDesc, parameters);
 
             // sensor description
             request.setProcedureDescription(procDesc);
             // service and version
-            request.setService(getServiceParameterValue(parameterValueMap));
-            request.setVersion(getVersionParameterValue(parameterValueMap));
+            request.setService(getServiceParameterValue(parameters));
+            request.setVersion(getVersionParameterValue(parameters));
             // format
             request.setProcedureDescriptionFormat(procDesc.getDescriptionFormat());
             // observable properties
             // get from parameter or from sml:output
-            List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameterValueMap);
+            List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameters);
             if (!observableProperties.isEmpty()) {
                 request.setObservableProperty(observableProperties);
-            } else if (procDesc instanceof AbstractSensorML) {
-                request.setObservableProperty(getObservablePropertyFromAbstractSensorML((AbstractSensorML)procDesc));
+            } else if (procDesc.getProcedureDescription() instanceof AbstractSensorML) {
+                request.setObservableProperty(getObservablePropertyFromAbstractSensorML(
+                        (AbstractSensorML) procDesc.getProcedureDescription()));
             } else if (isTypeRequest) {
                 request.setObservableProperty(Lists.newArrayList("not_defined"));
             } else {
                 throw new NoApplicableCodeException().withMessage(
                         "The sensor description does not contain sml:outputs which is used to fetch the possible observableProperties! "
-                        + "Please add an sml:ouput section or define the observableProperties via 'observableProperty' URL parameter!'");
+                                + "Please add an sml:ouput section or define the observableProperties via 'observableProperty' URL parameter!'");
             }
             // metadata
             if (!isTypeRequest) {
                 SosInsertionMetadata metadata = new SosInsertionMetadata();
-                List<String> featureOfInterestTypes =
-                        checkForFeatureOfInterestTypeParameter(procDesc, parameterValueMap);
+                List<String> featureOfInterestTypes = checkForFeatureOfInterestTypeParameter(procDesc, parameters);
                 if (!featureOfInterestTypes.isEmpty()) {
                     metadata.setFeatureOfInterestTypes(featureOfInterestTypes);
                 } else {
-                    metadata.setFeatureOfInterestTypes(
-                            Configurator.getInstance().getCache().getFeatureOfInterestTypes());
+                    metadata.setFeatureOfInterestTypes(supportedTypeRepository.getFeatureOfInterestTypesAsString());
                 }
-                List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameterValueMap);
+                List<String> observationTypes = checkForObservationTypeParameter(procDesc, parameters);
                 if (!observationTypes.isEmpty()) {
                     metadata.setObservationTypes(observationTypes);
-                } else if (procDesc instanceof AbstractProcess && ((AbstractProcess) procDesc).isSetOutputs()) {
-                    metadata.setObservationTypes(getObservationTypeFrom(((AbstractProcess) procDesc).getOutputs()));
-                } else if (procDesc instanceof SensorML && ((SensorML)procDesc).isWrapper()) {
+                } else if (procDesc.getProcedureDescription() instanceof AbstractProcess
+                        && ((AbstractProcess) procDesc.getProcedureDescription()).isSetOutputs()) {
+                    metadata.setObservationTypes(getObservationTypeFrom(
+                            ((AbstractProcess) procDesc.getProcedureDescription()).getOutputs()));
+                } else if (procDesc.getProcedureDescription() instanceof SensorML
+                        && ((SensorML) procDesc.getProcedureDescription()).isWrapper()) {
                     Set<String> obsTyp = Sets.newHashSet();
-                    for (AbstractProcess abstractProcess : ((SensorML)procDesc).getMembers()) {
+                    for (AbstractProcess abstractProcess : ((SensorML) procDesc.getProcedureDescription())
+                            .getMembers()) {
                         if (abstractProcess.isSetOutputs()) {
                             obsTyp.addAll(getObservationTypeFrom(abstractProcess.getOutputs()));
                         }
                     }
                     metadata.setObservationTypes(obsTyp);
                 } else {
-                    metadata.setObservationTypes(Configurator.getInstance().getCache().getObservationTypes());
+                    metadata.setObservationTypes(supportedTypeRepository.getObservationTypesAsString());
                 }
                 request.setMetadata(metadata);
             }
@@ -207,7 +238,7 @@ public class RegisterBinding extends SimpleBinding {
     }
 
     private String getServiceParameterValue(Map<String, String> map) {
-        final String service = KvpHelper.getParameterValue(RequestParams.service, map);
+        final String service = getParameterValue(OWSConstants.RequestParams.service, map);
         if (Strings.isNullOrEmpty(service)) {
             return Sos2Constants.SOS;
         }
@@ -215,57 +246,54 @@ public class RegisterBinding extends SimpleBinding {
     }
 
     private String getVersionParameterValue(Map<String, String> map) {
-        final String version = KvpHelper.getParameterValue(RequestParams.version, map);
+        final String version = getParameterValue(OWSConstants.RequestParams.version, map);
         if (Strings.isNullOrEmpty(version)) {
             return Sos2Constants.SERVICEVERSION;
         }
         return version;
     }
 
-    private void checkForProcedureParameter(SosProcedureDescription procDesc, Map<String, String> map) {
-        final String procedure = KvpHelper.getParameterValue(PROCEDURE, map);
+    private void checkForProcedureParameter(SosProcedureDescription<?> procDesc, Map<String, String> map) {
+        final String procedure = getParameterValue(PROCEDURE, map);
         if (!Strings.isNullOrEmpty(procedure)) {
             procDesc.setIdentifier(new CodeWithAuthority(procedure));
         }
     }
 
-    private void checkForOfferingParameter(SosProcedureDescription procDesc, Map<String, String> map)
-            throws MissingParameterValueException {
-        final String offerings = KvpHelper.getParameterValue(OFFERING, map);
+    private void checkForOfferingParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
+            throws OwsExceptionReport {
+        final String offerings = getParameterValue(OFFERING, map);
         if (!Strings.isNullOrEmpty(offerings)) {
-            List<String> multipleOfferingValues = KvpHelper.checkParameterMultipleValues(offerings, OFFERING);
+            List<String> multipleOfferingValues = checkParameterMultipleValues(offerings, OFFERING);
             for (String offering : multipleOfferingValues) {
                 procDesc.addOffering(new SosOffering(offering, offering));
             }
         }
     }
 
-    private List<String> checkForObservablePropertyParameter(SosProcedureDescription procDesc, Map<String, String> map)
-            throws MissingParameterValueException {
-        final String offering = KvpHelper.getParameterValue(Sos2Constants.InsertSensorParams.observableProperty, map);
+    private List<String> checkForObservablePropertyParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
+            throws OwsExceptionReport {
+        final String offering = getParameterValue(Sos2Constants.InsertSensorParams.observableProperty, map);
         if (!Strings.isNullOrEmpty(offering)) {
-            return KvpHelper.checkParameterMultipleValues(offering,
-                    Sos2Constants.InsertSensorParams.observableProperty);
+            return checkParameterMultipleValues(offering, Sos2Constants.InsertSensorParams.observableProperty);
         }
         return Collections.emptyList();
     }
 
-    private List<String> checkForObservationTypeParameter(SosProcedureDescription procDesc, Map<String, String> map)
-            throws MissingParameterValueException {
-        final String offering = KvpHelper.getParameterValue(Sos2Constants.InsertSensorParams.observationType, map);
+    private List<String> checkForObservationTypeParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
+            throws OwsExceptionReport {
+        final String offering = getParameterValue(Sos2Constants.InsertSensorParams.observationType, map);
         if (!Strings.isNullOrEmpty(offering)) {
-            return KvpHelper.checkParameterMultipleValues(offering, Sos2Constants.InsertSensorParams.observationType);
+            return checkParameterMultipleValues(offering, Sos2Constants.InsertSensorParams.observationType);
         }
         return Collections.emptyList();
     }
 
-    private List<String> checkForFeatureOfInterestTypeParameter(SosProcedureDescription procDesc,
-            Map<String, String> map) throws MissingParameterValueException {
-        final String offering =
-                KvpHelper.getParameterValue(Sos2Constants.InsertSensorParams.featureOfInterestType, map);
+    private List<String> checkForFeatureOfInterestTypeParameter(SosProcedureDescription<?> procDesc,
+            Map<String, String> map) throws OwsExceptionReport {
+        final String offering = getParameterValue(Sos2Constants.InsertSensorParams.featureOfInterestType, map);
         if (!Strings.isNullOrEmpty(offering)) {
-            return KvpHelper.checkParameterMultipleValues(offering,
-                    Sos2Constants.InsertSensorParams.featureOfInterestType);
+            return checkParameterMultipleValues(offering, Sos2Constants.InsertSensorParams.featureOfInterestType);
         }
         return Collections.emptyList();
     }
@@ -282,7 +310,7 @@ public class RegisterBinding extends SimpleBinding {
     private List<String> getObservablePropertyFromAbstractSensorML(AbstractSensorML absSensorML) {
         Set<String> obsProps = Sets.newHashSet();
         if (absSensorML instanceof AbstractProcess && ((AbstractProcess) absSensorML).isSetOutputs()) {
-            for (SmlIo<?> smlIo : ((AbstractProcess) absSensorML).getOutputs()) {
+            for (SmlIo smlIo : ((AbstractProcess) absSensorML).getOutputs()) {
                 if (smlIo.isSetValue()) {
                     SweAbstractDataComponent abstractDataComponent = smlIo.getIoValue();
                     if (abstractDataComponent instanceof SweAbstractDataRecord) {
@@ -291,8 +319,7 @@ public class RegisterBinding extends SimpleBinding {
                             if (!Strings.isNullOrEmpty(identifier)) {
                                 obsProps.add(identifier);
                             } else {
-                                String identifierFromField =
-                                        getObservablePropertyIdentifierFrom(field.getElement());
+                                String identifierFromField = getObservablePropertyIdentifierFrom(field.getElement());
                                 if (!Strings.isNullOrEmpty(identifierFromField)) {
                                     obsProps.add(identifierFromField);
                                 } else {
@@ -309,17 +336,17 @@ public class RegisterBinding extends SimpleBinding {
                     obsProps.add(smlIo.getIoName());
                 }
             }
-        } else if (absSensorML instanceof SensorML && ((SensorML)absSensorML).isWrapper()) {
-            for (AbstractProcess abstractProcess : ((SensorML)absSensorML).getMembers()) {
+        } else if (absSensorML instanceof SensorML && ((SensorML) absSensorML).isWrapper()) {
+            for (AbstractProcess abstractProcess : ((SensorML) absSensorML).getMembers()) {
                 obsProps.addAll(getObservablePropertyFromAbstractSensorML(abstractProcess));
             }
         }
         return Lists.newArrayList(obsProps);
     }
 
-    private Set<String> getObservationTypeFrom(List<SmlIo<?>> outputs) {
+    private Set<String> getObservationTypeFrom(List<SmlIo> outputs) {
         Set<String> observationTypes = Sets.newHashSet();
-        for (SmlIo<?> smlIo : outputs) {
+        for (SmlIo smlIo : outputs) {
             if (smlIo.isSetValue()) {
                 try {
                     if (smlIo.getIoValue() instanceof SweAbstractDataRecord) {
@@ -336,4 +363,31 @@ public class RegisterBinding extends SimpleBinding {
         }
         return observationTypes;
     }
+
+    private String getParameterValue(String name, Map<String, String> map) {
+        return map.computeIfAbsent(name, key -> map.entrySet().stream().filter(e -> e.getKey().equalsIgnoreCase(key))
+                .findFirst().map(Entry::getValue).orElse(null));
+    }
+
+    private String getParameterValue(Enum<?> name, Map<String, String> map) {
+        return getParameterValue(name.name(), map);
+    }
+
+    public List<String> checkParameterMultipleValues(String values, String name) throws OwsExceptionReport {
+        if (values.isEmpty()) {
+            throw new MissingParameterValueException(name);
+        }
+        List<String> splittedParameterValues = Arrays.asList(values.split(","));
+        for (String parameterValue : splittedParameterValues) {
+            if (Strings.isNullOrEmpty(parameterValue)) {
+                throw new MissingParameterValueException(name);
+            }
+        }
+        return splittedParameterValues;
+    }
+
+    public List<String> checkParameterMultipleValues(String values, Enum<?> name) throws OwsExceptionReport {
+        return checkParameterMultipleValues(values, name.name());
+    }
+
 }

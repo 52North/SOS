@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,16 +31,17 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.ereporting.EReportingNetworkEntity;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DAO class for entity {@link EReportingNetwork}
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * DAO class for entity {@link EReportingNetworkEntity}
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
@@ -48,46 +49,50 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingNetworkDAO.class);
 
+    public EReportingNetworkDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
+
     /**
      * Get default Hibernate Criteria for querying network
-     * 
+     *
      * @param session
      *            Hibernate Session
      * @return Default criteria
      */
     public Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(EReportingNetwork.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return session.createCriteria(EReportingNetworkEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**
-     * Get the {@link EReportingNetwork} for the id
-     * 
+     * Get the {@link EReportingNetworkEntity} for the id
+     *
      * @param networkId
-     *            Id to get {@link EReportingNetwork} for
+     *            Id to get {@link EReportingNetworkEntity} for
      * @param session
      *            Hibernate Session
-     * @return The resulting {@link EReportingNetwork}
+     * @return The resulting {@link EReportingNetworkEntity}
      */
-    public EReportingNetwork getEReportingNetwork(long networkId, Session session) {
+    public EReportingNetworkEntity getEReportingNetwork(long networkId, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingNetwork.ID, networkId));
+        c.add(Restrictions.eq(EReportingNetworkEntity.ID, networkId));
         LOGGER.debug("QUERY getEReportingNetwork(networkId): {}", HibernateHelper.getSqlString(c));
-        return (EReportingNetwork) c.uniqueResult();
+        return (EReportingNetworkEntity) c.uniqueResult();
     }
 
     /**
-     * Get the {@link EReportingNetwork} for the identifier
-     * 
+     * Get the {@link EReportingNetworkEntity} for the identifier
+     *
      * @param identifier
-     *            Identifier to get {@link EReportingNetwork} for
+     *            Identifier to get {@link EReportingNetworkEntity} for
      * @param session
      *            Hibernate Session
-     * @return The resulting {@link EReportingNetwork}
+     * @return The resulting {@link EReportingNetworkEntity}
      */
-    public EReportingNetwork getEReportingNetwork(String identifier, Session session) {
+    public EReportingNetworkEntity getEReportingNetwork(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingNetwork.IDENTIFIER, identifier));
+        c.add(Restrictions.eq(EReportingNetworkEntity.PROPERTY_IDENTIFIER, identifier));
         LOGGER.debug("QUERY getEReportingNetwork(identifier): {}", HibernateHelper.getSqlString(c));
-        return (EReportingNetwork) c.uniqueResult();
+        return (EReportingNetworkEntity) c.uniqueResult();
     }
 }

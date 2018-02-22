@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,22 +34,24 @@ import java.net.URI;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.wsdl.WSDLConstants.Operations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.util.StringHelper;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.wsdl.WSDLConstants.Operations;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.XmlHelper;
 
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
 public class WSDLBuilder {
@@ -67,7 +69,7 @@ public class WSDLBuilder {
     private static final String SOS_KVP_PORT = "SosKvpPort";
 
     private static final String SOS_POX_PORT = "SosPoxPort";
-    
+
     private static final String SOAP_ENPOINT_URL_PLACEHOLDER = "SOAP_ENDPOINT_URL";
 
     // private final WSDLFactory factory;
@@ -88,7 +90,9 @@ public class WSDLBuilder {
     //
     // private Port soapPort, kvpPort, poxPort;
 
-    private URI soapEndpoint, poxEndpoint, kvpEndpoint;
+    private URI soapEndpoint;
+    private URI poxEndpoint;
+    private URI kvpEndpoint;
 
     public WSDLBuilder() {
     }
@@ -366,8 +370,8 @@ public class WSDLBuilder {
             } else {
                 return getDefault();
             }
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while loading WSDL file!", e);
+        } catch (DecodingException | IOException ex) {
+            LOGGER.error("Error while loading WSDL file!", ex);
             return getDefault();
         }
     }
@@ -382,21 +386,10 @@ public class WSDLBuilder {
         return Configurator.getInstance().getClass().getResourceAsStream(filename);
     }
 
-    private XmlObject read(String path) throws OwsExceptionReport {
-        InputStream stream = null;
-        try {
-            stream = getDocumentAsStream(path);
+    private XmlObject read(String path) throws DecodingException, IOException {
+        try (InputStream stream = getDocumentAsStream(path)) {
             String string = StringHelper.convertStreamToString(stream);
-            XmlObject xml = XmlHelper.parseXmlString(string);
-            return xml;
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    LOGGER.error("Error while closing InputStream!", e);
-                }
-            }
+            return XmlHelper.parseXmlString(string);
         }
     }
 

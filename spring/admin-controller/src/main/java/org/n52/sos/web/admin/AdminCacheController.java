@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,31 +29,29 @@
 package org.n52.sos.web.admin;
 
 
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.google.common.base.Function;
 
 /**
  * @since 4.0.0
@@ -63,12 +61,24 @@ import com.google.common.base.Function;
 public class AdminCacheController extends AbstractController {
     private static final ObjectMapper objectMapper = buildObjectMapper();
 
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(AdminCacheController.class);
+    @Inject
+    private ContentCacheController cacheController;
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE, method = RequestMethod.GET)
     public String view() {
         return ControllerConstants.Views.ADMIN_CACHE;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_SUMMARY, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    public String getCacheSummary() {
+        return Json.print(Json.toJSON(CacheSummaryHandler.getCacheValues()));
+    }
+
+    @ResponseBody
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_DUMP, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    public String getCacheDump() throws JsonProcessingException {
+        return objectMapper.writeValueAsString(cacheController.getCache());
     }
 
     private static ObjectMapper buildObjectMapper() {
@@ -81,32 +91,12 @@ public class AdminCacheController extends AbstractController {
         SimpleModule module = new SimpleModule("CacheSerializerModule", new Version(1, 0, 0, null, null, null));
         module.addSerializer(DateTime.class, new ToStringSerializer());
         module.addSerializer(TimePeriod.class, new ToStringSerializer());
-        module.addSerializer(SosEnvelope.class, new ToStringSerializer());
+        module.addSerializer(ReferencedEnvelope.class, new ToStringSerializer());
         om.registerModule(module);
 
         //set property visibility
         om.setVisibility(PropertyAccessor.GETTER, Visibility.NON_PRIVATE);
         om.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NON_PRIVATE);
         return om;
-    }
-
-    @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_SUMMARY, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-    public String getCacheSummary() {
-
-        Function<String, JsonNode> textToJson
-                = new Function<String, JsonNode>() {
-                    @Override
-                    public JsonNode apply(String t) {
-                        return JSONUtils.nodeFactory().textNode(t);
-                    }
-                };
-        return JSONUtils.print(JSONUtils.toJSON(CacheSummaryHandler.getCacheValues()));
-    }
-
-    @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_DUMP, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-    public String getCacheDump() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(Configurator.getInstance().getCache());
     }
 }

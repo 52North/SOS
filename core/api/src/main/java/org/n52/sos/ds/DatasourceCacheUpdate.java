@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,23 +30,22 @@ package org.n52.sos.ds;
 
 import java.util.List;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.ThreadableAction;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.iceland.util.action.ThreadableAction;
+import org.n52.sos.cache.SosWritableContentCache;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
 public abstract class DatasourceCacheUpdate extends ThreadableAction {
 
-    private WritableContentCache cache;
+    private SosWritableContentCache cache;
 
     private List<OwsExceptionReport> errors;
-    
-    protected WritableContentCache getCache() {
+
+    protected SosWritableContentCache getCache() {
         return cache;
     }
 
@@ -54,11 +53,7 @@ public abstract class DatasourceCacheUpdate extends ThreadableAction {
         return errors;
     }
 
-    protected FeatureQueryHandler getFeatureQueryHandler() {
-        return Configurator.getInstance().getFeatureQueryHandler();
-    }
-
-    public void setCache(WritableContentCache cache) {
+    public void setCache(SosWritableContentCache cache) {
         this.cache = cache;
     }
 

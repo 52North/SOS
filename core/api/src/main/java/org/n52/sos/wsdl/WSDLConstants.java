@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,17 +32,17 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosSoapConstants;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.util.http.HTTPMethods;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosSoapConstants;
+import org.n52.shetland.ogc.swes.SwesConstants;
 
 /**
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
 public interface WSDLConstants {
@@ -56,9 +56,9 @@ public interface WSDLConstants {
     String NS_MIME_PREFIX = "mime";
 
     String NS_SOAP = "http://schemas.xmlsoap.org/wsdl/soap/";
-    
+
     String NS_SOAP_PREFIX = "soap";
-    
+
     String NS_SOAP_12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
 
     String NS_SOAP_12_PREFIX = "soap12";
@@ -134,7 +134,7 @@ public interface WSDLConstants {
     QName QN_MIME_CONTENT = new QName(NS_MIME, EN_MIME_CONTENT, NS_MIME_PREFIX);
 
     QName QN_MIME_MIME_XML = new QName(NS_MIME, EN_MIME_MIME_XML, NS_MIME_PREFIX);
-    
+
     QName QN_SOAP_ADDRESS = new QName(NS_SOAP, EN_SOAP_ADDRESS, NS_SOAP_PREFIX);
 
     QName QN_SOAP_BINDING = new QName(NS_SOAP, EN_SOAP_BINDING, NS_SOAP_PREFIX);
@@ -180,7 +180,7 @@ public interface WSDLConstants {
     String QUALIFIED_ELEMENT_FORM_DEFAULT = "qualified";
 
     String SOAP_BINDING_HTTP_TRANSPORT = "http://schemas.xmlsoap.org/soap/http";
-        
+
 //    String SOAP_12_BINDING_HTTP_TRANSPORT = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String SOAP_12_BINDING_HTTP_TRANSPORT = SOAP_BINDING_HTTP_TRANSPORT;
 

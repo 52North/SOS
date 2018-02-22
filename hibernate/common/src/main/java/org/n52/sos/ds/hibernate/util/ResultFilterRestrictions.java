@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,16 +38,16 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.sos.ResultFilterConstants;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.sos.ResultFilterConstants;
+
 
 public class ResultFilterRestrictions {
-    
+
     public static Criterion getResultFilterExpression(ComparisonFilter resultFilter, ResultFilterClasses resultFilterClasses, String column) throws CodedException {
         return getResultFilterExpression(resultFilter, resultFilterClasses, column, column);
     }
@@ -57,7 +57,7 @@ public class ResultFilterRestrictions {
             throws CodedException {
         return getResultFilterExpression(resultFilter, resultFilterClasses, subqueryColumn, column, null);
     }
-    
+
     public static Criterion getResultFilterExpression(ComparisonFilter resultFilter, ResultFilterClasses resultFilterClasses, String column, SubQueryIdentifier identifier) throws CodedException {
         return getResultFilterExpression(resultFilter, resultFilterClasses, column, column, identifier);
     }
@@ -72,21 +72,21 @@ public class ResultFilterRestrictions {
                     list.add(createEqDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
                     complexList.add(createEqDC(createDC(resultFilterClasses.getNumeric()),
-                            Double.parseDouble(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Double.parseDouble(resultFilter.getValue()), DataEntity.PROPERTY_ID));
                 }
                 if (isCount(resultFilter.getValue())) {
                     list.add(createEqDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
                     complexList.add(createEqDC(createDC(resultFilterClasses.getCount()),
-                            Integer.parseInt(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     list.add(createEqDC(createDC(resultFilterClasses.getCategory()), resultFilter.getValue(), column));
                     list.add(createEqDC(createDC(resultFilterClasses.getText()), resultFilter.getValue(), column));
                     complexList.add(createEqDC(createDC(resultFilterClasses.getCategory()), resultFilter.getValue(),
-                            BaseObservation.OBS_ID));
+                           DataEntity.PROPERTY_ID));
                     complexList.add(createEqDC(createDC(resultFilterClasses.getText()), resultFilter.getValue(),
-                            BaseObservation.OBS_ID));
+                           DataEntity.PROPERTY_ID));
                 }
                 break;
             case PropertyIsBetween:
@@ -96,7 +96,7 @@ public class ResultFilterRestrictions {
                             column));
                     complexList.add(createBetweenDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), Integer.parseInt(resultFilter.getValueUpper()),
-                            BaseObservation.OBS_ID));
+                           DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue()) && isNumeric(resultFilter.getValueUpper())) {
                     list.add(createBetweenDC(createDC(resultFilterClasses.getNumeric()),
@@ -104,7 +104,7 @@ public class ResultFilterRestrictions {
                             Double.parseDouble(resultFilter.getValueUpper()), column));
                     complexList.add(createBetweenDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()),
-                            Double.parseDouble(resultFilter.getValueUpper()), BaseObservation.OBS_ID));
+                            Double.parseDouble(resultFilter.getValueUpper()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     throw new NoApplicableCodeException();
@@ -115,13 +115,13 @@ public class ResultFilterRestrictions {
                     list.add(createGtDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
                     complexList.add(createGtDC(createDC(resultFilterClasses.getCount()),
-                            Integer.parseInt(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createGtDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
                     complexList.add(createGtDC(createDC(resultFilterClasses.getNumeric()),
-                            Double.parseDouble(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     throw new NoApplicableCodeException();
@@ -132,13 +132,13 @@ public class ResultFilterRestrictions {
                     list.add(createGeDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
                     complexList.add(createGeDC(createDC(resultFilterClasses.getCount()),
-                            Integer.parseInt(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createGeDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
                     complexList.add(createGeDC(createDC(resultFilterClasses.getNumeric()),
-                            Double.parseDouble(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     throw new NoApplicableCodeException();
@@ -149,13 +149,13 @@ public class ResultFilterRestrictions {
                     list.add(createLtDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
                     complexList.add(createLtDC(createDC(resultFilterClasses.getCount()),
-                            Integer.parseInt(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createLtDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
                     complexList.add(createLtDC(createDC(resultFilterClasses.getNumeric()),
-                            Double.parseDouble(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     throw new NoApplicableCodeException();
@@ -166,13 +166,13 @@ public class ResultFilterRestrictions {
                     list.add(createLeDC(createDC(resultFilterClasses.getCount()),
                             Integer.parseInt(resultFilter.getValue()), column));
                     complexList.add(createLeDC(createDC(resultFilterClasses.getCount()),
-                            Integer.parseInt(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Integer.parseInt(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (isNumeric(resultFilter.getValue())) {
                     list.add(createLeDC(createDC(resultFilterClasses.getNumeric()),
                             Double.parseDouble(resultFilter.getValue()), column));
                     complexList.add(createLeDC(createDC(resultFilterClasses.getNumeric()),
-                            Double.parseDouble(resultFilter.getValue()), BaseObservation.OBS_ID));
+                            Double.parseDouble(resultFilter.getValue()),DataEntity.PROPERTY_ID));
                 }
                 if (!isNumeric(resultFilter.getValue()) && !isCount(resultFilter.getValue())) {
                     throw new NoApplicableCodeException();
@@ -182,9 +182,9 @@ public class ResultFilterRestrictions {
                 list.add(createLikeDC(createDC(resultFilterClasses.getCategory()), resultFilter, column));
                 list.add(createLikeDC(createDC(resultFilterClasses.getText()), resultFilter, column));
                 complexList.add(createLikeDC(createDC(resultFilterClasses.getCategory()), resultFilter,
-                        BaseObservation.OBS_ID));
+                       DataEntity.PROPERTY_ID));
                 complexList.add(
-                        createLikeDC(createDC(resultFilterClasses.getText()), resultFilter, BaseObservation.OBS_ID));
+                        createLikeDC(createDC(resultFilterClasses.getText()), resultFilter,DataEntity.PROPERTY_ID));
                 break;
             default:
                 throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator",
@@ -245,33 +245,33 @@ public class ResultFilterRestrictions {
     private static DetachedCriteria createDC(Class<?> clazz) {
         return DetachedCriteria.forClass(clazz);
     }
-    
+
     private static DetachedCriteria createDC(Class<?> clazz, String alias) {
         return DetachedCriteria.forClass(clazz, alias);
     }
 
     private static DetachedCriteria createEqDC(DetachedCriteria dc, Object value, String column) {
-        return dc.add(Restrictions.eq(ValuedObservation.VALUE, value)).setProjection(Projections.property(column));
+        return dc.add(Restrictions.eq(DataEntity.PROPERTY_VALUE, value)).setProjection(Projections.property(column));
     }
 
     private static DetachedCriteria createGtDC(DetachedCriteria dc, Object value, String column) {
-        return dc.add(Restrictions.gt(ValuedObservation.VALUE, value)).setProjection(Projections.property(column));
+        return dc.add(Restrictions.gt(DataEntity.PROPERTY_VALUE, value)).setProjection(Projections.property(column));
     }
 
     private static DetachedCriteria createGeDC(DetachedCriteria dc, Object value, String column) {
-        return dc.add(Restrictions.ge(ValuedObservation.VALUE, value)).setProjection(Projections.property(column));
+        return dc.add(Restrictions.ge(DataEntity.PROPERTY_VALUE, value)).setProjection(Projections.property(column));
     }
 
     private static DetachedCriteria createLtDC(DetachedCriteria dc, Object value, String column) {
-        return dc.add(Restrictions.lt(ValuedObservation.VALUE, value)).setProjection(Projections.property(column));
+        return dc.add(Restrictions.lt(DataEntity.PROPERTY_VALUE, value)).setProjection(Projections.property(column));
     }
 
     private static DetachedCriteria createLeDC(DetachedCriteria dc, Object value, String column) {
-        return dc.add(Restrictions.le(ValuedObservation.VALUE, value)).setProjection(Projections.property(column));
+        return dc.add(Restrictions.le(DataEntity.PROPERTY_VALUE, value)).setProjection(Projections.property(column));
     }
 
     private static DetachedCriteria createBetweenDC(DetachedCriteria dc, Object lower, Object upper, String column) {
-        return dc.add(Restrictions.between(ValuedObservation.VALUE, lower, upper))
+        return dc.add(Restrictions.between(DataEntity.PROPERTY_VALUE, lower, upper))
                 .setProjection(Projections.property(column));
     }
 
@@ -284,7 +284,7 @@ public class ResultFilterRestrictions {
             value = resultFilter.getValue().replaceAll(resultFilter.getWildCard(), "%");
         }
         return dc
-                .add(HibernateCriterionHelper.getLikeExpression(ValuedObservation.VALUE, value,
+                .add(HibernateCriterionHelper.getLikeExpression(DataEntity.PROPERTY_VALUE, value,
                         resultFilter.getEscapeString(), resultFilter.isMatchCase()))
                 .setProjection(Projections.property(column));
     }
@@ -298,18 +298,18 @@ public class ResultFilterRestrictions {
             String column) {
         return createDC(dc, list, column, "cv");
     }
-    
+
     private static DetachedCriteria createDC(DetachedCriteria dc, List<DetachedCriteria> list,
             String column, String alias) {
-        DetachedCriteria complex = dc.setProjection(Projections.property(column)).createAlias(ValuedObservation.VALUE, alias);
+        DetachedCriteria complex = dc.setProjection(Projections.property(column)).createAlias(DataEntity.PROPERTY_VALUE, alias);
         if (list.size() > 1) {
             Disjunction d = Restrictions.disjunction();
             for (DetachedCriteria ldc : list) {
-                d.add(Subqueries.propertyIn(alias + "." + BaseObservation.OBS_ID, ldc));
+                d.add(Subqueries.propertyIn(alias + "." +DataEntity.PROPERTY_ID, ldc));
             }
             complex.add(d);
         } else {
-            complex.add(Subqueries.propertyIn(alias + "." + BaseObservation.OBS_ID, list.iterator().next()));
+            complex.add(Subqueries.propertyIn(alias + "." +DataEntity.PROPERTY_ID, list.iterator().next()));
         }
         return complex;
     }
@@ -317,5 +317,5 @@ public class ResultFilterRestrictions {
     public enum SubQueryIdentifier {
         Simple, Complex, Profile;
     }
-    
+
 }

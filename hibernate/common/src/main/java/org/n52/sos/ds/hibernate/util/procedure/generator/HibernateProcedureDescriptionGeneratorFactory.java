@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,25 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
-import java.util.Locale;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.janmayen.component.ComponentFactory;
 
 /**
  * Interface for procedure description generator factories
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public interface HibernateProcedureDescriptionGeneratorFactory {
-
-    List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes();
-
-    SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport;
+public interface HibernateProcedureDescriptionGeneratorFactory
+        extends ComponentFactory<HibernateProcedureDescriptionGeneratorKey, HibernateProcedureDescriptionGenerator> {
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,14 +34,14 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
+import org.n52.series.db.beans.RelatedFeatureRoleEntity;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for featureofInterest types
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -51,7 +51,7 @@ public class RelatedFeatureRoleDAO {
 
     /**
      * Get related feature role objects for role
-     * 
+     *
      * @param role
      *            Related feature role
      * @param session
@@ -59,30 +59,30 @@ public class RelatedFeatureRoleDAO {
      * @return Related feature role objects
      */
     @SuppressWarnings("unchecked")
-    public List<RelatedFeatureRole> getRelatedFeatureRole(String role, Session session) {
+    public List<RelatedFeatureRoleEntity> getRelatedFeatureRole(String role, Session session) {
         Criteria criteria =
-                session.createCriteria(RelatedFeatureRole.class).add(
-                        Restrictions.eq(RelatedFeatureRole.RELATED_FEATURE_ROLE, role));
+                session.createCriteria(RelatedFeatureRoleEntity.class).add(
+                        Restrictions.eq(RelatedFeatureRoleEntity.RELATED_FEATURE_ROLE, role));
         LOGGER.debug("QUERY getRelatedFeatureRole(role): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
     /**
      * Insert and get related feature role objects
-     * 
+     *
      * @param role
      *            Related feature role
      * @param session
      *            Hibernate session
      * @return Related feature objects
      */
-    public List<RelatedFeatureRole> getOrInsertRelatedFeatureRole(String role, Session session) {
-        List<RelatedFeatureRole> relFeatRoles = new RelatedFeatureRoleDAO().getRelatedFeatureRole(role, session);
+    public List<RelatedFeatureRoleEntity> getOrInsertRelatedFeatureRole(String role, Session session) {
+        List<RelatedFeatureRoleEntity> relFeatRoles = new RelatedFeatureRoleDAO().getRelatedFeatureRole(role, session);
         if (relFeatRoles == null) {
-            relFeatRoles = new LinkedList<RelatedFeatureRole>();
+            relFeatRoles = new LinkedList<RelatedFeatureRoleEntity>();
         }
         if (relFeatRoles.isEmpty()) {
-            RelatedFeatureRole relFeatRole = new RelatedFeatureRole();
+            RelatedFeatureRoleEntity relFeatRole = new RelatedFeatureRoleEntity();
             relFeatRole.setRelatedFeatureRole(role);
             session.save(relFeatRole);
             session.flush();

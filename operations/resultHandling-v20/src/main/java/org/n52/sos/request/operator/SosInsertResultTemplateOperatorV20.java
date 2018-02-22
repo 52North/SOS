@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,29 +32,29 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
-import org.n52.sos.event.SosEventBus;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.event.events.ResultTemplateInsertion;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceSettings;
+import org.n52.sos.service.SosSettings;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0
@@ -63,31 +63,34 @@ import org.n52.sos.wsdl.WSDLOperation;
 @Configurable
 public class SosInsertResultTemplateOperatorV20
         extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateDAO, InsertResultTemplateRequest, InsertResultTemplateResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateHandler, InsertResultTemplateRequest, InsertResultTemplateResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResultTemplate.name();
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
     private boolean allowTemplateWithoutProcedureAndFeature = false;
-    
+
     public SosInsertResultTemplateOperatorV20() {
         super(OPERATION_NAME, InsertResultTemplateRequest.class);
     }
-    
-    @Setting(ServiceSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+
+    @Setting(SosSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
     public void setAllowTemplateWithoutProcedureAndFeature(boolean allowTemplateWithoutProcedureAndFeature) {
         this.allowTemplateWithoutProcedureAndFeature = allowTemplateWithoutProcedureAndFeature;
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public InsertResultTemplateResponse receive(InsertResultTemplateRequest request) throws OwsExceptionReport {
-        InsertResultTemplateResponse response = getDao().insertResultTemplate(request);
-        SosEventBus.fire(new ResultTemplateInsertion(request, response));
+        InsertResultTemplateResponse response = getOperationHandler().insertResultTemplate(request);
+        getServiceEventBus().submit(new ResultTemplateInsertion(request, response));
         return response;
     }
 
@@ -234,8 +237,8 @@ public class SosInsertResultTemplateOperatorV20
     }
 
     private void createCompositePhenomenons(InsertResultTemplateRequest request) throws OwsExceptionReport {
-        if (request.getResultStructure().getResultStructure() instanceof SweDataRecord) {
-            SweDataRecord record = (SweDataRecord) request.getResultStructure().getResultStructure();
+        if (request.getResultStructure().isDecoded() && request.getResultStructure().get().get() instanceof SweDataRecord) {
+            SweDataRecord record = (SweDataRecord) request.getResultStructure().get().get();
             String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
             if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
                 if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
@@ -247,6 +250,10 @@ public class SosInsertResultTemplateOperatorV20
                 }
             }
         }
+    }
+
+    private void checkResultTemplateIdentifier(CodeWithAuthority identifier) throws OwsExceptionReport {
+        checkResultTemplateIdentifier(identifier.getValue());
     }
 
     private void checkResultTemplateIdentifier(String identifier) throws OwsExceptionReport {
@@ -266,10 +273,10 @@ public class SosInsertResultTemplateOperatorV20
             checkObservationType(observationConstellation.getObservationType(),
                     Sos2Constants.InsertResultTemplateParams.observationType.name());
         }
-       
-        Set<String> validObservationTypesForOffering = new HashSet<String>(0);
+
+        Set<String> validObservationTypesForOffering = new HashSet<>(0);
         for (String offering : observationConstellation.getOfferings()) {
-            validObservationTypesForOffering.addAll(Configurator.getInstance().getCache()
+            validObservationTypesForOffering.addAll(getCache()
                     .getAllowedObservationTypesForOffering(offering));
         }
         // check if observation type is valid for offering

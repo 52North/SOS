@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,21 +40,21 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 public class PostgisDialectSpatialIndex extends PostgisDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 1L;
-    
+
     public PostgisDialectSpatialIndex() {
         super();
     }
 
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
         // http://postgis.net/docs/manual-2.0/using_postgis_dbmanagement.html#idp60795872
-        // CREATE INDEX [indexname] ON [tablename] USING GIST ( [geometryfield] ); 
-        
+        // CREATE INDEX [indexname] ON [tablename] USING GIST ( [geometryfield] );
+
         String name = index.getName();
         Table table = index.getTable();
         Iterator<Column> columns = index.getColumnIterator();
         java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-        
-        
+
+
         StringBuilder buf = new StringBuilder( "create" )
                         .append( " index " )
                         .append( this.qualifyIndexName() ?
@@ -70,8 +70,9 @@ public class PostgisDialectSpatialIndex extends PostgisDialect implements Spatia
             if (columnOrderMap.containsKey(column)) {
                 buf.append(" ").append(columnOrderMap.get(column));
             }
-            if (columns.hasNext())
+            if (columns.hasNext()) {
                 buf.append(", ");
+            }
         }
         buf.append(")");
         return buf.toString();

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,22 +29,25 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 /**
- * Hold min and max obs time 
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * Hold min and max obs time
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public class TimeExtrema {
-    
+
     private DateTime minPhenomenonTime;
+
     private DateTime maxPhenomenonTime;
+
     private DateTime minResultTime;
+
     private DateTime maxResultTime;
 
     public DateTime getMinPhenomenonTime() {
@@ -78,7 +81,7 @@ public class TimeExtrema {
     public void setMaxResultTime(DateTime maxResultTime) {
         this.maxResultTime = maxResultTime;
     }
-    
+
     public Time getPhenomenonTime() {
         if (isSetPhenomenonTimes()) {
             if (getMinPhenomenonTime().equals(getMaxPhenomenonTime())) {
@@ -88,22 +91,22 @@ public class TimeExtrema {
             }
         return null;
     }
-    
+
     public Time getResultTime() {
         if (isSetResultTimes()) {
             return new TimeInstant(getMaxResultTime());
         }
         return null;
     }
-    
+
     public boolean isSetPhenomenonTimes() {
         return getMinPhenomenonTime() != null && getMaxPhenomenonTime() != null;
     }
 
     public boolean isSetResultTimes() {
-        return getMinResultTime()!= null && getMaxResultTime() != null;
+        return getMinResultTime() != null && getMaxResultTime() != null;
     }
-    
+
     public boolean isSetTimes() {
         return isSetPhenomenonTimes() && isSetResultTimes();
     }

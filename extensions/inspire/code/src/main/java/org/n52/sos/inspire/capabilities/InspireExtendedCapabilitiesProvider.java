@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,79 +28,89 @@
  */
 package org.n52.sos.inspire.capabilities;
 
+import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeParseException;
-import org.n52.sos.inspire.AbstractInspireProvider;
-import org.n52.sos.inspire.InspireConformity;
-import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
-import org.n52.sos.inspire.InspireConformityCitation;
-import org.n52.sos.inspire.InspireConstants;
-import org.n52.sos.inspire.InspireDateOfCreation;
-import org.n52.sos.inspire.InspireHelper;
-import org.n52.sos.inspire.InspireLanguageISO6392B;
-import org.n52.sos.inspire.InspireMandatoryKeyword;
-import org.n52.sos.inspire.InspireMandatoryKeywordValue;
-import org.n52.sos.inspire.InspireMetadataPointOfContact;
-import org.n52.sos.inspire.InspireResourceLocator;
-import org.n52.sos.inspire.InspireTemporalReference;
-import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilities;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesProvider;
-import org.n52.sos.ogc.ows.SosServiceProvider;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.inject.Inject;
 
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.inspire.InspireConformity;
+import org.n52.shetland.inspire.InspireConformityCitation;
+import org.n52.shetland.inspire.InspireConstants;
+import org.n52.shetland.inspire.InspireDateOfCreation;
+import org.n52.shetland.inspire.InspireLanguageISO6392B;
+import org.n52.shetland.inspire.InspireMandatoryKeyword;
+import org.n52.shetland.inspire.InspireMandatoryKeywordValue;
+import org.n52.shetland.inspire.InspireMetadataPointOfContact;
+import org.n52.shetland.inspire.InspireResourceLocator;
+import org.n52.shetland.inspire.InspireTemporalReference;
+import org.n52.shetland.inspire.InspireUniqueResourceIdentifier;
+import org.n52.shetland.inspire.InspireConformity.InspireDegreeOfConformity;
+import org.n52.shetland.inspire.dls.FullInspireExtendedCapabilities;
+import org.n52.shetland.inspire.dls.MinimalInspireExtendedCapabilities;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OwsAddress;
+import org.n52.shetland.ogc.ows.OwsContact;
+import org.n52.shetland.ogc.ows.OwsOperationMetadataExtension;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
+import org.n52.sos.inspire.AbstractInspireProvider;
+import org.n52.sos.util.SosHelper;
+
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Provider for the INSPIRE ExtendedCapabilities
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
-public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider implements
-        OwsExtendedCapabilitiesProvider {
+public class InspireExtendedCapabilitiesProvider
+        extends AbstractInspireProvider
+        implements OwsOperationMetadataExtensionProvider {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(InspireExtendedCapabilitiesProvider.class);
+    private final OwsOperationMetadataExtensionProviderKey key
+            = new OwsOperationMetadataExtensionProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
-    Set<OwsExtendedCapabilitiesKey> providerKeys = Sets.newHashSet(new OwsExtendedCapabilitiesKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE));
+    private OwsServiceMetadataRepository serviceMetadataRepository;
 
-    /**
-     * constructor
-     */
-    public InspireExtendedCapabilitiesProvider() {
-        InspireHelper.getInstance();
+    @Inject
+    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
+    }
+
+
+    public OwsServiceProvider getOwsServiceProvider() {
+        return serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS).get();
     }
 
     @Override
-    public Set<OwsExtendedCapabilitiesKey> getExtendedCapabilitiesKeyType() {
-        return providerKeys;
+    public Set<OwsOperationMetadataExtensionProviderKey> getKeys() {
+        return Collections.singleton(key);
     }
 
     @Override
-    public OwsExtendedCapabilities getOwsExtendedCapabilities(GetCapabilitiesRequest request)
+    public OwsOperationMetadataExtension getOwsExtendedCapabilities(GetCapabilitiesRequest request)
             throws OwsExceptionReport {
         if (getInspireHelper().isFullExtendedCapabilities()) {
             return getFullInspireExtendedCapabilities(request.getRequestedLanguage(), getRequestedCrs(request),
@@ -119,7 +129,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     /**
      * Get the SOS internal representation of the
      * {@link MinimalInspireExtendedCapabilities}
-     * 
+     *
      * @param language
      *            the requested language
      * @param crs
@@ -139,7 +149,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     /**
      * Get the SOS internal representation of the
      * {@link FullInspireExtendedCapabilities}
-     * 
+     *
      * @param language
      *            the requested language
      * @param crs
@@ -208,31 +218,37 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the resource locator
-     * 
+     *
      * @return the resource locator
      */
-    private InspireResourceLocator getResourceLocator() {
-        InspireResourceLocator resourceLocator = new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest());
-        resourceLocator.addMediaType(MediaTypes.APPLICATION_XML);
-        return resourceLocator;
+    private InspireResourceLocator getResourceLocator() throws OwsExceptionReport {
+        try {
+            InspireResourceLocator resourceLocator = new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest().toString());
+            resourceLocator.addMediaType(MediaTypes.APPLICATION_XML);
+            return resourceLocator;
+        } catch (MalformedURLException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
+        }
     }
 
     /**
      * Get the metadata point of contact
-     * 
+     *
      * @return the metadata point of contact
      * @throws OwsExceptionReport
      *             If an error occurs when creating the metadata point of
      *             contact
      */
     private InspireMetadataPointOfContact getMetadataPointOfContact() throws OwsExceptionReport {
-        SosServiceProvider serviceProvider = Configurator.getInstance().getServiceProvider();
-        return new InspireMetadataPointOfContact(serviceProvider.getName(), serviceProvider.getMailAddress());
+        OwsServiceProvider serviceProvider = getOwsServiceProvider();
+        String mail = serviceProvider.getServiceContact().getContactInfo().flatMap(OwsContact::getAddress)
+                .map(OwsAddress::getElectronicMailAddress).map(l -> Iterables.getFirst(l, null)).orElse(null);
+        return new InspireMetadataPointOfContact(serviceProvider.getProviderName(), mail);
     }
 
     /**
      * Get the conformity
-     * 
+     *
      * @return the conformity
      * @throws CodedException
      */
@@ -247,9 +263,10 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
         }
     }
 
+
     /**
      * Get the temporal reference
-     * 
+     *
      * @return the temporal reference
      */
     private InspireTemporalReference getTemporalReference() {
@@ -258,7 +275,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the spatial dataset identifiers
-     * 
+     *
      * @param version
      *            the service version
      * @return the spatial dataset identifiers
@@ -266,10 +283,10 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     private Set<InspireUniqueResourceIdentifier> getSpatialDataSetIdentifier(String version) {
         Set<InspireUniqueResourceIdentifier> spatialDataSetIdentifier = Sets.newHashSet();
 
-        for (String offering : Configurator.getInstance().getCache().getOfferings()) {
+        for (String offering : getCache().getOfferings()) {
             InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(offering);
-            if (InspireHelper.getInstance().isSetNamespace()) {
-                iuri.setNamespace(InspireHelper.getInstance().getNamespace());
+            if (getInspireHelper().isSetNamespace()) {
+                iuri.setNamespace(getInspireHelper().getNamespace());
             } else {
                 iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
             }
@@ -280,30 +297,26 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     /**
      * Get the coordinate reference system from the request
-     * 
+     *
      * @param request
      *            the request
      * @return the coordinate reference system
      */
-    private int getRequestedCrs(AbstractServiceRequest<?> request) {
-        int targetSrid = -1;
-        if (request.isSetExtensions()) {
-            if (request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.crs)) {
-                Object value =
-                        request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs).getValue();
-                if (value instanceof SweCount) {
-                    targetSrid = ((SweCount) value).getValue();
-                } else if (value instanceof Integer) {
-                    targetSrid =
-                            (Integer) request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs)
-                                    .getValue();
-                }
-            }
-        }
-        if (GeometryHandler.getInstance().getSupportedCRS().contains(Integer.toString(targetSrid))) {
-            return targetSrid;
-        }
-        return GeometryHandler.getInstance().getDefaultResponseEPSG();
+    private int getRequestedCrs(OwsServiceRequest request) {
+        int targetSrid = request.getExtension(OWSConstants.AdditionalRequestParams.crs)
+                .map(Extension::getValue)
+                .map(value -> {
+                    if (value instanceof SweCount) {
+                        return ((SweCount) value).getValue();
+                    } else if (value instanceof Integer) {
+                        return (Integer) value;
+                    } else {
+                        return null;
+                    }
+                }).orElse(-1);
+
+        return getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid))
+               ? targetSrid : getGeometryHandler().getDefaultResponseEPSG();
     }
 
 }

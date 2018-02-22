@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,87 +28,71 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.Set;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.series.wml.WaterMLConstants;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.series.wml.ObservationProcess;
-import org.n52.sos.util.CollectionHelper;
+import javax.inject.Inject;
+
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
  * Generator class for WaterML 2.0 procedure descriptions
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactoryWml20 implements
-        HibernateProcedureDescriptionGeneratorFactory {
+public class HibernateProcedureDescriptionGeneratorFactoryWml20
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
-    private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES =
-            CollectionHelper.list(new HibernateProcedureDescriptionGeneratorFactoryKeyType(
-                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+    private final DaoFactory daoFactory;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final SettingsService settingsService;
 
-    @Override
-    public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {
-        return GENERATOR_KEY_TYPES;
+    @Inject
+    public HibernateProcedureDescriptionGeneratorFactoryWml20(DaoFactory daoFactory,
+                                                              I18NDAORepository i18NDAORepository,
+                                                              ContentCacheController cacheController,
+                                                              SettingsService settingsService) {
+        this.daoFactory = daoFactory;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.settingsService = settingsService;
     }
 
     @Override
-    public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorWml20()
-                .generateProcedureDescription(procedure, i18n, session);
+    public Set<HibernateProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(HibernateProcedureDescriptionGeneratorWml20.GENERATOR_KEY_TYPES);
     }
 
-    private class HibernateProcedureDescriptionGeneratorWml20 extends AbstractHibernateProcedureDescriptionGenerator {
-
-        /**
-         * Generate procedure description from Hibernate procedure entity if no
-         * description (file, XML text) is available
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param session
-         *            the session
-         *
-         * @return Generated procedure description
-         *
-         * @throws OwsExceptionReport
-         *             If an error occurs
-         */
-        public ObservationProcess generateProcedureDescription(Procedure procedure, Locale i18n, Session session)
-                throws OwsExceptionReport {
-            setLocale(i18n);
-            final ObservationProcess op = new ObservationProcess();
-            setCommonData(procedure, op, session);
-            addName(procedure, op);
-            op.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-            return op;
-        }
-
-        private void addName(Procedure procedure, ObservationProcess op) {
-            String name = procedure.getIdentifier();
-            if (procedure.isSetName()) {
-               name = procedure.getName();
-            }
-            op.addParameter(createName("shortName", name));
-            op.addParameter(createName("longName", name));
-        }
-        
-        private NamedValue<String> createName(String type, String name) {
-            final NamedValue<String> namedValueProperty = new NamedValue<String>();
-            final ReferenceType refType = new ReferenceType(type);
-            refType.setTitle(name);
-            namedValueProperty.setName(refType);
-            namedValueProperty.setValue(new TextValue(name));
-            return namedValueProperty;
-        }
+    @Override
+    public HibernateProcedureDescriptionGenerator create(HibernateProcedureDescriptionGeneratorKey key) {
+        HibernateProcedureDescriptionGenerator generator
+                = new HibernateProcedureDescriptionGeneratorWml20(getDaoFactory(),
+                                                                  getI18NDAORepository(),
+                                                                  getCacheController());
+        getSettingsService().configureOnce(generator);
+        return generator;
     }
+
+    public DaoFactory getDaoFactory() {
+        return this.daoFactory;
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return this.i18NDAORepository;
+    }
+
+    public ContentCacheController getCacheController() {
+        return this.cacheController;
+    }
+
+    public SettingsService getSettingsService() {
+        return this.settingsService;
+    }
+
 }

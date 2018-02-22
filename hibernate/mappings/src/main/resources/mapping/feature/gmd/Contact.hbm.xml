@@ -24,17 +24,17 @@
         <property name="remoteSchema" column="remoteSchema" type="string" />
         <property name="id" column="id" type="string" />
         <property name="uuid" column="uuid" type="string" />
-        <many-to-one name="phone" 
-                     column="phoneId" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.TelephoneEntity" 
+        <many-to-one name="phone"
+                     column="phoneId"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.TelephoneEntity"
                      foreign-key="contactphoneFk" />
-        <many-to-one name="address" 
-                     column="addressId" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.AddressEntity" 
+        <many-to-one name="address"
+                     column="addressId"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.AddressEntity"
                      foreign-key="contactaddressFk" />
-        <many-to-one name="onlineResource" 
-                     column="onlineresourceid" 
-                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.OnlineResourceEntity" 
+        <many-to-one name="onlineResource"
+                     column="onlineresourceid"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gmd.OnlineResourceEntity"
                      foreign-key="contactonlineresFk" />
         <property name="hoursOfService" column="hoursOfService" type="string" />
         <property name="contactInstructions" column="contactInstructions" type="string" />

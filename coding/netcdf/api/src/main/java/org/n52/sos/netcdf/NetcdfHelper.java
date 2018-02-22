@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,12 +31,11 @@ package org.n52.sos.netcdf;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.config.annotation.Configurable;
-import org.n52.sos.config.annotation.Setting;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
-import org.n52.sos.util.Constants;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
 import com.axiomalaska.cf4j.CFStandardName;
 import com.axiomalaska.cf4j.CFStandardNames;
@@ -47,150 +46,150 @@ import ucar.nc2.NetcdfFileWriter.Version;
 
 /**
  * Helper class for netCDF encoding. Holds the netCDF setting values.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 @Configurable
-public class NetcdfHelper {
-    
-    private static NetcdfHelper instance;
-    
+public class NetcdfHelper implements Constructable {
+
     private Version version;
-    
+
     private int chunkSizeTime;
-    
+
     private double fillValue;
-    
+
     private CFStandardName heightDepth;
-    
+
     private String variableType;
-    
+
     private boolean upperCaseNames;
-    
+
     private CiRoleCodes contributor;
-    
+
     private CiRoleCodes publisher;
-    
+
     private Set<String> latitude = Collections.emptySet();
-    
+
     private Set<String> longitude = Collections.emptySet();
-    
+
     private Set<String> z = Collections.emptySet();
-    
+
+    @Deprecated
+    private static NetcdfHelper instance;
+
     /**
      * @return Returns a singleton instance of the AqdHelper.
      */
+    @Deprecated
     public static synchronized NetcdfHelper getInstance() {
-        if (instance == null) {
-            instance = new NetcdfHelper();
-            SettingsManager.getInstance().configure(instance);
-        }
         return instance;
     }
 
-    private NetcdfHelper() {
-        // private constructor
+    @Override
+    public void init() {
+        NetcdfHelper.instance = this;
     }
-    
+
     /**
      * @param version
+     *
      * @throws ConfigurationException
      */
-    @Setting(NetcdfSettings.NETCDF_VERSION)
-    public void setNetcdfVersion(String version) throws ConfigurationException {
+    @Setting(NetcdfSettingsProvider.NETCDF_VERSION)
+    public void setNetcdfVersion(String version) throws ConfigurationError {
         this.version = Version.valueOf(version);
     }
-    
+
     /**
-     * @return
+     * @return the version object
      */
     public Version getNetcdfVersion() {
         return version;
     }
-    
-    
+
     /**
-     * @return
+     * @return the version string
      */
     public String getNetcdfVersionString() {
         return version.name();
     }
-    
+
     /**
-     * @param chunkSize
+     * @param chunkSize the chunk size
      */
-    @Setting(NetcdfSettings.NETCDF_CHUNK_SIZE_TIME)
+    @Setting(NetcdfSettingsProvider.NETCDF_CHUNK_SIZE_TIME)
     public void setChunkSizeTime(int chunkSize) {
         this.chunkSizeTime = chunkSize;
     }
-    
+
     /**
-     * @return
+     * @return the chunk size
      */
     public int getChunkSizeTime() {
         return chunkSizeTime;
     }
-    
+
     /**
-     * @param fillValue
+     * @param fillValue the fill value
      */
-    @Setting(NetcdfSettings.NETCDF_FILL_VALUE)
+    @Setting(NetcdfSettingsProvider.NETCDF_FILL_VALUE)
     public void setFillValue(double fillValue) {
         this.fillValue = fillValue;
     }
-    
+
     /**
-     * @return
+     * @return the fill value
      */
     public double getFillValue() {
         return fillValue;
     }
-    
+
     /**
-     * @return
+     * @return the fill value as float
      */
     public float getFillValueAsFloat() {
         return (float) fillValue;
     }
-    
+
     /**
-     * @param heightDepth
+     * @param heightDepth either {@code height} or {@code depth}
      */
-    @Setting(NetcdfSettings.NETCDF_HEIGHT_DEPTH)
+    @Setting(NetcdfSettingsProvider.NETCDF_HEIGHT_DEPTH)
     public void setHeightDepth(String heightDepth) {
         this.heightDepth = getStandardName(heightDepth);
     }
-    
+
     /**
-     * @return
+     * @return the height/depth name
      */
     public CFStandardName getHeightDepth() {
         return heightDepth;
     }
 
     /**
-     * @param heightDepth
-     * @return
+     * @param heightDepth {@code height} or {@code depth}
+     *
+     * @return the standard name
      */
     private CFStandardName getStandardName(String heightDepth) {
         if (CFStandardNames.HEIGHT.getName().equals(heightDepth)) {
             return CFStandardNames.HEIGHT;
-        } 
+        }
         return CFStandardNames.DEPTH;
     }
-    
+
     /**
-     * @param type
+     * @param type the variable type
      */
-    @Setting(NetcdfSettings.NETCDF_VARIABLE_TYPE)
+    @Setting(NetcdfSettingsProvider.NETCDF_VARIABLE_TYPE)
     public void setVariableType(String type) {
         this.variableType = type;
     }
-    
+
     /**
-     * @return
+     * @return the variable type
      */
     public String getVariableType() {
         return variableType;
@@ -206,7 +205,7 @@ public class NetcdfHelper {
     /**
      * @param upperCaseNames the upperCaseNames to set
      */
-    @Setting(NetcdfSettings.NETCDF_VARIABLE_UPPER_CASE)
+    @Setting(NetcdfSettingsProvider.NETCDF_VARIABLE_UPPER_CASE)
     public void setUpperCaseNames(boolean upperCaseNames) {
         this.upperCaseNames = upperCaseNames;
     }
@@ -221,7 +220,7 @@ public class NetcdfHelper {
     /**
      * @param contributor the contributor to set
      */
-    @Setting(NetcdfSettings.NETCDF_CONTRIBUTOR)
+    @Setting(NetcdfSettingsProvider.NETCDF_CONTRIBUTOR)
     public void setContributor(String contributor) {
         this.contributor = CiRoleCodes.valueOf(contributor);
     }
@@ -236,7 +235,7 @@ public class NetcdfHelper {
     /**
      * @param publisher the publisher to set
      */
-    @Setting(NetcdfSettings.NETCDF_PUBLISHER)
+    @Setting(NetcdfSettingsProvider.NETCDF_PUBLISHER)
     public void setPublisher(String publisher) {
         this.publisher = CiRoleCodes.valueOf(publisher);
     }
@@ -251,10 +250,10 @@ public class NetcdfHelper {
     /**
      * @param latitude the latitude to set
      */
-    @Setting(NetcdfSettings.NETCDF_PHEN_LATITUDE)
+    @Setting(NetcdfSettingsProvider.NETCDF_PHEN_LATITUDE)
     public void setLatitude(String latitude) {
         if (!Strings.isNullOrEmpty(latitude)) {
-            this.latitude = Sets.newHashSet(latitude.split(Constants.COMMA_STRING));
+            this.latitude = Sets.newHashSet(latitude.split(","));
         } else {
             this.latitude.clear();
         }
@@ -270,10 +269,10 @@ public class NetcdfHelper {
     /**
      * @param longitude the longitude to set
      */
-    @Setting(NetcdfSettings.NETCDF_PHEN_LONGITUDE)
+    @Setting(NetcdfSettingsProvider.NETCDF_PHEN_LONGITUDE)
     public void setLongitude(String longitude) {
         if (!Strings.isNullOrEmpty(longitude)) {
-            this.longitude = Sets.newHashSet(longitude.split(Constants.COMMA_STRING));
+            this.longitude = Sets.newHashSet(longitude.split(","));
         } else {
             this.longitude.clear();
         }
@@ -289,10 +288,10 @@ public class NetcdfHelper {
     /**
      * @param z the z to set
      */
-    @Setting(NetcdfSettings.NETCDF_PHEN_Z)
+    @Setting(NetcdfSettingsProvider.NETCDF_PHEN_Z)
     public void setZ(String z) {
         if (!Strings.isNullOrEmpty(z)) {
-            this.z = Sets.newHashSet(z.split(Constants.COMMA_STRING));
+            this.z = Sets.newHashSet(z.split(","));
         } else {
             this.z.clear();
         }

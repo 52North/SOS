@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesProfileObservation"
+                     extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                     table="profilevalue">
+        <comment>Value table for profile observation</comment>
+    	<key foreign-key="observationProfileValueFk">
+        	<column name="observationId" >
+        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+        	</column>
+    	</key>
+    	<property name="fromLevel"
+    			  type="double">
+     		<column name="fromlevel"
+     				not-null="false">
+     			<comment>Value of fromLevel</comment>
+     		</column>
+     	</property>
+     	<property name="toLevel"
+    			  type="double">
+     		<column name="tolevel"
+     				not-null="false">
+     			<comment>Value of toLevel</comment>
+     		</column>
+     	</property>
+     	<many-to-one name="levelUnit"
+                 class="org.n52.sos.ds.hibernate.entities.Unit"
+                 fetch="select"
+                 lazy="no-proxy"
+                 foreign-key="profileUnitFk">
+            <column name="levelunitid"
+                    not-null="false">
+            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+            </column>
+    	</many-to-one>
+        <set name="value"
+             table="profileobservation"
+             inverse="false"
+             sort="natural"
+             cascade="delete-orphan">
+            <comment>Relation table for complex parent/child observations</comment>
+            <key foreign-key="profileObsParentFK" >
+                 <column name="observationId" not-null="true">
+                     <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                          foreign-key="oprofileObsChildFk">
+                <column name="childObservationId" not-null="true">
+                    <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
+                </column>
+            </many-to-many>
+        </set>
+    </joined-subclass>
+</hibernate-mapping>

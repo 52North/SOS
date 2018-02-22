@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,18 +30,18 @@ package org.n52.sos.netcdf.data.dataset;
 
 import java.util.Map;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.values.Value;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 
 /**
- * Implementation of {@link AbstractStringSensorDataset} for time series profile
+ * Implementation of {@link AbstractSensorDataset} for time series profile
  * sensor datasets
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -50,14 +50,14 @@ import ucar.nc2.constants.CF;
 public class TimeSeriesProfileSensorDataset extends AbstractSensorDataset implements StaticLocationDataset {
     private Double lng;
     private Double lat;
-    
-    public TimeSeriesProfileSensorDataset( DatasetSensor sensor, Double lng, Double lat, 
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
+
+    public TimeSeriesProfileSensorDataset( DatasetSensor sensor, Double lng, Double lat,
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, AbstractFeature procedure) {
         super( CF.FeatureType.timeSeriesProfile, sensor, dataValues, procedure);
         this.lng = lng;
         this.lat = lat;
     }
-    
+
     @Override
     public Double getLng() {
         return lng;

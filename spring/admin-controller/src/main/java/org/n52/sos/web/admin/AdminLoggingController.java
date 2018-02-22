@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,14 +29,16 @@
 package org.n52.sos.web.admin;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -45,10 +47,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import org.n52.sos.service.AbstractLoggingConfigurator;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -77,17 +75,19 @@ public class AdminLoggingController extends AbstractController {
 
     private static final String ERROR_MODEL_ATTRIBUTE = "error";
 
+    @Inject
+    private AbstractLoggingConfigurator loggingConfigurator;
+
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
-        AbstractLoggingConfigurator lc = AbstractLoggingConfigurator.getInstance();
-        Map<String, Object> model = new HashMap<String, Object>(5);
-        model.put(IS_FILE_ENABLED_MODEL_ATTRIBUTE, lc.isEnabled(AbstractLoggingConfigurator.Appender.FILE));
-        model.put(IS_CONSOLE_ENABLED_MODEL_ATTRIBUTE, lc.isEnabled(AbstractLoggingConfigurator.Appender.CONSOLE));
-        model.put(ROOT_LOG_LEVEL_MODEL_ATTRIBUTE, lc.getRootLogLevel());
-        model.put(DAYS_TO_KEEP_MDOEL_ATTRIBUTE, lc.getMaxHistory());
-        model.put(LOGGER_LEVELS_MODEL_ATTRIBUTE, lc.getLoggerLevels());
-        model.put(LOG_MESSAGES_MODEL_ATTRIBUTE, lc.getLastLogEntries(LOG_MESSAGES));
-        model.put(MAX_FILE_SIZE_MODEL_ATTRIBUTE, lc.getMaxFileSize());
+        Map<String, Object> model = new HashMap<>(5);
+        model.put(IS_FILE_ENABLED_MODEL_ATTRIBUTE, loggingConfigurator.isEnabled(AbstractLoggingConfigurator.Appender.FILE));
+        model.put(IS_CONSOLE_ENABLED_MODEL_ATTRIBUTE, loggingConfigurator.isEnabled(AbstractLoggingConfigurator.Appender.CONSOLE));
+        model.put(ROOT_LOG_LEVEL_MODEL_ATTRIBUTE, loggingConfigurator.getRootLogLevel());
+        model.put(DAYS_TO_KEEP_MDOEL_ATTRIBUTE, loggingConfigurator.getMaxHistory());
+        model.put(LOGGER_LEVELS_MODEL_ATTRIBUTE, loggingConfigurator.getLoggerLevels());
+        model.put(LOG_MESSAGES_MODEL_ATTRIBUTE, loggingConfigurator.getLastLogEntries(LOG_MESSAGES));
+        model.put(MAX_FILE_SIZE_MODEL_ATTRIBUTE, loggingConfigurator.getMaxFileSize());
         return new ModelAndView(ControllerConstants.Views.ADMIN_LOGGING, model);
     }
 
@@ -95,7 +95,7 @@ public class AdminLoggingController extends AbstractController {
     public ModelAndView save(HttpServletRequest req) {
 
         @SuppressWarnings("unchecked")
-        Set<String> parameters = new HashSet<String>(Collections.list((Enumeration<String>) req.getParameterNames()));
+        Set<String> parameters = new HashSet<>(Collections.list(req.getParameterNames()));
 
         int daysToKeep = Integer.parseInt(req.getParameter(DAYS_TO_KEEP_MDOEL_ATTRIBUTE));
         parameters.remove(DAYS_TO_KEEP_MDOEL_ATTRIBUTE);
@@ -110,19 +110,18 @@ public class AdminLoggingController extends AbstractController {
         parameters.remove(MAX_FILE_SIZE_MODEL_ATTRIBUTE);
 
         Map<String, AbstractLoggingConfigurator.Level> levels =
-                new HashMap<String, AbstractLoggingConfigurator.Level>(parameters.size());
+                new HashMap<>(parameters.size());
 
         for (String logger : parameters) {
             levels.put(logger, AbstractLoggingConfigurator.Level.valueOf(req.getParameter(logger)));
         }
 
-        AbstractLoggingConfigurator lc = AbstractLoggingConfigurator.getInstance();
-        lc.setMaxHistory(daysToKeep);
-        lc.enableAppender(AbstractLoggingConfigurator.Appender.FILE, fileEnabled);
-        lc.enableAppender(AbstractLoggingConfigurator.Appender.CONSOLE, consoleEnabled);
-        lc.setRootLogLevel(rootLevel);
-        lc.setLoggerLevel(levels);
-        lc.setMaxFileSize(maxFileSize);
+        loggingConfigurator.setMaxHistory(daysToKeep);
+        loggingConfigurator.enableAppender(AbstractLoggingConfigurator.Appender.FILE, fileEnabled);
+        loggingConfigurator.enableAppender(AbstractLoggingConfigurator.Appender.CONSOLE, consoleEnabled);
+        loggingConfigurator.setRootLogLevel(rootLevel);
+        loggingConfigurator.setLoggerLevel(levels);
+        loggingConfigurator.setMaxFileSize(maxFileSize);
 
         return new ModelAndView(new RedirectView(ControllerConstants.Paths.ADMIN_LOGGING, true));
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,10 +32,10 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorKey;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Embeddable
 public class OperationKey implements Serializable {

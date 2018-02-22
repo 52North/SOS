@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,12 +41,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.sos.exception.JSONException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.iceland.exception.JSONException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.JSONUtils;
-import org.n52.sos.web.ControllerConstants;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -71,7 +71,7 @@ public class AdminReloadCacheController extends AbstractAdminController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_LOADING, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String getCacheLoadingStatus() throws JSONException, UnavailableException {
         checkConfiguratorAvailability();
-        return JSONUtils.print(JSONUtils.nodeFactory().objectNode().put("loading", cacheIsLoading()));
+        return Json.print(Json.nodeFactory().objectNode().put("loading", cacheIsLoading()));
     }
 
     private void checkConfiguratorAvailability() throws UnavailableException {

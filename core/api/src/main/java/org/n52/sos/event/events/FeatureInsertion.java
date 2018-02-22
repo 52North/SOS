@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,8 +28,8 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.InsertFeatureOfInterestRequest;
-import org.n52.sos.response.InsertFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
 
 public class FeatureInsertion extends SosInsertionEvent<InsertFeatureOfInterestRequest, InsertFeatureOfInterestResponse> {
 

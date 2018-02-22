@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,25 +35,32 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.jdbc.ReturningWork;
+
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.util.SQLHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProvider;
+
 /**
  * class that deals with crud operations related to SOS DB.
- * 
+ *
  * @author Shubham Sachdeva
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
     private static final Logger LOG = LoggerFactory.getLogger(HibernateGeneralQueryDAO.class);
@@ -62,30 +69,27 @@ public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
 
     private static final String[] UPDATE_COMMANDS = { "update ", "insert ", "delete " };
 
-    private static boolean contains(String[] commands, String query) {
-        for (String command : commands) {
-            if (query.contains(command)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     /**
      * Method which query the SOS DB
-     * 
+     *
      * @param query
      *            normal sql query concerning any table
-     * 
+     *
      * @return query result
-     * 
+     *
      * @throws SQLException
      */
     @Override
     public QueryResult query(final String query) throws SQLException {
-        String q = query.toLowerCase();
+        String q = query.toLowerCase(Locale.ROOT);
         if (contains(MODIFY_COMMANDS, q)) {
             return doTransactionalWork(new ModifyWork(), query);
         } else if (contains(UPDATE_COMMANDS, q)) {
@@ -125,6 +129,15 @@ public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
         } finally {
             sessionHolder.returnSession(s);
         }
+    }
+
+    private static boolean contains(String[] commands, String query) {
+        for (String command : commands) {
+            if (query.contains(command)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class ErrorResult extends QueryResult {

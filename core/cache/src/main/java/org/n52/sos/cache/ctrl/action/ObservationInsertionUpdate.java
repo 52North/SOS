@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,22 +32,22 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.util.Action;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.iceland.util.action.Action;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.sos.cache.InMemoryCacheImpl;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -88,7 +88,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final InMemoryCacheImpl cache = (InMemoryCacheImpl) getCache();
         // TODO Review required methods and update test accordingly (@see
         // SensorInsertionInMemoryCacheUpdate)
         // Always update the javadoc when changing this method!
@@ -117,12 +117,12 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addPublishedFeatureOfInterest(featureOfInterest);
                 cache.addPublishedFeatureOfInterest(featureOfInterest);
                 if (sosSamplingFeature.isSetName()) {
-                	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest, sosSamplingFeature.getFirstName().getValue());
+                    cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest, sosSamplingFeature.getFirstName().getValue());
                 }
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
                 if (sosSamplingFeature.isSetSampledFeatures()) {
                     for (AbstractFeature parentFeature : sosSamplingFeature.getSampledFeatures()) {
-                        getCache().addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
+                        cache.addParentFeature(sosSamplingFeature.getIdentifierCodeWithAuthority().getValue(),
                                 parentFeature.getIdentifierCodeWithAuthority().getValue());
                         cache.addPublishedFeatureOfInterest(parentFeature.getIdentifierCodeWithAuthority().getValue());
                     }
@@ -173,7 +173,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
         }
     }
 
-    private void updateObservableProperties(WritableContentCache cache,
+    private void updateObservableProperties(InMemoryCacheImpl cache,
                                             AbstractPhenomenon observableProperty,
                                             String procedure) {
         // procedure <-> observable property

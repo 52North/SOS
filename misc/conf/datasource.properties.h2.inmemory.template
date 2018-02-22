@@ -2,7 +2,7 @@
 org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.H2InMemoryDatasource
 
 # path to mapping files
-HIBERNATE_DIRECTORY=/mapping/core;/mapping/old/observation;/mapping/transactional;
+HIBERNATE_DIRECTORY=/mapping/core;/mapping/series/base;/mapping/series/observation;/mapping/series/value;/mapping/transactional;
 
 # hibernate/h2 inmemory configuration
 hibernate.connection.username=sa

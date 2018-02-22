@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,11 +28,12 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.util.StringHelper;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
+
+import com.google.common.base.Strings;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -46,7 +47,7 @@ public class ProcedureDescriptionBuilder {
     private String offeringIdentifier;
 
     private CodeType offeringName;
-    
+
     private String offeringDescription;
 
     public static ProcedureDescriptionBuilder aSensorMLProcedureDescription() {
@@ -63,21 +64,21 @@ public class ProcedureDescriptionBuilder {
         this.offeringName = new CodeType(offeringName);
         return this;
     }
-    
+
     public ProcedureDescriptionBuilder setOffering(String offeringIdentifier, CodeType offeringName) {
         this.offeringIdentifier = offeringIdentifier;
         this.offeringName = offeringName;
         return this;
     }
 
-    public SosProcedureDescription build() {
-        SosProcedureDescription description = new SosProcedureDescriptionUnknowType(procedureIdentifer, null, null);
+    public SosProcedureDescription<?> build() {
+        SosProcedureDescription<?> description = new SosProcedureDescriptionUnknownType(procedureIdentifer, null, null);
         if (offeringIdentifier != null && offeringName != null) {
             SosOffering sosOffering = new SosOffering(offeringIdentifier, offeringName);
-            if (StringHelper.isNotEmpty(offeringDescription)) {
+            if (!Strings.isNullOrEmpty(offeringDescription)) {
                 sosOffering.setDescription(offeringDescription);
             }
-            ((SosProcedureDescriptionUnknowType) description).addOffering(sosOffering);
+            ((SosProcedureDescriptionUnknownType) description).addOffering(sosOffering);
         }
         return description;
     }

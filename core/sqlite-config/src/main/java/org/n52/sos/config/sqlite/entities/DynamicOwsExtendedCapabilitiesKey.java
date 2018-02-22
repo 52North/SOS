@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,14 +32,14 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 
 /**
  * Storage key for the entity {@link DynamicOwsExtendedCapabilities}
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Embeddable
 public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
@@ -50,18 +50,16 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     private String version;
 
     private String domain;
-    
+
     /**
      * constructor
-     * 
-     * @param service
-     *            the service to set
-     * @param version
-     *            the version to set
-     * @param domain
-     *            the domain to set
+     *
+     * @param service the service to set
+     * @param version the version to set
+     * @param domain the domain to set
      */
-    public DynamicOwsExtendedCapabilitiesKey(String service, String version, String domain) {
+    public DynamicOwsExtendedCapabilitiesKey(String service, String version,
+                                             String domain) {
         setService(service);
         setVersion(version);
         setDomain(domain);
@@ -69,11 +67,11 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * constructor
-     * 
-     * @param oeck
-     *            the {@link OwsExtendedCapabilitiesKey} to set
+     *
+     * @param key the {@link OwsOperationMetadataExtensionProviderKey} to set
      */
-    public DynamicOwsExtendedCapabilitiesKey(OwsExtendedCapabilitiesKey key) {
+    public DynamicOwsExtendedCapabilitiesKey(
+            OwsOperationMetadataExtensionProviderKey key) {
         this(key.getService(), key.getVersion(), key.getDomain());
     }
 
@@ -83,10 +81,10 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     public DynamicOwsExtendedCapabilitiesKey() {
         this(null, null, null);
     }
-    
+
     /**
      * Get the key service
-     * 
+     *
      * @return the service
      */
     public String getService() {
@@ -95,9 +93,9 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Set the key service
-     * 
-     * @param service
-     *            the service to set
+     *
+     * @param service the service to set
+     *
      * @return this
      */
     public DynamicOwsExtendedCapabilitiesKey setService(String service) {
@@ -107,7 +105,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Get the key version
-     * 
+     *
      * @return the version
      */
     public String getVersion() {
@@ -116,9 +114,9 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Set the key service
-     * 
-     * @param version
-     *            the version to seet
+     *
+     * @param version the version to seet
+     *
      * @return this
      */
     public DynamicOwsExtendedCapabilitiesKey setVersion(String version) {
@@ -128,7 +126,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Get the key domain
-     * 
+     *
      * @return the domain
      */
     public String getDomain() {
@@ -137,9 +135,9 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Set the key domain
-     * 
-     * @param domain
-     *            the domain to set
+     *
+     * @param domain the domain to set
+     *
      * @return this
      */
     public DynamicOwsExtendedCapabilitiesKey setDomain(String domain) {

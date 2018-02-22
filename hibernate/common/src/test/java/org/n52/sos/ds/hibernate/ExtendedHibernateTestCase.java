@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,15 +29,16 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.data.Data;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 
 /**
  * Abstract test class that contains implemented methods
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  *
@@ -46,20 +47,31 @@ public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
 
     @Deprecated
     protected static Class<?> getObservationClass(Session session) throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass();
+        return getObservationDao().getObservationFactory().observationClass();
     }
 
     @Deprecated
     protected static Class<?> getObservationInfoClass(Session session) throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().contextualReferencedClass();
+        return getObservationDao().getObservationFactory().contextualReferencedClass();
     }
 
     @SuppressWarnings("rawtypes")
-    protected static Class<? extends Observation> getObservationClass() throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass();
+    protected static Class<? extends Data> getObservationClass() throws OwsExceptionReport {
+        return getObservationDao().getObservationFactory().observationClass();
     }
 
-    protected static Class<? extends ContextualReferencedObservation> getContextualReferencedObservationClass() throws OwsExceptionReport {
-        return DaoFactory.getInstance().getObservationDAO().getObservationFactory().contextualReferencedClass();
+    protected static Class<? extends Data> getContextualReferencedObservationClass() throws OwsExceptionReport {
+        return getObservationDao().getObservationFactory().contextualReferencedClass();
+    }
+
+    protected static DaoFactory getDaoFactory() {
+        I18NDAORepository i18NDAORepository = new I18NDAORepository();
+        DaoFactory daoFactory = new DaoFactory();
+        daoFactory.setI18NDAORepository(i18NDAORepository);
+        return daoFactory;
+    }
+
+    protected static AbstractObservationDAO getObservationDao() throws OwsExceptionReport {
+        return getDaoFactory().getObservationDAO();
     }
 }

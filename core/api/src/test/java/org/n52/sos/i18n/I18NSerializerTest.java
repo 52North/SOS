@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,6 +39,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+
+import org.n52.iceland.i18n.I18NSerializer;
+import org.n52.janmayen.i18n.MultilingualString;
 
 /**
  * TODO JavaDoc

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,70 +29,60 @@
 package org.n52.sos.wsdl;
 
 import java.net.URI;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.binding.Binding;
-import org.n52.sos.binding.BindingConstants;
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.coding.OperationKey;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.HTTPException;
-import org.n52.sos.request.operator.RequestOperator;
-import org.n52.sos.request.operator.RequestOperatorKey;
-import org.n52.sos.request.operator.RequestOperatorRepository;
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.request.operator.RequestOperator;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.janmayen.Producer;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.Producer;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class WSDLFactory implements Producer<String> {
+
     @Override
-    public String get() throws ConfigurationException {
+    public String get() throws ConfigurationError {
         try {
             return getWSDL();
-        } catch (final Exception ex) {
-            throw new ConfigurationException(ex);
+        } catch (ConfigurationError ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ConfigurationError(ex);
         }
-    }
-
-    @Override
-    public String get(Locale language) {
-        // No language support
-        return get();
-    }
-
-    @Override
-    public String get(String identification) {
-        return get();
     }
 
     private String getWSDL() throws Exception {
         final WSDLBuilder builder = new WSDLBuilder();
-        if (Configurator.getInstance() != null) {
-            final Map<String, Binding> bindings = BindingRepository.getInstance().getBindings();
-            final RequestOperatorRepository repo = RequestOperatorRepository.getInstance();
-
+        if (isConfigured()) {
+            final RequestOperatorRepository repo = getRequestOperatorRepository();
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();
+            final String serviceUrl = getServiceURL();
 
-            final String serviceUrl = ServiceConfiguration.getInstance().getServiceURL();
+            Binding binding;
 
-            if (bindings.containsKey(BindingConstants.SOAP_BINDING_ENDPOINT)) {
-                builder.setSoapEndpoint(URI.create(serviceUrl + BindingConstants.SOAP_BINDING_ENDPOINT));
-                final Binding b = bindings.get(BindingConstants.SOAP_BINDING_ENDPOINT);
+            binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_SOAP_XML);
+            if (binding != null) {
+                builder.setSoapEndpoint(URI.create(serviceUrl));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
                     if (op instanceof WSDLAwareRequestOperator) {
                         final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
                         if (wop.getSosOperationDefinition() != null) {
-                            if (isHttpPostSupported(b, wop)) {
+                            if (isHttpPostSupported(binding, wop)) {
                                 builder.addSoapOperation(wop.getSosOperationDefinition());
                             }
                             addAdditionalPrefixes(wop, builder);
@@ -101,15 +91,16 @@ public class WSDLFactory implements Producer<String> {
                     }
                 }
             }
-            if (bindings.containsKey(BindingConstants.POX_BINDING_ENDPOINT)) {
-                builder.setPoxEndpoint(URI.create(serviceUrl + BindingConstants.POX_BINDING_ENDPOINT));
-                final Binding b = bindings.get(BindingConstants.POX_BINDING_ENDPOINT);
+
+            binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_XML);
+            if (binding != null) {
+                builder.setPoxEndpoint(URI.create(serviceUrl));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
                     if (op instanceof WSDLAwareRequestOperator) {
                         final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
                         if (wop.getSosOperationDefinition() != null) {
-                            if (isHttpPostSupported(b, wop)) {
+                            if (isHttpPostSupported(binding, wop)) {
                                 builder.addPoxOperation(wop.getSosOperationDefinition());
                             }
                             addAdditionalPrefixes(wop, builder);
@@ -118,15 +109,16 @@ public class WSDLFactory implements Producer<String> {
                     }
                 }
             }
-            if (bindings.containsKey(BindingConstants.KVP_BINDING_ENDPOINT)) {
-                builder.setKvpEndpoint(URI.create(serviceUrl + BindingConstants.KVP_BINDING_ENDPOINT + "?"));
-                final Binding b = bindings.get(BindingConstants.KVP_BINDING_ENDPOINT);
+
+            binding = getBindingRepository().getBinding(MediaTypes.APPLICATION_KVP);
+            if (binding != null) {
+                builder.setKvpEndpoint(URI.create(serviceUrl + "?"));
                 for (final RequestOperatorKey o : requestOperators) {
                     final RequestOperator op = repo.getRequestOperator(o);
                     if (op instanceof WSDLAwareRequestOperator) {
                         final WSDLAwareRequestOperator wop = (WSDLAwareRequestOperator) op;
                         if (wop.getSosOperationDefinition() != null) {
-                            if (isHttpGetSupported(b, wop)) {
+                            if (isHttpGetSupported(binding, wop)) {
                                 builder.addKvpOperation(wop.getSosOperationDefinition());
                             }
                             addAdditionalPrefixes(wop, builder);
@@ -139,17 +131,16 @@ public class WSDLFactory implements Producer<String> {
         return builder.build();
     }
 
-    private OperationKey toOperationKey(final RequestOperatorKey requestOperatorKeyType) {
-        return new OperationKey(requestOperatorKeyType.getServiceOperatorKey().getService(), requestOperatorKeyType
-                .getServiceOperatorKey().getVersion(), requestOperatorKeyType.getOperationName());
+    private OwsOperationKey toOperationKey(RequestOperatorKey requestOperatorKeyType) {
+        return new OwsOperationKey(requestOperatorKeyType.getServiceOperatorKey().getService(),
+                                   requestOperatorKeyType.getServiceOperatorKey().getVersion(),
+                                   requestOperatorKeyType.getOperationName());
     }
 
     private void addAdditionalPrefixes(final WSDLAwareRequestOperator op, final WSDLBuilder builder) {
         final Map<String, String> additionalPrefixes = op.getAdditionalPrefixes();
         if (additionalPrefixes != null) {
-            for (final Map.Entry<String, String> ap : additionalPrefixes.entrySet()) {
-                builder.addNamespace(ap.getKey(), ap.getValue());
-            }
+            additionalPrefixes.forEach(builder::addNamespace);
         }
     }
 
@@ -157,17 +148,43 @@ public class WSDLFactory implements Producer<String> {
             throws Exception {
         final Map<String, String> additionalSchemaImports = op.getAdditionalSchemaImports();
         if (additionalSchemaImports != null) {
-            for (final Map.Entry<String, String> as : additionalSchemaImports.entrySet()) {
-                builder.addSchemaImport(as.getKey(), as.getValue());
-            }
+            additionalSchemaImports.forEach(builder::addSchemaImport);
         }
     }
 
     private boolean isHttpPostSupported(final Binding b, final RequestOperator ro) throws HTTPException {
-        return b.checkOperationHttpPostSupported(toOperationKey(ro.getRequestOperatorKeyType()));
+        return ro.getKeys().stream().map(this::toOperationKey).anyMatch(k -> {
+            try {
+                return b.checkOperationHttpPostSupported(k);
+            } catch (HTTPException ex) {
+                throw new ConfigurationError(ex);
+            }
+        });
     }
 
     private boolean isHttpGetSupported(final Binding b, final RequestOperator ro) throws HTTPException {
-        return b.checkOperationHttpGetSupported(toOperationKey(ro.getRequestOperatorKeyType()));
+        return ro.getKeys().stream().map(this::toOperationKey).anyMatch(k -> {
+            try {
+                return b.checkOperationHttpGetSupported(k);
+            } catch (HTTPException ex) {
+                throw new ConfigurationError(ex);
+            }
+        });
+    }
+
+    private RequestOperatorRepository getRequestOperatorRepository() {
+        return RequestOperatorRepository.getInstance();
+    }
+
+    private BindingRepository getBindingRepository() {
+        return BindingRepository.getInstance();
+    }
+
+    private String getServiceURL() {
+        return ServiceConfiguration.getInstance().getServiceURL();
+    }
+
+    private boolean isConfigured() {
+        return Configurator.getInstance() != null;
     }
 }

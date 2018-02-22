@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,22 +31,16 @@ package org.n52.sos.ogc.om.values;
 import java.util.Objects;
 
 import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class XmlValue implements Value<XmlObject> {
-
-    private static final Logger log = LoggerFactory.getLogger(XmlValue.class);
-    private static final long serialVersionUID = 5895818649831864521L;
+public class XmlValue implements org.n52.shetland.ogc.om.values.XmlValue<XmlObject> {
 
     private XmlObject xml;
     private UoM unit;
@@ -85,8 +79,9 @@ public class XmlValue implements Value<XmlObject> {
     }
 
     @Override
-    public void setUnit(UoM unit) {
+    public Value<XmlObject> setUnit(UoM unit) {
         this.unit = unit;
+        return this;
     }
 
     @Override
@@ -97,18 +92,6 @@ public class XmlValue implements Value<XmlObject> {
     @Override
     public boolean isSetValue() {
         return this.xml != null;
-    }
-
-    @Override
-    public <X> X accept(ValueVisitor<X> visitor)
-            throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
-
-    @Override
-    public void accept(VoidValueVisitor visitor)
-            throws OwsExceptionReport {
-        visitor.visit(this);
     }
 
     @Override
@@ -138,6 +121,11 @@ public class XmlValue implements Value<XmlObject> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public <X, E extends Exception> X accept(ValueVisitor<X, E> visitor) throws E {
+        return visitor.visit(this);
     }
 
 }

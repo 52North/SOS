@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,23 +31,22 @@ package org.n52.sos.web.install;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ds.Datasource;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.iceland.ds.Datasource;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InstallationConfiguration {
 
-    private Map<SettingDefinition<?, ?>, SettingValue<?>> settings =
-            new HashMap<SettingDefinition<?, ?>, SettingValue<?>>();
+    private Map<SettingDefinition<?>, SettingValue<?>> settings = new HashMap<>();
 
-    private Map<String, Object> databaseSettings = new HashMap<String, Object>();
+    private Map<String, Object> databaseSettings = new HashMap<>();
 
     private String username;
 
@@ -58,17 +57,17 @@ public class InstallationConfiguration {
     private boolean createSchema = false;
 
     private boolean dropSchema = false;
-    
+
     private boolean forceUpdateSchema = false;
 
     public InstallationConfiguration() {
     }
 
-    public Map<SettingDefinition<?, ?>, SettingValue<?>> getSettings() {
+    public Map<SettingDefinition<?>, SettingValue<?>> getSettings() {
         return settings;
     }
 
-    public InstallationConfiguration setSettings(Map<SettingDefinition<?, ?>, SettingValue<?>> settings) {
+    public InstallationConfiguration setSettings(Map<SettingDefinition<?>, SettingValue<?>> settings) {
         this.settings = settings;
         return this;
     }
@@ -125,11 +124,11 @@ public class InstallationConfiguration {
         return this;
     }
 
-    public SettingValue<?> getSetting(SettingDefinition<?, ?> k) {
+    public SettingValue<?> getSetting(SettingDefinition<?> k) {
         return settings.get(k);
     }
 
-    public InstallationConfiguration setSetting(SettingDefinition<?, ?> k, SettingValue<?> v) {
+    public InstallationConfiguration setSetting(SettingDefinition<?> k, SettingValue<?> v) {
         settings.put(k, v);
         return this;
     }
@@ -153,9 +152,9 @@ public class InstallationConfiguration {
     public boolean isForceUpdateSchema() {
         return forceUpdateSchema;
     }
-    
+
     public void setForceUpdateSchema(boolean forceUpdateSchema) {
         this.forceUpdateSchema = forceUpdateSchema;
     }
-    
+
 }

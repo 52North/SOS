@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,65 +33,69 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractMonitoringFeature;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.AddressEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.ContactEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.ExExtentEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.ExVerticalExtentEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.OnlineResourceEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.ResponsiblePartyEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.RoleEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gmd.TelephoneEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gml.CoordinateSystemAxisEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gml.DomainOfValidityEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalCRSEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalCSEntity;
-import org.n52.sos.ds.hibernate.entities.feature.gml.VerticalDatumEntity;
-import org.n52.sos.iso.gco.Role;
-import org.n52.sos.iso.gmd.CiAddress;
-import org.n52.sos.iso.gmd.CiContact;
-import org.n52.sos.iso.gmd.CiOnlineResource;
-import org.n52.sos.iso.gmd.CiResponsibleParty;
-import org.n52.sos.iso.gmd.CiTelephone;
-import org.n52.sos.iso.gmd.EXExtent;
-import org.n52.sos.iso.gmd.EXVerticalExtent;
-import org.n52.sos.iso.gmd.ScCRS;
-import org.n52.sos.ogc.gml.Aggregation;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.CoordinateSystemAxis;
-import org.n52.sos.ogc.gml.DomainOfValidity;
-import org.n52.sos.ogc.gml.VerticalCRS;
-import org.n52.sos.ogc.gml.VerticalCS;
-import org.n52.sos.ogc.gml.VerticalDatum;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.w3c.Nillable;
-import org.n52.sos.w3c.xlink.Reference;
-import org.n52.sos.w3c.xlink.Referenceable;
+import org.n52.series.db.beans.feature.AbstractMonitoringFeature;
+import org.n52.series.db.beans.feature.ReferenceEntity;
+import org.n52.series.db.beans.feature.gmd.AddressEntity;
+import org.n52.series.db.beans.feature.gmd.ContactEntity;
+import org.n52.series.db.beans.feature.gmd.ExExtentEntity;
+import org.n52.series.db.beans.feature.gmd.ExVerticalExtentEntity;
+import org.n52.series.db.beans.feature.gmd.OnlineResourceEntity;
+import org.n52.series.db.beans.feature.gmd.ResponsiblePartyEntity;
+import org.n52.series.db.beans.feature.gmd.RoleEntity;
+import org.n52.series.db.beans.feature.gmd.TelephoneEntity;
+import org.n52.series.db.beans.feature.gml.CoordinateSystemAxisEntity;
+import org.n52.series.db.beans.feature.gml.DomainOfValidityEntity;
+import org.n52.series.db.beans.feature.gml.VerticalCRSEntity;
+import org.n52.series.db.beans.feature.gml.VerticalCSEntity;
+import org.n52.series.db.beans.feature.gml.VerticalDatumEntity;
+import org.n52.shetland.iso.gco.Role;
+import org.n52.shetland.iso.gmd.CiAddress;
+import org.n52.shetland.iso.gmd.CiContact;
+import org.n52.shetland.iso.gmd.CiOnlineResource;
+import org.n52.shetland.iso.gmd.CiResponsibleParty;
+import org.n52.shetland.iso.gmd.CiTelephone;
+import org.n52.shetland.iso.gmd.EXExtent;
+import org.n52.shetland.iso.gmd.EXVerticalExtent;
+import org.n52.shetland.iso.gmd.ScCRS;
+import org.n52.shetland.ogc.gml.Aggregation;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.CoordinateSystemAxis;
+import org.n52.shetland.ogc.gml.DomainOfValidity;
+import org.n52.shetland.ogc.gml.VerticalCRS;
+import org.n52.shetland.ogc.gml.VerticalCS;
+import org.n52.shetland.ogc.gml.VerticalDatum;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.w3c.Nillable;
+import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Referenceable;
 
-public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitoringFeature> extends AbstractFeatureOfInerestCreator<T> {
+public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitoringFeature>
+        extends AbstractFeatureOfInerestCreator<T> {
 
-    public AbstractMonitoringFeatureCreator(int storageEPSG, int storage3depsg) {
-        super(storageEPSG, storage3depsg);
-    }
-    
-    protected void addMonitoringFeatureData(org.n52.sos.ogc.series.AbstractMonitoringFeature amp, AbstractMonitoringFeature f, Session s) {
-        addVerticalDatum(amp, f, s);
-        addRelatedParty(amp, f, s);
+    public AbstractMonitoringFeatureCreator(FeatureVisitorContext context) {
+        super(context);
     }
 
-    
-    private void addVerticalDatum(org.n52.sos.ogc.series.AbstractMonitoringFeature amp, AbstractMonitoringFeature f, Session s) {
+    protected void addMonitoringFeatureData(org.n52.shetland.ogc.om.series.AbstractMonitoringFeature amp,
+            AbstractMonitoringFeature f) throws CodedException {
+        addVerticalDatum(amp, f);
+        addRelatedParty(amp, f);
+    }
+
+    private void addVerticalDatum(org.n52.shetland.ogc.om.series.AbstractMonitoringFeature amp,
+            AbstractMonitoringFeature f) throws CodedException {
         if (f.hasVerticalDatum()) {
             for (VerticalDatumEntity vde : f.getVerticalDatum()) {
                 amp.addVerticalDatum(createVerticalDatum(vde));
             }
         }
     }
-    
-    private void addRelatedParty(org.n52.sos.ogc.series.AbstractMonitoringFeature amp, AbstractMonitoringFeature f, Session s) {
+
+    private void addRelatedParty(org.n52.shetland.ogc.om.series.AbstractMonitoringFeature amp,
+            AbstractMonitoringFeature f) throws CodedException {
         if (f.hasRelatedParty()) {
             for (ResponsiblePartyEntity rpe : f.getRelatedParty()) {
                 amp.addRelatedParty(createCiResponsibleParty(rpe));
@@ -99,12 +103,12 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
         }
     }
 
-    private Referenceable<VerticalDatum> createVerticalDatum(VerticalDatumEntity vde) {
+    private Referenceable<VerticalDatum> createVerticalDatum(VerticalDatumEntity vde) throws CodedException {
         if (vde.isSetNilReason()) {
-            return Referenceable.<VerticalDatum>of(Nillable.<VerticalDatum>nil(vde.getNilReason()));
+            return Referenceable.<VerticalDatum> of(Nillable.<VerticalDatum> nil(vde.getNilReason()));
         } else if (vde.isSetHref()) {
-            Reference reference = vde.createReferenceValues();
-            return  Referenceable.<VerticalDatum>of(reference);
+            Reference reference = createReferenceValues(vde);
+            return Referenceable.<VerticalDatum> of(reference);
         } else {
             List<String> scope = new ArrayList<>();
             if (vde.hasScope()) {
@@ -112,11 +116,17 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             }
             CodeWithAuthority identifier = getIdentifier(vde);
             VerticalDatum verticalDatum = new VerticalDatum(identifier, scope);
-            verticalDatum.setGmlId("vd_" + vde.getPkid());
+            verticalDatum.setGmlId("vd_" + vde.getId());
             if (vde.isSetName()) {
                 CodeType name = new CodeType(vde.getName());
-                if (vde.isSetCodespaceName()) {
-                    name.setCodeSpace(vde.getCodespaceName().getCodespace());
+                if (vde.isSetNameCodespace()) {
+                    try {
+                        name.setCodeSpace(new URI(vde.getNameCodespace().getName()));
+                    } catch (URISyntaxException e) {
+                        throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
+                                vde.getNameCodespace().getName());
+                    }
+
                 }
                 verticalDatum.addName(name);
             }
@@ -126,7 +136,12 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (vde.isSetAnchorDefinition()) {
                 CodeType anchorDefinition = new CodeType(vde.getAnchorDefinition());
                 if (vde.isSetCodespaceAnchorDefinition()) {
-                    anchorDefinition.setCodeSpace(vde.getCodespaceAnchorDef().getCodespace());
+                    try {
+                        anchorDefinition.setCodeSpace(new URI(vde.getCodespaceAnchorDefinition().getName()));
+                    } catch (URISyntaxException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
                 verticalDatum.setAnchorDefinition(anchorDefinition);
             }
@@ -136,26 +151,26 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (vde.isSetRealizationEpoch()) {
                 verticalDatum.setRealizationEpoch(DateTimeHelper.makeDateTime(vde.getRealizationEpoch()));
             }
-            return Referenceable.<VerticalDatum>of(verticalDatum);
+            return Referenceable.<VerticalDatum> of(verticalDatum);
         }
     }
 
-    private Referenceable<DomainOfValidity> createDomainOfValidity(DomainOfValidityEntity dov) {
+    private Referenceable<DomainOfValidity> createDomainOfValidity(DomainOfValidityEntity dov) throws CodedException {
         if (dov.isSetNilReason()) {
-            return Referenceable.<DomainOfValidity>of(Nillable.<DomainOfValidity>nil(dov.getNilReason()));
+            return Referenceable.<DomainOfValidity> of(Nillable.<DomainOfValidity> nil(dov.getNilReason()));
         } else if (dov.isSetHref()) {
-            Reference reference = dov.createReferenceValues();
-            return Referenceable.<DomainOfValidity>of(reference);
+            Reference reference = createReferenceValues(dov);
+            return Referenceable.<DomainOfValidity> of(reference);
         } else {
             DomainOfValidity domainOfValidity = new DomainOfValidity();
             if (dov.isSetExExtent()) {
                 domainOfValidity.setExExtent(createExExtent(dov.getExExtent()));
             }
-            return Referenceable.<DomainOfValidity>of(domainOfValidity);
+            return Referenceable.<DomainOfValidity> of(domainOfValidity);
         }
     }
 
-    private EXExtent createExExtent(ExExtentEntity exe) {
+    private EXExtent createExExtent(ExExtentEntity exe) throws CodedException {
         EXExtent exExtent = new EXExtent();
         if (exe.isSetId()) {
             exExtent.setId(exe.getId());
@@ -174,51 +189,52 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
         return exExtent;
     }
 
-    private Referenceable<EXVerticalExtent> createVerticalExtent(ExVerticalExtentEntity exvee) {
+    private Referenceable<EXVerticalExtent> createVerticalExtent(ExVerticalExtentEntity exvee) throws CodedException {
         if (exvee.isSetNilReason()) {
-           return Referenceable.<EXVerticalExtent>of(Nillable.<EXVerticalExtent>nil(exvee.getNilReason()));
+            return Referenceable.<EXVerticalExtent> of(Nillable.<EXVerticalExtent> nil(exvee.getNilReason()));
         } else if (exvee.isSetHref()) {
-            Reference reference = exvee.createReferenceValues();
-            return Referenceable.<EXVerticalExtent>of(reference);
+            Reference reference = createReferenceValues(exvee);
+            return Referenceable.<EXVerticalExtent> of(reference);
         } else {
             EXVerticalExtent exVerticalExtent = new EXVerticalExtent();
             // min value
             if (exvee.isSetMinimumValue()) {
                 exVerticalExtent.setMinimumValue(Nillable.of(exvee.getMinimumValue()));
             } else if (exvee.isSetMinValuNilReason()) {
-                exVerticalExtent.setMinimumValue(Nillable.<Double>nil(exvee.getMinValuNilReason()));
+                exVerticalExtent.setMinimumValue(Nillable.<Double> nil(exvee.getMinValuNilReason()));
             } else {
-                exVerticalExtent.setMinimumValue(Nillable.<Double>missing());
+                exVerticalExtent.setMinimumValue(Nillable.<Double> missing());
             }
             // max value
             if (exvee.isSetMaximumValue()) {
                 exVerticalExtent.setMaximumValue(Nillable.of(exvee.getMaximumValue()));
             } else if (exvee.isSetMaxValuNilReason()) {
-                exVerticalExtent.setMaximumValue(Nillable.<Double>nil(exvee.getMaxValuNilReason()));
+                exVerticalExtent.setMaximumValue(Nillable.<Double> nil(exvee.getMaxValuNilReason()));
             } else {
-                exVerticalExtent.setMaximumValue(Nillable.<Double>missing());
+                exVerticalExtent.setMaximumValue(Nillable.<Double> missing());
             }
             if (exvee.isSetVerticalCRS()) {
                 VerticalCRSEntity vcrs = exvee.getVerticalCRS();
                 if (vcrs.isSetNilReason()) {
-                    exVerticalExtent.setVerticalCRS(Referenceable.<ScCRS>of(Nillable.<ScCRS>nil(vcrs.getNilReason())));
+                    exVerticalExtent
+                            .setVerticalCRS(Referenceable.<ScCRS> of(Nillable.<ScCRS> nil(vcrs.getNilReason())));
                 } else if (vcrs.isSetHref()) {
-                    Reference reference = vcrs.createReferenceValues();
-                    exVerticalExtent.setVerticalCRS(Referenceable.<ScCRS>of(reference));
+                    Reference reference = createReferenceValues(vcrs);
+                    exVerticalExtent.setVerticalCRS(Referenceable.<ScCRS> of(reference));
                 } else {
                     exVerticalExtent.setVerticalCRS(createVerticalCRS(vcrs));
                 }
             }
-            return Referenceable.<EXVerticalExtent>of(exVerticalExtent);
+            return Referenceable.<EXVerticalExtent> of(exVerticalExtent);
         }
     }
 
-    private Referenceable<ScCRS> createVerticalCRS(VerticalCRSEntity vcrs) {
+    private Referenceable<ScCRS> createVerticalCRS(VerticalCRSEntity vcrs) throws CodedException {
         if (vcrs.isSetNilReason()) {
-            return Referenceable.<ScCRS>of(Nillable.<ScCRS>nil(vcrs.getNilReason()));
+            return Referenceable.<ScCRS> of(Nillable.<ScCRS> nil(vcrs.getNilReason()));
         } else if (vcrs.isSetHref()) {
-            Reference reference = vcrs.createReferenceValues();
-            return Referenceable.<ScCRS>of(reference);
+            Reference reference = createReferenceValues(vcrs);
+            return Referenceable.<ScCRS> of(reference);
         } else {
             List<String> scope = new ArrayList<>();
             if (vcrs.hasScope()) {
@@ -228,16 +244,16 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (vcrs.isSetVerticalCS()) {
                 verticalCS = createVerticalCS(vcrs.getVerticalCS());
             } else {
-                verticalCS = Referenceable.<VerticalCS>of(Nillable.<VerticalCS>missing());
+                verticalCS = Referenceable.<VerticalCS> of(Nillable.<VerticalCS> missing());
             }
             Referenceable<VerticalDatum> verticalDatum;
             if (vcrs.isSetVerticalDatum()) {
                 verticalDatum = createVerticalDatum(vcrs.getVerticalDatum());
             } else {
-                verticalDatum = Referenceable.<VerticalDatum>of(Nillable.<VerticalDatum>missing());
+                verticalDatum = Referenceable.<VerticalDatum> of(Nillable.<VerticalDatum> missing());
             }
             VerticalCRS verticalCRS = new VerticalCRS(getIdentifier(vcrs), scope, verticalCS, verticalDatum);
-            verticalCRS.setGmlId("vcrs_" + vcrs.getPkid());
+            verticalCRS.setGmlId("vcrs_" + vcrs.getId());
             if (vcrs.isSetRemarks()) {
                 verticalCRS.setRemarks(vcrs.getRemarks());
             }
@@ -246,55 +262,57 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
                     verticalCRS.addDomainOfValidity(createDomainOfValidity(dov));
                 }
             }
-            return Referenceable.<ScCRS>of(new ScCRS().setAbstractCrs(verticalCRS));
+            return Referenceable.<ScCRS> of(new ScCRS().setAbstractCrs(verticalCRS));
         }
     }
 
-    private Referenceable<VerticalCS> createVerticalCS(VerticalCSEntity vcs) {
+    private Referenceable<VerticalCS> createVerticalCS(VerticalCSEntity vcs) throws CodedException {
         if (vcs.isSetNilReason()) {
-            return Referenceable.<VerticalCS>of(Nillable.<VerticalCS>nil(vcs.getNilReason()));
+            return Referenceable.<VerticalCS> of(Nillable.<VerticalCS> nil(vcs.getNilReason()));
         } else if (vcs.isSetHref()) {
-            Reference reference = vcs.createReferenceValues();
-            return Referenceable.<VerticalCS>of(reference);
+            Reference reference = createReferenceValues(vcs);
+            return Referenceable.<VerticalCS> of(reference);
         } else {
-            List<Referenceable<CoordinateSystemAxis>> coordinateSystemAxis = new ArrayList<>();;
+            List<Referenceable<CoordinateSystemAxis>> coordinateSystemAxis = new ArrayList<>();
+            ;
             if (vcs.hasCoordinateSystemAxis()) {
                 for (CoordinateSystemAxisEntity csae : vcs.getCoordinateSystemAxis()) {
                     coordinateSystemAxis.add(createCoordinateSystemAxis(csae));
                 }
             } else {
-                coordinateSystemAxis.add(Referenceable.<CoordinateSystemAxis>of(Nillable.<CoordinateSystemAxis>missing()));
+                coordinateSystemAxis
+                        .add(Referenceable.<CoordinateSystemAxis> of(Nillable.<CoordinateSystemAxis> missing()));
             }
             VerticalCS verticalCS = new VerticalCS(getIdentifier(vcs), coordinateSystemAxis);
-            verticalCS.setGmlId("vcs_" + vcs.getPkid());
+            verticalCS.setGmlId("vcs_" + vcs.getId());
             if (vcs.isSetRemarks()) {
                 verticalCS.setRemarks(vcs.getRemarks());
             }
             if (vcs.isSetAggregation()) {
                 verticalCS.setAggregation(Aggregation.valueOf(vcs.getAggregation()));
             }
-            return Referenceable.<VerticalCS>of(verticalCS);
+            return Referenceable.<VerticalCS> of(verticalCS);
         }
     }
 
-    
-    private Referenceable<CoordinateSystemAxis> createCoordinateSystemAxis(CoordinateSystemAxisEntity csae) {
+    private Referenceable<CoordinateSystemAxis> createCoordinateSystemAxis(CoordinateSystemAxisEntity csae) throws CodedException {
         if (csae.isSetNilReason()) {
-            return Referenceable.<CoordinateSystemAxis>of(Nillable.<CoordinateSystemAxis>nil(csae.getNilReason()));
+            return Referenceable.<CoordinateSystemAxis> of(Nillable.<CoordinateSystemAxis> nil(csae.getNilReason()));
         } else if (csae.isSetHref()) {
-            return Referenceable.<CoordinateSystemAxis>of(csae.createReferenceValues());
+            return Referenceable.<CoordinateSystemAxis> of(createReferenceValues(csae));
         } else {
             CodeType axisAbbrev = new CodeType(csae.getAxisAbbrev());
             if (csae.isSetCodespaceAxisAbbrev()) {
-                axisAbbrev.setCodeSpace(csae.getCodespaceAxisAbbrev().getCodespace());
+                axisAbbrev.setCodeSpace(createUri(csae.getCodespaceAxisAbbrev().getName(), csae.getClass()));
             }
             CodeWithAuthority axisDirection = new CodeWithAuthority(csae.getAxisDirection());
             if (csae.isSetCodespaceAxisDirection()) {
-                axisDirection.setCodeSpace(csae.getCodespaceAxisDirection().getCodespace());
+                axisDirection.setCodeSpace(csae.getCodespaceAxisDirection().getName());
             }
             String uom = csae.getUom() != null ? csae.getUom().getUnit() : "unknown";
-            CoordinateSystemAxis coordinateSystemAxis = new CoordinateSystemAxis(getIdentifier(csae), axisAbbrev, axisDirection, uom);
-            coordinateSystemAxis.setGmlId("csa" + csae.getPkid());
+            CoordinateSystemAxis coordinateSystemAxis =
+                    new CoordinateSystemAxis(getIdentifier(csae), axisAbbrev, axisDirection, uom);
+            coordinateSystemAxis.setGmlId("csa" + csae.getId());
             if (csae.isSetRemarks()) {
                 coordinateSystemAxis.setRemarks(csae.getRemarks());
             }
@@ -307,33 +325,22 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (csae.isSetRangeMeaning()) {
                 CodeWithAuthority rangeMeaning = new CodeWithAuthority(csae.getRangeMeaning());
                 if (csae.isSetCodespaceRangeMeaning()) {
-                    rangeMeaning.setCodeSpace(csae.getCodespaceRangeMeaning().getCodespace());
+                    rangeMeaning.setCodeSpace(csae.getCodespaceRangeMeaning().getName());
                 }
                 coordinateSystemAxis.setRangeMeaning(rangeMeaning);
             }
-            return Referenceable.<CoordinateSystemAxis>of(coordinateSystemAxis);
+            return Referenceable.<CoordinateSystemAxis> of(coordinateSystemAxis);
         }
     }
 
-    private CodeWithAuthority getIdentifier(AbstractIdentifierNameDescriptionEntity ainde) {
-        if (ainde.isSetIdentifier()) {
-            CodeWithAuthority identifier = new CodeWithAuthority(ainde.getIdentifier());
-            if (ainde.isSetCodespace()) {
-                identifier.setCodeSpace(ainde.getCodespace().getCodespace());
-            }
-            return identifier;
-        } else {
-            return new CodeWithAuthority("unknown");
-        }
-    }
-
-    private Referenceable<CiResponsibleParty> createCiResponsibleParty(ResponsiblePartyEntity rpe) {
+    private Referenceable<CiResponsibleParty> createCiResponsibleParty(ResponsiblePartyEntity rpe) throws CodedException {
         if (rpe.isSetNilReason()) {
-            return Referenceable.<CiResponsibleParty>of(Nillable.<CiResponsibleParty>nil(rpe.getNilReason()));
+            return Referenceable.<CiResponsibleParty> of(Nillable.<CiResponsibleParty> nil(rpe.getNilReason()));
         } else if (rpe.isSetHref()) {
-            return Referenceable.<CiResponsibleParty>of(rpe.createReferenceValues());
+            return Referenceable.<CiResponsibleParty> of(createReferenceValues(rpe));
         } else {
-            Nillable<Role> role = rpe.getCiRole() != null ? createRole(rpe.getCiRole()) : Nillable.<Role>of(new Role(""));
+            Nillable<Role> role =
+                    rpe.getCiRole() != null ? createRole(rpe.getCiRole()) : Nillable.<Role> of(new Role(""));
             CiResponsibleParty responsibleParty = new CiResponsibleParty(role);
             if (rpe.isSetId()) {
                 responsibleParty.setId(rpe.getId());
@@ -353,52 +360,52 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (rpe.isSetContactInfo()) {
                 responsibleParty.setContactInfo(createContactInfo(rpe.getContactInfo()));
             }
-            
-            return Referenceable.<CiResponsibleParty>of(responsibleParty);
+
+            return Referenceable.<CiResponsibleParty> of(responsibleParty);
         }
     }
 
-    private Referenceable<CiContact> createContactInfo(ContactEntity ce) {
+    private Referenceable<CiContact> createContactInfo(ContactEntity ce) throws CodedException {
         if (ce.isSetNilReason()) {
-            return Referenceable.<CiContact>of(Nillable.<CiContact>nil(ce.getNilReason()));
+            return Referenceable.<CiContact> of(Nillable.<CiContact> nil(ce.getNilReason()));
         } else if (ce.isSetHref()) {
-            return Referenceable.<CiContact>of(ce.createReferenceValues());
+            return Referenceable.<CiContact> of(createReferenceValues(ce));
         } else {
             CiContact contact = new CiContact();
             if (ce.isSetPhone()) {
                 contact.setPhone(createPhone(ce.getPhone()));
             } else {
-                contact.setPhone(Referenceable.<CiTelephone>of(Nillable.<CiTelephone>missing()));
+                contact.setPhone(Referenceable.<CiTelephone> of(Nillable.<CiTelephone> missing()));
             }
             if (ce.isSetAddress()) {
                 contact.setAddress(createAddress(ce.getAddress()));
             } else {
-                contact.setAddress(Referenceable.<CiAddress>of(Nillable.<CiAddress>missing()));
+                contact.setAddress(Referenceable.<CiAddress> of(Nillable.<CiAddress> missing()));
             }
             if (ce.isSetOnlineResource()) {
                 contact.setOnlineResource(createOnlineResource(ce.getOnlineResource()));
             } else {
-                contact.setOnlineResource(Referenceable.<CiOnlineResource>of(Nillable.<CiOnlineResource>missing()));
+                contact.setOnlineResource(Referenceable.<CiOnlineResource> of(Nillable.<CiOnlineResource> missing()));
             }
             if (ce.isSetHoursOfService()) {
-                contact.setHoursOfService(Nillable.<String>of(ce.getHoursOfService())); 
+                contact.setHoursOfService(Nillable.<String> of(ce.getHoursOfService()));
             } else {
-                contact.setHoursOfService(Nillable.<String>missing()); 
+                contact.setHoursOfService(Nillable.<String> missing());
             }
             if (ce.isSetContactInstructions()) {
-                contact.setContactInstructions(Nillable.<String>of(ce.getContactInstructions()));
+                contact.setContactInstructions(Nillable.<String> of(ce.getContactInstructions()));
             } else {
-                contact.setContactInstructions(Nillable.<String>missing());
+                contact.setContactInstructions(Nillable.<String> missing());
             }
-            return Referenceable.<CiContact>of(contact);
+            return Referenceable.<CiContact> of(contact);
         }
     }
 
     private Referenceable<CiTelephone> createPhone(TelephoneEntity te) {
         if (te.isSetNilReason()) {
-            return Referenceable.<CiTelephone>of(Nillable.<CiTelephone>nil(te.getNilReason()));
+            return Referenceable.<CiTelephone> of(Nillable.<CiTelephone> nil(te.getNilReason()));
         } else if (te.isSetHref()) {
-            return Referenceable.<CiTelephone>of(te.createReferenceValues());
+            return Referenceable.<CiTelephone> of(createReferenceValues(te));
         } else {
             CiTelephone telephone = new CiTelephone();
             if (te.isSetId()) {
@@ -413,15 +420,15 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (te.hasFacsimile()) {
                 telephone.setFacsimile(te.getFacsimile());
             }
-            return Referenceable.<CiTelephone>of(telephone);
+            return Referenceable.<CiTelephone> of(telephone);
         }
     }
 
     private Referenceable<CiAddress> createAddress(AddressEntity ae) {
         if (ae.isSetNilReason()) {
-            return Referenceable.<CiAddress>of(Nillable.<CiAddress>nil(ae.getNilReason()));
+            return Referenceable.<CiAddress> of(Nillable.<CiAddress> nil(ae.getNilReason()));
         } else if (ae.isSetHref()) {
-            return Referenceable.<CiAddress>of(ae.createReferenceValues());
+            return Referenceable.<CiAddress> of(createReferenceValues(ae));
         } else {
             CiAddress address = new CiAddress();
             if (ae.isSetId()) {
@@ -433,7 +440,7 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (ae.hasSetDeliveryPoint()) {
                 address.setDeliveryPoints(ae.getDeliveryPoint());
             }
-            if (ae.isSetCity()){
+            if (ae.isSetCity()) {
                 address.setCity(ae.getCity());
             }
             if (ae.isSetAdministrativeArea()) {
@@ -448,22 +455,18 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (ae.hasElectronicMailAddress()) {
                 address.setElectronicMailAddresses(ae.getElectronicMailAddress());
             }
-            return Referenceable.<CiAddress>of(address);
+            return Referenceable.<CiAddress> of(address);
         }
     }
 
-    private Referenceable<CiOnlineResource> createOnlineResource(OnlineResourceEntity ore) {
+    private Referenceable<CiOnlineResource> createOnlineResource(OnlineResourceEntity ore) throws CodedException {
         if (ore.isSetNilReason()) {
-            return Referenceable.<CiOnlineResource>of(Nillable.<CiOnlineResource>nil(ore.getNilReason()));
+            return Referenceable.<CiOnlineResource> of(Nillable.<CiOnlineResource> nil(ore.getNilReason()));
         } else if (ore.isSetHref()) {
-            return Referenceable.<CiOnlineResource>of(ore.createReferenceValues());
+            return Referenceable.<CiOnlineResource> of(createReferenceValues(ore));
         } else {
             Nillable<URI> linkage = null;
-            try {
-                linkage = ore.isSetLinkage() ? Nillable.<URI>of(new URI(ore.getLinkage())) : Nillable.<URI>missing();
-            } catch (URISyntaxException e) {
-                
-            }
+            linkage = ore.isSetLinkage() ? Nillable.<URI> of(createUri(ore.getLinkage(), ore.getClass())) : Nillable.<URI> missing();
             CiOnlineResource onlineResource = new CiOnlineResource(linkage);
             if (ore.isSetId()) {
                 onlineResource.setId(ore.getId());
@@ -472,9 +475,9 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
                 onlineResource.setUuid(ore.getUuid());
             }
             if (ore.isSetProtocol()) {
-                onlineResource.setProtocol(Nillable.<String>of(ore.getProtocol()));
+                onlineResource.setProtocol(Nillable.<String> of(ore.getProtocol()));
             } else {
-                onlineResource.setProtocol(Nillable.<String>missing());
+                onlineResource.setProtocol(Nillable.<String> missing());
             }
             if (ore.isSetApplicationProfile()) {
                 onlineResource.setApplicationProfile(ore.getApplicationProfile());
@@ -488,7 +491,7 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             if (ore.isSetFunction()) {
                 onlineResource.setFunction(ore.getFunction());
             }
-            return Referenceable.<CiOnlineResource>of(onlineResource);
+            return Referenceable.<CiOnlineResource> of(onlineResource);
         }
     }
 
@@ -496,6 +499,46 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
         Role role = new Role(cir.getCodeListValue());
         role.setCodeList(cir.getCodeList());
         role.setCodeListValue(cir.getCodeListValue());
-        return Nillable.<Role>of(role);
+        return Nillable.<Role> of(role);
     }
+
+    private URI createUri(String value, Class<?> clazz) throws CodedException {
+        try {
+            return new URI(value);
+        } catch (URISyntaxException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("CodeSpace value '{}' is of '' not of type URI!", value, clazz.getSimpleName());
+        }
+    }
+
+    public Reference createReferenceValues(ReferenceEntity r) {
+        Reference reference = new Reference();
+        if (r.isSetHref()) {
+            try {
+                reference.setHref(new URI(r.getHref()));
+            } catch (URISyntaxException e) {
+                // TODO
+            }
+        }
+        if (r.isSetType()) {
+            reference.setType(r.getType());
+        }
+        if (r.isSetRole()) {
+            reference.setRole(r.getRole());
+        }
+        if (r.isSetArcrole()) {
+            reference.setArcrole(r.getArcrole());
+        }
+        if (r.isSetShow()) {
+            reference.setShow(r.getShow());
+        }
+        if (r.isSetActuate()) {
+            reference.setActuate(r.getActuate());
+        }
+        if (r.isSetRemoteSchema()) {
+            reference.setRemoteSchema(r.getRemoteSchema());
+        }
+        return reference;
+    }
+
 }

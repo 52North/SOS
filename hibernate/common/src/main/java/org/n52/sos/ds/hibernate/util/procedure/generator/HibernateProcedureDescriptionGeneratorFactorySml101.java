@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,151 +28,89 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import java.util.List;
-import java.util.Locale;
+import java.util.Collections;
+import java.util.Set;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.ProcessMethod;
-import org.n52.sos.ogc.sensorML.ProcessModel;
-import org.n52.sos.ogc.sensorML.RulesDefinition;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.util.CollectionHelper;
+import javax.inject.Inject;
+
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * Generator class for SensorML 1.0.1 procedure descriptions
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactorySml101 implements HibernateProcedureDescriptionGeneratorFactory {
-    
-    private static final List<HibernateProcedureDescriptionGeneratorFactoryKeyType> GENERATOR_KEY_TYPES = CollectionHelper.list(
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), 
-            new HibernateProcedureDescriptionGeneratorFactoryKeyType(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
+public class HibernateProcedureDescriptionGeneratorFactorySml101
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
-    @Override
-    public List<HibernateProcedureDescriptionGeneratorFactoryKeyType> getHibernateProcedureDescriptionGeneratorFactoryKeyTypes() {
-        return GENERATOR_KEY_TYPES;
+    private final DaoFactory daoFactory;
+    private final SettingsService settingsService;
+    private final GeometryHandler geometryHandler;
+    private final I18NDAORepository i18NDAORepository;
+    private final ContentCacheController cacheController;
+    private final ProfileHandler profileHandler;
+
+    @Inject
+    public HibernateProcedureDescriptionGeneratorFactorySml101(DaoFactory daoFactory,
+                                                               SettingsService settingsService,
+                                                               GeometryHandler geometryHandler,
+                                                               I18NDAORepository i18NDAORepository,
+                                                               ContentCacheController cacheController,
+                                                               ProfileHandler profileHandler) {
+        this.daoFactory = daoFactory;
+        this.settingsService = settingsService;
+        this.geometryHandler = geometryHandler;
+        this.i18NDAORepository = i18NDAORepository;
+        this.cacheController = cacheController;
+        this.profileHandler = profileHandler;
     }
 
     @Override
-    public SosProcedureDescription create(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-        return new HibernateProcedureDescriptionGeneratorSml101().generateProcedureDescription(procedure, i18n, session);
+    public Set<HibernateProcedureDescriptionGeneratorKey> getKeys() {
+        return Collections.unmodifiableSet(HibernateProcedureDescriptionGeneratorSml101.GENERATOR_KEY_TYPES);
     }
 
-
-    private class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibernateProcedureDescriptionGeneratorSml {
-    
-        /**
-         * Generate procedure description from Hibernate procedure entity if no
-         * description (file, XML text) is available
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param session
-         *            the session
-         *
-         * @return Generated procedure description
-         *
-         * @throws OwsExceptionReport
-         *             If an error occurs
-         */
-        @Override
-        public SensorML generateProcedureDescription(Procedure procedure, Locale i18n, Session session) throws OwsExceptionReport {
-            setLocale(i18n);
-            final SensorML sml = new SensorML();
-            // 2 try to get position from entity
-            if (procedure.isSpatial()) {
-                // 2.1 if position is available -> system -> own class <- should
-                // be compliant with SWE lightweight profile
-                sml.addMember(createSmlSystem(procedure, session));
-            } else {
-                // 2.2 if no position is available -> processModel -> own class
-                sml.addMember(createSmlProcessModel(procedure, session));
-            }
-            return sml;
-        }
-    
-        /**
-         * Create a SensorML ProcessModel from Hibernate procedure entity
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         *
-         * @return SensorML ProcessModel
-         *
-         * @throws OwsExceptionReport
-         *             If an error occurs
-         */
-        private ProcessModel createSmlProcessModel(Procedure procedure, Session session) throws OwsExceptionReport {
-            final ProcessModel processModel = new ProcessModel();
-            setCommonValues(procedure, processModel, session);
-            processModel.setMethod(createMethod(procedure, getObservablePropertiesForProcedure(procedure.getIdentifier())));
-    //        processModel.setNames(createNames(procedure));
-            return processModel;
-        }
-    
-        /**
-         * Create a SensorML System from Hibernate procedure entity
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         *
-         * @return SensorML System
-         *
-         * @throws OwsExceptionReport
-         *             If an error occurs
-         */
-        private System createSmlSystem(Procedure procedure, Session session) throws OwsExceptionReport {
-            System smlSystem = new System();
-            setCommonValues(procedure, smlSystem, session);
-            smlSystem.setPosition(createPosition(procedure));
-            return smlSystem;
-        }
-    
-        /**
-         * Create a SensorML ProcessMethod for ProcessModel
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param observableProperties
-         *            Properties observed by the procedure
-         *
-         * @return SenbsorML ProcessModel
-         */
-        private ProcessMethod createMethod(Procedure procedure, String[] observableProperties) {
-            return new ProcessMethod(createRulesDefinition(procedure, observableProperties));
-        }
-    
-        /**
-         * Create the rules definition for ProcessMethod
-         *
-         * @param procedure
-         *            Hibernate procedure entity
-         * @param observableProperties
-         *            Properties observed by the procedure
-         *
-         * @return SensorML RulesDefinition
-         */
-        private RulesDefinition createRulesDefinition(Procedure procedure, String[] observableProperties) {
-            RulesDefinition rD = new RulesDefinition();
-            String template = procedureSettings().getProcessMethodRulesDefinitionDescriptionTemplate();
-            String description =
-                    String.format(template, procedure.getIdentifier(), COMMA_JOINER.join(observableProperties));
-            rD.setDescription(description);
-            return rD;
-        }
-
-        @Override
-        protected SweAbstractDataComponent getInputComponent(String observableProperty) {
-            return  new SweObservableProperty().setDefinition(observableProperty);
-        }
+    @Override
+    public HibernateProcedureDescriptionGenerator create(HibernateProcedureDescriptionGeneratorKey key) {
+        HibernateProcedureDescriptionGenerator generator
+                = new HibernateProcedureDescriptionGeneratorSml101(getProfileHandler(),
+                                                                   getGeometryHandler(),
+                                                                   getDaoFactory(),
+                                                                   getI18NDAORepository(),
+                                                                   getCacheController());
+        getSettingsService().configureOnce(key);
+        return generator;
     }
+
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    public SettingsService getSettingsService() {
+        return settingsService;
+    }
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    public I18NDAORepository getI18NDAORepository() {
+        return i18NDAORepository;
+    }
+
+    public ContentCacheController getCacheController() {
+        return cacheController;
+    }
+
+    public ProfileHandler getProfileHandler() {
+        return profileHandler;
+    }
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,12 +33,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.rules.ExternalResource;
-
+import org.n52.series.db.beans.FormatEntity;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -71,9 +70,9 @@ public class H2Database extends ExternalResource {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            Criteria criteria = session.createCriteria(ObservationType.class);
-            try (ScrollableIterable<ObservationType> i = ScrollableIterable.fromCriteria(criteria)) {
-                for (final ObservationType o : i) {
+            Criteria criteria = session.createCriteria(FormatEntity.class);
+            try (ScrollableIterable<FormatEntity> i = ScrollableIterable.fromCriteria(criteria)) {
+                for (final FormatEntity o : i) {
                     session.delete(o);
                 }
             }
@@ -103,9 +102,9 @@ public class H2Database extends ExternalResource {
             session = getSession();
             transaction = session.beginTransaction();
             for (int i = 0; i < defaultObservationTypes.length; i++) {
-                final ObservationType ot = new ObservationType();
-                ot.setObservationTypeId(i);
-                ot.setObservationType(defaultObservationTypes[i]);
+                final FormatEntity ot = new FormatEntity();
+                ot.setId((long)i);
+                ot.setFormat(defaultObservationTypes[i]);
                 session.save(ot);
             }
             session.flush();

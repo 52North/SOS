@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,14 +34,31 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.exception.ConstraintViolationException;
-import org.n52.sos.ds.AbstractInsertObservationDAO;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -49,28 +66,12 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.http.HTTPStatus;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -79,14 +80,13 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 
 
-public class InsertObservationDAO extends AbstractInsertObservationDAO {
+public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     private static final int FLUSH_THRESHOLD = 50;
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
     private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
 
-    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
-    private final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-    private final FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+    private HibernateSessionHolder sessionHolder;
+    private DaoFactory daoFactory;
 
     /**
      * constructor
@@ -95,10 +95,16 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         super(SosConstants.SOS);
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    @Inject
+    public void setDaoFactory(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
+
 
     @Override
     public synchronized InsertObservationResponse insertObservation(final InsertObservationRequest request)
@@ -121,13 +127,12 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check strict spatial filtering profile
-                if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                        && !sosObservation.isSetSpatialFilteringProfileParameter()) {
-                    throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
-                            .withMessage("The sampling geometry definition is missing in the observation because"
-                                    + " the Spatial Filtering Profile is specification conformant. To use a less"
-                                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
-                }
+//                if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
+//                    throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
+//                            .withMessage("The sampling geometry definition is missing in the observation because"
+//                                    + " the Spatial Filtering Profile is specification conformant. To use a less"
+//                                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+//                }
                 if (sosObservation.isSetIdentifier()) {
                     if (DaoFactory.getInstance().getObservationDAO()
                             .isIdentifierContained(sosObservation.getIdentifier(), session)) {
@@ -173,9 +178,14 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
     private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
         Set<Offering> offerings = Sets.newHashSet();
         for (ObservationConstellation observationConstellation : hObservationConstellations) {
-            offerings.add(observationConstellation.getOffering());
+            offerings.copy(observationConstellation.getOffering());
         }
         return offerings;
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
     private void insertObservation(OmObservation sosObservation,
@@ -192,11 +202,13 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         Set<ObservationConstellation> hObservationConstellations = new HashSet<>();
         AbstractFeatureOfInterest hFeature = null;
 
+        ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
         for (String offeringID : sosObsConst.getOfferings()) {
             ObservationConstellation hObservationConstellation = cache.get(sosObsConst, offeringID);
             if (hObservationConstellation == null) {
                 if (!cache.isChecked(sosObsConst, offeringID)) {
                     try {
+
                         hObservationConstellation =
                                 observationConstellationDAO.checkObservationConstellation(
                                         sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
@@ -216,17 +228,17 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 // only do feature checking once for each
                 // AbstractFeature/offering combo
                 if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                    featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(
+                    new FeatureOfInterestDAO(daoFactory).checkOrInsertRelatedFeatureRelation(
                             hFeature, hObservationConstellation.getOffering(), session);
                     cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
                 }
 
-                hObservationConstellations.add(hObservationConstellation);
+                hObservationConstellations.copy(hObservationConstellation);
             }
         }
 
         if (!hObservationConstellations.isEmpty()) {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             for (ObservationConstellation hObservationConstellation : hObservationConstellations) {
                 if (sosObservation.getValue() instanceof SingleObservationValue) {
                     observationDAO.insertObservationSingleValue(
@@ -243,14 +255,12 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
     protected void checkSpatialFilteringProfile(OmObservation sosObservation)
             throws CodedException {
-        // checkConstellation
-        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-            && !sosObservation.isSetSpatialFilteringProfileParameter()) {
-            throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
-                    .withMessage("The sampling geometry definition is missing in the observation because"
-                            + " the Spatial Filtering Profile is specification conformant. To use a less"
-                            + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
-        }
+//        if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
+//            throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
+//                    .withMessage("The sampling geometry definition is missing in the observation because"
+//                            + " the Spatial Filtering Profile is specification conformant. To use a less"
+//                            + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+//        }
     }
 
     protected void handleHibernateException(HibernateException he)
@@ -281,14 +291,14 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
     }
 
     private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(constraintName)) {
+        if (!Strings.isNullOrEmpty(constraintName)) {
             String exceptionMsg = null;
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
                 exceptionMsg = "Observation with same values already contained in database";
             } else if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
-            if(StringHelper.isNotEmpty(exceptionMsg)) {
+            if(!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
@@ -296,14 +306,14 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
     }
 
     private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(message)) {
+        if (!Strings.isNullOrEmpty(message)) {
             String exceptionMsg = null;
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation with same values already contained in database";
             } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
-            if (StringHelper.isNotEmpty(exceptionMsg)) {
+            if (!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
@@ -324,7 +334,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
         AbstractFeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
-            hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
+            hFeature = new FeatureOfInterestDAO(daoFactory).checkOrInsert(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
         if (!hFeature.isSetName() && abstractFeature.isSetName()) {

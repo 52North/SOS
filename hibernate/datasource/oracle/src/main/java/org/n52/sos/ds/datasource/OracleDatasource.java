@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ package org.n52.sos.ds.datasource;
  *
  */
 public class OracleDatasource extends AbstractOracleDatasource {
-    
+
     private static final String DIALECT_NAME = "Oracle Spatial";
 
     public OracleDatasource() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.ows.StaticCapabilities;
+import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 
 @Entity(name = "static_capabilities")
 public class StaticCapabilitiesImpl extends Activatable<String, StaticCapabilitiesImpl> implements StaticCapabilities,

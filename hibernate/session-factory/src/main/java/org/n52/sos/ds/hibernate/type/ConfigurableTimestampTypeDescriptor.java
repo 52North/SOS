@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -85,6 +85,13 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
             protected void doBind(PreparedStatement st, X value, int index, WrapperOptions options)
                     throws SQLException {
                 st.setTimestamp(index, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
+                        Calendar.getInstance(timeZone));
+            }
+
+            @Override
+            protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
+                    throws SQLException {
+                st.setTimestamp(name, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
                         Calendar.getInstance(timeZone));
             }
         };

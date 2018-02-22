@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,31 +28,20 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.ereporting.EReportingBlobDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingBooleanDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingCategoryDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingComplexDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingCountDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataArrayDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingGeometryDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingQuantityDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingReferencedDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingTextDataEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.BlobValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.BooleanValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.CategoryValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.ComplexValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.CountValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.GeometryValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.NumericValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.ProfileValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.ReferenceValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.SweDataArrayValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.TextValuedEReportingObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 
 public class EReportingValuedObservationFactory
         extends
@@ -60,65 +49,65 @@ public class EReportingValuedObservationFactory
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Class<? extends ValuedObservation> valuedObservationClass() {
-        return AbstractValuedEReportingObservation.class;
+    public Class<? extends DataEntity> valuedObservationClass() {
+        return EReportingDataEntity.class;
     }
 
     @Override
-    public Class<? extends BlobValuedObservation> blobClass() {
-        return BlobValuedEReportingObservation.class;
+    public Class<? extends EReportingBlobDataEntity> blobClass() {
+        return EReportingBlobDataEntity.class;
     }
 
     @Override
-    public Class<? extends BooleanValuedObservation> truthClass() {
-        return BooleanValuedEReportingObservation.class;
+    public Class<? extends EReportingBooleanDataEntity> truthClass() {
+        return EReportingBooleanDataEntity.class;
     }
 
     @Override
-    public Class<? extends CategoryValuedObservation> categoryClass() {
-        return CategoryValuedEReportingObservation.class;
+    public Class<? extends EReportingCategoryDataEntity> categoryClass() {
+        return EReportingCategoryDataEntity.class;
     }
 
     @Override
-    public Class<? extends CountValuedObservation> countClass() {
-        return CountValuedEReportingObservation.class;
+    public Class<? extends EReportingCountDataEntity> countClass() {
+        return EReportingCountDataEntity.class;
     }
 
     @Override
-    public Class<? extends GeometryValuedObservation> geometryClass() {
-        return GeometryValuedEReportingObservation.class;
+    public Class<? extends EReportingGeometryDataEntity> geometryClass() {
+        return EReportingGeometryDataEntity.class;
     }
 
     @Override
-    public Class<? extends NumericValuedObservation> numericClass() {
-        return NumericValuedEReportingObservation.class;
+    public Class<? extends EReportingQuantityDataEntity> numericClass() {
+        return EReportingQuantityDataEntity.class;
     }
 
     @Override
-    public Class<? extends SweDataArrayValuedObservation> sweDataArrayClass() {
-        return SweDataArrayValuedEReportingObservation.class;
+    public Class<? extends EReportingDataArrayDataEntity> sweDataArrayClass() {
+        return EReportingDataArrayDataEntity.class;
     }
 
     @Override
-    public Class<? extends TextValuedObservation> textClass() {
-        return TextValuedEReportingObservation.class;
+    public Class<? extends EReportingTextDataEntity> textClass() {
+        return EReportingTextDataEntity.class;
     }
 
     @Override
-    public Class<? extends ComplexValuedObservation> complexClass() {
-        return ComplexValuedEReportingObservation.class;
+    public Class<? extends EReportingComplexDataEntity> complexClass() {
+        return EReportingComplexDataEntity.class;
     }
 
     @Override
-    public Class<? extends ProfileValuedObservation> profileClass() {
-        return ProfileValuedEReportingObservation.class;
+    public Class<? extends EReportingProfileDataEntity> profileClass() {
+        return EReportingProfileDataEntity.class;
     }
 
     @Override
-    public Class<? extends ReferenceValuedObservation> referenceClass() {
-        return ReferenceValuedEReportingObservation.class;
+    public Class<? extends EReportingReferencedDataEntity> referenceClass() {
+        return EReportingReferencedDataEntity.class;
     }
-    
+
     public static EReportingValuedObservationFactory getInstance() {
         return Holder.INSTANCE;
     }

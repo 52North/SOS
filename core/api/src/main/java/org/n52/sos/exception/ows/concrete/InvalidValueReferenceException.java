@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,18 +28,18 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.filter.FilterConstants;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
 public class InvalidValueReferenceException extends InvalidParameterValueException {
     private static final long serialVersionUID = 4751250325590494752L;
 
     public InvalidValueReferenceException(String value) {
-        super(SosConstants.Filter.ValueReference, value);
+        super(FilterConstants.Expression.ValueReference, value);
     }
 }

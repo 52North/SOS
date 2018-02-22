@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import java.util.Map;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DefaultProfileHandler implements ProfileHandler {
 
@@ -44,6 +44,10 @@ public class DefaultProfileHandler implements ProfileHandler {
     public DefaultProfileHandler() {
         activeProfile = new DefaultProfile();
         availableProfiles.put(activeProfile.getIdentifier(), activeProfile);
+    }
+
+    @Override
+    public void init() {
     }
 
     @Override
@@ -64,7 +68,7 @@ public class DefaultProfileHandler implements ProfileHandler {
     @Override
     public void activateProfile(String identifier) {
         availableProfiles.get(identifier).setActiveProfile(true);
-        
+
     }
 
     @Override

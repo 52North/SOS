@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,28 +29,36 @@
 package org.n52.sos.ds.hibernate;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
-
+import org.geotools.metadata.sql.MetadataSource;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.hibernate.tool.hbm2ddl.SchemaUpdate;
+import org.hibernate.tool.schema.TargetType;
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.UpdateableConnectionProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,46 +68,66 @@ import org.slf4j.LoggerFactory;
  *
  * @since 4.0.0
  */
-public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
+public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider implements UpdateableConnectionProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
     private int maxConnections;
 
-
-    /**
-     * constructor. Opens a new Hibernate SessionFactory
-     */
-    public SessionFactoryProvider() {
-
-    }
-
-    public String getUpdateScript() throws ConnectionProviderException, SQLException {
+    @Override
+    public String getUpdateScript() throws ConnectionProviderException {
+        Configuration configuration = getConfiguration();
         if (configuration == null) {
-            throw new ConfigurationException("configuration is null");
+            throw new ConfigurationError("configuration is null");
         }
+        SessionFactory sessionFactory = getSessionFactory();
         if (sessionFactory == null) {
-            throw new ConfigurationException("sessionFactory is null");
+            throw new ConfigurationError("sessionFactory is null");
         }
-        Dialect dialect = ((SessionFactoryImplementor) sessionFactory).getDialect();
+        Dialect dialect = ((SessionFactoryImplementor) sessionFactory).getServiceRegistry().getService( JdbcServices.class ).getDialect();
         if (dialect == null) {
-            throw new ConfigurationException("dialect is null");
+            throw new ConfigurationError("dialect is null");
         }
         Session session = getConnection();
         Connection conn = ((SessionImplementor) session).connection();
-        DatabaseMetadata databaseMetadata = new DatabaseMetadata(conn, dialect, configuration);
-        String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
-        returnConnection(session);
-        StringBuilder updateSqlString = new StringBuilder();
-        for (String sqlLine : udpateSql) {
-            updateSqlString.append(sqlLine + ";\n\n");
+
+        Path createTempFile = null;
+        try {
+//            DatabaseInformationImpl databaseMetadata = new DatabaseInformationImpl(serviceRegistry, jdbcEnvironment, ddlTransactionIsolator, defaultNamespace);
+//            DatabaseMetadata databaseMetadata = new DatabaseInformationImpl(conn, dialect, configuration);
+//            String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
+//            SchemaUpdate schemaUpdate = new SchemaUpdate();
+//            createTempFile = Files.createTempFile("update", "tmp");
+//            schemaUpdate.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
+//            Metadata metadata = new MetadataSources(sessionFactory.getSessionFactory().getServiceRegistry()).buildMetadata();
+//            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata, sessionFactory.getSessionFactory().getServiceRegistry());
+            returnConnection(session);
+            StringBuilder updateSqlString = new StringBuilder();
+            for (String sqlLine : Files.readAllLines(createTempFile)) {
+                updateSqlString.append(sqlLine).append(";\n\n");
+            }
+            return updateSqlString.toString();
+        } catch (IOException e) {
+            throw new ConnectionProviderException("Error while creating update script!", e);
+        } finally {
+            try {
+                if (createTempFile != null) {
+                    Files.deleteIfExists(createTempFile);
+                }
+            } catch (IOException e) {
+                LOGGER.info("Unable to delete temp file {}", createTempFile.toString());
+            }
         }
-        return updateSqlString.toString();
+    }
+
+    @Override
+    public boolean supportsUpdateScript() {
+        return true;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Configuration getConfiguration(Properties properties) throws ConfigurationException {
+    protected Configuration getConfiguration(Properties properties) throws ConfigurationError {
         try {
-            Configuration configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
+            Configuration configuration = new Configuration().configure("/hibernate.cfg.xml");
             if (properties.containsKey(HibernateConstants.C3P0_MAX_SIZE)) {
                 this.maxConnections = Integer.parseInt(properties.getProperty(HibernateConstants.C3P0_MAX_SIZE, "-1"));
             }
@@ -123,37 +151,31 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
                                         new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset()
                                                 .toString()));
                             } catch (UnsupportedEncodingException e) {
-                                throw new ConfigurationException("Unable to encode directory URL " + dirUrl + "!");
+                                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
                             }
                         }
                     }
                     if (!hibernateDir.exists()) {
-                        throw new ConfigurationException("Hibernate directory " + directory + " doesn't exist!");
+                        throw new ConfigurationError("Hibernate directory " + directory + " doesn't exist!");
                     }
                     configuration.addDirectory(hibernateDir);
                 }
             } else {
                 // keep this as default/fallback
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_CORE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH)
-                        .toURI()));
-                configuration.addDirectory(new File(getClass().getResource(
-                        HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH).toURI()));
+//              configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH).toURI()));
+//              configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
             }
             return configuration;
         } catch (HibernateException | URISyntaxException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
-            cleanup();
-            throw new ConfigurationException(exceptionText, he);
+            destroy();
+            throw new ConfigurationError(exceptionText, he);
         }
     }
 
-    @Override
-    public String getConnectionProviderIdentifier() {
-        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
-    }
-    
     @Override
     public int getMaxConnections() {
         return maxConnections;

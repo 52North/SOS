@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,20 +30,22 @@ package org.n52.sos.service.profile;
 
 import java.util.Map;
 
+import org.n52.janmayen.lifecycle.Constructable;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
-public interface ProfileHandler {
+public interface ProfileHandler extends Constructable {
 
-    Profile getActiveProfile();
+    public abstract Profile getActiveProfile();
 
-    Map<String, Profile> getAvailableProfiles();
+    public abstract Map<String, Profile> getAvailableProfiles();
 
-    boolean isSetActiveProfile();
-    
+    public abstract boolean isSetActiveProfile();
+
     void activateProfile(String identifier);
-    
+
     void persist();
 
     void reloadProfiles();

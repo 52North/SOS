@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,31 +28,30 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
-import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
-import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public abstract class HibernateStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateStreamingValue.class);
-    private static final long serialVersionUID = -7451818170087729427L;
     protected final ValueDAO valueDAO = new ValueDAO();
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
     protected final Set<Long> procedure = Sets.newHashSet();
@@ -62,23 +61,19 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param procedure
-     *            Datasource procedure id
-     * @param observableProperty
-     *            observableProperty procedure id
-     * @param featureOfInterest
-     *            featureOfInterest procedure id
+     * @param connectionProvider the connection provider
+     * @param daoFactory         the DAO factory
+     * @param request            {@link GetObservationRequest}
+     * @param procedure          Datasource procedure id
+     * @param observableProperty observableProperty procedure id
+     * @param featureOfInterest  featureOfInterest procedure id
      */
-    public HibernateStreamingValue(GetObservationRequest request,
-                                   long procedure,
-                                   long observableProperty,
-                                   long featureOfInterest) {
-        super(request);
-        this.procedure.add(procedure);
-        this.observableProperty.add(observableProperty);
-        this.featureOfInterest.add(featureOfInterest);
+    public HibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
+            long featureOfInterest) {
+        super(connectionProvider, daoFactory, request);
+        this.procedure.copy(procedure);
+        this.observableProperty.copy(observableProperty);
+        this.featureOfInterest.copy(featureOfInterest);
     }
 
     @Override

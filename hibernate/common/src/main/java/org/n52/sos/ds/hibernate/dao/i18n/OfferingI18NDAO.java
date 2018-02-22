@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,28 +28,40 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.Collections;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+import org.n52.iceland.i18n.I18NDAOKey;
+import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.i18n.I18nOfferingEntity;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NOfferingMetadata;
-import org.n52.sos.i18n.metadata.I18NOfferingMetadata;
 
+public class OfferingI18NDAO extends AbstractHibernateI18NDAO<OfferingEntity, I18NOfferingMetadata, I18nOfferingEntity> {
+    private final DaoFactory daoFactory;
 
-public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOfferingMetadata, HibernateI18NOfferingMetadata> {
-
-    @Override
-    protected Offering getEntity(String id, Session session) {
-        return new OfferingDAO().getOfferingForIdentifier(id, session);
+    @Inject
+    public OfferingI18NDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Override
-    protected Class<HibernateI18NOfferingMetadata> getHibernateEntityClass() {
-        return HibernateI18NOfferingMetadata.class;
+    protected OfferingEntity getEntity(String id, Session session) {
+        return new OfferingDAO(daoFactory).getOfferingForIdentifier(id, session);
     }
 
     @Override
-    protected HibernateI18NOfferingMetadata createHibernateObject() {
-        return new HibernateI18NOfferingMetadata();
+    protected Class<I18nOfferingEntity> getHibernateEntityClass() {
+        return I18nOfferingEntity.class;
+    }
+
+    @Override
+    protected I18nOfferingEntity createHibernateObject() {
+        return new I18nOfferingEntity();
     }
 
     @Override
@@ -58,7 +70,7 @@ public class OfferingI18NDAO extends AbstractHibernateI18NDAO<Offering, I18NOffe
     }
 
     @Override
-    public Class<I18NOfferingMetadata> getType() {
-        return I18NOfferingMetadata.class;
+    public Set<I18NDAOKey> getKeys() {
+        return Collections.singleton(new I18NDAOKey(I18NOfferingMetadata.class));
     }
 }

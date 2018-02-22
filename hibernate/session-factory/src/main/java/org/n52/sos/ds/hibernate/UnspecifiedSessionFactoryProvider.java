@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,43 +28,63 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.jdbc.Work;
 import org.hibernate.service.ServiceRegistry;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.ds.DataConnectionProvider;
-import org.n52.sos.ds.Datasource;
-import org.n52.sos.ds.DatasourceCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.DataConnectionProvider;
+import org.n52.iceland.ds.Datasource;
+import org.n52.iceland.ds.DatasourceCallback;
+import org.n52.faroe.ConfigurationError;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
 import org.n52.sos.ds.hibernate.type.IsoTimeStringType;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
-import org.n52.sos.exception.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.service.DriverCleanupListener;
 
-public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionFactoryProvider
-        implements DataConnectionProvider, HibernateDatasourceConstants {
+public abstract class UnspecifiedSessionFactoryProvider
+        extends AbstractSessionFactoryProvider
+        implements DataConnectionProvider,
+                   HibernateDatasourceConstants,
+                   Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
-    /**
-     * SessionFactory instance
-     */
-    protected SessionFactory sessionFactory = null;
+    private static SessionFactory sessionFactory = null;
+    private static Configuration configuration = null;
+    private DriverCleanupListener driverCleanupListener;
+    private DatabaseSettingsHandler databaseSettingsHandler;
 
-    /**
-     * Configuration instance
-     */
-    protected Configuration configuration = null;
+    @Inject
+    public void setDriverCleanupListener(DriverCleanupListener driverCleanupListener) {
+        this.driverCleanupListener = driverCleanupListener;
+    }
+
+    @Inject
+    public void setDatabaseSettingsHandler(DatabaseSettingsHandler databaseSettingsHandler) {
+        this.databaseSettingsHandler = databaseSettingsHandler;
+    }
+
+    protected Configuration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    protected SessionFactory getSessionFactory() {
+        return UnspecifiedSessionFactoryProvider.sessionFactory;
+    }
 
     @Override
     public Session getConnection() throws ConnectionProviderException {
@@ -95,7 +115,6 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
         } catch (HibernateException he) {
             LOGGER.error("Error while returning connection!", he);
         }
-
     }
 
     protected DatasourceCallback getDatasourceCallback(Properties properties) {
@@ -107,11 +126,9 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
                 if (callback != null) {
                     return callback;
                 }
-            } catch (ClassNotFoundException ex) {
-                LOGGER.warn("Error instantiating Datasource", ex);
-            } catch (InstantiationException ex) {
-                LOGGER.warn("Error instantiating Datasource", ex);
-            } catch (IllegalAccessException ex) {
+            } catch (ClassNotFoundException |
+                     InstantiationException |
+                     IllegalAccessException ex) {
                 LOGGER.warn("Error instantiating Datasource", ex);
             }
         }
@@ -119,12 +136,17 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
     }
 
     @Override
-    protected SessionFactory getSessionFactory() {
-        return this.sessionFactory;
+    public void init() {
+        String value = this.databaseSettingsHandler.get(HibernateDatasourceConstants.PROVIDED_JDBC);
+        if (driverCleanupListener != null && (value == null || value.equals("true"))) {
+            driverCleanupListener.addDriverClass(this.databaseSettingsHandler
+                    .get(HibernateDatasourceConstants.HIBERNATE_DRIVER_CLASS));
+        }
+        this.initialize(this.databaseSettingsHandler.getAll());
     }
 
-    @Override
-    public void initialize(Properties properties) throws ConfigurationException {
+    private void initialize(Properties properties) throws ConfigurationError {
+
         final DatasourceCallback datasourceCallback = getDatasourceCallback(properties);
         datasourceCallback.onInit(properties);
         try {
@@ -139,24 +161,19 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
             registerTimestampMapping(configuration, properties);
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-            this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-            Session s = this.sessionFactory.openSession();
+            UnspecifiedSessionFactoryProvider.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            Session s = UnspecifiedSessionFactoryProvider.sessionFactory.openSession();
             try {
                 HibernateMetadataCache.init(s);
-                s.doWork(new Work() {
-                    @Override
-                    public void execute(Connection connection) throws SQLException {
-                        datasourceCallback.onFirstConnection(connection);
-                    }
-                });
+                s.doWork(datasourceCallback::onFirstConnection);
             } finally {
                 returnConnection(s);
             }
         } catch (HibernateException he) {
             String exceptionText = "An error occurs during instantiation of the database connection pool!";
             LOGGER.error(exceptionText, he);
-            cleanup();
-            throw new ConfigurationException(exceptionText, he);
+            destroy();
+            throw new ConfigurationError(exceptionText, he);
         }
     }
 
@@ -172,7 +189,7 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
                 properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
                 Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
     }
-    
+
     protected abstract Configuration getConfiguration(Properties properties);
 
 }

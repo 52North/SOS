@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,28 +32,28 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate series streaming value implementation for chunk results
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
-
-    private static final long serialVersionUID = -1990901204421577265L;
 
     private Iterator<AbstractValuedLegacyObservation<?>> seriesValuesResult;
 
@@ -65,9 +65,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     
     private int valueCounter = 0;
 
+    private int currentResultSize = 0;
+
     /**
      * constructor
      *
+     * @param connectionProvider the connection provider
+     * @param daoFactory the DAO factory
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -75,13 +79,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      * @param duplicated 
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
-        super(request, series, duplicated);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series, duplicated);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
             if (!noChunk && (valueCounter == 0 || valueCounter == chunkSize)) {
@@ -99,7 +103,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (!next) {
             sessionHolder.returnSession(session);
         }
-        
+
 
         return next;
     }
@@ -117,7 +121,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 AbstractValuedLegacyObservation<?> resultObject = getNextValue();
                 TimeValuePair value = null;
                 if (checkValue(resultObject)) {
@@ -135,10 +139,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+    public OmObservation next(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
-                OmObservation observation = null;
+            if (hasNext()) {
+                OmObservation observation = getObservationTemplate().cloneTemplate();
                 AbstractValuedLegacyObservation<?> resultObject = getNextValue();
                 if (checkValue(resultObject)) {
                     observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);

@@ -2,7 +2,7 @@
 org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.PostgresDatasource
 
 # path to mapping files
-HIBERNATE_DIRECTORY=/mapping/core;/mapping/old/observation;/mapping/transactional;
+HIBERNATE_DIRECTORY=/mapping/core;/mapping/old/base;/mapping/old/observation;/mapping/old/value;/mapping/transactional;
 
 # hibernate/postgres configuration
 

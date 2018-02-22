@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,39 +28,47 @@
  */
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.aqd.AqdHelper;
-import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 
-public class EReportingDaoHelper {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(EReportingDaoHelper.class);
+public interface EReportingDaoHelper {
 
-    public static void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request) throws InvalidParameterValueException {
+    default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request, StringBuilder logArgs)
+            throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
-            ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
+            ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
-                if (getAqdHelper().isSetValidityFlags()) {
-                    c.add(Restrictions.in(EReportingObservation.VALIDATION, getAqdHelper().getValidityFlags()));
+                if (isSetValidityFlags()) {
+                    c.add(Restrictions.in(EReportingDataEntity.VALIDATION, getValidityFlags()));
+                    logArgs.append(", validationFlag");
                 }
-                if (getAqdHelper().isSetVerificationFlags())
-                c.add(Restrictions.in(EReportingObservation.VERIFICATION, getAqdHelper().getVerificationFlags()));
+                if (isSetVerificationFlags()) {
+                    c.add(Restrictions.in(EReportingDataEntity.VERIFICATION, getVerificationFlags()));
+                    logArgs.append(", verification");
+                }
             }
         }
     }
-    
-    private static AqdHelper getAqdHelper() {
-        return AqdHelper.getInstance();
+
+    Set<Integer> getVerificationFlags();
+
+    Set<Integer> getValidityFlags();
+
+    default boolean isSetVerificationFlags() {
+        return CollectionHelper.isNotEmpty(getVerificationFlags());
     }
-    
-    private EReportingDaoHelper() {
+
+    default boolean isSetValidityFlags() {
+        return CollectionHelper.isNotEmpty(getValidityFlags());
     }
-    
+
 }

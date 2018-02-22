@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,7 +28,7 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

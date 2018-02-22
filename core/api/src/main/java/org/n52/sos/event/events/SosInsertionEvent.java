@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,16 +28,17 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.iceland.event.events.ModificationResponseEvent;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
-public abstract class SosInsertionEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse> extends
-        SosContentChangeEvent<I, O> {
+public abstract class SosInsertionEvent<I extends OwsServiceRequest, O extends OwsServiceResponse> extends
+        ModificationResponseEvent<I, O> {
 
     public SosInsertionEvent(I request, O response) {
         super(request, response);

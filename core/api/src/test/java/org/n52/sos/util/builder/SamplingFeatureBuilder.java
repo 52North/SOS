@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,17 +28,21 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.exception.ows.concrete.InvalidSridException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.util.JTSHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.util.JTSHelper;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -64,6 +68,8 @@ public class SamplingFeatureBuilder {
     private int epsgCode = Integer.MIN_VALUE;
 
     private String featureType;
+
+    private String name;
 
     public SamplingFeatureBuilder setIdentifier(String featureIdentifier) {
         this.featureIdentifier = featureIdentifier;
@@ -100,11 +106,19 @@ public class SamplingFeatureBuilder {
         if (featureType != null && !featureType.isEmpty()) {
             feature.setFeatureType(featureType);
         }
+        if (name != null && !name.isEmpty()) {
+            feature.setName(new CodeType(name));
+        }
         return feature;
     }
 
     public SamplingFeatureBuilder setFeatureType(String featureType) {
         this.featureType = featureType;
+        return this;
+    }
+
+    public SamplingFeatureBuilder setName(String name) {
+        this.name = name;
         return this;
     }
 

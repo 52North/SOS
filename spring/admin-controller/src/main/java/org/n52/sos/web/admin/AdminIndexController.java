@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,6 +31,14 @@ package org.n52.sos.web.admin;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.MetaDataHandler;
+import org.n52.sos.web.common.auth.AdministratorUserPrinciple;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,18 +47,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.MetaDataHandler;
-import org.n52.sos.web.auth.AdministratorUserPrinciple;
-
 /**
  * @since 4.0.0
  *
  */
 @Controller
-@RequestMapping({ ControllerConstants.Paths.ADMIN_INDEX, ControllerConstants.Paths.ADMIN_ROOT })
+@RequestMapping({ ControllerConstants.Paths.ADMIN_INDEX,
+                  ControllerConstants.Paths.ADMIN_ROOT })
 public class AdminIndexController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminIndexController.class);
 
@@ -64,15 +67,15 @@ public class AdminIndexController extends AbstractController {
                 warn = true;
             }
         }
-        Map<String, String> metadata = new HashMap<String, String>(MetaDataHandler.Metadata.values().length);
+        Map<String, String> metadata = new HashMap<>(MetaDataHandler.Metadata.values().length);
         try {
             for (MetaDataHandler.Metadata m : MetaDataHandler.Metadata.values()) {
                 metadata.put(m.name(), getMetaDataHandler().get(m));
             }
-        } catch (ConfigurationException ex) {
+        } catch (ConfigurationError ex) {
             LOG.error("Error reading metadata properties", ex);
         }
-        Map<String, Object> model = new HashMap<String, Object>(2);
+        Map<String, Object> model = new HashMap<>(2);
         model.put("metadata", metadata);
         model.put("warning", warn);
         return new ModelAndView(ControllerConstants.Views.ADMIN_INDEX, model);

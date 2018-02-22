@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.web.admin.caps;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +38,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.config.CapabilitiesExtensionManager;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.exception.JSONException;
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.exception.JSONException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.admin.AbstractAdminController;
 
-public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
+public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminController {
     private static final Logger log = LoggerFactory.getLogger(AbstractAdminCapabiltiesAjaxEndpoint.class);
     protected static final String OFFERING = "offeringId";
     protected static final String IDENTIFIER = "identifier";
@@ -56,12 +56,11 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     protected static final String ERRORS_PROPERTY = "errors";
     protected static final String VALID_PROPERTY = "valid";
 
-    protected CapabilitiesExtensionManager getDao() {
-        return getSettingsManager();
-    }
+    @Inject
+    private CapabilitiesExtensionService capabilitiesExtensionService;
 
-    protected ContentCache getCache() {
-        return Configurator.getInstance().getCache();
+    protected CapabilitiesExtensionService getCapabilitiesExtensionService() {
+        return capabilitiesExtensionService;
     }
 
     @ResponseBody
@@ -94,9 +93,9 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     }
 
     @ResponseBody
-    @ExceptionHandler(ConfigurationException.class)
+    @ExceptionHandler(ConfigurationError.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String error(final ConfigurationException e) {
+    public String error(final ConfigurationError e) {
         return e.getMessage();
     }
 
@@ -108,10 +107,10 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
     }
 
     protected String getSelectedStaticCapabilities() throws OwsExceptionReport {
-        return getSettingsManager().getActiveStaticCapabilities();
+        return this.capabilitiesExtensionService.getActiveStaticCapabilities();
     }
 
-    protected void setSelectedStaticCapabilities(String id) throws ConfigurationException,
+    protected void setSelectedStaticCapabilities(String id) throws ConfigurationError,
                                                                    OwsExceptionReport,
                                                                    NoSuchExtensionException {
         final String current = getSelectedStaticCapabilities();
@@ -133,11 +132,11 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractController {
         }
 
         if (change) {
-            getDao().setActiveStaticCapabilities(id);
+            this.capabilitiesExtensionService.setActiveStaticCapabilities(id);
         }
     }
 
-    protected void showDynamicCapabilities() throws ConfigurationException, OwsExceptionReport, NoSuchExtensionException {
+    protected void showDynamicCapabilities() throws ConfigurationError, OwsExceptionReport, NoSuchExtensionException {
         setSelectedStaticCapabilities(null);
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,31 +30,24 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ds.CacheFeederDAO;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.SosWritableContentCache;
 
 /**
  * Mock NOOP implementation of CacheFeederDAO used to prevent NoImplementationFoundException.
  */
-public class MockCacheFeederDAO implements CacheFeederDAO {
-    
-    public static final String DATASOURCE_DAO_IDENTIFIER = "hibernate.orm";
-    
+public class MockCacheFeederDAO implements CacheFeederHandler {
+
     @Override
-    public void updateCache(WritableContentCache capabilitiesCache)
+    public void updateCache(SosWritableContentCache capabilitiesCache)
             throws OwsExceptionReport {
         //NOOP, only used for testing
     }
 
     @Override
-    public void updateCacheOfferings(WritableContentCache capabilitiesCache, Collection<String> offerings)
+    public void updateCacheOfferings(SosWritableContentCache capabilitiesCache, Collection<String> offerings)
             throws OwsExceptionReport {
         //NOOP, only used for testing
     }
 
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return DATASOURCE_DAO_IDENTIFIER;
-    }
 }

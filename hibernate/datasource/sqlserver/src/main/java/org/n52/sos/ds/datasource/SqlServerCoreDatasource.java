@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,13 +31,13 @@ package org.n52.sos.ds.datasource;
 import java.util.Properties;
 import java.util.Set;
 
-import org.n52.sos.config.SettingDefinition;
+import org.n52.faroe.SettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 
 /**
  * MS SQL Server datasource for core mapping
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -57,13 +57,13 @@ public class SqlServerCoreDatasource extends AbstractSqlServerDatasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
         return filter(super.getChangableSettingDefinitions(current),
                 ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
         return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
     }
 

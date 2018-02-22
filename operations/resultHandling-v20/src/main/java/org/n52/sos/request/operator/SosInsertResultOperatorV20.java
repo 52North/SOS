@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,25 +31,25 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractInsertResultDAO;
-import org.n52.sos.event.SosEventBus;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
+import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesParameterException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0
  *
  */
 public class SosInsertResultOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertResultDAO, InsertResultRequest, InsertResultResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertResultHandler, InsertResultRequest, InsertResultResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResult.name();
     private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
@@ -59,14 +59,17 @@ public class SosInsertResultOperatorV20 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public InsertResultResponse receive(InsertResultRequest request) throws OwsExceptionReport {
-        InsertResultResponse response = getDao().insertResult(request);
-        SosEventBus.fire(new ResultInsertion(request, response));
+        InsertResultResponse response = getOperationHandler().insertResult(request);
+        getServiceEventBus().submit(new ResultInsertion(request, response));
         return response;
     }
 

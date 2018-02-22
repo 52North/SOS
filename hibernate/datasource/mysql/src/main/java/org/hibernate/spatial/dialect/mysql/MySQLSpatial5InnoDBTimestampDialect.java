@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,12 +43,12 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 /**
  * Hibernate Spatial {@link Dialect} for MySQL that registers Types.TIMESTAMP to
  * timestampt instead of datetime.
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
-public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDialect implements SpatialIndexDialect {
+public class MySQLSpatial5InnoDBTimestampDialect extends MySQL56InnoDBSpatialDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 4518550802945449263L;
 
@@ -56,7 +56,7 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
         super();
         registerColumnType( Types.TIMESTAMP, "timestamp" );
     }
-    
+
     @Override
     public String getTypeName(int code, long length, int precision, int scale) throws HibernateException {
         if (Types.TIMESTAMP == code ) {
@@ -64,7 +64,7 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
         }
         return super.getTypeName(code, length, precision, scale);
     }
-    
+
     @Override
     public String getTypeName(int code) throws HibernateException {
         if (Types.TIMESTAMP == code ) {
@@ -72,20 +72,20 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
         }
         return super.getTypeName(code);
     }
-    
+
     // https://dev.mysql.com/doc/refman/5.0/en/creating-spatial-indexes.html
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
-        
-       
+
+
         // only for NOT NULL columns and ENGINE=MyISAM
         // https://dev.mysql.com/doc/refman/5.7/en/creating-spatial-indexes.html
-        
+
 //        String name = index.getName();
 //        Table table = index.getTable();
 //        Iterator<Column> columns = index.getColumnIterator();
 //        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-//        
-//        
+//
+//
 //        StringBuilder buf = new StringBuilder( "create" )
 //                        .append( " spatial index " )
 //                        .append( this.qualifyIndexName() ?

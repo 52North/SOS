@@ -9,7 +9,7 @@
 	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertResultTemplate.xsd http://www.opengis.net/om/2.0 http://schemas.opengis.net/om/2.0/observation.xsd
 	http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd">
 	<sos:proposedTemplate>
-		<!-- Before using this example, make sure that all preconditions are fulfilled, 
+		<!-- Before using this example, make sure that all preconditions are fulfilled,
 			e.g. perform InsertSensor example. -->
 		<sos:ResultTemplate>
 			<swes:identifier>http://www.52north.org/test/procedure/10/template/Glider_Journy_10</swes:identifier>

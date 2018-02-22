@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,21 +28,30 @@
  */
 package org.n52.sos.ds.hibernate.admin;
 
+import javax.inject.Inject;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class HibernateRenameDAO implements RenameDAO {
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public void renameObservableProperty(String oldName, String newName) throws OwsExceptionReport,
@@ -53,7 +62,7 @@ public class HibernateRenameDAO implements RenameDAO {
             s = sessionHolder.getSession();
             t = s.beginTransaction();
             ObservableProperty op = (ObservableProperty) s.createCriteria(ObservableProperty.class)
-                    .add(Restrictions.eq(ObservableProperty.IDENTIFIER, oldName)).uniqueResult();
+                    .copy(Restrictions.eq(ObservableProperty.IDENTIFIER, oldName)).uniqueResult();
 
             if (op == null) {
                 throw new NoSuchObservablePropertyException(oldName);

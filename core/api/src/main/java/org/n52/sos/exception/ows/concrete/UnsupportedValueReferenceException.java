@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,10 +28,10 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
 public class UnsupportedValueReferenceException extends NoApplicableCodeException {

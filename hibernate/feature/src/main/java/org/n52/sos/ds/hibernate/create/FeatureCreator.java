@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,19 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import java.util.Locale;
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+public interface FeatureCreator<T extends FeatureEntity> {
 
-import com.vividsolutions.jts.geom.Geometry;
-
-public interface FeatureCreator<T extends FeatureOfInterest> {
-    
-    AbstractFeature create(T f,Locale i18n, String version, Session s)
+    AbstractFeature create(T f)
             throws OwsExceptionReport;
-    
-    Geometry createGeometry(T f, Session s) throws OwsExceptionReport;
+
+    Geometry createGeometry(T f) throws OwsExceptionReport;
 }

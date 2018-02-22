@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,17 +28,18 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.util.Action;
+import org.n52.iceland.util.action.Action;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations
@@ -73,7 +74,7 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
 
     @Override
     public void execute() {
-        final WritableContentCache cache = getCache();
+        final SosWritableContentCache cache = getCache();
         final String resultTemplate = response.getAcceptedTemplate();
         cache.addResultTemplate(resultTemplate);
         for (String offering : request.getObservationTemplate().getOfferings()) {
@@ -83,13 +84,13 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         }
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
-            cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
             cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
             cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
-        	cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
-        	cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
+            cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
         }
-        
+
         AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();
         if (observableProperty instanceof OmCompositePhenomenon) {
             OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;

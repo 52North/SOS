@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
+import org.n52.faroe.SettingType;
 
 @Entity(name = "boolean_settings")
 public class BooleanSettingValue extends AbstractSettingValue<Boolean> {
@@ -38,15 +38,23 @@ public class BooleanSettingValue extends AbstractSettingValue<Boolean> {
 
     private Boolean value;
 
+    public BooleanSettingValue(String identifier, Boolean value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public BooleanSettingValue() {
+        this(null, null);
+    }
+
     @Override
     public Boolean getValue() {
         return this.value;
     }
 
     @Override
-    public BooleanSettingValue setValue(Boolean value) {
+    public void setValue(Boolean value) {
         this.value = value;
-        return this;
     }
 
     @Override

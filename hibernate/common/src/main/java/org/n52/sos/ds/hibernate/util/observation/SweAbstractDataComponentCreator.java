@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,40 +28,40 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ProfileGeneratorSplitter;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import javax.inject.Inject;
+
+import org.n52.janmayen.NcName;
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.svalbard.decode.DecoderRepository;
 
 /**
  * {@code ValuedObservationVisitor} to create {@link SweAbstractDataComponent}
@@ -72,66 +72,78 @@ import org.n52.sos.util.XmlHelper;
 public class SweAbstractDataComponentCreator
         implements ValuedObservationVisitor<SweAbstractDataComponent> {
 
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    public SweAbstractDataComponent visit(DataEntity sub) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     @Override
-    public SweAbstractDataComponent visit(GeometryValuedObservation o)
+    public SweAbstractDataComponent visit(GeometryDataEntity o)
             throws OwsExceptionReport {
         // TODO implement SweEnvelope/SweCoordinte etc.
         throw notSupported(o);
     }
 
     @Override
-    public SweAbstractDataComponent visit(BlobValuedObservation o)
+    public SweAbstractDataComponent visit(BlobDataEntity o)
             throws OwsExceptionReport {
         throw notSupported(o);
     }
 
     @Override
-    public SweQuantity visit(NumericValuedObservation o) {
+    public SweQuantity visit(QuantityDataEntity o) throws CodedException {
         SweQuantity component = new SweQuantity();
-        component.setValue(o.getValue().doubleValue());
+        component.setValue(o.getValue());
         return setCommonValues(component, o);
     }
 
     @Override
-    public SweBoolean visit(BooleanValuedObservation o) {
+    public SweBoolean visit(BooleanDataEntity o) throws CodedException {
         SweBoolean component = new SweBoolean();
         component.setValue(o.getValue());
         return setCommonValues(component, o);
     }
 
     @Override
-    public SweCategory visit(CategoryValuedObservation o) {
+    public SweCategory visit(CategoryDataEntity o) throws CodedException {
         SweCategory component = new SweCategory();
         component.setValue(o.getValue());
         return setCommonValues(component, o);
     }
 
     @Override
-    public SweDataRecord visit(ComplexValuedObservation o)
+    public SweDataRecord visit(ComplexDataEntity o)
             throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
-        for (Observation<?> sub : o.getValue()) {
+        for (DataEntity<?> sub : o.getValue()) {
             String fieldName = getFieldName(sub);
-            record.addField(new SweField(fieldName, sub.accept(this)));
+            record.addField(new SweField(fieldName, this.visit(sub)));
         }
         return setCommonValues(record, o);
     }
 
-    protected String getFieldName(Observation<?> sub) {
-        String name = sub.getObservableProperty().getName();
+    protected String getFieldName(DataEntity<?> sub) {
+        String name = sub.getDataset().getObservableProperty().getName();
         if (name != null && !name.isEmpty()) { return name; }
-        return NcNameResolver.fixNcName(sub.getObservableProperty().getIdentifier());
+        return NcName.makeValid(sub.getDataset().getObservableProperty().getIdentifier());
     }
 
     @Override
-    public SweCount visit(CountValuedObservation o) {
+    public SweCount visit(CountDataEntity o) throws CodedException {
         SweCount component = new SweCount();
         component.setValue(o.getValue());
         return setCommonValues(component, o);
     }
 
     @Override
-    public SweText visit(TextValuedObservation o)
+    public SweText visit(TextDataEntity o)
             throws OwsExceptionReport {
         SweText component = new SweText();
         component.setValue(o.getValue());
@@ -139,55 +151,62 @@ public class SweAbstractDataComponentCreator
     }
 
     @Override
-    public SweDataArray visit(SweDataArrayValuedObservation o)
+    public SweDataArray visit(DataArrayDataEntity o)
             throws OwsExceptionReport {
-        XmlObject xml = XmlHelper.parseXmlString(o.getValue());
-        return (SweDataArray) CodingHelper.decodeXmlElement(xml);
+        SweDataArray array = new SweDataArray();
+        // TODO
+
+       return array;
     }
 
     @Override
-    public SweAbstractDataComponent visit(ProfileValuedObservation o) throws OwsExceptionReport {
+    public SweAbstractDataComponent visit(ProfileDataEntity o) throws OwsExceptionReport {
         return ProfileGeneratorSplitter.createValue(o);
     }
-    
+
     @Override
-    public SweCategory visit(ReferenceValuedObservation o) {
+    public SweCategory visit(ReferencedDataEntity o) throws OwsExceptionReport {
         SweCategory component = new SweCategory();
-        if (o.isSetHref()) {
-            component.setValue(o.getHref());
-        } else if (o.isSetTitle()) {
-            component.setValue(o.getTitle());
+        if (o.hasValue()) {
+            component.setValue(o.getValue());
+        } else if (o.hasValueName()) {
+            component.setValue(o.getValueName());
         }
         return setCommonValues(component, o);
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(
-            T component, ValuedObservation<?> valuedObservation) {
+            T component, DataEntity<?> valuedObservation) throws CodedException {
 
-        if (valuedObservation instanceof ContextualReferencedObservation) {
-            ContextualReferencedObservation observation
-                    = (ContextualReferencedObservation) valuedObservation;
-            ObservableProperty op = observation.getObservableProperty();
+        if (valuedObservation instanceof DataEntity) {
+            DataEntity observation
+                    = (DataEntity) valuedObservation;
+            PhenomenonEntity op = observation.getDataset().getPhenomenon();
             component.setIdentifier(op.getIdentifier());
             component.setDefinition(op.getIdentifier());
             component.setDescription(op.getDescription());
-            if (op.getCodespace() != null) {
-                String codespace = op.getCodespaceName().getCodespace();
-                component.setName(new CodeType(op.getName(), codespace));
+            if (op.isSetNameCodespace()) {
+                String codespace = op.getNameCodespace().getName();
+                try {
+                    component.setName(new CodeType(op.getName(), new URI(codespace)));
+                } catch (URISyntaxException e) {
+                    throw new NoApplicableCodeException().causedBy(e).withMessage(
+                            "Error while creating URI from '{}'", codespace);
+                }
             } else {
                 component.setName(op.getName());
             }
         }
 
-        if (valuedObservation.getUnit() != null &&
+        if (valuedObservation.getDataset().hasUnit() &&
             component instanceof SweAbstractUomType) {
             SweAbstractUomType<?> uomType = (SweAbstractUomType) component;
-            uomType.setUom(valuedObservation.getUnit().getUnit());
+            uomType.setUom(valuedObservation.getDataset().getUnit().getUnit());
         }
         return component;
     }
 
-    protected OwsExceptionReport notSupported(ValuedObservation<?> o) {
+    protected OwsExceptionReport notSupported(DataEntity<?> o) {
         return new NoApplicableCodeException()
                 .withMessage("Complex observation fields of type %s" +
                              " are currently not supported", o.getValue());

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,11 +46,11 @@ import org.slf4j.LoggerFactory;
 /**
  * SQL helper class with methods to close statements, connections, ... and to
  * load and execute a SQL script file.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
-public final class SQLHelper implements Constants {
+public final class SQLHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(SQLHelper.class);
 
@@ -77,8 +77,8 @@ public final class SQLHelper implements Constants {
                     if (strLine.equals("$$")) {
                         stringLiteral = !stringLiteral;
                     }
-                    sql.append(BLANK_CHAR).append(strLine).append(BLANK_CHAR);
-                    if (!stringLiteral && strLine.substring(strLine.length() - 1).equals(SEMICOLON_CHAR)) {
+                    sql.append(' ').append(strLine).append(' ');
+                    if (!stringLiteral && strLine.substring(strLine.length() - 1).equals(';')) {
                         st.execute(sql.substring(0, sql.length() - 1));
                         sql = new StringBuilder();
                     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,9 +43,11 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialectSpatialIndex;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.ds.DatasourceCallback;
-import org.n52.sos.exception.ConfigurationException;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.iceland.ds.DatasourceCallback;
+import org.n52.faroe.ConfigurationError;
 
 import geodb.GeoDB;
 
@@ -54,7 +56,7 @@ import geodb.GeoDB;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -88,7 +90,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     }
 
     @Override
-    public  Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties p) {
+    public  Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties p) {
         return Collections.emptySet();
     }
 
@@ -96,24 +98,24 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
 
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = openConnection(settings);
+            Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
             stmt = conn.createStatement();
             stmt.execute("set referential_integrity false");
             while (tables.hasNext()) {
                 Table table = tables.next();
                 if (table.isPhysicalTable()) {
-                    stmt.execute("truncate table " + table.getName());
+                    stmt.execute("truncate table " + table.getQuotedName(new GeoDBDialect()));
                 }
             }
             stmt.execute("set referential_integrity true");
             GeoDB.InitGeoDB(conn);
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(stmt);
             close(conn);
@@ -137,11 +139,11 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         });
     }
 
-    protected void initGeoDB(Map<String, Object> settings) throws ConfigurationException {
+    protected void initGeoDB(Map<String, Object> settings) throws ConfigurationError {
         try (Connection cx = openConnection(settings)) {
             GeoDB.InitGeoDB(cx);
         } catch (SQLException ex) {
-            throw new ConfigurationException("Could not init GeoDB", ex);
+            throw new ConfigurationError("Could not init GeoDB", ex);
         }
     }
 

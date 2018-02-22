@@ -154,11 +154,11 @@
             $("<div>").addClass("form-actions").append($button).appendTo($container);
 
             function setSosUrl() {
-                $("input[name='service.sosUrl']").val(window.location.toString()
+                $("input[name='service.serviceURL']").val(window.location.toString()
                     .replace(/admin\/settings.*/, "service")).trigger("input");
             }
 
-            if (!settings["service.sosUrl"]) {
+            if (!settings["service.serviceURL"]) {
               setSosUrl();
             }
 
@@ -201,7 +201,7 @@
                 var section = $(".nav.nav-tabs li a[href=#" + activeId + "]").text();
                 var s = getSettings(section);
                 for (var key in s) {
-                    if (key === "service.sosUrl") {
+                    if (key === "service.serviceURL") {
                         setSosUrl();
                     } else {
                         setSetting(key, (s[key]["default"] !== undefined

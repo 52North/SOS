@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,19 +32,19 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import org.n52.sos.ogc.swes.OfferingExtensionKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 
 /**
  * Storage key for the entity {@link DynamicOfferingExtension}
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Embeddable
 public class DynamicOfferingExtensionKey implements Serializable {
     private static final long serialVersionUID = -7127147660584447908L;
-    
+
     private String service;
 
     private String version;
@@ -53,15 +53,13 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * constructor
-     * 
-     * @param service
-     *            the service to set
-     * @param version
-     *            the version to set
-     * @param domain
-     *            the domain to set
+     *
+     * @param service the service to set
+     * @param version the version to set
+     * @param domain the domain to set
      */
-    public DynamicOfferingExtensionKey(String service, String version, String domain) {
+    public DynamicOfferingExtensionKey(String service, String version,
+                                       String domain) {
         setService(service);
         setVersion(version);
         setDomain(domain);
@@ -69,11 +67,10 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * constructor
-     * 
-     * @param oek
-     *            the {@link OfferingExtensionKey} to set
+     *
+     * @param key the {@link SosObservationOfferingExtensionKey} to set
      */
-    public DynamicOfferingExtensionKey(OfferingExtensionKey key) {
+    public DynamicOfferingExtensionKey(SosObservationOfferingExtensionKey key) {
         this(key.getService(), key.getVersion(), key.getDomain());
     }
 
@@ -83,10 +80,10 @@ public class DynamicOfferingExtensionKey implements Serializable {
     public DynamicOfferingExtensionKey() {
         this(null, null, null);
     }
-    
+
     /**
      * Get the key service
-     * 
+     *
      * @return the service
      */
     public String getService() {
@@ -95,9 +92,9 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * Set the key service
-     * 
-     * @param service
-     *            the service to set
+     *
+     * @param service the service to set
+     *
      * @return this
      */
     public DynamicOfferingExtensionKey setService(String service) {
@@ -107,7 +104,7 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * Get the key version
-     * 
+     *
      * @return the version
      */
     public String getVersion() {
@@ -116,9 +113,9 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * Set the key service
-     * 
-     * @param version
-     *            the version to seet
+     *
+     * @param version the version to seet
+     *
      * @return this
      */
     public DynamicOfferingExtensionKey setVersion(String version) {
@@ -128,7 +125,7 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * Get the key domain
-     * 
+     *
      * @return the domain
      */
     public String getDomain() {
@@ -137,9 +134,9 @@ public class DynamicOfferingExtensionKey implements Serializable {
 
     /**
      * Set the key domain
-     * 
-     * @param domain
-     *            the domain to set
+     *
+     * @param domain the domain to set
+     *
      * @return this
      */
     public DynamicOfferingExtensionKey setDomain(String domain) {

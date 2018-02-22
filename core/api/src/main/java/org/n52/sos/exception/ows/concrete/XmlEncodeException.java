@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,21 +28,20 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
-
 import org.apache.xmlbeans.XmlException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 public class XmlEncodeException extends NoApplicableCodeException {
     private static final long serialVersionUID = -3574545413710594013L;
 
     public XmlEncodeException(final String name, final String xml, final XmlException e) {
         withMessage("Error while encoding %s:\n%s", name, xml).causedBy(e);
-        setStatus(INTERNAL_SERVER_ERROR);
+        setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
     }
 
     public XmlEncodeException(final String name, final XmlException e) {
         withMessage("Error while encoding %s", name).causedBy(e);
-        setStatus(INTERNAL_SERVER_ERROR);
+        setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
     }
 }

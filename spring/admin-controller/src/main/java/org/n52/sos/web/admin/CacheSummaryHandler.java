@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,17 +32,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.n52.sos.cache.ContentCache;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.Configurator;
 
 /**
  * Class to get a summary of the cache objects.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class CacheSummaryHandler {
-    
+
     public static final String LAST_UPDATE_TIME = "last_update";
     public static final String MIN_PHENOMENON_TIME = "min_phenomenon_time";
     public static final String MAX_PHENOMENON_TIME = "max_phenomenon_time";
@@ -60,13 +60,15 @@ public class CacheSummaryHandler {
     public static final String DEFAULT_EPSG = "default_epsg";
     public static final String NUM_EPSGS = "num_epsgs";
 
+
+
     private CacheSummaryHandler() {
 
     }
 
     public static Map<String, String> getCacheValues() {
-        ContentCache cache = Configurator.getInstance().getCache();
-        Map<String, String> values = new TreeMap<String, String>();
+        SosContentCache cache = Configurator.getInstance().getCache();
+        Map<String, String> values = new TreeMap<>();
         values.put(LAST_UPDATE_TIME, nullSafeToString(cache.getLastUpdateTime()));
         values.put(MIN_PHENOMENON_TIME, nullSafeToString(cache.getMinPhenomenonTime()));
         values.put(MAX_PHENOMENON_TIME, nullSafeToString(cache.getMaxPhenomenonTime()));

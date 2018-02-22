@@ -105,8 +105,8 @@
 		$("#service_identification .control-group:last").before("<legend>Extended Settings</legend>");
 		$("#service_provider .control-group:last").before("<legend>Extended Settings</legend>");
 
-		if (!settings["service.sosUrl"]) {
-			$("input[name='service.sosUrl']").val(window.location.toString()
+		if (!settings["service.serviceURL"]) {
+			$("input[name='service.serviceURL']").val(window.location.toString()
 				.replace(/install\/settings.*/, "service")).trigger("input");
 		}
 

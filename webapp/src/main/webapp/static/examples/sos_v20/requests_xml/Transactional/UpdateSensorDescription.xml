@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <swes:UpdateSensorDescription service="SOS" version="2.0.0"
-	xmlns:swes="http://www.opengis.net/swes/2.0" 
-	xmlns:sos="http://www.opengis.net/sos/2.0" 
+	xmlns:swes="http://www.opengis.net/swes/2.0"
+	xmlns:sos="http://www.opengis.net/sos/2.0"
 	xmlns:swe="http://www.opengis.net/swe/1.0.1"
-	xmlns:sml="http://www.opengis.net/sensorML/1.0.1" 
-	xmlns:gml="http://www.opengis.net/gml" 
+	xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+	xmlns:gml="http://www.opengis.net/gml"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
 	<swes:procedure>http://www.52north.org/test/procedure/9</swes:procedure>
 	<swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
 	<swes:description>
-		<swes:SensorDescription>	
+		<swes:SensorDescription>
 			<swes:data>
 				<sml:SensorML version="1.0.1">
 					<sml:member>
@@ -41,7 +41,7 @@
 							<sml:capabilities name="offerings">
 								<!-- Special capabilities used to specify offerings. -->
 								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, added during DescribeSensor. -->
-								<!-- Offering is generated if not specified. -->						
+								<!-- Offering is generated if not specified. -->
 								<swe:SimpleDataRecord>
 									<!-- Field name is used for the offering's name -->
 									<swe:field name="Offering for sensor 9">
@@ -68,7 +68,7 @@
 								<swe:SimpleDataRecord>
 									<swe:field name="featureOfInterestID">
 										<swe:Text>
-											<swe:value>http://www.52north.org/test/featureOfInterest/9</swe:value>											
+											<swe:value>http://www.52north.org/test/featureOfInterest/9</swe:value>
 										</swe:Text>
 									</swe:field>
 								</swe:SimpleDataRecord>

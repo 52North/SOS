@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+    <bean id="serviceProviderSettingsDefitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+        <property name="title" value="Service Provider" />
+        <property name="order" value="0.0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.country" />
+        <property name="title" value="Country" />
+        <property name="description" value="The country of the responsible person." />
+        <property name="order" value="10.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="Germany" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.email" />
+        <property name="title" value="Mail-Address" />
+        <property name="description" value="The electronic mail address of the responsible person." />
+        <property name="order" value="5.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="info@52north.org" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.address" />
+        <property name="title" value="Address" />
+        <property name="description" value="The street address of the responsible person." />
+        <property name="order" value="6.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="Martin-Luther-King-Weg 24" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.state" />
+        <property name="title" value="State" />
+        <property name="description" value="The state of the responsible person." />
+        <property name="order" value="9.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="North Rhine-Westphalia" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.positionName" />
+        <property name="title" value="Position" />
+        <property name="description" value="The position of the responsible person." />
+        <property name="order" value="4.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.postalCode" />
+        <property name="title" value="Postal Code" />
+        <property name="description" value="The postal code of the responsible person." />
+        <property name="order" value="7.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="48155" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.phone" />
+        <property name="title" value="Phone" />
+        <property name="description" value="The phone number of the responsible person." />
+        <property name="order" value="2.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="+49(0)251/396 371-0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.city" />
+        <property name="title" value="City" />
+        <property name="description" value="The city of the responsible person." />
+        <property name="order" value="8.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="Münster" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.name" />
+        <property name="title" value="Name" />
+        <property name="description" value="Your or your company&apos;s name." />
+        <property name="order" value="0.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="52North" />
+    </bean>
+    <bean class="org.n52.faroe.settings.UriSettingDefinition">
+        <property name="key" value="serviceProvider.site" />
+        <property name="title" value="Website" />
+        <property name="description" value="Your website." />
+        <property name="order" value="1.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="http://52north.org/swe" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.individualName" />
+        <property name="title" value="Responsible Person" />
+        <property name="description" value="The name of the responsible person of this service." />
+        <property name="order" value="3.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.hoursOfService" />
+        <property name="title" value="Hours of service" />
+        <property name="description" value="The hours of service." />
+        <property name="order" value="11.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+       <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.contactInstructions" />
+        <property name="title" value="Contact instructions" />
+        <property name="description" value="The contact instructions" />
+        <property name="order" value="12.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.onlineResource" />
+        <property name="title" value="Online resource" />
+        <property name="description" value="Set the online resource" />
+        <property name="order" value="13.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA|TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.facsimile" />
+        <property name="title" value="Facsimile" />
+        <property name="description" value="Set the facsimile" />
+        <property name="order" value="14.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.role.value" />
+        <property name="title" value="Role" />
+        <property name="description" value="Set the role" />
+        <property name="order" value="15.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.UriSettingDefinition">
+        <property name="key" value="serviceProvider.role.codespace" />
+        <property name="title" value="Role codespace" />
+        <property name="description" value="Set the codespace for the role" />
+        <property name="order" value="16.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.faroe.settings.FileSettingDefinition">
+        <property name="key" value="serviceProvider.file" />
+        <property name="title" value="Service Provider File" />
+        <property name="description" value="The path to a file containing an ows:ServiceProvider overriding the above settings. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/provider.xml&lt;/code&gt;) or a path relative to the web application directory (e.g. &lt;code&gt;WEB-INF/provider.xml&lt;/code&gt;)." />
+        <property name="order" value="17.0" />
+        <property name="optional" value="true" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+    </bean>
+</beans>

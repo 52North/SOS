@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,26 +28,27 @@
  */
 package org.n52.sos.request.operator;
 
-import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.RequestContext;
+import org.n52.iceland.util.HasStatusCode;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
-import org.n52.sos.util.HasStatusCode;
-import org.n52.sos.util.http.HTTPStatus;
-import org.n52.sos.util.net.IPAddress;
+
+import org.locationtech.jts.io.ParseException;
 
 /**
  * @since 4.0.0
  *
  */
 public class TransactionalRequestCheckerTest {
-    private static TransactionalSecurityConfiguration tsc =
-            TransactionalSecurityConfiguration.getInstance();
+    private static TransactionalSecurityConfiguration tsc;
+
     private static final IPAddress IP = new IPAddress("123.123.123.123");
     private static final String TOKEN = "I_HAVE_THE_PERMISSION";
     private static final IPAddress INVALID_IP = new IPAddress("234.234.234.234");
@@ -56,9 +57,10 @@ public class TransactionalRequestCheckerTest {
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
-    @AfterClass
-    public static void cleanUp() {
-        SettingsManager.getInstance().cleanup();
+    @BeforeClass
+    public static void init() throws ParseException {
+       tsc = new TransactionalSecurityConfiguration();
+       tsc.init();
     }
 
     @Test
@@ -157,21 +159,21 @@ public class TransactionalRequestCheckerTest {
         new TransactionalRequestChecker(tsc).check(null);
     }
 
-    private RequestContext getRequestContextIp(boolean validIp) {
-        RequestContext requestContext = new RequestContext();
+    private OwsServiceRequestContext getRequestContextIp(boolean validIp) {
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setIPAddress(validIp ? IP : INVALID_IP);
         return requestContext;
     }
 
-    private RequestContext getRequestContextToken(boolean validToken) {
-        RequestContext requestContext = new RequestContext();
+    private OwsServiceRequestContext getRequestContextToken(boolean validToken) {
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setToken(validToken ? TOKEN : INVALID_TOKEN);
         return requestContext;
     }
 
-    private RequestContext getRequestContextBoth(boolean validIp,
+    private OwsServiceRequestContext getRequestContextBoth(boolean validIp,
                                                  boolean validToken) {
-        RequestContext requestContext = new RequestContext();
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setIPAddress(validIp ? IP : INVALID_IP);
         requestContext.setToken(validToken ? TOKEN : INVALID_TOKEN);
         return requestContext;

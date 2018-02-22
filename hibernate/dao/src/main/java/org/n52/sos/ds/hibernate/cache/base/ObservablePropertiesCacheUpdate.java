@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,8 +34,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
@@ -45,26 +51,27 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.CollectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertiesCacheUpdate.class);
 
+    private final DaoFactory daoFactory;
+
+    public ObservablePropertiesCacheUpdate(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
+    }
+
     @Override
     public void execute() {
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate");
         startStopwatch();
-        ObservablePropertyDAO observablePropertyDAO = new ObservablePropertyDAO();
+        ObservablePropertyDAO observablePropertyDAO = daoFactory.getObservablePropertyDAO();
         Map<ObservableProperty, Collection<ObservableProperty>> observablePropertyHierarchy = observablePropertyDAO.getObservablePropertyHierarchy(getSession());
         List<ObservableProperty> ops = observablePropertyDAO.getObservablePropertyObjects(getSession());
 //        Set<String> childObservableProperties = new HashSet<>(observablePropertyHierarchy.size());
@@ -79,7 +86,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
         // if ObservationConstellation is supported load them all at once,
         // otherwise query obs directly
         if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
-            ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+            ObservationConstellationDAO observationConstellationDAO = daoFactory.getObservationConstellationDAO();
             Map<String, Collection<ObservationConstellationInfo>> ociMap = ObservationConstellationInfo.mapByObservableProperty(observationConstellationDAO.getObservationConstellationInfo(getSession()));
 
             for (ObservableProperty observableProperty : observablePropertyHierarchy.keySet()) {
@@ -88,7 +95,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 boolean isParent = !children.isEmpty();
 
                 if (observableProperty.isSetName()) {
-                	getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
+                    getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
                 }
 
                 if (!observableProperty.isHiddenChild()) {
@@ -109,19 +116,19 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 }
             }
         } else {
-            OfferingDAO offeringDAO = new OfferingDAO();
-            ProcedureDAO procedureDAO = new ProcedureDAO();
+            OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
+            ProcedureDAO procedureDAO = daoFactory.getProcedureDAO();
             for (ObservableProperty op : observablePropertyHierarchy.keySet()) {
                 String observableProperty = op.getIdentifier();
                 try {
                     getCache().setOfferingsForObservableProperty(observableProperty, offeringDAO.getOfferingIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport e) {
-                    getErrors().add(e);
+                    getErrors().copy(e);
                 }
                 try {
                     getCache().setProceduresForObservableProperty(observableProperty, procedureDAO.getProcedureIdentifiersForObservableProperty(observableProperty, getSession()));
                 } catch (OwsExceptionReport owse) {
-                    getErrors().add(owse);
+                    getErrors().copy(owse);
                 }
             }
         }
@@ -135,7 +142,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 getCache().addPublishedObservableProperties(parents);
             }
         } catch (CodedException e) {
-           getErrors().add(e);
+           getErrors().copy(e);
         }
         LOGGER.debug("Executing ObservablePropertiesCacheUpdate ({})", getStopwatchResult());
     }
@@ -143,7 +150,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
     private void getParents(Set<String> parents, ObservableProperty observableProperty) {
         if (observableProperty instanceof TObservableProperty && ((TObservableProperty)observableProperty).getParents() != null) {
             for (ObservableProperty parent : ((TObservableProperty)observableProperty).getParents()) {
-                parents.add(parent.getIdentifier());
+                parents.copy(parent.getIdentifier());
                 getParents(parents, parent);
             }
         }

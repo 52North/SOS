@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean id="uvfSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+        <property name="title" value="UVF Encoding" />
+        <property name="order" value="10.0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="uvf.default.crs" />
+        <property name="title" value="The default CRS EPSG code used in UVF response" />
+        <property name="description" value="The default CRS EPSG code that is used if no swe extension is present in the request that specifies one. Allowed values are: &lt;tt&gt;31466, 31467, 31468&lt;/tt&gt;." />
+        <property name="order" value="1.0" />
+        <property name="group" ref="uvfSettingDefinitionGroup" />
+        <property name="defaultValue" value="31466" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="uvf.timeZone" />
+        <property name="title" value="Returned Time zone for the UVF encoding" />
+        <property name="description" value="Define the time zone in which the time should be encoded in the UVF responce Valid values are see &lt;a href='http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html' target='_blank'&gt;Java TimeZone&lt;/a&gt;. Default is CET." />
+        <property name="order" value="2.0" />
+        <property name="group" ref="uvfSettingDefinitionGroup" />
+        <property name="defaultValue" value="CET" />
+    </bean>
+    <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
+        <property name="key" value="uvf.lineEnding" />
+        <property name="title" value="The line ending that should be used for UVF" />
+        <property name="description" value="The line ending that should be used for UVF. Default is 'Unix'." />
+        <property name="order" value="3.0" />
+        <property name="group" ref="uvfSettingDefinitionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="Unix" />
+        <property name="options">
+            <map>
+                <entry key="Windows" value="Windows" />
+                <entry key="Unix" value="Unix" />
+                <entry key="Mac" value="Mac" />
+            </map>
+        </property>
+    </bean>
+</beans>

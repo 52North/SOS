@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,45 +30,44 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate series streaming value implementation for {@link ScrollableResults}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */
 public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStreamingValue {
-
-    private static final long serialVersionUID = -6439122088572009613L;
-
     private ScrollableResults scrollableResult;
 
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param series
-     *            Datasource series id
-     * @param duplicated 
-     * @throws CodedException 
+     * @param connectionProvider the connection provider
+     * @param daoFactory         the DAO factory
+     * @param request            {@link GetObservationRequest}
+     * @param series             Datasource series id
+     *
+     * @throws OwsExceptionReport
      */
-    public HibernateScrollableSeriesStreamingValue(AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
-        super(request, series, duplicated);
+    public HibernateScrollableSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
+                                                   GetObservationRequest request, long series) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series);
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (scrollableResult == null) {
             getNextResults();
@@ -87,22 +86,14 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     @Override
     public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
         checkMaxNumberOfReturnedValues(1);
-        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
-        if (checkValue(resultObject)) {
-            return resultObject;
-        }
-        session.evict(resultObject);
-        return null;
+        return (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
     }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
-            TimeValuePair value = null;
-            if (checkValue(resultObject)) {
-                value = resultObject.createTimeValuePairFrom();
-            }
+            TimeValuePair value = resultObject.createTimeValuePairFrom();
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -111,17 +102,18 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @Override
-    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+    public OmObservation next() throws OwsExceptionReport {
         try {
-            OmObservation observation = null;
+            OmObservation observation = getObservationTemplate().cloneTemplate();
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
-            if (checkValue(resultObject)) {
-                observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
-                resultObject.addValuesToObservation(observation, getResponseFormat());
-                checkForModifications(observation);
-            }
+            resultObject.addValuesToObservation(observation, getResponseFormat());
+//            addValuesToObservation(observation, resultObject);
+//            if (resultObject.hasSamplingGeometry()) {
+//                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+//            }
+            checkForModifications(observation);
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {
@@ -166,6 +158,6 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      */
     private void setScrollableResult(ScrollableResults scrollableResult) {
         this.scrollableResult = scrollableResult;
-    }
+}
 
 }

@@ -1,0 +1,178 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+    <bean id="oceansitesSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+        <property name="title" value="OceanSITES netCDF" />
+        <property name="description" value="Define OceanSITES specific parameter" />
+        <property name="order" value="10.22" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.license" />
+        <property name="title" value="OceanSITES license" />
+        <property name="description" value="A statement describing the data distribution policy; it may be a project- or DAC-specific statement, but must allow free use of data. OceanSITES has adopted the CLIVAR data policy, which explicitly calls for free and unrestricted data exchange. Details at: &lt;a href='http://www.clivar.org/data/data_policy.php' target='_blank'/&gt;" />
+        <property name="order" value="0.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="Follows CLIVAR (Climate Varibility and Predictability) standards, cf. http://www.clivar.org/data/data_policy.php. Data available free of charge. User assumes all risk for use of data. User must display citation in any publication or product using data. User must contact PI prior to any commercial use of data." />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.citation" />
+        <property name="title" value="OceanSITES citation" />
+        <property name="description" value="The citation to be used in publications using the dataset; should include a reference to OceanSITES but may contain any other text deemed appropriate by the PI and DAC." />
+        <property name="order" value="1.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="These data were collected and made freely available by the OceanSITES project and the national programs that contribute to it." />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.acknowledgement" />
+        <property name="title" value="OceanSITES acknowledgement" />
+        <property name="description" value="A place to acknowledge various types of support for the project that produced this data." />
+        <property name="order" value="2.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.project" />
+        <property name="title" value="OceanSITES project" />
+        <property name="description" value="The scientific project that produced the data." />
+        <property name="order" value="3.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.project" />
+        <property name="title" value="OceanSITES project definition" />
+        <property name="description" value="The project SensorML identifier definition" />
+        <property name="order" value="4.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#PROJECT_ID" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.array" />
+        <property name="title" value="OceanSITES array definition" />
+        <property name="description" value="The array SensorML identifier definition" />
+        <property name="order" value="5.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#ARRAY_ID" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.network" />
+        <property name="title" value="OceanSITES network definition" />
+        <property name="description" value="The network definition from sensor desription (SensorML identification)" />
+        <property name="order" value="6.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#NETWORK_ID" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.wmo.platformCode" />
+        <property name="title" value="OceanSITES WMO platform code definition" />
+        <property name="description" value="The WMO platform code SensorML identifier definition." />
+        <property name="order" value="7.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#WMO_ID" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.site" />
+        <property name="title" value="OceanSITES site definition" />
+        <property name="description" value="The site code SensorML identifier definition." />
+        <property name="order" value="8.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#SITE_ID" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.platform" />
+        <property name="title" value="OceanSITES platform code definition" />
+        <property name="description" value="The platform code SensorML identifier definition." />
+        <property name="order" value="9.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#PLATFORM_ID" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.definition.dataMode" />
+        <property name="title" value="OceanSITES data mode definition" />
+        <property name="description" value="The data mode SensorML classifier definition." />
+        <property name="order" value="10.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="WMO_PLATFORM_CODE_DEFINITION" />
+    </bean>
+	 <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
+        <property name="key" value="oceansites.dataMode" />
+        <property name="title" value="OceanSITES data mode" />
+        <property name="description" value="The data mode." />
+        <property name="order" value="11.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="R" />
+        <property name="options">
+            <map>
+                <entry key="D" value="D" />
+                <entry key="M" value="M" />
+                <entry key="P" value="P" />
+                <entry key="R" value="R" />
+            </map>
+        </property>
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.formatVersion" />
+        <property name="title" value="ceanSITES data mode definition" />
+        <property name="description" value="The data mode SensorML identifier definition." />
+        <property name="order" value="12.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="1.3" />
+    </bean>
+	 <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
+        <property name="key" value="oceansites.principalInvestigator" />
+        <property name="title" value="Set the principalInvestigator CI_RoleCode definition" />
+        <property name="description" value="Define the principalInvestigator CI_RoleCode definition." />
+        <property name="order" value="13.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="CI_RoleCode_principalInvestigator" />
+        <property name="options">
+            <map>
+                <entry key="CI_RoleCode_author" value="author" />
+                <entry key="CI_RoleCode_custodian" value="custodian" />
+                <entry key="CI_RoleCode_distributor" value="distributor" />
+                <entry key="CI_RoleCode_originator" value="originator" />
+                <entry key="CI_RoleCode_owner" value="owner" />
+                <entry key="CI_RoleCode_pointOfContact" value="pointOfContact" />
+                <entry key="CI_RoleCode_principalInvestigator" value="principalInvestigator" />
+                <entry key="CI_RoleCode_processor" value="processor" />
+                <entry key="CI_RoleCode_publisher" value="publisher" />
+                <entry key="CI_RoleCode_resourceProvider" value="resourceProvider" />
+                <entry key="CI_RoleCode_user" value="user" />
+            </map>
+        </property>
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.references" />
+        <property name="title" value="OceanSITES references" />
+        <property name="description" value="Published or web-based references that describe the data or methods used to produce it. Include a reference to OceanSITES and a project-specific reference if appropriate." />
+        <property name="order" value="14.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.oceansites.org" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="oceansites.area" />
+        <property name="title" value="OceanSITES data mode definition" />
+        <property name="description" value="The area SensorML identifier definition." />
+        <property name="order" value="15.0" />
+        <property name="group" ref="oceansitesSettingDefintionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#AREA" />
+    </bean>
+
+</beans>

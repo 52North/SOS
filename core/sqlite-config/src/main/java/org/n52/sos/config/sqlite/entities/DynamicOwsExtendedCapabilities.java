@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,40 +30,40 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 
 /**
  * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Entity(name = "dynamic_extended_capabilities")
 public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtendedCapabilitiesKey, DynamicOwsExtendedCapabilities> {
 
     private static final long serialVersionUID = -209286379108756824L;
-    
+
     /**
      * constructor
      */
     public DynamicOwsExtendedCapabilities() {
         super(null);
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param oeck
-     *            the {@link OwsExtendedCapabilitiesKey} to set
+     *            the {@link OwsOperationMetadataExtensionProviderKey} to set
      */
-    public DynamicOwsExtendedCapabilities(OwsExtendedCapabilitiesKey oeck) {
+    public DynamicOwsExtendedCapabilities(OwsOperationMetadataExtensionProviderKey oeck) {
        super(new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param key
      *            the {@link DynamicOwsExtendedCapabilitiesKey} to set
      */
@@ -73,7 +73,7 @@ public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtend
 
     /**
      * constructor
-     * 
+     *
      * @param service
      *            the service to set
      * @param version

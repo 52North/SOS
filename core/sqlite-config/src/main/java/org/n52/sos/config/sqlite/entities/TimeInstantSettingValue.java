@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,31 +30,39 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.sos.config.SettingType;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.joda.time.DateTime;
+
+import org.n52.faroe.SettingType;
 
 /**
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 @Entity(name = "time_settings")
-public class TimeInstantSettingValue extends AbstractSettingValue<TimeInstant> {
+public class TimeInstantSettingValue extends AbstractSettingValue<DateTime> {
 
     private static final long serialVersionUID = 5397140191924717568L;
-    
-    private TimeInstant value;
+
+    private DateTime value;
+
+    public TimeInstantSettingValue(String identifier, DateTime value) {
+        super(identifier);
+        this.value = value;
+    }
+
+    public TimeInstantSettingValue() {
+        this(null, null);
+    }
 
     @Override
-    public TimeInstant getValue() {
+    public DateTime getValue() {
         return value;
     }
 
     @Override
-    public SettingValue<TimeInstant> setValue(TimeInstant value) {
+    public void setValue(DateTime value) {
         this.value = value;
-        return this;
     }
 
     @Override

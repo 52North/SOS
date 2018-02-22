@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,24 +31,23 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractDescribeSensorDAO;
-import org.n52.sos.exception.ows.MissingParameterValueException;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.http.MediaType;
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.sos.ds.AbstractDescribeSensorHandler;
 
 /**
  * class handles the DescribeSensor request
- * 
+ *
  * @since 4.0.0
  */
 public class SosDescribeSensorOperatorV100 extends
-        AbstractV1RequestOperator<AbstractDescribeSensorDAO, DescribeSensorRequest, DescribeSensorResponse> {
+        AbstractV1RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
@@ -61,13 +60,16 @@ public class SosDescribeSensorOperatorV100 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public DescribeSensorResponse receive(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
-        DescribeSensorResponse response = getDao().getSensorDescription(sosRequest);
+        DescribeSensorResponse response = getOperationHandler().getSensorDescription(sosRequest);
         response.setOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()));
         return response;
     }
@@ -105,10 +107,10 @@ public class SosDescribeSensorOperatorV100 extends
         // }
         exceptions.throwIfNotEmpty();
     }
-    
+
     private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
         if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat, true)) {
-            SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
+            checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
                     sosRequest.getService(), sosRequest.getVersion());
         }
     }

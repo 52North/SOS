@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,54 +28,58 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.util.AbstractConfiguringServiceLoaderRepository;
+import javax.inject.Inject;
+
+import org.n52.janmayen.Producer;
+import org.n52.janmayen.component.AbstractComponentRepository;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdditionalObservationCreatorRepository extends AbstractConfiguringServiceLoaderRepository<AdditionalObservationCreator> {
+import com.google.common.collect.Maps;
+
+public class AdditionalObservationCreatorRepository extends
+        AbstractComponentRepository<AdditionalObservationCreatorKey, AdditionalObservationCreator, AdditionalObservationCreatorFactory>
+        implements Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
 
+    @Deprecated
+    private static AdditionalObservationCreatorRepository instance;
+    private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
+            = Maps.newHashMap();
 
-    private final Map<AdditionalObservationCreatorKey, AdditionalObservationCreator> additionalObservationCreator =
-            new HashMap<>(0);
 
-    /**
-     * private constructor for singleton
-     *
-     * @throws ConfigurationException
-     */
-    private AdditionalObservationCreatorRepository() throws ConfigurationException {
-        super(AdditionalObservationCreator.class, false);
-        load(false);
-    }
+    @Inject
+    private Optional<Collection<AdditionalObservationCreator>> components = Optional.of(Collections.emptyList());
 
+    @Inject
+    private Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories = Optional.of(Collections.emptyList());
 
     @Override
-    protected void processConfiguredImplementations(Set<AdditionalObservationCreator> additionalObservationCreators)
-            throws ConfigurationException {
-        this.additionalObservationCreator.clear();
-        for (final AdditionalObservationCreator<?> aoc : additionalObservationCreators) {
-            for (AdditionalObservationCreatorKey key : aoc.getKeys()) {
-                LOGGER.debug("Registered AdditionalObservationCreator for {}", key);
-                this.additionalObservationCreator.put(key, aoc);
-            }
-        }
+    public void init() {
+        AdditionalObservationCreatorRepository.instance = this;
+        Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> implementations
+                = getUniqueProviders(this.components, this.componentFactories);
+                this.additionalObservationCreator.clear();
+        this.additionalObservationCreator.putAll(implementations);
     }
 
 
     public AdditionalObservationCreator get(AdditionalObservationCreatorKey key) {
-        return additionalObservationCreator.get(key);
-}
+        Producer<AdditionalObservationCreator> producer = additionalObservationCreator.get(key);
+        return producer == null ? null : producer.get();
+    }
 
     public AdditionalObservationCreator get(String namespace, Class<?> type) {
-            return get(new AdditionalObservationCreatorKey(namespace, type));
+        return get(new AdditionalObservationCreatorKey(namespace, type));
     }
 
     public boolean hasAdditionalObservationCreatorFor(String namespace, Class<?> type) {
@@ -86,25 +90,16 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
         return additionalObservationCreator.containsKey(key);
     }
 
+    @Deprecated
     public static AdditionalObservationCreatorRepository getInstance() {
-        return LazyHolder.INSTANCE;
+        return AdditionalObservationCreatorRepository.instance;
     }
 
-    public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(
-            final String namespace,
-                                                                              final Class<?>... elements) {
-        final HashSet<AdditionalObservationCreatorKey> keys = new HashSet<>(elements.length);
-        for (final Class<?> x : elements) {
+    public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(String namespace, Class<?>... elements) {
+        HashSet<AdditionalObservationCreatorKey> keys = new HashSet<>(elements.length);
+        for (Class<?> x : elements) {
             keys.add(new AdditionalObservationCreatorKey(namespace, x));
         }
         return keys;
     }
-
-    private static class LazyHolder {
-        private static final AdditionalObservationCreatorRepository INSTANCE = new AdditionalObservationCreatorRepository();
-
-        private LazyHolder() {
-        }
-    }
-
 }

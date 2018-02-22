@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,11 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.admin;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
@@ -41,19 +48,21 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObserv
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObservationDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateDeleteDeletedObservationsDAO.class);
-    private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    }
 
     @Override
     public void deleteDeletedObservations() throws OwsExceptionReport {
@@ -97,7 +106,7 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
         } else {
             criteria = session.createCriteria(AbstractLegacyObservation.class);
         }
-        criteria.add(Restrictions.eq(AbstractObservation.DELETED, true));
+        criteria.copy(Restrictions.eq(AbstractObservation.DELETED, true));
         LOG.debug("QUERY getCriteria(): {}", HibernateHelper.getSqlString(criteria));
         return criteria;
     }

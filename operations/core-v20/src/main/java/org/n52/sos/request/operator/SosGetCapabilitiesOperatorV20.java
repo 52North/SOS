@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,22 +31,23 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0
  *
  */
 public class SosGetCapabilitiesOperatorV20 extends
-        AbstractV2RequestOperator<AbstractGetCapabilitiesDAO, GetCapabilitiesRequest, GetCapabilitiesResponse> {
+        AbstractV2RequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.GetCapabilities.name();
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
@@ -57,13 +58,16 @@ public class SosGetCapabilitiesOperatorV20 extends
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
-        return getDao().getCapabilities(request);
+        return getOperationHandler().getCapabilities(request);
     }
 
     @Override
@@ -77,5 +81,5 @@ public class SosGetCapabilitiesOperatorV20 extends
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
     }
- 
+
 }

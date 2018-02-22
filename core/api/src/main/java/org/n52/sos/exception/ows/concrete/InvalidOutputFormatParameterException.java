@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,12 +28,12 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.ogc.sos.Sos1Constants.DescribeSensorParams;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.sos.Sos1Constants.DescribeSensorParams;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InvalidOutputFormatParameterException extends InvalidParameterValueException {
     private static final long serialVersionUID = 21928020999418921L;

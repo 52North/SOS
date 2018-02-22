@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,58 +32,59 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.AbstractInsertObservationDAO;
-import org.n52.sos.event.SosEventBus;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.HasExtension;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.OMHelper;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.event.events.ObservationInsertion;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.OMHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
-
+import org.n52.svalbard.ConformanceClasses;
 
 public class SosInsertObservationOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertObservationDAO, InsertObservationRequest, InsertObservationResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler, InsertObservationRequest, InsertObservationResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.InsertObservation.name();
 
-    private static final Set<String> CONFORMANCE_CLASSES =
-            Collections.singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
+    private static final Set<String> CONFORMANCE_CLASSES = Collections
+            .singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
 
     public SosInsertObservationOperatorV20() {
         super(OPERATION_NAME, InsertObservationRequest.class);
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public InsertObservationResponse receive(final InsertObservationRequest request) throws OwsExceptionReport {
-        InsertObservationResponse response = getDao().insertObservation(request);
-        SosEventBus.fire(new ObservationInsertion(request, response));
+        InsertObservationResponse response = getOperationHandler().insertObservation(request);
+        getServiceEventBus().submit(new ObservationInsertion(request, response));
         return response;
     }
 
@@ -126,20 +127,19 @@ public class SosInsertObservationOperatorV20 extends
      * definitions.
      *
      * @param request
-     *            Request
+     *                Request
+     *
      * @throws CodedException
-     *             If more than one sampling geometry is defined
+     *                        If more than one sampling geometry is defined
      */
     private void checkParameterForSpatialFilteringProfile(InsertObservationRequest request) throws OwsExceptionReport {
         for (OmObservation observation : request.getObservations()) {
             if (observation.isSetParameter()) {
-                int count = 0;
-                for (NamedValue<?> namedValue : observation.getParameter()) {
-                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE
-                            .equals(namedValue.getName().getHref())) {
-                        count++;
-                    }
-                }
+                long count = observation.getParameter().stream()
+                        .map(NamedValue::getName)
+                        .map(ReferenceType::getHref)
+                        .filter(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE::equals)
+                        .count();
                 if (count > 1) {
                     throw new InvalidParameterValueException().at("om:parameter").withMessage(
                             "The observation contains more than one ({}) sampling geometry definitions!", count);
@@ -158,12 +158,10 @@ public class SosInsertObservationOperatorV20 extends
             for (final String offering : request.getOfferings()) {
                 if (offering == null || offering.isEmpty()) {
                     exceptions.add(new MissingOfferingParameterException());
-                } else if (!Configurator.getInstance().getCache().getOfferings().contains(offering)) {
+                } else if (!getCache().getOfferings().contains(offering)) {
                     exceptions.add(new InvalidOfferingParameterException(offering));
                 } else {
-                    for (final OmObservation observation : request.getObservations()) {
-                        observation.getObservationConstellation().addOffering(offering);
-                    }
+                    request.getObservations().forEach(observation -> observation.getObservationConstellation().addOffering(offering));
                 }
             }
             exceptions.throwIfNotEmpty();
@@ -174,22 +172,22 @@ public class SosInsertObservationOperatorV20 extends
         if (CollectionHelper.isEmpty(request.getObservations())) {
             throw new MissingObservationParameterException();
         } else {
-            final ContentCache cache = Configurator.getInstance().getCache();
+            final SosContentCache cache = getCache();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final OmObservation observation : request.getObservations()) {
                 final OmObservationConstellation obsConstallation = observation.getObservationConstellation();
                 checkObservationConstellationParameter(obsConstallation);
                 // Requirement 67
-                checkOrSetObservationType(observation, isSplitObservations(request.getExtensions()));
+                checkOrSetObservationType(observation, isSplitObservations(request));
                 if (!cache.getObservationTypes().contains(obsConstallation.getObservationType())) {
                     exceptions.add(new InvalidObservationTypeException(obsConstallation.getObservationType()));
                 } else if (obsConstallation.isSetOfferings()) {
                     for (final String offeringID : obsConstallation.getOfferings()) {
-                        final Collection<String> allowedObservationTypes =
-                                cache.getAllowedObservationTypesForOffering(offeringID);
-                        if ((allowedObservationTypes == null
-                                || !allowedObservationTypes.contains(obsConstallation.getObservationType()))
-                                && !request.isSetExtensionSplitDataArrayIntoObservations()) {
+                        final Collection<String> allowedObservationTypes = cache
+                                .getAllowedObservationTypesForOffering(offeringID);
+                        if ((allowedObservationTypes == null ||
+                                 !allowedObservationTypes.contains(obsConstallation.getObservationType())) &&
+                                 !request.isSetExtensionSplitDataArrayIntoObservations()) {
                             exceptions.add(new InvalidObservationTypeForOfferingException(
                                     obsConstallation.getObservationType(), offeringID));
                         }
@@ -200,9 +198,9 @@ public class SosInsertObservationOperatorV20 extends
         }
     }
 
-    private boolean isSplitObservations(final SwesExtensions swesExtensions) {
-        return swesExtensions != null && !swesExtensions.isEmpty() && swesExtensions
-                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
+    private boolean isSplitObservations(HasExtension<?> extensions) {
+        return extensions.getBooleanExtension(Sos2Constants.Extensions.SplitDataArrayIntoObservations);
+
     }
 
     private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation)
@@ -211,14 +209,13 @@ public class SosInsertObservationOperatorV20 extends
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
         checkForCompositeObservableProperty(observableProperty, obsConstallation.getOfferings(),
-                Sos2Constants.InsertObservationParams.observedProperty);
+                                            Sos2Constants.InsertObservationParams.observedProperty);
 
         checkTransactionalProcedure(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure.name());
         checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
         checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(),
-                Sos2Constants.InsertObservationParams.featureOfInterest);
+                               Sos2Constants.InsertObservationParams.featureOfInterest);
     }
-
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)
             throws OwsExceptionReport {
@@ -226,9 +223,9 @@ public class SosInsertObservationOperatorV20 extends
         final String obsTypeFromValue = OMHelper.getObservationTypeFor(sosObservation.getValue().getValue());
         if (observationConstellation.isSetObservationType() && !isSplitObservations) {
             checkObservationType(observationConstellation.getObservationType(),
-                    Sos2Constants.InsertObservationParams.observationType.name());
-            if (obsTypeFromValue != null
-                    && !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
+                                 Sos2Constants.InsertObservationParams.observationType.name());
+            if (obsTypeFromValue != null &&
+                     !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
                 throw new NoApplicableCodeException().withMessage(
                         "The requested observation is invalid! The result element does not comply with the defined type (%s)!",
                         sosObservation.getObservationConstellation().getObservationType());
@@ -247,11 +244,9 @@ public class SosInsertObservationOperatorV20 extends
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.INSERT_OBSERVATION;
     }
-    
+
     private void createCompositePhenomenons(InsertObservationRequest request) {
-        for (OmObservation observation : request.getObservations()) {
-            createCompositePhenomenon(observation);
-        }
+        request.getObservations().forEach(this::createCompositePhenomenon);
     }
 
 }

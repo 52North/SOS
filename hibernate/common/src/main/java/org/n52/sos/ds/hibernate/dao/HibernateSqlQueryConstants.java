@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface HibernateSqlQueryConstants {
 

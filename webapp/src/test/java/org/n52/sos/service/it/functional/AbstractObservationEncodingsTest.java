@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,56 +30,36 @@ package org.n52.sos.service.it.functional;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.netcdf.NetcdfConstants;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.series.wml.WaterMLConstants;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.operator.RequestOperatorKey;
-import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.it.Response;
-import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.service.it.ogc.OWSConstants;
+import org.n52.sos.service.it.ogc.OmConstants;
+import org.n52.sos.service.it.ogc.SosConstants;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.sun.jna.Native;
 
-import net.opengis.om.x10.ObservationCollectionDocument;
-import net.opengis.ows.x11.ExceptionReportDocument;
-import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.InsertObservationResponseDocument;
 import net.opengis.swes.x20.InsertSensorResponseDocument;
-import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.jni.netcdf.Nc4prototypes;
 
 public abstract class AbstractObservationEncodingsTest extends AbstractObservationTest {
     protected static final String FEATURE_OF_INTEREST = "featureOfInterest";
@@ -93,7 +73,7 @@ public abstract class AbstractObservationEncodingsTest extends AbstractObservati
 
     @Before
     public void before() throws OwsExceptionReport {
-        ServiceOperatorKey sok = new ServiceOperatorKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+        OwsServiceKey sok = new OwsServiceKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
         RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
         RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
 

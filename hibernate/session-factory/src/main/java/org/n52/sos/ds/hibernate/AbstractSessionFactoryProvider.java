@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,52 +28,41 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.spi.Stoppable;
-import org.n52.sos.ds.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.lifecycle.Destroyable;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
-public abstract class AbstractSessionFactoryProvider implements ConnectionProvider {
+public abstract class AbstractSessionFactoryProvider implements Destroyable, ConnectionProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSessionFactoryProvider.class);
 
-    private final ReentrantLock lock = new ReentrantLock();
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.n52.sos.ds.ConnectionProvider#cleanup()
-     */
     @Override
-    public void cleanup() {
-        lock.lock();
+    public void destroy() {
         SessionFactory sessionFactory = getSessionFactory();
+
+        if (sessionFactory == null || sessionFactory.isClosed()) {
+            return;
+        }
+
         try {
-            if (getSessionFactory() != null) {
-                try {
-                    if (SessionFactoryImpl.class.isInstance(sessionFactory)
-                            && Stoppable.class.isInstance(((SessionFactoryImpl) sessionFactory)
-                                    .getConnectionProvider())) {
-                        ((Stoppable) ((SessionFactoryImpl) sessionFactory).getConnectionProvider()).stop();
-                    }
-                    sessionFactory.close();
-                    LOG.info("Connection provider closed successfully!");
-                } catch (HibernateException he) {
-                    LOG.error("Error while closing connection provider!", he);
-                }
-            }
-        } finally {
-            sessionFactory = null;
-            lock.unlock();
+//            if (SessionFactoryImpl.class.isInstance(sessionFactory)
+//                && Stoppable.class.isInstance(((SessionFactoryImpl) sessionFactory).getConnectionProvider())) {
+//                ((Stoppable) ((SessionFactoryImpl) sessionFactory).getConnectionProvider()).stop();
+//            }
+            sessionFactory.close();
+            LOG.info("Connection provider closed successfully!");
+        } catch (HibernateException he) {
+            LOG.error("Error while closing connection provider!", he);
         }
     }
 

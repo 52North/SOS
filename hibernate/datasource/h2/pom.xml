@@ -3,25 +3,41 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate-datasource</artifactId>
-        <version>4.4.3-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource-h2</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate H2 Datasource</name>
-	<description>52°North Sensor Observation Service Hibernate H2 module</description>
+    <description>52°North Sensor Observation Service Hibernate H2 module</description>
     <dependencies>
-            <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-common</artifactId>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>faroe</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>faroe-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-session-factory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -34,6 +50,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

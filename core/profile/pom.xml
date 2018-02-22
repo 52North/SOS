@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>core</artifactId>
-        <version>4.4.3-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>profile</artifactId>
@@ -11,7 +11,6 @@
     <name>52°North SOS - Profile Module</name>
     <description>52°North SOS profile module</description>
     <modules>
-    	<module>xml</module>
     	<module>coding</module>
     </modules>
 </project>

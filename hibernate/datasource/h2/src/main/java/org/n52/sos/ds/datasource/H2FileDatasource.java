@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,8 +30,6 @@ package org.n52.sos.ds.datasource;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -44,18 +42,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.joda.time.DateTime;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
+import org.hibernate.boot.Metadata;
+import org.n52.faroe.AbstractSettingDefinition;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.exception.ConfigurationException;
 
 import com.google.common.collect.Sets;
 
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
@@ -66,10 +64,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
             .compile("^jdbc:h2:(.+)$");
 
     private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
-
-    private final StringSettingDefinition h2Database = createDatabaseDefinition().setDescription(
-            "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
-            System.getProperty("user.home") + File.separator + "sos");
 
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
@@ -89,9 +83,19 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?, ?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(
+                "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
+                System.getProperty("user.home") + File.separator + "sos");
+        return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
                 getTransactionalDefiniton(), getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
+    }
+
+    private StringSettingDefinition getDatabaseDefinition() {
+        StringSettingDefinition def = createDatabaseDefinition();
+        def.setDescription("Set this to the name/path of the database you want to use for SOS.");
+        def.setDefaultValue(System.getProperty("user.home") + File.separator + "sos");
+        return def;
     }
 
     @Override
@@ -105,23 +109,26 @@ public class H2FileDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_POOL_SIZE, "1");
         p.put(HibernateConstants.CONNECTION_RELEASE_MODE, HibernateConstants.CONNECTION_RELEASE_MODE_AFTER_TRANSACTION);
         p.put(HibernateConstants.CURRENT_SESSION_CONTEXT, HibernateConstants.THREAD_LOCAL_SESSION_CONTEXT);
+        p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         addMappingFileDirectories(settings, p);
         return p;
     }
 
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<>(2);
+        Map<String, Object> settings = new HashMap<>(5);
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();
-        settings.put(h2Database.getKey(), matcher.group(1));
+        settings.put(DATABASE_KEY, matcher.group(1));
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
+        settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
+        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         return settings;
     }
 
     @Override
     public boolean checkSchemaCreation(Map<String, Object> settings) {
-        String path = (String) settings.get(h2Database.getKey());
+        String path = (String) settings.get(DATABASE_KEY);
         File f = new File(path + ".h2.db");
         if (f.exists()) {
             return checkTableSize(settings);
@@ -140,11 +147,11 @@ public class H2FileDatasource extends AbstractH2Datasource {
                 }
                 return created;
             } catch (IOException ex) {
-                throw new ConfigurationException(ex);
+                throw new ConfigurationError(ex);
             }
         }
     }
-    
+
     private boolean checkTableSize(Map<String, Object> settings) {
         Connection conn = null;
         Statement stmt = null;
@@ -156,15 +163,15 @@ public class H2FileDatasource extends AbstractH2Datasource {
             resultSet.last();
             return resultSet.getRow() <= 1;
         } catch (SQLException ex) {
-            throw new ConfigurationException(ex);
+            throw new ConfigurationError(ex);
         } finally {
             close(conn);
             close(stmt);
         }
     }
-    
+
     @Override
-    protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override
@@ -174,7 +181,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     protected String toURL(Map<String, Object> settings) {
-        return String.format(JDBC_URL_FORMAT, settings.get(h2Database.getKey()));
+        return String.format(JDBC_URL_FORMAT, settings.get(DATABASE_KEY));
     }
 
     @Override

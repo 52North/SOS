@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,14 +45,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.n52.sos.cache.ContentCache;
+
+import org.n52.sos.cache.SosContentCache;
 
 import com.google.common.collect.Lists;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SosGetObservationOperatorV20Test {
@@ -74,7 +75,7 @@ public class SosGetObservationOperatorV20Test {
     @Test
     public void should_add_childs_for_features() {
         final SosGetObservationOperatorV20 operator = mock(SosGetObservationOperatorV20.class);
-        final ContentCache cache = mock(ContentCache.class);
+        final SosContentCache cache = mock(SosContentCache.class);
         final Set<String> myChildFeatures = new HashSet<String>(1);
         myChildFeatures.add("child-feature");
         when(cache.getChildFeatures(anyString(), anyBoolean(), anyBoolean())).thenReturn(myChildFeatures);

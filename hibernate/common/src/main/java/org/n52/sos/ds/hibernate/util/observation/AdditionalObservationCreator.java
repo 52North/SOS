@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,28 +28,25 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.Set;
-
 import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.janmayen.component.Component;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 
-public interface AdditionalObservationCreator<T extends Series> {
+public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
 
-    Set<AdditionalObservationCreatorKey> getKeys();
-    
-    OmObservation create(OmObservation omObservation, T series);
+    OmObservation create(OmObservation omObservation, DatasetEntity series);
 
-    OmObservation create(OmObservation omObservation, Observation<?> observation);
-    
-    OmObservation add(OmObservation omObservation, Observation<?> observation);
-    
-    OmObservation create(OmObservation omObservation, T series, Session session) throws CodedException;
+    OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException;
 
-    OmObservation create(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException;
-    
-    OmObservation add(OmObservation omObservation, Observation<?> observation, Session session) throws CodedException;
+    OmObservation add(OmObservation omObservation, DataEntity<?> observation);
+
+    OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException;
+
+    OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
+
+    OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
 
 }

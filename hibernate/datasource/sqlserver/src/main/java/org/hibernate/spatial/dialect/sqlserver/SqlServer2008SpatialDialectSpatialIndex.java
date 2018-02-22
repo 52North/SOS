@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,23 +41,23 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008SpatialDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 1L;
-    
+
     public SqlServer2008SpatialDialectSpatialIndex() {
         super();
     }
 
     // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
-        
+
         // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
         // CREATE SPATIAL INDEX SIndx_SpatialTable_geometry_col1 ON SpatialTable(geometry_col)
-        
+
 //        String name = index.getName();
 //        Table table = index.getTable();
 //        Iterator<Column> columns = index.getColumnIterator();
 //        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-//        
-//        
+//
+//
 //        StringBuilder buf = new StringBuilder( "create" )
 //                        .append( " spatial index " )
 //                        .append( this.qualifyIndexName() ?

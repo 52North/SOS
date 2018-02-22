@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,16 +31,18 @@ package org.n52.sos.service.profile;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Strings;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface Profile {
 
     String getIdentifier();
 
     boolean isActiveProfile();
-    
+
     void setActiveProfile(boolean active);
 
     String getObservationResponseFormat();
@@ -57,13 +59,21 @@ public interface Profile {
 
     boolean isSetEncodeFeatureOfInterestNamespace();
 
-    boolean isEncodeProcedureInObservation();
+    default boolean isEncodeProcedureInObservation() {
+        return getEncodeProcedureInObservation() != null && !getEncodeProcedureInObservation().isEmpty();
+    }
 
     boolean isEncodeProcedureInObservation(String namespace);
+
+    Map<String, Boolean> getEncodeProcedureInObservation();
 
     boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation();
 
     Map<String, String> getDefaultObservationTypesForEncoding();
+
+    default boolean isSetDefaultObservationTypesForEncoding() {
+        return getDefaultObservationTypesForEncoding() != null && !getDefaultObservationTypesForEncoding().isEmpty();
+    }
 
     boolean isListFeatureOfInterestsInOfferings();
 
@@ -75,11 +85,21 @@ public interface Profile {
 
     String getResponseNoDataPlaceholder();
 
+    default boolean isSetResponseNoDataPlaceholder() {
+        return !Strings.isNullOrEmpty(getResponseNoDataPlaceholder());
+    }
+
     Set<String> getNoDataPlaceholder();
 
-    boolean isSetNoDataPlaceholder();
-    
+    default boolean isSetNoDataPlaceholder() {
+        return getNoDataPlaceholder() != null && !getNoDataPlaceholder().isEmpty();
+    }
+
     void setDefinition(String definition);
-    
+
     String getDefinition();
+
+    default boolean isSetDefinition() {
+        return !Strings.isNullOrEmpty(getDefinition());
+    }
 }

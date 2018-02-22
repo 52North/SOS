@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,13 +28,13 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 
 /**
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
+ *
  * @since 4.0.0
  */
 public class ResultInsertion extends SosInsertionEvent<InsertResultRequest, InsertResultResponse> {

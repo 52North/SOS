@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,9 +47,9 @@ import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
 /**
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
  * the database to use UTC instead of the JVM's timezone.
- * 
- * @author Shane StClair <shane@axiomalaska.com>
- * 
+ *
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
+ *
  * @since 4.0.0
  */
 public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
@@ -67,6 +67,13 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
                 st.setTimestamp(index, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
                         Calendar.getInstance(UTC));
             }
+
+            @Override
+            protected void doBind(CallableStatement st, X value, String name, WrapperOptions options)
+                    throws SQLException {
+                st.setTimestamp(name, javaTypeDescriptor.unwrap(value, Timestamp.class, options),
+                        Calendar.getInstance(UTC));
+            }
         };
     }
 
@@ -74,10 +81,10 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
         return new BasicExtractor<X>(javaTypeDescriptor, this) {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {
-            	if (rs.getObject(name) != null) {
-            		return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
-            	}
-            	return null;
+                if (rs.getObject(name) != null) {
+                    return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
+                }
+                return null;
             }
 
             @Override

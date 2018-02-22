@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,16 +34,35 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.n52.series.db.beans.BlobDatasetEntity;
+import org.n52.series.db.beans.BooleanDatasetEntity;
+import org.n52.series.db.beans.CategoryDatasetEntity;
+import org.n52.series.db.beans.CategoryProfileDatasetEntity;
+import org.n52.series.db.beans.ComplexDatasetEntity;
+import org.n52.series.db.beans.CountDatasetEntity;
+import org.n52.series.db.beans.DataArrayDatasetEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.GeometryDatasetEntity;
+import org.n52.series.db.beans.NotInitializedDatasetEntity;
+import org.n52.series.db.beans.ProfileDatasetEntity;
+import org.n52.series.db.beans.QuantityDatasetEntity;
+import org.n52.series.db.beans.QuantityProfileDatasetEntity;
+import org.n52.series.db.beans.ReferencedDatasetEntity;
+import org.n52.series.db.beans.TextDatasetEntity;
+import org.n52.series.db.beans.TextProfileDatasetEntity;
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.ProfileDataset;
+import org.n52.series.db.beans.dataset.QuantityDataset;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
 
 /**
  * Hibernate data access class for series
@@ -53,14 +72,19 @@ import org.n52.sos.util.CollectionHelper;
  */
 public class SeriesDAO extends AbstractSeriesDAO {
 
+    public SeriesDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
+
     @Override
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
-        List<Series> series = new ArrayList<>();
+    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
+            OwsExceptionReport {
+        List<DatasetEntity> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesSet(request, ids, session));
             }
-           
+
         } else {
             series.addAll(getSeriesSet(request, features, session));
         }
@@ -69,22 +93,29 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, session).list();
     }
 
     @Override
-    public List<Series> getSeries(GetDataAvailabilityRequest request, Session session)
+    public List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
-        return  new ArrayList<>(getSeriesCriteria(request, session));
+        return new ArrayList<>(getSeriesCriteria(request, session));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DatasetEntity> getSeries(GetResultRequest request, Collection<String> featureIdentifiers,
+            Session session) throws OwsExceptionReport {
+        return getSeriesCriteria(request, featureIdentifiers, session).list();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+                                  Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedures, observedProperties, ids, session).list());
             }
@@ -96,10 +127,10 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
+    public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Collection<String> offerings, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedures, observedProperties, ids, offerings, session).list());
             }
@@ -111,9 +142,9 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String observedProperty, Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(observedProperty, ids, session).list());
             }
@@ -125,9 +156,9 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
-            List<Series> series = new ArrayList<>();
+            List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
                 series.addAll(getSeriesCriteria(procedure, observedProperty, offering, ids, session).list());
             }
@@ -138,18 +169,27 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public Series getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session) {
-        return (Series) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
+    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session) {
+        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
+    }
+
+    public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
+        return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
     }
 
     @Override
-    public Series getOrInsertSeries(ObservationContext ctx, final Session session) throws CodedException {
-        return getOrInsert(ctx, session);
+    public DatasetEntity getOrInsertSeries(ObservationContext ctx, Data<?> observation, final Session session) throws OwsExceptionReport {
+        return getOrInsert(ctx, observation, session);
     }
 
     @Override
-    public Class <?>getSeriesClass() {
-        return Series.class;
+    public Class<?> getSeriesClass() {
+        return DatasetEntity.class;
+    }
+
+    @Override
+    public Class<?> getNotInitializedDatasetClass() {
+        return NotInitializedDatasetEntity.class;
     }
 
     @Override
@@ -159,6 +199,111 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     public ObservationFactory getObservationFactory() {
         return SeriesObservationFactory.getInstance();
+    }
+
+    @Override
+    public DatasetFactory getDatasetFactory() {
+        return DefaultDatasetFactory.getInstance();
+    }
+
+    private static class DefaultDatasetFactory
+            extends
+            DatasetFactory {
+
+        protected DefaultDatasetFactory() {
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> datasetClass() {
+            return DatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends BlobDatasetEntity> blobClass() {
+            return BlobDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends BooleanDatasetEntity> truthClass() {
+            return BooleanDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends CategoryDatasetEntity> categoryClass() {
+            return CategoryDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends CountDatasetEntity> countClass() {
+            return CountDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends GeometryDatasetEntity> geometryClass() {
+            return GeometryDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends QuantityDataset> numericClass() {
+            return QuantityDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends DataArrayDatasetEntity> sweDataArrayClass() {
+            return DataArrayDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends TextDatasetEntity> textClass() {
+            return TextDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ComplexDatasetEntity> complexClass() {
+            return ComplexDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDatasetEntity> profileClass() {
+            return ProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> textProfileClass() {
+            return TextProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> categoryProfileClass() {
+            return CategoryProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ProfileDataset> quantityProfileClass() {
+            return QuantityProfileDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends ReferencedDatasetEntity> referenceClass() {
+            return ReferencedDatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends NotInitializedDatasetEntity> notInitializedClass() {
+            return NotInitializedDatasetEntity.class;
+        }
+
+        public static DefaultDatasetFactory getInstance() {
+            return Holder.INSTANCE;
+        }
+
+        private static class Holder {
+            private static final DefaultDatasetFactory INSTANCE = new DefaultDatasetFactory();
+
+            private Holder() {
+            }
+        }
+
     }
 
 }

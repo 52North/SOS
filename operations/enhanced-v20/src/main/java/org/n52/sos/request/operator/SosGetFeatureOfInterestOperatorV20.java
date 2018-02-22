@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,16 +32,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
+import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.ConformanceClasses;
 
 /**
  * @since 4.0.0
@@ -49,7 +49,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  */
 public class SosGetFeatureOfInterestOperatorV20
         extends
-        AbstractV2RequestOperator<AbstractGetFeatureOfInterestDAO, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
+        AbstractV2RequestOperator<AbstractGetFeatureOfInterestHandler, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_FEATURE_OF_INTEREST_RETRIEVAL);
@@ -61,56 +61,63 @@ public class SosGetFeatureOfInterestOperatorV20
     }
 
     @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+    public Set<String> getConformanceClasses(String service, String version) {
+        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+            return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
+        }
+        return Collections.emptySet();
     }
 
     @Override
     public GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
-        return getDao().getFeatureOfInterest(request);
+        return getOperationHandler().getFeatureOfInterest(request);
     }
 
     @Override
-    protected void checkParameters(GetFeatureOfInterestRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
-            checkServiceParameter(sosRequest.getService());
+            checkServiceParameter(request.getService());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSingleVersionParameter(sosRequest);
+            checkSingleVersionParameter(request);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(sosRequest.getObservedProperties(),
+            checkObservedProperties(request.getObservedProperties(),
                     Sos2Constants.GetFeatureOfInterestParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedures(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkQueryableProcedures(request.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
             // add instance and child procedures to request
-            if (sosRequest.isSetProcedures()) {
-                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
+            if (request.isSetProcedures()) {
+                request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
-                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+//            checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
+//                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+            checkFeatureOfInterestIdentifiers(request.getFeatureIdentifiers(), Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+            if (request.isSetFeatureOfInterestIdentifiers()) {
+                request.setFeatureIdentifiers(addChildFeatures(request.getFeatureIdentifiers()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSpatialFilters(sosRequest.getSpatialFilters(),
+            checkSpatialFilters(request.getSpatialFilters(),
                     Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        checkExtensions(sosRequest, exceptions);
+        checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
     }
 

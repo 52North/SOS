@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,11 +33,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmConstants;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DefaultProfile implements Profile {
 
@@ -72,7 +72,7 @@ public class DefaultProfile implements Profile {
     private Map<String, Boolean> encodeProcedureInObservation = new HashMap<String, Boolean>(0);
 
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
-    
+
     private String definition;
 
     @Override
@@ -139,6 +139,11 @@ public class DefaultProfile implements Profile {
     }
 
     @Override
+    public Map<String, Boolean> getEncodeProcedureInObservation() {
+        return encodeProcedureInObservation;
+    }
+
+    @Override
     public boolean isReturnLatestValueIfTemporalFilterIsMissingInGetObservation() {
         return DEAFULT_RETURN_LATEST_VALUE_IF_TEMPORAL_FILTER_IS_MISSING_IN_GETOBSERVATION;
     }
@@ -178,11 +183,6 @@ public class DefaultProfile implements Profile {
         return defaultNoDataPlaceholder;
     }
 
-    @Override
-    public boolean isSetNoDataPlaceholder() {
-        return defaultNoDataPlaceholder != null && !defaultNoDataPlaceholder.isEmpty();
-    }
-    
     @Override
     public void setDefinition(String definition) {
         this.definition = definition;

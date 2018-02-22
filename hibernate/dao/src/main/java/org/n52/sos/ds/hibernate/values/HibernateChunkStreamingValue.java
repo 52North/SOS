@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,35 +30,33 @@ package org.n52.sos.ds.hibernate.values;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate streaming value implementation for chunk results
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public class HibernateChunkStreamingValue extends HibernateStreamingValue {
-
-    private static final long serialVersionUID = -4898252375907510691L;
-
     private Iterator<ValuedObservation<?>> valuesResult;
-
     private int chunkSize;
-
     private int currentRow;
-
     private boolean noChunk = false;
     
     private int valueCounter = 0;
@@ -66,23 +64,21 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     /**
      * constructor
      *
-     * @param request
-     *            {@link GetObservationRequest}
-     * @param procedure
-     *            Datasource procedure id
-     * @param observableProperty
-     *            Datasource observableProperty id
-     * @param featureOfInterest
-     *            Datasource featureOfInterest id
+     * @param connectionProvider the connection provider
+     * @param request            {@link GetObservationRequest}
+     * @param daoFactory         the DAO factory
+     * @param procedure          Datasource procedure id
+     * @param observableProperty Datasource observableProperty id
+     * @param featureOfInterest  Datasource featureOfInterest id
      */
-    public HibernateChunkStreamingValue(GetObservationRequest request, long procedure, long observableProperty,
+    public HibernateChunkStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest) {
-        super(request, procedure, observableProperty, featureOfInterest);
+        super(connectionProvider, daoFactory, request, procedure, observableProperty, featureOfInterest);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
     @Override
-    public boolean hasNextValue() throws OwsExceptionReport {
+    public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
         if (valuesResult == null || !valuesResult.hasNext()) {
             if (!noChunk) {
@@ -113,13 +109,13 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
+            if (hasNext()) {
                 ValuedObservation<?> resultObject = nextEntity();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
             }
-            return null;
+            throw new NoSuchElementException();
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
@@ -128,10 +124,10 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
     
     @Override
-    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
+    public OmObservation next(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
-            if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+            if (hasNext()) {
+                OmObservation observation = getObservationTemplate().cloneTemplate(withIdentifierNameDesription);
                 AbstractValuedLegacyObservation<?> resultObject = nextEntity();
                 resultObject.addValuesToObservation(observation, getResponseFormat());
 //                addValuesToObservation(observation, resultObject);

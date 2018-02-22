@@ -6,7 +6,7 @@
     </appender>
 
     <logger name="org.n52" level="INFO" />
-    <logger name="org.n52.sos.ds.hibernate" level="DEBUG" />    
+    <logger name="org.n52.sos.ds.hibernate" level="DEBUG" />
     <logger name="org.springframework" level="WARN" />
 
     <root level="INFO">

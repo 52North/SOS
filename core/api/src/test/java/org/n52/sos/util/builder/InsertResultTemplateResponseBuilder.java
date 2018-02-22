@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,8 +28,8 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -49,7 +49,7 @@ public class InsertResultTemplateResponseBuilder {
         return this;
     }
 
-    public AbstractServiceResponse build() {
+    public OwsServiceResponse build() {
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setAcceptedTemplate(resultTemplateIdentifier);
         return response;

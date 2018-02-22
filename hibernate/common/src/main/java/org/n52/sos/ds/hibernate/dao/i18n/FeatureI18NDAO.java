@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,28 +28,41 @@
  */
 package org.n52.sos.ds.hibernate.dao.i18n;
 
+import java.util.Collections;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+import org.n52.iceland.i18n.I18NDAOKey;
+import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.i18n.I18nFeatureEntity;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata;
-import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 
 
-public class FeatureI18NDAO extends AbstractHibernateI18NDAO<AbstractFeatureOfInterest, I18NFeatureMetadata, HibernateI18NFeatureOfInterestMetadata> {
+public class FeatureI18NDAO extends AbstractHibernateI18NDAO<AbstractFeatureEntity, I18NFeatureMetadata, I18nFeatureEntity> {
+    private DaoFactory daoFactory;
 
-    @Override
-    protected AbstractFeatureOfInterest getEntity(String id, Session session) {
-        return new FeatureOfInterestDAO().getFeatureOfInterest(id, session);
+    @Inject
+    public FeatureI18NDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     @Override
-    protected Class<HibernateI18NFeatureOfInterestMetadata> getHibernateEntityClass() {
-        return HibernateI18NFeatureOfInterestMetadata.class;
+    protected AbstractFeatureEntity getEntity(String id, Session session) {
+        return new FeatureOfInterestDAO(daoFactory).get(id, session);
     }
 
     @Override
-    protected HibernateI18NFeatureOfInterestMetadata createHibernateObject() {
-        return new HibernateI18NFeatureOfInterestMetadata();
+    protected Class<I18nFeatureEntity> getHibernateEntityClass() {
+        return I18nFeatureEntity.class;
+    }
+
+    @Override
+    protected I18nFeatureEntity createHibernateObject() {
+        return new I18nFeatureEntity();
     }
 
     @Override
@@ -58,8 +71,7 @@ public class FeatureI18NDAO extends AbstractHibernateI18NDAO<AbstractFeatureOfIn
     }
 
     @Override
-    public Class<I18NFeatureMetadata> getType() {
-        return I18NFeatureMetadata.class;
+    public Set<I18NDAOKey> getKeys() {
+        return Collections.singleton(new I18NDAOKey(I18NFeatureMetadata.class));
     }
-
 }

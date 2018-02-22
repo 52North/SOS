@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,21 +30,21 @@ package org.n52.sos.netcdf.data.subsensor;
 
 /**
  * Implementation of {@link ProfileSubSensor} for point profile sub sensors.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 public class PointProfileSubSensor extends ProfileSubSensor {
-    private double height;
-            
+    private final double height;
+
     public PointProfileSubSensor(double height) {
         this.height = height;
     }
-    
+
     @Override
-    public double getHeight() {        
+    public double getHeight() {
         return height;
     }
 
@@ -60,16 +60,20 @@ public class PointProfileSubSensor extends ProfileSubSensor {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (null == obj) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         PointProfileSubSensor other = (PointProfileSubSensor) obj;
         if (Double.doubleToLongBits(height) != Double
-                .doubleToLongBits(other.height))
+            .doubleToLongBits(other.height)) {
             return false;
+        }
         return true;
     }
 

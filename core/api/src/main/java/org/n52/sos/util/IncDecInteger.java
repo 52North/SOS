@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,16 +34,16 @@ package org.n52.sos.util;
  *
  */
 public class IncDecInteger {
-    
+
     private int value;
-    
+
     /**
-     * 
+     *
      */
     public IncDecInteger() {
         set(0);
     }
-    
+
     /**
      * @param value
      */
@@ -52,7 +52,7 @@ public class IncDecInteger {
     }
 
     /**
-     * 
+     *
      */
     public void increment() {
         set(get() + 1);
@@ -72,14 +72,14 @@ public class IncDecInteger {
         set(get() + 1);
         return temp;
     }
-    
+
     /**
-     * 
+     *
      */
     public void decrement() {
         set(get() - 1);
     }
-    
+
     /**
      * @return
      */
@@ -87,7 +87,7 @@ public class IncDecInteger {
         set(get() - 1);
         return get();
     }
-    
+
     /**
      * @return
      */
@@ -96,21 +96,21 @@ public class IncDecInteger {
         set(get() - 1);
         return temp;
     }
-    
+
     /**
      * @return
      */
     public int get() {
         return value;
     }
-    
+
     /**
      * @param value
      */
     private void set(int value) {
         this.value = value;
     }
-    
+
     @Override
     public String toString() {
         return Integer.toString(get());

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -45,43 +44,38 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
-import org.n52.sos.ds.hibernate.entities.TProcedure;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.DateTimeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +98,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private static final String SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST =
             "getProceduresForAllFeaturesOfInterest";
 
-    private static final String SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST = "getProceduresForFeatureOfInterest";
+    private static final String SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST = "getProceduresForAbstractFeatureEntity";
 
     private static final String SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA = "getProcedureTimeExtrema";
 
@@ -116,15 +110,20 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     private final ProcedureTimeTransformer transformer = new ProcedureTimeTransformer();
 
+
+    public ProcedureDAO(DaoFactory daoFactory) {
+        super(daoFactory);
+    }
+
     /**
      * Get all procedure objects
      *
      * @param session
      *            Hibernate session
-     * @return Procedure objects
+     * @return ProcedureEntity objects
      */
     @SuppressWarnings("unchecked")
-    public List<Procedure> getProcedureObjects(final Session session) {
+    public List<ProcedureEntity> getProcedureObjects(final Session session) {
         Criteria criteria = getDefaultCriteria(session);
         LOGGER.debug("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
@@ -141,9 +140,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public Map<String, Collection<String>> getProcedureIdentifiers(final Session session) {
         Criteria criteria = getDefaultCriteria(session);
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.property(Procedure.IDENTIFIER));
-        criteria.createAlias(Procedure.PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
-        projectionList.add(Projections.property("pp." + Procedure.IDENTIFIER));
+        projectionList.add(Projections.property(ProcedureEntity.IDENTIFIER));
+        criteria.createAlias(ProcedureEntity.PROPERTY_PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
+        projectionList.add(Projections.property("pp." + ProcedureEntity.IDENTIFIER));
         criteria.setProjection(projectionList);
         // return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
@@ -166,23 +165,23 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     /**
-     * Get Procedure object for procedure identifier
+     * Get ProcedureEntity object for procedure identifier
      *
      * @param identifier
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param session
      *            Hibernate session
-     * @return Procedure object
+     * @return ProcedureEntity object
      */
-    public Procedure getProcedureForIdentifier(final String identifier, final Session session) {
-        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+    public ProcedureEntity getProcedureForIdentifier(final String identifier, final Session session) {
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        Procedure procedure = (Procedure) criteria.uniqueResult();
-        if (procedure instanceof TProcedure && HibernateHelper.isEntitySupported(TProcedure.class)) {
-            criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME)
-                    .add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+        ProcedureEntity procedure = (ProcedureEntity) criteria.uniqueResult();
+        if (HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class)) {
+            criteria.createCriteria(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME)
+                    .add(Restrictions.isNull(ProcedureHistoryEntity.END_TIME));
             LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-            Procedure proc = (Procedure) criteria.uniqueResult();
+            ProcedureEntity proc = (ProcedureEntity) criteria.uniqueResult();
             if (proc != null) {
                 return proc;
             }
@@ -191,63 +190,63 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     }
     //
-    // private Procedure getProcedureWithLatestValidProcedureDescription(String
+    // private ProcedureEntity getProcedureWithLatestValidProcedureDescription(String
     // identifier, Session session) {
     // Criteria criteria = getDefaultCriteria(session);
-    // criteria.add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-    // criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+    // criteria.add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
+    // criteria.createCriteria(TProcedureEntity.VALID_PROCEDURE_TIME).add(Restrictions.isNull(ValidProcedureTime.END_TIME));
     // LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}",
     // HibernateHelper.getSqlString(criteria));
-    // return (Procedure) criteria.uniqueResult();
+    // return (ProcedureEntity) criteria.uniqueResult();
     // }
 
     /**
-     * Get Procedure object for procedure identifier inclusive deleted procedure
+     * Get ProcedureEntity object for procedure identifier inclusive deleted procedure
      *
      * @param identifier
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param session
      *            Hibernate session
-     * @return Procedure object
+     * @return ProcedureEntity object
      */
-    public Procedure getProcedureForIdentifierIncludeDeleted(final String identifier, final Session session) {
+    public ProcedureEntity getProcedureForIdentifierIncludeDeleted(final String identifier, final Session session) {
         Criteria criteria =
-                session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+                session.createCriteria(ProcedureEntity.class).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifierIncludeDeleted(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
-        return (Procedure) criteria.uniqueResult();
+        return (ProcedureEntity) criteria.uniqueResult();
     }
 
     /**
-     * Get Procedure object for procedure identifier
+     * Get ProcedureEntity object for procedure identifier
      *
      * @param identifier
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param session
      *            Hibernate session
-     * @return Procedure object
+     * @return ProcedureEntity object
      */
-    public Procedure getProcedureForIdentifier(final String identifier, Time time, final Session session) {
-        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
+    public ProcedureEntity getProcedureForIdentifier(final String identifier, Time time, final Session session) {
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (Procedure) criteria.uniqueResult();
+        return (ProcedureEntity) criteria.uniqueResult();
     }
 
     /**
-     * Get Procedure objects for procedure identifiers
+     * Get ProcedureEntity objects for procedure identifiers
      *
      * @param identifiers
-     *            Procedure identifiers
+     *            ProcedureEntity identifiers
      * @param session
      *            Hibernate session
-     * @return Procedure objects
+     * @return ProcedureEntity objects
      */
     @SuppressWarnings("unchecked")
-    public List<Procedure> getProceduresForIdentifiers(final Collection<String> identifiers, final Session session) {
+    public List<ProcedureEntity> getProceduresForIdentifiers(final Collection<String> identifiers, final Session session) {
         if (identifiers == null || identifiers.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
-        Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(Procedure.IDENTIFIER, identifiers));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(ProcedureEntity.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getProceduresForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -315,22 +314,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             results = namedQuery.list();
         } else {
             Criteria c = null;
-            if (EntitiyHelper.getInstance().isSeriesSupported()) {
-                c = session.createCriteria(EntitiyHelper.getInstance().getSeriesEntityClass())
-                        .createAlias(Series.FEATURE_OF_INTEREST, "f").createAlias(Series.PROCEDURE, "p")
-                        .add(Restrictions.eq(Series.DELETED, false))
+                c = session.createCriteria(getDaoFactory().getSeriesDAO().getSeriesClass())
+                        .createAlias(DatasetEntity.PROPERTY_FEATURE, "f").createAlias( DatasetEntity.PROPERTY_PROCEDURE, "p")
+                        .add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
                         .setProjection(Projections.distinct(Projections.projectionList()
-                                .add(Projections.property("f." + FeatureOfInterest.IDENTIFIER))
-                                .add(Projections.property("p." + Procedure.IDENTIFIER))));
-            } else {
-                c = session.createCriteria(AbstractLegacyObservation.class)
-                        .createAlias(AbstractLegacyObservation.FEATURE_OF_INTEREST, "f")
-                        .createAlias(AbstractLegacyObservation.PROCEDURE, "p")
-                        .add(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
-                        .setProjection(Projections.distinct(Projections.projectionList()
-                                .add(Projections.property("f." + FeatureOfInterest.IDENTIFIER))
-                                .add(Projections.property("p." + Procedure.IDENTIFIER))));
-            }
+                                .add(Projections.property("f." + AbstractFeatureEntity.IDENTIFIER))
+                                .add(Projections.property("p." + ProcedureEntity.IDENTIFIER))));
             LOGGER.debug("QUERY getProceduresForAllFeaturesOfInterest(feature): {}", HibernateHelper.getSqlString(c));
             results = c.list();
         }
@@ -349,31 +338,21 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @throws CodedException
      */
     @SuppressWarnings("unchecked")
-    public List<String> getProceduresForFeatureOfInterest(final Session session, final FeatureOfInterest feature)
+    public List<String> getProceduresForAbstractFeatureEntity(final Session session, final AbstractFeatureEntity feature)
             throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
             namedQuery.setParameter(FEATURE, feature.getIdentifier());
-            LOGGER.debug("QUERY getProceduresForFeatureOfInterest(feature) with NamedQuery: {}",
+            LOGGER.debug("QUERY getProceduresForAbstractFeatureEntity(feature) with NamedQuery: {}",
                     SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
             return namedQuery.list();
         } else {
             Criteria c = null;
-            if (EntitiyHelper.getInstance().isSeriesSupported()) {
                 c = getDefaultCriteria(session);
-                c.add(Subqueries.propertyIn(Procedure.ID,
-                        getDetachedCriteriaProceduresForFeatureOfInterestFromSeries(feature, session)));
-                c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-            } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-                c = observationDAO.getDefaultObservationInfoCriteria(session);
-                c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST)
-                        .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, feature.getIdentifier()));
-                c.createCriteria(AbstractObservation.PROCEDURE)
-                        .setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-
-            }
-            LOGGER.debug("QUERY getProceduresForFeatureOfInterest(feature): {}", HibernateHelper.getSqlString(c));
+                c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
+                        getDetachedCriteriaProceduresForAbstractFeatureEntityFromSeries(feature, session)));
+                c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
+            LOGGER.debug("QUERY getProceduresForAbstractFeatureEntity(feature): {}", HibernateHelper.getSqlString(c));
             return c.list();
         }
     }
@@ -385,54 +364,36 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Offering identifier
      * @param session
      *            Hibernate session
-     * @return Procedure identifiers
+     * @return ProcedureEntity identifiers
      * @throws CodedException
      *             If an error occurs
      */
     @SuppressWarnings("unchecked")
     public List<String> getProcedureIdentifiersForOffering(final String offeringIdentifier, final Session session)
             throws OwsExceptionReport {
-        final boolean obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
-        Criteria c = null;
-
-        if (obsConstSupported) {
-            c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyIn(Procedure.ID,
+        Criteria c = getDefaultCriteria(session);
+            c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
                     getDetachedCriteriaProceduresForOfferingFromObservationConstellation(offeringIdentifier,
                             session)));
-            c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-        } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            c = observationDAO.getDefaultObservationInfoCriteria(session);
-            if (observationDAO instanceof SeriesObservationDAO) {
-                Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
-                seriesCriteria.createCriteria(Series.PROCEDURE)
-                        .setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-
-            } else {
-                c.createCriteria(AbstractObservation.PROCEDURE)
-                        .setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-            }
-            new OfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifier);
-        }
+            c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
         LOGGER.debug(
-                "QUERY getProcedureIdentifiersForOffering(offeringIdentifier) using ObservationContellation entitiy ({}): {}",
-                obsConstSupported, HibernateHelper.getSqlString(c));
+                "QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
+                HibernateHelper.getSqlString(c));
         return c.list();
     }
 
     private Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        Criteria c = session.createCriteria(ProcedureEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        try {
+            c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
+                    getDetachedCriteriaProceduresForFromSeries(session)));
+        } catch (OwsExceptionReport e) {
+        }
+        return c;
     }
 
-    private Criteria getDefaultTProcedureCriteria(Session session) {
-        return session.createCriteria(TProcedure.class).add(Restrictions.eq(Procedure.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    }
-
-    private Criteria getDefaultTProcedureCriteriaIncludeDeleted(Session session) {
-        return session.createCriteria(TProcedure.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    private Criteria getDefaultProcedureCriteriaIncludeDeleted(Session session) {
+        return session.createCriteria(ProcedureEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**
@@ -442,71 +403,21 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Observable property identifier
      * @param session
      *            Hibernate session
-     * @return Procedure identifiers
+     * @return ProcedureEntity identifiers
      * @throws CodedException
      */
     @SuppressWarnings("unchecked")
     public Collection<String> getProcedureIdentifiersForObservableProperty(final String observablePropertyIdentifier,
             final Session session) throws OwsExceptionReport {
-        final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
-        Criteria c = null;
-        if (flag) {
-            c = getDefaultCriteria(session);
-            c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-            c.add(Subqueries.propertyIn(Procedure.ID,
+        Criteria c = getDefaultCriteria(session);
+            c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
+            c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
                     getDetachedCriteriaProceduresForObservablePropertyFromObservationConstellation(
                             observablePropertyIdentifier, session)));
-        } else {
-            if (EntitiyHelper.getInstance().isSeriesSupported()) {
-                c = getDefaultCriteria(session);
-                c.setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-                c.add(Subqueries.propertyIn(Procedure.ID, getDetachedCriteriaProceduresForObservablePropertyFromSeries(
-                        observablePropertyIdentifier, session)));
-            } else {
-                c = session.createCriteria(ContextualReferencedLegacyObservation.class).add(Restrictions.eq(ContextualReferencedLegacyObservation.DELETED, false));
-                c.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).setProjection(
-                        Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-                c.createCriteria(ContextualReferencedLegacyObservation.OBSERVABLE_PROPERTY).add(
-                        Restrictions.eq(ObservableProperty.IDENTIFIER, observablePropertyIdentifier));
-            }
-        }
         LOGGER.debug(
-                "QUERY getProcedureIdentifiersForObservableProperty(observablePropertyIdentifier) using ObservationContellation entitiy ({}): {}",
-                flag, HibernateHelper.getSqlString(c));
+                "QUERY getProcedureIdentifiersForObservableProperty(observablePropertyIdentifier): {}",
+                 HibernateHelper.getSqlString(c));
         return c.list();
-    }
-
-    /**
-     * Get transactional procedure object for procedure identifier
-     *
-     * @param identifier
-     *            Procedure identifier
-     * @param session
-     *            Hibernate session
-     * @return Transactional procedure object
-     */
-    public TProcedure getTProcedureForIdentifier(final String identifier, final Session session) {
-        Criteria criteria =
-                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (TProcedure) criteria.uniqueResult();
-    }
-
-    /**
-     * Get transactional procedure object for procedure identifier, include
-     * deleted
-     *
-     * @param identifier
-     *            Procedure identifier
-     * @param session
-     *            Hibernate session
-     * @return Transactional procedure object
-     */
-    public TProcedure getTProcedureForIdentifierIncludeDeleted(String identifier, Session session) {
-        Criteria criteria = getDefaultTProcedureCriteriaIncludeDeleted(session)
-                .add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (TProcedure) criteria.uniqueResult();
     }
 
     /**
@@ -514,7 +425,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * procedureDescriptionFormat
      *
      * @param identifier
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param procedureDescriptionFormat
      *            ProcedureDescriptionFormat identifier
      * @param session
@@ -524,22 +435,22 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @throws UnsupportedValueReferenceException
      * @throws UnsupportedTimeException
      */
-    public TProcedure getTProcedureForIdentifier(final String identifier, String procedureDescriptionFormat,
+    public ProcedureEntity getProcedureForIdentifier(final String identifier, String procedureDescriptionFormat,
             Time validTime, final Session session)
                     throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Criteria criteria =
-                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        Criteria createValidProcedureTime = criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME);
+                getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
+        Criteria createValidProcedureTime = criteria.createCriteria(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME);
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         if (validTime == null || validTimeCriterion == null) {
-            createValidProcedureTime.add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+            createValidProcedureTime.add(Restrictions.isNull(ProcedureHistoryEntity.END_TIME));
         } else {
             createValidProcedureTime.add(validTimeCriterion);
         }
-        createValidProcedureTime.createCriteria(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT).add(
-                Restrictions.eq(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormat));
+        createValidProcedureTime.createCriteria(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT).add(
+                Restrictions.eq(FormatEntity.FORMAT, procedureDescriptionFormat));
         LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (TProcedure) criteria.uniqueResult();
+        return (ProcedureEntity) criteria.uniqueResult();
     }
 
     /**
@@ -547,21 +458,21 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * procedureDescriptionFormats
      *
      * @param identifier
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param procedureDescriptionFormats
      *            ProcedureDescriptionFormat identifiers
      * @param session
      *            Hibernate session
      * @return Transactional procedure object
      */
-    public TProcedure getTProcedureForIdentifier(final String identifier, Set<String> procedureDescriptionFormats,
+    public ProcedureEntity getProcedureForIdentifier(final String identifier, Set<String> procedureDescriptionFormats,
             final Session session) {
         Criteria criteria =
-                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME)
-                .add(Restrictions.in(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormats));
+                getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
+        criteria.createCriteria(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME)
+                .add(Restrictions.in(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormats));
         LOGGER.debug("QUERY getTProcedureForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (TProcedure) criteria.uniqueResult();
+        return (ProcedureEntity) criteria.uniqueResult();
     }
 
     /**
@@ -576,7 +487,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Valid time of the procedure
      * @param session
      *            Hibernate Session
-     * @return Procedure entity that match the parameters
+     * @return ProcedureEntity entity that match the parameters
      * @throws UnsupportedTimeException
      *             If the time is not supported
      * @throws UnsupportedValueReferenceException
@@ -584,24 +495,24 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @throws UnsupportedOperatorException
      *             If the temporal operator is not supported
      */
-    public TProcedure getTProcedureForIdentifier(String identifier, Set<String> possibleProcedureDescriptionFormats,
+    public ProcedureEntity getProcedureForIdentifier(String identifier, Set<String> possibleProcedureDescriptionFormats,
             Time validTime, Session session)
                     throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Criteria criteria =
-                getDefaultTProcedureCriteria(session).add(Restrictions.eq(Procedure.IDENTIFIER, identifier));
-        Criteria createValidProcedureTime = criteria.createCriteria(TProcedure.VALID_PROCEDURE_TIME);
+                getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
+        Criteria createValidProcedureTime = criteria.createCriteria(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME);
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         if (validTime == null || validTimeCriterion == null) {
-            createValidProcedureTime.add(Restrictions.isNull(ValidProcedureTime.END_TIME));
+            createValidProcedureTime.add(Restrictions.isNull(ProcedureHistoryEntity.END_TIME));
         } else {
             createValidProcedureTime.add(validTimeCriterion);
         }
-        createValidProcedureTime.createCriteria(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT).add(Restrictions
-                .in(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT, possibleProcedureDescriptionFormats));
+        createValidProcedureTime.createCriteria(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT).add(Restrictions
+                .in(FormatEntity.FORMAT, possibleProcedureDescriptionFormats));
         LOGGER.debug(
                 "QUERY getTProcedureForIdentifier(identifier, possibleProcedureDescriptionFormats, validTime): {}",
                 HibernateHelper.getSqlString(criteria));
-        return (TProcedure) criteria.uniqueResult();
+        return (ProcedureEntity) criteria.uniqueResult();
     }
 
     public boolean isProcedureTimeExtremaNamedQuerySupported(Session session) {
@@ -649,20 +560,16 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             return getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
         }
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
         Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
-        if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            criteria.createAlias(ContextualReferencedSeriesObservation.SERIES, "s");
-            criteria.createAlias("s." + Series.PROCEDURE, "p");
-        } else {
-            criteria.createAlias(ContextualReferencedLegacyObservation.PROCEDURE, "p");
-        }
-        criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
+            criteria.createAlias(DataEntity.PROPERTY_DATASET, "s");
+            criteria.createAlias("s." +  DatasetEntity.PROPERTY_PROCEDURE, "p");
+        criteria.add(Restrictions.eq("p." + ProcedureEntity.IDENTIFIER, procedureIdentifier));
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
-        projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
+        projectionList.add(Projections.groupProperty("p." + ProcedureEntity.IDENTIFIER));
+        projectionList.add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END));
         criteria.setProjection(projectionList);
 
         LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
@@ -681,27 +588,27 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             namedQuery.setResultTransformer(transformer);
             results = namedQuery.list();
         } else {
-            AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+            AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
             if (seriesDAO != null) {
                 Criteria c = seriesDAO.getDefaultSeriesCriteria(session);
-                c.createAlias(Series.PROCEDURE, "p");
+                c.createAlias( DatasetEntity.PROPERTY_PROCEDURE, "p");
                 c.setProjection(Projections.projectionList()
-                        .add(Projections.groupProperty("p." + Procedure.IDENTIFIER))
-                        .add(Projections.min(Series.FIRST_TIME_STAMP)).add(Projections.max(Series.LAST_TIME_STAMP)));
+                        .add(Projections.groupProperty("p." + ProcedureEntity.IDENTIFIER))
+                        .add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT)).add(Projections.max(DatasetEntity.PROPERTY_LAST_VALUE_AT)));
                 LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}",
                         HibernateHelper.getSqlString(c));
                 c.setResultTransformer(transformer);
                 results = c.list();
             }
             if (checkHasNoProcedureTimeResult(results)) {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+                AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
                 Criteria criteria = observationDAO.getDefaultObservationTimeCriteria(session);
                 String alias = observationDAO.addProcedureAlias(criteria);
                 criteria.setProjection(
-                        Projections.projectionList().add(Projections.groupProperty(alias + Procedure.IDENTIFIER))
-                                .add(Projections.min(AbstractObservation.PHENOMENON_TIME_START))
-                                .add(Projections.max(AbstractObservation.PHENOMENON_TIME_START))
-                                .add(Projections.max(AbstractObservation.PHENOMENON_TIME_END)));
+                        Projections.projectionList().add(Projections.groupProperty(alias + ProcedureEntity.IDENTIFIER))
+                                .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START)));
 
                 LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}",
                         HibernateHelper.getSqlString(criteria));
@@ -741,7 +648,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * Get min time from observations for procedure
      *
      * @param procedure
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param session
      *            Hibernate session
      * @return min time for procedure
@@ -756,14 +663,14 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                     SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE);
             min = namedQuery.uniqueResult();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 addProcedureRestrictionForSeries(criteria, procedure);
             } else {
                 addProcedureRestrictionForObservation(criteria, procedure);
             }
-            addMinMaxProjection(criteria, MinMax.MIN, AbstractObservation.PHENOMENON_TIME_START);
+            addMinMaxProjection(criteria, MinMax.MIN, DataEntity.PROPERTY_SAMPLING_TIME_START);
             LOGGER.debug("QUERY getMinDate4Procedure(procedure): {}", HibernateHelper.getSqlString(criteria));
             min = criteria.uniqueResult();
         }
@@ -777,7 +684,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * Get max time from observations for procedure
      *
      * @param procedure
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      * @param session
      *            Hibernate session
      * @return max time for procedure
@@ -794,7 +701,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             maxStart = namedQuery.uniqueResult();
             maxEnd = maxStart;
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             Criteria cstart = observationDAO.getDefaultObservationInfoCriteria(session);
             Criteria cend = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
@@ -804,8 +711,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 addProcedureRestrictionForObservation(cstart, procedure);
                 addProcedureRestrictionForObservation(cend, procedure);
             }
-            addMinMaxProjection(cstart, MinMax.MAX, AbstractObservation.PHENOMENON_TIME_START);
-            addMinMaxProjection(cend, MinMax.MAX, AbstractObservation.PHENOMENON_TIME_END);
+            addMinMaxProjection(cstart, MinMax.MAX, DataEntity.PROPERTY_SAMPLING_TIME_START);
+            addMinMaxProjection(cend, MinMax.MAX, DataEntity.PROPERTY_SAMPLING_TIME_END);
             LOGGER.debug("QUERY getMaxDate4Procedure(procedure) start: {}", HibernateHelper.getSqlString(cstart));
             LOGGER.debug("QUERY getMaxDate4Procedure(procedure) end: {}", HibernateHelper.getSqlString(cend));
             if (HibernateHelper.getSqlString(cstart).endsWith(HibernateHelper.getSqlString(cend))) {
@@ -838,67 +745,53 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Procedure identifier
      * @param procedureDescriptionFormat
      *            Procedure description format object
-     * @param parentProcedures
-     *            Parent procedure identifiers
-     * @param session
-     *            Hibernate session
-     * @return Procedure object
-     *
-     * @deprecated use
-     *      {@link #getOrInsertProcedure(String, ProcedureDescriptionFormat, SosProcedureDescription, boolean, Session)}
-     */
-    @Deprecated
-    public Procedure getOrInsertProcedure(final String identifier,
-            final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
-            final Session session) {
-        SosProcedureDescription procedure = new SosProcedureDescriptionUnknowType(identifier,
-                procedureDescriptionFormat.getProcedureDescriptionFormat(), "").setParentProcedures(parentProcedures);
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedure, false, session);
-    }
-
-    /**
-     * Insert and get procedure object
-     *
-     * @param identifier
-     *            Procedure identifier
-     * @param procedureDescriptionFormat
-     *            Procedure description format object
      * @param procedureDescription
      *            {@link SosProcedureDescription} to insert
      * @param isType
      * @param session
      *            Hibernate session
-     * @return Procedure object
+     * @return ProcedureEntity object
      */
-    public Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
-            SosProcedureDescription procedureDescription, boolean isType, Session session) {
-        Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
+    public ProcedureEntity getOrInsertProcedure(String identifier, FormatEntity procedureDescriptionFormat,
+            SosProcedureDescription<?> procedureDescription, boolean isType, Session session) {
+        ProcedureEntity procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
         if (procedure == null) {
-            final TProcedure tProcedure = new TProcedure();
-            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
-            tProcedure.setIdentifier(identifier);
-            if (procedureDescription.isSetProcedureName()) {
-                tProcedure.setName(procedureDescription.getProcedureName());
-            }
-            if (procedureDescription.isSetParentProcedures()) {
-                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(procedureDescription.getParentProcedures(), session)));
-            }
-            if (procedureDescription.isSetTypeOf() && !tProcedure.isSetTypeOf()) {
-                Procedure typeOfProc = getProcedureForIdentifier(procedureDescription.getTypeOf().getTitle(), session);
-                if (typeOfProc != null) {
-                    tProcedure.setTypeOf(typeOfProc);
+            procedure = new ProcedureEntity();
+            procedure.setFormat(procedureDescriptionFormat);
+            procedure.setIdentifier(identifier);
+            if (procedureDescription.getProcedureDescription() instanceof AbstractFeature) {
+                AbstractFeature af = (AbstractFeature) procedureDescription.getProcedureDescription();
+                if (af.isSetName()) {
+                    procedure.setName(af.getFirstName().getValue());
+                }
+                if (af.isSetDescription()) {
+                    procedure.setDescription(af.getDescription());
                 }
             }
-            tProcedure.setIsType(isType);
-            tProcedure.setIsAggregation(procedureDescription.isAggragation());
-            if (procedureDescription.isSetMobile()) {
-                tProcedure.setMobile(procedureDescription.getMobile());
+            if (procedureDescription.isSetParentProcedure()) {
+                ProcedureEntity parent = getProcedureForIdentifier(procedureDescription.getParentProcedure().getHref(), session);
+                if (parent != null) {
+                    procedure.setParents(Sets.newHashSet(parent));
+                }
             }
-            if (procedureDescription.isSetInsitu()) {
-                tProcedure.setInsitu(procedureDescription.getInsitu());
+            if (procedureDescription.getTypeOf() != null && !procedure.isSetTypeOf()) {
+                ProcedureEntity typeOfProc = getProcedureForIdentifier(procedureDescription.getTypeOf().getTitle(), session);
+                if (typeOfProc != null) {
+                    procedure.setTypeOf(typeOfProc);
+                }
             }
-            tProcedure.setReference(procedureDescription.isReference());
-            procedure = tProcedure;
+            procedure.setType(isType);
+            procedure.setAggregation(procedureDescription.isAggregation());
+            if (procedureDescription.getProcedureDescription() instanceof AbstractSensorML) {
+                AbstractSensorML sml = (AbstractSensorML) procedureDescription.getProcedureDescription();
+                if (sml.isSetMobile()) {
+                    procedure.setMobile(sml.getMobile());
+                }
+                if (sml.isSetInsitu()) {
+                    procedure.setInsitu(sml.getInsitu());
+                }
+            }
+            procedure.setReference(procedureDescription.isReference());
         }
         procedure.setDeleted(false);
         session.saveOrUpdate(procedure);
@@ -907,24 +800,32 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         return procedure;
     }
 
+    private DetachedCriteria getDetachedCriteriaProceduresForFromSeries(Session session) throws OwsExceptionReport {
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
+        return detachedCriteria;
+    }
+
     /**
      * Get Hibernate Detached Criteria for class Series and featureOfInterest
      * identifier
      *
      * @param featureOfInterest
-     *            FeatureOfInterest identifier parameter
+     *            AbstractFeatureEntity identifier parameter
      * @param session
      *            Hibernate session
-     * @return Hiberante Detached Criteria with Procedure entities
+     * @return Hiberante Detached Criteria with ProcedureEntity entities
      * @throws CodedException
      */
-    private DetachedCriteria getDetachedCriteriaProceduresForFeatureOfInterestFromSeries(
-            FeatureOfInterest featureOfInterest, Session session) throws CodedException {
+    private DetachedCriteria getDetachedCriteriaProceduresForAbstractFeatureEntityFromSeries(
+            AbstractFeatureEntity featureOfInterest, Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getClass());
-        detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
-        detachedCriteria.add(Restrictions.eq(Series.FEATURE_OF_INTEREST, featureOfInterest));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_FEATURE, featureOfInterest));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -936,15 +837,15 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            ObservableProperty identifier parameter
      * @param session
      *            Hibernate session
-     * @return Hiberante Detached Criteria with Procedure entities
+     * @return Hiberante Detached Criteria with ProcedureEntity entities
      */
     private DetachedCriteria getDetachedCriteriaProceduresForObservablePropertyFromObservationConstellation(
             String observablePropertyIdentifier, Session session) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(ObservationConstellation.class);
-        detachedCriteria.add(Restrictions.eq(ObservationConstellation.DELETED, false));
-        detachedCriteria.createCriteria(ObservationConstellation.OBSERVABLE_PROPERTY)
-                .add(Restrictions.eq(ObservableProperty.IDENTIFIER, observablePropertyIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(ObservationConstellation.PROCEDURE)));
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -956,17 +857,18 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            ObservableProperty identifier parameter
      * @param session
      *            Hibernate session
-     * @return Hiberante Detached Criteria with Procedure entities
+     * @return Hiberante Detached Criteria with ProcedureEntity entities
      * @throws CodedException
      */
     private DetachedCriteria getDetachedCriteriaProceduresForObservablePropertyFromSeries(
-            String observablePropertyIdentifier, Session session) throws CodedException {
+            String observablePropertyIdentifier, Session session) throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getClass());
-        detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
-        detachedCriteria.createCriteria(Series.OBSERVABLE_PROPERTY)
-                .add(Restrictions.eq(ObservableProperty.IDENTIFIER, observablePropertyIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -978,15 +880,15 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Offering identifier parameter
      * @param session
      *            Hibernate session
-     * @return Detached Criteria with Procedure entities
+     * @return Detached Criteria with ProcedureEntity entities
      */
     private DetachedCriteria getDetachedCriteriaProceduresForOfferingFromObservationConstellation(
             String offeringIdentifier, Session session) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(ObservationConstellation.class);
-        detachedCriteria.add(Restrictions.eq(ObservationConstellation.DELETED, false));
-        detachedCriteria.createCriteria(ObservationConstellation.OFFERING)
-                .add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(ObservationConstellation.PROCEDURE)));
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PROCEDURE)));
         return detachedCriteria;
     }
 
@@ -996,12 +898,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param criteria
      *            Hibernate Criteria for series to add restriction
      * @param procedure
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      */
     private void addProcedureRestrictionForSeries(Criteria criteria, String procedure) {
-        Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
-        seriesCriteria.createCriteria(ContextualReferencedSeriesObservation.PROCEDURE).add(
-                Restrictions.eq(Procedure.IDENTIFIER, procedure));
+        Criteria seriesCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET);
+        seriesCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE).add(
+                Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
     }
 
     /**
@@ -1010,51 +912,55 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param criteria
      *            Hibernate Criteria to add restriction
      * @param procedure
-     *            Procedure identifier
+     *            ProcedureEntity identifier
      */
     private void addProcedureRestrictionForObservation(Criteria criteria, String procedure) {
-        criteria.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).add(Restrictions.eq(Procedure.IDENTIFIER, procedure));
+        criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
+                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedure));
     }
 
     @SuppressWarnings("unchecked")
     protected Set<String> getObservationIdentifiers(Session session, String procedureIdentifier) {
-        if (EntitiyHelper.getInstance().isSeriesObservationInfoSupported()) {
             Criteria criteria =
-                    session.createCriteria(EntitiyHelper.getInstance().getObservationInfoEntityClass())
+                    session.createCriteria(DataEntity.class)
                             .setProjection(
-                                    Projections.distinct(Projections.property(ContextualReferencedSeriesObservation.IDENTIFIER)))
-                            .add(Restrictions.isNotNull(ContextualReferencedSeriesObservation.IDENTIFIER))
-                            .add(Restrictions.eq(ContextualReferencedSeriesObservation.DELETED, false));
-            Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
-            seriesCriteria.createCriteria(Series.PROCEDURE)
-                    .add(Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
+                                    Projections.distinct(Projections.property(DataEntity.IDENTIFIER)))
+                            .add(Restrictions.isNotNull(DataEntity.IDENTIFIER))
+                            .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
+            Criteria seriesCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET);
+            seriesCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
+                    .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
             LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                     HibernateHelper.getSqlString(criteria));
             return Sets.newHashSet(criteria.list());
-        } else {
-            Criteria criteria =
-                    session.createCriteria(EntitiyHelper.getInstance().getObservationInfoEntityClass())
-                            .setProjection(Projections.distinct(Projections.property(ContextualReferencedLegacyObservation.IDENTIFIER)))
-                            .add(Restrictions.isNotNull(ContextualReferencedLegacyObservation.IDENTIFIER))
-                            .add(Restrictions.eq(ContextualReferencedLegacyObservation.DELETED, false));
-            criteria.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).add(
-                    Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
-            LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
-                    HibernateHelper.getSqlString(criteria));
-            return Sets.newHashSet(criteria.list());
-        }
     }
 
     public Map<String, String> getProcedureFormatMap(Session session) {
-        if (HibernateHelper.isEntitySupported(TProcedure.class)) {
-            // get the latest validProcedureTimes' procedureDescriptionFormats
-            return new ValidProcedureTimeDAO().getTProcedureFormatMap(session);
+        if (HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class)) {
+            Criteria criteria = session.createCriteria(ProcedureEntity.class);
+            criteria.createAlias(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME, "vpt");
+            criteria.createAlias(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
+            criteria.add(Restrictions.isNull("vpt." + ProcedureHistoryEntity.END_TIME));
+            criteria.setProjection(Projections.projectionList()
+                    .add(Projections.property(ProcedureEntity.IDENTIFIER))
+                    .add(Projections.property("pdf." + FormatEntity.FORMAT)));
+            criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
+            LOGGER.debug("QUERY getTProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
+            @SuppressWarnings("unchecked")
+            List<Object[]> results = criteria.list();
+            Map<String,String> tProcedureFormatMap = Maps.newTreeMap();
+            for (Object[] result : results) {
+                String procedureIdentifier = (String) result[0];
+                String format = (String) result[1];
+                tProcedureFormatMap.put(procedureIdentifier, format);
+            }
+            return tProcedureFormatMap;
         } else {
             Criteria criteria = getDefaultCriteria(session);
-            criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
-            criteria.setProjection(Projections.projectionList().add(Projections.property(Procedure.IDENTIFIER))
-                    .add(Projections.property("pdf." + ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT)));
-            criteria.addOrder(Order.asc(Procedure.IDENTIFIER));
+            criteria.createAlias(ProcedureEntity.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
+            criteria.setProjection(Projections.projectionList().add(Projections.property(ProcedureEntity.IDENTIFIER))
+                    .add(Projections.property("pdf." + FormatEntity.FORMAT)));
+            criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
             LOGGER.debug("QUERY getProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
             @SuppressWarnings("unchecked")
             List<Object[]> results = criteria.list();
@@ -1069,24 +975,24 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     @SuppressWarnings("unchecked")
-    public List<Procedure> getPublishedProcedure(Session session) throws CodedException {
-        if (HibernateHelper.isEntitySupported(Series.class)) {
+    public List<ProcedureEntity> getPublishedProcedure(Session session) throws OwsExceptionReport {
+        if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
             Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyNotIn(Procedure.ID, getDetachedCriteriaSeries(session)));
+            c.add(Subqueries.propertyNotIn(ProcedureEntity.PROPERTY_ID, getDetachedCriteriaSeries(session)));
             return c.list();
         }
         return getProcedureObjects(session);
      }
 
-     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
-         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
-         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
+     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
+         detachedCriteria.setProjection(Projections.distinct(Projections.property( DatasetEntity.PROPERTY_PROCEDURE)));
          return detachedCriteria;
-     }
+}
 
     /**
-     * Procedure time extrema {@link ResultTransformer}
+     * ProcedureEntity time extrema {@link ResultTransformer}
      *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
@@ -1119,18 +1025,21 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
     }
 
-    public Procedure updateProcedure(Procedure procedure, SosProcedureDescription procedureDescription, Session session) {
-        if (procedureDescription.isSetProcedureName()) {
-            if (!procedure.isSetName() || procedure.isSetName() && !procedureDescription.getProcedureName().equals(procedure.getName())) {
-                procedure.setName(procedureDescription.getProcedureName());
+    public ProcedureEntity updateProcedure(ProcedureEntity procedure, SosProcedureDescription procedureDescription, Session session) {
+        if (procedureDescription.getProcedureDescription() instanceof AbstractFeature) {
+            AbstractFeature af = (AbstractFeature) procedureDescription.getProcedureDescription();
+            if (af.isSetName()) {
+                if (!procedure.isSetName() || (procedure.isSetName() && !af.getName().equals(procedure.getName()))) {
+                    procedure.setName(af.getFirstName().getValue());
+                }
+                if (af.isSetDescription() && !af.getDescription().equals(procedure.getDescription())) {
+                    procedure.setDescription(af.getDescription());
+                }
             }
-            if (procedureDescription.isSetDescription() && !procedureDescription.getDescription().equals(procedure.getDescription())) {
-                procedure.setDescription(procedureDescription.getDescription());
-            }
+            session.saveOrUpdate(procedure);
+            session.flush();
+            session.refresh(procedure);
         }
-        session.saveOrUpdate(procedure);
-        session.flush();
-        session.refresh(procedure);
         return procedure;
 
     }

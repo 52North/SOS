@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,55 +31,52 @@ package org.n52.sos.ds.hibernate.dao.observation;
 import java.sql.Timestamp;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract DAO class for querying {@link AbstractValuedLegacyObservation}
- * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * Abstract DAO class for querying {@link ValuedObservation<?>}
+ *
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 public abstract class AbstractValueDAO extends TimeCreator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
      * criteria
-     * 
+     *
      * @param c
      *            Criteria to add crtierion
      * @param request
      *            GetObservationRequest request
      * @param session
      *            Hiberante Session
-     * @param logArgs 
+     * @param logArgs
      * @throws OwsExceptionReport
      *             If Spatial Filteirng Profile is not supported or an error
      *             occurs.
@@ -90,7 +87,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
             if (((GetObservationRequest)request).hasSpatialFilteringProfileSpatialFilter()) {
                 if (GeometryHandler.getInstance().isSpatialDatasource()) {
                     c.add(SpatialRestrictions.filter(
-                            AbstractObservation.SAMPLING_GEOMETRY,
+                            DataEntity.PROPERTY_GEOMETRY_ENTITY,
                             ((GetObservationRequest)request).getSpatialFilter().getOperator(),
                             GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
                                     ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
@@ -102,20 +99,19 @@ public abstract class AbstractValueDAO extends TimeCreator {
             }
         }
     }
-    
+
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session, StringBuilder logArgs)
             throws OwsExceptionReport {
-        if (request.hasResultFilter()) {
-            ComparisonFilter resultFilter = request.getResultFilter();
-            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
-                    getResultFilterClasses(), BaseObservation.OBS_ID, identifier);
+        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
+            ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), DataEntity.PROPERTY_ID, identifier);
             if (resultFilterExpression != null) {
                 c.add(resultFilterExpression);
                 logArgs.append(", resultFilter");
             }
         }
     }
-    
+
     protected ResultFilterClasses getResultFilterClasses() {
         return new ResultFilterClasses(getValuedObservationFactory().numericClass(), getValuedObservationFactory().countClass(),
                 getValuedObservationFactory().textClass(), getValuedObservationFactory().categoryClass(),
@@ -136,77 +132,74 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     * 
+     *
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime, StringBuilder logArgs) {
-        if (sosIndeterminateTime != null) {
-            // get extrema indeterminate time
-            c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
-            Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
-    
-            // reset criteria
-            // see http://stackoverflow.com/a/1472958/193435
-            c.setProjection(null);
-            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    
-            // get observations with exactly the extrema time
-            c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
-            logArgs.append(", sosIndeterminateTime");
-        }
-        // not really necessary to return the Criteria object, but useful if we
-        // want to chain
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime, StringBuilder logArgs) {
+        // get extrema indeterminate time
+        c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
+        Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
+
+        // reset criteria
+        // see http://stackoverflow.com/a/1472958/193435
+        c.setProjection(null);
+        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        // get observations with exactly the extrema time
+        c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
+
+        logArgs.append(", sosIndeterminateTime");
         return c;
     }
 
     /**
-     * Get projection for {@link SosIndeterminateTime} value
-     * 
+     * Get projection for {@link IndeterminateValue} value
+     *
      * @param indetTime
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
      */
-    protected Projection getIndeterminateTimeExtremaProjection(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
-            return Projections.min(AbstractValuedLegacyObservation.PHENOMENON_TIME_START);
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
-            return Projections.max(AbstractValuedLegacyObservation.PHENOMENON_TIME_END);
+    protected Projection getIndeterminateTimeExtremaProjection(IndeterminateValue indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
+            return Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START);
+        } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
+            return Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END);
         }
         return null;
     }
 
     /**
      * Get the AbstractValue property to filter on for an
-     * {@link SosIndeterminateTime}
-     * 
+     * {@link IndeterminateValue}
+     *
      * @param indetTime
      *            Value to get property for
      * @return String property to filter on
      */
-    protected String getIndeterminateTimeFilterProperty(final SosIndeterminateTime indetTime) {
-        if (indetTime.equals(SosIndeterminateTime.first)) {
-            return AbstractValuedLegacyObservation.PHENOMENON_TIME_START;
-        } else if (indetTime.equals(SosIndeterminateTime.latest)) {
-            return AbstractValuedLegacyObservation.PHENOMENON_TIME_END;
+    protected String getIndeterminateTimeFilterProperty(IndeterminateValue indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
+            return DataEntity.PROPERTY_SAMPLING_TIME_START;
+        } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
+            return DataEntity.PROPERTY_SAMPLING_TIME_END;
         }
         return null;
     }
 
     /**
      * Add chunk information to {@link Criteria}
-     * 
+     *
      * @param c
      *            {@link Criteria} to add information
      * @param chunkSize
      *            Chunk size
      * @param currentRow
      *            Start row
-     * @param request 
-     * @param logArgs 
+     * @param request
+     * @param logArgs
      */
     protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, AbstractObservationRequest request, StringBuilder logArgs) {
         if (chunkSize > 0) {
@@ -214,38 +207,38 @@ public abstract class AbstractValueDAO extends TimeCreator {
             logArgs.append(", chunk(" + currentRow + "," + chunkSize + ")");
         }
     }
-    
+
     protected String getOrderColumn(AbstractObservationRequest request) {
         if (request instanceof GetObservationRequest) {
             if (((GetObservationRequest)request).isSetTemporalFilter()) {
                 TemporalFilter filter = ((GetObservationRequest)request).getTemporalFilters().iterator().next();
-                if (filter.getValueReference().contains(AbstractTemporalReferencedObservation.RESULT_TIME)) {
-                   return AbstractTemporalReferencedObservation.RESULT_TIME;
+                if (filter.getValueReference().contains(DataEntity.PROPERTY_RESULT_TIME)) {
+                   return DataEntity.PROPERTY_RESULT_TIME;
                 }
             }
         }
-        return AbstractTemporalReferencedObservation.PHENOMENON_TIME_START;
+        return DataEntity.PROPERTY_SAMPLING_TIME_START;
     }
-    
+
     @SuppressWarnings("rawtypes")
     protected Criteria getDefaultCriteria(Class clazz, Session session) {
         Criteria criteria = session.createCriteria(clazz)
-                .add(Restrictions.eq(Observation.DELETED, false));
+                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
         if (!isIncludeChildObservableProperties()) {
-            criteria.add(Restrictions.eq(Observation.CHILD, false));
+            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
         } else {
-            criteria.add(Restrictions.eq(Observation.PARENT, false));
+            criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
         }
-
+        criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
-    protected boolean isIncludeChildObservableProperties() {
-        return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
+    protected boolean isIncludeChildObservableProperties(){
+        return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
     }
 
-    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException;
-    
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport;
+
     protected abstract ValuedObservationFactory getValuedObservationFactory();
 }

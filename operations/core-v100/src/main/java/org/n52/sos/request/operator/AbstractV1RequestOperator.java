@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,11 +28,11 @@
  */
 package org.n52.sos.request.operator;
 
-import org.n52.sos.ds.OperationDAO;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.iceland.request.handler.OperationHandler;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * @param <T>
@@ -41,12 +41,12 @@ import org.n52.sos.response.AbstractServiceResponse;
  *            The request type
  * @param <A>
  *            the response type
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
-public abstract class AbstractV1RequestOperator<T extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractV1RequestOperator<T extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<T, Q, A> {
     public AbstractV1RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos1Constants.SERVICEVERSION, operationName, requestType);

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.sos.util.DateTimeHelper.formatDateTime2IsoString;
+import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +38,21 @@ import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
+import org.n52.faroe.ConfigurationError;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
@@ -47,35 +62,14 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
-import org.n52.sos.util.SweHelper;
+import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.io.WKTWriter;
 
 /**
  * @since 4.0.0
@@ -87,9 +81,10 @@ public class ResultHandlingHelper {
     private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
     public final String OM_PROCEDURE = "om:procedure";
     public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
-    private final SweHelper helper = new SweHelper();
+    private final org.n52.svalbard.util.SweHelper helper;
     
-    public ResultHandlingHelper() {
+    public ResultHandlingHelper(SweHelper sweHelper) {
+        this.helper = sweHelper;
         
     }
 
@@ -101,9 +96,7 @@ public class ResultHandlingHelper {
      * @return Internal ResultEncoding
      */
     public SosResultEncoding createSosResultEncoding(final String resultEncoding) {
-        final SosResultEncoding sosResultEncoding = new SosResultEncoding();
-        sosResultEncoding.setXml(resultEncoding);
-        return sosResultEncoding;
+        return new SosResultEncoding(resultEncoding);
     }
 
     /**
@@ -114,9 +107,7 @@ public class ResultHandlingHelper {
      * @return Internal ResultStructure
      */
     public SosResultStructure createSosResultStructure(final String resultStructure) {
-        final SosResultStructure sosResultStructure = new SosResultStructure();
-        sosResultStructure.setXml(resultStructure);
-        return sosResultStructure;
+        return new SosResultStructure(resultStructure);
     }
 
     /**
@@ -135,13 +126,13 @@ public class ResultHandlingHelper {
      *             If creation fails
      */
     public String createResultValuesFromObservations(final List<Observation<?>> observations,
-            final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure)
+            final SweAbstractEncoding sosResultEncoding, final SweAbstractDataComponent sosResultStructure)
             throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
         if (CollectionHelper.isNotEmpty(observations)) {
-            final String tokenSeparator = getTokenSeparator(sosResultEncoding.getEncoding());
-            final String blockSeparator = getBlockSeparator(sosResultEncoding.getEncoding());
-            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
+            final String tokenSeparator = getTokenSeparator(sosResultEncoding);
+            final String blockSeparator = getBlockSeparator(sosResultEncoding);
+            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure);
             addElementCount(builder, observations.size(), blockSeparator);
             for (final Observation<?> observation : observations) {
                 for (final Integer intger : valueOrder.keySet()) {
@@ -149,7 +140,7 @@ public class ResultHandlingHelper {
                     switch (definition) {
                         case PHENOMENON_TIME:
                             builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
-                                                                          observation.getPhenomenonTimeEnd()));
+                                                                      observation.getPhenomenonTimeEnd()));
                             break;
                         case RESULT_TIME:
                             builder.append(getTimeStringForResultTime(observation.getResultTime()));
@@ -286,12 +277,12 @@ public class ResultHandlingHelper {
         if (resultTime != null) {
             return DateTimeHelper.formatDateTime2IsoString(new DateTime(resultTime, DateTimeZone.UTC));
         }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
+        return getActiveProfile().getResponseNoDataPlaceholder();
     }
 
     private Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd) {
         if (phenomenonTimeStart == null) {
-            return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
+            return getActiveProfile().getResponseNoDataPlaceholder();
         }
 
         final StringBuilder builder = new StringBuilder();
@@ -388,7 +379,7 @@ public class ResultHandlingHelper {
                 return writer.write(((GeometryObservation) observation).getValue());
             } else if (observation instanceof BlobObservation) {
                 return String.valueOf(((BlobObservation) observation).getValue());
-            } 
+            }
         }
         return "";
     }
@@ -450,6 +441,10 @@ public class ResultHandlingHelper {
             return (SweVector)sweAbstractDataComponent;
         }
         return null;
+    }
+
+    private static Profile getActiveProfile() throws ConfigurationError {
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 
     private SweVector getVector(List<SweField> fields) throws CodedException {

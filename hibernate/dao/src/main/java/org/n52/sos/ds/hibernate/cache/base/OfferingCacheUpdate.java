@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,15 +30,21 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
@@ -47,47 +53,42 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
-
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
-
-    private final OfferingDAO offeringDAO = new OfferingDAO();
-
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
-
     private Collection<Offering> offeringsToUpdate;
-
     private Map<String,Collection<ObservationConstellationInfo>> offObsConstInfoMap;
+    private final Locale defaultLanguage;
+    private final I18NDAORepository i18NDAORepository;
+    private final FeatureQueryHandler featureQueryHandler;
+    private final DaoFactory daoFactory;
 
-    /**
-     * constructor
-     * @param threads Thread count
-     */
-    public OfferingCacheUpdate(int threads) {
-        super(threads, THREAD_GROUP_NAME);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider, DaoFactory daoFactory) {
+        this(threads, defaultLanguage, i18NDAORepository, featureQueryHandler, connectionProvider, null, daoFactory);
     }
 
-    public OfferingCacheUpdate(int threads, Collection<String> offeringIdsToUpdate) {
-        super(threads, THREAD_GROUP_NAME);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, FeatureQueryHandler featureQueryHandler, ConnectionProvider connectionProvider, Collection<String> offeringIdsToUpdate, DaoFactory daoFactory) {
+        super(threads, THREAD_GROUP_NAME, connectionProvider);
         this.offeringsIdToUpdate = offeringIdsToUpdate;
+        this.defaultLanguage = defaultLanguage;
+        this.i18NDAORepository = i18NDAORepository;
+        this.featureQueryHandler = featureQueryHandler;
+        this.daoFactory = daoFactory;
     }
 
     private Collection<Offering> getOfferingsToUpdate() {
         if (offeringsToUpdate == null) {
-            offeringsToUpdate = offeringDAO.getOfferingObjectsForCacheUpdate(offeringsIdToUpdate, getSession());
+            offeringsToUpdate = daoFactory.getOfferingDAO().getOfferingObjectsForCacheUpdate(offeringsIdToUpdate, getSession());
         }
         return offeringsToUpdate;
     }
@@ -95,7 +96,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private Map<String,Collection<ObservationConstellationInfo>> getOfferingObservationConstellationInfo() {
         if (offObsConstInfoMap == null) {
             offObsConstInfoMap = ObservationConstellationInfo.mapByOffering(
-                new ObservationConstellationDAO().getObservationConstellationInfo(getSession()));
+                daoFactory.getObservationConstellationDAO().getObservationConstellationInfo(getSession()));
         }
         return offObsConstInfoMap;
     }
@@ -139,10 +140,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         //     in OfferingCacheUpdateTask if needed
         Map<String, OfferingTimeExtrema> offeringTimeExtrema = null;
         try {
-            offeringTimeExtrema = offeringDAO.getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
+            offeringTimeExtrema = daoFactory.getOfferingDAO().getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
         } catch (OwsExceptionReport ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
-            getErrors().add(ce);
+            getErrors().copy(ce);
         }
         if (!CollectionHelper.isEmpty(offeringTimeExtrema)) {
             for (Entry<String, OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
@@ -172,25 +173,33 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         for (Offering offering : getOfferingsToUpdate()){
             
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
-                offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
-                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
+                Collection<ObservationConstellationInfo> observationConstellations
+                        = getOfferingObservationConstellationInfo().get(offering.getIdentifier());
+                offeringUpdateTasks.add(new OfferingCacheUpdateTask(
+                        offering,
+                        observationConstellations,
+                        hasSamplingGeometry,
+                        this.defaultLanguage,
+                        this.i18NDAORepository,
+                        this.featureQueryHandler,
+                        this.daoFactory));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
-    }    
-    
+    }
+
     /**
      * Check if the observation table contains samplingGeometries with values.
-     * 
+     *
      * @return <code>true</code>, if the observation table contains samplingGeometries with values
      */
     private boolean checkForSamplingGeometry() {
         try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             return observationDAO.containsSamplingGeometries(getSession());
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while getting observation DAO class from factory!", e);
-            getErrors().add(e);
+            getErrors().copy(e);
         }
         return false;
     }
@@ -219,18 +228,18 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {
-        Set<String> obsTypes = new HashSet<String>(observationTypes.size());
+        Set<String> obsTypes = new HashSet<>(observationTypes.size());
         for (ObservationType obsType : observationTypes) {
-            obsTypes.add(obsType.getObservationType());
+            obsTypes.copy(obsType.getObservationType());
         }
         return obsTypes;
     }
 
     protected Collection<String> getFeatureOfInterestTypesFromFeatureOfInterestType(
             Set<FeatureOfInterestType> featureOfInterestTypes) {
-        Set<String> featTypes = new HashSet<String>(featureOfInterestTypes.size());
+        Set<String> featTypes = new HashSet<>(featureOfInterestTypes.size());
         for (FeatureOfInterestType featType : featureOfInterestTypes) {
-            featTypes.add(featType.getFeatureOfInterestType());
+            featTypes.copy(featType.getFeatureOfInterestType());
         }
         return featTypes;
     }
@@ -240,7 +249,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         for (RelatedFeature hRelatedFeature : hOffering.getRelatedFeatures()) {
             if (hRelatedFeature.getFeatureOfInterest() != null
                     && hRelatedFeature.getFeatureOfInterest().getIdentifier() != null) {
-                relatedFeatureList.add(hRelatedFeature.getFeatureOfInterest().getIdentifier());
+                relatedFeatureList.copy(hRelatedFeature.getFeatureOfInterest().getIdentifier());
             }
         }
         return relatedFeatureList;

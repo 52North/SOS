@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,12 +30,15 @@ package org.n52.sos.config.sqlite.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-import org.n52.sos.config.AdministratorUser;
+import org.n52.iceland.config.AdministratorUser;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name="administrator_user")
 public class AdminUser implements Serializable, AdministratorUser {
@@ -62,9 +65,8 @@ public class AdminUser implements Serializable, AdministratorUser {
     }
 
     @Override
-    public AdminUser setUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
-        return this;
     }
 
     @Override
@@ -73,9 +75,8 @@ public class AdminUser implements Serializable, AdministratorUser {
     }
 
     @Override
-    public AdminUser setPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;
-        return this;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,39 +29,37 @@
 package org.n52.sos.ds.hibernate.create;
 
 import java.net.URI;
-import java.util.Locale;
 
-import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.sos.ds.hibernate.entities.feature.Specimen;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.features.samplingFeatures.SfProcess;
-import org.n52.sos.ogc.om.features.samplingFeatures.SfSpecimen;
-import org.n52.sos.ogc.om.features.samplingFeatures.SpecLocation;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.w3c.xlink.Reference;
-import org.n52.sos.w3c.xlink.Referenceable;
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SfProcess;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SfSpecimen;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SpecLocation;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Referenceable;
 
-import com.vividsolutions.jts.geom.Geometry;
+public class SpecimenCreator extends AbstractFeatureOfInerestCreator<SpecimenEntity> {
 
-public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
 
-    public SpecimenCreator(int storageEPSG, int storage3depsg) {
-        super(storageEPSG, storage3depsg);
+    public SpecimenCreator(FeatureVisitorContext context) {
+        super(context);
     }
 
     @Override
-    public AbstractFeature create(Specimen f, Locale i18n, String version, Session s) throws OwsExceptionReport {
-         AbstractFeature absFeat = createFeature(f, i18n, version, s);
+    public AbstractFeature create(SpecimenEntity f) throws OwsExceptionReport {
+         AbstractFeature absFeat = createFeature(f);
          if (absFeat instanceof SfSpecimen) {
              SfSpecimen specimen = (SfSpecimen)absFeat;
              specimen.setMaterialClass(new ReferenceType(f.getMaterialClass()));
@@ -99,7 +97,7 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
          return absFeat;
     }
 
-    private Time getSamplingTime(Specimen s) {
+    private Time getSamplingTime(SpecimenEntity s) {
         final DateTime phenStartTime = new DateTime(s.getSamplingTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
         if (s.getSamplingTimeEnd() != null) {
@@ -119,8 +117,8 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<Specimen> {
     }
 
     @Override
-    public Geometry createGeometry(Specimen feature, Session session) throws OwsExceptionReport {
-        return createGeometryFrom(feature, session);
+    public Geometry createGeometry(SpecimenEntity feature) throws OwsExceptionReport {
+        return createGeometryFrom(feature);
     }
 
     @Override

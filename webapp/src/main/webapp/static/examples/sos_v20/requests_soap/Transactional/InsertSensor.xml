@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd
     http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
 	<env:Body>
 		<swes:InsertSensor service="SOS" version="2.0.0"
@@ -14,7 +14,7 @@
 				<sml:SensorML version="1.0.1">
 					<sml:member>
 						<sml:System>
-		
+
 							<!-- optional; generated if not present -->
 							<sml:identification>
 								<sml:IdentifierList>
@@ -36,10 +36,10 @@
 									</sml:identifier>
 								</sml:IdentifierList>
 							</sml:identification>
-		
+
 							<sml:capabilities name="offerings">
 								<!-- Special capabilities used to specify offerings. -->
-								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 									added during DescribeSensor. -->
 								<!-- Offering is generated if not specified. -->
 								<swe:SimpleDataRecord>
@@ -54,7 +54,7 @@
 							</sml:capabilities>
 							<sml:capabilities name="parentProcedures">
 								<!-- Special capabilities used to specify parent procedures. -->
-								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 									added during DescribeSensor. -->
 								<swe:SimpleDataRecord>
 									<swe:field name="parentProcedure">
@@ -66,7 +66,7 @@
 							</sml:capabilities>
 							<sml:capabilities name="featuresOfInterest">
 								<!-- Special capabilities used to specify features of interest. -->
-								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+								<!-- Parsed and removed during InsertSensor/UpdateSensorDescription,
 									added during DescribeSensor. -->
 								<swe:SimpleDataRecord>
 									<swe:field name="featureOfInterestID">
@@ -93,7 +93,7 @@
                         </swe:field>
                     </swe:SimpleDataRecord>
                 </sml:capabilities>
-		
+
 							<sml:position name="sensorPosition">
 								<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
 									<swe:location>

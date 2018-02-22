@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,93 +28,81 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.BlobValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.BooleanValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.CategoryValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.ComplexValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.CountValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.GeometryValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.ProfileValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.ReferenceValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.SweDataArrayValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.valued.TextValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 
-public class SeriesValuedObervationFactory extends ValuedObservationFactory{
+public class SeriesValuedObervationFactory extends ValuedObservationFactory {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Class<? extends ValuedObservation> valuedObservationClass() {
-        return AbstractValuedSeriesObservation.class;
+    public Class<? extends DataEntity> valuedObservationClass() {
+        return DataEntity.class;
     }
 
     @Override
-    public Class<? extends BlobValuedObservation> blobClass() {
-        return BlobValuedSeriesObservation.class;
+    public Class<? extends BlobDataEntity> blobClass() {
+        return BlobDataEntity.class;
     }
 
     @Override
-    public Class<? extends BooleanValuedObservation> truthClass() {
-        return BooleanValuedSeriesObservation.class;
+    public Class<? extends BooleanDataEntity> truthClass() {
+        return BooleanDataEntity.class;
     }
 
     @Override
-    public Class<? extends CategoryValuedObservation> categoryClass() {
-        return CategoryValuedSeriesObservation.class;
+    public Class<? extends CategoryDataEntity> categoryClass() {
+        return CategoryDataEntity.class;
     }
 
     @Override
-    public Class<? extends CountValuedObservation> countClass() {
-        return CountValuedSeriesObservation.class;
+    public Class<? extends CountDataEntity> countClass() {
+        return CountDataEntity.class;
     }
 
     @Override
-    public Class<? extends GeometryValuedObservation> geometryClass() {
-        return GeometryValuedSeriesObservation.class;
+    public Class<? extends GeometryDataEntity> geometryClass() {
+        return GeometryDataEntity.class;
     }
 
     @Override
-    public Class<? extends NumericValuedObservation> numericClass() {
-        return NumericValuedSeriesObservation.class;
+    public Class<? extends QuantityDataEntity> numericClass() {
+        return QuantityDataEntity.class;
     }
 
     @Override
-    public Class<? extends SweDataArrayValuedObservation> sweDataArrayClass() {
-        return SweDataArrayValuedSeriesObservation.class;
+    public Class<? extends DataArrayDataEntity> sweDataArrayClass() {
+        return DataArrayDataEntity.class;
     }
 
     @Override
-    public Class<? extends TextValuedObservation> textClass() {
-        return TextValuedSeriesObservation.class;
+    public Class<? extends TextDataEntity> textClass() {
+        return TextDataEntity.class;
     }
 
     @Override
-    public Class<? extends ComplexValuedObservation> complexClass() {
-        return ComplexValuedSeriesObservation.class;
+    public Class<? extends ComplexDataEntity> complexClass() {
+        return ComplexDataEntity.class;
     }
 
     @Override
-    public Class<? extends ProfileValuedObservation> profileClass() {
-        return ProfileValuedSeriesObservation.class;
+    public Class<? extends ProfileDataEntity> profileClass() {
+        return ProfileDataEntity.class;
     }
 
     @Override
-    public Class<? extends ReferenceValuedObservation> referenceClass() {
-        return ReferenceValuedSeriesObservation.class;
+    public Class<? extends ReferencedDataEntity> referenceClass() {
+        return ReferencedDataEntity.class;
     }
 
     public static SeriesValuedObervationFactory getInstance() {

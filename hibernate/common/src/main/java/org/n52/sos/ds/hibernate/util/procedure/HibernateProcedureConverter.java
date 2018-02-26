@@ -116,19 +116,22 @@ public class HibernateProcedureConverter
      *             If an error occurs
      */
     public SosProcedureDescription<?> createSosProcedureDescription(ProcedureEntity procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
+            String requestedDescriptionFormat, String version, Locale i18n, Session session)
             throws OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException()
                     .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
+        if (procedure.hasProcedureHistory()) {
+            return createSosProcedureDescriptionFromValidProcedureTime(procedure, requestedDescriptionFormat, procedure.getProcedureHistory().stream().filter(h -> h.getEndTime() == null).findFirst().get(), version, i18n, session);
+        }
         checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat,
                 getFormat(procedure));
         SosProcedureDescription<?> desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
-            enrich(desc, procedure, requestedServiceVersion, requestedDescriptionFormat, null, i18n, session);
+            enrich(desc, procedure, version, requestedDescriptionFormat, null, i18n, session);
             if (!requestedDescriptionFormat.equals(desc.getDescriptionFormat())) {
                 desc = convert(desc.getDescriptionFormat(), requestedDescriptionFormat, desc);
                 desc.setDescriptionFormat(requestedDescriptionFormat);

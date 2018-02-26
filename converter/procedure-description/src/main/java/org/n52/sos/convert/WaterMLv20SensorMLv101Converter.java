@@ -43,6 +43,7 @@ import org.n52.shetland.ogc.sensorML.ProcessModel;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +95,8 @@ public class WaterMLv20SensorMLv101Converter
                         .equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
                 && objectToConvert instanceof AbstractSensorML) {
             return convertSensorML101ToWML2ObservationProcess((AbstractSensorML) objectToConvert);
+        } else if (objectToConvert instanceof SosProcedureDescription) {
+            return convert(((SosProcedureDescription) objectToConvert).getProcedureDescription());
         }
         return null;
     }

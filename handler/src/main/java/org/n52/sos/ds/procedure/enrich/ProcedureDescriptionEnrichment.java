@@ -43,6 +43,7 @@ import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
@@ -65,7 +66,8 @@ public abstract class ProcedureDescriptionEnrichment {
         this.ctx = ctx;
     }
 
-    protected ProcedureDescriptionSettings procedureSettings() {
+    @VisibleForTesting
+    public ProcedureDescriptionSettings procedureSettings() {
         return getProcedureCreationContext().getProcedureSettings();
     }
 
@@ -73,7 +75,8 @@ public abstract class ProcedureDescriptionEnrichment {
         return getProcedureCreationContext().getCache();
     }
 
-    protected Collection<SosOffering> getSosOfferings()
+    @VisibleForTesting
+    public Collection<SosOffering> getSosOfferings()
             throws CodedException {
 
         Collection<String> identifiers = getCache().getOfferingsForProcedure(getIdentifier());

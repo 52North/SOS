@@ -26,56 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ds.hibernate.util;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.hibernate.Session;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.ConnectionProviderException;
+import java.util.Locale;
+import java.util.Set;
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
- */
-public class HibernateTestCase extends Matchers implements ConnectionProvider {
-    @BeforeClass
-    public static void init() {
-        H2Configuration.assertInitialized();
-    }
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
 
-    protected static Session getSession() {
-        return H2Configuration.getSession();
-    }
+public class OwsServiceMetadataRepositoryMock
+        implements
+        OwsServiceMetadataRepository {
 
-    protected static void returnSession(Session session) {
-        H2Configuration.returnSession(session);
-    }
-
-    public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
-        Assert.assertThat(actual, matcher);
-    }
-
-    public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
-        Assert.assertThat(reason, actual, matcher);
+    @Override
+    public LocalizedProducer<OwsServiceIdentification> getServiceIdentificationFactory(String service) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
-    public Object getConnection()
-            throws ConnectionProviderException {
-       return getSession();
+    public LocalizedProducer<OwsServiceProvider> getServiceProviderFactory(String service) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
-    public void returnConnection(Object connection) {
-        returnSession((Session) connection);
+    public Set<Locale> getAvailableLocales() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    @Override
-    public int getMaxConnections() {
-        return 0;
-    }
 }

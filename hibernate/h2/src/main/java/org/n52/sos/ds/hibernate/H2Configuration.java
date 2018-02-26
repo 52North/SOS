@@ -60,6 +60,7 @@ import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.hbm2ddl.SchemaExport.Action;
 import org.hibernate.tool.schema.TargetType;
 import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -78,7 +79,7 @@ import geodb.GeoDB;
  * @since 4.0.0
  *
  */
-public class H2Configuration {
+public class H2Configuration implements ConnectionProvider {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
 
     private static final String HIBERNATE_CONNECTION_URL = HibernateConstants.CONNECTION_URL;
@@ -461,6 +462,22 @@ public class H2Configuration {
 
     public Configuration getConfiguration() {
         return configuration;
+    }
+
+    @Override
+    public Object getConnection()
+            throws ConnectionProviderException {
+        return getSession();
+    }
+
+    @Override
+    public void returnConnection(Object connection) {
+        returnSession((Session) connection);
+    }
+
+    @Override
+    public int getMaxConnections() {
+        return 0;
     }
 
 //    public List<String> getCreateScript() {

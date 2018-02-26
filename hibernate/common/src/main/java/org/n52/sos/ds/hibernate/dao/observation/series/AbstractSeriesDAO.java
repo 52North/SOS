@@ -79,6 +79,7 @@ import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
@@ -1011,7 +1012,10 @@ public abstract class AbstractSeriesDAO
     }
 
     protected boolean isIncludeChildObservableProperties() {
-        return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
+        if (ObservationSettingProvider.getInstance() != null) {
+            return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
+        }
+        return false;
     }
 
     public DatasetEntity checkOrInsertSeries(ProcedureEntity procedure, PhenomenonEntity observableProperty,

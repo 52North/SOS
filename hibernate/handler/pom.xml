@@ -28,6 +28,14 @@
             <artifactId>hibernate-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>handler</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.series.db</groupId>
             <artifactId>entities</artifactId>
         </dependency>
@@ -139,6 +147,10 @@
             <scope>runtime</scope>
         </dependency>
         <!-- TODO remove after changing from document to type saving in resultTemplate -->
+         <dependency>
+            <groupId>org.n52.series-api.db</groupId>
+            <artifactId>sos-integration</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
@@ -172,6 +184,14 @@
         <dependency>
         	<groupId>org.n52.sensorweb</groupId>
         	<artifactId>52n-xml-sweCommon-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard-xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -39,6 +39,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
@@ -48,6 +49,7 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -85,6 +87,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     @Before
     public void createScenario() throws OwsExceptionReport {
         Session session = getSession();
+        HibernateMetadataCache.init(session);
         try {
             this.filter = createScenario(session);
         } finally {
@@ -104,12 +107,20 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     @SuppressWarnings("unchecked")
     private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
             throws OwsExceptionReport {
+        Criterion c = r.getCriterion(d, time);
+        if (c == null) {
+            throw new UnsupportedTimeException(time);
+        }
         List<String> list =
-                session.createCriteria(getObservationClass()).add(r.getCriterion(d, time))
+                session.createCriteria(getObservationClass()).add(c)
                         .setProjection(Projections.distinct(Projections.property(DataEntity.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
-            s.add(valueOf(id));
+            if (id.contains("/")) {
+                s.add(valueOf(id.substring(id.indexOf("/") + 1)));
+            } else {
+                s.add(valueOf(id));
+            }
         }
         return s;
     }

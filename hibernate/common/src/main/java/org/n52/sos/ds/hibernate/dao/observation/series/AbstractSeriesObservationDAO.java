@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
@@ -543,7 +544,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         if (request.isSetFesFilterExtension()) {
             new ExtensionFesFilterCriteriaAdder(observationCriteria, request.getFesFilterExtensions()).add();
         }
-        criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
+        observationCriteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
                 HibernateHelper.getSqlString(observationCriteria));
         return observationCriteria;

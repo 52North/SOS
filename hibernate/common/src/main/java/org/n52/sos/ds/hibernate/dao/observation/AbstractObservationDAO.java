@@ -498,7 +498,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         } else {
             criteria.add(Restrictions.eq(Observation.PARENT, false));
         }
-
+        criteria.setFetchMode("offerings", org.hibernate.FetchMode.JOIN);
+        criteria.setFetchMode("parameters", org.hibernate.FetchMode.JOIN);
+//        criteria.setFetchMode("value", org.hibernate.FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

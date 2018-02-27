@@ -49,6 +49,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -415,8 +416,18 @@ public class ValueDAO extends AbstractValueDAO {
      * @return Default {@link Criteria}
      */
     public Criteria getDefaultObservationCriteria(Class<?> clazz, Session session) {
-        return session.createCriteria(clazz).add(Restrictions.eq(AbstractValuedLegacyObservation.DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        Criteria criteria = session.createCriteria(clazz)
+                .add(Restrictions.eq(Observation.DELETED, false));
+
+        if (!isIncludeChildObservableProperties()) {
+            criteria.add(Restrictions.eq(Observation.CHILD, false));
+        } else {
+            criteria.add(Restrictions.eq(Observation.PARENT, false));
+        }
+        criteria.setFetchMode("offerings", org.hibernate.FetchMode.JOIN);
+        criteria.setFetchMode("parameters", org.hibernate.FetchMode.JOIN);
+//        criteria.setFetchMode("value", org.hibernate.FetchMode.JOIN);
+        return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**

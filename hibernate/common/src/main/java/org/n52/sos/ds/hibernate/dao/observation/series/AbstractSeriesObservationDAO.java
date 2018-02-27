@@ -569,9 +569,6 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         if (request.isSetFesFilterExtension()) {
             new ExtensionFesFilterCriteriaAdder(observationCriteria, request.getFesFilterExtensions()).add();
         }
-        observationCriteria.setFetchMode("offerings", org.hibernate.FetchMode.JOIN);
-        observationCriteria.setFetchMode("parameters", org.hibernate.FetchMode.JOIN);
-//        observationCriteria.setFetchMode("value", org.hibernate.FetchMode.JOIN);
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
                 HibernateHelper.getSqlString(observationCriteria));
         return observationCriteria;

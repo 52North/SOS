@@ -538,7 +538,6 @@ public abstract class AbstractObservationDAO
         } else {
             criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
         }
-
         criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }

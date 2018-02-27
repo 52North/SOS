@@ -342,7 +342,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
         for (ObservationConstellation obsConst : obsConsts) {
-            if (observationType == null) {
+            if (observationType == null && obsConst.isSetObservationType()) {
                 observationType = obsConst.getObservationType().getObservationType();
             }
         }

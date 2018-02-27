@@ -255,7 +255,7 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                         "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
                         referenceValue.getAbstractDataComponent().getDataComponentType());
             }
-            String identifier = hProcedure.getIdentifier() + "_referencevalue";
+            String identifier = hProcedure.getIdentifier() + "_referencevalue_" + referenceValue.getName();
             SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknowType(identifier,
                     procedureDescriptionFormat.getProcedureDescriptionFormat(), "");
             procedureReferenceSeries.setReference(true);
@@ -268,8 +268,8 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                     session);
             Offering hOfferingReferenceSeries = new OfferingDAO().getAndUpdateOrInsertNewOffering(
                     new SosOffering(
-                            hOffering.getIdentifier() + "_referencevalue",
-                            hOffering.getName() + "_referencevalue"),
+                            hOffering.getIdentifier() + "_referencevalue_" + referenceValue.getName(),
+                            hOffering.getName() + "_referencevalue_" + referenceValue.getName()),
                     hRelatedFeatures,
                     observationTypes,
                     featureOfInterestTypes,
@@ -319,7 +319,15 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
             ctx.setOffering(hOffering);
             ctx.setPublish(false);
             Series hSeries = seriesDAO.getOrInsertSeries(ctx, session);
-            hSeries.setReferenceValues(Collections.singletonList(hReferenceSeries));
+            List<Series> referenceValues = hSeries.getReferenceValues();
+            if (referenceValues.isEmpty()) {
+                hSeries.setReferenceValues(Collections.singletonList(hReferenceSeries));
+            } else {
+                List<Series> newReferenceValues = new LinkedList<>();
+                newReferenceValues.addAll(referenceValues);
+                newReferenceValues.add(hReferenceSeries);
+                hSeries.setReferenceValues(newReferenceValues);
+            }
             session.update(hSeries);
         }
     }

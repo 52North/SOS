@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -46,7 +47,9 @@ import org.junit.runners.Parameterized;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -54,6 +57,7 @@ import org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl;
 import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
 import org.n52.janmayen.event.EventBus;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.da.sos.SOSHibernateSessionHolder;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -110,9 +114,13 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.SosCacheFeederHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.GetObservationDao;
+import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
@@ -123,11 +131,25 @@ import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
-import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ProcedureDescriptionSettings;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.GmlDecoderv311;
+import org.n52.svalbard.decode.GmlDecoderv321;
+import org.n52.svalbard.decode.SensorMLDecoderV101;
+import org.n52.svalbard.decode.SensorMLDecoderV20;
+import org.n52.svalbard.decode.SweCommonDecoderV101;
+import org.n52.svalbard.decode.SweCommonDecoderV20;
 import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.GmlEncoderv311;
+import org.n52.svalbard.encode.GmlEncoderv321;
+import org.n52.svalbard.encode.SensorMLEncoderv101;
+import org.n52.svalbard.encode.SensorMLEncoderv20;
+import org.n52.svalbard.encode.SweCommonEncoderv101;
+import org.n52.svalbard.encode.SweCommonEncoderv20;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -256,8 +278,11 @@ public class InsertDAOTest
     private final ConverterRepository converterRepository = new ConverterRepository();
     private final HibernateProcedureDescriptionGeneratorFactoryRepository factotyRepository =
             new HibernateProcedureDescriptionGeneratorFactoryRepository();
-    private final OwsServiceMetadataRepositoryImpl serviceMetadataRepository = new OwsServiceMetadataRepositoryImpl();
+    private final OwsServiceMetadataRepositoryImpl serviceMetadataRepository = Mockito.mock(OwsServiceMetadataRepositoryImpl.class);
     private HibernateProcedureCreationContext ctx;
+    private final SosCacheFeederHandler cacheFeeder = new SosCacheFeederHandler();
+    private final SosWritableContentCache cache = new InMemoryCacheImpl();
+    final ContentCacheController contentCacheControllerMock = Mockito.mock(ContentCacheController.class);
 
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
@@ -275,20 +300,108 @@ public class InsertDAOTest
     @Before
     public void setUp()
             throws OwsExceptionReport, ConverterException, EncodingException {
-        encoderRepository.init();
+        SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
+        holder.setConnectionProvider(this);
+        daoFactory.setSweHelper(new SweHelper());
+        daoFactory.setGeometryHandler(GeometryHandler.getInstance());
+        daoFactory.setFeatureQueryHandler(new FeatureQueryHandlerMock());
+
+        cacheFeeder.setConnectionProvider(holder);
+        insertSensorDAO.setConnectionProvider(this);
+        insertSensorDAO.setDaoFactory(daoFactory);
+        insertResultTemplateDAO.setConnectionProvider(this);
+        insertResultTemplateDAO.setDaoFactory(daoFactory);
+        insertResultTemplateDAO.init();
+        initEncoder();
+        initDecoder();
+
+        Mockito.when(contentCacheControllerMock.getCache()).thenReturn(cache);
+
         i18NDAORepository.init();
         decoderRepository.init();
         converterRepository.init();
         factotyRepository.init();
-        ctx = new HibernateProcedureCreationContext(serviceMetadataRepository, decoderRepository, factotyRepository, i18NDAORepository, daoFactory,
-                converterRepository, null, null, null, null, null);
+        ctx = new HibernateProcedureCreationContext(serviceMetadataRepository, decoderRepository, factotyRepository,
+                i18NDAORepository, daoFactory, converterRepository, null, null, null,
+                contentCacheControllerMock, Mockito.mock(ProcedureDescriptionSettings.class));
 
         Session session = getSession();
+        HibernateMetadataCache.init(session);
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);
         insertSensor(PROCEDURE3, OFFERING3, OBSPROP3, PROCEDURE2);
         insertResultTemplate(RESULT_TEMPLATE, PROCEDURE3, OFFERING3, OBSPROP3, FEATURE3, getSession());
         returnSession(session);
+    }
+
+    private void initEncoder() {
+        GmlEncoderv321 gmlEncoderv321 = new GmlEncoderv321();
+        gmlEncoderv321.setEncoderRepository(encoderRepository);
+        gmlEncoderv321.setXmlOptions(XmlOptions::new);
+
+        SensorMLEncoderv20 sensorMLEncoderv20 = new SensorMLEncoderv20();
+        sensorMLEncoderv20.setXmlOptions(XmlOptions::new);
+        sensorMLEncoderv20.setEncoderRepository(encoderRepository);
+
+        SweCommonEncoderv20 sweCommonEncoderv20 = new SweCommonEncoderv20();
+        sweCommonEncoderv20.setEncoderRepository(encoderRepository);
+        sweCommonEncoderv20.setXmlOptions(XmlOptions::new);
+
+        GmlEncoderv311 gmlEncoderv311 = new GmlEncoderv311();
+        gmlEncoderv311.setEncoderRepository(encoderRepository);
+        gmlEncoderv311.setXmlOptions(XmlOptions::new);
+
+        SensorMLEncoderv101 sensorMLEncoderv101 = new SensorMLEncoderv101();
+        sensorMLEncoderv101.setXmlOptions(XmlOptions::new);
+        sensorMLEncoderv101.setEncoderRepository(encoderRepository);
+
+        SweCommonEncoderv101 sweCommonEncoderv101 = new SweCommonEncoderv101();
+        sweCommonEncoderv101.setEncoderRepository(encoderRepository);
+        sweCommonEncoderv101.setXmlOptions(XmlOptions::new);
+
+        encoderRepository.setEncoders(Arrays.asList(
+                gmlEncoderv321,
+                sensorMLEncoderv20,
+                sweCommonEncoderv20,
+                gmlEncoderv311,
+                sensorMLEncoderv101,
+                sweCommonEncoderv101));
+        encoderRepository.init();
+    }
+
+    private void initDecoder() {
+        GmlDecoderv321 gmlDecoderv321 = new GmlDecoderv321();
+        gmlDecoderv321.setDecoderRepository(decoderRepository);
+        gmlDecoderv321.setXmlOptions(XmlOptions::new);
+
+        SensorMLDecoderV20 sensorMLDecoderv20 = new SensorMLDecoderV20();
+        sensorMLDecoderv20.setXmlOptions(XmlOptions::new);
+        sensorMLDecoderv20.setDecoderRepository(decoderRepository);
+
+        SweCommonDecoderV20 sweCommonDecoderv20 = new SweCommonDecoderV20();
+        sweCommonDecoderv20.setDecoderRepository(decoderRepository);
+        sweCommonDecoderv20.setXmlOptions(XmlOptions::new);
+
+        GmlDecoderv311 gmlDecoderv311 = new GmlDecoderv311();
+//        gmlDecoderv311.setDecoderRepository(decoderRepository);
+//        gmlDecoderv311.setXmlOptions(XmlOptions::new);
+
+        SensorMLDecoderV101 sensorMLDecoderv101 = new SensorMLDecoderV101();
+        sensorMLDecoderv101.setXmlOptions(XmlOptions::new);
+        sensorMLDecoderv101.setDecoderRepository(decoderRepository);
+
+        SweCommonDecoderV101 sweCommonDecoderv101 = new SweCommonDecoderV101();
+        sweCommonDecoderv101.setDecoderRepository(decoderRepository);
+        sweCommonDecoderv101.setXmlOptions(XmlOptions::new);
+
+        decoderRepository.setDecoders(Arrays.asList(
+                gmlDecoderv321,
+                sensorMLDecoderv20,
+                sweCommonDecoderv20,
+                gmlDecoderv311,
+                sensorMLDecoderv101,
+                sweCommonDecoderv101));
+        decoderRepository.init();
     }
 
     @After
@@ -397,12 +510,12 @@ public class InsertDAOTest
     }
 
     private SosContentCache getCache() {
-        return Configurator.getInstance().getCache();
+        return cache;
     }
 
     private void updateCache()
             throws OwsExceptionReport {
-        Configurator.getInstance().getCacheController().update();
+        cacheFeeder.updateCache(cache);
     }
 
     private OmObservationConstellation getOmObsConst(String procedureId, String obsPropId, String unit,

@@ -445,14 +445,13 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             throws OwsExceptionReport {
         if (session != null) {
             Criteria criteria =
-                    daoFactory.getObservationDAO().getDefaultObservationInfoCriteria(session);
-            criteria.createAlias(DataEntity.PROPERTY_DATASET, "ds");
-            criteria.createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off");
+                    daoFactory.getSeriesDAO().getDefaultSeriesCriteria(session);
+            criteria.createCriteria(DatasetEntity.PROPERTY_OFFERING, "off");
             criteria.setProjection(
-                    Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
-                            .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
-                            .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
-                            .add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER)));
+                    Projections.projectionList().add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT))
+                            .add(Projections.max(DatasetEntity.PROPERTY_FIRST_VALUE_AT))
+                            .add(Projections.max(DatasetEntity.PROPERTY_LAST_VALUE_AT))
+                            .add(Projections.groupProperty("off." + OfferingEntity.IDENTIFIER)));
             LOGGER.debug("QUERY getTemporalBoundingBoxesForOfferings(): {}", HibernateHelper.getSqlString(criteria));
             final List<?> temporalBoundingBoxes = criteria.list();
             if (!temporalBoundingBoxes.isEmpty()) {

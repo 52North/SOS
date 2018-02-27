@@ -97,7 +97,7 @@ public class BoundingBoxEnrichment
      * @return merged sosEnvelope
      * @throws CodedException
      */
-    protected ReferencedEnvelope createEnvelopeForOfferings()
+    public ReferencedEnvelope createEnvelopeForOfferings()
             throws CodedException {
         final ReferencedEnvelope mergedEnvelope = new ReferencedEnvelope();
         for (final SosOffering offering : getSosOfferings()) {

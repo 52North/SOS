@@ -32,9 +32,13 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.iceland.coding.SupportedTypeRepository;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.da.sos.SOSHibernateSessionHolder;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.SosCacheFeederHandler;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -44,38 +48,44 @@ import org.n52.sos.cache.SosWritableContentCache;
  */
 public class SosCacheFeederDAOTest extends HibernateTestCase {
     /* FIXTURES */
-//    private SosCacheFeederDAO instance;
-//
-//    @Before
-//    public void initCacheFeeder() {
-//        instance = new SosCacheFeederDAO();
-//    }
-//
-//    @Test
-//    public void updateCacheFillsCapabilitiesCache() throws OwsExceptionReport {
-//        SosWritableContentCache cache = new InMemoryCacheImpl();
-//        instance.updateCache(cache);
-//        testCacheResult(cache);
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void updateNullThrowsNullPointerException() throws OwsExceptionReport {
-//        instance.updateCache(null);
-//    }
-//
-//    /* HELPER */
-//    private void testCacheResult(SosWritableContentCache cache) {
-//        assertNotNull("cache is null", cache);
-//        assertNotNull("envelope of features is null", cache.getGlobalEnvelope());
-//        assertNotNull("feature types is null", cache.getFeatureOfInterestTypes());
-//        assertNotNull("offerings is null", cache.getOfferings());
-//        // assertNotNull("max phenomenon time is null",
-//        // cache.getMaxPhenomenonTime());
-//        // assertNotNull("min phenomenon time is null",
-//        // cache.getMinPhenomenonTime());
-//        // assertNotNull("max result time is null", cache.getMaxResultTime());
-//        // assertNotNull("min result time is null", cache.getMinResultTime());
-//        assertNotNull("observation types is null", cache.getObservationTypes());
-//        assertNotNull("result templates is null", cache.getResultTemplates());
-//    }
+    private SosCacheFeederHandler instance;
+
+    @Before
+    public void initCacheFeeder() {
+        instance = new SosCacheFeederHandler();
+        SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
+        holder.setConnectionProvider(this);
+        instance.setConnectionProvider(holder);
+    }
+
+    @Test
+    public void updateCacheFillsCapabilitiesCache()
+            throws OwsExceptionReport {
+        SosWritableContentCache cache =
+                (InMemoryCacheImpl) new InMemoryCacheImpl().setSupportedTypeRepository(new SupportedTypeRepository());
+        instance.updateCache(cache);
+        testCacheResult(cache);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void updateNullThrowsNullPointerException() throws OwsExceptionReport {
+        instance.updateCache(null);
+    }
+
+    /* HELPER */
+    private void testCacheResult(SosWritableContentCache cache) {
+        assertNotNull("cache is null", cache);
+        assertNotNull("envelope of features is null", cache.getGlobalEnvelope());
+        assertNotNull("feature types is null", cache.getFeatureOfInterestTypes());
+        assertNotNull("offerings is null", cache.getOfferings());
+        // assertNotNull("max phenomenon time is null",
+        // cache.getMaxPhenomenonTime());
+        // assertNotNull("min phenomenon time is null",
+        // cache.getMinPhenomenonTime());
+        // assertNotNull("max result time is null", cache.getMaxResultTime());
+        // assertNotNull("min result time is null", cache.getMinResultTime());
+        assertNotNull("observation types is null", cache.getObservationTypes());
+        assertNotNull("result templates is null", cache.getResultTemplates());
+    }
+
 }

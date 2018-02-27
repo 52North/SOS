@@ -235,7 +235,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
     }
 
     protected boolean isIncludeChildObservableProperties(){
-        return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
+        if (ObservationSettingProvider.getInstance() != null) {
+            return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
+        }
+        return false;
     }
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport;

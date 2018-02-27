@@ -1467,7 +1467,7 @@ public abstract class AbstractObservationDAO
         if (ObservationSettingProvider.getInstance() != null) {
             return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
         }
-        return true;
+        return false;
     }
 
     private GeometryHandler getGeometryHandler() {

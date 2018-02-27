@@ -43,7 +43,6 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -110,6 +109,7 @@ public class ComplexObservationTest extends AbstractObservationTest {
         TEXT_OBSERVABLE_PROPERTY
     };
     private EncoderRepository encoderRepository = new EncoderRepository();
+    private RequestOperatorRepository operatorRepository = new RequestOperatorRepository();
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
@@ -118,6 +118,7 @@ public class ComplexObservationTest extends AbstractObservationTest {
     @Before
     public void before() throws OwsExceptionReport, EncodingException {
         encoderRepository.init();
+        operatorRepository.init();
         activate();
 
         assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
@@ -161,8 +162,8 @@ public class ComplexObservationTest extends AbstractObservationTest {
 
     private void activate() {
         OwsServiceKey sok = new OwsServiceKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
-        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
+        operatorRepository.setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
+        operatorRepository.setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
     }
 
     @Test

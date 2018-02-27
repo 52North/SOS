@@ -77,7 +77,6 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
@@ -567,6 +566,6 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
 
     private FeatureQueryHandler getFeatureQueryHandler() {
-        return Configurator.getInstance().getFeatureQueryHandler();
+        return getDaoFactory().getFeatureQueryHandler();
     }
 }

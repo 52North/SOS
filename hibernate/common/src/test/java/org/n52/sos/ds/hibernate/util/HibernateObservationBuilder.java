@@ -101,7 +101,7 @@ public class HibernateObservationBuilder {
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
         List<Data<?>> observations = Lists.newArrayList();
         for (OfferingEntity offering : getOfferings()) {
-             observations.add(createObservation(createObservation(offering), offering.getIdentifier() + "_" + id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
+             observations.add(createObservation(createObservation(offering), offering.getIdentifier() + "/" + id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
                     phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
                     resultTime != null ? resultTime.toDate() : null, validTimeStart != null ? validTimeStart.toDate()
                             : null, validTimeEnd != null ? validTimeEnd.toDate() : null));

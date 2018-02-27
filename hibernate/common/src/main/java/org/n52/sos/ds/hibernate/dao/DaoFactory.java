@@ -46,6 +46,7 @@ import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.EReportingSetting;
+import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
@@ -86,6 +87,7 @@ public class DaoFactory {
     private I18NDAORepository i18NDAORepository;
     private GeometryHandler geometryHandler;
     private SweHelper sweHelper;
+    private FeatureQueryHandler featureQueryHandler;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -127,6 +129,11 @@ public class DaoFactory {
     @Inject
     public void setSweHelper(SweHelper sweHelper) {
         this.sweHelper = sweHelper;
+    }
+
+    @Inject
+    public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
+        this.featureQueryHandler = featureQueryHandler;
     }
 
     public AbstractSeriesDAO getSeriesDAO() {
@@ -253,6 +260,10 @@ public class DaoFactory {
 
     public SweHelper getSweHelper() {
         return sweHelper;
+    }
+
+    public FeatureQueryHandler getFeatureQueryHandler() {
+        return featureQueryHandler;
     }
 
 }

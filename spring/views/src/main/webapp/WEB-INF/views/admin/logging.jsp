@@ -218,7 +218,7 @@
                 $modal.remove();
                 callback(false);
         }).appendTo($header);
-        $("<h3>").text("Are you really shure?").appendTo($header);
+        $("<h3>").text("Are you really sure?").appendTo($header);
         var $body = $("<div>").addClass("modal-body");
         $("<p>")
             .html("This will remove the logger <code>" + logger + "</code>.")

@@ -219,8 +219,8 @@ public class SplitMergeObservations
                     // identifier
                     if (observation.isSetIdentifier()) {
                         final CodeWithAuthority identifier = observation.getIdentifierCodeWithAuthority();
-                        identifier.setValue(identifier.getValue() + counter);
-                        newObservation.setIdentifier(identifier);
+                        newObservation.setIdentifier(new CodeWithAuthority(identifier.getValue() + counter,
+                                identifier.getCodeSpace()));
                     }
                     // phen time
                     Time phenomenonTime;

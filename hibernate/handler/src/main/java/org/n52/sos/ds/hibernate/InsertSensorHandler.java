@@ -103,6 +103,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -316,7 +317,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             ctxReferenced.setPublish(false);
             DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
             if (hSeries instanceof QuantityDataset) {
-                ((QuantityDataset)hSeries).setReferenceValues(Sets.newHashSet(hReferenceSeries));
+                ((QuantityDataset)hSeries).setReferenceValues(Lists.newArrayList(hReferenceSeries));
             }
             session.update(hSeries);
         }

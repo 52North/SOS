@@ -412,7 +412,14 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
     }
 
     private <V, T extends Data<V>> T setUnitAndPersist(T observation, Value<V> value) throws OwsExceptionReport {
+        if (!dataset.hasUnit()) {
+            dataset.setUnit(getUnit(value));
+        }
         return persist(observation, value.getValue());
+    }
+
+    private UnitEntity getUnit(Value<?> value) {
+        return value.isSetUnit() ? daos.observation().getUnit(value.getUnitObject(), caches.units(), session) : null;
     }
 
     private <V, T extends Data<V>> T persist(T observation, V value) throws OwsExceptionReport {
@@ -463,6 +470,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
             observationContext.setHiddenChild(true);
         }
         observationContext.setFeatureOfInterest(featureOfInterest);
+
         daos.observation().fillObservationContext(observationContext, omObservation, session);
         daos.observation().addObservationContextToObservation(observationContext, observation, session);
         if (omObservation.isSetParameter()) {

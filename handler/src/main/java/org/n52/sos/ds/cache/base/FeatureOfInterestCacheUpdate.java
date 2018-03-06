@@ -81,7 +81,6 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 }
                 getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(procedureDao.getAllInstances(createProcedureDbQuery(featureEntity))));
             }
-
         } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae).withMessage("Error while updating featureOfInterest cache!"));
         }

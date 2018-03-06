@@ -33,6 +33,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.aqd.AqdSamplingPoint;
+import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -115,8 +116,13 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
         if (eReportingSamplingPoint == null) {
             eReportingSamplingPoint = new EReportingSamplingPointEntity();
             addIdentifierNameDescription(samplingPoint, eReportingSamplingPoint, session);
-            eReportingSamplingPoint.setAssessmentType(new EReportingAssessmentTypeDAO().getOrInsert(
-                    samplingPoint.getAssessmentType(), session));
+            if (samplingPoint.hasAssessmentType()) {
+                eReportingSamplingPoint.setAssessmentType(new EReportingAssessmentTypeDAO().getOrInsert(
+                        samplingPoint.getAssessmentType(), session));
+            } else {
+                eReportingSamplingPoint.setAssessmentType(new EReportingAssessmentTypeDAO().getOrInsert(
+                        AssessmentType.Fixed, session));
+            }
             session.save(eReportingSamplingPoint);
             session.flush();
             session.refresh(eReportingSamplingPoint);

@@ -52,6 +52,7 @@ import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.shetland.aqd.AqdSamplingPoint;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -59,6 +60,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -210,13 +212,14 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
 
     @Override
     protected ObservationContext fillObservationContext(
-            ObservationContext ctx, OmObservation sosObservation, Session session) {
+            ObservationContext ctx, OmObservation omObservation, Session session) {
         if (ctx instanceof EReportingObservationContext) {
             EReportingObservationContext ectx = (EReportingObservationContext) ctx;
-            if (sosObservation.isSetParameter()) {
-                AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
+            AqdSamplingPoint samplingPoint = null;
+            if (omObservation.isSetParameter()) {
+                samplingPoint = new AqdSamplingPoint();
                 List<NamedValue<?>> remove = Lists.newArrayList();
-                for (NamedValue<?> namedValue : sosObservation.getParameter()) {
+                for (NamedValue<?> namedValue : omObservation.getParameter()) {
                     if (checkForSamplingPoint(namedValue.getName())) {
                         addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
@@ -225,10 +228,21 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                         remove.add(namedValue);
                     }
                 }
-                sosObservation.getParameter().removeAll(remove);
+                omObservation.getParameter().removeAll(remove);
                 EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
-
                 ectx.setSamplingPoint(dao.getOrInsert(samplingPoint, session));
+            }
+            if (samplingPoint == null && omObservation.getObservationConstellation().isSetFeatureOfInterest()) {
+                samplingPoint = new AqdSamplingPoint();
+                AbstractFeature featureOfInterest = omObservation.getObservationConstellation().getFeatureOfInterest();
+                addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint,
+                        new ReferenceValue(new ReferenceType(featureOfInterest.getIdentifier(),
+                                featureOfInterest.isSetName() ? featureOfInterest.getFirstName().getValue() : "")));
+                EReportingSamplingPointDAO dao = new EReportingSamplingPointDAO(getDaoFactory());
+                ectx.setSamplingPoint(dao.getOrInsert(samplingPoint, session));
+            }
+            if (samplingPoint != null && samplingPoint.getAssessmentType() == null) {
+                addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, new TextValue(AssessmentType.Fixed.name()));
             }
         }
         return ctx;

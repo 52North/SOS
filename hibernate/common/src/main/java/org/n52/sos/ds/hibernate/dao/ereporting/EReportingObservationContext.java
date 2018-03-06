@@ -59,9 +59,9 @@ public class EReportingObservationContext extends ObservationContext {
     }
 
     @Override
-    public void addIdentifierRestrictionsToCritera(Criteria criteria) {
-        super.addIdentifierRestrictionsToCritera(criteria);
-        if (isSetSamplingPoint()) {
+    public void addIdentifierRestrictionsToCritera(Criteria criteria, boolean includeFeature) {
+        super.addIdentifierRestrictionsToCritera(criteria, includeFeature);
+        if (includeFeature && isSetSamplingPoint()) {
             criteria.add(Restrictions.eq(HasEReportingSamplingPoint.SAMPLING_POINT, getSamplingPoint()));
         }
     }

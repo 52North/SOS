@@ -302,9 +302,10 @@ public abstract class AbstractSeriesDAO
         }
         if (dataset != null) {
             StringBuilder builder = new StringBuilder();
-            builder.append("update DatasetEntity ")
-                .append("set valueType = :valueType ")
-                .append("where id = :id");
+            builder.append("update ")
+                .append(getSeriesClass().getSimpleName())
+                .append(" set valueType = :valueType")
+                .append(" where id = :id");
             session.createQuery(builder.toString())
                 .setParameter( "valueType", getDatasetFactory().visit(observation).getValueType())
                 .setParameter( "id", dataset.getId())
@@ -334,7 +335,7 @@ public abstract class AbstractSeriesDAO
         AbstractPhenomenon observableProperty = sosOC.getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
-        Criteria c = session.createCriteria(DatasetEntity.class)
+        Criteria c = session.createCriteria(getSeriesClass())
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         c.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
@@ -1038,32 +1039,6 @@ public abstract class AbstractSeriesDAO
             OfferingEntity offering, boolean hiddenChild, Session session) throws OwsExceptionReport {
         CategoryEntity category = getDaoFactory().getObservablePropertyDAO().getOrInsertCategory(observableProperty, session);
         return checkOrInsertSeries(procedure, observableProperty, offering, category, hiddenChild, session);
-//        Criteria criteria = session.createCriteria(DatasetEntity.class)
-//                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-//                .add(Restrictions.eq( DatasetEntity.PROPERTY_OFFERING, offering))
-//                .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, observableProperty))
-//                .add(Restrictions.eq( DatasetEntity.PROPERTY_PROCEDURE, procedure));
-//        LOGGER.debug(
-//                "QUERY checkOrInsertObservationConstellation(procedure, observableProperty, offering, hiddenChild): {}",
-//                HibernateHelper.getSqlString(criteria));
-//        DatasetEntity dataset = (DatasetEntity) criteria.uniqueResult();
-//        if (dataset == null) {
-//            dataset = new NotDefinedDatasetEntity();
-//            dataset.setObservableProperty(observableProperty);
-//            dataset.setProcedure(procedure);
-//            dataset.setOffering(offering);
-//            dataset.setDeleted(false);
-//            dataset.setHiddenChild(hiddenChild);
-//            session.save(dataset);
-//            session.flush();
-//            session.refresh(dataset);
-//        } else if (dataset.getDeleted()) {
-//            dataset.setDeleted(false);
-//            session.update(dataset);
-//            session.flush();
-//            session.refresh(dataset);
-//        }
-//        return dataset;
     }
 
     public boolean checkObservationType(DatasetEntity dataset, String observationType, Session session) {
@@ -1089,7 +1064,7 @@ public abstract class AbstractSeriesDAO
 
         if (CollectionHelper.isNotEmpty(offerings)) {
             Criteria c =
-                    session.createCriteria(DatasetEntity.class)
+                    session.createCriteria(getSeriesClass())
                             .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                             .add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON,
                                     dataset.getObservableProperty()))

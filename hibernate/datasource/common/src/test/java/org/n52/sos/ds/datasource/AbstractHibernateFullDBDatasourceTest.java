@@ -57,7 +57,7 @@ public class AbstractHibernateFullDBDatasourceTest
 
     private static int CHANGEABLE_COUNT = 10;
 
-    private static int MAX_COUNT = 19;
+    private static int MAX_COUNT = 17;
 
     @Override
     protected void setUp() throws Exception {
@@ -112,10 +112,8 @@ public class AbstractHibernateFullDBDatasourceTest
 
     private void checkSettingKeys(Collection<String> keys, boolean changeable, boolean settingsDefinitions,
             boolean timeFormat) {
-        boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
-        boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
         boolean seriesMetadata = keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
@@ -130,10 +128,8 @@ public class AbstractHibernateFullDBDatasourceTest
         assertTrue(
                 changeable || settingsDefinitions || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
-        assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
-        assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
         assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
@@ -143,16 +139,10 @@ public class AbstractHibernateFullDBDatasourceTest
             assertEquals(CHANGEABLE_COUNT, keys.size());
         } else {
             int counter = MAX_COUNT;
-            if (!transactional) {
-                counter--;
-            }
             if (!concept) {
                 counter--;
             }
             if (!featureConcept) {
-                counter--;
-            }
-            if (!multiLanguage) {
                 counter--;
             }
             if (!seriesMetadata) {

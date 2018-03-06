@@ -48,7 +48,6 @@ public class SqlServerCoreDatasource extends AbstractSqlServerDatasource {
 
     public SqlServerCoreDatasource() {
         super();
-        super.setTransactional(false);
     }
 
     @Override
@@ -59,12 +58,12 @@ public class SqlServerCoreDatasource extends AbstractSqlServerDatasource {
     @Override
     public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
         return filter(super.getChangableSettingDefinitions(current),
-                ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+                ImmutableSet.of(BATCH_SIZE_KEY));
     }
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+        return filter(super.getSettingDefinitions(), ImmutableSet.of(BATCH_SIZE_KEY));
     }
 
 }

@@ -190,7 +190,6 @@ public class OracleDatasourceTest extends TestCase {
         settings.put(AbstractHibernateDatasource.USERNAME_KEY, user);
         settings.put(AbstractHibernateDatasource.PASSWORD_KEY, pass);
         settings.put(AbstractHibernateDatasource.SCHEMA_KEY, schema);
-        settings.put(AbstractHibernateDatasource.TRANSACTIONAL_KEY, true);
         return settings;
     }
 }

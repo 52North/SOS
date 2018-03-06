@@ -118,22 +118,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String FEATURE_CONCEPT_DEFAULT_VALUE = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
 
-    protected static final String TRANSACTIONAL_TITLE = "Transactional Profile";
-
-    protected static final String TRANSACTIONAL_DESCRIPTION = "Should the database support the transactional profile?";
-
-    protected static final String TRANSACTIONAL_KEY = "sos.transactional";
-
-    protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
-
-    protected static final String MULTILINGUALISM_TITLE = "Multilingualism support";
-
-    protected static final String MULTILINGUALISM_DESCRIPTION = "Should the database support multilingualism?";
-
-    protected static final String MULTILINGUALISM_KEY = "sos.language";
-
-    protected static final boolean MULTILINGUALISM_DEFAULT_VALUE = false;
-
     protected static final String SERIES_METADATA_TITLE = "Series metadata support";
 
     protected static final String SERIES_METADATA_DESCRIPTION = "Should the database support series metadata? This holds global data for observations of this series.";
@@ -166,14 +150,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
 
     private final ChoiceSettingDefinition featureConceptDefinition = createFeatureConceptDefinition();
-
-    private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
-
-    private boolean transactionalDatasource = true;
-
-    private final BooleanSettingDefinition multilingualismDefinition = createMultilingualismDefinition();
-
-    private boolean multilingualismDatasource = true;
 
     private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
 
@@ -225,8 +201,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                       DatabaseConcept.SERIES_CONCEPT.getDisplayName());
         def.addOption(DatabaseConcept.EREPORTING_CONCEPT.name(),
                       DatabaseConcept.EREPORTING_CONCEPT.getDisplayName());
-        def.addOption(DatabaseConcept.OLD_CONCEPT.name(),
-                      DatabaseConcept.OLD_CONCEPT.getDisplayName());
         def.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
         return def;
     }
@@ -245,33 +219,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 FeatureConcept.EXTENDED_FEATURE_CONCEPT.getDisplayName());
         choiceSettingDefinition.setDefaultValue(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
         return choiceSettingDefinition;
-    }
-
-    /**
-     * Create settings definition for transactional support
-     *
-     * @return Transactional support settings definition
-     */
-    protected BooleanSettingDefinition createTransactionalDefinition() {
-        BooleanSettingDefinition def = new BooleanSettingDefinition();
-        def.setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE);
-        def.setTitle(TRANSACTIONAL_TITLE);
-        def.setDescription(TRANSACTIONAL_DESCRIPTION);
-        def.setGroup(ADVANCED_GROUP);
-        def.setOrder(3);
-        def.setKey(TRANSACTIONAL_KEY);
-        return def;
-    }
-
-    protected BooleanSettingDefinition createMultilingualismDefinition() {
-        BooleanSettingDefinition def = new BooleanSettingDefinition();
-        def.setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE);
-        def.setTitle(MULTILINGUALISM_TITLE);
-        def.setDescription(MULTILINGUALISM_DESCRIPTION);
-        def.setGroup(ADVANCED_GROUP);
-        def.setOrder(4);
-        def.setKey(MULTILINGUALISM_KEY);
-        return def;
     }
 
     /**
@@ -358,18 +305,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
             paths.add(resource(featureConceptMappingDirectory));
         }
-//        if (isTransactionalDatasource()) {
-//            Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
-//            if (transactional != null && transactional.booleanValue()) {
-//                paths.add(resource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH));
-//            }
-//        }
-//        if (isMultiLanguageDatasource()) {
-//            Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
-//            if (multiLanguage != null && multiLanguage.booleanValue()) {
-//                paths.add(resource(HIBERNATE_MAPPING_I18N_PATH));
-//            }
-//        }
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
                 || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
@@ -558,6 +493,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         try {
             SchemaValidator schemaValidator = new SchemaValidator();
             getServiceRegistry(settings);
+            metadata = null;
             Metadata metadata = getMetadata(settings);
             schemaValidator.validate(metadata, registry);
         } catch (HibernateException ex) {
@@ -846,18 +782,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
                     featureConceptMappingDirectory);
         }
-//        if (isTransactionalDatasource()) {
-//            Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
-//            if (t != null && t) {
-//                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
-//            }
-//        }
-//        if (isMultiLanguageDatasource()) {
-//            Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
-//            if (t != null && t) {
-//                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
-//            }
-//        }
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
                 || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
@@ -875,39 +799,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected ChoiceSettingDefinition getDatabaseConceptDefinition() {
         return databaseConceptDefinition;
-    }
-
-    /**
-     * Check if properties contains transactional mapping path
-     *
-     * @param properties
-     *            Datasource properties
-     * @return <code>true</code>, if properties contains transactional mapping
-     *         path
-     */
-    protected boolean isTransactional(Properties properties) {
-//        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-//        return p == null || p.contains(HIBERNATE_MAPPING_TRANSACTIONAL_PATH);
-        return true;
-    }
-
-    /**
-     * Get transactional setting definition
-     *
-     * @return Transactional setting definition
-     */
-    protected BooleanSettingDefinition getTransactionalDefiniton() {
-        return transactionalDefiniton;
-    }
-
-    protected boolean isMultiLanguage(Properties properties) {
-//        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
-//        return p == null || p.contains(HIBERNATE_MAPPING_I18N_PATH);
-        return true;
-    }
-
-    protected BooleanSettingDefinition getMulitLanguageDefiniton() {
-        return multilingualismDefinition;
     }
 
     /**
@@ -976,40 +867,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             return (String) settings.get(HibernateConstants.DEFAULT_SCHEMA) + ".";
         }
         return "";
-    }
-
-    /**
-     * Check if the datasource is transactional
-     *
-     * @return <code>true</code>, if it is a transactionalDatasource
-     */
-    public boolean isTransactionalDatasource() {
-        return transactionalDatasource;
-    }
-
-    /**
-     * Set transactional datasource flag
-     *
-     * @param transactionalDatasource
-     *            the transactionalDatasource flag to set
-     */
-    public void setTransactional(boolean transactionalDatasource) {
-        this.transactionalDatasource = transactionalDatasource;
-    }
-
-    /**
-     * @return the multi language
-     */
-    public boolean isMultiLanguageDatasource() {
-        return multilingualismDatasource;
-    }
-
-    /**
-     * @param multi
-     *            language the multi language to set
-     */
-    public void setMultiLangugage(boolean multiLanguageDatasource) {
-        this.multilingualismDatasource = multiLanguageDatasource;
     }
 
     /**

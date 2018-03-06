@@ -128,7 +128,6 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_DATASOURCE_TIME_STRING_Z  = "hibernate.datasource.timeStringZ";
 
     public enum DatabaseConcept {
-        OLD_CONCEPT("Old concept"),
         SERIES_CONCEPT("Series concept"),
         EREPORTING_CONCEPT("eReporting concept (extended Series concept)");
 

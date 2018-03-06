@@ -88,7 +88,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
                 "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
                 System.getProperty("user.home") + File.separator + "sos");
         return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
-                getTransactionalDefiniton(), getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
+                getSeriesMetadataDefiniton());
     }
 
     private StringSettingDefinition getDatabaseDefinition() {
@@ -120,7 +120,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();
         settings.put(DATABASE_KEY, matcher.group(1));
-        settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         return settings;

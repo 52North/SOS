@@ -49,7 +49,6 @@ public class MySQLCoreDatasource extends AbstractMySQLDatasource {
 
     public MySQLCoreDatasource() {
         super(false);
-        super.setTransactional(false);
     }
 
     @Override
@@ -59,12 +58,12 @@ public class MySQLCoreDatasource extends AbstractMySQLDatasource {
 
     @Override
     public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
-        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+        return filter(super.getChangableSettingDefinitions(current), ImmutableSet.of(BATCH_SIZE_KEY));
     }
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return filter(super.getSettingDefinitions(), ImmutableSet.of(TRANSACTIONAL_KEY, BATCH_SIZE_KEY));
+        return filter(super.getSettingDefinitions(), ImmutableSet.of(BATCH_SIZE_KEY));
     }
 
     @Override

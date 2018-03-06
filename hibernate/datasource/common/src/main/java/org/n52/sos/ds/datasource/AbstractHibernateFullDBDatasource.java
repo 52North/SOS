@@ -72,12 +72,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         set.add(createProvidedJdbcDriverDefinition(providedJdbc));
         set.add(getDatabaseConceptDefinition());
         set.add(getFeatureConceptDefinition());
-        if (isTransactionalDatasource()) {
-            set.add(getTransactionalDefiniton());
-        }
-        if (isMultiLanguageDatasource()) {
-            set.add(getMulitLanguageDefiniton());
-        }
         if (isSeriesMetadataDatasource()) {
             set.add(getSeriesMetadataDefiniton());
         }
@@ -180,7 +174,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (current.containsKey(HibernateConstants.JDBC_BATCH_SIZE)) {
             settings.put(BATCH_SIZE_KEY, current.getProperty(HibernateConstants.JDBC_BATCH_SIZE));
         }
-        settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,

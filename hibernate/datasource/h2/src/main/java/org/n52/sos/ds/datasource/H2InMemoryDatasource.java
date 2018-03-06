@@ -62,8 +62,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getFeatureConceptDefinition(), getTransactionalDefiniton(),
-                getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
+        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
+                getSeriesMetadataDefiniton());
     }
 
     @Override
@@ -93,7 +93,6 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = new HashMap<>(4);
-        settings.put(getTransactionalDefiniton().getKey(), isTransactional(current));
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         return settings;

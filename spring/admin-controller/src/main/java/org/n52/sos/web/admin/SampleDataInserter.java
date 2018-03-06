@@ -292,7 +292,7 @@ public class SampleDataInserter implements Sos2Constants {
     private void missingServiceOperator(final String service, final String version, final String operation)
             throws MissingServiceOperatorException {
         String msg = String.format("Could not load request operator for: %s, %s, %s. Please activate the according "
-                + "operation in the <a href=\"../operations\">settings</a>.", service, version,
+                + "operation in the <a href=\"../admin/operations\">settings</a>.", service, version,
                 operation);
         LOG.error(msg);
         throw new MissingServiceOperatorException(msg);

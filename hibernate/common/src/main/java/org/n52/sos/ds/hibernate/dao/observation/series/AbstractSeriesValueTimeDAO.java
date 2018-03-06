@@ -347,14 +347,8 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session, logArgs);
             checkAndAddResultFilterCriterion(c, getObsReq, null, session, logArgs);
-            if (temporalFilterCriterion != null) {
-                logArgs.append(", filterCriterion");
-                c.add(temporalFilterCriterion);
-            }
-            if (sosIndeterminateTime != null) {
-                logArgs.append(", sosIndeterminateTime");
-                addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-            }
+            addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             addSpecificRestrictions(c, getObsReq, logArgs);
         }
         LOGGER.debug("QUERY getDataEntityFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
@@ -370,14 +364,8 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             GetObservationRequest getObsReq = (GetObservationRequest)request;
             checkAndAddSpatialFilteringProfileCriterion(c, getObsReq, session, logArgs);
 
-            if (temporalFilterCriterion != null) {
-                logArgs.append(", filterCriterion");
-                c.add(temporalFilterCriterion);
-            }
-            if (sosIndeterminateTime != null) {
-                logArgs.append(", sosIndeterminateTime");
-                addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-            }
+            addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             addSpecificRestrictions(c, getObsReq, logArgs);
         }
         LOGGER.debug("QUERY getSeriesValueCriteriaFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));

@@ -140,19 +140,21 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * @return Modified criteria
      */
     protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime, StringBuilder logArgs) {
-        // get extrema indeterminate time
-        c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
-        Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
+        if (sosIndeterminateTime != null) {
+            // get extrema indeterminate time
+            c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
+            Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
 
-        // reset criteria
-        // see http://stackoverflow.com/a/1472958/193435
-        c.setProjection(null);
-        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            // reset criteria
+            // see http://stackoverflow.com/a/1472958/193435
+            c.setProjection(null);
+            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-        // get observations with exactly the extrema time
-        c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
+            // get observations with exactly the extrema time
+            c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
 
-        logArgs.append(", sosIndeterminateTime");
+            logArgs.append(", sosIndeterminateTime");
+        }
         return c;
     }
 

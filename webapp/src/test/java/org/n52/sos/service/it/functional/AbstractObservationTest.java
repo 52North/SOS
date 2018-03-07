@@ -94,6 +94,7 @@ import net.opengis.swes.x20.InsertSensorType;
 
 public abstract class AbstractObservationTest extends AbstractComplianceSuiteTest {
     private static final GeometryFactory GEOM_FACTORY_4326 = JTSHelper.getGeometryFactoryForSRID(4326);
+    private static final GeometryFactory GEOM_FACTORY_4979 = JTSHelper.getGeometryFactoryForSRID(4979);
     private static final String APPLICATION_XML = MediaTypes.APPLICATION_XML.toString();
     protected static final String CODESPACE = "codespace";
 
@@ -284,12 +285,16 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
         return GEOM_FACTORY_4326.createPoint(new Coordinate(lng, lat));
     }
 
-    protected static Point createPoint4326(double lat, double lng, double height) {
-        return GEOM_FACTORY_4326.createPoint(new Coordinate(lng, lat, height));
+    protected static Point createPoint4979(double lat, double lng, double height) {
+        return GEOM_FACTORY_4979.createPoint(new Coordinate(lng, lat, height));
     }
 
     protected static Point createRandomPoint4326() {
-        return GEOM_FACTORY_4326.createPoint(new Coordinate(randomLng(), randomLat(),
+        return GEOM_FACTORY_4326.createPoint(new Coordinate(randomLng(), randomLat()));
+    }
+
+    protected static Point createRandomPoint4979() {
+        return GEOM_FACTORY_4979.createPoint(new Coordinate(randomLng(), randomLat(),
                 randomInRange(-10.0, 50.0, 2)));
     }
 

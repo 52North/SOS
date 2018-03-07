@@ -796,7 +796,7 @@ public class CoordinateTransformator
         }
         return getGeomtryHandler().getDefaultResponseEPSG();
     }
-    
+
     private int getRequested3DCrs(OwsServiceRequest request) throws OwsExceptionReport {
         int crsFrom = getCrsFrom(request);
         if (crsFrom != NOT_SET_EPSG) {

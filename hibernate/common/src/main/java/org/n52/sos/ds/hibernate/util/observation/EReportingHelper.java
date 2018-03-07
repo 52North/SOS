@@ -251,6 +251,7 @@ public class EReportingHelper {
 
     private List<List<String>> createValue(OmObservation omObservation, EReportingData observation, PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
+        addTimes(value, DataTimeCreator.createPhenomenonTime(observation));
         addIntegerValue(value, observation.getVerification());
         addIntegerValue(value, observation.getValidation());
         addValue(value, observation, omObservation);

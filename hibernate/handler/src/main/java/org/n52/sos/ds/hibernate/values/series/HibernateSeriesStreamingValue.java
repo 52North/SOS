@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
@@ -40,6 +39,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
+import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,6 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;
-    private boolean duplicated;
 
     /**
      * constructor
@@ -69,10 +68,9 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            Datasource series id
      * @throws OwsExceptionReport
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated) throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request);
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, DecoderRepository decoderRepository) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, decoderRepository);
         this.series = series;
-        this.duplicated = duplicated;
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
     }
@@ -111,17 +109,6 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         } finally {
             sessionHolder.returnSession(s);
         }
-    }
-
-    protected boolean checkValue(DataEntity value) {
-        if (isDuplicated()) {
-            return value.getDataset().getOffering() != null;
-        }
-        return true;
-     }
-
-    protected boolean isDuplicated() {
-        return duplicated;
     }
 
 }

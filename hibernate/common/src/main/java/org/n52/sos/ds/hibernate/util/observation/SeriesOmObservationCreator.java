@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
 import java.util.Locale;
-import org.hibernate.query.Query;;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.janmayen.http.MediaType;

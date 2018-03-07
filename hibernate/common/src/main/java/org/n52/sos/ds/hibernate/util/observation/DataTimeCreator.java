@@ -43,14 +43,14 @@ public interface DataTimeCreator {
 
     static Time createPhenomenonTime(HasPhenomenonTime data) {
         // create time element
-        DateTime phenEndTime = DateTimeHelper.makeDateTime(data.getPhenomenonTimeEnd());
-        DateTime phenStartTime = null;
-        if (data.getPhenomenonTimeStart() != null) {
-            phenEndTime = DateTimeHelper.makeDateTime(data.getPhenomenonTimeStart());
+        DateTime end = DateTimeHelper.makeDateTime(data.getSamplingTimeEnd());
+        DateTime start = null;
+        if (data.hasSamplingTimeStart()) {
+            start = DateTimeHelper.makeDateTime(data.getSamplingTimeStart());
         } else {
-            phenStartTime = phenEndTime;
+            start = end;
         }
-        return GmlHelper.createTime(phenStartTime, phenEndTime);
+        return GmlHelper.createTime(start, end);
     }
 
     /**
@@ -60,7 +60,7 @@ public interface DataTimeCreator {
      *            {@link Date} to create result time from
      * @return result time
      */
-    default TimeInstant createResutlTime(Date date) {
+    default TimeInstant createResultTime(Date date) {
         DateTime dateTime = new DateTime(date, DateTimeZone.UTC);
         return new TimeInstant(dateTime);
     }

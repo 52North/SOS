@@ -30,20 +30,10 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import javax.inject.Inject;
 
-import org.n52.series.db.beans.BlobDataEntity;
-import org.n52.series.db.beans.BooleanDataEntity;
-import org.n52.series.db.beans.CategoryDataEntity;
-import org.n52.series.db.beans.ComplexDataEntity;
-import org.n52.series.db.beans.CountDataEntity;
-import org.n52.series.db.beans.DataArrayDataEntity;
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.HibernateRelations.HasObservablePropertyGetter;
-import org.n52.series.db.beans.ProfileDataEntity;
-import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.ReferencedDataEntity;
-import org.n52.series.db.beans.TextDataEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.data.Data.*;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.values.BooleanValue;
@@ -74,42 +64,41 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     private DecoderRepository decoderRepository;
 
-    @Inject
-    public void setDecoderRepository(DecoderRepository decoderRepository) {
+    public ObservationValueCreator(DecoderRepository decoderRepository) {
         this.decoderRepository = decoderRepository;
     }
 
     @Override
-    public Value<?> visit(DataEntity o)
+    public Value<?> visit(Data o)
             throws OwsExceptionReport {
-       if (o instanceof QuantityDataEntity) {
-           return visit((QuantityDataEntity)o);
-       } else if (o instanceof BlobDataEntity) {
-           return visit((BlobDataEntity)o);
-       } else if (o instanceof BooleanDataEntity) {
-           return visit((BooleanDataEntity)o);
-       } else if (o instanceof CategoryDataEntity) {
-           return visit((CategoryDataEntity)o);
-       } else if (o instanceof ComplexDataEntity) {
-           return visit((ComplexDataEntity)o);
-       } else if (o instanceof CountDataEntity) {
-           return visit((CountDataEntity)o);
-       } else if (o instanceof GeometryDataEntity) {
-           return visit((GeometryDataEntity)o);
-       } else if (o instanceof TextDataEntity) {
-           return visit((TextDataEntity)o);
-       } else if (o instanceof DataArrayDataEntity) {
-           return visit((DataArrayDataEntity)o);
-       } else if (o instanceof ProfileDataEntity) {
-           return visit((ProfileDataEntity)o);
-       } else if (o instanceof ReferencedDataEntity) {
-           return visit((ReferencedDataEntity)o);
+       if (o instanceof QuantityData) {
+           return visit((QuantityData)o);
+       } else if (o instanceof BlobData) {
+           return visit((BlobData)o);
+       } else if (o instanceof BooleanData) {
+           return visit((BooleanData)o);
+       } else if (o instanceof CategoryData) {
+           return visit((CategoryData)o);
+       } else if (o instanceof ComplexData) {
+           return visit((ComplexData)o);
+       } else if (o instanceof CountData) {
+           return visit((CountData)o);
+       } else if (o instanceof GeometryData) {
+           return visit((GeometryData)o);
+       } else if (o instanceof TextData) {
+           return visit((TextData)o);
+       } else if (o instanceof DataArrayData) {
+           return visit((DataArrayData)o);
+       } else if (o instanceof ProfileData) {
+           return visit((ProfileData)o);
+       } else if (o instanceof ReferencedData) {
+           return visit((ReferencedData)o);
        }
         return null;
     }
 
     @Override
-    public QuantityValue visit(QuantityDataEntity o) {
+    public QuantityValue visit(QuantityData o) {
         QuantityValue v = new QuantityValue(o.getValue().doubleValue());
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
@@ -119,7 +108,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
 
     @Override
-    public UnknownValue visit(BlobDataEntity o) {
+    public UnknownValue visit(BlobData o) {
         UnknownValue v = new UnknownValue(o.getValue());
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
@@ -128,7 +117,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public BooleanValue visit(BooleanDataEntity o) {
+    public BooleanValue visit(BooleanData o) {
         BooleanValue v = new BooleanValue(o.getValue());
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
@@ -137,7 +126,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public CategoryValue visit(CategoryDataEntity o) {
+    public CategoryValue visit(CategoryData o) {
         CategoryValue v = new CategoryValue(o.getValue());
         addAdditonalData(o, v);
         addDefinitionFromObservableProperty(o, v);
@@ -148,20 +137,20 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public ComplexValue visit(ComplexDataEntity o) throws OwsExceptionReport {
+    public ComplexValue visit(ComplexData o) throws OwsExceptionReport {
         SweAbstractDataComponentCreator visitor
-                = new SweAbstractDataComponentCreator();
+                = new SweAbstractDataComponentCreator(decoderRepository);
         SweDataRecord record = visitor.visit(o);
         return new ComplexValue(record);
     }
 
     @Override
-    public CountValue visit(CountDataEntity o) {
+    public CountValue visit(CountData o) {
         return new CountValue(o.getValue());
     }
 
     @Override
-    public GeometryValue visit(GeometryDataEntity o) throws OwsExceptionReport {
+    public GeometryValue visit(GeometryData o) throws OwsExceptionReport {
         GeometryValue v = new GeometryValue(JTSConverter.convert(o.getValue().getGeometry()));
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
@@ -170,7 +159,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public TextValue visit(TextDataEntity o) {
+    public TextValue visit(TextData o) {
         TextValue v = new TextValue(o.getValue());
         addAdditonalData(o, v);
         addDefinitionFromObservableProperty(o, v);
@@ -181,7 +170,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public SweDataArrayValue visit(DataArrayDataEntity o)
+    public SweDataArrayValue visit(DataArrayData o)
             throws OwsExceptionReport {
         SweDataArray array = new SweDataArray();
         // TODO
@@ -189,12 +178,12 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public ProfileValue visit(ProfileDataEntity o) throws OwsExceptionReport {
-        return ProfileGeneratorSplitter.create(o);
+    public ProfileValue visit(ProfileData o) throws OwsExceptionReport {
+        return new ProfileGeneratorSplitter(this).create(o);
     }
 
     @Override
-    public ReferenceValue visit(ReferencedDataEntity o) {
+    public ReferenceValue visit(ReferencedData o) {
         ReferenceValue v = new ReferenceValue(new ReferenceType(o.getValue()));
         if (o.hasValueName()) {
             v.getValue().setTitle(o.getValueName());
@@ -206,7 +195,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @SuppressWarnings("rawtypes")
-    protected void addAdditonalData(DataEntity o, SweAbstractSimpleType v) {
+    protected void addAdditonalData(Data o, SweAbstractSimpleType v) {
         if (o.hasValueIdentifier()) {
             v.setIdentifier(o.getValueIdentifier());
         }
@@ -219,7 +208,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @SuppressWarnings("rawtypes")
-    protected void addDefinitionFromObservableProperty(DataEntity o, SweAbstractSimpleType v) {
+    protected void addDefinitionFromObservableProperty(Data o, SweAbstractSimpleType v) {
         if (o instanceof HasObservablePropertyGetter) {
             if (((HasObservablePropertyGetter)o).getObservableProperty() != null) {
                 v.setDefinition(((HasObservablePropertyGetter)o).getObservableProperty().getIdentifier());

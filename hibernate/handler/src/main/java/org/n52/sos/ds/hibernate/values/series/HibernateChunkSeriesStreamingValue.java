@@ -45,6 +45,7 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
+import org.n52.svalbard.decode.DecoderRepository;
 
 /**
  * Hibernate series streaming value implementation for chunk results
@@ -76,8 +77,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, boolean duplicated ) throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, series, duplicated);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, DecoderRepository decoderRepository) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series, decoderRepository);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 

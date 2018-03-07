@@ -81,6 +81,7 @@ import org.n52.sos.ds.hibernate.util.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSConverter;
+import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     protected Criterion temporalFilterCriterion;
     private final DaoFactory daoFactory;
     private final EReportingHelper helper;
+    protected final DecoderRepository decoderRepository;
 
     /**
      * constructor
@@ -113,11 +115,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      * @param daoFactory the DAO factory
      * @param connectionProvider the connection provider
      */
-    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request) {
+    public AbstractHibernateStreamingValue(
+            ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request,
+            DecoderRepository decoderRepository) {
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
         this.daoFactory = daoFactory;
         this.helper = new EReportingHelper(daoFactory.getSweHelper());
+        this.decoderRepository = decoderRepository;
     }
 
     @Override
@@ -186,7 +191,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      *             If an error occurs when getting the value
      */
     protected TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
-        return new TimeValuePair(createPhenomenonTime(abstractValue), new ObservationValueCreator().visit(abstractValue));
+        return new TimeValuePair(createPhenomenonTime(abstractValue), new ObservationValueCreator(decoderRepository).visit(abstractValue));
     }
 
     /**
@@ -214,7 +219,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (abstractValue.isSetDescription()) {
             observation.setDescription(abstractValue.getDescription());
         }
-        Value<?> value = new ObservationValueCreator().visit(abstractValue);
+        Value<?> value = new ObservationValueCreator(decoderRepository).visit(abstractValue);
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }
@@ -373,7 +378,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      */
     @Deprecated
     protected Value<?> getValueFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
-        Value<?> value = new ObservationValueCreator().visit(abstractValue);
+        Value<?> value = new ObservationValueCreator(decoderRepository).visit(abstractValue);
 //        if (value != null && abstractValue.isSetUnit()) {
 //            value.setUnit(abstractValue.getUnit().getUnit());
 //        }
@@ -429,7 +434,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (!observation.isSetDescription() && o.isSetDescription()) {
             observation.setDescription(o.getDescription());
         }
-        Value<?> value = new ObservationValueCreator().visit(o);
+        Value<?> value = new ObservationValueCreator(decoderRepository).visit(o);
         if (!value.isSetUnit()
                 && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
                 && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
@@ -497,7 +502,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                     observation.getObservationConstellation()
                             .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
                 }
-                observation.mergeWithObservation(getSingleObservationValue(o, new ObservationValueCreator().visit(o)));
+                observation.mergeWithObservation(getSingleObservationValue(o, new ObservationValueCreator(decoderRepository).visit(o)));
             }
         }
         return observation;

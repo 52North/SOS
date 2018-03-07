@@ -153,7 +153,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
         Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
-        final Value<?> value = new ObservationValueCreator().visit(hObservation);
+        final Value<?> value = new ObservationValueCreator(getCreatorContext().getDecoderRepository()).visit(hObservation);
         OmObservation sosObservation = null;
         if (value != null) {
             value.setUnit(queryUnit(hObservation.getDataset()));

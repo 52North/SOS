@@ -28,18 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.series.db.beans.BlobDataEntity;
-import org.n52.series.db.beans.BooleanDataEntity;
-import org.n52.series.db.beans.CategoryDataEntity;
-import org.n52.series.db.beans.ComplexDataEntity;
-import org.n52.series.db.beans.CountDataEntity;
-import org.n52.series.db.beans.DataArrayDataEntity;
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.GeometryDataEntity;
-import org.n52.series.db.beans.ProfileDataEntity;
-import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.ReferencedDataEntity;
-import org.n52.series.db.beans.TextDataEntity;
+
+import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.data.Data.*;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 
@@ -50,29 +41,29 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
  */
 public interface ValuedObservationVisitor<T> {
 
-    T visit(DataEntity o) throws OwsExceptionReport;
+    T visit(Data o) throws OwsExceptionReport;
 
-    T visit(QuantityDataEntity o) throws OwsExceptionReport;
+    T visit(QuantityData o) throws OwsExceptionReport;
 
-    T visit(BlobDataEntity o) throws OwsExceptionReport;
+    T visit(BlobData o) throws OwsExceptionReport;
 
-    T visit(BooleanDataEntity o) throws OwsExceptionReport;
+    T visit(BooleanData o) throws OwsExceptionReport;
 
-    T visit(CategoryDataEntity o) throws OwsExceptionReport;
+    T visit(CategoryData o) throws OwsExceptionReport;
 
-    T visit(ComplexDataEntity o) throws OwsExceptionReport;
+    T visit(ComplexData o) throws OwsExceptionReport;
 
-    T visit(CountDataEntity o) throws OwsExceptionReport;
+    T visit(CountData o) throws OwsExceptionReport;
 
-    T visit(GeometryDataEntity o) throws OwsExceptionReport;
+    T visit(GeometryData o) throws OwsExceptionReport;
 
-    T visit(TextDataEntity o) throws OwsExceptionReport;
+    T visit(TextData o) throws OwsExceptionReport;
 
-    T visit(DataArrayDataEntity o) throws OwsExceptionReport;
+    T visit(DataArrayData o) throws OwsExceptionReport;
 
-    T visit(ProfileDataEntity o)
+    T visit(ProfileData o)
             throws OwsExceptionReport;
-    T visit(ReferencedDataEntity o)
+    T visit(ReferencedData o)
             throws OwsExceptionReport;
 
 

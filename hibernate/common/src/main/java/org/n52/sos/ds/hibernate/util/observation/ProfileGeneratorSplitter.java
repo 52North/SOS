@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.data.Data.ProfileData;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.parameter.Parameter;
@@ -55,8 +56,13 @@ import com.google.common.collect.Maps;
 
 public class ProfileGeneratorSplitter {
     private static final Logger LOG = LoggerFactory.getLogger(ProfileGeneratorSplitter.class);
+    private ObservationValueCreator creator;
 
-    public static ProfileValue create(ProfileDataEntity entity) throws OwsExceptionReport {
+    public ProfileGeneratorSplitter(ObservationValueCreator creator) {
+        this.creator = creator;
+    }
+
+    public ProfileValue create(ProfileData entity) throws OwsExceptionReport {
         ProfileValue profileValue = new ProfileValue("");
         profileValue.setGmlId("pv" + entity.getId());
         UoM uom = null;
@@ -80,11 +86,11 @@ public class ProfileGeneratorSplitter {
         return profileValue;
     }
 
-    public static SweAbstractDataComponent createValue(ProfileDataEntity entity) throws OwsExceptionReport {
+    public SweAbstractDataComponent createValue(ProfileData entity) throws OwsExceptionReport {
         return create(entity).asDataRecord();
     }
 
-    private static List<ProfileLevel> createProfileLevel(ProfileDataEntity entity) throws OwsExceptionReport {
+    private List<ProfileLevel> createProfileLevel(ProfileData entity) throws OwsExceptionReport {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
@@ -99,7 +105,7 @@ public class ProfileGeneratorSplitter {
                 }
                 if (levelStart != null || levelEnd != null) {
                     BigDecimal key = getKey(levelStart, levelEnd);
-                    Value<?> value = new ObservationValueCreator().visit(observation);
+                    Value<?> value = creator.visit(observation);
                     if (map.containsKey(key)) {
                         map.get(key).addValue(value);
                     } else {
@@ -118,7 +124,7 @@ public class ProfileGeneratorSplitter {
         return (List<ProfileLevel>)Lists.newArrayList(map.values());
     }
 
-    private static BigDecimal getKey(QuantityValue levelStart, QuantityValue levelEnd) {
+    private BigDecimal getKey(QuantityValue levelStart, QuantityValue levelEnd) {
         if (levelStart != null && levelStart.isSetValue()) {
             return levelStart.getValue();
         } else if (levelEnd != null && levelEnd.isSetValue()) {
@@ -128,7 +134,7 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings("rawtypes")
-    private static QuantityValue getLevelStart(Set<Parameter<?>> parameters) throws OwsExceptionReport {
+    private QuantityValue getLevelStart(Set<Parameter<?>> parameters) throws OwsExceptionReport {
         for (Parameter<?> parameter : parameters) {
             if (checkParameterForStartLevel(parameter.getName())) {
                 NamedValue namedValue = new ParameterVisitor().visit(parameter);
@@ -144,7 +150,7 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings("rawtypes")
-    private static QuantityValue getLevelEnd(Set<Parameter<?>> parameters) throws OwsExceptionReport {
+    private QuantityValue getLevelEnd(Set<Parameter<?>> parameters) throws OwsExceptionReport {
         for (Parameter<?> parameter : parameters) {
             if (checkParameterForEndLevel(parameter.getName())) {
                 NamedValue namedValue = new ParameterVisitor().visit(parameter);
@@ -159,7 +165,7 @@ public class ProfileGeneratorSplitter {
         return null;
     }
 
-    private static QuantityValue getLevelStart(BigDecimal fromLevel, String fromLevelName, UnitEntity levelUnit) {
+    private QuantityValue getLevelStart(BigDecimal fromLevel, String fromLevelName, UnitEntity levelUnit) {
         if (fromLevel != null) {
             return fromLevelName != null && !fromLevelName.isEmpty()
                     ? getLevel(fromLevel, fromLevelName, levelUnit)
@@ -168,7 +174,7 @@ public class ProfileGeneratorSplitter {
         return null;
     }
 
-    private static QuantityValue getLevelEnd(BigDecimal toLevel, String toLevelName, UnitEntity levelUnit) {
+    private QuantityValue getLevelEnd(BigDecimal toLevel, String toLevelName, UnitEntity levelUnit) {
         if (toLevel != null) {
             return toLevelName != null && !toLevelName.isEmpty()
                     ? getLevel(toLevel, toLevelName, levelUnit)
@@ -177,7 +183,7 @@ public class ProfileGeneratorSplitter {
         return null;
     }
 
-    private static QuantityValue getLevel(BigDecimal v, String n, UnitEntity u) {
+    private QuantityValue getLevel(BigDecimal v, String n, UnitEntity u) {
         QuantityValue value = new QuantityValue(v);
         value.setDefinition(n);
         value.setName(n);
@@ -196,7 +202,7 @@ public class ProfileGeneratorSplitter {
         return value;
     }
 
-    private static boolean checkParameterForStartLevel(String name) {
+    private boolean checkParameterForStartLevel(String name) {
         return OmConstants.PARAMETER_NAME_DEPTH_URL.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_DEPTH_URL.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_DEPTH.equalsIgnoreCase(name)
@@ -207,13 +213,13 @@ public class ProfileGeneratorSplitter {
                 || OmConstants.PARAMETER_NAME_FROM_HEIGHT.equalsIgnoreCase(name);
     }
 
-    private static boolean checkParameterForEndLevel(String name) {
+    private boolean checkParameterForEndLevel(String name) {
         return OmConstants.PARAMETER_NAME_TO.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_TO_DEPTH.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_TO_HEIGHT.equalsIgnoreCase(name);
     }
 
-    public static void split(ProfileValue coverage, ProfileDataEntity entity) {
+    public void split(ProfileValue coverage, ProfileDataEntity entity) {
         LOG.warn("Inserting of GW_GeologyLogCoverages is not yet supported!");
     }
 

@@ -281,7 +281,6 @@ public class GetObservationDao
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
         checkSeriesOfferings(serieses, request);
-        Collection<DatasetEntity> duplicated = checkAndGetDuplicatedtSeries(serieses, request);
         for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,
@@ -290,7 +289,7 @@ public class GetObservationDao
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), duplicated.contains(series));
+                            series.getId(), observationCreatorContext.getDecoderRepository());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
@@ -319,33 +318,6 @@ public class GetObservationDao
         }
     }
 
-    private Collection<DatasetEntity> checkAndGetDuplicatedtSeries(List<DatasetEntity> serieses, GetObservationRequest request) {
-        if (!request.isCheckForDuplicity()) {
-            return Sets.newHashSet();
-        }
-        Set<DatasetEntity> single = Sets.newHashSet();
-        Set<DatasetEntity> duplicated = Sets.newHashSet();
-        for (DatasetEntity series : serieses) {
-            if (!single.isEmpty()) {
-                if (isDuplicatedSeries(series, single)) {
-                    duplicated.add(series);
-                }
-            } else {
-                single.add(series);
-            }
-        }
-        return duplicated;
-    }
-
-    private boolean isDuplicatedSeries(DatasetEntity series, Set<DatasetEntity> serieses) {
-        for (DatasetEntity s : serieses) {
-            if (hasSameObservationIdentifier(series, s)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean hasSameObservationIdentifier(DatasetEntity toCheck, DatasetEntity s) {
         return toCheck.getFeature().equals(s.getFeature()) && toCheck.getProcedure().equals(s.getProcedure())
                 && toCheck.getObservableProperty().equals(s.getObservableProperty());
@@ -362,11 +334,6 @@ public class GetObservationDao
         for (DataEntity<?> seriesObservation : seriesObservations) {
             if (serieses.isEmpty()) {
                 serieses.add(seriesObservation.getDataset());
-            } else {
-                if (!serieses.contains(seriesObservation.getDataset()) && !duplicated.contains(seriesObservation)
-                        && isDuplicatedSeries(seriesObservation.getDataset(), serieses)) {
-                    duplicated.add(seriesObservation.getDataset());
-                }
             }
 
             if (serieses.contains(seriesObservation.getDataset()) || (duplicated.contains(seriesObservation.getDataset())

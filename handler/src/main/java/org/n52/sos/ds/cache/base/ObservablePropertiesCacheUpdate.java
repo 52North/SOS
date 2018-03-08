@@ -36,6 +36,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
@@ -63,7 +64,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
             Collection<PhenomenonEntity> observableProperties =
                     new PhenomenonDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {
-                Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
+                Collection<Dataset> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
                 String identifier = observableProperty.getIdentifier();
 
                 if (observableProperty.isSetName()) {

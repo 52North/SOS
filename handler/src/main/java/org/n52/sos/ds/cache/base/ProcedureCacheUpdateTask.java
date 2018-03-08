@@ -38,6 +38,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -58,7 +59,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdateTask.class);
     private ProcedureEntity procedure;
-    private Collection<DatasetEntity> datasets = new HashSet<>();
+    private Collection<Dataset> datasets = new HashSet<>();
 
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
@@ -67,7 +68,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
      * @param identifier
      *            Procedure identifier
      */
-    ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<DatasetEntity> datasets) {
+    ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<Dataset> datasets) {
         this.procedure = procedure;
         this.datasets.clear();
         if (datasets != null) {
@@ -98,7 +99,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             }
 
             TimePeriod phenomenonTime = new TimePeriod();
-            for (DatasetEntity dataset : datasets) {
+            for (Dataset dataset : datasets) {
                 OfferingEntity offering = dataset.getOffering();
                     phenomenonTime.extendToContain(
                             new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));

@@ -39,6 +39,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.OfferingDao;
@@ -65,7 +66,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private OfferingDao offeringDAO;
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
     private Collection<OfferingEntity> offeringsToUpdate;
-    private Map<String,Collection<DatasetEntity>> offDatasetMap;
+    private Map<String,Collection<Dataset>> offDatasetMap;
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
 
@@ -108,7 +109,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String,Collection<DatasetEntity>> getOfferingDatasets() throws OwsExceptionReport {
+    private Map<String,Collection<Dataset>> getOfferingDatasets() throws OwsExceptionReport {
         if (offDatasetMap == null) {
             try {
                 offDatasetMap = DatasourceCacheUpdateHelper.mapByOffering(
@@ -138,7 +139,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         for (OfferingEntity offering : getOfferingsToUpdate()){
-                Collection<DatasetEntity> datasets
+                Collection<Dataset> datasets
                         = getOfferingDatasets().get(offering.getIdentifier());
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(
                         offering,

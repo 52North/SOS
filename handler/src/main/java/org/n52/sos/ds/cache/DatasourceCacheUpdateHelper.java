@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
@@ -91,9 +92,9 @@ public class DatasourceCacheUpdateHelper {
         return procedures;
     }
 
-    public static Collection<String> getAllOfferingIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
+    public static Collection<String> getAllOfferingIdentifiersFromDatasets(Collection<Dataset> datasets) {
         Set<String> offerings = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
+        for (Dataset dataset : datasets) {
             if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
                 offerings.add(dataset.getOffering().getIdentifier());
             }
@@ -101,9 +102,9 @@ public class DatasourceCacheUpdateHelper {
         return offerings;
     }
 
-    public static Collection<String> getAllProcedureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
+    public static Collection<String> getAllProcedureIdentifiersFromDatasets(Collection<Dataset> datasets) {
         Set<String> procedures = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
+        for (Dataset dataset : datasets) {
             if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
                 procedures.add(dataset.getProcedure().getIdentifier());
             }
@@ -111,9 +112,9 @@ public class DatasourceCacheUpdateHelper {
         return procedures;
     }
 
-    public static Set<String> getAllObservablePropertyIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
+    public static Set<String> getAllObservablePropertyIdentifiersFromDatasets(Collection<Dataset> datasets) {
         Set<String> observableProperties = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
+        for (Dataset dataset : datasets) {
             if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
                 observableProperties.add(dataset.getPhenomenon().getIdentifier());
             }
@@ -121,9 +122,9 @@ public class DatasourceCacheUpdateHelper {
         return observableProperties;
     }
 
-    public static Collection<String> getAllFeatureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
+    public static Collection<String> getAllFeatureIdentifiersFromDatasets(Collection<Dataset> datasets) {
         Set<String> features = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
+        for (Dataset dataset : datasets) {
             if (dataset.getFeature() != null && !Strings.isNullOrEmpty(dataset.getFeature().getIdentifier())) {
                 features.add(dataset.getFeature().getIdentifier());
             }
@@ -132,9 +133,9 @@ public class DatasourceCacheUpdateHelper {
     }
 
     public static Collection<? extends String> getAllProcedureIdentifiersFromDatasets(
-            Collection<DatasetEntity> datasets, ProcedureFlag parent) {
+            Collection<Dataset> datasets, ProcedureFlag parent) {
         Set<String> procedures = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
+        for (Dataset dataset : datasets) {
             if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
                 if (ProcedureFlag.HIDDEN_CHILD.equals(parent)) {
                     addChilds(dataset.getProcedure(), procedures);
@@ -154,10 +155,10 @@ public class DatasourceCacheUpdateHelper {
         }
     }
 
-    public static Map<String,Collection<DatasetEntity>> mapByOffering(
-            Collection<DatasetEntity> datasets) {
-        Map<String,Collection<DatasetEntity>> map = Maps.newHashMap();
-        for (DatasetEntity dataset : datasets) {
+    public static Map<String,Collection<Dataset>> mapByOffering(
+            Collection<Dataset> datasets) {
+        Map<String,Collection<Dataset>> map = Maps.newHashMap();
+        for (Dataset dataset : datasets) {
             if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
                 CollectionHelper.addToCollectionMap(dataset.getOffering().getIdentifier(), dataset, map);
             }

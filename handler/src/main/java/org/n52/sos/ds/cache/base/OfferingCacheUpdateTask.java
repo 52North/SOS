@@ -47,6 +47,7 @@ import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
@@ -71,7 +72,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 //    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String identifier;
-    private final Collection<DatasetEntity> datasets;
+    private final Collection<Dataset> datasets;
     private final OfferingEntity offering;
     private final Locale defaultLanguage;
     private final I18NDAORepository i18NDAORepository;
@@ -87,7 +88,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      *            parent update if supported
      */
     public OfferingCacheUpdateTask(OfferingEntity offering,
-                                   Collection<DatasetEntity> datasets,
+                                   Collection<Dataset> datasets,
                                    Locale defaultLanguage,
                                    I18NDAORepository i18NDAORepository) {
         this.offering = offering;
@@ -251,7 +252,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         } else if (datasets != null && !datasets.isEmpty()) {
             Envelope e = new Envelope();
             int srid = -1;
-            for (DatasetEntity de : datasets) {
+            for (Dataset de : datasets) {
                 if (de.isSetFeature() && de.getFeature().isSetGeometry() && !de.getFeature().getGeometryEntity().isEmpty()) {
                     if (srid < 0 ) {
                         srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();

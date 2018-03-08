@@ -39,6 +39,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.ProcedureDao;
@@ -63,7 +64,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
     private Collection<ProcedureEntity> procedures = new ArrayList<>();
-    private Map<String,Collection<DatasetEntity>> procedureDatasetMap = new HashMap<>();
+    private Map<String,Collection<Dataset>> procedureDatasetMap = new HashMap<>();
 
     /**
      * constructor
@@ -74,9 +75,9 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String,Collection<DatasetEntity>> getProcedureDatasets() throws OwsExceptionReport {
+    private Map<String, Collection<Dataset>> getProcedureDatasets() throws OwsExceptionReport {
         if (procedureDatasetMap.isEmpty()) {
-            Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper.mapByProcedure(
+            Map<String, Collection<Dataset>> map = DatasourceCacheUpdateHelper.mapByProcedure(
                     new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
             if (map != null) {
                 procedureDatasetMap.putAll(map);

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -704,6 +705,10 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (CollectionHelper.isNotEmpty(offerings)) {
             addOfferingToCriteria(c, offerings);
         }
+        c.setFetchMode(Series.PROCEDURE, FetchMode.JOIN);
+        c.setFetchMode(Series.OBSERVABLE_PROPERTY, FetchMode.JOIN);
+        c.setFetchMode(Series.FEATURE_OF_INTEREST, FetchMode.JOIN);
+        c.setFetchMode(Series.OFFERING, FetchMode.JOIN);
         return c;
     }
 

@@ -161,9 +161,9 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writeAddtitionalNamespaces();
         String observationID = addGmlId(observation);
         writeNewLine();
+        checkAndWriteDescription();
         checkAndWriteIdentifier();
         checkAndWriteName();
-        checkAndWriteDescription();
         if (observation.getObservationConstellation().isSetObservationType()) {
             writeObservationType(observation.getObservationConstellation().getObservationType());
             writeNewLine();

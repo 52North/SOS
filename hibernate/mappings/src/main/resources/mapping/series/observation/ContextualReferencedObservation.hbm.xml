@@ -129,6 +129,7 @@
                 <comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
+        <!-- 
         <set name="offerings"
              table="observationhasoffering"
              inverse="false">
@@ -148,6 +149,7 @@
                 </column>
             </many-to-many>
         </set>
+         -->
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType"
                   index="samplingGeomIdx" >

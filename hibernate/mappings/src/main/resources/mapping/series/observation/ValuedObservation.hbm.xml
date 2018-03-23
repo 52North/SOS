@@ -138,6 +138,7 @@
                 <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
             </column>
         </many-to-one>
+        <!-- 
         <set name="offerings"
              table="observationhasoffering"
              inverse="false">
@@ -157,6 +158,7 @@
                 </column>
             </many-to-many>
         </set>
+         -->
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType"
                   index="samplingGeomIdx" >

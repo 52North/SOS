@@ -162,7 +162,8 @@ public interface HibernateRelations {
     interface HasReadableObservationContext
             extends HasObservablePropertyGetter,
                     HasProcedureGetter,
-                    HasFeatureOfInterestGetter {
+                    HasFeatureOfInterestGetter,
+                    HasOfferingGetter {
     }
 
     interface HasWriteableObservationContext
@@ -264,6 +265,20 @@ public interface HibernateRelations {
 
         void setObservableProperty(ObservableProperty observableProperty);
     }
+    
+    interface HasOfferingGetter {
+
+        String OFFERING = "offering";
+
+        Offering getOffering();
+    }
+
+    interface HasOffering extends HasOfferingGetter{
+    
+        void setOffering(Offering offering);
+    
+        boolean isSetOffering();
+    }
 
     interface HasObservationType {
         String OBSERVATION_TYPE = "observationType";
@@ -281,16 +296,6 @@ public interface HibernateRelations {
         Set<ObservationType> getObservationTypes();
 
         void setObservationTypes(Set<ObservationType> observationTypes);
-    }
-
-    interface HasOffering {
-        String OFFERING = "offering";
-
-        void setOffering(Offering offering);
-
-        Offering getOffering();
-        
-        boolean isSetOffering();
     }
 
     interface HasPhenomenonTime {

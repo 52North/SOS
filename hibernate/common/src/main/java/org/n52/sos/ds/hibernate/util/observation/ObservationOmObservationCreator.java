@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameter
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
@@ -337,8 +338,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         Set<String> offerings = Sets.newHashSet();    
         if (hObservation instanceof AbstractSeriesObservation && ((AbstractSeriesObservation<?>) hObservation).getSeries().isSetOffering()) {
              offerings.add(((AbstractSeriesObservation<?>) hObservation).getSeries().getOffering().getIdentifier());
-        } else if (hObservation.isSetOfferings()) {
-            for (Offering offering : hObservation.getOfferings()) {
+        } else if (hObservation instanceof LegacyObservation && ((LegacyObservation)hObservation).isSetOfferings()) {
+            for (Offering offering : ((LegacyObservation)hObservation).getOfferings()) {
                 offerings.add(offering.getIdentifier());
             }
         } else {
@@ -366,7 +367,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         final ObservationConstellationDAO dao = new ObservationConstellationDAO();
         final ObservationConstellation hoc =
                 dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
-                        hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());
+                        hObservation.getObservableProperty(), hObservation.getOffering(), getSession());
         if (hoc != null && hoc.getObservationType() != null) {
             obsConst.setObservationType(hoc.getObservationType().getObservationType());
         }

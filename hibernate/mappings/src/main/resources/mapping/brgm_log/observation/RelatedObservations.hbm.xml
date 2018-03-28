@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class
+		name="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation"
+		table="relatedobservation">
+		<comment>The related observation of an observation.</comment>
+		<id name="relationId" type="long">
+            <column name="relatedObservationId">
+                <comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">relatedObservationId_seq</param>
+            </generator>
+        </id>
+		<many-to-one name="observation"
+			class="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation" index="relobsobsididx">
+			<column name="observationId" not-null="false">
+				<comment>Foreign Key (FK) to the observation. Contains "observation".observationId</comment>
+			</column>
+		</many-to-one>
+		<many-to-one name="relatedObservation"
+			class="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation" index="relobsrelobsididx">
+			<column name="relatedObservation">
+				<comment>Relation/foreign key to the associated observation table. Contains "observation".observationId</comment>
+			</column>
+		</many-to-one>
+		<property name="role" type="string">
+			<column name="role">
+				<comment>The role of the relation</comment>
+			</column>
+		</property>
+		<property name="relatedUrl" type="string" not-null="false">
+			<column name="relatedUrl">
+				<comment>An url to a related observation</comment>
+			</column>
+		</property>
+	</class>
+</hibernate-mapping>

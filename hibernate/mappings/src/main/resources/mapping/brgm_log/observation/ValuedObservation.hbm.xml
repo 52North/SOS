@@ -1,0 +1,299 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+           table="observation"
+           abstract="true">
+        <comment>Stores the observations. Mapping file: mapping/series/observation/ValuedObservation.hbm.xml</comment>
+        <id name="observationId"
+            type="long">
+            <column name="observationId">
+                <comment>Table primary key, used in relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">observationId_seq</param>
+            </generator>
+        </id>
+        <discriminator column="hibernatediscriminator" type="string" />
+        <many-to-one name="series"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
+                     foreign-key="observationSeriesFk">
+            <column index="obsSeriesIdx"
+                    name="seriesId"
+                    not-null="true">
+                   <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
+               </column>
+        </many-to-one>
+        <property name="phenomenonTimeStart"
+                  type="timestamp" >
+            <column index="obsPhenTimeStartIdx"
+                    name="phenomenonTimeStart"
+                    length="29"
+                    not-null="true">
+                <comment>Time stamp when the observation was started or phenomenon was observed</comment>
+            </column>
+        </property>
+        <property name="phenomenonTimeEnd"
+                  type="timestamp">
+            <column index="obsPhenTimeEndIdx"
+                    name="phenomenonTimeEnd"
+                    length="29"
+                    not-null="true">
+                <comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
+            </column>
+        </property>
+        <property name="resultTime"
+                  type="timestamp" >
+            <column index="obsResultTimeIdx"
+                    name="resultTime"
+                    length="29"
+                    not-null="true">
+                <comment>Time stamp when the observation was published or result was published/available</comment>
+            </column>
+        </property>
+        <property name="identifier"
+                  type="string">
+            <column name="identifier" >
+                <comment>The identifier of the observation, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
+                     foreign-key="obsCodespaceIdentifierFk">
+            <column name="codespace">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name"
+                  type="string">
+            <column name="name">
+                <comment>The name of the observation, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
+                     foreign-key="obsCodespaceNameFk">
+            <column name="codespaceName">
+                <comment>The name of the observation, gml:name. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description"
+                  type="string">
+            <column name="description">
+                <comment>Description of the observation, gml:description. Optional</comment>
+            </column>
+        </property>
+        <property name="deleted"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="deleted"
+                    not-null="true"
+                    default="'F'"
+                    check="deleted in ('T','F')">
+                <comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
+            </column>
+        </property>
+        <property name="child"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="child"
+                    not-null="true"
+                    default="'F'"
+                    length="1"
+                    check="child in ('T','F')">
+                <comment>Flag to indicate that this observation is a child observation for complex observation</comment>
+            </column>
+        </property>
+        <property name="parent"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="parent"
+                    not-null="true"
+                    default="'F'"
+                    length="1"
+                    check="parent in ('T','F')">
+                <comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
+            </column>
+        </property>
+        <property name="validTimeStart"
+                  type="timestamp">
+            <column name="validTimeStart"
+                    length="29"
+                    not-null="false"
+                    default="NULL">
+                <comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+            </column>
+        </property>
+        <property name="validTimeEnd"
+                  type="timestamp">
+            <column name="validTimeEnd"
+                    length="29"
+                    not-null="false"
+                    default="NULL">
+                <comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="unit"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     foreign-key="observationUnitFk">
+            <column name="unitId"
+                    not-null="false">
+                <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+            </column>
+        </many-to-one>
+        <!-- 
+        <set name="offerings"
+             table="observationhasoffering"
+             inverse="false">
+            <key>
+                <column name="observationId"
+                        not-null="true"
+                        index="obshasoffobservationidx">
+                    <comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
+                          foreign-key="observationOfferingFk">
+                <column name="offeringId"
+                        not-null="true"
+                        index="obshasoffofferingidx">
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
+            </many-to-many>
+        </set>
+         -->
+        <property name="samplingGeometry"
+                  type="org.hibernate.spatial.GeometryType"
+                  index="samplingGeomIdx" >
+            <column name="samplingGeometry">
+                <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
+            </column>
+        </property>
+        <property name="verticalFrom" column="verticalFrom" type="double" />
+        <property name="verticalTo" column="verticalTo" type="double" />
+        <property name="verticalFromName" column="verticalFromName" type="string" />
+        <property name="verticalToName" column="verticalToName" type="string" />
+        <many-to-one name="verticalUnit"
+                     column="verticalUnit"
+                     not-null="false"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     foreign-key="observationVerticalUnitFk">
+        </many-to-one>
+        <set name="relatedObservations" table="relatedobservations" fetch="join" access="field" cascade="all">
+	        <key>
+	            <column name="observationId" not-null="true" index="relatedObsObsIdx" />
+	        </key>
+	        <one-to-many class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation" />
+    	</set>
+        <subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.CategoryValuedSeriesObservation"
+                         extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                         discriminator-value="category">
+             <property name="value" 
+                       type="string"
+                       index="categoryvalueidx">
+                 <column name="valuecategory">
+                     <comment>Category observation value</comment>
+                 </column>
+             </property>
+             <property name="valueIdentifier" 
+                       type="string">
+                 <column name="valueIdentifier">
+                     <comment>SweCategory observation identifier</comment>
+                 </column>
+             </property>
+             <property name="valueName" 
+                       type="string">
+                 <column name="valueName">
+                     <comment>SweCategory observation name</comment>
+                 </column>
+             </property>
+             <property name="valueDescription" 
+                       type="string">
+                 <column name="valueDescription">
+                     <comment>SweCategory observation description</comment>
+                 </column>
+             </property>
+        </subclass>
+        <subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.TextValuedSeriesObservation"
+                         extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                         discriminator-value="text">
+            <property name="value" 
+                      type="org.hibernate.type.StringClobType"
+                      index="textvalueidx">
+                 <column name="valuetext">
+                     <comment>Text observation value</comment>
+                 </column>
+             </property>
+             <property name="valueIdentifier" 
+                       type="string">
+                 <column name="valueIdentifier">
+                     <comment>SweText observation identifier</comment>
+                 </column>
+             </property>
+             <property name="valueName" 
+                       type="string">
+                 <column name="valueName">
+                     <comment>SweText observation name</comment>
+                 </column>
+             </property>
+             <property name="valueDescription" 
+                       type="string">
+                 <column name="valueDescription">
+                     <comment>SweText observation description</comment>
+                 </column>
+             </property>
+        </subclass>
+        <subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ProfileValuedSeriesObservation"
+                         extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                         discriminator-value="profile">
+            <set name="value"
+                 table="profileobservation"
+                 inverse="false"
+                 sort="natural"
+                 fetch="join"
+                 cascade="delete-orphan">
+                <comment>Relation table for complex parent/child observations</comment>
+                <key foreign-key="profileObsParentFK" >
+                     <column name="observationId" not-null="true" index="profileobsididx">
+                         <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
+                    </column>
+                </key>
+                <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                              foreign-key="profileObsChildFk" >
+                    <column name="childObservationId" not-null="true" index="profileobsididx">
+                        <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
+                    </column>
+                </many-to-many>
+            </set>
+          <join table="profilevalue" fetch="join">
+              <key foreign-key="observationProfileValueFk">
+                <column name="observationId" index="profvalueobsididx">
+                  <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+                </column>
+              </key>
+            	<property name="fromLevel" 
+            			  type="double">
+             		<column name="fromlevel"
+             				not-null="false">
+             			<comment>Value of fromLevel</comment>
+             		</column>
+             	</property>
+             	<property name="toLevel" 
+            			  type="double">
+             		<column name="tolevel"
+             				not-null="false">
+             			<comment>Value of toLevel</comment>
+             		</column>
+             	</property>
+             	<many-to-one name="levelUnit"
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         fetch="select"
+                         lazy="no-proxy"
+                         foreign-key="profileUnitFk">
+    	            <column name="levelunitid"
+    	                    not-null="false">
+    	            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+    	            </column>
+            	</many-to-one>
+            </join>
+        </subclass>
+    </class>
+</hibernate-mapping>

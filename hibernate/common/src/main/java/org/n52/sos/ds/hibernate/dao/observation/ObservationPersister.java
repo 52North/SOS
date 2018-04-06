@@ -153,7 +153,6 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         this.observationFactory = daos.observation().getObservationFactory();
         this.childObservation = childObservation;
         this.offerings = hOfferings;
-;
     }
 
 

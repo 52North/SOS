@@ -413,20 +413,20 @@ public class HibernateFeatureQueryHandler
         if (!getGeometryHandler().isSpatialDatasource()) {
             throw new NotYetSupportedException("Insertion of full encoded features for non spatial datasources");
         }
-        checkForSwitchCoordinateAxis(samplingFeature);
+//        checkForSwitchCoordinateAxis(samplingFeature);
         return daoFactory.getFeatureDAO().insertFeature(samplingFeature, session);
     }
 
-    private void checkForSwitchCoordinateAxis(AbstractSamplingFeature samplingFeature)
-            throws InvalidSridException, OwsExceptionReport {
-        samplingFeature.setGeometry(
-                getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(samplingFeature.getGeometry()));
-        for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
-            if (sampledFeature instanceof AbstractSamplingFeature) {
-                checkForSwitchCoordinateAxis((AbstractSamplingFeature) sampledFeature);
-            }
-        }
-    }
+//    private void checkForSwitchCoordinateAxis(AbstractSamplingFeature samplingFeature)
+//            throws InvalidSridException, OwsExceptionReport {
+//        samplingFeature.setGeometry(
+//                getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(samplingFeature.getGeometry()));
+//        for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
+//            if (sampledFeature instanceof AbstractSamplingFeature) {
+//                checkForSwitchCoordinateAxis((AbstractSamplingFeature) sampledFeature);
+//            }
+//        }
+//    }
 
     protected Map<String, AbstractFeature> getFeaturesForNonSpatialDatasource(
             FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {

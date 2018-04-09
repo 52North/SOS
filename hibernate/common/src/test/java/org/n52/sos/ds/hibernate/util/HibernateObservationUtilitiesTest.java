@@ -156,7 +156,7 @@ public class HibernateObservationUtilitiesTest
 
             session.flush();
 
-            hObservation.setValue(new BigDecimal(1.0));
+            hObservation.setValue(BigDecimal.valueOf(1.0));
             hObservation.setSamplingTimeStart(DateTime.now().toDate());
             hObservation.setSamplingTimeEnd(hObservation.getSamplingTimeStart());
             hObservation.setResultTime(hObservation.getSamplingTimeStart());

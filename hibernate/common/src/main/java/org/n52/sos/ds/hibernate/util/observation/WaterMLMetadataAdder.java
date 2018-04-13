@@ -28,12 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.Session;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.metadata.MetadataEntity;
+import org.n52.series.db.beans.parameter.Parameter;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.series.wml.DefaultPointMetadata;
@@ -44,8 +42,6 @@ import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.sos.ds.hibernate.dao.metadata.SeriesMetadataDAO;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -55,19 +51,14 @@ public class WaterMLMetadataAdder {
 
     private OmObservation omObservation;
     private DatasetEntity series;
-    private Session session;
-    private static SeriesMetadataDAO seriesMetadataDAO = new SeriesMetadataDAO();
 
-    public WaterMLMetadataAdder(OmObservation omObservation, DatasetEntity series, Session session) {
+    public WaterMLMetadataAdder(OmObservation omObservation, DatasetEntity series) {
         this.omObservation = omObservation;
         this.series = series;
-        this.session = session;
     }
 
     public WaterMLMetadataAdder add() throws CodedException {
-        if (HibernateHelper.isEntitySupported(MetadataEntity.class)) {
-            List<MetadataEntity> seriesMetadata = seriesMetadataDAO.getDomainMetadata(series.getId(),
-                    WaterMLConstants.NS_WML_20, session);
+        if (series.hasParameters()) {
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             /*
              * Add interpolation type
@@ -82,7 +73,7 @@ public class WaterMLMetadataAdder {
             /*
              * Get interpolation type from database
              */
-            Optional<Object> interpolationTypeTitle = seriesMetadataDAO.getMetadataElement(seriesMetadata,
+            Optional<Object> interpolationTypeTitle = getMetadataElement(series,
                     WaterMLConstants.NS_WML_20,
                     WaterMLConstants.INTERPOLATION_TYPE);
             /*
@@ -108,7 +99,7 @@ public class WaterMLMetadataAdder {
             if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
                 observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
             }
-            Optional<Object> cumulativeMetadata = seriesMetadataDAO.getMetadataElement(seriesMetadata,
+            Optional<Object> cumulativeMetadata = getMetadataElement(series,
                     WaterMLConstants.NS_WML_20,
                     WaterMLConstants.SERIES_METADATA_CUMULATIVE);
             /*
@@ -136,6 +127,18 @@ public class WaterMLMetadataAdder {
                 .setCumulative(cumulative);
         }
         return this;
+    }
+
+    private Optional<Object> getMetadataElement(DatasetEntity dataset, String domain,
+            String name) {
+        if (dataset.hasParameters()) {
+            for (Parameter<?> parameter : dataset.getParameters()) {
+                if (domain.equals(parameter.getDomain()) && name.equals(parameter.getName())) {
+                    return Optional.ofNullable(parameter.getValue());
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private CodedException createMetadataInvalidException(String metadataKey, String metadataContent,

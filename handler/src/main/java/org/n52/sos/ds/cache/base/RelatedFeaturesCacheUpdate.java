@@ -59,7 +59,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
                 for (OfferingEntity offering : relatedFeature.getOfferings()) {
                     getCache().addRelatedFeatureForOffering(offering.getIdentifier(), identifier);
                 }
-                getCache().addRoleForRelatedFeature(identifier, relatedFeature.getRole().getRelatedFeatureRole());
+                getCache().addRoleForRelatedFeature(identifier, relatedFeature.getRole());
             }
         } catch (HibernateException | DataAccessException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)

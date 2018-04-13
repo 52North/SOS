@@ -181,10 +181,8 @@ public class InsertSensorDAO extends AbstractInsertSensorHandler {
                                 final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO(daoFactory);
                                 final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
                                 for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-                                    final List<RelatedFeatureRoleEntity> relatedFeatureRoles = relatedFeatureRoleDAO
-                                            .getOrInsertRelatedFeatureRole(relatedFeature.getRole(), session);
                                     hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
-                                            relatedFeature.getFeature(), relatedFeatureRoles, session));
+                                            relatedFeature.getFeature(), relatedFeature.getRole(), session));
                                 }
                             }
                             final OfferingEntity hOffering =

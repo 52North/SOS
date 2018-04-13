@@ -57,6 +57,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.SpatialFilter;

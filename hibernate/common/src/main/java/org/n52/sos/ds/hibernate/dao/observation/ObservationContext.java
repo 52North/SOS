@@ -225,7 +225,7 @@ public class ObservationContext {
         if (!contextual.isSetObservationType() && isSetObservationType()) {
             contextual.setObservationType(getObservationType());
         }
-       contextual.setHiddenChild(isHiddenChild());
+       contextual.setHidden(isHiddenChild());
     }
 
     public ObservationContext setHiddenChild(boolean hiddenChild) {

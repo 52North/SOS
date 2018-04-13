@@ -142,7 +142,7 @@ public class HibernateObservationUtilitiesTest
             hObservationConstellation.setObservationType(hObservationType);
             hObservationConstellation.setFeature(hFeatureOfInterest);
             hObservationConstellation.setDeleted(false);
-            hObservationConstellation.setHiddenChild(false);
+            hObservationConstellation.setHidden(false);
 
             session.save(hProcedureDescriptionFormat);
             session.save(hProcedure);

@@ -532,8 +532,8 @@ public abstract class AbstractObservationDAO
     @SuppressWarnings("rawtypes")
     private Criteria getDefaultCriteria(Class clazz, Session session) {
         Criteria criteria = session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-       
-        
+
+
         if (!isIncludeChildObservableProperties()) {
             criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
         } else {

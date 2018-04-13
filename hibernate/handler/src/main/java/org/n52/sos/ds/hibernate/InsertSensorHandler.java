@@ -100,6 +100,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**

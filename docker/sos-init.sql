@@ -1,0 +1,6 @@
+\connect template_postgis
+DROP SCHEMA IF EXISTS tiger CASCADE;
+DROP SCHEMA IF EXISTS tiger_data CASCADE;
+\connect sos
+DROP SCHEMA IF EXISTS tiger CASCADE;
+DROP SCHEMA IF EXISTS tiger_data CASCADE;

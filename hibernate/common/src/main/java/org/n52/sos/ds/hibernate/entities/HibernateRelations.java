@@ -745,4 +745,37 @@ public interface HibernateRelations {
         boolean hasSamplingGeometry();
 
     }
+    
+    interface HasVertical {
+        
+        Double getVerticalFrom();
+
+        void setVerticalTo(Double verticalFrom);
+
+        boolean hasVerticalTo();
+
+        Double getVerticalTo();
+
+        void setVerticalFrom(Double verticalTo);
+
+        boolean hasVerticalFrom();
+
+        String getVerticalFromName();
+
+        void setVerticalFromName(String name);
+
+        boolean hasVerticalFromName();
+
+        String getVerticalToName();
+
+        void setVerticalToName(String name);
+
+        boolean hasVerticalToName();
+
+        Unit getVerticalUnit();
+
+        void setVerticalUnit(Unit unit);
+
+        boolean hasVerticalUnit();
+    }
 }

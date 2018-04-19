@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Comparables;
@@ -56,7 +57,12 @@ public abstract class AbstractBaseObservation
     private boolean parent;
     private Set<Parameter> parameters = new HashSet<>(0);
     private Set<RelatedObservation> relatedObservations = new HashSet<>(0);
-
+    private Double verticalFrom;
+    private Double verticalTo;
+    private String verticalFromName;
+    private String verticalToName;
+    private Unit verticalUnit;
+    
     @Override
     public boolean getDeleted() {
         return deleted;
@@ -230,6 +236,66 @@ public abstract class AbstractBaseObservation
     @Override
     public boolean hasRelatedObservations() {
         return CollectionHelper.isNotEmpty(getRelatedObservations());
+    }
+    
+    public Double getVerticalFrom() {
+        return verticalFrom;
+    }
+    
+    public void setVerticalTo(Double verticalTo) {
+        this.verticalTo = verticalTo;
+    }
+    
+    public boolean hasVerticalTo() {
+        return getVerticalTo() != null;
+    }
+    
+    public Double getVerticalTo() {
+        return verticalTo;
+    }
+    
+    public void setVerticalFrom(Double verticalFrom) {
+        this.verticalFrom = verticalFrom;
+    }
+    
+    public boolean hasVerticalFrom() {
+        return getVerticalFrom() != null;
+    }
+    
+    public String getVerticalFromName() {
+        return verticalFromName;
+    }
+    
+    public void setVerticalFromName(String verticalFromName) {
+        this.verticalFromName = verticalFromName;
+    }
+    
+    public boolean hasVerticalFromName() {
+        return getVerticalFromName() != null && !getVerticalFromName().isEmpty();
+    }
+    
+    public String getVerticalToName() {
+        return verticalToName;
+    }
+    
+    public void setVerticalToName(String verticalToName) {
+        this.verticalToName = verticalToName;
+    }
+    
+    public boolean hasVerticalToName() {
+        return getVerticalToName() != null && !getVerticalToName().isEmpty();
+    }
+    
+    public Unit getVerticalUnit() {
+        return verticalUnit;
+    }
+    
+    public void setVerticalUnit(Unit verticalUnit) {
+        this.verticalUnit = verticalUnit;
+    }
+    
+    public boolean hasVerticalUnit() {
+        return getVerticalUnit() != null && getVerticalUnit().isSetUnit();
     }
 
     @Override

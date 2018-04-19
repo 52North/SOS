@@ -59,4 +59,5 @@ public abstract class AbstractObservation<T>
     public String getValueAsString() {
         return getValue().toString();
     }
+    
 }

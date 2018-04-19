@@ -517,18 +517,25 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                     throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             List<SeriesObservation<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
-                Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session);
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
+                String logArgs = new String(identifier + ",");
+                Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session, logArgs);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
+                LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
+                        HibernateHelper.getSqlString(c));
                 list.addAll(c.list());
             }
             return list;
         }
-        return getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+        String logArgs = new String();
+        Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session, logArgs);
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
+                HibernateHelper.getSqlString(c));
+        return c.list();
     }
     
     private Criteria getDefaultSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session, String logArgs)
                     throws OwsExceptionReport {
         final Criteria observationCriteria = getDefaultObservationCriteria(session);
 
@@ -559,7 +566,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 //                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
-        String logArgs = "request, features, offerings";
+        logArgs = logArgs != null ? logArgs + "request, features, offerings" : new String("request, features, offerings");
         if (filterCriterion != null) {
             logArgs += ", filterCriterion";
             observationCriteria.add(filterCriterion);
@@ -571,8 +578,6 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         if (request.isSetFesFilterExtension()) {
             new ExtensionFesFilterCriteriaAdder(observationCriteria, request.getFesFilterExtensions()).add();
         }
-        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
-                HibernateHelper.getSqlString(observationCriteria));
         return observationCriteria;
     }
     
@@ -879,7 +884,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             List<SeriesObservation<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c =
                         getDefaultObservationCriteria(session).add(
                                 Restrictions.eq(AbstractSeriesObservation.SERIES, series));

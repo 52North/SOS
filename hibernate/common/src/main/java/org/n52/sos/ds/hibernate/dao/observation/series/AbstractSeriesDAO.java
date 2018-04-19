@@ -263,7 +263,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throws OwsExceptionReport {
         Set<Series> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(),
                         features, request.getOfferings(), session);
                 addSpecificRestrictions(c, request);
@@ -289,7 +289,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throws OwsExceptionReport {
         Set<Series> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
                         request.getFeaturesOfInterest(), request.getOfferings(), session);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);

@@ -32,8 +32,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
@@ -44,6 +47,7 @@ import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Class to generate the create and drop scripts for different databases.
@@ -236,14 +240,19 @@ public class SQLScriptGenerator {
                         .toString();
         boolean duplicate = false;
         List<String> checkedSchema = Lists.newLinkedList();
+        Set<String> set = new HashSet<>();
         for (String string : create) {
             if (string.contains(hexStringToCheck)) {
                 if (!duplicate) {
-                    checkedSchema.add(string);
+                    if (set.add(string)) {
+                        checkedSchema.add(string);
+                    }
                     duplicate = true;
                 }
             } else {
-                checkedSchema.add(string);
+                if (set.add(string)) {
+                    checkedSchema.add(string);
+                }
             }
         }
         return checkedSchema;

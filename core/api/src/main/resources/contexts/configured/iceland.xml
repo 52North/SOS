@@ -23,7 +23,6 @@
 	<bean id="sosObservationOfferingExtensionRepository" class="org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository" />
 	<bean id="owsCapabilitiesExtensionRepository" class="org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionRepository" />
 	<bean id="i18NDAORepository" class="org.n52.iceland.i18n.I18NDAORepository" />
-	<bean id="schemaRepository" class="org.n52.svalbard.encode.SchemaRepository" />
 	<bean id="operationHandlerRepository" class="org.n52.iceland.request.handler.OperationHandlerRepository" />
 	<bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
 	<bean id="responseWriterRepository" class="org.n52.iceland.coding.encode.ResponseWriterRepository" />

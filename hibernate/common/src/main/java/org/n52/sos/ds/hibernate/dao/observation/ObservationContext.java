@@ -43,6 +43,7 @@ import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.UnitEntity;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -62,6 +63,7 @@ public class ObservationContext {
     private boolean hiddenChild = false;
     private boolean publish = true;
     private FormatEntity observationType;
+    private UnitEntity unit;
 
     /**
      * Indicates that the series of the observation should be published
@@ -144,6 +146,17 @@ public class ObservationContext {
         return this;
     }
 
+    public UnitEntity getUnit() {
+        return unit;
+    }
+
+    public ObservationContext setUnit(UnitEntity unit) {
+        this.unit = unit;
+        return this;
+    }
+
+
+
     public boolean isSetFeatureOfInterest() {
         return getFeatureOfInterest() != null;
     }
@@ -166,6 +179,10 @@ public class ObservationContext {
 
     public boolean isSetObservationType() {
         return getObservationType() != null;
+    }
+
+    public boolean isSetUnit() {
+        return getUnit() != null;
     }
 
     public void addIdentifierRestrictionsToCritera(Criteria c) {
@@ -225,7 +242,10 @@ public class ObservationContext {
         if (!contextual.isSetObservationType() && isSetObservationType()) {
             contextual.setObservationType(getObservationType());
         }
-       contextual.setHidden(isHiddenChild());
+        if (!contextual.hasUnit() && isSetUnit()) {
+            contextual.setUnit(getUnit());
+        }
+        contextual.setHidden(isHiddenChild());
     }
 
     public ObservationContext setHiddenChild(boolean hiddenChild) {

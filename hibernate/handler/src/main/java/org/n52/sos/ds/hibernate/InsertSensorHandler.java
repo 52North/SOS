@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,11 +63,13 @@ import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -167,6 +170,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<PhenomenonEntity> hObservableProperties =
                                 getOrInsertNewObservableProperties(request.getObservableProperty(), request.getProcedureDescription(), session);
+                        Map<String, UnitEntity> hUnits = getOrInsertNewUnits(hObservableProperties, request.getProcedureDescription(), session);
                         final AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
                         final OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
@@ -188,7 +192,25 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                         new ObservationContext().setCategory(hCategory).setOffering(hOffering)
                                                 .setPhenomenon(hObservableProperty).setProcedure(hProcedure)
                                                 .setPublish(false).setHiddenChild(assignedOffering.isParentOffering());
-                                seriesDAO.getOrInsert(ctx, session);
+                                if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
+                                    ctx.setUnit(hUnits.get(hObservableProperty.getIdentifier()));
+                                }
+                                if (request.getProcedureDescription().isSetFeaturesOfInterestMap()) {
+                                    boolean inserted = false;
+                                    for (AbstractFeature feature : request.getProcedureDescription().getFeaturesOfInterestMap().values()) {
+                                        if (feature instanceof FeatureWithGeometry && ((FeatureWithGeometry) feature).isSetGeometry()) {
+                                            ctx.setFeatureOfInterest(daoFactory.getFeatureOfInterestDAO().checkOrInsert(feature, session));
+                                            inserted = true;
+                                            seriesDAO.getOrInsert(ctx, session);
+                                        }
+                                    }
+                                    if (!inserted) {
+                                        seriesDAO.getOrInsert(ctx, session);
+                                    }
+                                } else {
+                                    seriesDAO.getOrInsert(ctx, session);
+                                }
+
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
                                     addStaticReferenceValues(request, session, procedureDescriptionFormat, hProcedure,
                                             observationTypes, featureOfInterestTypes, hRelatedFeatures, hOffering,
@@ -334,17 +356,35 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             PhenomenonNameDescriptionProvider process = (PhenomenonNameDescriptionProvider) sosProcedureDescription.getProcedureDescription();
             for (final String observableProperty : obsProps) {
                 OmObservableProperty omObservableProperty = new OmObservableProperty(observableProperty);
+                if (process.isSetObservablePropertyName(observableProperty)) {
+                    omObservableProperty.addName(process.getObservablePropertyName(observableProperty));
+                }
                 if (process.isSetObservablePropertyDescription(observableProperty)) {
-                    String name = process.getObservablePropertyDescription(observableProperty);
-                    if (!Strings.isNullOrEmpty(name)) {
-                        omObservableProperty.addName(name);
-                    }
+                    omObservableProperty.setDescription(process.getObservablePropertyDescription(observableProperty));
                 }
                 observableProperties.add(omObservableProperty);
             }
 
         }
         return daoFactory.getObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, session);
+    }
+
+    private Map<String, UnitEntity> getOrInsertNewUnits(List<PhenomenonEntity> hObservableProperties,
+            SosProcedureDescription<?> procedureDescription, Session session) {
+        Map<String, UnitEntity> map = new LinkedHashMap<>();
+        if (procedureDescription.getProcedureDescription() instanceof PhenomenonNameDescriptionProvider) {
+            PhenomenonNameDescriptionProvider process = (PhenomenonNameDescriptionProvider) procedureDescription.getProcedureDescription();
+            for (PhenomenonEntity phenomenonEntity : hObservableProperties) {
+                UoM unit = process.getObservablePropertyUnit(phenomenonEntity.getIdentifier());
+                if (unit != null) {
+                    UnitEntity hUnit = daoFactory.getUnitDAO().getOrInsertUnit(unit, session);
+                    if (hUnit != null) {
+                        map.put(phenomenonEntity.getIdentifier(), hUnit);
+                    }
+                }
+            }
+        }
+        return map;
     }
 
     /**

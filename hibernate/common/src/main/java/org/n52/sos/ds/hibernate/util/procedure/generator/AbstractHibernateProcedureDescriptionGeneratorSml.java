@@ -386,7 +386,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
      * @return SWE Quantity
      */
     private SweQuantity createSweQuantity(Object value, String axis, String uom) {
-        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(new BigDecimal(JavaHelper.asDouble(value)));
+        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(BigDecimal.valueOf(JavaHelper.asDouble(value)));
     }
 
     private List<SmlIdentifier> createIdentifications(String identifier) {

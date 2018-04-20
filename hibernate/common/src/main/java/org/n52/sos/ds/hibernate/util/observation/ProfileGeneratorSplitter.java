@@ -130,7 +130,7 @@ public class ProfileGeneratorSplitter {
         } else if (levelEnd != null && levelEnd.isSetValue()) {
             return levelEnd.getValue();
         }
-        return new BigDecimal(Double.NaN);
+       return null;
     }
 
     @SuppressWarnings("rawtypes")

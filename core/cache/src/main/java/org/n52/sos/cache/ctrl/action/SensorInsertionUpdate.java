@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.util.action.Action;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
@@ -155,6 +156,20 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
                 }
                 cache.addPublishedObservableProperty(observableProperty);
+            }
+        }
+        // add featureOfInterest
+        if (request.getProcedureDescription().isSetFeatures()) {
+            for (AbstractFeature feature : request.getProcedureDescription().getFeaturesOfInterestMap().values()) {
+                if (feature.isSetIdentifier()) {
+                    cache.addFeatureOfInterest(feature.getIdentifier());
+                    cache.addPublishedFeatureOfInterest(feature.getIdentifier());
+                    cache.addFeatureOfInterest(feature.getIdentifier());
+                    getCache().setProceduresForFeatureOfInterest(feature.getIdentifier(), Sets.newHashSet(procedure));
+                    if (feature.isSetName()) {
+                        getCache().addFeatureOfInterestIdentifierHumanReadableName(feature.getIdentifier(), feature.getFirstName().getValue());
+                    }
+                }
             }
         }
 

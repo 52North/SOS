@@ -29,6 +29,8 @@
 package org.n52.sos.ds;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +47,11 @@ import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
@@ -152,7 +158,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      */
     private FeatureCollection getFeatures(GetFeatureOfInterestRequest request, Session session)
             throws OwsExceptionReport {
-        Set<FeatureEntity> featureEntities = new HashSet<>(queryFeaturesForParameter(request, session));
+        Set<AbstractFeatureEntity> featureEntities = new HashSet<>(queryFeaturesForParameter(request, session));
         if (featureEntities == null || featureEntities.isEmpty()) {
             return new FeatureCollection();
         }
@@ -163,16 +169,16 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return new FeatureCollection(createFeatures(featureEntities));
     }
 
-    private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities) throws InvalidSridException, OwsExceptionReport {
+    private Map<String, AbstractFeature> createFeatures(Set<AbstractFeatureEntity> featureEntities) throws InvalidSridException, OwsExceptionReport {
         final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
-        for (final FeatureEntity feature : featureEntities) {
+        for (final AbstractFeatureEntity feature : featureEntities) {
             final AbstractFeature abstractFeature = createFeature(feature);
             map.put(abstractFeature.getIdentifier(), abstractFeature);
         }
         return map;
     }
 
-    private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
+    private AbstractFeature createFeature(AbstractFeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
         final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getIdentifier()));
         if (feature.isSetName()) {
             sampFeat.addName(feature.getName());
@@ -205,14 +211,22 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      * @throws OwsExceptionReport
      *             If an error occurs during processing
      */
-    private List<FeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req, Session session)
+    private Collection<AbstractFeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req, Session session)
             throws OwsExceptionReport {
-        try {
-            return new FeatureDao(session).getAllInstances(createDbQuery(req));
-        } catch (DataAccessException dae) {
-            throw new NoApplicableCodeException().causedBy(dae)
-                    .withMessage("Error while querying data for GetFeatureOfInterest!");
+//        try {
+             Collection<DatasetEntity> datasets = new DatasetDao(session).get(createDbQuery(req));
+        if (datasets != null) {
+            return datasets.stream()
+                    .filter(d -> d.isSetFeature() && (d.isPublished() || !d.isPublished()
+                            && d.getValueType().equalsIgnoreCase(NotInitializedDataset.DATASET_TYPE)))
+                    .map(d -> d.getFeature()).collect(Collectors.toSet());
         }
+        return Collections.emptySet();
+//            return new FeatureDao(session).getAllInstances(createDbQuery(req));
+//        } catch (DataAccessException dae) {
+//            throw new NoApplicableCodeException().causedBy(dae)
+//                    .withMessage("Error while querying data for GetFeatureOfInterest!");
+//        }
     }
 
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req) {

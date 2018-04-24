@@ -89,8 +89,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
 
         // procedure relations
         cache.addProcedure(procedure);
+        cache.addPublishedProcedure(procedure);
         if (request.getProcedureDescription().isSetParentProcedure()) {
-            cache.addPublishedProcedure(procedure);
             cache.addParentProcedures(procedure, Sets.newHashSet(request.getProcedureDescription().getParentProcedure().getTitleOrFromHref()));
             cache.addPublishedProcedure(request.getProcedureDescription().getParentProcedure().getHref());
         }

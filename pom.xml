@@ -1692,6 +1692,14 @@
                         <groupId>org.jdom</groupId>
                         <artifactId>jdom2</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>c3p0</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>  
             <dependency>

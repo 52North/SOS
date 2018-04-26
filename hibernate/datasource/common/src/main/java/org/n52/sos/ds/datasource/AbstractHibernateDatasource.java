@@ -279,7 +279,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public CustomConfiguration getConfig(Map<String, Object> settings) {
         CustomConfiguration config = new CustomConfiguration();
-        config.configure("/sos-hibernate.cfg.xml");
+//        config.configure("/hibernate.cfg.xml");
         for (File path : getMappingPaths(settings)) {
             config.addDirectory(path);
         }

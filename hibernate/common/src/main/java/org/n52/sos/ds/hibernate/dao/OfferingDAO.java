@@ -299,17 +299,21 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         } else {
             Criteria criteria = null;
             if (EntitiyHelper.getInstance().isSeriesSupported()) {
-                criteria = DaoFactory.getInstance().getSeriesDAO().getDefaultSeriesCriteria(session);
-                criteria.createAlias(Series.OFFERING, "off");
+                criteria =
+                        DaoFactory.getInstance().getObservationDAO()
+                                .getDefaultObservationInfoCriteria(
+                                        session);
+                Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES, "s");
+                seriesCriteria.createCriteria("s." + Series.OFFERING, Series.OFFERING);
                 criteria.setProjection(Projections.projectionList()
-                        .add(Projections.groupProperty("off." + Offering.IDENTIFIER))
-                        .add(Projections.min(Series.FIRST_TIME_STAMP))
-                        .add(Projections.max(Series.FIRST_TIME_STAMP))
-                        .add(Projections.max(Series.LAST_TIME_STAMP))
-                        .add(Projections.min(Series.FIRST_TIME_STAMP))
-                        .add(Projections.max(Series.LAST_TIME_STAMP)));
+                        .add(Projections.groupProperty(Series.OFFERING + "." + Offering.IDENTIFIER))
+                        .add(Projections.min(AbstractObservation.PHENOMENON_TIME_START))
+                        .add(Projections.max(AbstractObservation.PHENOMENON_TIME_START))
+                        .add(Projections.max(AbstractObservation.PHENOMENON_TIME_END))
+                        .add(Projections.min(AbstractObservation.RESULT_TIME))
+                        .add(Projections.max(AbstractObservation.RESULT_TIME)));
                 if (CollectionHelper.isNotEmpty(identifiers)) {
-                    criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
+                    criteria.add(Restrictions.in(Series.OFFERING + "." + Offering.IDENTIFIER, identifiers));
                 }
             } else {
                 criteria =
@@ -325,7 +329,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                         .add(Projections.min(AbstractObservation.RESULT_TIME))
                         .add(Projections.max(AbstractObservation.RESULT_TIME)));
                 if (CollectionHelper.isNotEmpty(identifiers)) {
-                    criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
+                    criteria.add(Restrictions.in("off." + Offering.IDENTIFIER, identifiers));
                 }
             }
             LOGGER.debug("QUERY getOfferingTimeExtrema(): {}", HibernateHelper.getSqlString(criteria));

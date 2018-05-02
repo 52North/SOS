@@ -38,7 +38,7 @@ import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
-import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.core.CodingMode;
 
 /**
  * Configuration settings for {@link EXIBinding}.

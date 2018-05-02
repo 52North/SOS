@@ -299,7 +299,7 @@ public class LegacyObservationDAO
             throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             List<Observation<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c = getDefaultObservationCriteria(session);
 
                 checkAndAddSpatialFilteringProfileCriterion(c, request, session);
@@ -408,7 +408,7 @@ public class LegacyObservationDAO
             throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             Set<Observation<?>> set = new HashSet<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c = getDefaultObservationsFor(oc, features, request, sosIndeterminateTime, session);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
                 String logArgs = "request, features, offerings";

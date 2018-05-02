@@ -138,25 +138,6 @@
                 <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
             </column>
         </many-to-one>
-        <set name="offerings"
-             table="observationhasoffering"
-             inverse="false">
-            <key>
-                <column name="observationId"
-                        not-null="true"
-                        index="obshasoffobservationidx">
-                    <comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
-                </column>
-            </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
-                          foreign-key="observationOfferingFk">
-                <column name="offeringId"
-                        not-null="true"
-                       index="obshasoffofferingidx">
-                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-                </column>
-            </many-to-many>
-        </set>
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType"
                   index="samplingGeomIdx" >

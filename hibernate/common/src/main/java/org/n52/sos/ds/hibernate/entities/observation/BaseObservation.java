@@ -38,6 +38,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedObservations;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSrid;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasVertical;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 
 /**
@@ -59,6 +60,7 @@ public interface BaseObservation
                 HasChildFlag,
                 HasParentFlag,
                 HasParameters,
-                HasRelatedObservations {
+                HasRelatedObservations,
+                HasVertical {
 
 }

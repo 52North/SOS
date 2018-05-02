@@ -108,12 +108,16 @@
                 <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameter" inverse="true" fetch="join" cascade="delete-orphan">
-            <key>
-                <column name="observationId" not-null="true" />
-            </key>
-            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
-        </set>
+        <property name="verticalFrom" column="verticalFrom" type="double" />
+        <property name="verticalTo" column="verticalTo" type="double" />
+        <property name="verticalFromName" column="verticalFromName" type="string" />
+        <property name="verticalToName" column="verticalToName" type="string" />
+        <many-to-one name="verticalUnit"
+                     column="verticalUnit"
+                     not-null="false"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     foreign-key="observationVerticalUnitFk">
+        </many-to-one>
         <set name="relatedObservations" table="relatedobservations" fetch="join" access="field" cascade="all">
 	        <key>
 	            <column name="observationId" not-null="true" index="relatedObsObsIdx" />

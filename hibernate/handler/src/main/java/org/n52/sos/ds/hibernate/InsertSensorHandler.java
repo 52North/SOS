@@ -55,7 +55,6 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
-import org.n52.series.db.beans.RelatedFeatureRoleEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.dataset.QuantityDataset;
@@ -65,12 +64,14 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -97,7 +98,6 @@ import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureDAO;
-import org.n52.sos.ds.hibernate.dao.RelatedFeatureRoleDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationPersister;
@@ -107,7 +107,6 @@ import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorHandler
@@ -180,13 +179,9 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                             final List<RelatedFeatureEntity> hRelatedFeatures = new LinkedList<RelatedFeatureEntity>();
                             if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
                                 final RelatedFeatureDAO relatedFeatureDAO = daoFactory.getRelatedFeatureDAO();
-                                final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
                                 for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-                                    final List<RelatedFeatureRoleEntity> relatedFeatureRoles =
-                                            relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
-                                                    session);
                                     hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
-                                            relatedFeature.getFeature(), relatedFeatureRoles, session));
+                                            relatedFeature.getFeature(), relatedFeature.getRole(), session));
                                 }
                             }
                             final OfferingEntity hOffering =
@@ -217,6 +212,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                 } else {
                                     seriesDAO.getOrInsert(ctx, session);
                                 }
+
                                 if (checkPreconditionsOfStaticReferenceValues(request)) {
                                     addStaticReferenceValues(request, session, procedureDescriptionFormat, hProcedure,
                                             observationTypes, featureOfInterestTypes, hRelatedFeatures, hOffering,
@@ -372,7 +368,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             }
 
         }
-        return daoFactory.getObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, false, session);
+        return daoFactory.getObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, session);
     }
 
     private Map<String, UnitEntity> getOrInsertNewUnits(List<PhenomenonEntity> hObservableProperties,

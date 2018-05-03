@@ -1,4 +1,4 @@
-Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source Software GmbH
 
 Licensed under GNU General Public License, Version 2.0
 
@@ -6,106 +6,66 @@ This project includes:
 
   "Java Concurrency in Practice" book annotations under Creative Commons Attribution License, http://creativecommons.org/licenses/by/2.5
   52North Sensor Web Client PDF report structure under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
-  52North SOS Integration and Compliance Common under Eclipse Public License 1.0
-  52°North Aggregated Third Party modules under GPLv2
-  52°North AQD - 1.0 XML Coding under GPLv2
+  52°North Faroe under The Apache Software License, Version 2.0
   52°North Faroe Annotations under The Apache Software License, Version 2.0
+  52°North Faroe JSON Backend under The Apache Software License, Version 2.0
   52°North Faroe Utilities under The Apache Software License, Version 2.0
+  52°North Iceland under The Apache Software License, Version 2.0
+  52°North Iceland Statistics under The Apache Software License, Version 2.0
+  52°North Iceland Statistics Geolocation Feature under The Apache Software License, Version 2.0
   52°North Jan Mayen under The Apache Software License, Version 2.0
   52°North Sensor Observation Service under GPLv2
   52°North Shetland under The Apache Software License, Version 2.0
-  52°North SOS -  GMLCOV 1.0 XML Request Coding under GPLv2
-  52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
-  52°North SOS - Abstract SensorML Coding Module under GPLv2
-  52°North SOS - Administrator Service Operator under GPLv2
-  52°North SOS - API for INSPIRE Module under GPLv2
-  52°North SOS - AQD 1.0 API Operator under GPLv2
-  52°North SOS - AQD 1.0 Core Profile Operator under GPLv2
-  52°North SOS - AQD Split and Merge observations module under GPLv2
-  52°North SOS - Binding Modules under GPLv2
+  52°North SOS - AQD 1.0.0 Operator under GPLv2
   52°North SOS - Cache under GPLv2
-  52°North SOS - Coding Module for INSPIRE under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Converter Modules under GPLv2
   52°North SOS - Coordinate transformation module under GPLv2
   52°North SOS - Core Modules under GPLv2
   52°North SOS - eReporting Prefixed identifier convert module under GPLv2
-  52°North SOS - EXI Coding under GPLv2
-  52°North SOS - EXI Efficient XML Interchange Binding under GPLv2
-  52°North SOS - Extension Delete Observation under GPLv2
-  52°North SOS - Extension Delete Observation - Hibernate DAO under GPLv2
-  52°North SOS - Extension Delete Observation - JSON under GPLv2
-  52°North SOS - Extension Delete Observation - KVP under GPLv2
-  52°North SOS - Extension Delete Observation - Operation under GPLv2
-  52°North SOS - Extension DeleteResultTemplate under GPLv2
-  52°North SOS - Extension DeleteResultTemplate - Hibernate DAO under GPLv2
-  52°North SOS - Extension DeleteResultTemplate - SOS 2.0 Operation under GPLv2
-  52°North SOS - Extension for AQD under GPLv2
-  52°North SOS - Extension for AQD coding under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
-  52°North SOS - Extension for INSPIRE - Coding Module under GPLv2
-  52°North SOS - Extension GetDataAvailability under GPLv2
-  52°North SOS - Extension GetDataAvailability - Hibernate DAO under GPLv2
-  52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation under GPLv2
-  52°North SOS - Extension InsertFeatureOfInterest under GPLv2
-  52°North SOS - Extension InsertFeatureOfInterest - Hibernate DAO under GPLv2
-  52°North SOS - Extension InsertFeatureOfInterest - SOS 2.0 Operation under GPLv2
   52°North SOS - Extension Modules under GPLv2
-  52°North SOS - Extension register Binding under GPLv2
-  52°North SOS - Extension REST Binding under GPLv2
-  52°North SOS - Extension REST Binding - Core under GPLv2
-  52°North SOS - Extension REST Binding - XML under GPLv2
   52°North SOS - Flexible identifier convert module under GPLv2
   52°North SOS - GetCapabilities DAO under GPLv2
+  52°North SOS - Handler Module under GPLv2
+  52°North SOS - Hibernate c3p0 under GPLv2
   52°North SOS - Hibernate Common under GPLv2
   52°North SOS - Hibernate Common Datasource under GPLv2
-  52°North SOS - Hibernate DAOs under GPLv2
   52°North SOS - Hibernate Datasources under GPLv2
   52°North SOS - Hibernate Feature Query DAO under GPLv2
-  52°North SOS - Hibernate H2 under GPLv2
   52°North SOS - Hibernate H2 Datasource under GPLv2
+  52°North SOS - Hibernate Handler under GPLv2
   52°North SOS - Hibernate Mappings under GPLv2
   52°North SOS - Hibernate Module under GPLv2
   52°North SOS - Hibernate MySQL Datasource under GPLv2
   52°North SOS - Hibernate Oracle Datasource under GPLv2
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
-  52°North SOS - Hibernate Session Factory under GPLv2
   52°North SOS - Hibernate SQL Server Datasource under GPLv2
+  52°North SOS - Hibernate Utils under GPLv2
   52°North SOS - Identifier Modifier Modules under GPLv2
-  52°North SOS - JSON Binding under GPLv2
-  52°North SOS - JSON Coding under GPLv2
-  52°North SOS - JSON Common under GPLv2
-  52°North SOS - KVP Binding under GPLv2
+  52°North SOS - KVP Coding under GPLv2
   52°North SOS - netCDF under GPLv2
   52°North SOS - netCDF Coding under GPLv2
+  52°North SOS - Observation Converter under GPLv2
+  52°North SOS - OceanSITES netCDF API under GPLv2
   52°North SOS - OceanSITES netCDF Coding under GPLv2
+  52°North SOS - OGC Statistics under GPLv2
   52°North SOS - Operation Request Operators under GPLv2
-  52°North SOS - OWS 1.1.0 XML Request Coding under GPLv2
-  52°North SOS - POX Binding under GPLv2
   52°North SOS - Prefixed identifier convert module under GPLv2
+  52°North SOS - Procedure Description Converter under GPLv2
   52°North SOS - Profile Coding Module under GPLv2
   52°North SOS - Profile Module under GPLv2
-  52°North SOS - Profile XmlBeans Module under GPLv2
-  52°North SOS - SensorML 101 Request Coding under GPLv2
-  52°North SOS - SensorML 20 Request Coding under GPLv2
   52°North SOS - Series type checker module under GPLv2
-  52°North SOS - SOAP Binding under GPLv2
   52°North SOS - SOS 1.0.0 Core Profile Operator under GPLv2
-  52°North SOS - SOS 1.0.0 XML Request Coding under GPLv2
   52°North SOS - SOS 2.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Enhanced Profile Operator under GPLv2
-  52°North SOS - SOS 2.0 eReporting Extension under GPLv2
   52°North SOS - SOS 2.0 Inspire extension under GPLv2
   52°North SOS - SOS 2.0 Result Handling Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Transactional Profile Operator under GPLv2
+  52°North SOS - SOS 2.0.0 Extension Operators under GPLv2
   52°North SOS - SOS API Module under GPLv2
   52°North SOS - Split and Merge observations module under GPLv2
-  52°North SOS - SQLite Configuration under GPLv2
-  52°North SOS - Test Module under GPLv2
-  52°North SOS - UVF under GPLv2
-  52°North SOS - WaterML 2.0 XML Coding under GPLv2
   52°North SOS - Web Admin Controller under GPLv2
   52°North SOS - Web Client Controller under GPLv2
   52°North SOS - Web Common Controller under GPLv2
@@ -113,32 +73,26 @@ This project includes:
   52°North SOS - Web Modules under GPLv2
   52°North SOS - Web Views under GPLv2
   52°North SOS - Webapp under GPLv2
-  52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
-  52°North Svalbard - Extension DeleteResultTemplate coding under GPLv2
-  52°North Svalbard - Extension GetDataAvailability - SOS 2.0 coding under GPLv2
-  52°North Svalbard - Extension InsertFeatureOfInterest coding under GPLv2
-  52°North Svalbard - GML XML Request Coding under GPLv2
-  52°North Svalbard - GWML 2.2 XML Coding under GPLv2
-  52°North Svalbard - INSPIRE XML OMPR Coding under GPLv2
-  52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
-  52°North Svalbard - SOS RF 1.0 XML Coding under GPLv2
-  52°North Svalbard - SOS SF 1.0 XML Coding under GPLv2
-  52°North Svalbard - Svalbard Related Offering Coding extension under GPLv2
   52°North Svalbard Core under The Apache Software License, Version 2.0
+  52°North Svalbard Exi under The Apache Software License, Version 2.0
+  52°North Svalbard JSON encoding under The Apache Software License, Version 2.0
   52°North Svalbard OData under The Apache Software License, Version 2.0
-  52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
-                License
+  52°North Svalbard XML Stream under The Apache Software License, Version 2.0
+  52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
   abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
+  Animal Sniffer Annotations under MIT license
   ANTLR 4 Runtime under BSD 3-Clause License
-  AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
+  Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Compress under Apache License, Version 2.0
+  Apache Commons IO under Apache License, Version 2.0
   Apache Commons Lang under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
-  Apache HttpClient Mime under Apache License, Version 2.0
+  Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
-  API interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  API interfaces under Lesser General Public License (LGPL)
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   Avalon Framework API under The Apache Software License, Version 2.0
@@ -162,34 +116,35 @@ This project includes:
   Batik utility library under The Apache Software License, Version 2.0
   Batik XML utility library under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
+  c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
-  ClassLoader leak prevention under Apache 2
-  Commons Codec under The Apache Software License, Version 2.0
-  Commons IO under The Apache Software License, Version 2.0
+  ClassLoader Leak Prevention library under Apache 2
+  ClassLoader Leak Prevention library for servlet environments under Apache 2
+  com.vividsolutions:jts-core under GNU Lesser General Public License, Version 2.1
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
-  Core Hibernate O/RM functionality under GNU Lesser General Public License
-  CORS Filter under The Apache Software License, Version 2.0
-  dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
+  Compress-LZF under Apache License 2.0
+  Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   EJML under The Apache Software License, Version 2.0
-  EPSG Authority Service using HSQL database under GNU Lesser General Public License (LGPL) version 2.1
-  EXIficient under GNU General Public License (GPL), Version 2.0
+  Elasticsearch: Core under The Apache Software License, Version 2.0
+  EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
+  error-prone annotations under Apache 2.0
+  EXIficient under MIT License
+  EXIficient-Core under MIT License
+  EXIficient-Grammars under MIT License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
-  GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
+  GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
+  geolatte-geom under LGPL 3.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
-  H2 Database Engine under The H2 License, Version 1.0
+  H2 Database Engine under MPL 2.0 or EPL 1.0
   Hamcrest All under New BSD License
-  Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
-  Hibernate Commons Annotations under GNU Lesser General Public License
-  hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
-  Hibernate/c3p0 Integration under GNU Lesser General Public License
-  HttpClient under Apache License
-  HttpCore under Apache License
+  HdrHistogram under Public Domain, per Creative Commons CC0
+  HPPC Collections under The Apache Software License, Version 2.0
   httpservices under (MIT-style) netCDF C library license
   HyperSQL Database under HSQLDB License, a BSD open source license
   INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
@@ -206,54 +161,55 @@ This project includes:
   INSPIRE OM Process schema (spec. v3.0) under The Apache Software License, Version 2.0
   INSPIRE OM Specialised Observation schema (spec. v3.0.1) under The Apache Software License, Version 2.0
   ISO 19139 CV_DiscreteCoverage model (spec. v0.2.2) under The Apache Software License, Version 2.0
+  J2ObjC Annotations under The Apache Software License, Version 2.0
+  Jackson dataformat: CBOR under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
-  Jackson-dataformat-CBOR under The Apache Software License, Version 2.0
-  Java Annotation Indexer under AL 2.0
+  Jackson-dataformat-Smile under The Apache Software License, Version 2.0
+  Jackson-dataformat-YAML under The Apache Software License, Version 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Native Access under LGPL, version 2.1 or ASL, version 2
-  Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
-  Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
-  Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
-  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
-  JavaMail API jar under CDDL or GPLv2+CE
-  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
-  JBoss Logging 3 under Apache License, version 2.0
-  JBoss Logging I18n Annotations under Public Domain
-  JCL 1.1.1 implemented over SLF4J under MIT License
+  JCL 1.2 implemented over SLF4J under MIT License
   JCommander under The Apache Software License, Version 2.0
-  JCommon under GNU Lesser General Public Licence
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   JMES Path Query library under Apache License, Version 2.0
+  Joda convert under Apache 2
   Joda-Time under Apache 2
-  JOpt Simple under The MIT License
-  jsp-api under CDDL 1.1 or GPL2 w/ CPE
   jsr-275 under BSD License
+  JSR166e under CC0 1.0 Universal
   jstl under CDDL 1.1 or GPL2 w/ CPE
-  JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
   JUnit under Eclipse Public License 1.0
-  libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
-  Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
-  Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
-  Main module under GNU Lesser General Public License (LGPL) version 2.1
+  Lucene Common Analyzers under Apache 2
+  Lucene Core under Apache 2
+  Lucene Grouping under Apache 2
+  Lucene Highlighter under Apache 2
+  Lucene Join under Apache 2
+  Lucene Memory under Apache 2
+  Lucene Miscellaneous under Apache 2
+  Lucene Queries under Apache 2
+  Lucene QueryParsers under Apache 2
+  Lucene Sandbox under Apache 2
+  Lucene Spatial under Apache 2
+  Lucene Spatial 3D under Apache 2
+  Lucene Suggest under Apache 2
+  Main module under Lesser General Public License (LGPL)
+  MaxMind DB Reader under Apache License 2.0
+  MaxMind GeoIP2 API under Apache License, Version 2.0
   mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  Metadata under GNU Lesser General Public License (LGPL) version 2.1
+  Metadata under Lesser General Public License (LGPL)
   Microsoft JDBC Driver for SQL Server under MIT License
-  Mockito under The MIT License
-  Mozilla Rhino under Mozilla Public License, Version 2.0
-  MySQL Connector/J under The GNU General Public License, Version 2
+  MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   netcdf4 under (MIT-style) netCDF C library license
-  null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
+  Netty under Apache License, Version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
-  Objenesis under MIT License
   odata-commons-api under The Apache Software License, Version 2.0
   odata-commons-core under The Apache Software License, Version 2.0
   odata-server-api under The Apache Software License, Version 2.0
@@ -270,12 +226,12 @@ This project includes:
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC Sampling schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 2.0 under The Apache Software License, Version 2.0
   OGC SOS DeleteResultTemplate schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
+  OGC SOS GetDataAvailability schema 2.0 under The Apache Software License, Version 2.0
   OGC SOS RelatedOfferings schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS Result Filtering schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
@@ -284,58 +240,58 @@ This project includes:
   OGC SWECommon schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC TimeseriesML schema (spec. v1.0) under The Apache Software License, Version 2.0
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC XML schemas under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
-  Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
-  Protocol Buffer Java API under New BSD license
-  quartz under The Apache Software License, Version 2.0
-  Referencing services under GNU Lesser General Public License (LGPL) version 2.1
-  Reflections under WTFPL
-  SaxonB under Mozilla Public License Version 1.0
-  Series REST API - DAO Mappings module under GNU General Public License, Version 2.0
+  PostgreSQL JDBC Driver - JDBC 4.2 under BSD-2-Clause
+  Protocol Buffers [Core] under 3-Clause BSD License
+  Quartz Enterprise Job Scheduler under Apache 2.0
+  Referencing services under Lesser General Public License (LGPL)
+  Reflections under WTFPL or The New BSD License
+  Saxon-HE under Mozilla Public License Version 2.0
+  Series Database Model - Entities under The Apache Software License, Version 2.0
   Series REST API - DAO module under GNU General Public License, Version 2.0
   Series REST API - DAO Webapp under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0
   Series REST API - SPI module under GNU General Public License, Version 2.0
-  servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
+  SnakeYAML under Apache License Version 2.0
   software.amazon.ion:ion-java under The Apache License, Version 2.0
-  Spring AOP under The Apache Software License, Version 2.0
-  Spring Aspects under The Apache Software License, Version 2.0
-  Spring Beans under The Apache Software License, Version 2.0
-  Spring Context under The Apache Software License, Version 2.0
+  Spatial4J under The Apache Software License, Version 2.0
+  Spring AOP under Apache License, Version 2.0
+  Spring Aspects under Apache License, Version 2.0
+  Spring Beans under Apache License, Version 2.0
+  Spring Context under Apache License, Version 2.0
   Spring Context Support under The Apache Software License, Version 2.0
-  Spring Core under The Apache Software License, Version 2.0
-  Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
-  Spring JDBC under The Apache Software License, Version 2.0
-  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
-  Spring Object/XML Marshalling under The Apache Software License, Version 2.0
-  Spring TestContext Framework under The Apache Software License, Version 2.0
-  Spring Transaction under The Apache Software License, Version 2.0
-  Spring Web under The Apache Software License, Version 2.0
-  Spring Web MVC under The Apache Software License, Version 2.0
+  Spring Core under Apache License, Version 2.0
+  Spring Expression Language (SpEL) under Apache License, Version 2.0
+  Spring JDBC under Apache License, Version 2.0
+  Spring Object/Relational Mapping under Apache License, Version 2.0
+  Spring Object/XML Marshalling under Apache License, Version 2.0
+  Spring Transaction under Apache License, Version 2.0
+  Spring Web under Apache License, Version 2.0
+  Spring Web MVC under Apache License, Version 2.0
   spring-security-acl under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  SQLite JDBC under The Apache Software License, Version 2.0
-  StAX API under The Apache Software License, Version 2.0
+  T-Digest under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
-  vecmath under GPL 2.0 license w/ CPE
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   xalan under The Apache Software License, Version 2.0
   Xerces2-j under The Apache Software License, Version 2.0
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0

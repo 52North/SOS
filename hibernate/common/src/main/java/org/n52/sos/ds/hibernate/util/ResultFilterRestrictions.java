@@ -28,8 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -312,6 +314,17 @@ public class ResultFilterRestrictions {
             complex.add(Subqueries.propertyIn(alias + "." +DataEntity.PROPERTY_ID, list.iterator().next()));
         }
         return complex;
+    }
+
+    public static Set<SubQueryIdentifier> getSubQueryIdentifier(ResultFilterClasses resultFilterClasses) {
+        Set<SubQueryIdentifier> set = new HashSet<>();
+        set.add(SubQueryIdentifier.Simple);
+        if (HibernateHelper.isEntitySupported(resultFilterClasses.getComplex())) {
+            set.add(SubQueryIdentifier.Complex);
+        } else if (HibernateHelper.isEntitySupported(resultFilterClasses.getProfile())) {
+            set.add(SubQueryIdentifier.Profile);
+        }
+        return set;
     }
 
     public enum SubQueryIdentifier {

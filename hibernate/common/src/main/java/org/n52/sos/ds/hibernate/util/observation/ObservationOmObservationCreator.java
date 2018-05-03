@@ -59,6 +59,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
@@ -68,6 +69,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Table.Cell;
 
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
@@ -285,6 +287,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Offerings done in {} ms.", System.currentTimeMillis() - start);
         return offerings;
     }
+
     private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation,
             String procedureId, String phenomenonId, String featureId, Set<String> offerings) throws CodedException {
         long start = System.currentTimeMillis();

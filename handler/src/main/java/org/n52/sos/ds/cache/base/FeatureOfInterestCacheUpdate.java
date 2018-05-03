@@ -29,19 +29,18 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.FeatureDao;
-import org.n52.series.db.dao.ProcedureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
@@ -65,34 +64,32 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         startStopwatch();
         try {
             Collection<FeatureEntity> features = new FeatureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
-            List<FeatureEntity> publishedFeatureOfInterest = new FeatureDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
-            ProcedureDao procedureDao = new ProcedureDao(getSession());
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getIdentifier();
-                if (publishedFeatureOfInterest.contains(featureEntity)) {
-                    getCache().addPublishedFeatureOfInterest(identifier);
-                }
                 getCache().addFeatureOfInterest(identifier);
+                Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
+                if (datasets != null && !datasets.isEmpty()) {
+                    if (datasets.stream().anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
+                        getCache().addPublishedFeatureOfInterest(identifier);
+                    }
+                    getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(datasets));
+                }
                 if (featureEntity.isSetName()) {
                         getCache().addFeatureOfInterestIdentifierHumanReadableName(identifier, featureEntity.getName());
                 }
                 if (featureEntity.hasParents()) {
                     getCache().addParentFeatures(identifier, getParents(featureEntity));
                 }
-                getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(procedureDao.getAllInstances(createProcedureDbQuery(featureEntity))));
             }
-        } catch (HibernateException | DataAccessException dae) {
-            getErrors().add(new NoApplicableCodeException().causedBy(dae).withMessage("Error while updating featureOfInterest cache!"));
+        } catch (HibernateException he) {
+            getErrors().add(new NoApplicableCodeException().causedBy(he).withMessage("Error while updating featureOfInterest cache!"));
         }
         LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
     }
 
-    private Collection<String> getProcedures(List<ProcedureEntity> procedures) {
-        Set<String> set = Sets.newTreeSet();
-        for (ProcedureEntity procedure : procedures) {
-            set.add(procedure.getIdentifier());
-        }
-        return set;
+    private Collection<String> getProcedures(Collection<DatasetEntity> datasets) {
+        return datasets.stream().filter(d -> d.getProcedure() != null).map(d -> d.getProcedure().getIdentifier())
+                .collect(Collectors.toSet());
     }
 
     private DbQuery createProcedureDbQuery(FeatureEntity featureEntity) {
@@ -123,5 +120,11 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         return features.stream()
                 .map(FeatureEntity::getIdentifier)
                 .collect(Collectors.toSet());
+    }
+
+    private DbQuery createDatasetDbQuery(FeatureEntity feature) {
+        IoParameters parameters = IoParameters.createDefaults();
+        parameters.extendWith(IoParameters.FEATURES, Long.toString(feature.getId()));
+        return new DbQuery(parameters);
     }
 }

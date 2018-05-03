@@ -37,7 +37,6 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
-import org.n52.series.db.beans.RelatedFeatureRoleEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -74,7 +73,7 @@ public class RelatedFeatureDAO {
     @SuppressWarnings("unchecked")
     public List<RelatedFeatureEntity> getRelatedFeatureForOffering(final String offering, final Session session) {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        criteria.createCriteria(RelatedFeatureEntity.OFFERINGS).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        criteria.createCriteria(RelatedFeatureEntity.OFFERINGS).add(Restrictions.eq(OfferingEntity.PROPERTY_IDENTIFIER, offering));
         LOGGER.debug("QUERY getRelatedFeatureForOffering(offering): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -106,7 +105,7 @@ public class RelatedFeatureDAO {
     public List<RelatedFeatureEntity> getRelatedFeatures(final String targetIdentifier, final Session session) {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
         criteria.createCriteria(RelatedFeatureEntity.FEATURE_OF_INTEREST).add(
-                Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, targetIdentifier));
+                Restrictions.eq(AbstractFeatureEntity.PROPERTY_IDENTIFIER, targetIdentifier));
         LOGGER.debug("QUERY getRelatedFeatures(targetIdentifier): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -124,14 +123,14 @@ public class RelatedFeatureDAO {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public List<RelatedFeatureEntity> getOrInsertRelatedFeature(final AbstractFeature feature, final List<RelatedFeatureRoleEntity> roles,
+    public List<RelatedFeatureEntity> getOrInsertRelatedFeature(final AbstractFeature feature, final String role,
             final Session session) throws OwsExceptionReport {
         // TODO: create featureOfInterest and link to relatedFeature
         List<RelatedFeatureEntity> relFeats = getRelatedFeatures(feature.getIdentifierCodeWithAuthority().getValue(), session);
         if (relFeats == null) {
             relFeats = new LinkedList<>();
         }
-        if (relFeats.isEmpty() && roles != null && !roles.isEmpty()) {
+        if (relFeats.isEmpty() && role != null && !role.isEmpty()) {
             final RelatedFeatureEntity relFeat = new RelatedFeatureEntity();
             String identifier = feature.getIdentifierCodeWithAuthority().getValue();
             String url = null;
@@ -143,7 +142,7 @@ public class RelatedFeatureDAO {
             }
             relFeat.setFeature(new FeatureOfInterestDAO(daoFactory).getOrInsert(identifier, url,
                     session));
-            relFeat.setRole(roles.iterator().next());
+            relFeat.setRole(role);
             session.save(relFeat);
             session.flush();
             relFeats.add(relFeat);

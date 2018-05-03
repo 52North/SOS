@@ -251,14 +251,14 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      * @return Observable property objects
      */
     public List<PhenomenonEntity> getOrInsertObservableProperty(
-            List<? extends AbstractPhenomenon> observableProperties, boolean hiddenChild, Session session) {
-        return new ArrayList<>(getOrInsertObservablePropertyAsMap(observableProperties, hiddenChild, session).values());
+            List<? extends AbstractPhenomenon> observableProperties, Session session) {
+        return new ArrayList<>(getOrInsertObservablePropertyAsMap(observableProperties, session).values());
     }
 
     public Map<String, PhenomenonEntity> getOrInsertObservablePropertyAsMap(
-            List<? extends AbstractPhenomenon> observableProperties, boolean hiddenChild, Session session) {
+            List<? extends AbstractPhenomenon> observableProperties, Session session) {
         Map<String, PhenomenonEntity> existing = getExistingObservableProperties(observableProperties, session);
-        insertNonExisting(observableProperties, hiddenChild, existing, session);
+        insertNonExisting(observableProperties, existing, session);
         insertHierachy(observableProperties, existing, session);
         return existing;
     }
@@ -268,7 +268,6 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         if (obsProp == null) {
             obsProp = new PhenomenonEntity();
             addIdentifierNameDescription(observableProperty, obsProp, session);
-            obsProp.setHiddenChild(false);
             session.save(obsProp);
             session.flush();
             session.refresh(obsProp);
@@ -294,31 +293,28 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
 
     protected void insertNonExisting(
             List<? extends AbstractPhenomenon> observableProperties,
-            boolean hiddenChild,
             Map<String, PhenomenonEntity> existing,
             Session session)
             throws HibernateException {
         for (AbstractPhenomenon sosObsProp : observableProperties) {
-            insertNonExisting(sosObsProp, hiddenChild, existing, session);
+            insertNonExisting(sosObsProp, existing, session);
         }
     }
 
     protected void insertNonExisting(AbstractPhenomenon sosObsProp,
-                                     boolean hiddenChild,
                                      Map<String, PhenomenonEntity> existing,
                                      Session session)
             throws HibernateException {
         if (!existing.containsKey(sosObsProp.getIdentifier())) {
             PhenomenonEntity obsProp = new PhenomenonEntity();
             addIdentifierNameDescription(sosObsProp, obsProp, session);
-            obsProp.setHiddenChild(hiddenChild);
             session.save(obsProp);
             session.flush();
             session.refresh(obsProp);
             existing.put(obsProp.getIdentifier(), obsProp);
         }
         if (sosObsProp instanceof OmCompositePhenomenon) {
-            insertNonExisting(((OmCompositePhenomenon) sosObsProp).getPhenomenonComponents(), true, existing, session);
+            insertNonExisting(((OmCompositePhenomenon) sosObsProp).getPhenomenonComponents(), existing, session);
         }
     }
 

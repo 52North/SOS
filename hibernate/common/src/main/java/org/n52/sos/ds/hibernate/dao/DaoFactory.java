@@ -222,10 +222,6 @@ public class DaoFactory {
         return new ResultTemplateDAO(encoderRepository, xmlOptionsHelper, decoderRepository);
     }
 
-    public RelatedFeatureRoleDAO getRelatedFeatureRoleDAO() {
-        return new RelatedFeatureRoleDAO();
-    }
-
     public CodespaceDAO getCodespaceDAO() {
         return new CodespaceDAO();
     }

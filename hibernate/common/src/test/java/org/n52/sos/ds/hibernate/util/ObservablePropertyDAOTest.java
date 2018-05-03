@@ -133,23 +133,18 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         PhenomenonEntity child3 = observableProperties.get("child3");
         PhenomenonEntity single = observableProperties.get("single");
 
-        errors.checkThat(parent.isHiddenChild(), is(false));
         errors.checkThat(parent.getParents(), is(empty()));
         errors.checkThat(parent.getChildren(), containsInAnyOrder(child1, child2, child3));
 
-        errors.checkThat(child1.isHiddenChild(), is(true));
         errors.checkThat(child1.getParents(), contains(parent));
         errors.checkThat(child1.getChildren(), is(empty()));
 
-        errors.checkThat(child2.isHiddenChild(), is(true));
         errors.checkThat(child2.getParents(), contains(parent));
         errors.checkThat(child2.getChildren(), is(empty()));
 
-        errors.checkThat(child3.isHiddenChild(), is(true));
         errors.checkThat(child3.getParents(), contains(parent));
         errors.checkThat(child3.getChildren(), is(empty()));
 
-        errors.checkThat(single.isHiddenChild(), is(false));
         errors.checkThat(single.getParents(), is(empty()));
         errors.checkThat(single.getChildren(), is(empty()));
     }
@@ -160,7 +155,7 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         daoFactory.setI18NDAORepository(i18NDAORepository);
         ObservablePropertyDAO dao = daoFactory.getObservablePropertyDAO();
         Collection<PhenomenonEntity> savedObservableProperties
-                = dao.getOrInsertObservableProperty(abstractPhenomenons, false, session);
+                = dao.getOrInsertObservableProperty(abstractPhenomenons, session);
         return asMap(savedObservableProperties);
     }
 

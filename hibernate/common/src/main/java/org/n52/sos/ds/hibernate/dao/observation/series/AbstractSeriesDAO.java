@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -57,6 +58,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -411,7 +413,7 @@ public abstract class AbstractSeriesDAO
             throws OwsExceptionReport {
         Set<DatasetEntity> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(),
                         features, request.getOfferings(), session);
                 addSpecificRestrictions(c, request);
@@ -437,7 +439,7 @@ public abstract class AbstractSeriesDAO
             throws OwsExceptionReport {
         Set<DatasetEntity> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
                         request.getFeaturesOfInterest(), request.getOfferings(), session);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
@@ -659,16 +661,12 @@ public abstract class AbstractSeriesDAO
      * @throws OwsExceptionReport
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
-        c.createAlias( DatasetEntity.PROPERTY_OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-        c.add(Restrictions.or(Restrictions.isNull( DatasetEntity.PROPERTY_OFFERING),
-                Restrictions.in("off." + OfferingEntity.IDENTIFIER, offerings)));
+        c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
 
     }
 
     public void addOfferingToCriteria(Criteria c, String offering) {
-        c.createAlias( DatasetEntity.PROPERTY_OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-        c.add(Restrictions.or(Restrictions.isNull( DatasetEntity.PROPERTY_OFFERING),
-                Restrictions.eq("off." + OfferingEntity.IDENTIFIER, offering)));
+        c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
     }
 
     public void addOfferingToCriteria(Criteria c, OfferingEntity offering) {
@@ -889,6 +887,10 @@ public abstract class AbstractSeriesDAO
         if (CollectionHelper.isNotEmpty(offerings)) {
             addOfferingToCriteria(c, offerings);
         }
+        c.setFetchMode(DatasetEntity.PROPERTY_PROCEDURE, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_PHENOMENON, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_FEATURE, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_OFFERING, FetchMode.JOIN);
         return c;
     }
 

@@ -302,10 +302,6 @@ public class GetResultDAO extends AbstractGetResultHandler {
         } else {
             c.copy(Restrictions.in(AbstractSeriesObservation.SERIES, series));
         }
-
-        if (request.isSetOffering()) {
-            addOfferingRestriction(c, request.getOffering());
-        }
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
             addTemporalFilter(c, request.getTemporalFilter());
         }

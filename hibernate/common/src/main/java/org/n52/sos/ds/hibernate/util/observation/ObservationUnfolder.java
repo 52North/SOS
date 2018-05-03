@@ -728,7 +728,7 @@ public class ObservationUnfolder {
                     getSrid());
             geometry.setSRID(getSrid());
             if (isSetAltitude() && geometry instanceof Point) {
-                ((Point) geometry).getCoordinate().y = getAltitude();
+                ((Point) geometry).getCoordinate().z = getAltitude();
             }
             return geometry;
         }

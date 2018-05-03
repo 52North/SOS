@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.hibernate.c3p0.internal.C3P0ConnectionProvider;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
@@ -76,7 +77,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
 
     protected static final String C3P0_CONNECTION_POOL =
-            "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
+            "org.hibernate.c3p0.internal.C3P0ConnectionProvider";
 
     // protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE =
     // false;

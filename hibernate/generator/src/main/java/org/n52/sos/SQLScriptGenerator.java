@@ -146,6 +146,7 @@ public class SQLScriptGenerator {
         printToScreen("Create a all or a single selected script:");
         printToScreen("1   all");
         printToScreen("2   Select script");
+        printToScreen("3   Misc scripts");
         printToScreen("");
         printToScreen("Enter your selection: ");
 
@@ -257,6 +258,20 @@ public class SQLScriptGenerator {
                         }   
                     }
                 }
+            } else if (select == 3) {
+                String schema = "public";
+                // dialectSelection
+                for (int i = 1; i < 6; i++) {
+                    schema = getSchema(i);
+                    try {
+                        execute(sqlScriptGenerator, i, 2, 2, schema);
+                    } catch (MissingDriverException mde) {
+                        System.exit(1);
+                    } catch (Exception e) {
+                        printToScreen("ERROR: " + e.getMessage());
+                        System.exit(1);
+                    }
+                }
             } else {
                 try {
                     int dialectSelection = sqlScriptGenerator.getDialectSelection();
@@ -303,7 +318,7 @@ public class SQLScriptGenerator {
         try {
             Configuration configuration = new CustomConfiguration().configure("/sos-hibernate.cfg.xml");
             Dialect dia = sqlScriptGenerator.getDialect(dialectSelection);
-            String fileName = "target/" + dialectSelection + "_" + modelSelection + "_" + concept + ".sql";
+            String fileName = "target/" + sqlScriptGenerator.getDialectSelection(dialectSelection) + "_" + sqlScriptGenerator.getModelSelection(modelSelection) + "_" + sqlScriptGenerator.getConceptSelection(concept) + ".sql";
             writer = new FileWriter(fileName);
             if (schema != null && !schema.isEmpty()) {
                 Properties p = new Properties();
@@ -342,6 +357,43 @@ public class SQLScriptGenerator {
                 writer.close();
             }
         }
+    }
+    
+    private String getDialectSelection(int i) {
+        if (i == 1) {
+            return "postgre";
+        } else if (i == 2) {
+            return "oracle";
+        } else if (i == 3) {
+            return "h2";
+        } else if (i == 4) {
+            return "mysql";
+        } else if (i == 5) {
+            return "sqlServer";
+        }
+        return Integer.toString(i);
+    }
+    
+    private String getModelSelection(int i) {
+        if (i == 1) {
+            return "core";
+        } else if (i == 2) {
+            return "transactional";
+        } else if (i == 3) {
+            return "all";
+        }
+        return Integer.toString(i);
+    }
+    
+    private String getConceptSelection(int i) {
+        if (i == 1) {
+            return "old";
+        } else if (i == 2) {
+            return "series";
+        } else if (i == 3) {
+            return "ereporting";
+        }
+        return Integer.toString(i);
     }
 
     private class MissingDriverException extends Exception {

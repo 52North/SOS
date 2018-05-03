@@ -85,7 +85,7 @@ public class WaterMLObservationCreator
 
     private OmObservation addWaterMLMetadata(OmObservation omObservation, DatasetEntity series, Session session)
             throws CodedException {
-        return new WaterMLMetadataAdder(omObservation, series, session).add().result();
+        return new WaterMLMetadataAdder(omObservation, series).add().result();
     }
 
 }

@@ -92,7 +92,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
             ObservationTimeExtrema ote = new ObservationTimeExtrema();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, new StringBuilder());
                 addMinMaxTimeProjection(c);
@@ -128,7 +128,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
             ObservationTimeExtrema ote = new ObservationTimeExtrema();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, new StringBuilder());
                 addMinMaxTimeProjection(c);

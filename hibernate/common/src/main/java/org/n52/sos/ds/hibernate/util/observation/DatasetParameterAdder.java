@@ -48,7 +48,9 @@ public class DatasetParameterAdder {
     public void add() throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(hParameters)) {
             for (Parameter parameter : hParameters) {
-                observation.addParameter(new ParameterVisitor().visit(parameter));
+                if (!parameter.isSetDomain()) {
+                    observation.addParameter(new ParameterVisitor().visit(parameter));
+                }
             }
         }
     }

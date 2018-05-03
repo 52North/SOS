@@ -243,7 +243,7 @@ public class ObservationContext {
         if (!contextual.hasUnit() && isSetUnit()) {
             contextual.setUnit(getUnit());
         }
-       contextual.setHiddenChild(isHiddenChild());
+        contextual.setHidden(isHiddenChild());
     }
 
     public ObservationContext setHiddenChild(boolean hiddenChild) {

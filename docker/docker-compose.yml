@@ -26,6 +26,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sos
+    volumes:
+      - "./sos-init.sql:/docker-entrypoint-initdb.d/zz_sos_init.sql"
     container_name: testing-db
   sos:
     # change to 7- or 9- to change the tomcat version

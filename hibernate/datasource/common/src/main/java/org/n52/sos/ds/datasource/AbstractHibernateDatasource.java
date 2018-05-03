@@ -279,7 +279,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public CustomConfiguration getConfig(Map<String, Object> settings) {
         CustomConfiguration config = new CustomConfiguration();
-        config.configure("/sos-hibernate.cfg.xml");
+//        config.configure("/hibernate.cfg.xml");
         for (File path : getMappingPaths(settings)) {
             config.addDirectory(path);
         }
@@ -307,7 +307,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
-                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.BGRM_LOG_CONCEPT.equals(databaseConcept))) {
             Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
             if (t != null && t) {
                 paths.add(resource(HIBERNATE_MAPPING_EXTENSION));
@@ -366,6 +367,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             case EREPORTING_CONCEPT:
                 mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH);
                 break;
+            case BGRM_LOG_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH);
+                break;
             default:
                 mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH);
                 break;
@@ -380,7 +384,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             concept = DatabaseConcept.SERIES_CONCEPT.name();
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH)) {
                 concept = DatabaseConcept.EREPORTING_CONCEPT.name();
-            }
+            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH)) {
+            concept = DatabaseConcept.BGRM_LOG_CONCEPT.name();
+        }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
                     databaseConceptDefinition.getKey(),
@@ -784,7 +790,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
-                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.BGRM_LOG_CONCEPT.equals(databaseConcept))) {
             Boolean t = (Boolean) settings.get(seriesMetadataDefiniton.getKey());
             if (t != null && t) {
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION);

@@ -67,6 +67,7 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature
 import org.n52.shetland.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SfSpecimen;
+import org.n52.shetland.ogc.om.series.tsml.TsmlMonitoringFeature;
 import org.n52.shetland.ogc.om.series.wml.WmlMonitoringPoint;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -434,7 +435,12 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         @Override
         public AbstractFeatureEntity visit(WmlMonitoringPoint monitoringPoint) throws OwsExceptionReport {
            throw new NotYetSupportedException(WmlMonitoringPoint.class.getSimpleName());
-//            return null;
+        }
+
+        @Override
+        public AbstractFeatureEntity visit(TsmlMonitoringFeature value)
+                throws OwsExceptionReport {
+            throw new NotYetSupportedException(TsmlMonitoringFeature.class.getSimpleName());
         }
 
         private AbstractFeatureEntity persist(AbstractFeatureEntity feature, AbstractFeature abstractFeature, boolean add) throws OwsExceptionReport {

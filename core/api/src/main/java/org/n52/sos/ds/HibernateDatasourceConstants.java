@@ -55,6 +55,14 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_SERIES_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/dataset";
 
+    String HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_PATH + "/ereporting";
+
+    String HIBERNATE_MAPPING_BRGM_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/brgm_log";
+
+    String HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_BRGM_CONCEPT_PATH + "/observation";
+
+    String HIBERNATE_MAPPING_I18N_PATH = HIBERNATE_MAPPING_PATH + "/i18n";
+
     // eReporting concept
     String HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/ereporting";
 
@@ -129,7 +137,8 @@ public interface HibernateDatasourceConstants {
 
     public enum DatabaseConcept {
         SERIES_CONCEPT("Series concept"),
-        EREPORTING_CONCEPT("eReporting concept (extended Series concept)");
+        EREPORTING_CONCEPT("eReporting concept (extended Series concept)"),
+        BGRM_LOG_CONCEPT("BRGM - special concept for BRGM log observations");
 
         private final String displayName;
 

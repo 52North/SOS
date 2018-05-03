@@ -146,6 +146,7 @@ public class SQLScriptGenerator {
         printToScreen("Create a all or a single selected script:");
         printToScreen("1   all");
         printToScreen("2   Select script");
+        printToScreen("3   Misc scripts");
         printToScreen("");
         printToScreen("Enter your selection: ");
 
@@ -255,6 +256,20 @@ public class SQLScriptGenerator {
                                 System.exit(1);
                             }
                         }   
+                    }
+                }
+            } else if (select == 3) {
+                String schema = "public";
+                // dialectSelection
+                for (int i = 1; i < 6; i++) {
+                    schema = getSchema(i);
+                    try {
+                        execute(sqlScriptGenerator, i, 2, 2, schema);
+                    } catch (MissingDriverException mde) {
+                        System.exit(1);
+                    } catch (Exception e) {
+                        printToScreen("ERROR: " + e.getMessage());
+                        System.exit(1);
                     }
                 }
             } else {

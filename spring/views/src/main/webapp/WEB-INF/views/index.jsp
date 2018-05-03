@@ -132,8 +132,8 @@
    <tr>
     <td align="center" style="padding:3px;width:30%;">
       <a target="_blank" href="https://www.bmvi.de/"><img alt="BMVI" align="middle" width="90" src="<c:url value="static/images/funding/bmvi-logo-en.svg"/>"/></a>
-      <a target="_blank" href="https://www.bmvi.de/DE/Themen/Digitales/mFund/Ueberblick/ueberblick.html"><img alt="BMVI" align="middle" width="90" src="<c:url value="static/images/funding/mFund.jpg"/>"/></a>
-      <a target="_blank" href="http://wacodis.fbg-hsbo.de/"><img alt="WaCoDis - Water management Copernicus services for the determination of substance inputs into waters and dams within the framework of environmental monitoring " width="90" src="<c:url value="/static/images/funding/wacodis-logo.png"/>"/></a>
+      <a target="_blank" href="https://www.bmvi.de/DE/Themen/Digitales/mFund/Ueberblick/ueberblick.html"><img alt="mFund" align="middle" width="90" src="<c:url value="static/images/funding/mFund.jpg"/>"/></a>
+      <a target="_blank" href="http://wacodis.fbg-hsbo.de/"><img alt="WaCoDis - Water management Copernicus services for the determination of substance inputs into waters and dams within the framework of environmental monitoring" width="90" src="<c:url value="/static/images/funding/wacodis-logo.png"/>"/></a>
     </td>
       <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Transport and Digital Infrastructure</a> research project <a target="_blank" href="http://wacodis.fbg-hsbo.de/">WaCoDis</a> (co-funded by the German Federal Ministry of Transport and Digital Infrastructure, programme mFund)</td>
    </tr>

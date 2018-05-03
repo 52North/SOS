@@ -131,7 +131,7 @@
    </tr>
    <tr>
     <td align="center" style="padding:3px;width:30%;">
-      <a target="_blank" href="https://www.bmvi.de/"><img alt="BMVI" align="middle" width="90" src="<c:url value="static/images/funding/bmvi-logo-en.svg"/>"/></a>
+      <a target="_blank" href="https://www.bmvi.de/"><img alt="BMVI" align="middle" width="90" src="<c:url value="static/images/funding/bmvi-logo-en.png"/>"/></a>
       <a target="_blank" href="https://www.bmvi.de/DE/Themen/Digitales/mFund/Ueberblick/ueberblick.html"><img alt="mFund" align="middle" width="90" src="<c:url value="static/images/funding/mFund.jpg"/>"/></a>
       <a target="_blank" href="http://wacodis.fbg-hsbo.de/"><img alt="WaCoDis - Water management Copernicus services for the determination of substance inputs into waters and dams within the framework of environmental monitoring" width="90" src="<c:url value="/static/images/funding/wacodis-logo.png"/>"/></a>
     </td>
@@ -139,8 +139,8 @@
    </tr>
    <tr>
     <td align="center" style="padding:3px;width:30%;">
-      <a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="70" src="<c:url value="static/images/funding/bmbf_logo_neu_eng.svg"/>"/></a>
-      <a target="_blank" href="https://www.fona.de/"><img alt="FONA" align="middle" width="70" src="<c:url value="static/images/funding/fona.svg"/>"/></a>
+      <a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="70" src="<c:url value="static/images/funding/bmbf_logo_neu_eng.png"/>"/></a>
+      <a target="_blank" href="https://www.fona.de/"><img alt="FONA" align="middle" width="70" src="<c:url value="static/images/funding/fona.png"/>"/></a>
       <a target="_blank" href="http://www.mudak-wrm.kit.edu/"><img alt="Multidisciplinary data acquisition as the key for a globally applicable water resource management (MuDak-WRM)" width="70" src="<c:url value="/static/images/funding/mudak_wrm_logo.png"/>"/></a>
     </td>
       <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="http://www.mudak-wrm.kit.edu/">MuDak-WRM</a> (co-funded by the German Federal Ministry of Education and Research, programme FONA)</td>

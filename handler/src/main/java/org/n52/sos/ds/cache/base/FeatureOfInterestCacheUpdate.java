@@ -37,6 +37,7 @@ import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
@@ -67,7 +68,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getIdentifier();
                 getCache().addFeatureOfInterest(identifier);
-                Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
+                Collection<Dataset> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
                 if (datasets != null && !datasets.isEmpty()) {
                     if (datasets.stream().anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
                         getCache().addPublishedFeatureOfInterest(identifier);
@@ -87,7 +88,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
     }
 
-    private Collection<String> getProcedures(Collection<DatasetEntity> datasets) {
+    private Collection<String> getProcedures(Collection<Dataset> datasets) {
         return datasets.stream().filter(d -> d.getProcedure() != null).map(d -> d.getProcedure().getIdentifier())
                 .collect(Collectors.toSet());
     }

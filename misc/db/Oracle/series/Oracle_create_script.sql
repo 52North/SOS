@@ -348,7 +348,7 @@ create table oracle.textseriesparamvalue (parameterId number(19,0) not null, val
 comment on table oracle.textseriesparamvalue is 'Value table for text parameter';
 comment on column oracle.textseriesparamvalue.parameterId is 'Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid';
 comment on column oracle.textseriesparamvalue.value is 'Text parameter value';
-create table oracle.textvalue (observationId number(19,0) not null, value clob, identifier varchar2(255 char), name varchar2(255 char), description varchar2(255 char), primary key (observationId));
+create table oracle.textvalue (observationId number(19,0) not null, value long, identifier varchar2(255 char), name varchar2(255 char), description varchar2(255 char), primary key (observationId));
 comment on table oracle.textvalue is 'Value table for text observation';
 comment on column oracle.textvalue.observationId is 'Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid';
 comment on column oracle.textvalue.value is 'Text observation value';
@@ -383,7 +383,6 @@ comment on column oracle.xmlseriesparamvalue.parameterId is 'Foreign Key (FK) to
 comment on column oracle.xmlseriesparamvalue.value is 'XML parameter value';
 alter table oracle."procedure" add constraint procIdentifierUK unique (identifier);
 create index blobvalueobsididx on oracle.blobvalue (observationId);
-create index blobvalueidx on oracle.blobvalue (value);
 create index booleanFeatParamIdx on oracle.booleanfeatparamvalue (value);
 create index booleanparamididx on oracle.booleanparametervalue (parameterId);
 create index booleanParamIdx on oracle.booleanparametervalue (value);

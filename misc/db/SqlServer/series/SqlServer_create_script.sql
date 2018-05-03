@@ -93,7 +93,6 @@ create table dbo.xmlparametervalue (parameterId bigint not null, value varchar(M
 create table dbo.xmlseriesparamvalue (parameterId bigint not null, value varchar(MAX), primary key (parameterId));
 alter table dbo.[procedure] add constraint procIdentifierUK unique (identifier);
 create index blobvalueobsididx on dbo.blobvalue (observationId);
-create index blobvalueidx on dbo.blobvalue (value);
 create index booleanFeatParamIdx on dbo.booleanfeatparamvalue (value);
 create index booleanparamididx on dbo.booleanparametervalue (parameterId);
 create index booleanParamIdx on dbo.booleanparametervalue (value);

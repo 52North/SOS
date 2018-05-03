@@ -383,7 +383,6 @@ comment on column public.xmlseriesparamvalue.parameterId is 'Foreign Key (FK) to
 comment on column public.xmlseriesparamvalue.value is 'XML parameter value';
 alter table public."procedure" add constraint procIdentifierUK unique (identifier);
 create index blobvalueobsididx on public.blobvalue (observationId);
-create index blobvalueidx on public.blobvalue (value);
 create index booleanFeatParamIdx on public.booleanfeatparamvalue (value);
 create index booleanparamididx on public.booleanparametervalue (parameterId);
 create index booleanParamIdx on public.booleanparametervalue (value);

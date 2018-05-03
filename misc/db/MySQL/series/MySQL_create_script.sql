@@ -91,7 +91,6 @@ create table sos.xmlparametervalue (parameterId bigint not null comment 'Foreign
 create table sos.xmlseriesparamvalue (parameterId bigint not null comment 'Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid', value longtext comment 'XML parameter value', primary key (parameterId)) comment='Value table for XML parameter' ENGINE=InnoDB;
 alter table sos.`procedure` add constraint procIdentifierUK unique (identifier);
 create index blobvalueobsididx on sos.blobvalue (observationId);
-create index blobvalueidx on sos.blobvalue (value);
 create index booleanFeatParamIdx on sos.booleanfeatparamvalue (value);
 create index booleanparamididx on sos.booleanparametervalue (parameterId);
 create index booleanParamIdx on sos.booleanparametervalue (value);

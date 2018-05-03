@@ -184,7 +184,7 @@
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
                          discriminator-value="category">
             <property name="value" 
-                      type="org.hibernate.type.StringClobType"
+                      type="text"
                       index="textvalueidx">
                  <column name="valuecategory">
                      <comment>Text observation value</comment>

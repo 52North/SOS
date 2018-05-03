@@ -167,8 +167,7 @@
                 </column>
             </key>
              <property name="value" 
-                       type="blob"
-                       index="blobvalueidx">
+                       type="blob">
                  <column name="value">
                      <comment>Blob observation value</comment>
                  </column>
@@ -288,7 +287,7 @@
                 </column>
             </key>
             <property name="value" 
-                      type="org.hibernate.type.StringClobType"
+                      type="text"
                       index="textvalueidx">
                  <column name="value">
                      <comment>Text observation value</comment>

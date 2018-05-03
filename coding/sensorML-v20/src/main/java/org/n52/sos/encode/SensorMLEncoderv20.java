@@ -804,9 +804,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     if (capability.isSetName()) {
                         c.setName(NcNameResolver.fixNcName(capability.getName()));
                     } else if (capability.getAbstractDataComponent().isSetName()) {
-                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName().getValue()));
+                        c.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName().getValue()));
+                    } else if (capability.getAbstractDataComponent().isSetDefinition()) {
+                        c.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getDefinition()));
                     } else {
-                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getDefinition()));
+                        c.setName(NcNameResolver.fixNcName("unknown"));
                     }
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
@@ -819,8 +821,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     Capability capability = capabilityList.addNewCapability();
                     if (component.isSetName()) {
                         capability.setName(NcNameResolver.fixNcName(component.getName().getValue()));
-                    } else {
+                    } else if (component.isSetDefinition()) {
                         capability.setName(NcNameResolver.fixNcName(component.getDefinition()));
+                    } else {
+                        capability.setName(NcNameResolver.fixNcName("unknown"));
                     }
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(capability.addNewAbstractDataComponent(), encodeObjectToXml);

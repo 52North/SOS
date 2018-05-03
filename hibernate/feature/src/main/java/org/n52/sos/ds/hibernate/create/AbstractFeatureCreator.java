@@ -90,10 +90,14 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity>
                 Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                 if (name.isPresent()) {
                     abstractFeature.addName(new CodeType(name.get()));
+                } else {
+                    abstractFeature.addName(featureDAO.getName(feature));
                 }
                 Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
                 if (description.isPresent()) {
                     abstractFeature.setDescription(description.get().getText());
+                } else {
+                    abstractFeature.setDescription(featureDAO.getDescription(feature));
                 }
             } else {
                 final I18NFeatureMetadata i18n;

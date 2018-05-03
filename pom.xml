@@ -1437,7 +1437,7 @@
             <dependency>
                 <groupId>org.opengeo</groupId>
                 <artifactId>geodb</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.vividsolutions</groupId>
@@ -1453,7 +1453,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>6.0.6</version>
+                <version>8.0.11</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>

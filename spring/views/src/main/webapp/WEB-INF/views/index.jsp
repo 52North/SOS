@@ -124,23 +124,39 @@
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;">
-			<a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="90" src="static/images/funding/bmbf_logo_en.png" /></a>
-			<a target="_blank" href="https://colabis.de/"><img alt="COLABIS - Collaborative Early Warning Information Systems for Urban Infrastructures" width="90" src="static/images/funding/colabis.png"/></a>
+			<a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="90" src="<c:url value="static/images/funding/bmbf_logo_en.png"/>"/></a>
+			<a target="_blank" href="https://colabis.de/"><img alt="COLABIS - Collaborative Early Warning Information Systems for Urban Infrastructures" width="90" src="<c:url value="/static/images/funding/colabis.png"/>"/></a>
 		</td>
     	<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="https://colabis.de/">COLABIS</a> (co-funded by the German Federal Ministry of Education and Research, programme Geotechnologien, under grant agreement no. 03G0852A)</td>
-    </tr>
-    <tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/"><img alt="SeaDataCloud" align="middle" width="156" src="static/images/funding/logo_seadatanet.png"/></a></td>
+   </tr>
+   <tr>
+    <td align="center" style="padding:3px;width:30%;">
+      <a target="_blank" href="https://www.bmvi.de/"><img alt="BMVI" align="middle" width="90" src="<c:url value="static/images/funding/bmvi-logo-en.svg"/>"/></a>
+      <a target="_blank" href="https://www.bmvi.de/DE/Themen/Digitales/mFund/Ueberblick/ueberblick.html"><img alt="mFund" align="middle" width="90" src="<c:url value="static/images/funding/mFund.jpg"/>"/></a>
+      <a target="_blank" href="http://wacodis.fbg-hsbo.de/"><img alt="WaCoDis - Water management Copernicus services for the determination of substance inputs into waters and dams within the framework of environmental monitoring" width="90" src="<c:url value="/static/images/funding/wacodis-logo.png"/>"/></a>
+    </td>
+      <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Transport and Digital Infrastructure</a> research project <a target="_blank" href="http://wacodis.fbg-hsbo.de/">WaCoDis</a> (co-funded by the German Federal Ministry of Transport and Digital Infrastructure, programme mFund)</td>
+   </tr>
+   <tr>
+    <td align="center" style="padding:3px;width:30%;">
+      <a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="70" src="<c:url value="static/images/funding/bmbf_logo_neu_eng.svg"/>"/></a>
+      <a target="_blank" href="https://www.fona.de/"><img alt="FONA" align="middle" width="70" src="<c:url value="static/images/funding/fona.svg"/>"/></a>
+      <a target="_blank" href="http://www.mudak-wrm.kit.edu/"><img alt="Multidisciplinary data acquisition as the key for a globally applicable water resource management (MuDak-WRM)" width="70" src="<c:url value="/static/images/funding/mudak_wrm_logo.png"/>"/></a>
+    </td>
+      <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="http://www.mudak-wrm.kit.edu/">MuDak-WRM</a> (co-funded by the German Federal Ministry of Education and Research, programme FONA)</td>
+   </tr>
+   <tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/"><img alt="SeaDataCloud" align="middle" width="156" src="<c:url value="/static/images/funding/logo_seadatanet.png"/>"/></a></td>
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">Horizon 2020</a> research project <a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/">SeaDataCloud</a> (co-funded by the European Commission under the grant agreement n&deg;730960)</td>
 	</tr>
     <tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.odip.org/"><img alt="ODIP II - Ocean Data Interoperability Platform" align="middle" width="156" src="static/images/funding/odip-logo.png"/></a></td>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.odip.org/"><img alt="ODIP II - Ocean Data Interoperability Platform" align="middle" width="120" src="<c:url value="/static/images/funding/odip-logo.png"/>"/></a></td>
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">Horizon 2020</a> research project <a target="_blank" href="http://www.odip.org/">ODIP II</a> (co-funded by the European Commission under the grant agreement n&deg;654310)</td>
 	</tr>
 	<tr>
 		<td align="center" style="padding:3px;width:30%;">
-				<a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="static/images/funding/inspire-logo.jpg" /></a>
-				<a target="_blank" href="http://ec.europa.eu/isa/"><img alt="ISA" align="middle" width="60" src="static/images/funding/ISALogo.png" /></a>
+				<a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="<c:url value="static/images/funding/inspire-logo.jpg"/>"/></a>
+				<a target="_blank" href="http://ec.europa.eu/isa/"><img alt="ISA" align="middle" width="60" src="<c:url value="static/images/funding/ISALogo.png"/>"/></a>
 				<a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm"><img alt="ARE3NA" align="middle" width="60" src="<c:url value="/static/images/funding/ARe3NA.png"/>"/></a>
 		</td>
 		<td style="padding:3px;width:70%;">The enhancements to make the 52&deg;North SOS an <a target="_blank" href="http://inspire.ec.europa.eu/">INSPIRE</a> compliant Download Service were funded by the <a target="_blank" href="http://ec.europa.eu/dgs/jrc/">JRC</a> under the <a target="_blank" href="http://ec.europa.eu/isa/">ISA</a> Programme's Action 1.17: A Reusable INSPIRE Reference Platform (<a target="_blank" href="http://ec.europa.eu/isa/actions/01-trusted-information-exchange/1-17action_en.htm">ARE3NA</a>).</td>
@@ -174,7 +190,7 @@
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="http://www.smart-project.info">SMART</a> Project, funded by the <a target="_blank" href="http://www.msi.govt.nz/">Ministry of Business, Innovation and Employment</a> (07/2011 &ndash; 06/2017): <br/> Experts in the Smart Project will develop, apply, and validate pioneering new techniques for understanding New Zealand&lsquo;s groundwater resources. Satellite and airborne remote sensing techniques and Sensor Observation Services including seismic signals from earthquakes are used for rapid and costeffective characterisation and mapping of New Zealand&lsquo;s aquifer systems. Together with a stakeholder network the research team will use new methods to overcome the current time- and resourceconsuming challenges of in-time data acquisition. Special spatial skills in hydrogeology, geology, satellite remote sensing, geophysics, seismology, uncertainty mathematics and spatial information technology will be developed to assist with improvement of New Zealand&lsquo;s freshwater management.</td>
 	</tr>
 	<tr>
-		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.itzbund.de/"><img alt="ITZBund" align="middle" width="140" src="<c:url value="/static/images/funding/itzbund.png"/>"/></a></td>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.itzbund.de/"><img alt="ITZBund" align="middle" width="140" src="<c:url value="/static/images/funding/logo_itzbund.png"/>"/></a></td>
 		<td style="padding:3px;width:70%;">The <a target="_blank" href="https://www.itzbund.de">ITZBund</a> Information Technology Services Centre of the Federal Government (Germany)</td>
 	</tr>
 	<tr>

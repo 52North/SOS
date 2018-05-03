@@ -6,6 +6,33 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform
  (SensorML as well).
  
+ 
+    Release 52n-sensorweb-sos-4.4.3
+====================================
+ 
+  --- New features ---
+
+      * Request timeout support (#603)
+  
+  --- Changes ---
+  
+      * Use Java 8
+      * Increase GDA performance when metadata are defined
+      * Remove obsolete observationHasOffering table for series concept(s)
+  
+  --- Fixed issues ---
+  
+      * Issue #607: UVF encoding does not consider contentType from requested responseFormat
+      * Issue #608: InsertResult throws NPE for hidden child procedures
+      * altitude/depth value setting to coordinate.z
+      * gml:description order for O&M XML stream encoder
+      * Sampling geometry with 3D coordinates
+      * Referenced series creation
+      * WaterML TVP encoding for single value
+      * Setting of GDA 2.0 response format if forced
+      * Check for FES filter extension
+      
+ 
    Release 52n-sensorweb-sos-4.4.2
 ====================================
  
@@ -22,7 +49,7 @@ RELEASE NOTES
   --- Fixed issues ---
   
       * Issue #212: Allow sort by status in 52n-sos-webapp/admin/operations
-      * Issue #555:Wrong error code when sending plain SensorML and not a request
+      * Issue #555: Wrong error code when sending plain SensorML and not a request
       * Issue #572: Fix NPE in InsertSensor when procedure description has invalid namespace declaration
       * Issue #574: Capabilities shows metadata and test client provides examples for not supported operations
       * Issue #575: HibernateMetadataCache not updated after resetting the SOS

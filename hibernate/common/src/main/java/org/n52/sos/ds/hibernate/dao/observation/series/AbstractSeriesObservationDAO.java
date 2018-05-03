@@ -486,14 +486,21 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
         if (request.hasResultFilter()) {
             List<DataEntity<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
-                Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session);
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
+                String logArgs = new String(identifier + ",");
+                Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session, logArgs);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
+                LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
+                        HibernateHelper.getSqlString(c));
                 list.addAll(c.list());
             }
             return list;
         }
-        return getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+        String logArgs = new String();
+        Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session, logArgs);
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
+                HibernateHelper.getSqlString(c));
+        return c.list();
     }
 
     private Criteria getDefaultSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
@@ -738,7 +745,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             List<DataEntity<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c =
                         getDefaultObservationCriteria(session).add(
                                 Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
@@ -764,9 +771,6 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                         Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
-        if (request.isSetOffering()) {
-            c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(
-                    Restrictions.in(OfferingEntity.IDENTIFIER, request.getOfferings()));
         }
         String logArgs = "request, features, offerings";
         logArgs += ", sosIndeterminateTime";

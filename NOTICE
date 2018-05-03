@@ -164,7 +164,7 @@ This project includes:
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
-  ClassLoader leak prevention under Apache 2
+  ClassLoader Leak Prevention library under Apache 2
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
@@ -175,13 +175,15 @@ This project includes:
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   EJML under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under GNU Lesser General Public License (LGPL) version 2.1
-  EXIficient under GNU General Public License (GPL), Version 2.0
+  EXIficient under MIT License
+  EXIficient-Core under MIT License
+  EXIficient-Grammars under MIT License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
-  GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
+  GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
-  H2 Database Engine under The H2 License, Version 1.0
+  H2 Database Engine under MPL 2.0 or EPL 1.0
   Hamcrest All under New BSD License
   Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
@@ -223,7 +225,7 @@ This project includes:
   javax.inject under The Apache Software License, Version 2.0
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
-  JCL 1.1.1 implemented over SLF4J under MIT License
+  JCL 1.2 implemented over SLF4J under MIT License
   JCommander under The Apache Software License, Version 2.0
   JCommon under GNU Lesser General Public Licence
   JDOM under Similar to Apache License but with the acknowledgment clause removed
@@ -248,7 +250,7 @@ This project includes:
   Microsoft JDBC Driver for SQL Server under MIT License
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
-  MySQL Connector/J under The GNU General Public License, Version 2
+  MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   netcdf4 under (MIT-style) netCDF C library license
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
@@ -337,6 +339,7 @@ This project includes:
   Xerces2-j under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
+  XML Pull Parsing API under Public Domain
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License

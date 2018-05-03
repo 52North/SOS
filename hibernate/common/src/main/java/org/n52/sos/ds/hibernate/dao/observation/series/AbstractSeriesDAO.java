@@ -887,10 +887,10 @@ public abstract class AbstractSeriesDAO
         if (CollectionHelper.isNotEmpty(offerings)) {
             addOfferingToCriteria(c, offerings);
         }
-        c.setFetchMode(Series.PROCEDURE, FetchMode.JOIN);
-        c.setFetchMode(Series.OBSERVABLE_PROPERTY, FetchMode.JOIN);
-        c.setFetchMode(Series.FEATURE_OF_INTEREST, FetchMode.JOIN);
-        c.setFetchMode(Series.OFFERING, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_PROCEDURE, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_PHENOMENON, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_FEATURE, FetchMode.JOIN);
+        c.setFetchMode(DatasetEntity.PROPERTY_OFFERING, FetchMode.JOIN);
         return c;
     }
 

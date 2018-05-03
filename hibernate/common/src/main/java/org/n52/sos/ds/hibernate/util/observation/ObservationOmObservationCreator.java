@@ -59,6 +59,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
@@ -286,36 +287,21 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Offerings done in {} ms.", System.currentTimeMillis() - start);
         return offerings;
     }
+
     private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation,
             String procedureId, String phenomenonId, String featureId, Set<String> offerings) throws CodedException {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating ObservationConstellation...");
-        OmObservationConstellation obsConstCheck = new OmObservationConstellation();
-        obsConstCheck.setProcedure(getProcedure(procedureId));
-        obsConstCheck.setObservableProperty(getObservedProperty(phenomenonId));
-        obsConstCheck.setOfferings(offerings);
-                       
-        if (!observationConstellations.containsKey(obsConstCheck.hashCode())) {
-            if (StringHelper.isNotEmpty(getResultModel())) {
-                obsConstCheck.setObservationType(getResultModel());
-            } else {
-                final ObservationConstellationDAO dao = new ObservationConstellationDAO();
-                final ObservationConstellation hoc =
-                        dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
-                                hObservation.getObservableProperty(), hObservation.getOffering(), getSession());
-                if (hoc != null && hoc.getObservationType() != null) {
-                    obsConstCheck.setObservationType(hoc.getObservationType().getObservationType());
-                }
-            }
-            observationConstellations.put(obsConstCheck.hashCode(), obsConstCheck);
+        OmObservationConstellation obsConst =
+                new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
+                        getFeature(featureId), offerings);
+        if (observationConstellations.containsKey(obsConst.hashCode())) {
+            return observationConstellations.get(obsConst.hashCode());
         }
-        OmObservationConstellation obsConst;
-        try {
-            obsConst = obsConstCheck.clone();
-        } catch (CloneNotSupportedException e) {
-            obsConst = obsConstCheck;
+        int hashCode = obsConst.hashCode();
+        if (!Strings.isNullOrEmpty(getResultModel())) {
+            obsConst.setObservationType(getResultModel());
         }
-        obsConst.setFeatureOfInterest(getFeature(featureId));
         if (hObservation.getDataset().isSetObservationType()) {
             obsConst.setObservationType(hObservation.getDataset().getObservationType().getFormat());
         }

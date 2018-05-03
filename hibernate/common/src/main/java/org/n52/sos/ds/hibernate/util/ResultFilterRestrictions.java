@@ -326,7 +326,7 @@ public class ResultFilterRestrictions {
         }
         return set;
     }
-    
+
     public enum SubQueryIdentifier {
         Simple, Complex, Profile;
     }

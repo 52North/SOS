@@ -30,16 +30,12 @@ package org.n52.sos.ds.hibernate;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -52,7 +48,6 @@ import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.MultiObservationValues;
@@ -81,7 +76,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
-import com.google.common.collect.Table.Cell;
 
 @Configurable
 public class InsertObservationHandler extends AbstractInsertObservationHandler  {
@@ -124,7 +118,6 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         Session session = null;
         Transaction transaction = null;
 
-        // TODO: checkConstellation unit and set if available and not defined in DB
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
@@ -152,8 +145,6 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
                 // flush every FLUSH_INTERVAL
                 if (++obsCount % FLUSH_THRESHOLD == 0) {
                     session.flush();
-                    session.clear();
-                    cache.clearConstellation();
                 }
             }
 
@@ -199,10 +190,6 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         cache.addOfferings(sosObsConst.getOfferings());
 
         AbstractFeatureEntity hFeature = null;
-
-        if (sosObsConst.getOfferings().size() > 1) {
-
-        }
 
         String offeringID = sosObsConst.getOfferings().iterator().next();
         DatasetEntity hDataset = cache.get(sosObsConst, offeringID);
@@ -341,54 +328,54 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
         private final HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
 
-
         public DatasetEntity get(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingHibernateObsConstTable.get(oc, offering);
         }
+
         public void putConstellation(OmObservationConstellation soc, String offering, DatasetEntity hoc) {
             this.obsConstOfferingHibernateObsConstTable.put(soc, offering, hoc);
         }
-        public void clearConstellation() {
-            Set<Cell<OmObservationConstellation, String, DatasetEntity>> removable = new HashSet<>();
-            for (Cell<OmObservationConstellation, String, DatasetEntity> cell : this.obsConstOfferingHibernateObsConstTable.cellSet()) {
-                if (cell.getValue() instanceof NotInitializedDataset) {
-                    removable.add(cell);
-                }
-            }
-            for (Cell<OmObservationConstellation, String, DatasetEntity> cell : removable) {
-                this.obsConstOfferingHibernateObsConstTable.remove(cell.getRowKey(), cell.getColumnKey());
-            }
-        }
+
         public boolean isChecked(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingCheckedMap.containsEntry(oc, offering);
         }
+
         public boolean isChecked(AbstractFeature feature, String offering) {
             return this.relatedFeatureCheckedMap.containsEntry(feature, offering);
         }
+
         public void checkConstellation(OmObservationConstellation oc, String offering) {
             this.obsConstOfferingCheckedMap.put(oc, offering);
         }
+
         public void checkFeature(AbstractFeature feature, String offering) {
             this.relatedFeatureCheckedMap.put(feature, offering);
         }
+
         public void putFeature(AbstractFeature sfeature, AbstractFeatureEntity hfeature) {
             getFeatureCache().put(sfeature, hfeature);
         }
+
         public AbstractFeatureEntity getFeature(AbstractFeature sfeature) {
             return getFeatureCache().get(sfeature);
         }
+
         public Map<AbstractFeature, AbstractFeatureEntity> getFeatureCache() {
             return featureCache;
         }
+
         public Map<String, CodespaceEntity> getCodespaceCache() {
             return codespaceCache;
         }
+
         public Map<UoM, UnitEntity> getUnitCache() {
             return unitCache;
         }
+
         public Set<String> getAllOfferings() {
             return allOfferings;
         }
+
         public void addOfferings(Collection<String> offerings) {
             this.allOfferings.addAll(offerings);
         }

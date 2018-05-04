@@ -477,7 +477,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
                     caches.units, session);
             observation.setParameters(insertParameter);
         }
-        session.saveOrUpdate(observation);
+        session.persist(observation);
         session.flush();
         session.refresh(observation);
         daos.dataset.updateSeriesWithFirstLatestValues(dataset, (DataEntity<?>) observation, session);

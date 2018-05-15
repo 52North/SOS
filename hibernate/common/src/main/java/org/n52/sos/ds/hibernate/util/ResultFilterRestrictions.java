@@ -321,7 +321,8 @@ public class ResultFilterRestrictions {
         set.add(SubQueryIdentifier.Simple);
         if (HibernateHelper.isEntitySupported(resultFilterClasses.getComplex())) {
             set.add(SubQueryIdentifier.Complex);
-        } else if (HibernateHelper.isEntitySupported(resultFilterClasses.getProfile())) {
+        }
+        if (HibernateHelper.isEntitySupported(resultFilterClasses.getProfile())) {
             set.add(SubQueryIdentifier.Profile);
         }
         return set;

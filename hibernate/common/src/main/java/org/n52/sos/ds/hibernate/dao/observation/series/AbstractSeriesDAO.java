@@ -42,7 +42,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
@@ -111,6 +110,17 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @throws CodedException
      */
     public abstract List<Series> getSeries(GetObservationByIdRequest request, Session session)
+            throws OwsExceptionReport;
+    
+    /**
+     * Get series for series identifiers
+     * @param identifiers Series identifiers to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fit
+     * @throws CodedException
+     */
+    public abstract List<Series> getSeries(Collection<String> identifiers, Session session)
             throws OwsExceptionReport;
 
     /**
@@ -308,9 +318,9 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return set;
     }
 
-    public Criteria  getSeriesCriteria(GetObservationByIdRequest request, Session session) {
+    public Criteria  getSeriesCriteria(Collection<String> identifiers, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
-        c.add(Restrictions.in(Series.IDENTIFIER, request.getObservationIdentifier()));
+        c.add(Restrictions.in(Series.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }

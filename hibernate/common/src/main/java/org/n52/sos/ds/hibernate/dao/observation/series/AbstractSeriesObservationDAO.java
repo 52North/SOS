@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
@@ -48,6 +49,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
+import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -69,6 +71,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -79,18 +82,21 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
-
+    private final SeriesTimeTransformer transformer = new SeriesTimeTransformer();
+    
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx,
             Observation<?> observation, Session session) throws CodedException {
@@ -1009,6 +1015,59 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 //        criteria.setProjection(Projections.distinct(Projections.property("off." + Offering.IDENTIFIER)));
 //        LOGGER.debug("QUERY getOfferingsForSeries(series): {}", HibernateHelper.getSqlString(criteria));
         return Lists.newArrayList(series.getOffering().getIdentifier());
+    }
+
+    public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimes(Set<Series> serieses, Session session) {
+        Criteria c = getDefaultObservationTimeCriteria(session);
+        c.add(Restrictions.in(SeriesObservation.SERIES, serieses));
+        c.setProjection(Projections.projectionList()
+                .add(Projections.groupProperty(SeriesObservation.SERIES))
+                .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
+                .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+        c.setResultTransformer(transformer);
+        
+        Map<Long, SeriesTimeExtrema> map = Maps.newHashMap();
+        for (SeriesTimeExtrema result : (List<SeriesTimeExtrema>) c.list()) {
+            if (result.isSetSeries()) {
+                map.put(result.getSeries(), result);
+            }
+        }
+        return map;
+    }
+    
+    private class SeriesTimeTransformer implements ResultTransformer {
+        private static final long serialVersionUID = -373512929481519459L;
+
+        @Override
+        public SeriesTimeExtrema transformTuple(Object[] tuple, String[] aliases) {
+            SeriesTimeExtrema seriesTimeExtrema = new SeriesTimeExtrema();
+            if (tuple != null) {
+                seriesTimeExtrema.setSeries(((Series) tuple[0]).getSeriesId());
+                seriesTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
+                seriesTimeExtrema.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
+            }
+            return seriesTimeExtrema;
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes"})
+        public List transformList(List collection) {
+            return collection;
+        }
+    }
+
+    public Observation<?> getMinObservation(Series series, DateTime time, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        c.add(Restrictions.eq(SeriesObservation.SERIES, series));
+        c.add(Restrictions.eq(SeriesObservation.PHENOMENON_TIME_START, time.toDate()));
+        return (Observation<?>) c.uniqueResult();
+    }
+    
+    public Object getMaxObservation(Series series, DateTime time, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        c.add(Restrictions.eq(SeriesObservation.SERIES, series));
+        c.add(Restrictions.eq(SeriesObservation.PHENOMENON_TIME_END, time.toDate()));
+        return (Observation<?>) c.uniqueResult();
     }
 
 }

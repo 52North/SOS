@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -29,40 +29,36 @@
 
 -- Database name to apply changes to
 use sos
+drop table dbo.[procedure];
 drop table dbo.blobValue;
 drop table dbo.booleanValue;
 drop table dbo.categoryValue;
+drop table dbo.codespace;
+drop table dbo.compositePhenomenon;
 drop table dbo.countValue;
+drop table dbo.featureOfInterest;
+drop table dbo.featureOfInterestType;
+drop table dbo.featureRelation;
 drop table dbo.geometryValue;
 drop table dbo.numericValue;
-drop table dbo.sweDataArrayValue;
-drop table dbo.textValue;
-drop table dbo.compositePhenomenon;
-drop table dbo.parameter;
+drop table dbo.observableProperty;
+drop table dbo.observation;
+drop table dbo.observationConstellation;
 drop table dbo.observationHasOffering;
+drop table dbo.observationType;
+drop table dbo.offering;
 drop table dbo.offeringAllowedFeatureType;
 drop table dbo.offeringAllowedObservationType;
 drop table dbo.offeringHasRelatedFeature;
+drop table dbo.parameter;
+drop table dbo.procedureDescriptionFormat;
+drop table dbo.relatedFeature;
 drop table dbo.relatedFeatureHasRole;
 drop table dbo.relatedFeatureRole;
-drop table dbo.relatedFeature;
-drop table dbo.sensorSystem;
-drop table dbo.validProcedureTime;
 drop table dbo.resultTemplate;
-drop table dbo.featureRelation;
-drop table dbo.observationConstellation;
-drop table dbo.observation;
+drop table dbo.sensorSystem;
 drop table dbo.series;
+drop table dbo.sweDataArrayValue;
+drop table dbo.textValue;
 drop table dbo.unit;
-drop table dbo.observationType;
-drop table dbo.featureOfInterest;
-drop table dbo.observableProperty;
-drop table dbo.offering;
-drop table dbo.[procedure];
-drop table dbo.featureOfInterestType;
-drop table dbo.procedureDescriptionFormat;
-drop table dbo.codespace;
-drop table dbo.i18nfeatureOfInterest;
-drop table dbo.i18nobservableProperty;
-drop table dbo.i18noffering;
-drop table dbo.i18nprocedure;
+drop table dbo.validProcedureTime;

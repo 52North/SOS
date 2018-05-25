@@ -5,6 +5,20 @@ RELEASE NOTES
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+ 
+     Release 52n-sensorweb-sos-4.3.16
+======================================
+
+  --- New features ---
+
+    
+  --- Changes ---
+    
+  
+  --- Fixed issues ---
+
+    * Issue #566: Reload Capabilities Cache leads to severe error
+    * Issue #571: Sensors disappear (same as #566)
 
     Release 52n-sensorweb-sos-4.3.15
 =====================================

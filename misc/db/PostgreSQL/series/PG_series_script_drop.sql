@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -38,10 +38,6 @@ drop table if exists public.featureOfInterest cascade;
 drop table if exists public.featureOfInterestType cascade;
 drop table if exists public.featureRelation cascade;
 drop table if exists public.geometryValue cascade;
-drop table if exists public.i18nfeatureOfInterest cascade;
-drop table if exists public.i18nobservableProperty cascade;
-drop table if exists public.i18noffering cascade;
-drop table if exists public.i18nprocedure cascade;
 drop table if exists public.numericValue cascade;
 drop table if exists public.observableProperty cascade;
 drop table if exists public.observation cascade;
@@ -67,10 +63,6 @@ drop table if exists public.validProcedureTime cascade;
 drop sequence public.codespaceId_seq;
 drop sequence public.featureOfInterestId_seq;
 drop sequence public.featureOfInterestTypeId_seq;
-drop sequence public.i18nObsPropId_seq;
-drop sequence public.i18nOfferingId_seq;
-drop sequence public.i18nProcedureId_seq;
-drop sequence public.i18nfeatureOfInterestId_seq;
 drop sequence public.observablePropertyId_seq;
 drop sequence public.observationConstellationId_seq;
 drop sequence public.observationId_seq;

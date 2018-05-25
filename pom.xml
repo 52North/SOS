@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.3.16-SNAPSHOT</version>
+    <version>4.3.17-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -73,7 +73,7 @@
         <geotools.version>3.7.2</geotools.version>
         <jackson.version>2.3.3</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
-        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <sqljdbc.version>6.2.1.jre7</sqljdbc.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
@@ -495,11 +495,6 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>2.9.1</version>
             </dependency>
             
             <!-- Hibernate Core Dependencies -->
@@ -986,10 +981,10 @@
                 <version>15.0</version>
             </dependency>
             <dependency>
-			  <groupId>se.jiderhamn</groupId>
-			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.13.0</version>
-			</dependency>
+                <groupId>se.jiderhamn</groupId>
+                <artifactId>classloader-leak-prevention</artifactId>
+                <version>1.13.0</version>
+            </dependency>
             <!-- third party dialects -->
             <!-- Remove third party ncname resolver from SOS and use OXF instead -->
             <dependency>
@@ -1002,65 +997,65 @@
                 <artifactId>xmlunit</artifactId>
                 <version>1.5</version>
             </dependency>
-	        <dependency>
-	            <groupId>com.oracle</groupId>
-	            <artifactId>ojdbc6</artifactId>
-	            <version>${ojdbc6.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.microsoft</groupId>
-	            <artifactId>sqljdbc4</artifactId>
-	            <version>${sqljdbc4.version}</version>
-	        </dependency>            
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${ojdbc6.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${sqljdbc.version}</version>
+            </dependency>
             <!-- geotools -->
-             <dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-epsg-hsql</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-hsql</artifactId>
+                <version>9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
                 <version>9.5</version>
             </dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-referencing</artifactId>
-				<version>9.5</version>
-				<exclusions>
-					<exclusion>
-						<groupId>java3d</groupId>
-						<artifactId>vecmath</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>java3d</groupId>
-				<artifactId>vecmath</artifactId>
-				<version>1.5.2</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-api</artifactId>
-				<version>9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections</artifactId>
-				<version>0.9.9-RC1</version>
-			</dependency>
-			<!-- EXI - Efficient XML Interchange -->
-			<dependency>
-				<groupId>com.siemens.ct.exi</groupId>
-				<artifactId>exificient</artifactId>
-				<version>0.9.4</version>
-			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-referencing</artifactId>
+                <version>9.5</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>java3d</groupId>
+                        <artifactId>vecmath</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>java3d</groupId>
+                <artifactId>vecmath</artifactId>
+                <version>1.5.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-api</artifactId>
+                <version>9.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
+            <!-- EXI - Efficient XML Interchange -->
+            <dependency>
+                <groupId>com.siemens.ct.exi</groupId>
+                <artifactId>exificient</artifactId>
+                <version>0.9.4</version>
+            </dependency>
+            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-exi</artifactId>
                 <version>${project.version}</version>

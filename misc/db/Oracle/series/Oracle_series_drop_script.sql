@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -38,10 +38,6 @@ drop table featureOfInterest cascade constraints;
 drop table featureOfInterestType cascade constraints;
 drop table featureRelation cascade constraints;
 drop table geometryValue cascade constraints;
-drop table i18nfeatureOfInterest cascade constraints;
-drop table i18nobservableProperty cascade constraints;
-drop table i18noffering cascade constraints;
-drop table i18nprocedure cascade constraints;
 drop table numericValue cascade constraints;
 drop table observableProperty cascade constraints;
 drop table observation cascade constraints;
@@ -67,10 +63,6 @@ drop table validProcedureTime cascade constraints;
 drop sequence codespaceId_seq;
 drop sequence featureOfInterestId_seq;
 drop sequence featureOfInterestTypeId_seq;
-drop sequence i18nObsPropId_seq;
-drop sequence i18nOfferingId_seq;
-drop sequence i18nProcedureId_seq;
-drop sequence i18nfeatureOfInterestId_seq;
 drop sequence observablePropertyId_seq;
 drop sequence observationConstellationId_seq;
 drop sequence observationId_seq;

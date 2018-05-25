@@ -60,9 +60,9 @@ A link to the contributors license agreement and further explanations are availa
 
 ## Support and Contact
 
-You can get support in the community mailing list and forums:
+You can get support in the community mailing list:
 
-    http://52north.org/resources/mailing-lists-and-forums/
+    https://list.52north.org/mailman/listinfo/sensorweb
 
 If you encounter any issues with the software or if you would like to see
 certain functionality added, let us know at:

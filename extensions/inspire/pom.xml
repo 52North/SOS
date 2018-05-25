@@ -31,10 +31,9 @@
     <mailingLists>
         <mailingList>
             <name>Sensor Web Mailing List</name>
-            <post>swe@52north.org</post>
-            <subscribe>http://list.52north.org/mailman/listinfo/swe</subscribe>
-            <unsubscribe>http://list.52north.org/mailman/listinfo/swe#subscribers</unsubscribe>
-            <archive>http://list.52north.org/pipermail/swe/</archive>
+            <subscribe>http://list.52north.org/mailman/listinfo/sensorweb</subscribe>
+            <unsubscribe>http://list.52north.org/mailman/listinfo/sensorweb#subscribers</unsubscribe>
+            <archive>http://list.52north.org/pipermail/sensorweb/</archive>
         </mailingList>
     </mailingLists>
     <issueManagement>

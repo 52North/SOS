@@ -20,6 +20,10 @@
         <sos.groupid>org.n52.sensorweb.sos</sos.groupid>
 		<svn.url>https://svn.52north.org/svn/swe/main/SOS/Extensions/Binding/RESTful/trunk/</svn.url>
     </properties>
+            <name>Sensor Web Mailing List</name>
+            <subscribe>http://list.52north.org/mailman/listinfo/sensorweb</subscribe>
+            <unsubscribe>http://list.52north.org/mailman/listinfo/sensorweb#subscribers</unsubscribe>
+            <archive>http://list.52north.org/pipermail/sensorweb/</archive>
     <contributors>
         <contributor>
             <name>Eike Hinderk Jürrens</name>

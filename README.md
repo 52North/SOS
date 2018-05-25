@@ -161,9 +161,9 @@ No printer friendly documentation exist for this release. Instead, refer to the 
 
 ## Support
 
-You can get support in the community mailing list and forums:
+You can get support in the community mailing list:
 
-    http://52north.org/resources/mailing-lists-and-forums/
+    http://list.52north.org/mailman/listinfo/sensorweb
 
 ## License
 

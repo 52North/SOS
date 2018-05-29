@@ -18,7 +18,7 @@
 
     * ```conf.sos.name``` is set to ```52nSOS``` and
 
-    * ```conf.osgeo.live.version``` in set to the latest OSGeo-Live version e.g. ```10.0```.
+    * ```conf.osgeo.live.version``` in set to the latest OSGeo-Live version e.g. ```12.0```.
 
   1. Build with maven: ```mvn clean install```.
 
@@ -85,5 +85,10 @@
   Run ```mvn clean install``` for the last time and copy the resulting ```52n-sos-osgeo-live-X.Y.tar.gz``` to the 52N webdav folder for OSGeo-Live ````https://52north.org/files/sensorweb/osgeo-live/```.
 
 1. **Update Installer**
+
+  Update the property:
+
+  - `SOS_TAR_NAME` to match the name of the new uploaded file.
+  - `SOS_VERSION` to match the version of the current SOS deployed on OSGeoLive.
 
 1. **Update Documentation**

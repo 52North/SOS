@@ -16,8 +16,4 @@
         <module>code</module>
         <module>coding</module>
     </modules>
-            <name>Sensor Web Mailing List</name>
-            <subscribe>http://list.52north.org/mailman/listinfo/sensorweb</subscribe>
-            <unsubscribe>http://list.52north.org/mailman/listinfo/sensorweb#subscribers</unsubscribe>
-            <archive>http://list.52north.org/pipermail/sensorweb/</archive>
 </project>

@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -137,7 +137,7 @@ jQuery(document).ready(function($) {
                 0: { sorter: "text" },
                 1: { sorter: "text" },
                 2: { sorter: "text" },
-                3: { sorter: false } 
+                3: { sorter: "text" } 
             },
             sortList: [ [0,0], [1,1], [2,0] ]
         });

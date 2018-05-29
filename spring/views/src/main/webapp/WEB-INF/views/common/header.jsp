@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -55,11 +55,11 @@
 
         <c:if test="${sos:hasInstaller() and not sos:configurated(pageContext.servletContext)}">
             <script type="text/javascript">
-				$(function() {
-					showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
-				});
-			</script>
-		</c:if>
+                $(function() {
+                        showMessage('You first have to complete the installation process! Click <a href="<c:url value="/install/index" />"><strong>here</strong></a> to start it.', "error");
+                });
+	    </script>
+	</c:if>
 	</head>
 	<body>
 		<div id="wrap">

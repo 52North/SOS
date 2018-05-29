@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,6 +37,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyValuedObservationFactory;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -291,8 +293,9 @@ public class ValueTimeDAO extends AbstractValueDAO {
             Session session) throws OwsExceptionReport {
         final Criteria c =
                 getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session);
-
-        checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+        StringBuilder logArgs = new StringBuilder("request, series, offerings");
+        checkAndAddSpatialFilteringProfileCriterion(c, request, session, logArgs);
+        checkAndAddResultFilterCriterion(c, request, null, session, logArgs);
 
         if (CollectionHelper.isNotEmpty(procedure)) {
             c.createAlias(TemporalReferencedLegacyObservation.PROCEDURE, "p");
@@ -316,11 +319,10 @@ public class ValueTimeDAO extends AbstractValueDAO {
             c.createCriteria(TemporalReferencedLegacyObservation.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
-        String logArgs = "request, series, offerings";
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        addSpecificRestrictions(c, request);
-        LOGGER.debug("QUERY getObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        addSpecificRestrictions(c, request, logArgs);
+        LOGGER.debug("QUERY getObservationFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -339,7 +341,12 @@ public class ValueTimeDAO extends AbstractValueDAO {
     }
     
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
         // nothing  to add
+    }
+
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return LegacyValuedObservationFactory.getInstance();
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -90,7 +90,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  */
-public class RestBinding extends Binding {
+public class RestBinding implements Binding {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestBinding.class);
     private final Set<String> conformanceClasses;
@@ -118,7 +118,7 @@ public class RestBinding extends Binding {
             throws HTTPException, IOException {
         if (request.getPathInfo() == null ||
             request.getPathInfo().isEmpty()) {
-            super.doOptionsOperation(request, response);
+            throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
         } else {
             doOperation(request, response);
         }

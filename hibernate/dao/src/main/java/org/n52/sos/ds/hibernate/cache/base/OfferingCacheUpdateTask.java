@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -302,6 +302,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             observationTypes.add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
         } else if (observationDAO.checkSweDataArrayObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        } else if (observationDAO.checkComplexObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        } else if (observationDAO.checkProfileObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
+        } else if (observationDAO.checkReferenceObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_REFERENCE_OBSERVATION);
         }
         return observationTypes;
     }

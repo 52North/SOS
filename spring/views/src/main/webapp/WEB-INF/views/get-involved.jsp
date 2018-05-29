@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -43,23 +43,23 @@
 <hr/>
 
 <h4>Tell the world!</h4>
-<p>If your SOS instance is publicly available please consider informing <a class="telltheworld" href="mailto:sos-installation@52north.org">us</a> or the community on <a class="telltheworld" href="mailto:swe@52north.org" target="_blank">swe@52north.org</a> or use our <a href="http://sensorweb.forum.52north.org/">forums</a> so that many people can profit from your hard work. If you like, your SOS can also be listed in our <a href="https://wiki.52north.org/bin/view/SensorWeb/SosExampleServices">Wiki</a> as an example.</p>
+<p>If your SOS instance is publicly available please consider informing <a class="telltheworld" href="mailto:sos-installation@52north.org">us</a> or the community on <a class="telltheworld" href="mailto:sensorweb@52north.org" target="_blank">sensorweb@52north.org</a> so that many people can profit from your hard work. If you like, your SOS can also be listed in our <a href="https://wiki.52north.org/bin/view/SensorWeb/SosExampleServices">Wiki</a> as an example.</p>
 
 <h4>Code development/ bug fixing</h4>
 <p>The best way to get to know a software is to use it! Implement features that you yourself need - new software, code snippets, adaptations, extensions, etc.  Help others solve their problems. Fix bugs and enhance the existing software. There are many ways to get started!</p>
-<p>Contact the <a href="http://52north.org/communities/community-leaders/">community leader</a> who is responsible for the software to which you would like to contribute. If you are interested in providing code, please read our <a href="http://52north.org/about/licensing/cla-guidelines">contributors license agreement (CLA) guidelines </a>. If you have questions about this or our software licensing, please check our <a href="http://52north.org/about/licensing/">licensing pages</a>.</p>
+<p>Contact the <a href="https://52north.org/research/research-labs/">community leader</a> who is responsible for the software to which you would like to contribute. If you are interested in providing code, please read our <a href="https://52north.org/software/licensing/guidelines/">contributors license agreement (CLA) guidelines </a>. If you have questions about this or our software licensing, please check our <a href="https://52north.org/software/licensing/">licensing pages</a>.</p>
 
 <h4>Testing / bug reporting</h4>
-<p>The development of high quality software demands a lot of testing. Run the latest development code and provide feedback on changes as they occur. Report errors or possible improvements. The best way to test 52&deg;North's development code is to use the <a href="https://github.com/52North/SOS/issues/">52&deg;North SOS GitHub issue tracker</a>. This requires an account. Simply sign up with a legitimate email address. We also have various <a href="http://52north.org/resources/mailing-list-and-forums/">mailing lists/forums</a> in which you can also report bugs.</p>
+<p>The development of high quality software demands a lot of testing. Run the latest development code and provide feedback on changes as they occur. Report errors or possible improvements. The best way to test 52&deg;North's development code is to use the <a href="https://github.com/52North/SOS/issues/">52&deg;North SOS GitHub issue tracker</a>. This requires an account. Simply sign up with a legitimate email address. We also have various <a href="https://52north.org/discuss/#mailing-lists/">mailing lists</a> in which you can also report bugs.</p>
 
 <h4>Documentation</h4>
-<p>Help produce official software documentation, i.e. user guides, tutorials, how tos, FAQs, etc. Document a solution to a problem. Check, proof and test documents for accuracy. Contact the <a href="http://52north.org/communities/community-leaders/">community leader</a> who is responsible for the software documentation in question.</p>
+<p>Help produce official software documentation, i.e. user guides, tutorials, how tos, FAQs, etc. Document a solution to a problem. Check, proof and test documents for accuracy. Contact the <a href="https://52north.org/research/research-labs/">community leader</a> who is responsible for the software documentation in question.</p>
 
 <h4>Discuss and Support</h4>
-<p>Join or start discussions about new feature ideas, help answer questions in our <a href="http://52north.org/resources/mailing-list-and-forums/">mailings lists and forums</a>.</p>
+<p>Join or start discussions about new feature ideas, help answer questions in our <a href="https://52north.org/discuss/#mailing-lists/">mailings lists</a>.</p>
 
 <h4>Partnership</h4>
-<p>Make your commitment official and become a <a href="http://52north.org/about/get-involved/partnership-levels">52&deg;North cooperation partner!</a></p>
+<p>Make your commitment official and become a <a href="https://52north.org/research/partners/#partnership-levels">52&deg;North cooperation partner!</a></p>
 
 <br/>
 
@@ -87,6 +87,7 @@
                         "<ul>" +
                         "<li>Insert up-to-date <a href='<c:url value="/admin/datasource/"/>'>sample data</a></li>" +
                         "<c:if test="${sos:hasClient()}"><li>Use the <a href='<c:url value="/client"/>'>test client</a> with the provided example requests</li></c:if>" +
+                        "<li>Finalize the configuration using the <a href='<c:url value="/admin/"/>'>admin interface</a>, e.g. en-/disable <a href='<c:url value="/admin/operations/"/>'>operations</a>, <a href='<c:url value="/admin/encodings/"/>'>encodings</a>, <a href='<c:url value="/admin/bindings/"/>'>bindings</a>, <a href='<c:url value="/admin/extensions/" />'>extensions</a></li>" +
                         "</ul>",
                         "success",
                         false);

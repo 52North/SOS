@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,16 +28,28 @@
  */
 package org.n52.svalbard.gml.v321.encode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.om.values.QuantityValued;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swe.RangeValue;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import net.opengis.gml.x32.DirectPositionListType;
+import net.opengis.gml.x32.DirectPositionType;
 import net.opengis.gml.x32.DiscreteCoverageType;
+import net.opengis.gml.x32.LineStringDocument;
+import net.opengis.gml.x32.LineStringType;
 import net.opengis.gml.x33.ce.SimpleMultiPointDocument;
 import net.opengis.gml.x33.ce.SimpleMultiPointType;
 
@@ -74,11 +86,61 @@ public abstract class AbstractRectifiedGridCoverageTypeEncoder<T>
     }
 
     private XmlObject encodeDomainSet(RectifiedGridCoverage rectifiedGridCoverage) {
-        SimpleMultiPointDocument smpd = SimpleMultiPointDocument.Factory.newInstance();
-        SimpleMultiPointType smpt = smpd.addNewSimpleMultiPoint();
-        smpt.setId("smp_" + rectifiedGridCoverage.getGmlId());
-        smpt.addNewPosList().setListValue(rectifiedGridCoverage.getDomainSet());
-        return smpd;
+        List<QuantityValued<?, ?>> domainSet = rectifiedGridCoverage.getDomainSet();
+        if (!checkForRange(domainSet)) {
+            SimpleMultiPointDocument smpd = SimpleMultiPointDocument.Factory.newInstance();
+            SimpleMultiPointType smpt = smpd.addNewSimpleMultiPoint();
+            smpt.setId("smp_" + rectifiedGridCoverage.getGmlId());
+            DirectPositionListType dplt = smpt.addNewPosList();
+            List<String> uoms = getUoms(domainSet);
+            if (!uoms.isEmpty()) {
+                dplt.setUomLabels(Lists.newArrayList(uoms));
+            }
+            dplt.setListValue(getList(rectifiedGridCoverage.getDomainSet()));
+            return smpd;
+        } else {
+            LineStringDocument lsd = LineStringDocument.Factory.newInstance();
+            LineStringType lst = lsd.addNewLineString();
+            lst.setId("ls_" + rectifiedGridCoverage.getGmlId());
+            lst.setUomLabels(getUoms(domainSet));
+            for (QuantityValued<?, ?> quantityValued : domainSet) {
+                Object value = quantityValued.getValue();
+                if (value instanceof Double) {
+                    lst.addNewPos().setListValue(Lists.newArrayList((Double)value));
+                } else if (value instanceof RangeValue) {
+                    lst.addNewPos().setListValue(((RangeValue) value).getRangeAsList());
+                }
+            }
+            return lsd;
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private List getList(List<QuantityValued<?, ?>> domainSet) {
+        List list = new ArrayList<>();
+        for (QuantityValued<?, ?> quantityValued : domainSet) {
+            if (quantityValued.getValue() instanceof Double) {
+                list.add(((Double)quantityValued.getValue()));
+            }
+        }
+        return list;
+    }
+
+    private boolean checkForRange(List<QuantityValued<?, ?>> domainSet) {
+        for (QuantityValued<?, ?> quantityValued : domainSet) {
+            if (quantityValued.getValue() instanceof RangeValue) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<String> getUoms(List<QuantityValued<?, ?>> domainSet) {
+        SortedSet<String> uoms = Sets.newTreeSet();
+        for (QuantityValued<?, ?> values : domainSet) {
+            uoms.add(values.getUnit());
+        }
+        return Lists.newArrayList(uoms);
     }
 
     @Override
@@ -86,5 +148,5 @@ public abstract class AbstractRectifiedGridCoverageTypeEncoder<T>
         super.addNamespacePrefixToMap(nameSpacePrefixMap);
         nameSpacePrefixMap.put(GmlConstants.NS_GML_32, GmlConstants.NS_GML_PREFIX);
     }
-
+    
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -161,9 +161,9 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writeAddtitionalNamespaces();
         String observationID = addGmlId(observation);
         writeNewLine();
+        checkAndWriteDescription();
         checkAndWriteIdentifier();
         checkAndWriteName();
-        checkAndWriteDescription();
         if (observation.getObservationConstellation().isSetObservationType()) {
             writeObservationType(observation.getObservationConstellation().getObservationType());
             writeNewLine();

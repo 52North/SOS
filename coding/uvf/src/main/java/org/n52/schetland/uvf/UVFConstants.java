@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,11 +39,11 @@ public interface UVFConstants {
 
     MediaType CONTENT_TYPE_UVF = new MediaType("application", "uvf");
     
-    MediaType CONTENT_TYPE_UVF_WINDOWS = new MediaType("application", "uvf", "lineEnding", "Windows");
+    MediaType CONTENT_TYPE_UVF_WINDOWS = new MediaType("application", "uvf", "lineending", "Windows");
     
-    MediaType CONTENT_TYPE_UVF_UNIX = new MediaType("application", "uvf", "lineEnding", "Unix");
+    MediaType CONTENT_TYPE_UVF_UNIX = new MediaType("application", "uvf", "lineending", "Unix");
     
-    MediaType CONTENT_TYPE_UVF_MAC = new MediaType("application", "uvf", "lineEnding", "Mac");
+    MediaType CONTENT_TYPE_UVF_MAC = new MediaType("application", "uvf", "lineending", "Mac");
 
     /**
      * Time format to be used in UVF encoded data: <code>yyMMddHHmm</code>,

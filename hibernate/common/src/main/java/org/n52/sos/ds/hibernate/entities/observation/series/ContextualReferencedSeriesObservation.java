@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractContextualReferencedObservation;
@@ -66,6 +67,11 @@ public class ContextualReferencedSeriesObservation
     @Override
     public Procedure getProcedure() {
         return isSetSeries() ? getSeries().getProcedure() : null;
+    }
+    
+    @Override
+    public Offering getOffering() {
+        return isSetSeries() ? getSeries().getOffering() : null;
     }
 
     @Override

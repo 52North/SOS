@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,53 @@
 <jsp:include page="../common/header.jsp">
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>
+
+<%
+    String ip = request.getHeader("X-Forwarded-For");
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        ip = request.getHeader("Proxy-Client-IP");
+    }
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        ip = request.getHeader("WL-Proxy-Client-IP");
+    }
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        ip = request.getHeader("HTTP_CLIENT_IP");
+    }
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+    }
+    if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        ip = request.getRemoteAddr();
+    }
+    pageContext.setAttribute("clientIp", ip);
+%>
+
+<script type="text/javascript">
+    function waitForElementToDisplayAfter(selector, time, content) {
+        if($(selector).length > 0) {
+            $(selector).after(content);
+            return;
+        }
+        else {
+            setTimeout(function() {
+                waitForElementToDisplayAfter(selector, time, content);
+            }, time);
+        }
+    }
+
+    $( document ).ready(function() {
+        waitForElementToDisplayAfter(
+            "#service_transactionalallowedips > div.controls > span.help-block",
+            1000,
+            "<br /><span class='alert alert-info'>" +
+            "Consider entering the IP of your machine: " +
+            "<code>" +
+            "<c:out value="${clientIp}" escapeXml="false"/>" +
+            "</code>" +
+            "</span>"
+        );
+    });
+</script>
 
 <div class="row">
     <div class="span9">

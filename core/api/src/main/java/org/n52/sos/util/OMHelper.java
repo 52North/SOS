@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,11 +43,12 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -136,6 +137,8 @@ public final class OMHelper {
             return OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
         } else if (OmConstants.RESULT_MODEL_TEXT_OBSERVATION.equals(resultModel)) {
             return OmConstants.OBS_TYPE_TEXT_OBSERVATION;
+        } else if (OmConstants.RESULT_MODEL_TEXT_OBSERVATION.equals(resultModel)) {
+            return OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
         } else if (OmConstants.RESULT_MODEL_COMPLEX_OBSERVATION.equals(resultModel)) {
             return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION;
         }
@@ -172,6 +175,8 @@ public final class OMHelper {
                     return OmConstants.RESULT_MODEL_TRUTH_OBSERVATION;
                 case OmConstants.OBS_TYPE_TEXT_OBSERVATION:
                     return OmConstants.RESULT_MODEL_TEXT_OBSERVATION;
+                case OmConstants.OBS_TYPE_REFERENCE_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_REFERENCE_OBSERVATION;
                 case OmConstants.OBS_TYPE_COMPLEX_OBSERVATION:
                     return OmConstants.RESULT_MODEL_COMPLEX_OBSERVATION;
             }
@@ -231,7 +236,7 @@ public final class OMHelper {
 
         @Override
         public String visit(ReferenceValue value) {
-            return defaultValue();
+            return OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
         }
 
         @Override
@@ -275,18 +280,23 @@ public final class OMHelper {
         }
 
         @Override
-        public String visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+        public String visit(MultiPointCoverage value) throws OwsExceptionReport {
             return defaultValue();
         }
 
         @Override
-        public String visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
+        public String visit(RectifiedGridCoverage value) throws OwsExceptionReport {
             return defaultValue();
         }
 
         @Override
         public String visit(ProfileValue value) throws OwsExceptionReport {
             return GWMLConstants.OBS_TYPE_GEOLOGY_LOG;
+        }
+
+        @Override
+        public String visit(QuantityRangeValue value) throws OwsExceptionReport {
+            return defaultValue();
         }
     }
 }

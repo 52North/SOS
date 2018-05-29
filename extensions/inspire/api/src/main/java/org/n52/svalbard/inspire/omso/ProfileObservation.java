@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,6 +40,7 @@ import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.ProfileLevel;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 import org.n52.sos.util.CollectionHelper;
@@ -89,10 +90,16 @@ public class ProfileObservation extends AbstractInspireObservation {
             ProfileValue profile = (ProfileValue) value.getValue();
             RectifiedGridCoverage rectifiedGridCoverage = new RectifiedGridCoverage(getObservationID());
             rectifiedGridCoverage.setUnit(value.getValue().getUnit());
+            rectifiedGridCoverage.setRangeParameters(getObservationConstellation().getObservablePropertyIdentifier());
             List<Coordinate> coordinates = Lists.newArrayList();
             int srid = 0;
             for (ProfileLevel level : profile.getValue()) {
-                rectifiedGridCoverage.addValue(level.getLevelStart().getValue(), level.getSimpleValue());
+                if (level.isSetLevelEnd()) {
+                    rectifiedGridCoverage.addValue(new QuantityRangeValue(level.getLevelStart().getValue(),
+                            level.getLevelEnd().getValue(), level.getLevelStart().getUnit()), level.getSimpleValue());
+                } else {
+                    rectifiedGridCoverage.addValue(level.getLevelStart().getValue(), level.getSimpleValue());
+                }
                 if (level.isSetLocation()) {
                     Coordinate coordinate = level.getLocation().getCoordinate();
                     coordinate.z = level.getLevelStart().getValue();
@@ -110,12 +117,13 @@ public class ProfileObservation extends AbstractInspireObservation {
             double heightDepth = 0;
             if (isSetHeightDepthParameter()) {
                 heightDepth = getHeightDepthParameter().getValue().getValue();
+                removeParameter(getHeightDepthParameter());
             }
             RectifiedGridCoverage rectifiedGridCoverage = new RectifiedGridCoverage(getObservationID());
             rectifiedGridCoverage.setUnit(value.getValue().getUnit());
             rectifiedGridCoverage.addValue(heightDepth, value.getValue());
             super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), rectifiedGridCoverage));
-            removeParameter(getHeightDepthParameter());
+            
         }
     }
     
@@ -136,19 +144,22 @@ public class ProfileObservation extends AbstractInspireObservation {
     }
 
     @Override
-    protected void mergeValues(ObservationValue<?> observationValue) {
-      if (observationValue.getValue() instanceof RectifiedGridCoverage) {
-          ((RectifiedGridCoverage)getValue().getValue()).addValue(((RectifiedGridCoverage)observationValue.getValue()).getValue());
-//      } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
-//          ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
-          
-          if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
-              if (((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                  // TODO check for SamplingCurve and Depht/Height
-              }
-          }
-      } else {
-          super.mergeValues(observationValue);
-      }
+    protected boolean mergeValues(ObservationValue<?> observationValue) {
+        if (observationValue.getValue() instanceof RectifiedGridCoverage) {
+            ((RectifiedGridCoverage) getValue().getValue())
+                    .addValue(((RectifiedGridCoverage) observationValue.getValue()).getValue());
+            // } else if (observationValue.getValue() instanceof
+            // ReverencableGridCoverage) {
+            // ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
+
+            if (getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                if (((AbstractSamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    // TODO check for SamplingCurve and Depht/Height
+                }
+            }
+            return true;
+        } else {
+            return super.mergeValues(observationValue);
+        }
     }
 }

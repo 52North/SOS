@@ -1,0 +1,15 @@
+<div uib-dropdown
+     class="dropup"
+     ng-hide="formatsList.length === 0" 
+     ng-click="toggled($event)">
+    <a uib-dropdown-toggle y
+       class="btn btn-block btn-default"
+       id="raw-procedure-dropdown" 
+       translate="metadataOutput.selectRawProcedureFormat">
+    </a>
+    <ul uib-dropdown-menu aria-labelledby="raw-procedure-dropdown">
+        <li ng-repeat="choice in formatsList">
+            <a ng-click="select(choice)">{{choice}}</a>
+        </li>
+    </ul>
+</div>

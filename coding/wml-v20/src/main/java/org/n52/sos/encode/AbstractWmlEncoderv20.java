@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -312,6 +312,13 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                     mpt.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
                 }
             }
+            
+            if (sampFeat.isSetDescription()) {
+                if (!mpt.isSetDescription()) {
+                    mpt.addNewDescription();
+                }
+                mpt.getDescription().setStringValue(sampFeat.getDescription());
+            }
 
             // set type
             // TODO: check if special definition
@@ -392,7 +399,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 } else {
                     observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
                 }
-
+                if (procedure.isSetIdentifier()) {
+                    observationProcess.addNewIdentifier()
+                            .set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, procedure.getIdentifierCodeWithAuthority()));
+                }
                 if (procedure.isSetName()) {
                     for (final CodeType sosName : procedure.getName()) {
                         observationProcess.addNewName()

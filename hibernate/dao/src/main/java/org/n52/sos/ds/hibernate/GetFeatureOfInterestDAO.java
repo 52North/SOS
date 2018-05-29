@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -241,24 +241,17 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Adds the identifiers from <tt>featureIdentifiers</tt> to the
-     * <tt>foiIDs</tt> if the feature is an relatedFeature and a child is
-     * already contained in <tt>foiIDs</tt>
+     * <tt>foiIDs</tt> if the feature is an relatedFeature
      *
      * @param foiIDs
      *            Feature identifiers
-     * @param featureIdentifiers
+     * @param requestedfeatures
      *            Feature identifiers to add
      */
-    private void addRequestedRelatedFeatures(final Set<String> foiIDs, final List<String> featureIdentifiers) {
-        requestedFeatures: for (final String requestedFeature : featureIdentifiers) {
+    private void addRequestedRelatedFeatures(final Set<String> foiIDs, final List<String> requestedfeatures) {
+        for (final String requestedFeature : requestedfeatures) {
             if (isRelatedFeature(requestedFeature)) {
-                final Set<String> childFeatures = getCache().getChildFeatures(requestedFeature, true, false);
-                for (final String featureWithObservation : foiIDs) {
-                    if (childFeatures.contains(featureWithObservation)) {
-                        foiIDs.add(requestedFeature);
-                        continue requestedFeatures;
-                    }
-                }
+                foiIDs.addAll(getCache().getChildFeatures(requestedFeature, true, false));
             }
         }
     }
@@ -631,6 +624,11 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
             return namedQuery.list();
         }
         return Lists.newLinkedList();
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
 }

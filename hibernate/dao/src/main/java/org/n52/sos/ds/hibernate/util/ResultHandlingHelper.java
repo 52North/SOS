@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -462,11 +462,12 @@ public class ResultHandlingHelper {
     }
 
     public boolean checkDataRecordForObservedProperty(SweField swefield, String observedProperty) throws CodedException {
-        if (isDataRecord(swefield) && !checkDefinition(swefield, observedProperty)) {
+        if (isDataRecord(swefield) && !checkDefinition(swefield, observedProperty) && !checkDataRecordForParameter(swefield)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
-                            "The swe:DataRecord element is currently only supported for the definition of the observedProperty and the definition should be '%s'!",
-                            observedProperty);
+                            "The swe:DataRecord element is currently only supported for the definition of the observedProperty and om:parameter. "
+                            + "The definition should be '%s' or '%s'!",
+                            observedProperty, OmConstants.PARAMETER);
         }
         return true;
     }
@@ -518,6 +519,14 @@ public class ResultHandlingHelper {
 
     public boolean isVector(SweField sweField) {
         return sweField.getElement() instanceof SweVector;
+    }
+
+    public boolean checkDataRecordForParameter(SweField swefield) throws CodedException {
+        if (isDataRecord(swefield) && !checkDefinition(swefield, OmConstants.OM_PARAMETER)) {
+            return false;
+        }
+        return true;
+        
     }
 
     private GeometryHandler getGeomtryHandler() {

@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -120,4 +120,8 @@ alter table dbo.textfeatparamvalue add constraint featParamTextValueFk foreign k
 alter table dbo.textparametervalue add constraint parameterTextValueFk foreign key (parameterId) references dbo.parameter;
 alter table dbo.xmlfeatparamvalue add constraint featParamXmlValueFk foreign key (parameterId) references dbo.featureparameter;
 alter table dbo.xmlparametervalue add constraint parameterXmlValueFk foreign key (parameterId) references dbo.parameter;
+ALTER TABLE dbo.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
+ALTER TABLE dbo.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
+UPDATE dbo.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE dbo.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence dbo.relatedObservationId_seq

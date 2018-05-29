@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.NamedQueryDefinition;
 import org.hibernate.engine.spi.NamedSQLQueryDefinition;
@@ -60,6 +61,7 @@ import com.google.common.collect.Maps;
  *
  */
 public final class HibernateHelper {
+
     /**
      * Private constructor
      */
@@ -88,6 +90,16 @@ public final class HibernateHelper {
                         factory, criteriaImpl, criteriaImpl.getEntityOrClassName(), session.getLoadQueryInfluencers());
 
         return walker.getSQLString();
+    }
+    
+    public static String getSqlString(Criterion criterion, Criteria criteria) {
+        CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
+        SessionImplementor session = criteriaImpl.getSession();
+        SessionFactoryImplementor factory = session.getFactory();
+        CriteriaQueryTranslator translator =
+                new CriteriaQueryTranslator(factory, criteriaImpl, criteriaImpl.getEntityOrClassName(),
+                        CriteriaQueryTranslator.ROOT_SQL_ALIAS);
+        return criterion.toSqlString(criteria, translator);
     }
 
     /**
@@ -122,7 +134,7 @@ public final class HibernateHelper {
 
     /**
      * Checks if the specified column is supported by this entity.
-     * 
+     *
      * @param clazz
      *            the class
      * @param column
@@ -135,7 +147,7 @@ public final class HibernateHelper {
 
     /**
      * Checks if the specified named query is supported.
-     * 
+     *
      * @param namedQuery
      *            the named query
      * @param session
@@ -160,8 +172,8 @@ public final class HibernateHelper {
             int startIndex = 0;
             int endIndex = HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
             while (startIndex < queryIdsList.size() - 1) {
-                if (endIndex > (queryIdsList.size())) {
-                    endIndex = (queryIdsList.size());
+                if (endIndex > queryIdsList.size()) {
+                    endIndex = queryIdsList.size();
                 }
                 lists.add(queryIdsList.subList(startIndex, endIndex));
                 startIndex = endIndex;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -88,13 +88,13 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
                 addIdentifierRestriction(c, ids);
                 c.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
                 LOGGER.debug("QUERY getFeatureExtent(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
-                mergeGeometries(geom, c.list());
+                geom = mergeGeometries(geom, c.list());
             }
         } else {
             Criteria c = getDefaultCriteria(session);
             c.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
             LOGGER.debug("QUERY getFeatureExtent(identifiers): {}", HibernateHelper.getSqlString(c));
-            mergeGeometries(geom, c.list());
+            geom = mergeGeometries(geom, c.list());
         }
         return geom;
     }
@@ -191,7 +191,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         }
     }
     
-    private void mergeGeometries(Geometry geom, List<Object> list) {
+    private Geometry mergeGeometries(Geometry geom, List<Object> list) {
         for (Object extent : list) {
             if (extent != null) {
                 if (geom == null) {
@@ -201,6 +201,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
                 }
             }
         }
+        return geom;
     }
 
     public void updateFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest, AbstractFeature abstractFeature, Session session) {

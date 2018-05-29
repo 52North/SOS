@@ -45,3 +45,13 @@ services:
       - JPDA_TRANSPORT=dt_socket
     container_name: osgeolive-sos
     command: ["catalina.sh", "jpda", "run"]
+  proxy:
+    image: nginx:mainline-alpine
+    ports:
+      - 81:80
+    links:
+      - sos:sos
+    volumes:
+      - "./nginx-proxy.conf:/etc/nginx/conf.d/default.conf"
+      - "./htpasswd:/etc/nginx/htpasswd"
+    container_name: testing-proxy

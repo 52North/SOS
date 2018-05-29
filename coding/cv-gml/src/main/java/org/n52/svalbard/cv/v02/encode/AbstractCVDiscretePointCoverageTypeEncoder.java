@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,6 +48,7 @@ import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -340,18 +341,23 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         }
 
         @Override
-        public XmlObject visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+        public XmlObject visit(MultiPointCoverage value) throws OwsExceptionReport {
             return null;
         }
 
         @Override
-        public XmlObject visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
+        public XmlObject visit(RectifiedGridCoverage value) throws OwsExceptionReport {
             return null;
         }
 
         @Override
         public XmlObject visit(ProfileValue value) throws OwsExceptionReport {
             return CodingHelper.encodeObjectToXml(value.getDefaultElementEncoding(), value);
+        }
+
+        @Override
+        public XmlObject visit(QuantityRangeValue value) throws OwsExceptionReport {
+            return null;
         }
     }
 }

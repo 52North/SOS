@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -113,7 +113,6 @@ public class H2Configuration {
             resources.add("/mapping/core/ObservationType.hbm.xml");
             resources.add("/mapping/core/FeatureOfInterestType.hbm.xml");
             resources.add("/mapping/core/Offering.hbm.xml");
-            resources.add("/mapping/core/Parameter.hbm.xml");
             resources.add("/mapping/core/Procedure.hbm.xml");
             resources.add("/mapping/core/ObservableProperty.hbm.xml");
             resources.add("/mapping/core/Unit.hbm.xml");
@@ -139,8 +138,9 @@ public class H2Configuration {
             resources.add("/mapping/series/observation/Observation.hbm.xml");
             resources.add("/mapping/series/observation/TemporalReferencedObservation.hbm.xml");
             resources.add("/mapping/series/observation/ContextualReferencedObservation.hbm.xml");
+            resources.add("/mapping/series/observation/Parameter.hbm.xml");
+            resources.add("/mapping/series/observation/ParameterValues.hbm.xml");
             resources.add("/mapping/parameter/feature/FeatureParameterValues.hbm.xml");
-            resources.add("/mapping/parameter/observation/ParameterValues.hbm.xml");
             return resources;
         }
     };

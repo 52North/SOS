@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -81,7 +82,7 @@ public class SQLScriptGenerator {
                 printToScreen("To execute the SQL script generator for Oracle you have to uncomment the dependency in the pom.xml.");
                 printToScreen("If the Oracle JDBC driver is not installed in your local Maven repository, ");
                 printToScreen("follow the first steps describes here: ");
-                printToScreen("https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_support.");
+                printToScreen("https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Oracle_support.");
                 throw new MissingDriverException();
             }
 
@@ -146,6 +147,7 @@ public class SQLScriptGenerator {
         printToScreen("Create a all or a single selected script:");
         printToScreen("1   all");
         printToScreen("2   Select script");
+        printToScreen("3   Misc scripts");
         printToScreen("");
         printToScreen("Enter your selection: ");
 
@@ -220,14 +222,19 @@ public class SQLScriptGenerator {
                         .toString();
         boolean duplicate = false;
         List<String> checkedSchema = Lists.newLinkedList();
+        Set<String> set = new HashSet<>();
         for (String string : create) {
             if (string.contains(hexStringToCheck)) {
                 if (!duplicate) {
-                    checkedSchema.add(string);
+                    if (set.add(string)) {
+                        checkedSchema.add(string);
+                    }
                     duplicate = true;
                 }
             } else {
-                checkedSchema.add(string);
+                if (set.add(string)) {
+                    checkedSchema.add(string);
+                }
             }
         }
         return Sets.newLinkedHashSet(checkedSchema);
@@ -255,6 +262,20 @@ public class SQLScriptGenerator {
                                 System.exit(1);
                             }
                         }   
+                    }
+                }
+            } else if (select == 3) {
+                String schema = "public";
+                // dialectSelection
+                for (int i = 1; i < 6; i++) {
+                    schema = getSchema(i);
+                    try {
+                        execute(sqlScriptGenerator, i, 2, 2, schema);
+                    } catch (MissingDriverException mde) {
+                        System.exit(1);
+                    } catch (Exception e) {
+                        printToScreen("ERROR: " + e.getMessage());
+                        System.exit(1);
                     }
                 }
             } else {
@@ -303,7 +324,7 @@ public class SQLScriptGenerator {
         try {
             Configuration configuration = new CustomConfiguration().configure("/sos-hibernate.cfg.xml");
             Dialect dia = sqlScriptGenerator.getDialect(dialectSelection);
-            String fileName = "target/" + dialectSelection + "_" + modelSelection + "_" + concept + ".sql";
+            String fileName = "target/" + sqlScriptGenerator.getDialectSelection(dialectSelection) + "_" + sqlScriptGenerator.getModelSelection(modelSelection) + "_" + sqlScriptGenerator.getConceptSelection(concept) + ".sql";
             writer = new FileWriter(fileName);
             if (schema != null && !schema.isEmpty()) {
                 Properties p = new Properties();
@@ -342,6 +363,43 @@ public class SQLScriptGenerator {
                 writer.close();
             }
         }
+    }
+    
+    private String getDialectSelection(int i) {
+        if (i == 1) {
+            return "postgre";
+        } else if (i == 2) {
+            return "oracle";
+        } else if (i == 3) {
+            return "h2";
+        } else if (i == 4) {
+            return "mysql";
+        } else if (i == 5) {
+            return "sqlServer";
+        }
+        return Integer.toString(i);
+    }
+    
+    private String getModelSelection(int i) {
+        if (i == 1) {
+            return "core";
+        } else if (i == 2) {
+            return "transactional";
+        } else if (i == 3) {
+            return "all";
+        }
+        return Integer.toString(i);
+    }
+    
+    private String getConceptSelection(int i) {
+        if (i == 1) {
+            return "old";
+        } else if (i == 2) {
+            return "series";
+        } else if (i == 3) {
+            return "ereporting";
+        }
+        return Integer.toString(i);
     }
 
     private class MissingDriverException extends Exception {

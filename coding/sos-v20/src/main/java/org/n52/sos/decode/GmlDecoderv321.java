@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -390,7 +390,7 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             if (srid == -1 && xbPositions[0].getSrsName() != null && !(xbPositions[0].getSrsName().isEmpty())) {
                 srid = SosHelper.parseSrsName(xbPositions[0].getSrsName());
             }
-            positions.append(getString4PosArray(xbLineStringType.getPosArray()));
+            positions.append(getString4PosArray(xbLineStringType.getPosArray(), false));
         }
         String geomWKT = "LINESTRING" + positions.toString() + "";
 
@@ -509,7 +509,7 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
         } else if (xbCoordinates != null && !(xbCoordinates.getStringValue().isEmpty())) {
             result = getString4Coordinates(xbCoordinates);
         } else if (xbPosArray != null && xbPosArray.length > 0) {
-            result = getString4PosArray(xbPosArray);
+            result = getString4PosArray(xbPosArray, true);
         } else {
             throw new NoApplicableCodeException().withMessage("The Polygon must contain the following elements "
                     + "<gml:exterior><gml:LinearRing><gml:posList>, "
@@ -538,14 +538,18 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
      *            XmlBeans generated DirectPosition[].
      * @return Returns String with coordinates for WKT.
      */
-    private String getString4PosArray(DirectPositionType[] xbPosArray) {
+    private String getString4PosArray(DirectPositionType[] xbPosArray, boolean polygon) {
         StringBuilder coordinateString = new StringBuilder();
         coordinateString.append("(");
         for (DirectPositionType directPositionType : xbPosArray) {
             coordinateString.append(directPositionType.getStringValue());
             coordinateString.append(", ");
         }
-        coordinateString.append(xbPosArray[0].getStringValue());
+        if (polygon) {
+            coordinateString.append(xbPosArray[0].getStringValue());
+        } else {
+            coordinateString.delete(coordinateString.length() - 2, coordinateString.length());
+        }
         coordinateString.append(")");
 
         return coordinateString.toString();

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,12 +39,14 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.OperationKey;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.exception.HTTPException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 import org.slf4j.Logger;
@@ -81,12 +83,19 @@ public class PoxBinding extends SimpleBinding {
     protected AbstractServiceRequest<?> parseRequest(HttpServletRequest request)
             throws OwsExceptionReport {
         XmlObject doc = XmlHelper.parseXmlSosRequest(request);
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             LOGGER.debug("XML-REQUEST: {}", doc.xmlText());
         }
-        Decoder<AbstractServiceRequest<?>, XmlObject> decoder =
+        Decoder<?, XmlObject> decoder =
                 getDecoder(CodingHelper.getDecoderKey(doc));
-        return decoder.decode(doc).setRequestContext(getRequestContext(request));
+        Object decode = decoder.decode(doc);
+        if (!(decode instanceof AbstractServiceRequest)) {
+            throw new NoApplicableCodeException().at("request")
+                    .withMessage("The send XML document (%s) is not a XML encoded OGC request!",
+                            decode.getClass().getName())
+                    .setStatus(HTTPStatus.BAD_REQUEST);
+        }
+        return ((AbstractServiceRequest<?>) decode).setRequestContext(getRequestContext(request));
     }
 
     @Override

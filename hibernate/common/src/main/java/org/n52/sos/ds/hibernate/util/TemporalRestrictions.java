@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -202,6 +202,10 @@ public class TemporalRestrictions {
         return filter(new BeforeRestriction(), property, value);
     }
 
+    public static Criterion before(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new BeforeRestriction(count), property, value);
+    }
+
     /**
      * Creates a temporal restriction for the specified time and property.
      *
@@ -259,6 +263,10 @@ public class TemporalRestrictions {
      */
     public static Criterion after(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new AfterRestriction(), property, value);
+    }
+    
+    public static Criterion after(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new AfterRestriction(count), property, value);
     }
 
     /**
@@ -319,6 +327,10 @@ public class TemporalRestrictions {
     public static Criterion begins(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new BeginsRestriction(), property, value);
     }
+    
+    public static Criterion begins(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new BeginsRestriction(count), property, value);
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -377,6 +389,10 @@ public class TemporalRestrictions {
      */
     public static Criterion ends(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new EndsRestriction(), property, value);
+    }
+    
+    public static Criterion ends(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new EndsRestriction(count), property, value);
     }
 
     /**
@@ -437,6 +453,10 @@ public class TemporalRestrictions {
     public static Criterion endedBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new EndedByRestriction(), property, value);
     }
+    
+    public static Criterion endedBy(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new EndedByRestriction(count), property, value);
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -495,6 +515,10 @@ public class TemporalRestrictions {
      */
     public static Criterion begunBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new BegunByRestriction(), property, value);
+    }
+    
+    public static Criterion begunBy(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new BegunByRestriction(count), property, value);
     }
 
     /**
@@ -555,6 +579,10 @@ public class TemporalRestrictions {
     public static Criterion during(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new DuringRestriction(), property, value);
     }
+    
+    public static Criterion during(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new DuringRestriction(count), property, value);
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -613,6 +641,10 @@ public class TemporalRestrictions {
      */
     public static Criterion tEquals(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new TEqualsRestriction(), property, value);
+    }
+    
+    public static Criterion tEquals(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new TEqualsRestriction(count), property, value);
     }
 
     /**
@@ -674,6 +706,11 @@ public class TemporalRestrictions {
             throws UnsupportedTimeException {
         return filter(new ContainsRestriction(), property, value);
     }
+    
+    public static Criterion contains(TimePrimitiveFieldDescriptor property, Time value, Integer count)
+            throws UnsupportedTimeException {
+        return filter(new ContainsRestriction(count), property, value);
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -734,6 +771,11 @@ public class TemporalRestrictions {
             throws UnsupportedTimeException {
         return filter(new OverlapsRestriction(), property, value);
     }
+    
+    public static Criterion overlaps(TimePrimitiveFieldDescriptor property, Time value, Integer count)
+            throws UnsupportedTimeException {
+        return filter(new OverlapsRestriction(count), property, value);
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -792,6 +834,10 @@ public class TemporalRestrictions {
      */
     public static Criterion meets(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new MeetsRestriction(), property, value);
+    }
+    
+    public static Criterion meets(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new MeetsRestriction(count), property, value);
     }
 
     /**
@@ -852,6 +898,10 @@ public class TemporalRestrictions {
     public static Criterion metBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
         return filter(new MetByRestriction(), property, value);
     }
+    
+    public static Criterion metBy(TimePrimitiveFieldDescriptor property, Time value, Integer count) throws UnsupportedTimeException {
+        return filter(new MetByRestriction(count), property, value);
+    }
 
     /**
      * Creates a temporal restriction for the specified time and property.
@@ -911,6 +961,11 @@ public class TemporalRestrictions {
     public static Criterion overlappedBy(TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
         return filter(new OverlappedByRestriction(), property, value);
+    }
+    
+    public static Criterion overlappedBy(TimePrimitiveFieldDescriptor property, Time value, Integer count)
+            throws UnsupportedTimeException {
+        return filter(new OverlappedByRestriction(count), property, value);
     }
 
     /**
@@ -980,7 +1035,7 @@ public class TemporalRestrictions {
             throws UnsupportedTimeException {
         return restriction.get(property, value);
     }
-
+    
     /**
      * Create a new <tt>Criterion</tt> using the specified filter.
      *
@@ -1035,6 +1090,41 @@ public class TemporalRestrictions {
         }
     }
 
+    public static Criterion filterHql(TemporalFilter filter, Integer count) throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
+        TimePrimitiveFieldDescriptor property = getFields(filter.getValueReference());
+        Time value = filter.getTime();
+        switch (filter.getOperator()) {
+        case TM_Before:
+            return before(property, value, count);
+        case TM_After:
+            return after(property, value, count);
+        case TM_Begins:
+            return begins(property, value, count);
+        case TM_Ends:
+            return ends(property, value, count);
+        case TM_EndedBy:
+            return endedBy(property, value, count);
+        case TM_BegunBy:
+            return begunBy(property, value, count);
+        case TM_During:
+            return during(property, value, count);
+        case TM_Equals:
+            return tEquals(property, value, count);
+        case TM_Contains:
+            return contains(property, value, count);
+        case TM_Overlaps:
+            return overlaps(property, value, count);
+        case TM_Meets:
+            return meets(property, value, count);
+        case TM_MetBy:
+            return metBy(property, value, count);
+        case TM_OverlappedBy:
+            return overlappedBy(property, value, count);
+        default:
+            throw new UnsupportedOperatorException(filter.getOperator());
+        }
+    }
+
     /**
      * Creates a {@link Conjunction} for the specified temporal filters.
      *
@@ -1065,7 +1155,19 @@ public class TemporalRestrictions {
         }
         return conjunction;
     }
-
+    
+    public static Criterion filterHql(Iterable<TemporalFilter> temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        Conjunction conjunction = Restrictions.conjunction();
+        Collection<Disjunction> disjunctions = getDisjunctionHql(temporalFilters);
+        if (disjunctions.size() == 1) {
+            return disjunctions.iterator().next();
+        }
+        for (Disjunction disjunction : disjunctions) {
+            conjunction.add(disjunction);
+        }
+        return conjunction;
+    }
     /**
      * Creates {@link Disjunction}s for the specified temporal filters with the
      * same valueReference.
@@ -1097,6 +1199,23 @@ public class TemporalRestrictions {
         }
         return map.values();
     }
+    
+    private static Collection<Disjunction> getDisjunctionHql(Iterable<TemporalFilter> temporalFilters)
+            throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
+        Map<String, Disjunction> map = Maps.newHashMap();
+        Integer count = 1;
+        for (TemporalFilter temporalFilter : temporalFilters) {
+            if (map.containsKey(temporalFilter.getValueReference())) {
+                map.get(temporalFilter.getValueReference()).add(filterHql(temporalFilter, count));
+            } else {
+                Disjunction disjunction = Restrictions.disjunction();
+                disjunction.add(filterHql(temporalFilter, count));
+                map.put(temporalFilter.getValueReference(), disjunction);
+            }
+            count++;
+        }
+        return map.values();
+    }
 
     /**
      * Gets the field descriptor for the specified value reference.
@@ -1116,7 +1235,7 @@ public class TemporalRestrictions {
      * @throws UnsupportedValueReferenceException
      *             if the <tt>valueReference</tt> can not be decoded
      */
-    private static TimePrimitiveFieldDescriptor getFields(String valueReference)
+    public static TimePrimitiveFieldDescriptor getFields(String valueReference)
             throws UnsupportedValueReferenceException {
         if (valueReference.contains(PHENOMENON_TIME_VALUE_REFERENCE)) {
             return PHENOMENON_TIME_FIELDS;

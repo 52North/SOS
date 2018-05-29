@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -41,6 +41,26 @@
 <link rel="stylesheet" href="<c:url value='/static/lib/jquery.tablesorter-bootstrap-2.712.min.css' />">
 <script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter-2.7.12.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/static/lib/jquery.tablesorter.widgets-2.7.12.min.js'/>"></script>
+
+<div class="btn-group pull-right">
+    <button id="activateAll" class="btn btn-success"><i class="icon-ok-circle icon-white" style="color:#fff;"></i></button>
+    <button id="disableAll" class="btn btn-danger"><i class="icon-ban-circle icon-white"></i></button>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    $("#activateAll").on("click", function() {
+        $("tbody > tr > td.status > button.btn-danger").each(function(){
+            $( this ).click();
+        });
+    });
+    $("#disableAll").on("click", function() {
+        $("tbody > tr > td.status > button.btn-success").each(function(){
+            $( this ).click();
+        });
+    });
+});
+</script>
 
 <table id="bindings" class="table table-striped table-bordered">
     <colgroup>

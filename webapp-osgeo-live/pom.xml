@@ -4,7 +4,7 @@
   <parent>
     <artifactId>52n-sos</artifactId>
     <groupId>org.n52.sensorweb.sos</groupId>
-    <version>4.4.0</version>
+    <version>4.4.3-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>webapp-osgeo-live</artifactId>
@@ -33,7 +33,7 @@
           <overlays>
             <overlay>
               <groupId>${project.groupId}</groupId>
-              <artifactId>webapp-bundle</artifactId>
+              <artifactId>webapp</artifactId>
             </overlay>
           </overlays>
         </configuration>
@@ -64,7 +64,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>webapp-bundle</artifactId>
+      <artifactId>webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
     </dependency>

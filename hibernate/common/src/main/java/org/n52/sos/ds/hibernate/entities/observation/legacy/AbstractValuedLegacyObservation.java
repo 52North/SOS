@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -81,6 +81,10 @@ public abstract class AbstractValuedLegacyObservation<T>
     private ObservableProperty observableProperty;
     private AbstractFeatureOfInterest featureOfInterest;
     private Offering offering;
+    private Double verticalTo;
+    private String verticalFromName;
+    private String verticalToName;
+    private Double verticalFrom;
 
     @Override
     public Unit getUnit() {
@@ -300,4 +304,52 @@ public abstract class AbstractValuedLegacyObservation<T>
         return null;
     }
 
+    public Double getVerticalFrom() {
+        return verticalFrom;
+    }
+    
+    public void setVerticalFrom(Double verticalFrom) {
+        this.verticalFrom = verticalFrom;
+    }
+
+    public boolean hasVerticalFrom() {
+        return getVerticalFrom() != null;
+    }
+
+    public void setVerticalTo(Double verticalTo) {
+        this.verticalTo = verticalTo;
+    }
+    
+    public boolean hasVerticalTo() {
+        return getVerticalTo() != null;
+    }
+    
+    public Double getVerticalTo() {
+        return verticalTo;
+    }
+    
+    public String getVerticalFromName() {
+        return verticalFromName;
+    }
+    
+    public void setVerticalFromName(String verticalFromName) {
+        this.verticalFromName = verticalFromName;
+    }
+    
+    public boolean hasVerticalFromName() {
+        return getVerticalFromName() != null && !getVerticalFromName().isEmpty();
+    }
+    
+    public String getVerticalToName() {
+        return verticalToName;
+    }
+    
+    public void setVerticalToName(String verticalToName) {
+        this.verticalToName = verticalToName;
+    }
+    
+    public boolean hasVerticalToName() {
+        return getVerticalToName() != null && !getVerticalToName().isEmpty();
+    }
+    
 }

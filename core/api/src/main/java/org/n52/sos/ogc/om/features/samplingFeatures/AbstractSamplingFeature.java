@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -99,8 +99,6 @@ public abstract class AbstractSamplingFeature extends AbstractFeature implements
      */
     private Collection<SamplingFeatureComplex> relatedSamplingFeatures;
 
-    private boolean wasEncoded = false;
-
     /**
      * constructor
      * 
@@ -140,7 +138,7 @@ public abstract class AbstractSamplingFeature extends AbstractFeature implements
     
     @Override
     public boolean isSetGmlID() {
-        return super.isSetGmlID() && wasEncoded;
+        return super.isSetGmlID();
     }
     
     @Override
@@ -282,10 +280,6 @@ public abstract class AbstractSamplingFeature extends AbstractFeature implements
         this.encode = encode;
     }
     
-    public void wasEncoded() {
-        this.wasEncoded  = true;
-    }
-
     /**
      * Add related sampling feature
      * 

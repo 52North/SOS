@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,6 +41,7 @@ import java.util.RandomAccess;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.locationtech.jts.io.WKTWriter;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.decode.Decoder;
@@ -48,9 +50,15 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
+import org.n52.sos.ogc.filter.FilterConstants;
+import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator2;
@@ -62,7 +70,10 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.ResultFilter;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.sos.SosSpatialFilter;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.SwesExtension;
@@ -76,8 +87,15 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.Validation;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.odata.ODataFesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 
 /**
  * @since 4.0.0
@@ -97,6 +115,8 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     private int defaultResponseEPSG;
 
     private int defaultResponse3DEPSG;
+    
+    private static ODataFesParser odataFesParser = new ODataFesParser();
 
     @Override
     public Set<String> getConformanceClasses() {
@@ -182,6 +202,9 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
             String parameterName) throws OwsExceptionReport {
+        if (parameterName.equals("$filter")) {
+            return parseODataFes(request, parameterValues, parameterName);
+        }
         return false;
     }
 
@@ -439,6 +462,165 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
         SweText text = (SweText) new SweText().setValue(value).setIdentifier(identifier);
         return new SwesExtensionImpl<SweText>().setValue(text);
+    }
+
+    protected boolean parseODataFes(AbstractServiceRequest<?> request, String parameterValues, String parameterName) throws OwsExceptionReport {
+        try {
+            List<Filter<?>> filters = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
+            for (Filter<?> f : filters) {
+                if (f instanceof ComparisonFilter) {
+                    request.addExtension(new ResultFilter((ComparisonFilter) f));
+                } else if (f instanceof SpatialFilter) {
+                    request.addExtension(new SosSpatialFilter((SpatialFilter) f));
+                }
+            }
+            return true;
+        } catch (DecodingException e) {
+            throw new OptionNotSupportedException().causedBy(e).at("$filter");
+        }
+    }
+    
+    private String checkValues(String parameterValues) {
+        if (parameterValues.contains("sams:shape")) {
+            parameterValues =  parameterValues.replaceAll("om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape", "om:featureOfInterest");
+            parameterValues =  parameterValues.replaceAll("om:featureOfInterest/*/sams:shape", "om:featureOfInterest");
+        }
+        return parameterValues.replaceAll("om:", "")
+                .replaceAll(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE, "samplingGeometry");
+    }
+
+    private List<Filter<?>> convertFilter(org.n52.shetland.ogc.filter.Filter<?> filter) throws OwsExceptionReport {
+        List<Filter<?>> list = new LinkedList<>();
+        if (filter instanceof org.n52.shetland.ogc.filter.ComparisonFilter) {
+            list.add(convertComparisonFilter((org.n52.shetland.ogc.filter.ComparisonFilter) filter));
+        } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter) {
+            list.add(convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter));
+        } else if (filter instanceof org.n52.shetland.ogc.filter.BinaryLogicFilter) {
+            if (!filter.getOperator().equals(org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And)) {
+                throw new OptionNotSupportedException().at("$filter").withMessage("Currently, only the AND operator is supported!");
+            }
+            for (org.n52.shetland.ogc.filter.Filter<?> f : ((org.n52.shetland.ogc.filter.BinaryLogicFilter) filter).getFilterPredicates()) {
+                list.addAll(convertFilter(f));
+            }
+            return checkForBetweenComparisonFilter(list);
+        }
+       return list;
+    }
+
+    private ComparisonFilter convertComparisonFilter(org.n52.shetland.ogc.filter.ComparisonFilter filter) {
+        ComparisonFilter comparisonFilter = new ComparisonFilter();
+        comparisonFilter.setOperator(convertComparisonOperator(filter.getOperator()));
+        comparisonFilter.setEscapeString(filter.getEscapeString());
+        comparisonFilter.setMatchCase(filter.isMatchCase());
+        comparisonFilter.setSingleChar(filter.getSingleChar());
+        comparisonFilter.setValue(filter.getValue());
+        comparisonFilter.setValueReference(filter.getValueReference());
+        comparisonFilter.setValueUpper(filter.getValueUpper());
+        comparisonFilter.setWildCard(filter.getWildCard());
+        return comparisonFilter;
+    }
+
+    private ComparisonOperator convertComparisonOperator(
+            org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator operator) {
+        switch (operator) {
+            case PropertyIsBetween:
+                return FilterConstants.ComparisonOperator.PropertyIsBetween;
+            case PropertyIsEqualTo:
+                return FilterConstants.ComparisonOperator.PropertyIsEqualTo;
+            case PropertyIsGreaterThan:
+                return FilterConstants.ComparisonOperator.PropertyIsGreaterThan;
+            case PropertyIsGreaterThanOrEqualTo:
+                return FilterConstants.ComparisonOperator.PropertyIsGreaterThanOrEqualTo;
+            case PropertyIsLessThan:
+                return FilterConstants.ComparisonOperator.PropertyIsLessThan;
+            case PropertyIsLessThanOrEqualTo:
+                return FilterConstants.ComparisonOperator.PropertyIsLessThanOrEqualTo;
+            case PropertyIsLike:
+                return FilterConstants.ComparisonOperator.PropertyIsLike;
+            case PropertyIsNil:
+                return FilterConstants.ComparisonOperator.PropertyIsNil;
+            case PropertyIsNotEqualTo:
+                return FilterConstants.ComparisonOperator.PropertyIsNotEqualTo;
+            case PropertyIsNull:
+                return FilterConstants.ComparisonOperator.PropertyIsNull;
+            default:
+               return null;
+        }
+    }
+
+    private SpatialFilter convertSpatialFilter(org.n52.shetland.ogc.filter.SpatialFilter filter) throws CodedException {
+        try {
+            SpatialFilter spatialFilter = new SpatialFilter();
+            spatialFilter
+                    .setGeometry(new WKTReader(convertGeometryFactory(filter.getGeometry().toGeometry().getFactory()))
+                            .read(new WKTWriter().write(filter.getGeometry().toGeometry())));
+            spatialFilter.setOperator(convertSpatialOperator(filter.getOperator()));
+            spatialFilter.setValueReference(filter.getValueReference());
+            return spatialFilter;
+        } catch (ParseException e) {
+            throw new NoApplicableCodeException().causedBy(e);
+        }
+    }
+
+    private GeometryFactory convertGeometryFactory(org.locationtech.jts.geom.GeometryFactory factory) {
+        return new GeometryFactory(new PrecisionModel(), factory.getSRID());
+    }
+
+    private SpatialOperator convertSpatialOperator(
+            org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator operator) {
+        switch (operator) {
+            case BBOX:
+                return SpatialOperator.BBOX;
+            case Beyond:
+                return SpatialOperator.Beyond;
+            case Contains:
+                return SpatialOperator.Contains;
+            case Crosses:
+                return SpatialOperator.Crosses;
+            case Disjoint:
+                return SpatialOperator.Disjoint;
+            case DWithin:
+                return SpatialOperator.DWithin;
+            case Equals:
+                return SpatialOperator.Equals;
+            case Intersects:
+                return SpatialOperator.BBOX;
+            case Overlaps:
+                return SpatialOperator.Overlaps;
+            case Touches:
+                return SpatialOperator.Touches;
+            case Within:
+                return SpatialOperator.Within;
+            default:
+                return null;
+        }
+    }
+
+    private List<Filter<?>> checkForBetweenComparisonFilter(List<Filter<?>> set)
+            throws OwsExceptionReport {
+        List<Filter<?>> prepared = new LinkedList<>();
+        ComparisonFilter ge = null;
+        for (Filter<?> filter : set) {
+            if (filter instanceof ComparisonFilter) {
+                if (filter.getOperator().equals(FilterConstants.ComparisonOperator.PropertyIsGreaterThanOrEqualTo)) {
+                    ge = (ComparisonFilter) filter;
+                } else if (filter.getOperator().equals(FilterConstants.ComparisonOperator.PropertyIsLessThanOrEqualTo)
+                        && ge != null) {
+                    ComparisonFilter le = (ComparisonFilter) filter;
+                    prepared.add(new ComparisonFilter(FilterConstants.ComparisonOperator.PropertyIsBetween,
+                            ge.getValueReference(), ge.getValue(), le.getValue()));
+                    ge = null;
+                } else {
+                    prepared.add(filter);
+                }
+            } else {
+                prepared.add(filter);
+            }
+        }
+        if (ge != null) {
+            prepared.add(ge);
+        }
+        return prepared;
     }
 
 }

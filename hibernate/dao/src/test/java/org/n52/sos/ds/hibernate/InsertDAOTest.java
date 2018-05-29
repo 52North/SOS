@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,6 +46,7 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -253,7 +254,6 @@ public class InsertDAOTest extends HibernateTestCase {
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException {
-        
         Session session = getSession();
         insertSensor(PROCEDURE1, OFFERING1, OBSPROP1, null);
         insertSensor(PROCEDURE2, OFFERING2, OBSPROP2, PROCEDURE1);
@@ -656,7 +656,7 @@ public class InsertDAOTest extends HibernateTestCase {
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         SosEventBus.fire(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkSamplingGeometry(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_SP);
+        checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_SP);
     }
     
     private NamedValue<?> createSamplingGeometry() {
@@ -711,7 +711,7 @@ public class InsertDAOTest extends HibernateTestCase {
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         SosEventBus.fire(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkOmParameter(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_PARAM);
+        checkOmParameter(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_PARAM);
     }
     
     private void addParameter(OmObservation obs) {
@@ -779,7 +779,7 @@ public class InsertDAOTest extends HibernateTestCase {
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         SosEventBus.fire(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkHeightParameter(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_HEIGHT);
+        checkHeightParameter(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_HEIGHT);
     }
     
     private void checkHeightParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
@@ -824,7 +824,7 @@ public class InsertDAOTest extends HibernateTestCase {
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         SosEventBus.fire(new ObservationInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkDepthParameter(OFFERING1, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_DEPTH);
+        checkDepthParameter(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, OBS_TIME_DEPTH);
     }
     
     private void checkDepthParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {

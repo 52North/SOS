@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -84,7 +84,7 @@
             "#service_transactionalallowedips > div.controls > span.help-block",
             1000,
             "<br /><span class='alert alert-info'>" +
-            "Consider entering the IP of our machine: " +
+            "Consider entering the IP of your machine: " +
             "<code>" +
             "<c:out value="${clientIp}" escapeXml="false"/>" +
             "</code>" +

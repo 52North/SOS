@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,7 +63,7 @@ public class RequestOperatorRepository extends AbstractConfiguringServiceLoaderR
     public static RequestOperatorRepository getInstance() {
         return LazyHolder.INSTANCE;
     }
-
+    
     /**
      * private constructor for singleton
      * 
@@ -79,13 +79,17 @@ public class RequestOperatorRepository extends AbstractConfiguringServiceLoaderR
             throws ConfigurationException {
         this.requestOperators.clear();
         for (final RequestOperator op : requestOperators) {
-            try {
-                LOG.info("Registered IRequestOperator for {}", op.getRequestOperatorKeyType());
-                final boolean active = SettingsManager.getInstance().isActive(op.getRequestOperatorKeyType());
-                this.requestOperators
-                        .put(op.getRequestOperatorKeyType(), new Activatable<RequestOperator>(op, active));
-            } catch (final ConnectionProviderException cpe) {
-                throw new ConfigurationException("Error while checking RequestOperator", cpe);
+            if (op.isSupported()) {
+                try {
+                    LOG.info("Registered RequestOperator for {}", op.getRequestOperatorKeyType());
+                    final boolean active = SettingsManager.getInstance().isActive(op.getRequestOperatorKeyType());
+                    this.requestOperators
+                            .put(op.getRequestOperatorKeyType(), new Activatable<RequestOperator>(op, active));
+                } catch (final ConnectionProviderException cpe) {
+                    throw new ConfigurationException("Error while checking RequestOperator", cpe);
+                }
+            } else {
+                LOG.info("Not supported RequestOperator for {}", op.getRequestOperatorKeyType());
             }
         }
     }

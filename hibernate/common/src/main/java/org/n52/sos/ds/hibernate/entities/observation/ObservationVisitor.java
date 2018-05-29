@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,8 +36,10 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesReferenceObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
@@ -75,6 +77,9 @@ public interface ObservationVisitor<T> {
             throws OwsExceptionReport;
     
     T visit(ProfileObservation o)
+            throws OwsExceptionReport;
+    
+    T visit(ReferenceObservation o)
             throws OwsExceptionReport;
 
 }

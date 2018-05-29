@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
@@ -258,7 +257,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         InterpolationType interpolationType = InterpolationType.Continuous;
         if (sosObservation.isSetValue() &&
                 sosObservation.getValue().isSetValue() &&
-                sosObservation.getValue().getValue().getClass().isAssignableFrom(TVPValue.class) &&
                 sosObservation.getObservationConstellation().isSetDefaultPointMetadata() &&
                 sosObservation.getObservationConstellation().getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata() &&
                 sosObservation.getObservationConstellation().getDefaultPointMetadata()

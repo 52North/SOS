@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.TabableView;
+
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.om.values.Value;
@@ -42,6 +44,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JavaHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -154,10 +157,20 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         if (isSetAdditionalRequestParams() && contains(AdditionalRequestParams.crs)) {
             Object additionalRequestParam = getAdditionalRequestParams(AdditionalRequestParams.crs);
             int targetCRS = -1;
+            int target3DCRS = -1;
             if (additionalRequestParam instanceof Integer) {
                 targetCRS = (Integer) additionalRequestParam;
+                target3DCRS = targetCRS;
             } else if (additionalRequestParam instanceof String) {
                 targetCRS = Integer.parseInt((String) additionalRequestParam);
+                target3DCRS = targetCRS;
+            } else if (additionalRequestParam instanceof List && ((List) additionalRequestParam).size() > 0) {
+                targetCRS = JavaHelper.asInteger(((List) additionalRequestParam).get(0));
+                if (((List) additionalRequestParam).size() == 2) {
+                    target3DCRS = JavaHelper.asInteger(((List) additionalRequestParam).get(1));
+                } else {
+                    target3DCRS = targetCRS;
+                }
             }
             if (observation.isSetParameter()) {
                 for (NamedValue<?> namedValue : observation.getParameter()) {
@@ -165,7 +178,10 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
                         NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
                         spatialFilteringProfileParameter.getValue().setValue(
                                 GeometryHandler.getInstance().transform(
-                                        spatialFilteringProfileParameter.getValue().getValue(), targetCRS));
+                                        spatialFilteringProfileParameter.getValue().getValue(),
+                                        !Double.isNaN(spatialFilteringProfileParameter.getValue().getValue().getCoordinate().z)
+                                        ? target3DCRS
+                                        : targetCRS));
                     }
                 }
             }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -89,6 +89,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -761,6 +762,11 @@ public abstract class AbstractOmEncoderv20
         @Override
         public XmlObject visit(QuantityValue value) throws OwsExceptionReport {
             return encodeGML(value, createHelperValues(value));
+        }
+
+        @Override
+        public XmlObject visit(QuantityRangeValue value) throws OwsExceptionReport {
+            return defaultValue(value);
         }
 
         @Override

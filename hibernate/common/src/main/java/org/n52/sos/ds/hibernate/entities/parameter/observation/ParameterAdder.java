@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,10 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class ParameterAdder {
@@ -50,6 +59,63 @@ public class ParameterAdder {
                 observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
             }
         }
+        if (!(hObservation instanceof ProfileObservation || hObservation instanceof ProfileValuedObservation) && hObservation.hasVerticalFrom() || hObservation.hasVerticalTo()) {
+            if (hObservation.hasVerticalFrom()) {
+                observation.addParameter(getVerticalFrom(hObservation));
+            }
+            if (hObservation.hasVerticalTo()) {
+                observation.addParameter(getVerticalTo(hObservation));
+            }
+            
+        }
+    }
+
+    private NamedValue<?> getVerticalFrom(BaseObservation hObservation) {
+        NamedValue<Double> namedValue = new NamedValue<>();
+        if (hObservation.hasVerticalFromName()) {
+            addName(namedValue, hObservation.getVerticalFromName());
+        } else {
+            addName(namedValue, "from");
+        }
+        namedValue.setValue(new QuantityValue(hObservation.getVerticalFrom()));
+        if (hObservation.hasVerticalUnit()) {
+            addUnit(hObservation.getVerticalUnit(), namedValue.getValue());
+        }
+        return namedValue;
+    }
+
+    private NamedValue<?> getVerticalTo(BaseObservation hObservation) {
+        NamedValue<Double> namedValue = new NamedValue<>();
+        if (hObservation.hasVerticalToName()) {
+            addName(namedValue, hObservation.getVerticalToName());
+        } else {
+            addName(namedValue, "to");
+        }
+        namedValue.setValue(new QuantityValue(hObservation.getVerticalTo()));
+        if (hObservation.hasVerticalUnit()) {
+            addUnit(hObservation.getVerticalUnit(), namedValue.getValue());
+        }
+        return namedValue;
+    }
+
+    private void addUnit(Unit unit, Value<?> v) {
+        if (!v.isSetUnit() && unit instanceof HasUnit && ((HasUnit)unit).isSetUnit()) {
+            Unit u = ((HasUnit)unit).getUnit();
+            UoM uom = new UoM(unit.getUnit());
+            if (u.isSetName()) {
+                u.setName(unit.getName());
+            }
+            if (u.isSetLink()) {
+                uom.setLink(u.getLink());
+            }
+            v.setUnit(uom);
+        }
+    }
+
+    private NamedValue<?> addName(NamedValue<?> namedValue, String name) {
+        ReferenceType referenceType = new ReferenceType(name);
+        namedValue.setName(referenceType);
+        return namedValue;
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.DefaultEncoding;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
@@ -143,7 +144,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
         encodingValues.setEncodingNamespace(response.getResponseFormat());
         // write schemaLocation
-        schemaLocation(getSchemaLocation(encodingValues, encoder));
+        schemaLocation(getSchemaLocation(encodingValues, encoder, response));
         writeNewLine();
         // Map<HelperValues, String> additionalValues = Maps.newHashMap();
         // additionalValues.put(HelperValues.DOCUMENT, null);
@@ -208,7 +209,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
     }
 
     private Set<SchemaLocation> getSchemaLocation(EncodingValues encodingValue,
-            ObservationEncoder<XmlObject, OmObservation> encoder) {
+            ObservationEncoder<XmlObject, OmObservation> encoder, GetObservationResponse response) {
         Set<SchemaLocation> schemaLocations = Sets.newHashSet();
         if (encodingValue.isSetEncoder()
                 && CollectionHelper.isNotEmpty(encodingValue.getEncoder().getSchemaLocations())) {
@@ -218,6 +219,16 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         }
         if (encoder != null && CollectionHelper.isNotEmpty(encoder.getSchemaLocations())) {
             schemaLocations.addAll(encoder.getSchemaLocations());
+        }
+        if (response.getObservationCollection() != null) {
+            for (OmObservation o : response.getObservationCollection()) {
+                if (!(o.getValue() instanceof StreamingObservation) && !(o.getValue() instanceof StreamingValue)
+                        && o.getValue().getValue() instanceof DefaultEncoding
+                        && ((DefaultEncoding) o.getValue().getValue()).isSetDefaultElementEncoding()) {
+                    schemaLocations.addAll(CodingRepository.getInstance().getSchemaLocation(
+                            ((DefaultEncoding) o.getValue().getValue()).getDefaultElementEncoding()));
+                }
+            }
         }
         return schemaLocations;
     }

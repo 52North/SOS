@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,6 +54,7 @@ import net.opengis.swes.x20.UpdateSensorDescriptionType.Description;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DecoderResponseUnsupportedException;
@@ -83,6 +84,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -198,7 +200,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
             final XmlObject xbProcedureDescription =
                     XmlObject.Factory.parse(getNodeFromNodeList(xbInsertSensor.getProcedureDescription().getDomNode()
                             .getChildNodes()));
-
+            checkFormatWithNamespace(xbInsertSensor.getProcedureDescriptionFormat(), XmlHelper.getNamespace(xbProcedureDescription));
             final Decoder<?, XmlObject> decoder =
                     CodingRepository.getInstance().getDecoder(
                             new XmlNamespaceDecoderKey(xbInsertSensor.getProcedureDescriptionFormat(),
@@ -206,16 +208,6 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
             if (decoder == null) {
                 SosHelper.checkProcedureDescriptionFormat(xbInsertSensor.getProcedureDescriptionFormat(),
                         request.getService(), request.getVersion());
-                // if
-                // (StringHelper.isNullOrEmpty(xbInsertSensor.getProcedureDescriptionFormat()))
-                // {
-                //
-                // } else {
-                // throw new InvalidParameterValueException().at(
-                // Sos2Constants.InsertSensorParams.procedureDescriptionFormat).withMessage(
-                // "The requested %s is not supported!",
-                // Sos2Constants.InsertSensorParams.procedureDescriptionFormat.name());
-                // }
             }
             final Object decodedProcedureDescription = decoder.decode(xbProcedureDescription);
             if (decodedProcedureDescription instanceof SosProcedureDescription) {
@@ -226,6 +218,26 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                     "Error while parsing procedure description of InsertSensor request!");
         }
         return request;
+    }
+
+    /**
+     * Check if the namespace of the procedure description element is equal to
+     * the procedure description format of the request.
+     * 
+     * @param procedureDescriptionFormat
+     *            the procedure description format of the request
+     * @param namespace
+     *            the namespace of the procedure description element
+     *            
+     * @throws CodedException
+     *             If the {@code procedureDescriptionFormat} and
+     *             {@code namespace} are not equal
+     */
+    private void checkFormatWithNamespace(String procedureDescriptionFormat, String namespace) throws CodedException {
+        if (!procedureDescriptionFormat.equals(namespace) && !procedureDescriptionFormat.contains(namespace)) {
+            throw new NoApplicableCodeException().withMessage(
+                    "The procedure description namespace '%s' does not match the procedureDescriptionFormat '%s'", namespace, procedureDescriptionFormat);
+        }
     }
 
     private AbstractServiceRequest<?> parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) throws OwsExceptionReport {
@@ -245,7 +257,6 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
      * @param xbUpSenDoc
      *            UpdateSensorDescription document
      * @return SOS UpdateSensor request
-     * 
      * 
      * @throws OwsExceptionReport
      *             * if an error occurs.

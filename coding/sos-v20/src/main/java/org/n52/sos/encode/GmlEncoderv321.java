@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -290,7 +290,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
             return featurePropertyType;
         } else {
             final AbstractSamplingFeature abstractSamplingFeature = (AbstractSamplingFeature) feature;
-            if (feature.isSetGmlID()) {
+            if (feature.isSetGmlID() && feature.isEncoded()) {
                 featurePropertyType.setHref("#" + feature.getGmlId());
                 return featurePropertyType;
             } else {

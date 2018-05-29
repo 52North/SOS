@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -50,13 +50,15 @@ import com.google.common.collect.Maps;
  * @since 4.4.0
  *
  */
-public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double, Value<?>>> {
+public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<QuantityValued<?, ?>, Value<?>>> {
 
     private static final long serialVersionUID = 5209844268871191549L;
 
     private String gmlId;
 
-    private SortedMap<Double, Value<?>> value = Maps.newTreeMap();
+    private SortedMap<QuantityValued<?, ?>, Value<?>> value = Maps.newTreeMap();
+    
+    private String rangeParameters;
 
     private UoM unit;
 
@@ -74,22 +76,30 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
     }
 
     @Override
-    public RectifiedGridCoverage setValue(SortedMap<Double, Value<?>> value) {
+    public RectifiedGridCoverage setValue(SortedMap<QuantityValued<?, ?>, Value<?>> value) {
         this.value.clear();
         addValue(value);
         return this;
     }
-
-    public void addValue(Double key, Value<?> value) {
+    
+    public void addValue(QuantityValued<?, ?> key, Value<?> value) {
         this.value.put(key, value);
     }
 
-    public void addValue(SortedMap<Double, Value<?>> value) {
+    public void addValue(Double key, Value<?> value) {
+        this.value.put(new QuantityValue(key), value);
+    }
+    
+    public void addValue(Double from, Double to, Value<?> value) {
+        this.value.put(new QuantityRangeValue(from, to), value);
+    }
+
+    public void addValue(SortedMap<QuantityValued<?, ?>, Value<?>> value) {
         this.value.putAll(value);
     }
 
     @Override
-    public SortedMap<Double, Value<?>> getValue() {
+    public SortedMap<QuantityValued<?, ?>, Value<?>> getValue() {
         return value;
     }
 
@@ -141,12 +151,27 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
      * 
      * @return The domainSet as {@link Double} {@link List}
      */
-    public List<Double> getDomainSet() {
+    public List<QuantityValued<?, ?>> getDomainSet() {
         return Lists.newArrayList(getValue().keySet());
     }
 
     public Collection<Value<?>> getRangeSet() {
         return getValue().values();
+    }
+
+    @Override
+    public String getRangeParameters() {
+        return rangeParameters;
+    }
+
+    @Override
+    public void setRangeParameters(String rangeParameters) {
+        this.rangeParameters = rangeParameters;
+    }
+    
+    @Override
+    public boolean isSetRangeParameters() {
+        return !Strings.isNullOrEmpty(getRangeParameters());
     }
 
 }

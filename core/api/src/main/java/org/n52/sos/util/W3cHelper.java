@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,9 +48,9 @@ import org.w3c.dom.NodeList;
 
 /**
  * Helper class for W3C
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class W3cHelper {
 
@@ -58,12 +58,12 @@ public final class W3cHelper {
 
     /**
      * Parses w3c.Node to String
-     * 
+     *
      * @param node
      *            Node to parse.
-     * 
+     *
      * @return Node as String.
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs.
      */
@@ -94,21 +94,21 @@ public final class W3cHelper {
 
     /**
      * Get text content from element by namespace.
-     * 
+     *
      * @param element
      *            element
      * @param namespaceURI
      *            Namespace URI
      * @param localName
      *            local name
-     * 
+     *
      * @return Text content.
      */
     public static String getContentFromElement(Element element, String namespaceURI, String localName) {
         String elementContent = null;
         NodeList nodes = element.getElementsByTagNameNS(namespaceURI, localName);
         for (int i = 0; i < nodes.getLength(); i++) {
-            elementContent = nodes.item(i).getTextContent();
+            elementContent = nodes.item(i).getNodeValue();
         }
         return elementContent;
     }

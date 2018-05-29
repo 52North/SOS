@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -58,15 +58,15 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class AbstractObservationDAOTest {
-    
-    
+
+
     TestObservationDAO dao = new TestObservationDAO();
-    
-    
+
+
     /*
      * PhenomenonTime with TimeInstant
      */
-   
+
     @Test
     public void add_phenomenonTime_instant_value() throws OwsExceptionReport {
         Observation<?> observation = new SeriesNumericObservation();
@@ -75,211 +75,194 @@ public class AbstractObservationDAOTest {
         Assert.assertTrue(observation.getPhenomenonTimeStart() != null);
         Assert.assertTrue(observation.getPhenomenonTimeEnd() != null);
     }
-    
+
     @Test
     public void add_phenomenonTime_instant_timeIndeterminatePosition_now() throws OwsExceptionReport {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant phenomenonTime = new TimeInstant(TimeIndeterminateValue.now);
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
         Assert.assertTrue(observation.getPhenomenonTimeStart() != null);
         Assert.assertTrue(observation.getPhenomenonTimeEnd() != null);
     }
-    
+
     @Test(expected=InvalidParameterValueException.class)
     public void add_phenomenonTime_instant_timeIndeterminatePosition_other() throws OwsExceptionReport {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant phenomenonTime = new TimeInstant(TimeIndeterminateValue.unknown);
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
     }
-    
+
     @Test(expected=MissingParameterValueException.class)
     public void add_phenomenonTime_instant_timeIndeterminatePosition_missing() throws OwsExceptionReport {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant phenomenonTime = new TimeInstant();
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
     }
-    
+
     /*
      * ResultTime
      */
-    
+
     @Test
     public void add_resultTime_value() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant(new DateTime());
         dao.addResultTimeToObservation(observation, resultTime, null);
         Assert.assertTrue(observation.getResultTime() != null);
     }
-    
+
     @Test
     public void add_resultTime_timeIndeterminatePosition_now() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant(TimeIndeterminateValue.now);
         dao.addResultTimeToObservation(observation, resultTime, null);
         Assert.assertTrue(observation.getResultTime() != null);
     }
-    
+
     @Test(expected=InvalidParameterValueException.class)
     public void add_resultTime_timeIndeterminatePosition_other() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant(TimeIndeterminateValue.unknown);
         dao.addResultTimeToObservation(observation, resultTime, null);
     }
-    
+
     @Test(expected=NoApplicableCodeException.class)
     public void add_resultTime_timeIndeterminatePosition_missing() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         dao.addResultTimeToObservation(observation, resultTime, null);
     }
-    
+
     @Test
     public void add_resultTime_value_from_phenomenonTime() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant(new DateTime());
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
         Assert.assertTrue(observation.getResultTime() != null);
     }
-    
+
     @Test
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_now() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant(TimeIndeterminateValue.now);
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
         Assert.assertTrue(observation.getResultTime() != null);
     }
-    
+
     @Test(expected=InvalidParameterValueException.class)
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_other() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant(TimeIndeterminateValue.unknown);
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
     }
-    
+
     @Test(expected=NoApplicableCodeException.class)
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_missing() throws CodedException {
-        Observation observation = new SeriesNumericObservation();
+        Observation<?> observation = new SeriesNumericObservation();
         TimeInstant resultTime = new TimeInstant();
         resultTime.setGmlId("#phenomenonTime");
         TimeInstant phenomeonTime = new TimeInstant();
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
     }
-    
+
     public class TestObservationDAO extends AbstractObservationDAO {
 
         @Override
         protected void addObservationContextToObservation(ObservationContext ctx,
                 Observation<?> observation, Session session) throws CodedException {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public Criteria getObservationInfoCriteriaForFeatureOfInterestAndProcedure(String feature, String procedure,
                 Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationInfoCriteriaForFeatureOfInterestAndOffering(String feature, String offering,
                 Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaForProcedure(String procedure, Session session) throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getObservationCriteriaFor(String procedure, String observableProperty,
                 String featureOfInterest, Session session) throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public ScrollableResults getObservations(Set<String> procedure, Set<String> observableProperty,
                 Set<String> featureOfInterest, Set<String> offering, Criterion filterCriterion, Session session) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, ObservationConstellation observationConstellation, Session session)
                 throws CodedException {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public ObservationFactory getObservationFactory() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String addProcedureAlias(Criteria criteria) {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
-            // TODO Auto-generated method stub
             return null;
         }
 

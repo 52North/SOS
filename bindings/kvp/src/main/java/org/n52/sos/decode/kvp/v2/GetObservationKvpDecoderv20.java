@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.shetland.ogc.sos.SosSpatialFilterConstants;
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -46,6 +47,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2Constants.Extensions;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosSpatialFilter;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
@@ -153,7 +155,7 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder {
         if (!request.isSetVersion()) {
             exceptions.add(new MissingVersionParameterException());
         }
-
+        
         exceptions.throwIfNotEmpty();
 
         return request;

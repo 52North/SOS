@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>bindings</artifactId>
-        <version>4.4.0</version>
+        <version>4.4.3-SNAPSHOT</version>
     </parent>
     <artifactId>binding-exi</artifactId>
     <name>52°North SOS - EXI Efficient XML Interchange Binding</name>
@@ -20,6 +20,7 @@
         <dependency>
 			<groupId>com.siemens.ct.exi</groupId>
 			<artifactId>exificient</artifactId>
+			<version>1.0.0</version>
 		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

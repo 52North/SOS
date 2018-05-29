@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -49,6 +49,7 @@ import org.n52.sos.config.SettingValue;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.Datasource;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.web.ControllerConstants;
 import org.n52.sos.web.MetaDataHandler;
@@ -164,6 +165,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         } else {
             LOG.error("Configurator seems to be already instantiated...");
         }
+        RequestOperatorRepository.getInstance().update();
     }
 
     protected void saveDatabaseProperties(Properties properties, InstallationConfiguration c)

@@ -1,0 +1,12 @@
+<div class="map-wrapper">
+    <leaflet id="{{$ctrl.mapId}}" width="100%" height="100%" markers="$ctrl.markers" layers="$ctrl.mapLayers"></leaflet>
+    <div class="mapNotifier" ng-if="$ctrl.loading">
+        <div>
+            <div class="glyphicon glyphicon-refresh icon-spin"></div>
+            <div translate="map.loading"></div>
+        </div>
+    </div>
+    <div class="mapNotifier" ng-if="$ctrl.noResultsFound">
+        <div>No results found</div>
+    </div>
+</div>

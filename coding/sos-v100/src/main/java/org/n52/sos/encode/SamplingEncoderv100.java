@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -136,7 +136,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
     public XmlObject encode(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         XmlObject encodedObject = createFeature(abstractFeature);
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }

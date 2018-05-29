@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -56,14 +55,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
-import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -71,24 +65,20 @@ import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
+import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
@@ -100,6 +90,7 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
@@ -109,33 +100,10 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.MultiPointCoverage;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.ProfileValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TLVTValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.om.values.XmlValue;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
@@ -157,7 +125,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static final String SQL_QUERY_CHECK_SAMPLING_GEOMETRIES = "checkSamplingGeometries";
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
-
+    
     /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
@@ -294,6 +262,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public abstract Criteria getTemoralReferencedObservationCriteriaFor(OmObservation bservation, ObservationConstellation observationConstellation, Session session) throws CodedException;
 
+    
+    public ResultFilterClasses getResultFilterClasses() {
+        return new ResultFilterClasses(getObservationFactory().numericClass(), getObservationFactory().countClass(),
+                getObservationFactory().textClass(), getObservationFactory().categoryClass(),
+                getObservationFactory().complexClass(), getObservationFactory().profileClass());
+    }
+    
     /**
      * Query observation by identifier
      *
@@ -389,7 +364,33 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkTextObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().textClass(), offeringIdentifier, session);
     }
+    
+    /**
+     * Check if there are complex observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkComplexObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getObservationFactory().complexClass(), offeringIdentifier, session);
+    }
 
+    /**
+     * Check if there are profile observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkProfileObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getObservationFactory().profileClass(), offeringIdentifier, session);
+    }
+    
     /**
      * Check if there are blob observations for the offering
      *
@@ -428,7 +429,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkSweDataArrayObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().sweDataArrayClass(), offeringIdentifier, session);
     }
-
+    
+    /**
+     * Check if there are referenced observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkReferenceObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getObservationFactory().referenceClass(), offeringIdentifier, session);
+    }
+    
     /**
      * Get Hibernate Criteria for result model
      *
@@ -488,7 +502,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         } else {
             criteria.add(Restrictions.eq(Observation.PARENT, false));
         }
-
+        criteria.setFetchMode("offerings", org.hibernate.FetchMode.JOIN);
+        criteria.setFetchMode("parameters", org.hibernate.FetchMode.JOIN);
+//        criteria.setFetchMode("value", org.hibernate.FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -511,6 +527,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Map based codespace object cache to prevent redundant queries
      * @param unitCache
      *            Map based unit object cache to prevent redundant queries
+     * @param checkForDuplicatedObservations 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -518,11 +535,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void insertObservationMultiValue(ObservationConstellation observationConstellation,
             AbstractFeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
+            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
             insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
-                    hOfferings, session);
+                    hOfferings, checkForDuplicatedObservations, session);
         }
     }
 
@@ -541,8 +558,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      */
     public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, session);
+            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session) throws OwsExceptionReport {
+        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, checkForDuplicatedObservations, session);
     }
 
     /**
@@ -560,6 +577,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            querying)
      * @param unitCache
      *            Map cache for unit objects (to prevent redundant querying)
+     * @param b 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -568,7 +586,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
             AbstractFeatureOfInterest hFeature, OmObservation sosObservation,
             Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session)
+            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session)
             throws OwsExceptionReport {
         SingleObservationValue<?> value
                 = (SingleObservationValue) sosObservation.getValue();
@@ -580,6 +598,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 codespaceCache,
                 unitCache,
                 hOfferings,
+                checkForDuplicatedObservations,
                 session
         );
         value.getValue().accept(persister);
@@ -759,7 +778,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected boolean checkObservationFor(Class clazz, String offeringIdentifier, Session session) {
         Criteria c = session.createCriteria(clazz).add(Restrictions.eq(Observation.DELETED, false));
-        c.createCriteria(Observation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+        if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+            c.createCriteria(SeriesObservation.SERIES).createCriteria(Series.OFFERING)
+                    .add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+        } else {
+            c.createCriteria(LegacyObservation.OFFERINGS)
+                    .add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+        }
         c.setMaxResults(1);
         LOGGER.debug("QUERY checkObservationFor(clazz, offeringIdentifier): {}", HibernateHelper.getSqlString(c));
         return CollectionHelper.isNotEmpty(c.list());
@@ -1201,7 +1226,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
     }
-
+    
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
+            SubQueryIdentifier identifier, Session session)
+            throws OwsExceptionReport {
+        if (request.hasResultFilter()) {
+            ComparisonFilter resultFilter = request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
+                    getResultFilterClasses(), BaseObservation.OBS_ID, identifier);
+            if (resultFilterExpression != null) {
+                c.add(resultFilterExpression);
+            }
+        }
+    }
+    
     /**
      * Get all observation identifiers
      *
@@ -1232,8 +1270,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.setProjection(SpatialProjections.extent(TemporalReferencedObservation.SAMPLING_GEOMETRY));
-                criteria.createCriteria(Observation.OFFERINGS).add(
-                        Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+                    criteria.createCriteria(SeriesObservation.SERIES).createCriteria(Series.OFFERING)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                } else {
+                    criteria.createCriteria(LegacyObservation.OFFERINGS)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                }
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
                 geom = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
@@ -1243,8 +1286,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 Envelope envelope = null;
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
-                criteria.createCriteria(AbstractObservation.OFFERINGS)
-                        .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+                    criteria.createCriteria(SeriesObservation.SERIES).createCriteria(Series.OFFERING)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                } else {
+                    criteria.createCriteria(LegacyObservation.OFFERINGS)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                }
                 if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), TemporalReferencedObservation.SAMPLING_GEOMETRY)) {
                     criteria.add(Restrictions.isNotNull(TemporalReferencedObservation.SAMPLING_GEOMETRY));
                     criteria.setProjection(Projections.property(TemporalReferencedObservation.SAMPLING_GEOMETRY));
@@ -1387,421 +1435,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     public ParameterFactory getParameterFactory() {
         return ParameterFactory.getInstance();
-    }
-
-    private static class ObservationPersister
-            implements ValueVisitor<Observation<?>> {
-        private static final ObservationVisitor<String> SERIES_TYPE_VISITOR = new SeriesTypeVisitor();
-        private final ObservationConstellation observationConstellation;
-        private final AbstractFeatureOfInterest featureOfInterest;
-        private final Caches caches;
-        private final Session session;
-        private final Geometry samplingGeometry;
-        private final DAOs daos;
-        private final ObservationFactory observationFactory;
-        private final OmObservation sosObservation;
-        private final boolean childObservation;
-        private final Set<Offering> offerings;
-
-        ObservationPersister(
-                AbstractObservationDAO observationDao,
-                OmObservation sosObservation,
-                ObservationConstellation hObservationConstellation,
-                AbstractFeatureOfInterest hFeature,
-                Map<String, Codespace> codespaceCache,
-                Map<UoM, Unit> unitCache,
-                Set<Offering> hOfferings,
-                Session session)
-                throws OwsExceptionReport {
-            this(new DAOs(observationDao),
-                 new Caches(codespaceCache, unitCache),
-                 sosObservation,
-                 hObservationConstellation,
-                 hFeature,
-                 getSamplingGeometry(sosObservation),
-                 hOfferings,
-                 session,
-                 false);
-        }
-
-        private ObservationPersister(
-                DAOs daos,
-                Caches caches,
-                OmObservation observation,
-                ObservationConstellation hObservationConstellation,
-                AbstractFeatureOfInterest hFeature,
-                Geometry samplingGeometry,
-                Set<Offering> hOfferings,
-                Session session,
-                boolean childObservation)
-                throws OwsExceptionReport {
-            this.observationConstellation = hObservationConstellation;
-            this.featureOfInterest = hFeature;
-            this.caches = caches;
-            this.sosObservation = observation;
-            this.samplingGeometry = samplingGeometry;
-            this.session = session;
-            this.daos = daos;
-            this.observationFactory = daos.observation().getObservationFactory();
-            this.childObservation = childObservation;
-            this.offerings = hOfferings;
-            checkForDuplicity();
-        }
-        
-        private void checkForDuplicity() throws OwsExceptionReport {
-            /*
-             *  TODO check if observation exists in database for
-             *  - series, phenTimeStart, phenTimeEnd, resultTime
-             *  - series, phenTimeStart, phenTimeEnd, resultTime, depth/height parameter (same observation different depth/height)
-             */
-             daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellation, session);
-
-        }
-
-        @Override
-        public Observation<?> visit(BooleanValue value) throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.truth(), value);
-        }
-
-        @Override
-        public Observation<?> visit(CategoryValue value)
-                throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.category(), value);
-        }
-
-        @Override
-        public Observation<?> visit(CountValue value)
-                throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.count(), value);
-        }
-
-        @Override
-        public Observation<?> visit(GeometryValue value)
-                throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.geometry(), value);
-        }
-
-        @Override
-        public Observation<?> visit(QuantityValue value)
-                throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.numeric(), value);
-        }
-
-
-        @Override
-        public Observation<?> visit(TextValue value)
-                throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.text(), value);
-        }
-
-        @Override
-        public Observation<?> visit(UnknownValue value)
-                throws OwsExceptionReport {
-            return setUnitAndPersist(observationFactory.blob(), value);
-        }
-
-        @Override
-        public Observation<?> visit(SweDataArrayValue value)
-                throws OwsExceptionReport {
-            return persist(observationFactory.sweDataArray(), value.getValue().getXml());
-        }
-
-        @Override
-        public Observation<?> visit(ComplexValue value)
-                throws OwsExceptionReport {
-            ComplexObservation complex = observationFactory.complex();
-            complex.setParent(true);
-            return persist(complex, persistChildren(value.getValue()));
-        }
-
-        @Override
-        public Observation<?> visit(HrefAttributeValue value)
-                throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(NilTemplateValue value)
-                throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(ReferenceValue value)
-                throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(TVPValue value)
-                throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-        
-        @Override
-        public Observation<?> visit(TLVTValue value)
-                throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        @Override
-        public Observation<?> visit(XmlValue value)
-                throws OwsExceptionReport {
-            throw notSupported(value);
-        }
-
-        private Set<Observation<?>> persistChildren(SweAbstractDataRecord dataRecord)
-                throws HibernateException, OwsExceptionReport {
-            Set<Observation<?>> children = new TreeSet<>();
-            for (SweField field : dataRecord.getFields()) {
-                ObservableProperty observableProperty = getObservablePropertyForField(field);
-                ObservationPersister childPersister = createChildPersister(observableProperty);
-                children.add(field.accept(ValueCreatingSweDataComponentVisitor.getInstance()).accept(childPersister));
-            }
-            session.flush();
-            return children;
-        }
-
-        private ObservationPersister createChildPersister(ObservableProperty observableProperty) throws OwsExceptionReport {
-            return new ObservationPersister(daos, caches, sosObservation,
-                    getObservationConstellation(observableProperty), featureOfInterest,
-                    samplingGeometry, offerings, session, true);
-        }
-
-        private ObservationConstellation getObservationConstellation(ObservableProperty observableProperty) {
-            return daos.observationConstellation()
-                    .checkOrInsertObservationConstellation(
-                            observationConstellation.getProcedure(),
-                            observableProperty,
-                            observationConstellation.getOffering(),
-                            true,
-                            session);
-
-        }
-
-         private OwsExceptionReport notSupported(Value<?> value)
-                throws OwsExceptionReport {
-            throw new NoApplicableCodeException()
-                    .withMessage("Unsupported observation value %s", value
-                                 .getClass().getCanonicalName());
-        }
-
-        private ObservableProperty getObservablePropertyForField(SweField field) {
-            String definition = field.getElement().getDefinition();
-            return daos.observableProperty().getObservablePropertyForIdentifier(definition, session);
-        }
-
-        private <V, T extends Observation<V>> T setUnitAndPersist(T observation, Value<V> value) throws OwsExceptionReport {
-            observation.setUnit(getUnit(value));
-            return persist(observation, value.getValue());
-        }
-
-        private Unit getUnit(Value<?> value) {
-            return value.isSetUnit() ? daos.observation().getUnit(value.getUnitObject(), caches.units(), session) : null;
-        }
-
-        private <V, T extends Observation<V>> T persist(T observation, V value) throws OwsExceptionReport {
-            if (!observation.isSetUnit()) {
-                observation.setUnit(getUnit(sosObservation.getValue().getValue()));
-            }
-            observation.setDeleted(false);
-
-            if (!childObservation) {
-                daos.observation().addIdentifier(sosObservation, observation, session);
-            } else {
-                observation.setChild(true);
-            }
-
-            daos.observation().addName(sosObservation, observation, session);
-            daos.observation().addDescription(sosObservation, observation);
-            daos.observation().addTime(sosObservation, observation);
-
-            observation.setSamplingGeometry(samplingGeometry);
-            checkUpdateFeatureOfInterestGeometry();
-
-            ObservationContext observationContext = daos.observation().createObservationContext();
-
-            String observationType = observation.accept(ObservationTypeObservationVisitor.getInstance());
-
-            if (!daos.observationConstellation().checkObservationType(observationConstellation, observationType, session)) {
-                throw new InvalidParameterValueException()
-                .withMessage("The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
-                                observationType,
-                                observationConstellation.getProcedure().getIdentifier(),
-                                observationConstellation.getObservableProperty().getIdentifier(),
-                                observationConstellation.getOffering().getIdentifier(),
-                                observationConstellation.getObservationType().getObservationType());
-            }
-
-            if (observationConstellation != null) {
-                observationContext.setObservableProperty(observationConstellation.getObservableProperty());
-                observationContext.setProcedure(observationConstellation.getProcedure());
-                observationContext.setOffering(observationConstellation.getOffering());
-            }
-            observation.setValue(value);
-            if (sosObservation.isSetSeriesType()) {
-                observationContext.setSeriesType(sosObservation.getSeriesType());
-            } else {
-                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));  
-            }
-            if (childObservation) {
-                observationContext.setHiddenChild(true);
-            }
-            observationContext.setFeatureOfInterest(featureOfInterest);
-            observation.setOfferings(offerings);
-            daos.observation().fillObservationContext(observationContext, sosObservation, session);
-            daos.observation().addObservationContextToObservation(observationContext, observation, session);
-
-            session.saveOrUpdate(observation);
-
-            if (sosObservation.isSetParameter()) {
-                daos.parameter.insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
-            }
-            return observation;
-        }
-
-        private static Geometry getSamplingGeometry(OmObservation sosObservation) throws OwsExceptionReport {
-            if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
-                return null;
-            }
-            NamedValue<Geometry> spatialFilteringProfileParameter = sosObservation.getSpatialFilteringProfileParameter();
-            Geometry geometry = spatialFilteringProfileParameter.getValue().getValue();
-            return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-        }
-
-        private void checkUpdateFeatureOfInterestGeometry() {
-            // check if flag is set and if this observation is not a child observation
-            if (samplingGeometry != null && ServiceConfiguration.getInstance().isUpdateFeatureGeometry() && !childObservation) {
-                new FeatureOfInterestDAO().updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
-            }
-        }
-
-        private static class Caches {
-            private final Map<String, Codespace> codespaces;
-            private final Map<UoM, Unit> units;
-
-            Caches(Map<String, Codespace> codespaces, Map<UoM, Unit> units) {
-                this.codespaces = codespaces;
-                this.units = units;
-            }
-
-            public Map<String, Codespace> codespaces() {
-                return codespaces;
-            }
-
-            public Map<UoM, Unit> units() {
-                return units;
-            }
-        }
-
-        private static class DAOs {
-            private final ObservablePropertyDAO observableProperty;
-            private final ObservationConstellationDAO observationConstellation;
-            private final AbstractObservationDAO observation;
-            private final ObservationTypeDAO observationType;
-            private final ParameterDAO parameter;
-
-            DAOs(AbstractObservationDAO observationDAO) {
-                this.observation = observationDAO;
-                this.observableProperty = new ObservablePropertyDAO();
-                this.observationConstellation = new ObservationConstellationDAO();
-                this.observationType = new ObservationTypeDAO();
-                this.parameter = new ParameterDAO();
-            }
-
-            public ObservablePropertyDAO observableProperty() {
-                return this.observableProperty;
-            }
-
-            public ObservationConstellationDAO observationConstellation() {
-                return this.observationConstellation;
-            }
-
-            public AbstractObservationDAO observation() {
-                return this.observation;
-            }
-
-            public ObservationTypeDAO observationType() {
-                return this.observationType;
-            }
-
-            public ParameterDAO parameter() {
-                return this.parameter;
-            }
-        }
-        
-        private static class SeriesTypeVisitor implements ObservationVisitor<String> {
-
-            @Override
-            public String visit(NumericObservation o) throws OwsExceptionReport {
-                return "quantity";
-            }
-
-            @Override
-            public String visit(BlobObservation o) throws OwsExceptionReport {
-                return "blob";
-            }
-
-            @Override
-            public String visit(BooleanObservation o) throws OwsExceptionReport {
-                return "boolean";
-            }
-
-            @Override
-            public String visit(CategoryObservation o) throws OwsExceptionReport {
-                return "category";
-            }
-
-            @Override
-            public String visit(ComplexObservation o) throws OwsExceptionReport {
-                return "complex";
-            }
-
-            @Override
-            public String visit(CountObservation o) throws OwsExceptionReport {
-                return "count";
-            }
-
-            @Override
-            public String visit(GeometryObservation o) throws OwsExceptionReport {
-                return "geometry";
-            }
-
-            @Override
-            public String visit(TextObservation o) throws OwsExceptionReport {
-                return "text";
-            }
-
-            @Override
-            public String visit(SweDataArrayObservation o) throws OwsExceptionReport {
-                return "swedataarray";
-            }
-
-            @Override
-            public String visit(ProfileObservation o) throws OwsExceptionReport {
-                return "profile";
-            }
-        }
     }
 
     /**
@@ -1960,4 +1593,5 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             this.maxLon = maxLon;
         }
     }
+    
 }

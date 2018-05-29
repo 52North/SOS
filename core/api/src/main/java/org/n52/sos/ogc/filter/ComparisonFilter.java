@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -58,7 +58,7 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
     /**
      * escape character
      */
-    private String escapeString;
+    private String escapeString = "\\";
 
     /**
      * wild card character
@@ -69,6 +69,11 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
      * single char character
      */
     private String singleChar;
+    
+    /**
+     * match case flag
+     */
+    private boolean matchCase = true;
 
     /**
      * default constructor
@@ -302,6 +307,20 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
         return StringHelper.isNotEmpty(getSingleChar());
     }
     
+    /**
+     * @return the matchCase
+     */
+    public boolean isMatchCase() {
+        return matchCase;
+    }
+
+    /**
+     * @param matchCase the matchCase to set
+     */
+    public void setMatchCase(boolean matchCase) {
+        this.matchCase = matchCase;
+    }
+
     @Override
     public String toString() {
         String result = "ComparisonFilter: ";
@@ -312,6 +331,5 @@ public class ComparisonFilter extends Filter<ComparisonOperator> {
             return result + getValueReference() + " " + getOperator().name() + " " + getValue();
         }
     }
-
 
 }

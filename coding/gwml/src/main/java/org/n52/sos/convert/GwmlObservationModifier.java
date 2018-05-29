@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.gwml.GWMLConstants;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -50,8 +51,11 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -64,6 +68,7 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier<Abs
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
         Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
+        requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
         Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
         for (String service : services) {
@@ -86,17 +91,23 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier<Abs
     @Override
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
-       if (response instanceof GetObservationByIdResponse) {
-           return checkGetObservationByIdResponse((GetObservationByIdResponse)response);
+       if (response instanceof AbstractObservationResponse) {
+           return checkGetObservationResponse((AbstractObservationResponse)response);
        }
        return super.modifyResponse(request, response);
     }
 
-    private AbstractServiceResponse checkGetObservationByIdResponse(GetObservationByIdResponse response) {
+    private AbstractServiceResponse checkGetObservationResponse(AbstractObservationResponse response) {
         for (OmObservation o : response.getObservationCollection()) {
             if (o.getObservationConstellation().isSetObservationType() 
                     && (GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(o.getObservationConstellation().getObservationType())
-                    || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType()))) {
+                    || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType())
+                    || OmConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(o.getObservationConstellation().getObservationType()))) {
+                if (OmConstants.NS_OM_2.equals(response.getResponseFormat())
+                        || GWMLConstants.NS_GWML_22.equals(response.getResponseFormat())
+                        || GWMLConstants.NS_GWML_WELL_22.equals(response.getResponseFormat())) {
+                    o.getObservationConstellation().setObservationType(GWMLConstants.OBS_TYPE_GEOLOGY_LOG);
+                }
                 if (o.isSetValue() && o.getValue() instanceof SingleObservationValue) {
                     if (o.getValue().getValue() instanceof BooleanValue || o.getValue().getValue() instanceof CategoryValue
                             || o.getValue().getValue() instanceof CountValue || o.getValue().getValue() instanceof QuantityValue

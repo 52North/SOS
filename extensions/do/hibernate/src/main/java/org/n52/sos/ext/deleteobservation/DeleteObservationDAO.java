@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,26 +28,42 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesTimeExtrema;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.ds.hibernate.util.TimePrimitiveFieldDescriptor;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractObservationRequest;
@@ -124,6 +140,8 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                 response.setObservationId(request.getObservationIdentifiers().iterator().next());
                 response.setDeletedObservation(so);
             }
+        } else if (EntitiyHelper.getInstance().isSeriesSupported()) {
+            deleteSeriesObservation(DaoFactory.getInstance().getSeriesDAO().getSeries(ids, session), null, session);
         } else {
             if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
                 throw new InvalidParameterValueException(DeleteObservationConstants.PARAM_OBSERVATION,
@@ -138,38 +156,153 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
         if (CollectionHelper.isNotEmpty(request.getTemporalFilters())) {
             filter = TemporalRestrictions.filter(request.getTemporalFilters());
         }
-        ScrollableResults result = DaoFactory.getInstance().getObservationDAO().getObservations(request.getProcedures(),
-                request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(),
-                filter, session);
-        while (result.next()) {
-            delete((Observation<?>) result.get()[0], session);
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
+            deleteSeriesObservation(request, request.getTemporalFilters(), session);
+           
+        } else {
+            ScrollableResults result = DaoFactory.getInstance().getObservationDAO().getObservations(request.getProcedures(),
+                    request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(),
+                    filter, session);
+            if (result.next()) {
+                while (result.next()) {
+                    delete((Observation<?>) result.get()[0], session);
+                }
+            }
         }
     }
     
-    private void delete(Observation<?> observation, Session session) {
+    private Observation<?> delete(Observation<?> observation, Session session) {
         if (observation != null) {
+            if (observation instanceof ComplexObservation) {
+                for (Observation<?> o : ((ComplexObservation)observation).getValue()) {
+                    delete(o, session);
+                }
+            } else if (observation instanceof ProfileObservation) {
+                for (Observation<?> o : ((ProfileObservation)observation).getValue()) {
+                    delete(o, session);
+                }
+            }
             observation.setDeleted(true);
             session.saveOrUpdate(observation);
-            checkSeriesForFirstLatest(observation, session);
             session.flush();
+            return observation;
+        }
+        return null;
+    }
+    
+    private void deleteSeriesObservation(DeleteObservationRequest request, Set<TemporalFilter> filters, Session session)
+            throws CodedException, OwsExceptionReport {
+        deleteSeriesObservation(DaoFactory.getInstance().getSeriesDAO().getSeries(request.getProcedures(),
+                request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(), session),
+                filters, session);
+    }
+
+    private void deleteSeriesObservation(List<Series> serieses, Set<TemporalFilter> filters, Session session) throws CodedException, OwsExceptionReport {
+        boolean temporalFilters = filters != null && !filters.isEmpty();
+        Set<Series> modifiedSeries = new HashSet<>();
+        StringBuilder builder = new StringBuilder();
+        builder.append("update ");
+        builder.append(DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
+            builder.append(" set deleted = :deleted");
+        builder.append(" where seriesid = :id");
+        if (temporalFilters) {
+            builder.append(" AND (" + TemporalRestrictions.filterHql(filters).toString()).append(")");
+        }
+        for (Series s : serieses) {
+            Query q = session.createQuery(builder.toString())
+                    .setBoolean("deleted", true)
+                    .setLong("id", s.getSeriesId());
+            if (temporalFilters) {
+                checkForPlaceholder(q, filters);
+            }
+            int executeUpdate = q.executeUpdate();
+            session.flush();
+            if (executeUpdate > 0) {
+                modifiedSeries.add(s);
+            }
+        }
+        if (!modifiedSeries.isEmpty()) {
+            checkSeriesForFirstLatest(modifiedSeries, session);
+        }
+    }
+
+    private void checkForPlaceholder(Query q, Set<TemporalFilter> filters) throws UnsupportedValueReferenceException {
+        int count = 1;
+        for (TemporalFilter filter : filters) {
+            TimePrimitiveFieldDescriptor tpfd = TemporalRestrictions.getFields(filter.getValueReference());
+            if (filter.getTime() instanceof TimePeriod) {
+                TimePeriod tp = (TimePeriod) filter.getTime();
+                q.setDate(tpfd.getBeginPosition() + count, tp.getStart().toDate());
+                q.setDate(tpfd.getEndPosition() + count, tp.getEnd().toDate());
+            } if (filter.getTime() instanceof TimeInstant) {
+                TimeInstant ti = (TimeInstant) filter.getTime();
+                if (tpfd.isInstant()) {
+                    q.setDate(tpfd.getBeginPosition() + count, ti.getValue().toDate());
+                }
+                if (tpfd.isPeriod()) {
+                    q.setDate(tpfd.getBeginPosition() + count, ti.getValue().toDate());
+                    q.setDate(tpfd.getEndPosition() + count, ti.getValue().toDate());
+                }
+            }
+            count++;
         }
     }
 
     /**
      * Check if {@link Series} should be updated
      * 
-     * @param observation
+     * @param serieses
      *            Deleted observation
      * @param session
      *            Hibernate session
+     * @throws OwsExceptionReport 
      */
-    private void checkSeriesForFirstLatest(Observation<?> observation, Session session) {
-        if (observation instanceof SeriesObservation) {
-            Series series = ((SeriesObservation) observation).getSeries();
-            if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())
-                    || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
-                new SeriesDAO().updateSeriesAfterObservationDeletion(series, (SeriesObservation) observation, session);
+    private void checkSeriesForFirstLatest(Set<Series> serieses, Session session) throws OwsExceptionReport {
+        if (!serieses.isEmpty()) {
+            AbstractSeriesObservationDAO observationDAO =
+                    (AbstractSeriesObservationDAO) DaoFactory.getInstance().getObservationDAO();
+            Map<Long, SeriesTimeExtrema> minMaxTimes = observationDAO.getMinMaxSeriesTimes(serieses, session);
+            for (Series series : serieses) {
+                boolean update = false;
+                if (minMaxTimes.containsKey(series.getSeriesId())) {
+                    SeriesTimeExtrema extrema = minMaxTimes.get(series.getSeriesId());
+                    if (!series.isSetFirstTimeStamp() || (series.isSetFirstTimeStamp() && !DateTimeHelper.makeDateTime(series.getFirstTimeStamp())
+                            .equals(extrema.getMinPhenomenonTime()))) {
+                        series.setFirstTimeStamp(extrema.getMinPhenomenonTime().toDate());
+                        if (series.getSeriesType().equals("quantity")) {
+                            NumericValuedObservation o = (NumericValuedObservation) observationDAO
+                                    .getMinObservation(series, extrema.getMinPhenomenonTime(), session);
+                            series.setFirstNumericValue(o.getValue());
+                        }
+                        update = true;
+                    }
+                    if (!series.isSetLastTimeStamp() || (series.isSetLastTimeStamp() && !DateTimeHelper.makeDateTime(series.getLastTimeStamp())
+                            .equals(extrema.getMaxPhenomenonTime()))) {
+                        series.setLastTimeStamp(extrema.getMaxPhenomenonTime().toDate());
+                        if (series.getSeriesType().equals("quantity")) {
+                            NumericValuedObservation o = (NumericValuedObservation) observationDAO
+                                    .getMaxObservation(series, extrema.getMaxPhenomenonTime(), session);
+                            series.setLastNumericValue(o.getValue());
+                        }
+                        update = true;
+                    }
+                } else {
+                    series.setFirstTimeStamp(null);
+                    series.setFirstNumericValue(null);
+                    series.setLastTimeStamp(null);
+                    series.setLastNumericValue(null);
+                    update = true;
+                }
+                if (update) {
+                    session.saveOrUpdate(series);
+                    session.flush();
+                }
             }
         }
+    }
+
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 }

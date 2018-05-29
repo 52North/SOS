@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -120,4 +120,8 @@ alter table oracle.textfeatparamvalue add constraint featParamTextValueFk foreig
 alter table oracle.textparametervalue add constraint parameterTextValueFk foreign key (parameterId) references oracle.parameter;
 alter table oracle.xmlfeatparamvalue add constraint featParamXmlValueFk foreign key (parameterId) references oracle.featureparameter;
 alter table oracle.xmlparametervalue add constraint parameterXmlValueFk foreign key (parameterId) references oracle.parameter;
+ALTER TABLE oracle.featureofinterest ALTER hibernatediscriminator TYPE character varying(255);
+ALTER TABLE oracle.featureofinterest ALTER hibernatediscriminator DROP NOT NULL;
+UPDATE oracle.featureofinterest SET hibernatediscriminator = null;
+ALTER TABLE oracle.observableproperty DROP COLUMN hibernatediscriminator;
 create sequence oracle.relatedObservationId_seq

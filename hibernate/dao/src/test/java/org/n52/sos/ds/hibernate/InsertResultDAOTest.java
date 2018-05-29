@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,9 +31,13 @@ package org.n52.sos.ds.hibernate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Test;
+import org.n52.sos.config.SettingsManager;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
@@ -48,6 +52,16 @@ public class InsertResultDAOTest extends HibernateTestCase {
     private static final String OBS_PROP_3 = "obsProp_3";
     
     private InsertResultDAO insertResultDAO = new InsertResultDAO();
+    
+    @After
+    public void tearDown() throws OwsExceptionReport, InterruptedException {
+        H2Configuration.truncate();
+    }
+
+    @AfterClass
+    public static void cleanUp() {
+        H2Configuration.recreate();
+    }
     
     @Test
     public void test_getIndexForObservedPropertyAndUnit_SimpleObservation() throws CodedException {

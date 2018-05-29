@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,7 +41,9 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -184,6 +186,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         return getOperationName();
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+    
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty, OmObservationConstellation sosObsConst)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
@@ -224,9 +231,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
                             + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
                             + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
-                            + "'%s' and '%s'!",
+                            + "'%s' and '%s' and swe:DataRecord with element definition '%s'!",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
-                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE);
+                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
         }
     }
 
@@ -247,6 +254,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                 if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_PROCEDURE)) {
                     additionalValues++;
                 }
+            }
+            if (helper.checkDataRecordForParameter(swefield)) {
+                additionalValues++;
             }
         }
         return allowedSize + additionalValues;

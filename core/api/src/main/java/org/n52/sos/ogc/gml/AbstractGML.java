@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.ogc.gml;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -253,9 +254,9 @@ public abstract class AbstractGML implements Serializable{
      *            Feature names to ad
      * @return this
      */
-    public AbstractGML setName(final List<CodeType> name) {
+    public AbstractGML setName(final Collection<CodeType> name) {
         this.names.clear();
-        this.names = name;
+        this.names.addAll(name);
         return this;
     }
 
@@ -363,7 +364,7 @@ public abstract class AbstractGML implements Serializable{
     /**
      * @param metaDataProperty the metaDataProperty to set
      */
-    public void setMetaDataProperty(List<AbstractMetaData> metaDataProperty) {
+    public void setMetaDataProperty(Collection<AbstractMetaData> metaDataProperty) {
         this.metaDataProperty.clear();
         this.metaDataProperty.addAll(metaDataProperty);
     }
@@ -371,7 +372,7 @@ public abstract class AbstractGML implements Serializable{
     /**
      * @param metaDataProperty the metaDataProperty to add
      */
-    public void addMetaDataProperty(List<AbstractMetaData> metaDataProperty) {
+    public void addMetaDataProperty(Collection<AbstractMetaData> metaDataProperty) {
         this.metaDataProperty.addAll(metaDataProperty);
     }
     

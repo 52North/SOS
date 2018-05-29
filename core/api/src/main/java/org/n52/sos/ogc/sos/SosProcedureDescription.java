@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -55,6 +55,7 @@ import com.google.common.collect.Sets;
  *
  */
 public abstract class SosProcedureDescription extends AbstractFeature {
+
     private static final long serialVersionUID = 1144253800787127139L;
     private String sensorDescriptionXmlString;
     private String descriptionFormat;
@@ -66,10 +67,11 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
     private ReferenceType typeOf;
-    
+    private boolean reference;
+
     /**
      * Is it an aggregation procedure, e.g. System, PhysicalSystem
-     * 
+     *
      * @return <code>true</code>, if this is an aggregation procedure
      */
     public boolean isAggragation() {
@@ -81,7 +83,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         super.setIdentifier(identifier);
         return this;
     }
-    
+
     public Set<SosOffering> getOfferings() {
         return offerings;
     }
@@ -93,7 +95,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public SosProcedureDescription addOffering(SosOffering offering) {
         if (offering != null) {
-            this.offerings.add(offering);
+            offerings.add(offering);
         }
         return this;
     }
@@ -124,7 +126,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         this.descriptionFormat = descriptionFormat;
         return this;
     }
-    
+
     public SosProcedureDescription setFeaturesOfInterest(Collection<String> features) {
     	getFeaturesOfInterest().clear();
         getFeaturesOfInterest().addAll(features);
@@ -135,12 +137,12 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         getFeaturesOfInterest().addAll(features);
         return this;
     }
-    
+
     public SosProcedureDescription addFeatureOfInterest(String featureIdentifier) {
         getFeaturesOfInterest().add(featureIdentifier);
         return this;
     }
-    
+
     public Set<String> getFeaturesOfInterest() {
         return featuresOfInterest;
     }
@@ -148,23 +150,23 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public boolean isSetFeaturesOfInterest() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
     }
-    
+
     public SosProcedureDescription setFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
     	this.featuresOfInterestMap.clear();
     	this.featuresOfInterestMap.putAll(featuresOfInterestMap);
         return this;
     }
-    
+
     public SosProcedureDescription addFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
         getFeaturesOfInterestMap().putAll(featuresOfInterestMap);
         return this;
     }
-    
+
     public SosProcedureDescription addFeatureOfInterest(AbstractFeature feature) {
         getFeaturesOfInterestMap().put(feature.getIdentifier(), feature);
         return this;
     }
-    
+
     public Map<String, AbstractFeature> getFeaturesOfInterestMap() {
         return featuresOfInterestMap;
     }
@@ -172,11 +174,11 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public boolean isSetFeaturesOfInterestMap() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterestMap());
     }
-    
+
     public boolean hasAbstractFeatureFor(String identifier) {
         return isSetFeaturesOfInterestMap() && getFeaturesOfInterestMap().containsKey(identifier);
     }
-    
+
     public AbstractFeature getAbstractFeatureFor(String identifier) {
         return getFeaturesOfInterestMap().get(identifier);
     }
@@ -186,14 +188,14 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     	addParentProcedures(parentProcedures);
         return this;
     }
-    
+
     public SosProcedureDescription addParentProcedures(Collection<String> parentProcedures) {
         this.parentProcedures.addAll(parentProcedures);
         return this;
     }
 
     public SosProcedureDescription addParentProcedure(String parentProcedureIdentifier) {
-        this.parentProcedures.add(parentProcedureIdentifier);
+        parentProcedures.add(parentProcedureIdentifier);
         return this;
     }
 
@@ -213,7 +215,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
 
     public SosProcedureDescription addChildProcedure(SosProcedureDescription childProcedure) {
-        this.childProcedures.add(childProcedure);
+        childProcedures.add(childProcedure);
         return this;
     }
 
@@ -255,42 +257,42 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
 
     public Time getValidTime() {
-        return this.validTime;
+        return validTime;
     }
 
     public SosProcedureDescription addPhenomenon(AbstractPhenomenon phenomenon) {
         getPhenomenon().put(phenomenon.getIdentifier(), phenomenon);
         return this;
     }
-    
+
     public SosProcedureDescription setPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
     	getPhenomenon().clear();
         getPhenomenon().putAll(phenomenons);
         return this;
     }
-    
+
     public SosProcedureDescription addPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
         getPhenomenon().putAll(phenomenons);
         return this;
     }
-    
+
     public Map<String, AbstractPhenomenon> getPhenomenon() {
         return phenomenonMap;
     }
-    
+
     public boolean isSetPhenomenon() {
         return CollectionHelper.isNotEmpty(getPhenomenon());
     }
-    
+
     public boolean hasPhenomenonFor(String identifier) {
         return isSetPhenomenon() && getPhenomenon().containsKey(identifier);
     }
-    
+
     public AbstractPhenomenon getPhenomenonFor(String identifer) {
         return getPhenomenon().get(identifer);
     }
-    
-    
+
+
     /**
      * Copies all values from this object to the copyOf object except XML description and description format
      * @param copyOf {@link SosProcedureDescription} to copy values to
@@ -305,7 +307,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         copyOf.setChildProcedures(getChildProcedures());
         copyOf.setTypeOf(getTypeOf());
     }
-    
+
     public boolean isSetFeatures() {
         return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
     }
@@ -323,8 +325,8 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public void setTypeOf(ReferenceType typeOf) {
         this.typeOf = typeOf;
     }
-    
-    
+
+
     /**
      * @return <code>true</code>, if typeOf is not null
      */
@@ -385,7 +387,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public boolean supportsObservablePropertyName() {
         return false;
     }
-    
+
     public boolean isSetObservablePropertyNameFor(String observableProperty) {
         return false;
     }
@@ -408,5 +410,18 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public boolean getInsitu() {
         return true;
+    }
+
+    /**
+     * Flag used by the REST API for displaying reference values. Not used by OGC SOS interface
+     *
+     * @return the reference flag state
+     */
+    public boolean isReference() {
+        return reference;
+    }
+
+    public void setReference(boolean isReference) {
+        reference = isReference;
     }
 }

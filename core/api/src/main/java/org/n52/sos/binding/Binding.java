@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ import org.n52.sos.util.http.MediaType;
  * 
  * @since 4.0.0
  */
-public abstract class Binding implements ConformanceClass, OwsExceptionReportHandler {
+public interface Binding extends ConformanceClass, OwsExceptionReportHandler {
     /**
      * HTTP DELETE request handling method
      * 
@@ -69,7 +69,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * @throws IOException
      *             if an IO error occurs
      */
-    public void doDeleteOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
+    default void doDeleteOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
             IOException {
         throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
     }
@@ -89,7 +89,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * @throws IOException
      *             if an IO error occurs
      */
-    public void doGetOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
+    default void doGetOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
             IOException {
         throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
     }
@@ -109,7 +109,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * @throws IOException
      *             if an IO error occurs
      */
-    public void doOptionsOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
+    default void doOptionsOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
             IOException {
         throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
     }
@@ -129,7 +129,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * @throws IOException
      *             if an IO error occurs
      */
-    public void doPostOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
+    default void doPostOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
             IOException {
         throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
     }
@@ -149,7 +149,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * @throws IOException
      *             if an IO error occurs
      */
-    public void doPutOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
+    default void doPutOperation(HttpServletRequest request, HttpServletResponse response) throws HTTPException,
             IOException {
         throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
     }
@@ -162,7 +162,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * 
      * @return URL pattern
      */
-    public abstract String getUrlPattern();
+    String getUrlPattern();
 
     /**
      * Check, if the operation is supported by the decoder by the HTTP-Delete
@@ -177,7 +177,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * 
      * @throws HTTPException
      */
-    public boolean checkOperationHttpDeleteSupported(OperationKey decoderKey) throws HTTPException {
+    default boolean checkOperationHttpDeleteSupported(OperationKey decoderKey) throws HTTPException {
         return false;
     }
 
@@ -194,7 +194,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * 
      * @throws HTTPException
      */
-    public boolean checkOperationHttpGetSupported(OperationKey decoderKey) throws HTTPException {
+    default boolean checkOperationHttpGetSupported(OperationKey decoderKey) throws HTTPException {
         return false;
     }
 
@@ -211,7 +211,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * 
      * @throws HTTPException
      */
-    public boolean checkOperationHttpPostSupported(OperationKey decoderKey) throws HTTPException {
+    default boolean checkOperationHttpPostSupported(OperationKey decoderKey) throws HTTPException {
         return false;
     }
 
@@ -228,7 +228,7 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * 
      * @throws HTTPException
      */
-    public boolean checkOperationHttpOptionsSupported(OperationKey decoderKey) throws HTTPException {
+    default boolean checkOperationHttpOptionsSupported(OperationKey decoderKey) throws HTTPException {
         return false;
     }
 
@@ -245,14 +245,14 @@ public abstract class Binding implements ConformanceClass, OwsExceptionReportHan
      * 
      * @throws HTTPException
      */
-    public boolean checkOperationHttpPutSupported(OperationKey decoderKey) throws HTTPException {
+    default boolean checkOperationHttpPutSupported(OperationKey decoderKey) throws HTTPException {
         return false;
     }
     
     /**
      * @return the message encoding used as a constraint for the DCP
      */
-    public Set<MediaType> getSupportedEncodings() {
+    default Set<MediaType> getSupportedEncodings() {
         return null;
     }
 }

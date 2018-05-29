@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ public class SeriesParameterDAO {
         if (HibernateHelper.isEntitySupported(SeriesParameter.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Restrictions.eq(SeriesParameter.SERIES_ID, series));
-            LOGGER.debug("QUERY getSeriesParameter(): {series}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getSeriesParameter(): {series}", HibernateHelper.getSqlString(c));
             return c.list();
         }
         return Collections.EMPTY_LIST;

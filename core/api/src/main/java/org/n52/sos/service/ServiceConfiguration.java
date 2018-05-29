@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -161,6 +161,12 @@ public class ServiceConfiguration {
     private File cacheFileFolder;
 
     private boolean createFeatureGeometryFromSamplingGeometries = false;
+    
+    private boolean convertComplexProfileToSingleProfiles = true;
+
+    private Integer requestTimeout = 0;
+
+    private boolean checkForDuplicatedObservations = true;
 
     /**
      * Returns the default token seperator for results.
@@ -514,6 +520,37 @@ public class ServiceConfiguration {
 
     public boolean isCreateFeatureGeometryFromSamplingGeometries() {
         return createFeatureGeometryFromSamplingGeometries;
+    }
+    
+    @Setting(MiscSettings.CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+    public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
+        this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;
+    }
+
+    public boolean isConvertComplexProfileToSingleProfiles() {
+        return this.convertComplexProfileToSingleProfiles;
+    }
+    
+    @Setting(ServiceSettings.REQUEST_TIMEOUT)
+    public void setRequestTimeout(Integer requestTimeout) {
+        if (requestTimeout != null) {
+            this.requestTimeout = requestTimeout;
+        }
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+    
+    @Setting(ServiceSettings.CHECK_FOR_REQUEST_DUPLICITY)
+    public void setCheckForDuplicatedObservations(Boolean checkForDuplicatedObservations) {
+        if (checkForDuplicatedObservations != null) {
+            this.checkForDuplicatedObservations = checkForDuplicatedObservations;
+        }
+    }
+
+    public boolean isCheckForDuplicatedObservations() {
+        return checkForDuplicatedObservations;
     }
 
     /*

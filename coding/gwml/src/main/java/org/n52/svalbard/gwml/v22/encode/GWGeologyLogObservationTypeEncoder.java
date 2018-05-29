@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,6 +46,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
@@ -57,13 +58,15 @@ import net.opengis.om.x20.OMObservationType;
 
 public class GWGeologyLogObservationTypeEncoder extends OmEncoderv20 {
     
-    private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22, OmObservation.class);
+    @SuppressWarnings("unchecked")
+    private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(
+            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22, OmObservation.class),
+            CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_WELL_22, OmObservation.class));
     
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
             SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG, 
                     GWMLConstants.OBS_TYPE_GEOLOGY_LOG, OmConstants.OBS_TYPE_CATEGORY_OBSERVATION, 
-                    OmConstants.OBS_TYPE_TEXT_OBSERVATION));
+                    OmConstants.OBS_TYPE_TEXT_OBSERVATION, OmConstants.OBS_TYPE_PROFILE_OBSERVATION));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -155,11 +158,14 @@ public class GWGeologyLogObservationTypeEncoder extends OmEncoderv20 {
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         nameSpacePrefixMap.put(GWMLConstants.NS_GWML_22, GWMLConstants.NS_GWML_2_PREFIX);
+        nameSpacePrefixMap.put(GWMLConstants.NS_GWML_WELL_22, GWMLConstants.NS_GWML_WELL_2_PREFIX);
     }
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(GWMLConstants.GWML_22_SCHEMA_LOCATION);
+        Set<SchemaLocation> schemaLocations = Sets.newHashSet(GWMLConstants.GWML_22_SCHEMA_LOCATION, GWMLConstants.GWML_WELL_22_SCHEMA_LOCATION);
+        schemaLocations.addAll(super.getSchemaLocations());
+        return schemaLocations;
     }
 
     private void encodeStartDepth(StartDepth sd, SweQuantity sweQuantity) throws OwsExceptionReport {

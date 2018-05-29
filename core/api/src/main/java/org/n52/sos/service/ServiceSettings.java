@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.FileSettingDefinition;
+import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 
@@ -76,6 +77,10 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
 
     public static final String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
+    
+    public static final String CHECK_FOR_REQUEST_DUPLICITY = "service.checkForRequestDuplicity";
+    
+    public static final String REQUEST_TIMEOUT = "service.requestTimeout";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -88,7 +93,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     "The endpoint URL of this sos which will be shown in the GetCapabilities response "
                             + "(e.g. <code>http://localhost:8080/52nSOS/sos</code> or <code>http://localhost:8080/52nSOS/service</code>)."
                             + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
-                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>.");
+                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>.");
 
     public static final StringSettingDefinition SENSOR_DIRECTORY_DEFINITION =
             new StringSettingDefinition()
@@ -217,6 +222,25 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setDescription(
                             "Whether the SOS should if the response contains duplicated observations. Only necessary if you have inserted an observation for multiple offerings!");
       
+     
+     public static final BooleanSettingDefinition CHECK_FOR_REQUEST_DUPLICITY_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(24)
+                     .setKey(CHECK_FOR_REQUEST_DUPLICITY)
+                     .setDefaultValue(true)
+                     .setTitle("Should this SOS check for duplicated observations in the request?")
+                     .setDescription(
+                            "Whether the SOS should check if the request contains duplicated observations. Consider that this may lead to duplicated observation in the database!!!");
+      
+     
+     public static final IntegerSettingDefinition REQUEST_TIMEOUT_DEFINITION =
+             new IntegerSettingDefinition()
+                     .setGroup(GROUP)
+                     .setKey(REQUEST_TIMEOUT)
+                     .setDefaultValue(0)
+                     .setTitle("Request timeout value in seconds")
+                     .setDescription("Set the request timeout value in seconds. Set to <code>0</code> (zero) for no timeout.");
     
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
@@ -231,7 +255,9 @@ public class ServiceSettings implements SettingDefinitionProvider {
             CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION,
             ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE_DEFINITION,
             INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION,
-            CHECK_FOR_DUPLICITY_DEFINITION);
+            CHECK_FOR_DUPLICITY_DEFINITION,
+            REQUEST_TIMEOUT_DEFINITION,
+            CHECK_FOR_REQUEST_DUPLICITY_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -85,6 +85,11 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new featureOfInterest!";
         throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg).setStatus(status);
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
 }

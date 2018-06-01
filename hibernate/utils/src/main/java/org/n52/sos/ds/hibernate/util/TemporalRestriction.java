@@ -73,7 +73,21 @@ public interface TemporalRestriction {
             throw new UnsupportedTimeException(time);
         }
     }
+    
+    default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time, Integer count) throws UnsupportedTimeException {
+        if (time instanceof TimePeriod) {
+            return filterWithPeriod((TimePeriod) time, ref, false, count);
+        } else if (time instanceof TimeInstant) {
+            return filterWithInstant((TimeInstant) time, ref);
+        } else {
+            throw new UnsupportedTimeException(time);
+        }
+    }
 
+    default String getPlaceHolder(String placeHolder, Integer count) {
+        return count != null ? ":" + placeHolder + count : ":" + placeHolder;
+    }
+    
     /**
      * Applies this restriction to the specified time periods.
      *
@@ -101,6 +115,11 @@ public interface TemporalRestriction {
      */
     default Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                                               boolean isOtherPeriodFromReducedPrecisionInstant) {
+        return null;
+    }
+    
+    default Criterion filterInstantWithPeriod(String position, String endPosition, Date begin, Date end,
+            boolean periodFromReducedPrecisionInstant) {
         return null;
     }
 
@@ -149,12 +168,35 @@ public interface TemporalRestriction {
         }
         if (r.isPeriod()) {
             return getPropertyCheckingCriterion(
-                    filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-                    filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
         } else {
             return filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
         }
 
+    }
+
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r, boolean periodFromReducedPrecisionInstant, Integer count) {
+        Date begin = time.resolveStart().toDate();
+        // FIXME should also incorporate reduced precision like getRequestedTimeLength()
+        // (Partially?) fixed with use of periodFromReducedPrecisionInstant?
+        Date end = time.resolveEnd().toDate();
+        if (begin.equals(end)) {
+            return filterWithInstant(new TimeInstant(time.resolveStart()), r);
+        }
+        if (r.isPeriod()) {
+            return count != null
+                    ? getPropertyCheckingCriterion(
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                            filterInstantWithPeriod(r.getPosition(), r.getEndPosition(), begin, end, periodFromReducedPrecisionInstant), r)
+                    : getPropertyCheckingCriterion(
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
+        } else {
+            return count != null
+                    ? filterInstantWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end, periodFromReducedPrecisionInstant)
+                    : filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
+        }
     }
 
     /**

@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.shetland.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sensorML.elements.SmlParameter;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
@@ -238,7 +239,7 @@ public abstract class AbstractWaterMLv20SensorMLConverter
     }
 
     private void convertSMLParametersToObservationProcessParameter(final ObservationProcess observationProcess,
-            final List<String> parameters) {
+            final List<SmlParameter> parameters) {
         // TODO Auto-generated method stub
     }
 

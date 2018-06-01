@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -221,14 +222,19 @@ public class SQLScriptGenerator {
                         .toString();
         boolean duplicate = false;
         List<String> checkedSchema = Lists.newLinkedList();
+        Set<String> set = new HashSet<>();
         for (String string : create) {
             if (string.contains(hexStringToCheck)) {
                 if (!duplicate) {
-                    checkedSchema.add(string);
+                    if (set.add(string)) {
+                        checkedSchema.add(string);
+                    }
                     duplicate = true;
                 }
             } else {
-                checkedSchema.add(string);
+                if (set.add(string)) {
+                    checkedSchema.add(string);
+                }
             }
         }
         return Sets.newLinkedHashSet(checkedSchema);

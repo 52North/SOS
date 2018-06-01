@@ -146,7 +146,7 @@
       <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="http://www.mudak-wrm.kit.edu/">MuDak-WRM</a> (co-funded by the German Federal Ministry of Education and Research, programme FONA)</td>
    </tr>
    <tr>
-    <td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/"><img alt="SeaDataCloud" align="middle" width="156" src="<c:url value="/static/images/funding/logo_seadatanet.png"/>"/></a></td>
+    <td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/"><img alt="SeaDataCloud" align="middle" width="156" src="<c:url value="/static/images/funding/LOGO_SDC_Layer_opengraphimage.png"/>"/></a></td>
     <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">Horizon 2020</a> research project <a target="_blank" href="https://www.seadatanet.org/About-us/SeaDataCloud/">SeaDataCloud</a> (co-funded by the European Commission under the grant agreement n&deg;730960)</td>
   </tr>
     <tr>

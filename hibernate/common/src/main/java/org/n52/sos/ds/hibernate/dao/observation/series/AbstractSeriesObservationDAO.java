@@ -93,7 +93,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
     private final SeriesTimeTransformer transformer = new SeriesTimeTransformer();
-    
+
     public AbstractSeriesObservationDAO(DaoFactory daoFactory) {
         super(daoFactory);
     }
@@ -903,7 +903,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
         c.setResultTransformer(transformer);
-        
+
         Map<Long, SeriesTimeExtrema> map = Maps.newHashMap();
         for (SeriesTimeExtrema result : (List<SeriesTimeExtrema>) c.list()) {
             if (result.isSetSeries()) {
@@ -912,7 +912,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         }
         return map;
     }
-    
+
     private class SeriesTimeTransformer implements ResultTransformer {
         private static final long serialVersionUID = -373512929481519459L;
 
@@ -940,7 +940,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, time.toDate()));
         return (Data<?>) c.uniqueResult();
     }
-    
+
     public Object getMaxObservation(Dataset series, DateTime time, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));

@@ -38,7 +38,6 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.sos.ds.hibernate.util.restriction.AfterRestriction;
 import org.n52.sos.ds.hibernate.util.restriction.BeforeRestriction;
@@ -141,7 +140,7 @@ public class SosTemporalRestrictions {
                                                                  UnsupportedOperatorException {
         return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()), filter.getTime());
     }
-    
+
     public static Criterion filterHql(TemporalFilter filter, Integer count) throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()), filter.getTime(), count);
     }
@@ -171,7 +170,7 @@ public class SosTemporalRestrictions {
         disjunctions.forEach(conjunction::add);
         return conjunction;
     }
-    
+
     public static Criterion filterHql(Iterable<TemporalFilter> temporalFilters)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Conjunction conjunction = Restrictions.conjunction();
@@ -212,7 +211,7 @@ public class SosTemporalRestrictions {
         }
         return map.values();
     }
-    
+
     private static Collection<Disjunction> getDisjunctionHql(Iterable<TemporalFilter> temporalFilters)
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         Map<String, Disjunction> map = Maps.newHashMap();

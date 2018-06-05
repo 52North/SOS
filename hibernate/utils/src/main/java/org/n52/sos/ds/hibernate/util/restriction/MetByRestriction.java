@@ -61,4 +61,9 @@ public class MetByRestriction implements TemporalRestriction {
         return Restrictions.eq(selfBegin, otherEnd);
     }
 
+    @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.eq(selfBegin, getEndPlaceHolder(count));
+    }
+
 }

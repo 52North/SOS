@@ -95,10 +95,10 @@ public final class HibernateHelper {
 
         return walker.getSQLString();
     }
-    
+
     public static String getSqlString(Criterion criterion, Criteria criteria) {
         CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
-        SessionImplementor session = criteriaImpl.getSession();
+        SharedSessionContractImplementor session = criteriaImpl.getSession();
         SessionFactoryImplementor factory = session.getFactory();
         CriteriaQueryTranslator translator =
                 new CriteriaQueryTranslator(factory, criteriaImpl, criteriaImpl.getEntityOrClassName(),

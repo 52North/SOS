@@ -64,6 +64,12 @@ public class EqualsRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.and(Restrictions.eq(selfBegin, getStartPlaceHolder(count)),
+                                Restrictions.eq(selfEnd, getEndPlaceHolder(count)));
+    }
+
+    @Override
     public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                                              boolean isOtherPeriodFromReducedPrecisionInstant) {
         if (!isOtherPeriodFromReducedPrecisionInstant) {
@@ -75,8 +81,18 @@ public class EqualsRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
+        return Restrictions.and(Restrictions.ge(selfPosition, getStartPlaceHolder( count)),
+                Restrictions.le(selfPosition, getStartPlaceHolder(count)));
+    }
+
+    @Override
     public Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
         return Restrictions.eq(selfPosition, otherPosition);
     }
 
+    @Override
+    public Criterion filterInstantWithInstant(String selfPosition, String otherPosition, Integer count) {
+        return Restrictions.eq(selfPosition, getInstantPlaceHolder(count));
+    }
 }

@@ -62,9 +62,19 @@ public class BeforeRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.lt(selfEnd, getEndPlaceHolder(count));
+    }
+
+    @Override
     public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                                                 boolean isOtherPeriodFromReducedPrecisionInstant) {
         return Restrictions.lt(selfPosition, otherBegin);
+    }
+
+    @Override
+    public Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
+        return Restrictions.lt(selfPosition, getStartPlaceHolder(count));
     }
 
     @Override
@@ -73,8 +83,17 @@ public class BeforeRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.lt(selfEnd, getInstantPlaceHolder(count));
+    }
+
+    @Override
     public Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
         return Restrictions.lt(selfPosition, otherPosition);
     }
 
+    @Override
+    public Criterion filterInstantWithInstant(String selfPosition, String otherPosition, Integer count) {
+        return Restrictions.lt(selfPosition, getInstantPlaceHolder(count));
+    }
 }

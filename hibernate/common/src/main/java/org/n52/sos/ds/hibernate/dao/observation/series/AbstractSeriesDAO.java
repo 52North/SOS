@@ -134,7 +134,7 @@ public abstract class AbstractSeriesDAO
      */
     public abstract List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport;
-    
+
     /**
      * Get series for series identifiers
      * @param identifiers Series identifiers to get series for

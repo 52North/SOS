@@ -63,10 +63,15 @@ public class DuringRestriction implements TemporalRestriction {
     }
 
     @Override
-    public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-                                             boolean isOtherPeriodFromReducedPrecisionInstant) {
-        return Restrictions.and(Restrictions.gt(selfPosition, otherBegin),
-                                Restrictions.lt(selfPosition, otherEnd));
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
+                                Restrictions.lt(selfEnd, getEndPlaceHolder(count)));
+    }
+
+    @Override
+    public Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
+                                Restrictions.lt(selfBegin, getEndPlaceHolder(count)));
     }
 
 }

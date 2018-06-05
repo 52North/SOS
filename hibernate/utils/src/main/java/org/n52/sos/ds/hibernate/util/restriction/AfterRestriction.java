@@ -62,9 +62,19 @@ public class AfterRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.gt(selfBegin, getEndPlaceHolder(count));
+    }
+
+    @Override
     public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                                                 boolean periodFromReducedPrecisionInstant) {
         return Restrictions.gt(selfPosition, otherEnd);
+    }
+
+    @Override
+    public Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
+        return Restrictions.gt(selfPosition, getEndPlaceHolder( count));
     }
 
     @Override
@@ -73,8 +83,17 @@ public class AfterRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.gt(selfBegin, getInstantPlaceHolder(count));
+    }
+
+    @Override
     public Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
         return Restrictions.gt(selfPosition, otherPosition);
     }
 
+    @Override
+    public Criterion filterInstantWithInstant(String selfPosition, String otherPosition, Integer count) {
+        return Restrictions.gt(selfPosition, getInstantPlaceHolder(count));
+    }
 }

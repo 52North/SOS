@@ -1090,7 +1090,7 @@ public final class TemporalRestrictions {
             throws UnsupportedTimeException {
         return restriction.getCriterion(property, value);
     }
-    
+
     private static Criterion filter(TemporalRestriction restriction, TimePrimitiveFieldDescriptor property, Time value, Integer count)
             throws UnsupportedTimeException {
         return restriction.getCriterion(property, value, count);
@@ -1112,12 +1112,12 @@ public final class TemporalRestrictions {
             throws UnsupportedOperatorException, UnsupportedTimeException {
         return filter(operator, new TimePrimitiveFieldDescriptor(property), value);
     }
-    
+
     public static Criterion filter(TimeOperator operator, String property, Time value, Integer count)
             throws UnsupportedOperatorException, UnsupportedTimeException {
         return filter(operator, new TimePrimitiveFieldDescriptor(property), value, count);
     }
-    
+
     /**
      * Create a new {@code Criterion} using the specified operator, fields and value
      *

@@ -61,4 +61,9 @@ public class MeetsRestriction implements TemporalRestriction {
         return Restrictions.eq(selfEnd, otherBegin);
     }
 
+    @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.eq(selfEnd, getStartPlaceHolder(count));
+    }
+
 }

@@ -40,7 +40,6 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.query.Query;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
@@ -69,8 +68,9 @@ import org.n52.sos.ds.AbstractDeleteObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesTimeExtrema;
+import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
-import org.n52.sos.ds.hibernate.util.TimePrimitiveFieldDescriptor;
+import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
@@ -177,23 +177,6 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
     private void deleteObservationByParameter(DeleteObservationRequest request, DeleteObservationResponse response,
             Session session) throws OwsExceptionReport {
-        // Criterion filter = null;
-        // if (CollectionHelper.isNotEmpty(request.getTemporalFilters())) {
-        // filter =
-        // SosTemporalRestrictions.filter(request.getTemporalFilters());
-        // }
-        // ScrollableResults result =
-        // daoFactory.getObservationDAO().getObservations(request.getProcedures(),
-        // request.getObservedProperties(), request.getFeatureIdentifiers(),
-        // request.getOfferings(), filter,
-        // session);
-        // while (result.next()) {
-        // delete((DataEntity<?>) result.get()[0], session);
-        // }
-        Criterion filter = null;
-        if (CollectionHelper.isNotEmpty(request.getTemporalFilters())) {
-            filter = SosTemporalRestrictions.filter(request.getTemporalFilters());
-        }
         deleteObservation(request, request.getTemporalFilters(), session);
     }
 
@@ -206,7 +189,6 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
             }
             observation.setDeleted(true);
             session.saveOrUpdate(observation);
-            // checkSeriesForFirstLatest(observation, session);
             if (deletePhysically) {
                 session.delete(observation);
             }
@@ -227,13 +209,14 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         StringBuilder builder = new StringBuilder();
         builder.append("update ");
         builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(" set deleted = :deleted");
-        builder.append(" where seriesid = :id");
+        builder.append(" set ").append(DataEntity.PROPERTY_DELETED).append(" = :").append(DataEntity.PROPERTY_DELETED);
+        builder.append(" where ").append(DataEntity.PROPERTY_DATASET).append(" = :").append(DataEntity.PROPERTY_DATASET);
         if (temporalFilters) {
             builder.append(" AND (" + SosTemporalRestrictions.filterHql(filters).toString()).append(")");
         }
         for (Dataset s : serieses) {
-            Query q = session.createQuery(builder.toString()).setBoolean("deleted", true).setLong("id", s.getId());
+            Query<?> q = session.createQuery(builder.toString()).setParameter(DataEntity.PROPERTY_DELETED, true)
+                    .setParameter(DataEntity.PROPERTY_DATASET, s);
             if (temporalFilters) {
                 checkForPlaceholder(q, filters);
             }
@@ -248,25 +231,23 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         }
     }
 
-    private void checkForPlaceholder(Query q, Collection<TemporalFilter> filters)
+    private void checkForPlaceholder(Query<?> q, Collection<TemporalFilter> filters)
             throws UnsupportedValueReferenceException {
+
         int count = 1;
         for (TemporalFilter filter : filters) {
-            TimePrimitiveFieldDescriptor tpfd = SosTemporalRestrictions.getFields(filter.getValueReference());
             if (filter.getTime() instanceof TimePeriod) {
                 TimePeriod tp = (TimePeriod) filter.getTime();
-                q.setDate(tpfd.getBeginPosition() + count, tp.getStart().toDate());
-                q.setDate(tpfd.getEndPosition() + count, tp.getEnd().toDate());
+                if (q.getComment().contains(":" + TemporalRestriction.START)) {
+                    q.setParameter(TemporalRestriction.START + count, tp.getStart().toDate(), UtcTimestampType.INSTANCE);
+                }
+                if (q.getComment().contains(":" + TemporalRestriction.END)) {
+                    q.setParameter(TemporalRestriction.END + count, tp.getEnd().toDate(), UtcTimestampType.INSTANCE);
+                }
             }
             if (filter.getTime() instanceof TimeInstant) {
                 TimeInstant ti = (TimeInstant) filter.getTime();
-                if (tpfd.isInstant()) {
-                    q.setDate(tpfd.getBeginPosition() + count, ti.getValue().toDate());
-                }
-                if (tpfd.isPeriod()) {
-                    q.setDate(tpfd.getBeginPosition() + count, ti.getValue().toDate());
-                    q.setDate(tpfd.getEndPosition() + count, ti.getValue().toDate());
-                }
+                q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue().toDate(), UtcTimestampType.INSTANCE);
             }
             count++;
         }
@@ -274,7 +255,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
     /**
      * Check if {@link Dataset} should be updated
-     * 
+     *
      * @param serieses
      *            Deleted observation
      * @param session

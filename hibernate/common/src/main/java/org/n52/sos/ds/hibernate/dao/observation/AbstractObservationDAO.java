@@ -1350,7 +1350,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void checkForDuplicatedObservations(OmObservation sosObservation, ObservationConstellation observationConstellation, Session session) throws OwsExceptionReport {
         Criteria c = getTemoralReferencedObservationCriteriaFor(sosObservation, observationConstellation, session);
-        addAdditionalObservationIdentification(c, sosObservation);
         // add times check (start/end phen, result)
         List<TemporalFilter> filters = Lists.newArrayListWithCapacity(2);
         filters.add(getPhenomeonTimeFilter(c, sosObservation.getPhenomenonTime()));

@@ -187,22 +187,32 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     protected ObservationContext fillObservationContext(
             ObservationContext ctx, OmObservation sosObservation, Session session) {
         if (ctx instanceof EReportingObservationContext) {
+            boolean samplingPointAdded = false;
+            boolean assessmentTypeAdded = false;
+            AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
             if (sosObservation.isSetParameter()) {
-                AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
                 List<NamedValue<?>> remove = Lists.newArrayList();
                 for (NamedValue<?> namedValue : sosObservation.getParameter()) {
                     if (checkForSamplingPoint(namedValue.getName())) {
                         addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
+                        samplingPointAdded = true;
                     } else if (checkForAssessmentType(namedValue.getName())) {
                         addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
+                        assessmentTypeAdded = true;
                     }
                 }
                 sosObservation.getParameter().removeAll(remove);
-                ((EReportingObservationContext) ctx)
-                        .setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
+                
             }
+            if (!samplingPointAdded) {
+                addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, new ReferenceValue(new ReferenceType(ctx.getFeatureOfInterest().getIdentifier(), ctx.getFeatureOfInterest().getName())));
+            }
+            if (!assessmentTypeAdded) {
+                addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, new ReferenceValue(new ReferenceType(AssessmentType.Fixed.getConceptURI())));
+            }
+            ((EReportingObservationContext) ctx).setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
         }
         return ctx;
     }

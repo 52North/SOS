@@ -596,7 +596,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.9.9</version>
+                <version>2.10</version>
             </dependency>
 
             <!-- Hibernate Core Dependencies -->
@@ -1354,7 +1354,7 @@
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.9-RC1</version>
+                <version>0.9.10</version>
             </dependency>
             <!-- EXI - Efficient XML Interchange -->
             <dependency>

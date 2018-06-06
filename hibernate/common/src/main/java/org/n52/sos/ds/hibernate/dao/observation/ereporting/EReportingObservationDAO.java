@@ -223,11 +223,9 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                     if (checkForSamplingPoint(namedValue.getName())) {
                         addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
-                        samplingPointAdded = true;
                     } else if (checkForAssessmentType(namedValue.getName())) {
                         addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
-                        assessmentTypeAdded = true;
                     }
                 }
                 omObservation.getParameter().removeAll(remove);

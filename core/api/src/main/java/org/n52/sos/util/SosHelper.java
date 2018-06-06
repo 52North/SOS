@@ -211,7 +211,7 @@ public class SosHelper {
         // check remaining free memory on heap if too small, throw exception to
         // avoid an OutOfMemoryError
         long freeMem = runtime.freeMemory();
-        LOGGER.debug("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
+        LOGGER.trace("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
         if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
             // accords to 256 kB create service exception
             throw new ResponseExceedsSizeLimitException().withMessage(

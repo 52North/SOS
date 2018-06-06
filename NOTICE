@@ -134,6 +134,7 @@ This project includes:
   EXIficient under MIT License
   EXIficient-Core under MIT License
   EXIficient-Grammars under MIT License
+  FindBugs-Annotations under GNU Lesser Public License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0

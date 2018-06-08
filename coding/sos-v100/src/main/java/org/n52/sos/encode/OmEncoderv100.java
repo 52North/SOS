@@ -325,8 +325,10 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
             if (sosObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
                 AbstractSamplingFeature samplingFeature =
                         (AbstractSamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
-                sosEnvelope.setSrid(samplingFeature.getGeometry().getSRID());
-                sosEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
+                if (samplingFeature.isSetGeometry()) {
+                    sosEnvelope.setSrid(samplingFeature.getGeometry().getSRID());
+                    sosEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
+                }
             }
         }
         return sosEnvelope;

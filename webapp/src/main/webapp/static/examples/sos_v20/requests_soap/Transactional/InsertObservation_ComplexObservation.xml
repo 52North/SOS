@@ -26,7 +26,7 @@
 					</om:phenomenonTime>
 					<om:resultTime>
 						<gml:TimeInstant gml:id="resultTime">
-							<gml:timePosition>2012-11-19T13:50:00+02:00</gml:timePosition>
+							<gml:timePosition>2012-11-19T13:50:00.000+02:00</gml:timePosition>
 						</gml:TimeInstant>
 					</om:resultTime>
 					<om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>

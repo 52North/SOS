@@ -33,6 +33,7 @@ RELEASE NOTES
       * Setting of GDA 2.0 response format if forced
       * Check for FES filter extension
       * Fix support for referenced featureOfInterst (gml:id) in InsertObservation with multiple observations
+      * Some minor fixes
       
  
    Release 52n-sensorweb-sos-4.4.2

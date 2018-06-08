@@ -720,6 +720,10 @@
               <groupId>com.mchange</groupId>
               <artifactId>c3p0</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>com.fasterxml.jackson.core</groupId>
+              <artifactId>jackson-annotations</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>
@@ -751,6 +755,10 @@
             <exclusion>
               <groupId>com.mchange</groupId>
               <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -784,6 +792,10 @@
               <groupId>com.mchange</groupId>
               <artifactId>c3p0</artifactId>
             </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>
@@ -813,6 +825,10 @@
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
             </exclusion>
           </exclusions>
          </dependency>

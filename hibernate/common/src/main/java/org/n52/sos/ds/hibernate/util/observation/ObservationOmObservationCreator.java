@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -78,7 +77,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Table.Cell;
 
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
@@ -92,9 +90,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
     private final Map<Long, List<Parameter>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
-
-    private HashSet<Object> set;
-
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, Locale language, Session session) {
@@ -373,6 +368,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 }
             }
             observationConstellations.put(obsConstCheck.hashCode(), obsConstCheck);
+        } else {
+            obsConstCheck = observationConstellations.get(obsConstCheck.hashCode());
         }
         OmObservationConstellation obsConst;
         try {

@@ -163,10 +163,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     private void addAssessmentType(Criteria c, String assessmentType) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingSeries.class);
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
+        detachedCriteria.add(Restrictions.eq(Series.PUBLISHED, true));
         detachedCriteria.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
         add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.ID)));
-        c.add(Subqueries.propertyIn(SeriesObservation.SERIES, detachedCriteria));
+        c.add(Subqueries.propertyIn(Series.ID, detachedCriteria));
     }
 
     @Override

@@ -40,7 +40,9 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
@@ -403,8 +405,15 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     protected boolean mergeValues(final ObservationValue<?> observationValue) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
-            if (getValue().getValue() instanceof ProfileValue && observationValue.getValue() instanceof ProfileValue){
+            if (getValue().getValue() instanceof ProfileValue && observationValue.getValue() instanceof ProfileValue) {
                 ((ProfileValue)getValue().getValue()).addValues(((ProfileValue)observationValue.getValue()).getValue());
+                return true;
+            } else if (getValue().getValue() instanceof SweDataArrayValue
+                    && observationValue.getValue() instanceof SweDataArrayValue
+                    && ((SweDataArray) getValue().getValue().getValue()).getElementType()
+                            .equals(((SweDataArray) observationValue.getValue().getValue()).getElementType())) {
+                ((SweDataArray) getValue().getValue().getValue())
+                        .addAll(((SweDataArray) observationValue.getValue().getValue()).getValues());
                 return true;
             } else {
                 tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);

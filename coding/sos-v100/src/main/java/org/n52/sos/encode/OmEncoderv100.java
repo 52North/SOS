@@ -237,7 +237,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }
@@ -325,8 +325,10 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
             if (sosObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
                 AbstractSamplingFeature samplingFeature =
                         (AbstractSamplingFeature) sosObservation.getObservationConstellation().getFeatureOfInterest();
-                sosEnvelope.setSrid(samplingFeature.getGeometry().getSRID());
-                sosEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
+                if (samplingFeature.isSetGeometry()) {
+                    sosEnvelope.setSrid(samplingFeature.getGeometry().getSRID());
+                    sosEnvelope.expandToInclude(samplingFeature.getGeometry().getEnvelopeInternal());
+                }
             }
         }
         return sosEnvelope;

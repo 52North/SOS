@@ -57,6 +57,7 @@ import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -68,6 +69,9 @@ import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -498,7 +502,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         } else {
             criteria.add(Restrictions.eq(Observation.PARENT, false));
         }
-
+        criteria.setFetchMode("offerings", org.hibernate.FetchMode.JOIN);
+        criteria.setFetchMode("parameters", org.hibernate.FetchMode.JOIN);
+//        criteria.setFetchMode("value", org.hibernate.FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -521,6 +527,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Map based codespace object cache to prevent redundant queries
      * @param unitCache
      *            Map based unit object cache to prevent redundant queries
+     * @param checkForDuplicatedObservations 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -528,11 +535,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void insertObservationMultiValue(ObservationConstellation observationConstellation,
             AbstractFeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
+            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
             insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
-                    hOfferings, session);
+                    hOfferings, checkForDuplicatedObservations, session);
         }
     }
 
@@ -551,8 +558,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      */
     public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, session);
+            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session) throws OwsExceptionReport {
+        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, checkForDuplicatedObservations, session);
     }
 
     /**
@@ -570,6 +577,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            querying)
      * @param unitCache
      *            Map cache for unit objects (to prevent redundant querying)
+     * @param b 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -578,7 +586,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
             AbstractFeatureOfInterest hFeature, OmObservation sosObservation,
             Map<String, Codespace> codespaceCache,
-            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, Session session)
+            Map<UoM, Unit> unitCache, Set<Offering> hOfferings, boolean checkForDuplicatedObservations, Session session)
             throws OwsExceptionReport {
         SingleObservationValue<?> value
                 = (SingleObservationValue) sosObservation.getValue();
@@ -590,6 +598,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 codespaceCache,
                 unitCache,
                 hOfferings,
+                checkForDuplicatedObservations,
                 session
         );
         value.getValue().accept(persister);
@@ -769,7 +778,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected boolean checkObservationFor(Class clazz, String offeringIdentifier, Session session) {
         Criteria c = session.createCriteria(clazz).add(Restrictions.eq(Observation.DELETED, false));
-        c.createCriteria(Observation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+        if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+            c.createCriteria(SeriesObservation.SERIES).createCriteria(Series.OFFERING)
+                    .add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+        } else {
+            c.createCriteria(LegacyObservation.OFFERINGS)
+                    .add(Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
+        }
         c.setMaxResults(1);
         LOGGER.debug("QUERY checkObservationFor(clazz, offeringIdentifier): {}", HibernateHelper.getSqlString(c));
         return CollectionHelper.isNotEmpty(c.list());
@@ -1255,8 +1270,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.setProjection(SpatialProjections.extent(TemporalReferencedObservation.SAMPLING_GEOMETRY));
-                criteria.createCriteria(Observation.OFFERINGS).add(
-                        Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+                    criteria.createCriteria(SeriesObservation.SERIES).createCriteria(Series.OFFERING)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                } else {
+                    criteria.createCriteria(LegacyObservation.OFFERINGS)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                }
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}", HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
                 geom = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
@@ -1266,8 +1286,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             } else {
                 Envelope envelope = null;
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
-                criteria.createCriteria(AbstractObservation.OFFERINGS)
-                        .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+                    criteria.createCriteria(SeriesObservation.SERIES).createCriteria(Series.OFFERING)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                } else {
+                    criteria.createCriteria(LegacyObservation.OFFERINGS)
+                            .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
+                }
                 if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), TemporalReferencedObservation.SAMPLING_GEOMETRY)) {
                     criteria.add(Restrictions.isNotNull(TemporalReferencedObservation.SAMPLING_GEOMETRY));
                     criteria.setProjection(Projections.property(TemporalReferencedObservation.SAMPLING_GEOMETRY));
@@ -1325,7 +1350,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void checkForDuplicatedObservations(OmObservation sosObservation, ObservationConstellation observationConstellation, Session session) throws OwsExceptionReport {
         Criteria c = getTemoralReferencedObservationCriteriaFor(sosObservation, observationConstellation, session);
-        addAdditionalObservationIdentification(c, sosObservation);
         // add times check (start/end phen, result)
         List<TemporalFilter> filters = Lists.newArrayListWithCapacity(2);
         filters.add(getPhenomeonTimeFilter(c, sosObservation.getPhenomenonTime()));

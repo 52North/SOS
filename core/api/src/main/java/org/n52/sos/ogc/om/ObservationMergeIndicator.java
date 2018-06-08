@@ -43,6 +43,8 @@ public class ObservationMergeIndicator {
     private boolean resultTime = false;
 
     private boolean samplingGeometry = false;
+    
+    private boolean observationType = true;
 
     public ObservationMergeIndicator() {
     }
@@ -165,6 +167,15 @@ public class ObservationMergeIndicator {
      */
     public ObservationMergeIndicator setSamplingGeometry(boolean samplingGeometry) {
         this.samplingGeometry = samplingGeometry;
+        return this;
+    }
+
+    public boolean isCheckObservationType() {
+        return observationType;
+    }
+    
+    public ObservationMergeIndicator setObservationType(boolean observationType) {
+        this.observationType = observationType;
         return this;
     }
 

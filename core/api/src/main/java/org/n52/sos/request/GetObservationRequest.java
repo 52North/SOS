@@ -428,8 +428,9 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     public boolean hasSpatialFilteringProfileSpatialFilter() {
         return isSetSpatialFilter() 
                 && (getSpatialFilter().getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)
-                        || ((SosSpatialFilter) getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue()
-                                .getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE));
+                        || (hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER) 
+                                && ((SosSpatialFilter) getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue()
+                                .getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)));
     }
 
     public boolean hasResultFilter() {
@@ -502,6 +503,9 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     private boolean isFesFilterExtension(SwesExtension<?> extension) {
-        return !(extension instanceof ResultFilter) && extension.getValue() instanceof Filter<?>;
+        return !((extension instanceof ResultFilter) 
+                || (extension instanceof SpatialFilter)
+                || (extension instanceof SosSpatialFilter)) 
+                && extension.getValue() instanceof Filter<?>;
     }
 }

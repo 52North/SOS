@@ -162,7 +162,8 @@ public interface HibernateRelations {
     interface HasReadableObservationContext
             extends HasObservablePropertyGetter,
                     HasProcedureGetter,
-                    HasFeatureOfInterestGetter {
+                    HasFeatureOfInterestGetter,
+                    HasOfferingGetter {
     }
 
     interface HasWriteableObservationContext
@@ -264,6 +265,20 @@ public interface HibernateRelations {
 
         void setObservableProperty(ObservableProperty observableProperty);
     }
+    
+    interface HasOfferingGetter {
+
+        String OFFERING = "offering";
+
+        Offering getOffering();
+    }
+
+    interface HasOffering extends HasOfferingGetter{
+    
+        void setOffering(Offering offering);
+    
+        boolean isSetOffering();
+    }
 
     interface HasObservationType {
         String OBSERVATION_TYPE = "observationType";
@@ -281,16 +296,6 @@ public interface HibernateRelations {
         Set<ObservationType> getObservationTypes();
 
         void setObservationTypes(Set<ObservationType> observationTypes);
-    }
-
-    interface HasOffering {
-        String OFFERING = "offering";
-
-        void setOffering(Offering offering);
-
-        Offering getOffering();
-        
-        boolean isSetOffering();
     }
 
     interface HasPhenomenonTime {
@@ -739,5 +744,38 @@ public interface HibernateRelations {
 
         boolean hasSamplingGeometry();
 
+    }
+    
+    interface HasVertical {
+        
+        Double getVerticalFrom();
+
+        void setVerticalTo(Double verticalFrom);
+
+        boolean hasVerticalTo();
+
+        Double getVerticalTo();
+
+        void setVerticalFrom(Double verticalTo);
+
+        boolean hasVerticalFrom();
+
+        String getVerticalFromName();
+
+        void setVerticalFromName(String name);
+
+        boolean hasVerticalFromName();
+
+        String getVerticalToName();
+
+        void setVerticalToName(String name);
+
+        boolean hasVerticalToName();
+
+        Unit getVerticalUnit();
+
+        void setVerticalUnit(Unit unit);
+
+        boolean hasVerticalUnit();
     }
 }

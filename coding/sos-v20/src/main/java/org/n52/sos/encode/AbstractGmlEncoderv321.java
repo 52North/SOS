@@ -55,7 +55,7 @@ public abstract class AbstractGmlEncoderv321<T> extends AbstractXmlEncoder<T> {
             featurePropertyType.setHref(abstractFeature.getIdentifierCodeWithAuthority().getValue());
             return featurePropertyType;
         } else {
-            if (abstractFeature.isSetGmlID()) {
+            if (abstractFeature.isSetGmlID() && abstractFeature.isEncoded()) {
                 featurePropertyType.setHref("#" + abstractFeature.getGmlId());
                 return featurePropertyType;
             } else {

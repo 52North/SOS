@@ -649,22 +649,28 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             return getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
         }
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
-        if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            criteria.createAlias(ContextualReferencedSeriesObservation.SERIES, "s");
-            criteria.createAlias("s." + Series.PROCEDURE, "p");
+        Criteria criteria = null;
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
+            criteria = DaoFactory.getInstance().getSeriesDAO().getDefaultSeriesCriteria(session);
+            criteria.createAlias(Series.PROCEDURE, "p");
+            criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
+            ProjectionList projectionList = Projections.projectionList();
+            projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
+            projectionList.add(Projections.min(Series.FIRST_TIME_STAMP));
+            projectionList.add(Projections.max(Series.FIRST_TIME_STAMP));
+            projectionList.add(Projections.max(Series.LAST_TIME_STAMP));
+            criteria.setProjection(projectionList);
         } else {
+            criteria = DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
             criteria.createAlias(ContextualReferencedLegacyObservation.PROCEDURE, "p");
+            criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
+            ProjectionList projectionList = Projections.projectionList();
+            projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
+            projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
+            projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
+            projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
+            criteria.setProjection(projectionList);
         }
-        criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
-        ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
-        projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
-        criteria.setProjection(projectionList);
-
         LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
         result = (Object[]) criteria.uniqueResult();
 
@@ -687,7 +693,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 c.createAlias(Series.PROCEDURE, "p");
                 c.setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("p." + Procedure.IDENTIFIER))
-                        .add(Projections.min(Series.FIRST_TIME_STAMP)).add(Projections.max(Series.LAST_TIME_STAMP)));
+                        .add(Projections.min(Series.FIRST_TIME_STAMP))
+                        .add(Projections.max(Series.LAST_TIME_STAMP)));
                 LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}",
                         HibernateHelper.getSqlString(c));
                 c.setResultTransformer(transformer);

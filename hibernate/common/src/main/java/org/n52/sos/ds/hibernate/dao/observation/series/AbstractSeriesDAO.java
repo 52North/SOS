@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -41,7 +42,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
@@ -110,6 +110,17 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @throws CodedException
      */
     public abstract List<Series> getSeries(GetObservationByIdRequest request, Session session)
+            throws OwsExceptionReport;
+    
+    /**
+     * Get series for series identifiers
+     * @param identifiers Series identifiers to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fit
+     * @throws CodedException
+     */
+    public abstract List<Series> getSeries(Collection<String> identifiers, Session session)
             throws OwsExceptionReport;
 
     /**
@@ -262,7 +273,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throws OwsExceptionReport {
         Set<Series> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 final Criteria c = createCriteriaFor(request.getProcedures(), request.getObservedProperties(),
                         features, request.getOfferings(), session);
                 addSpecificRestrictions(c, request);
@@ -288,7 +299,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throws OwsExceptionReport {
         Set<Series> set = new LinkedHashSet<>();
         if (request.hasResultFilter()) {
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
                         request.getFeaturesOfInterest(), request.getOfferings(), session);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
@@ -307,9 +318,9 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return set;
     }
 
-    public Criteria  getSeriesCriteria(GetObservationByIdRequest request, Session session) {
+    public Criteria  getSeriesCriteria(Collection<String> identifiers, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
-        c.add(Restrictions.in(Series.IDENTIFIER, request.getObservationIdentifier()));
+        c.add(Restrictions.in(Series.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
@@ -492,16 +503,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @throws OwsExceptionReport
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
-        c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
-                Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
+        c.createCriteria(Series.OFFERING).add(Restrictions.in(Offering.IDENTIFIER, offerings));
 
     }
 
     public void addOfferingToCriteria(Criteria c, String offering) {
-        c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
-                Restrictions.eq("off." + Offering.IDENTIFIER, offering)));
+        c.createCriteria(Series.OFFERING).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
 
     public void addOfferingToCriteria(Criteria c, Offering offering) {
@@ -704,6 +711,10 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (CollectionHelper.isNotEmpty(offerings)) {
             addOfferingToCriteria(c, offerings);
         }
+        c.setFetchMode(Series.PROCEDURE, FetchMode.JOIN);
+        c.setFetchMode(Series.OBSERVABLE_PROPERTY, FetchMode.JOIN);
+        c.setFetchMode(Series.FEATURE_OF_INTEREST, FetchMode.JOIN);
+        c.setFetchMode(Series.OFFERING, FetchMode.JOIN);
         return c;
     }
 

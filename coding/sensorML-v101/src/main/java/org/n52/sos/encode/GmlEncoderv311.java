@@ -165,7 +165,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }
@@ -469,7 +469,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     private XmlObject createFeature(AbstractFeature sosAbstractFeature) throws OwsExceptionReport {
         if (sosAbstractFeature instanceof AbstractSamplingFeature) {
             AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) sosAbstractFeature;
-            if (sosAbstractFeature.isSetGmlID()) {
+            if (sosAbstractFeature.isSetGmlID() && sosAbstractFeature.isEncoded()) {
                 FeaturePropertyType featureProperty =
                         FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 featureProperty.setHref("#" + sosAbstractFeature.getGmlId());

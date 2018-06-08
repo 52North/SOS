@@ -164,6 +164,10 @@ public class ServiceConfiguration {
     
     private boolean convertComplexProfileToSingleProfiles = true;
 
+    private Integer requestTimeout = 0;
+
+    private boolean checkForDuplicatedObservations = true;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -525,6 +529,28 @@ public class ServiceConfiguration {
 
     public boolean isConvertComplexProfileToSingleProfiles() {
         return this.convertComplexProfileToSingleProfiles;
+    }
+    
+    @Setting(ServiceSettings.REQUEST_TIMEOUT)
+    public void setRequestTimeout(Integer requestTimeout) {
+        if (requestTimeout != null) {
+            this.requestTimeout = requestTimeout;
+        }
+    }
+
+    public int getRequestTimeout() {
+        return requestTimeout;
+    }
+    
+    @Setting(ServiceSettings.CHECK_FOR_REQUEST_DUPLICITY)
+    public void setCheckForDuplicatedObservations(Boolean checkForDuplicatedObservations) {
+        if (checkForDuplicatedObservations != null) {
+            this.checkForDuplicatedObservations = checkForDuplicatedObservations;
+        }
+    }
+
+    public boolean isCheckForDuplicatedObservations() {
+        return checkForDuplicatedObservations;
     }
 
     /*

@@ -94,7 +94,9 @@ public class ObservationMerger {
                 || (!observation.isSetAdditionalMergeIndicator() && observationToAdd.isSetAdditionalMergeIndicator())) {
             merge = false;
         }
-        merge = merge && checkObservationTypeForMerging(observationToAdd.getObservationConstellation());
+        if (observationMergeIndicator.isCheckObservationType()) {
+            merge = merge && checkObservationTypeForMerging(observationToAdd.getObservationConstellation());
+        }
         if (observationMergeIndicator.sameObservationConstellation()) {
             merge = merge && observation.getObservationConstellation().equals(observationToAdd.getObservationConstellation());
         } else {

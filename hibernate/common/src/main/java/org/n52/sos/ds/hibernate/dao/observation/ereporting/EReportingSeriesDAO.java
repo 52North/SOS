@@ -77,7 +77,13 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
-        return getSeriesCriteria(request, session).list();
+        return getSeriesCriteria(request.getObservationIdentifier(), session).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Series> getSeries(Collection<String> identifiers, Session session) throws OwsExceptionReport {
+        return getSeriesCriteria(identifiers, session).list();
     }
 
     @Override

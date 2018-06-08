@@ -17,7 +17,6 @@
 	<sos:observation>
 		<om:OM_Observation gml:id="o1">
 			<gml:description>test description for this observation</gml:description>
-			<gml:identifier codeSpace="">http://www.52north.org/test/observation/9</gml:identifier>
 			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
 			<om:phenomenonTime>
 				<gml:TimeInstant gml:id="phenomenonTime">

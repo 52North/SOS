@@ -115,6 +115,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
     private final OmObservation sosObservation;
     private final boolean childObservation;
     private final Set<Offering> offerings;
+    private boolean checkForDuplicity;
 
     public ObservationPersister(
             AbstractObservationDAO observationDao,
@@ -124,6 +125,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
             Map<String, Codespace> codespaceCache,
             Map<UoM, Unit> unitCache,
             Set<Offering> hOfferings,
+            boolean checkForDuplicity,
             Session session)
             throws OwsExceptionReport {
         this(new DAOs(observationDao),
@@ -133,6 +135,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
              hFeature,
              getSamplingGeometry(sosObservation),
              hOfferings,
+             checkForDuplicity,
              session,
              false);
     }
@@ -145,6 +148,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
             AbstractFeatureOfInterest hFeature,
             Geometry samplingGeometry,
             Set<Offering> hOfferings,
+            boolean checkForDuplicity,
             Session session,
             boolean childObservation)
             throws OwsExceptionReport {
@@ -158,6 +162,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
         observationFactory = daos.observation().getObservationFactory();
         this.childObservation = childObservation;
         offerings = hOfferings;
+        this.checkForDuplicity = checkForDuplicity;
         checkForDuplicity();
     }
 
@@ -167,8 +172,9 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
          *  - series, phenTimeStart, phenTimeEnd, resultTime
          *  - series, phenTimeStart, phenTimeEnd, resultTime, depth/height parameter (same observation different depth/height)
          */
-         daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellation, session);
-
+        if (checkForDuplicity) {
+            daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellation, session);
+        }
     }
 
     @Override
@@ -347,20 +353,20 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
     private ObservationPersister createChildPersister(ProfileLevel level, String observableProperty) throws OwsExceptionReport {
         return new ObservationPersister(daos, caches, getObservationWithLevelParameter(level),
                 getObservationConstellation(getObservableProperty(observableProperty)), featureOfInterest,
-                getSamplingGeometryFromLevel(level), offerings, session, true);
+                getSamplingGeometryFromLevel(level), offerings, checkForDuplicity, session, true);
     }
 
     private ObservationPersister createChildPersister(ProfileLevel level) throws OwsExceptionReport {
         return new ObservationPersister(daos, caches, getObservationWithLevelParameter(level),
                 observationConstellation, featureOfInterest,
-                getSamplingGeometryFromLevel(level), offerings, session, true);
+                getSamplingGeometryFromLevel(level), offerings, checkForDuplicity, session, true);
 
     }
 
     private ObservationPersister createChildPersister(ObservableProperty observableProperty) throws OwsExceptionReport {
         return new ObservationPersister(daos, caches, sosObservation,
                 getObservationConstellation(observableProperty), featureOfInterest,
-                samplingGeometry, offerings, session, true);
+                samplingGeometry, offerings, checkForDuplicity, session, true);
     }
 
     private ObservationConstellation getObservationConstellation(ObservableProperty observableProperty) {

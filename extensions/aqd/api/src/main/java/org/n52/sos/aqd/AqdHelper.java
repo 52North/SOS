@@ -137,6 +137,7 @@ public class AqdHelper {
 
     public void processObservation(OmObservation observation, TimeInstant resultTime,
             FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
+        observation.setObservationID(Integer.toString(counter));
         observation.setGmlId(getObservationId(counter));
         // add xlink:href to eReportingHeader.content
         eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));

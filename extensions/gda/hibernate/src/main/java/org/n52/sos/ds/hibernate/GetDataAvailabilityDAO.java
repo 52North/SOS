@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
@@ -142,6 +144,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         Session session = sessionHolder.getSession();
         try {
             List<?> dataAvailabilityValues = queryDataAvailabilityValues(req, session);
+            if (isForceGDAv20Response()) {
+                req.setResponseFormat(GetDataAvailabilityConstants.NS_GDA_20);
+            }
             GetDataAvailabilityResponse response = req.getResponse();
             response.setNamespace(req.getNamespace());
             for (Object o : dataAvailabilityValues) {
@@ -196,7 +201,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
 
             if (req.isSetOfferings()) {
-                c.createCriteria(ContextualReferencedObservation.OFFERINGS)
+                c.createCriteria(ContextualReferencedLegacyObservation.OFFERINGS)
                         .add(Restrictions.in(Offering.IDENTIFIER, req.getOfferings()));
             }
 
@@ -247,7 +252,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         c.createCriteria(ContextualReferencedObservation.OBSERVABLE_PROPERTY).add(
                 Restrictions.eq(ObservableProperty.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
         if (request.isSetOfferings()) {
-            c.createCriteria(ContextualReferencedObservation.OFFERINGS).add(
+            c.createCriteria(ContextualReferencedLegacyObservation.OFFERINGS).add(
                     Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
@@ -287,11 +292,18 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 .setSeriesObservationDAO(getSeriesObservationDAO())
                 .setSupportsSeriesObservationTime(EntitiyHelper.getInstance().isSeriesObservationTimeSupported());
         boolean gdaV20 = checkForGDAv20(request);
-        for (final Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request, session)) {
+        List<Series> resultSeries = DaoFactory.getInstance().getSeriesDAO().getSeries(request, session);
+        Map<Long, List<SeriesMetadata>> metadata = null;
+        if (resultSeries != null && !resultSeries.isEmpty() && gdaV20 && HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
+            metadata = new SeriesMetadataDAO().getMetadata(resultSeries, session);
+        } else {
+            metadata = new LinkedHashMap<>();
+        }
+        for (final Series series : resultSeries) {
             if (gdaV20) {
                 context.setMinMaxTransformer(new SeriesOfferingMinMaxTransformer())
                 .setSupportsNamedQuery(HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_OFFERING_DATA_AVAILABILITY_FOR_SERIES, session));
-                processDataAvailabilityForEachOffering(series, context, session);
+                processDataAvailabilityForEachOffering(series, context, metadata, session);
             } else {
                 context.setMinMaxTransformer(new SeriesMinMaxTransformer())
                 .setSupportsNamedQuery(HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session));
@@ -316,12 +328,14 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      *            Series to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
+     * @param metadata 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void processDataAvailabilityForEachOffering(Series series, GdaRequestContext context, Session session) throws OwsExceptionReport {
+    private void processDataAvailabilityForEachOffering(Series series, GdaRequestContext context, Map<Long, List<SeriesMetadata>> metadata, Session session) throws OwsExceptionReport {
+        long start = System.currentTimeMillis();
         List<OfferingMinMaxTime> offeringTimePeriodList = null;
         if (series.isSetOffering() && series.isSetFirstLastTime()) {
             offeringTimePeriodList = Lists.newArrayList();
@@ -358,17 +372,18 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                     }
                     dataAvailability.setOffering(getOfferingReference(series, context.getOfferings(), ommt.getOffering(), session));
                     dataAvailability.setFormatDescriptor(getFormatDescriptor(ommt.getOffering(), context, series));
-                    checkForMetadataExtension(dataAvailability, series, session);
+                    checkForMetadataExtension(dataAvailability, series, metadata, session);
                     context.addDataAvailability(dataAvailability);
                 }
             }
         }
         checkForParentOfferings(context);
+        LOGGER.trace("Processing of data availability for seriesid {} took {} ms", series.getSeriesId(), (System.currentTimeMillis() - start));
     }
 
-    private void checkForMetadataExtension(DataAvailability dataAvailability, Series series, Session session) {
-        if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
-            List<SeriesMetadata> metadataList = new SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
+    private void checkForMetadataExtension(DataAvailability dataAvailability, Series series, Map<Long, List<SeriesMetadata>> metadata, Session session) {
+        if (metadata != null && !metadata.isEmpty()) {
+            List<SeriesMetadata> metadataList = metadata.get(series.getSeriesId());
             if (CollectionHelper.isNotEmpty(metadataList)) {
                 for (SeriesMetadata seriesMetadata : metadataList) {
                     dataAvailability.addMetadata(seriesMetadata.getDomain(), new NamedValue<>(new ReferenceType(seriesMetadata.getIdentifier()),
@@ -656,10 +671,10 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         Criteria criteria = session.createCriteria(TemporalReferencedSeriesObservation.class)
         		.add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false));
         criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
-        if (request.isSetOfferings()) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
-                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
-        }
+//        if (request.isSetOfferings()) {
+//            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
+//                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+//        }
         criteria.setProjection(Projections.rowCount());
         return (Long) criteria.uniqueResult();
     }

@@ -79,12 +79,13 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            GetObservationRequest request
      * @param session
      *            Hiberante Session
+     * @param logArgs 
      * @throws OwsExceptionReport
      *             If Spatial Filteirng Profile is not supported or an error
      *             occurs.
      */
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
-            Session session) throws OwsExceptionReport {
+            Session session, StringBuilder logArgs) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
             if (((GetObservationRequest)request).hasSpatialFilteringProfileSpatialFilter()) {
                 if (GeometryHandler.getInstance().isSpatialDatasource()) {
@@ -93,6 +94,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                             ((GetObservationRequest)request).getSpatialFilter().getOperator(),
                             GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
                                     ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
+                    logArgs.append(", spatialFilter");
                 } else {
                     // TODO add filter with lat/lon
                     LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
@@ -101,7 +103,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
     }
     
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session)
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session, StringBuilder logArgs)
             throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             ComparisonFilter resultFilter = request.getResultFilter();
@@ -109,6 +111,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
                     getResultFilterClasses(), BaseObservation.OBS_ID, identifier);
             if (resultFilterExpression != null) {
                 c.add(resultFilterExpression);
+                logArgs.append(", resultFilter");
             }
         }
     }
@@ -120,9 +123,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
     }
 
 
-    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
+    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, StringBuilder logArgs) {
         if (temporalFilterCriterion != null) {
-            logArgs += ", filterCriterion";
+            logArgs.append(", filterCriterion");
             c.add(temporalFilterCriterion);
         }
     }
@@ -140,7 +143,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime, String logArgs) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, SosIndeterminateTime sosIndeterminateTime, StringBuilder logArgs) {
         if (sosIndeterminateTime != null) {
             // get extrema indeterminate time
             c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
@@ -153,7 +156,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
     
             // get observations with exactly the extrema time
             c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
-            logArgs += ", sosIndeterminateTime";
+            logArgs.append(", sosIndeterminateTime");
         }
         // not really necessary to return the Criteria object, but useful if we
         // want to chain
@@ -203,10 +206,12 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * @param currentRow
      *            Start row
      * @param request 
+     * @param logArgs 
      */
-    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, AbstractObservationRequest request) {
+    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, AbstractObservationRequest request, StringBuilder logArgs) {
         if (chunkSize > 0) {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
+            logArgs.append(", chunk(" + currentRow + "," + chunkSize + ")");
         }
     }
     
@@ -232,7 +237,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
         } else {
             criteria.add(Restrictions.eq(Observation.PARENT, false));
         }
-
+        criteria.setFetchMode("offerings", org.hibernate.FetchMode.JOIN);
+        criteria.setFetchMode("parameters", org.hibernate.FetchMode.JOIN);
+//        criteria.setFetchMode("value", org.hibernate.FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -240,7 +247,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
         return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
     }
 
-    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException;
     
     protected abstract ValuedObservationFactory getValuedObservationFactory();
 }

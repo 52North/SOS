@@ -237,9 +237,12 @@ public final class SweHelper {
             return new SweText();
         } else if (iValue instanceof NilTemplateValue) {
             return new SweText();
+        } else if (iValue instanceof SweDataArrayValue) {
+            return ((SweDataArrayValue) iValue).getValue();
         } else if (iValue instanceof ComplexValue) {
-            throw new NotYetSupportedException().withMessage("The merging of '%s' is not yet supported!",
-                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+            throw new NotYetSupportedException().withMessage("The merging of value type '%s' is not yet supported!",
+                    iValue.getClass().getName());
+            // return ((ComplexValue) iValue).getValue();
         }
         throw new NotYetSupportedException().withMessage("The merging of value type '%s' is not yet supported!",
                 iValue.getClass().getName());

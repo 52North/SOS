@@ -28,8 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -40,6 +42,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -314,6 +318,18 @@ public class ResultFilterRestrictions {
         return complex;
     }
 
+    public static Set<SubQueryIdentifier> getSubQueryIdentifier(ResultFilterClasses resultFilterClasses) {
+        Set<SubQueryIdentifier> set = new HashSet<>();
+        set.add(SubQueryIdentifier.Simple);
+        if (HibernateHelper.isEntitySupported(resultFilterClasses.getComplex())) {
+            set.add(SubQueryIdentifier.Complex);
+        }
+        if (HibernateHelper.isEntitySupported(resultFilterClasses.getProfile())) {
+            set.add(SubQueryIdentifier.Profile);
+        }
+        return set;
+    }
+    
     public enum SubQueryIdentifier {
         Simple, Complex, Profile;
     }

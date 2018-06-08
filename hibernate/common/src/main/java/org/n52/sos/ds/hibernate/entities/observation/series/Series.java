@@ -60,7 +60,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
                    HasUnit,
                    HasPublishedFlag,
                    HasSeriesType,
-                   HasOffering{
+                   HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
 

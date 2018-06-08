@@ -28,12 +28,7 @@
  */
 package org.n52.sos.ogc.gml;
 
-public interface DefaultEncoding<T> {
-
-    public T setDefaultElementEncoding(String defaultEncoding);
-
-    public String getDefaultElementEncoding();
-
-    public boolean isSetDefaultElementEncoding();
+@Deprecated
+public interface DefaultEncoding<T> extends org.n52.sos.ogc.DefaultEncoding<T> {
 
 }

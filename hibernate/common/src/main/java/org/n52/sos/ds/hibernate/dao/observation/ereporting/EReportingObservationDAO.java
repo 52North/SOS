@@ -163,10 +163,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     private void addAssessmentType(Criteria c, String assessmentType) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingSeries.class);
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
+        detachedCriteria.add(Restrictions.eq(Series.PUBLISHED, true));
         detachedCriteria.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
         add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.ID)));
-        c.add(Subqueries.propertyIn(SeriesObservation.SERIES, detachedCriteria));
+        c.add(Subqueries.propertyIn(Series.ID, detachedCriteria));
     }
 
     @Override
@@ -187,22 +188,32 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     protected ObservationContext fillObservationContext(
             ObservationContext ctx, OmObservation sosObservation, Session session) {
         if (ctx instanceof EReportingObservationContext) {
+            boolean samplingPointAdded = false;
+            boolean assessmentTypeAdded = false;
+            AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
             if (sosObservation.isSetParameter()) {
-                AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
                 List<NamedValue<?>> remove = Lists.newArrayList();
                 for (NamedValue<?> namedValue : sosObservation.getParameter()) {
                     if (checkForSamplingPoint(namedValue.getName())) {
                         addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
+                        samplingPointAdded = true;
                     } else if (checkForAssessmentType(namedValue.getName())) {
                         addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
+                        assessmentTypeAdded = true;
                     }
                 }
                 sosObservation.getParameter().removeAll(remove);
-                ((EReportingObservationContext) ctx)
-                        .setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
+                
             }
+            if (!samplingPointAdded) {
+                addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, new ReferenceValue(new ReferenceType(ctx.getFeatureOfInterest().getIdentifier(), ctx.getFeatureOfInterest().getName())));
+            }
+            if (!assessmentTypeAdded) {
+                addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, new ReferenceValue(new ReferenceType(AssessmentType.Fixed.getConceptURI())));
+            }
+            ((EReportingObservationContext) ctx).setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
         }
         return ctx;
     }

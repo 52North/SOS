@@ -290,7 +290,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
             return featurePropertyType;
         } else {
             final AbstractSamplingFeature abstractSamplingFeature = (AbstractSamplingFeature) feature;
-            if (feature.isSetGmlID()) {
+            if (feature.isSetGmlID() && feature.isEncoded()) {
                 featurePropertyType.setHref("#" + feature.getGmlId());
                 return featurePropertyType;
             } else {

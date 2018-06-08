@@ -61,9 +61,9 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.api.sax.EXISource;
-import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.main.api.sax.EXISource;
 
 /**
  * Binding implementation for EXI - Efficient XML Interchange See See <a
@@ -140,7 +140,7 @@ public class EXIBinding extends SimpleBinding {
      */
     protected AbstractServiceRequest<?> parseRequest(HttpServletRequest request) throws OwsExceptionReport {
         XmlObject doc = decode(request);
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             LOGGER.debug("EXI-REQUEST: {}", doc.xmlText());
         }
         Decoder<AbstractServiceRequest<?>, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));

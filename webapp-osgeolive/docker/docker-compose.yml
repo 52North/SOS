@@ -32,8 +32,10 @@ services:
     links:
       - db:postgres
     volumes:
-      - "../target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
-      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+      - "${PWD}/webapp-osgeolive/target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
+      - "${PWD}/webapp-osgeolive/docker/tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+      - "${PWD}/webapp-osgeolive/docker/datasource.properties:/usr/local/tomcat/webapps/52nSOS/WEB-INF/datasource.properties"
+      - "${PWD}/webapp-osgeolive/docker/application.properties:/usr/local/tomcat/webapps/52nSOS/WEB-INF/classes/application.properties"
     depends_on:
       - db
     environment:

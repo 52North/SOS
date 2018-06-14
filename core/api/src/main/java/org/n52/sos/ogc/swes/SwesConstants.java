@@ -28,8 +28,12 @@
  */
 package org.n52.sos.ogc.swes;
 
+import java.util.Collection;
+
 import javax.xml.namespace.QName;
 
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
@@ -140,13 +144,25 @@ public interface SwesConstants {
      * 
      * @param <T>
      */
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since
+     *
+     * @param <T>
+     */
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since
+     *
+     * @param <T>
+     */
     interface HasSwesExtension<T> {
         /**
          * Get the {@link SwesExtension}s
          * 
          * @return {@link SwesExtensions} with {@link SwesExtension}s
          */
-        public SwesExtensions getExtensions();
+        SwesExtensions getExtensions();
 
         /**
          * Set the {@link SwesExtensions} object
@@ -155,7 +171,7 @@ public interface SwesConstants {
          *            the {@link SwesExtensions} object to set
          * @return this
          */
-        public T setExtensions(final SwesExtensions extensions);
+        T setExtensions(final SwesExtensions extensions);
         
         /**
          * Add a {@link SwesExtensions} to this object
@@ -164,7 +180,7 @@ public interface SwesConstants {
          *            the {@link SwesExtensions} to add
          * @return this
          */
-        public T addExtensions(final SwesExtensions extension);
+        T addExtensions(final SwesExtensions extension);
 
         /**
          * Add a {@link SwesExtension} to this object
@@ -174,7 +190,16 @@ public interface SwesConstants {
          * @return this
          */
         @SuppressWarnings("rawtypes")
-        public T addExtension(final SwesExtension extension);
+        T addExtension(final SwesExtension extension);
+
+        /**
+         * Add a {@link SwesExtension}s to this object
+         * 
+         * @param extensions
+         *            the {@link SwesExtension}s to add
+         * @return this
+         */
+        T addExtensions(Collection<SwesExtension<?>> extensions);
 
         /**
          * Check if {@link SwesExtension}s are set
@@ -182,7 +207,47 @@ public interface SwesConstants {
          * @return <code>true</code>, if {@link SwesExtensions} is not null or
          *         empty
          */
-        public boolean isSetExtensions();
+        boolean isSetExtensions();
+
+        /**
+         * Check if the extension for the identifier exists
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return <code>true</code>, if the extension exists
+         */
+        @SuppressWarnings("rawtypes")
+        public boolean hasExtension(Enum identifier);
+
+        /**
+         * Check if the extension for the identifier exists
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return <code>true</code>, if the extension exists
+         */
+        boolean hasExtension(String identifier);
+
+        /**
+         * Get the extension for the identifier
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return The extension or null.
+         * @throws InvalidParameterValueException
+         */
+        @SuppressWarnings("rawtypes")
+        SwesExtension<?> getExtension(Enum identifier) throws InvalidParameterValueException;
+
+        /**
+         * Get the extension for the identifier
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return The extension or null.
+         * @throws InvalidParameterValueException
+         */
+        SwesExtension<?> getExtension(String identifier) throws InvalidParameterValueException;
     }
 
 }

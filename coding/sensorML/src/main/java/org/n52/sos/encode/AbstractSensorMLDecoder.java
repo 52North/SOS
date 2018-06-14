@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.decode.Decoder;
+import org.n52.sos.decode.ProcedureDecoder;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
@@ -48,7 +49,7 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
-public abstract class AbstractSensorMLDecoder implements Decoder<AbstractSensorML, XmlObject> {
+public abstract class AbstractSensorMLDecoder implements ProcedureDecoder<AbstractSensorML, XmlObject> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLDecoder.class);
 

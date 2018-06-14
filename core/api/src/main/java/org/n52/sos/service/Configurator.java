@@ -80,6 +80,7 @@ import org.n52.sos.util.Cleanupable;
 import org.n52.sos.util.ConfiguringSingletonServiceLoader;
 import org.n52.sos.util.Producer;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
@@ -155,6 +156,15 @@ public class Configurator implements Cleanupable {
             }
         }
         return instance;
+    }
+
+    /**
+     * Method to set a {@code Configurator} instance (eg a mock).
+     * @param configurator
+     */
+    @VisibleForTesting
+    public static void setInstance(Configurator configurator) {
+        instance = configurator;
     }
 
     private static void cleanUpAndThrow(final ConfigurationException t) throws ConfigurationException {
@@ -270,7 +280,7 @@ public class Configurator implements Cleanupable {
      * Get the {@link ConnectionProviderIdentificator} and
      * {@link DatasourceDaoIdentifier} values from {@link Datasource}
      * implementation
-     * 
+     *
      * @param dataConnectionProviderProperties
      *            Datasource properties
      */

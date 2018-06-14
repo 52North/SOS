@@ -62,6 +62,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
@@ -340,7 +341,7 @@ public class SosHelper implements Constants {
         // check remaining free memory on heap if too small, throw exception to
         // avoid an OutOfMemoryError
         long freeMem = runtime.freeMemory();
-        LOGGER.debug("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
+        LOGGER.trace("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
         if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
             // accords to 256 kB create service exception
             throw new ResponseExceedsSizeLimitException().withMessage(
@@ -605,9 +606,17 @@ public class SosHelper implements Constants {
      *         <p/>
      */
     public static MinMax<String> getMinMaxFromEnvelope(final Envelope envelope) {
-        // TODO for full 3D support add minz to parameter in setStringValue
         return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
+    }
+    
+    public static MinMax<String> getMinMaxFromEnvelope(final SosEnvelope envelope) {
+        if (envelope.isSetMinMaxZ()) {
+            return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
+                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+        }
+        return getMinMaxFromEnvelope(envelope.getEnvelope());
+        
     }
 
     /**

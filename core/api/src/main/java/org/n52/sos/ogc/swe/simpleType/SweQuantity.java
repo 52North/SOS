@@ -30,11 +30,16 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import java.util.Collection;
 
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType quantity
- * 
+ *
  * @author Carsten Hollmann
  * @since 4.0.0
  */
@@ -49,16 +54,29 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
      * value
      */
     private Double value;
+    
+    private Referenceable<SweAllowedValues> constraint;
+    
 
     /**
      * constructor
      */
     public SweQuantity() {
     }
+    
+    public SweQuantity(Double value, String uom) {
+        this.value = value;
+        setUom(uom);
+    }
+    
+    public SweQuantity(Double value, UoM uom) {
+        this.value = value;
+        setUom(uom);
+    }
 
     /**
      * Get axis ID
-     * 
+     *
      * @return the axisID
      */
     public String getAxisID() {
@@ -67,7 +85,7 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
 
     /**
      * set axis ID
-     * 
+     *
      * @param axisID
      *            the axisID to set
      * @return This SweQuantity
@@ -109,6 +127,9 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
         if ((getAxisID() == null) ? (other.getAxisID() != null) : !getAxisID().equals(other.getAxisID())) {
             return false;
         }
+        if ((getValue() == null) ? (other.getValue() != null) : !getValue().equals(other.getValue())) {
+            return false;
+        }
         return super.equals(obj);
     }
 
@@ -143,4 +164,58 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
     public SweQuantity setQuality(Collection<SweQuality> quality) {
         return (SweQuantity) super.setQuality(quality);
     }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedValues> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedValues constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedValues> constraint) {
+        this.constraint = constraint;
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SweQuantity clone() {
+        SweQuantity clone = new SweQuantity();
+        copyValueTo(clone);
+        if (isSetAxisID()) {
+            clone.setAxisID(getAxisID());
+        }
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
+        }
+        return clone;
+    }
+
 }

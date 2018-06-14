@@ -28,8 +28,10 @@
  */
 package org.n52.sos.request.operator;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
-
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.RequestContext;
@@ -38,10 +40,6 @@ import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.net.IPAddress;
 import org.n52.sos.util.net.IPAddressRange;
 import org.n52.sos.util.net.ProxyChain;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
@@ -62,7 +60,13 @@ public class TransactionalRequestChecker {
     }
 
     public void check(RequestContext rc) throws OwsExceptionReport {
-        if (!predicate.apply(rc)) {
+        if (rc == null) {
+            throw new NoApplicableCodeException()
+                    .causedBy(new NullPointerException(
+                            "RequestContext MUST not be null!"))
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+        }
+        else if (!predicate.apply(rc)) {
             throw new NoApplicableCodeException()
                     .withMessage("Not authorized for transactional operations!")
                     .setStatus(HTTPStatus.UNAUTHORIZED);

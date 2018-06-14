@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;

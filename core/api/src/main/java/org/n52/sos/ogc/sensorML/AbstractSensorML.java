@@ -32,36 +32,44 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.sos.ogc.sensorML.elements.SmlCapability;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.ogc.sensorML.elements.SmlIdentifierPredicates;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractSensorML extends SosProcedureDescription {
     private static final long serialVersionUID = -5715790909736521952L;
-    private List<String> keywords = new ArrayList<String>(0);
-    private List<SmlIdentifier> identifications = new ArrayList<SmlIdentifier>(0);
-    private List<SmlClassifier> classifications = new ArrayList<SmlClassifier>(0);
-    private List<SmlCharacteristics> characteristics = new ArrayList<SmlCharacteristics>(0);
-    private final List<SmlCapabilities> capabilities = new ArrayList<SmlCapabilities>(0);
-    private List<SmlContact> contacts = new ArrayList<SmlContact>(0);
-    private final List<AbstractSmlDocumentation> documentations = new ArrayList<AbstractSmlDocumentation>(0);
+    private List<String> keywords = new ArrayList<>(0);
+    private List<SmlIdentifier> identifications = new ArrayList<>(0);
+    private List<SmlClassifier> classifications = new ArrayList<>(0);
+    private List<SmlCharacteristics> characteristics = new ArrayList<>(0);
+    private final List<SmlCapabilities> capabilities = new ArrayList<>(0);
+    private List<SmlContact> contacts = new ArrayList<>(0);
+    private final List<AbstractSmlDocumentation> documentations = new ArrayList<>(0);
     private String history;
     private String gmlId;
-    
+
     @Override
     public SosProcedureDescription setIdentifier(final String identifier) {
         super.setIdentifier(identifier);
@@ -76,7 +84,7 @@ public class AbstractSensorML extends SosProcedureDescription {
         this.keywords = keywords;
         return this;
     }
-    
+
     public AbstractSensorML addKeywords(final List<String> keywords) {
         if (isSetKeywords()) {
             this.keywords.addAll(keywords);
@@ -130,11 +138,12 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     public Optional<SmlClassifier> findClassifier(Predicate<SmlClassifier> predicate) {
         if (isSetClassifications()) {
-            return Iterables.tryFind(this.classifications, predicate);
+            return Iterables.tryFind(classifications, predicate);
         } else {
             return Optional.absent();
         }
     }
+
 
     public AbstractSensorML addClassification(final SmlClassifier classifier) {
         classifications.add(classifier);
@@ -160,6 +169,14 @@ public class AbstractSensorML extends SosProcedureDescription {
         return this;
     }
 
+    public Optional<SmlCharacteristics> findCharacteristics(Predicate<SmlCharacteristics> predicate) {
+        if (isSetCharacteristics()) {
+            return Iterables.tryFind(characteristics, predicate);
+        } else {
+            return Optional.absent();
+        }
+    }
+
     public AbstractSensorML addCharacteristic(final SmlCharacteristics characteristic) {
         characteristics.add(characteristic);
         return this;
@@ -177,16 +194,16 @@ public class AbstractSensorML extends SosProcedureDescription {
     }
 
     public Optional<SmlCapabilities> findCapabilities(Predicate<SmlCapabilities> predicate) {
-        if (this.capabilities != null) {
-            return Iterables.tryFind(this.capabilities, predicate);
+        if (capabilities != null) {
+            return Iterables.tryFind(capabilities, predicate);
         } else {
             return Optional.absent();
         }
     }
-    
+
     public void removeCapabilities(SmlCapabilities caps) {
-        if (this.capabilities != null) {
-            this.capabilities.remove(caps);
+        if (capabilities != null) {
+            capabilities.remove(caps);
         }
     }
 
@@ -199,7 +216,7 @@ public class AbstractSensorML extends SosProcedureDescription {
     }
 
     public AbstractSensorML setContact(final List<SmlContact> contacts) {
-        if (isSetContacts()) {
+        if (isSetContact()) {
             this.contacts.addAll(contacts);
         } else {
             this.contacts = contacts;
@@ -207,16 +224,41 @@ public class AbstractSensorML extends SosProcedureDescription {
         return this;
     }
 
-    private boolean isSetContacts() {
-        return contacts != null && !contacts.isEmpty();
+    public AbstractSensorML addContact(final SmlContact contact) {
+        if (contacts == null) {
+            contacts = new LinkedList<>();
+        }
+        contacts.add(contact);
+        return this;
     }
 
-    public AbstractSensorML addContact(final SmlContact contact) {
-        if (this.contacts == null) {
-            this.contacts = new LinkedList<SmlContact>();
+    /**
+     * Get {@link SmlContact} for a specific role
+     *
+     * @param contactRole
+     *            Role to get {@link SmlContact} for
+     * @return The {@link SmlContact} or null if not defined
+     */
+    public SmlContact getContact(String contactRole) {
+        if (isSetContact()) {
+            return getContact(getContact(), contactRole);
         }
-        this.contacts.add(contact);
-        return this;
+        return null;
+    }
+
+    private SmlContact getContact(List<SmlContact> contacts, String contactRole) {
+        for (SmlContact contact : contacts) {
+            if (contact instanceof SmlContactList) {
+                SmlContact cont = getContact(((SmlContactList) contact).getMembers(), contactRole);
+                if (cont != null) {
+                    return cont;
+                }
+            } else if (contact.getRole() != null && contact.getRole().equals(contactRole)
+                    && contact instanceof SmlResponsibleParty) {
+                return contact;
+            }
+        }
+        return null;
     }
 
     public List<AbstractSmlDocumentation> getDocumentation() {
@@ -279,10 +321,12 @@ public class AbstractSensorML extends SosProcedureDescription {
         return history != null && !history.isEmpty();
     }
 
+    @Override
     public String getGmlId() {
         return gmlId;
     }
 
+    @Override
     public void setGmlId(String gmlId) {
         this.gmlId = gmlId;
     }
@@ -290,9 +334,121 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(gmlId);
     }
-    
+
+    protected Predicate<SmlIdentifier> createSmlIdentifierPredicate(String name) {
+        return createSmlIdentifierPredicate(name, name);
+    }
+
+    protected Predicate<SmlIdentifier> createSmlIdentifierPredicate(String name, String definition) {
+        return SmlIdentifierPredicates.nameOrDefinition(name, definition);
+    }
+
+    private boolean isSetShortName() {
+        return isIdentificationSet(createSmlIdentifierPredicate(SensorMLConstants.ELEMENT_NAME_SHORT_NAME));
+    }
+
+    private String getShortName() {
+        if (isSetShortName()) {
+           return findIdentification(createSmlIdentifierPredicate(SensorMLConstants.ELEMENT_NAME_SHORT_NAME)).get()
+                    .getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isSetProcedureName() {
+        if (super.isSetProcedureName()) {
+            return super.isSetProcedureName();
+        } else {
+            return isSetShortName();
+        }
+    }
+
+    @Override
+    public String getProcedureName() {
+        if (isSetProcedureName()) {
+            if (super.isSetProcedureName()) {
+                return super.getProcedureName();
+            } else {
+                return getShortName();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isSetMobile() {
+        return getSweBooleanFromCapabilitiesFor(Sets.newHashSet(SensorMLConstants.STATIONARY, SensorMLConstants.MOBILE)) == null ? false : true;
+    }
+
+    @Override
+    public boolean getMobile() {
+        SweBoolean sweBoolean = getSweBooleanFromCapabilitiesFor(Sets.newHashSet(SensorMLConstants.STATIONARY, SensorMLConstants.MOBILE, SensorMLConstants.FIXED));
+        if (SensorMLConstants.MOBILE.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return sweBoolean.getValue();
+        } else if (SensorMLConstants.STATIONARY.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return !sweBoolean.getValue();
+        }
+        return super.getMobile();
+    }
+
+    @Override
+    public boolean isSetInsitu() {
+        return getSweBooleanFromCapabilitiesFor(Sets.newHashSet(Sets.newHashSet(SensorMLConstants.INSITU, SensorMLConstants.REMOTE))) == null ? false : true;
+    }
+
+    @Override
+    public boolean getInsitu() {
+        SweBoolean sweBoolean = getSweBooleanFromCapabilitiesFor(Sets.newHashSet(Sets.newHashSet(SensorMLConstants.INSITU, SensorMLConstants.REMOTE)));
+        if (SensorMLConstants.INSITU.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return sweBoolean.getValue();
+        } else if (SensorMLConstants.REMOTE.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return !sweBoolean.getValue();
+        }
+        return super.getInsitu();
+    }
+
+    private SweBoolean getSweBooleanFromCapabilitiesFor(Set<String> definitions) {
+        if (this instanceof SensorML && ((SensorML)this).isWrapper()) {
+            for (AbstractProcess absProcess : ((SensorML)this).getMembers()) {
+                return getSweBooleanFromCapabilitiesFor(absProcess, definitions);
+            }
+        } else {
+            return getSweBooleanFromCapabilitiesFor(this, definitions);
+        }
+        return null;
+    }
+
+    private SweBoolean getSweBooleanFromCapabilitiesFor(AbstractSensorML sml, Set<String> definitions) {
+        if (sml.isSetCapabilities()) {
+            for (SmlCapabilities caps : sml.getCapabilities()) {
+                for (SmlCapability cap : caps.getCapabilities()) {
+                    if (cap.getAbstractDataComponent() instanceof SweDataRecord) {
+                        for (SweField field : ((SweDataRecord)cap.getAbstractDataComponent()).getFields()) {
+                            if (field.getElement() instanceof SweBoolean) {
+                                if (field.getElement().isSetDefinition() && definitions.contains(field.getElement().getDefinition().toLowerCase(Locale.ROOT))) {
+                                    return (SweBoolean)field.getElement();
+                                } else if (cap.isSetName() && definitions.contains(cap.getName().toLowerCase(Locale.ROOT))) {
+                                    return (SweBoolean)field.getElement();
+                                }
+                            }
+                        }
+                    } else if (cap.getAbstractDataComponent() instanceof SweBoolean) {
+                        if (cap.getAbstractDataComponent().isSetDefinition() && definitions.contains(cap.getAbstractDataComponent().getDefinition().toLowerCase(Locale.ROOT))) {
+                            return (SweBoolean)cap.getAbstractDataComponent();
+                        } else if (cap.isSetName() && definitions.contains(cap.getName().toLowerCase(Locale.ROOT))) {
+                            return (SweBoolean)cap.getAbstractDataComponent();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void copyTo(AbstractSensorML copyOf) {
         super.copyTo(copyOf);
+        copyOf.addCapabilities(getCapabilities());
         copyOf.setCharacteristics(getCharacteristics());
         copyOf.setClassifications(getClassifications());
         copyOf.setContact(getContact());

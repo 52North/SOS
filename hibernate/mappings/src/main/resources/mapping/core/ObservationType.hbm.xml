@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ObservationType" table="observationType">
+    <class name="org.n52.sos.ds.hibernate.entities.ObservationType" table="observationtype">
         <comment>Table to store the observationTypes. Mapping file: mapping/core/ObservationType.hbm.xml</comment>
         <id name="observationTypeId" type="long">
             <column name="observationTypeId">

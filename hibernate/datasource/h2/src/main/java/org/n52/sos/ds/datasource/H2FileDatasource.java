@@ -30,6 +30,8 @@ package org.n52.sos.ds.datasource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -88,8 +90,8 @@ public class H2FileDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?, ?>> newHashSet(h2Database, getDatabaseConceptDefinition(),
-                getTransactionalDefiniton(), getMulitLanguageDefiniton());
+        return Sets.<SettingDefinition<?, ?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
+                getTransactionalDefiniton(), getMulitLanguageDefiniton(), getSeriesMetadataDefiniton());
     }
 
     @Override
@@ -108,7 +110,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected Map<String, Object> parseDatasourceProperties(Properties current) {
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = new HashMap<>(2);
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();

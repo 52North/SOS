@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -105,10 +106,55 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
         getExtensions().addSwesExtension(extension);
         return this;
     }
-
+    
+    @Override
+    public AbstractServiceRequest addExtensions(final Collection<SwesExtension<?>> extensions) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extensions);
+        return this;
+    }
+    
     @Override
     public boolean isSetExtensions() {
         return extensions != null && !extensions.isEmpty();
+    }
+    
+    @Override
+    public boolean hasExtension(Enum identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean hasExtension(String identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+
+    @Override
+    public SwesExtension<?> getExtension(Enum identifier) {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
+    }
+    
+    @Override
+    public SwesExtension<?> getExtension(String identifier) {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
+    }
+    
+    public int getExtensionCount(String identifier) {
+        return getExtensions().getExtensionCount(identifier);
     }
 
     public String getRequestedLanguage() {
@@ -143,7 +189,7 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
     }
     
     public abstract T getResponse() throws OwsExceptionReport;
-
+    
     @Override
     public String toString() {
         return String.format("%s[service=%s, version=%s, operation=%s]", getClass().getName(), getService(),

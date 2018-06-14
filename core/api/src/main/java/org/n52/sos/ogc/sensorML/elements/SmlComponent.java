@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import org.n52.sos.ogc.gml.AbstractReferenceType;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 
 /**
@@ -35,15 +36,9 @@ import org.n52.sos.ogc.sensorML.AbstractSensorML;
  * 
  * @since 4.0.0
  */
-public class SmlComponent {
+public class SmlComponent extends AbstractReferenceType {
 
     private String name;
-
-    private String title;
-
-    private String href;
-
-    private String role;
 
     private AbstractSensorML process;
 
@@ -77,32 +72,8 @@ public class SmlComponent {
         this.name = name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setHref(String href) {
-        this.href = href;
-    }
-
     public void setProcess(AbstractSensorML process) {
         this.process = process;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getHref() {
-        return href;
     }
 
     public AbstractSensorML getProcess() {
@@ -115,6 +86,10 @@ public class SmlComponent {
 
     public boolean isSetName() {
         return name != null && !name.isEmpty();
+    }
+    
+    public boolean isReferencedExternally() {
+        return isSetTitle() || isSetHref();
     }
 
 }

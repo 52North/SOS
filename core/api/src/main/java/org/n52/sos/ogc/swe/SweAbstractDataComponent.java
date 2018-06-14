@@ -32,8 +32,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.gml.DefaultEncoding;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -43,9 +45,9 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public abstract class SweAbstractDataComponent implements DefaultEncoding<SweAbstractDataComponent> {
+public abstract class SweAbstractDataComponent implements DefaultEncoding<SweAbstractDataComponent>, Cloneable {
 
     private String definition;
 
@@ -246,14 +248,19 @@ public abstract class SweAbstractDataComponent implements DefaultEncoding<SweAbs
     }
 
     public abstract SweDataComponentType getDataComponentType();
-
+    public abstract <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport;
+    public abstract void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport;
+    
+    @Override
+    public abstract SweAbstractDataComponent clone() throws CloneNotSupportedException;
+    
     /**
      * Copies all values from this {@link SweAbstractDataComponent} to the
      * passed
      * 
      * @param copy
      *            {@link SweAbstractDataComponent} to copy values to
-     * @return 
+     * @return Copy of this
      */
     public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
         copy.setDefinition(definition);
@@ -263,5 +270,5 @@ public abstract class SweAbstractDataComponent implements DefaultEncoding<SweAbs
         copy.setName(names);
         return copy;
     }
-
+    
 }

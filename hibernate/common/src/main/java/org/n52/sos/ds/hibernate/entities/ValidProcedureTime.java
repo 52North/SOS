@@ -36,7 +36,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescript
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ValidProcedureTime extends DescriptionXmlEntity implements Serializable, HasProcedure,
         HasProcedureDescriptionFormat {
@@ -83,9 +83,8 @@ public class ValidProcedureTime extends DescriptionXmlEntity implements Serializ
     }
 
     @Override
-    public ValidProcedureTime setProcedureDescriptionFormat(ProcedureDescriptionFormat procedureDescriptionFormat) {
+    public void setProcedureDescriptionFormat(ProcedureDescriptionFormat procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
-        return this;
     }
 
     public Date getStartTime() {

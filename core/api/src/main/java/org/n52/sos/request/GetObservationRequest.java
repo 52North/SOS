@@ -31,6 +31,7 @@ package org.n52.sos.request;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.Filter;
@@ -38,9 +39,15 @@ import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.ResultFilter;
+import org.n52.sos.ogc.sos.ResultFilterConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.sos.SosSpatialFilter;
+import org.n52.sos.ogc.sos.SosSpatialFilterConstants;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
@@ -48,6 +55,7 @@ import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * SOS GetObservation request
@@ -91,19 +99,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     private SpatialFilter spatialFilter;
 
-    /**
-     * Result filters list
-     */
-    @Deprecated
-    private ComparisonFilter result;
-
-    @SuppressWarnings("rawtypes")
-    private Filter resultFilter;
-
     private Map<String, String> namespaces = Maps.newHashMap();
-    
-    private boolean mergeObservationValues = false;
-    
 
     /*
      * (non-Javadoc)
@@ -212,7 +208,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         this.procedures = procedures;
     }
 
-
     /**
      * Get result filters
      * 
@@ -220,7 +215,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     @Deprecated
     public ComparisonFilter getResult() {
-        return result;
+        return getResultFilter();
     }
 
     /**
@@ -231,28 +226,22 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     @Deprecated
     public void setResult(ComparisonFilter result) {
-        this.result = result;
+        this.setResultFilter(result);
     }
 
-    /**
-     * Get result filter(s)
-     * 
-     * @return result filter(s)
-     */
-    @SuppressWarnings("rawtypes")
-    public Filter getResultFilter() {
-        return resultFilter;
-    }
 
     /**
      * Add result filter(s)
      * 
-     * @param result
+     * @param resultFilter
      *            result filter(s)
      */
     @SuppressWarnings("rawtypes")
+    @Deprecated
     public void setResultFilter(Filter resultFilter) {
-        this.resultFilter = resultFilter;
+        if (resultFilter instanceof ComparisonFilter) {
+            setResultFilter((ComparisonFilter)resultFilter);
+        }
     }
 
     /**
@@ -260,12 +249,13 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * 
      * @return <code>true</code>, if a result filter is set
      */
+    @Deprecated
     public boolean isSetResultFilter() {
         return getResultFilter() != null;
     }
 
     /**
-
+     * 
      * Get request as String
      * 
      * @return request as String
@@ -291,7 +281,10 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     @Override
     public SpatialFilter getSpatialFilter() {
-        return spatialFilter;
+        if (hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
+            return ((SosSpatialFilter) getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue();
+        } else
+            return spatialFilter;
     }
 
     /**
@@ -322,7 +315,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         res.setResponseFormat(getResponseFormat());
         res.setResponseMode(getResponseMode());
         res.setSpatialFilter(this.spatialFilter);
-        res.setResult(this.result);
         res.setResultModel(getResultModel());
         res.setFeatureIdentifiers(this.featureIdentifiers);
         res.setService(this.getService());
@@ -377,7 +369,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     @Override
     public boolean isSetSpatialFilter() {
-        if (spatialFilter != null) {
+        if (spatialFilter != null || hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
             return true;
         }
         return false;
@@ -434,9 +426,28 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     @Override
     public boolean hasSpatialFilteringProfileSpatialFilter() {
-        return isSetSpatialFilter()
-                && getSpatialFilter().getValueReference().equals(
-                        Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
+        return isSetSpatialFilter() 
+                && (getSpatialFilter().getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)
+                        || (hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER) 
+                                && ((SosSpatialFilter) getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue()
+                                .getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)));
+    }
+
+    public boolean hasResultFilter() {
+        return isSetExtensions() && hasExtension(ResultFilterConstants.RESULT_FILTER)
+                && getExtension(ResultFilterConstants.RESULT_FILTER) instanceof ResultFilter;
+    }
+    
+    public ComparisonFilter getResultFilter() {
+        if (hasResultFilter()) {
+            return ((ResultFilter)getExtension(ResultFilterConstants.RESULT_FILTER)).getValue();
+        }
+        return null;
+    }
+
+    public GetObservationRequest setResultFilter(ComparisonFilter filter) {
+        addExtension(new ResultFilter(filter));
+        return this;
     }
 
     public boolean isSetRequestString() {
@@ -450,17 +461,51 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     public boolean isSetNamespaces() {
         return CollectionHelper.isNotEmpty(getNamespaces());
     }
-    
+
     @Override
     public AbstractObservationResponse getResponse() throws OwsExceptionReport {
         return (GetObservationResponse) new GetObservationResponse().set(this);
     }
 
-    public void setMergeObservationValues(boolean mergeObservationValues) {
-        this.mergeObservationValues = mergeObservationValues;
-     }
-     
-     public boolean isSetMergeObservationValues(){
-         return mergeObservationValues;
-     }
+
+    /**
+     * Check if the {@link SwesExtensions} contains {@link Filter}
+     * 
+     * @return <code>true</code>, if the {@link SwesExtensions} contains
+     *         {@link Filter}
+     */
+    public boolean isSetFesFilterExtension() {
+        if (isSetExtensions()) {
+            for (SwesExtension<?> extension : getExtensions().getExtensions()) {
+                if (isFesFilterExtension(extension)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get all {@link SwesExtensions} with {@link Filter}
+     * 
+     * @return All {@link SwesExtensions} with {@link Filter}
+     */
+    public Set<SwesExtension<?>> getFesFilterExtensions() {
+        Set<SwesExtension<?>> set = Sets.newHashSet();
+        if (isSetExtensions()) {
+            for (SwesExtension<?> extension : getExtensions().getExtensions()) {
+                if (isFesFilterExtension(extension)) {
+                    set.add(extension);
+                }
+            }
+        }
+        return set;
+    }
+
+    private boolean isFesFilterExtension(SwesExtension<?> extension) {
+        return !((extension instanceof ResultFilter) 
+                || (extension instanceof SpatialFilter)
+                || (extension instanceof SosSpatialFilter)) 
+                && extension.getValue() instanceof Filter<?>;
+    }
 }

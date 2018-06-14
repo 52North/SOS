@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality" table="ereportingQuality">
+    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality" table="ereportingquality">
         <comment>Table to store the AQD e-Reporting quality information for yearly reporting. Mapping file: mapping/ereporting/EReportingQuality.hbm.xml</comment>
         <id name="id" type="long">
             <column name="id">

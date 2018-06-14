@@ -2,9 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries" table="series">
+    <class name="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries"
+           table="series">
         <comment>Table to store a (time-) series which consists of featureOfInterest, observableProperty, procedure, and samplingPoint. Mapping file: mapping/ereporting/EReportingSeries.hbm.xml</comment>
-        <id name="seriesId" type="long">
+        <id name="seriesId"
+            type="long">
             <column name="seriesId">
                 <comment>Table primary key, used for relations</comment>
             </column>
@@ -12,66 +14,166 @@
                 <param name="sequence">seriesId_seq</param>
             </generator>
         </id>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="seriesFeatureFk">
-               <column index="seriesFeatureIdx" name="featureOfInterestId" not-null="true" unique-key="seriesIdentity">
+        <many-to-one name="featureOfInterest"
+                     class="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
+                     foreign-key="seriesFeatureFk">
+            <column index="seriesFeatureIdx"
+                    name="featureOfInterestId"
+                    not-null="true"
+                    unique-key="seriesIdentity" >
                 <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" foreign-key="seriesObPropFk">
-            <column index="seriesObsPropIdx" name="observablePropertyId" not-null="true" unique-key="seriesIdentity">
+        <many-to-one name="observableProperty"
+                     class="org.n52.sos.ds.hibernate.entities.ObservableProperty"
+                     foreign-key="seriesObPropFk">
+            <column index="seriesObsPropIdx"
+                    name="observablePropertyId"
+                    not-null="true"
+                    unique-key="seriesIdentity">
                 <comment>Foreign Key (FK) to the related observableProperty. Contains "observableproperty".observablepropertyid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="seriesProcedureFk">
-            <column index="seriesProcedureIdx" name="procedureId" not-null="true" unique-key="seriesIdentity">
+        <many-to-one name="procedure"
+                     class="org.n52.sos.ds.hibernate.entities.Procedure"
+                     foreign-key="seriesProcedureFk">
+            <column index="seriesProcedureIdx"
+                    name="procedureId"
+                    not-null="true"
+                    unique-key="seriesIdentity" >
                 <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="seriesOfferingFk">
-            <column index="seriesOfferingIdx" name="offeringId" not-null="false" unique-key="seriesIdentity">
+        <many-to-one name="offering" 
+                     class="org.n52.sos.ds.hibernate.entities.Offering" 
+                     foreign-key="seriesOfferingFk">
+            <column index="seriesOfferingIdx" 
+                    name="offeringId" 
+                    not-null="true"
+                    unique-key="seriesIdentity" >
                 <comment>Foreign Key (FK) to the related procedure. Contains "offering".offeringid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="samplingPoint" class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint" foreign-key="seriesSampPointFk">
-            <column index="seriesSampPointIdx" name="samplingPointId" not-null="true" unique-key="seriesIdentity" >
+        <many-to-one name="samplingPoint"
+                     class="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint"
+                     foreign-key="seriesSampPointFk">
+            <column index="seriesSampPointIdx"
+                    name="samplingPointId"
+                    not-null="true"
+                    unique-key="seriesIdentity" >
                 <comment>Foreign Key (FK) to the related samplingPoint. Contains "samplingPoint".samplingPointId</comment>
             </column>
         </many-to-one>
-        <property name="deleted" type="org.hibernate.type.TrueFalseType">
-            <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')">
+        <property name="deleted"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="deleted"
+                    not-null="true"
+                    default="'F'"
+                    check="deleted in ('T','F')">
                 <comment>Flag to indicate that this series is deleted or not. Set if the related procedure is deleted via DeleteSensor operation (OGC SWES 2.0 - DeleteSensor operation)</comment>
             </column>
         </property>
-        <property name="published" type="org.hibernate.type.TrueFalseType">
-            <column name="published" not-null="true" default="'T'" check="published in ('T','F')">
+        <property name="published"
+                    type="org.hibernate.type.TrueFalseType">
+            <column name="published"
+                    not-null="true"
+                    default="'T'"
+                    check="published in ('T','F')">
                 <comment>Flag to indicate that this series is published or not. A not published series is not contained in GetObservation and GetDataAvailability responses</comment>
             </column>
         </property>
+        <property name="hiddenChild"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild"
+                    not-null="true"
+                    default="'F'"
+                    check="hiddenChild in ('T','F')" >
+                <comment>TODO</comment>
+            </column>
+        </property>
         <!-- values for timeseries api -->
-        <property name="firstTimeStamp" type="timestamp">
-            <column name="firstTimeStamp" not-null="false" default="NULL" length="29">
+        <property name="firstTimeStamp"
+                  type="timestamp">
+            <column name="firstTimeStamp"
+                    not-null="false"
+                    default="NULL"
+                    length="29" >
                 <comment>The time stamp of the first (temporal) observation associated to this series</comment>
             </column>
         </property>
-        <property name="lastTimeStamp" type="timestamp">
-            <column name="lastTimeStamp" not-null="false" default="NULL" length="29">
+        <property name="lastTimeStamp"
+                  type="timestamp">
+            <column name="lastTimeStamp"
+                    not-null="false"
+                    default="NULL"
+                    length="29" >
                 <comment>The time stamp of the last (temporal) observation associated to this series</comment>
             </column>
         </property>
-        <property name="firstNumericValue" type="double">
-            <column name="firstNumericValue" >
+        <property name="firstNumericValue"
+                  type="double">
+            <column name="firstNumericValue"
+                    length="29" >
                 <comment>The value of the first (temporal) observation associated to this series</comment>
             </column>
         </property>
-        <property name="lastNumericValue" type="double">
-            <column name="lastNumericValue">
+        <property name="lastNumericValue"
+                  type="double">
+            <column name="lastNumericValue"
+                    length="29" >
                 <comment>The value of the last (temporal) observation associated to this series</comment>
             </column>
         </property>
-         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit" foreign-key="seriesUnitFk">
-            <column name="unitId" not-null="false">
+        <many-to-one name="unit"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     foreign-key="seriesUnitFk">
+            <column name="unitId"
+                    not-null="false" >
                 <comment>Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid</comment>
             </column>
         </many-to-one>
+        <property name="identifier" type="string">
+            <column name="identifier" not-null="false" unique-key="seriesIdentifierUK">
+                <comment>The identifier of the series, gml:identifier. Unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="seriesCodespaceIdentifierFk">
+            <column name="codespace">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+                <comment>The name of the series, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="seriesCodespaceNameFk">
+            <column name="codespaceName">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+                <comment>Description of the series, gml:description. Optional</comment>
+            </column>
+        </property>
+        <property name="seriesType" type="string">
+            <column name="seriesType" not-null="false">
+                <comment>Definition of the series type, e.g. measurement for OM_Measurement. Optional</comment>
+            </column>
+        </property>
+        <list name="referenceValues" table="seriesreference" inverse="false">
+            <key foreign-key="seriesrefseriesfk">
+              <column name="seriesid" not-null="true" index="seriesididx">
+                  <comment>Foreign Key (FK) to link a series with a reference value series. Contains "series".seriesid</comment>
+              </column>
+            </key>
+            <list-index column="sortorder" />
+            <many-to-many class="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries" unique="true" foreign-key="seriesrefreffk">
+                <column name="referenceseriesid" not-null="true" index="referenceseriesididx">
+                    <comment>Foreign Key (FK) to the linked reference value series. Contains "series".seriesid</comment>
+                </column>
+            </many-to-many>
+        </list>
     </class>
 </hibernate-mapping>

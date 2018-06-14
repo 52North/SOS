@@ -29,9 +29,10 @@
 package org.n52.sos.ogc.om;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.text.TabableView;
 
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
@@ -43,6 +44,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JavaHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -60,49 +62,64 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     private int maxNumberOfValues = Integer.MIN_VALUE;
     
     private int currentNumberOfValues = 0;
+    
+    private ObservationMerger observationMerger;
+    
+    private ObservationMergeIndicator observationMergeIndicator;
 
     public abstract boolean hasNextValue() throws OwsExceptionReport;
 
-    public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
+    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+        return nextSingleObservation(false);
+    }
     
-
+    public abstract OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport;
+    
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
-        List<OmObservation> observations = getObservation();
+        return mergeObservation(getObservation());
+    }
+    
+    public Collection<OmObservation> mergeObservation(Collection<OmObservation> observations) throws OwsExceptionReport {
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
         // the merged Observations
         // (proc, obsProp, foi)
         if (CollectionHelper.isNotEmpty(observations)) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : observations) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.checkForMerge(sosObservation)) {
-                            combinedSosObs.setResultTime(null);
-                            combinedSosObs.mergeWithObservation(sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            return mergedObservations;
+            return getObservationMerger().mergeObservations(observations, getObservationMergeIndicator());
+//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+//            int obsIdCounter = 1;
+//            for (final OmObservation sosObservation : observations) {
+//                if (mergedObservations.isEmpty()) {
+//                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+//                    mergedObservations.add(sosObservation);
+//                } else {
+//                    boolean combined = false;
+//                    for (final OmObservation combinedSosObs : mergedObservations) {
+//                        if (combinedSosObs.checkForMerge(sosObservation)) {
+//                            combinedSosObs.setResultTime(null);
+//                            combinedSosObs.mergeWithObservation(sosObservation);
+//                            combined = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!combined) {
+//                        mergedObservations.add(sosObservation);
+//                    }
+//                }
+//            }
+//            return mergedObservations;
         }
         return observations;
     }
 
     public List<OmObservation> getObservation() throws OwsExceptionReport {
+        return getObservation(false);
+    }
+    
+    public List<OmObservation> getObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         List<OmObservation> observations = Lists.newArrayList();
         do {
-            OmObservation obs = nextSingleObservation();
+            OmObservation obs = nextSingleObservation(withIdentifierNameDesription);
             if (obs != null) {
                 observations.add(obs);
             }
@@ -140,10 +157,20 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         if (isSetAdditionalRequestParams() && contains(AdditionalRequestParams.crs)) {
             Object additionalRequestParam = getAdditionalRequestParams(AdditionalRequestParams.crs);
             int targetCRS = -1;
+            int target3DCRS = -1;
             if (additionalRequestParam instanceof Integer) {
                 targetCRS = (Integer) additionalRequestParam;
+                target3DCRS = targetCRS;
             } else if (additionalRequestParam instanceof String) {
                 targetCRS = Integer.parseInt((String) additionalRequestParam);
+                target3DCRS = targetCRS;
+            } else if (additionalRequestParam instanceof List && ((List) additionalRequestParam).size() > 0) {
+                targetCRS = JavaHelper.asInteger(((List) additionalRequestParam).get(0));
+                if (((List) additionalRequestParam).size() == 2) {
+                    target3DCRS = JavaHelper.asInteger(((List) additionalRequestParam).get(1));
+                } else {
+                    target3DCRS = targetCRS;
+                }
             }
             if (observation.isSetParameter()) {
                 for (NamedValue<?> namedValue : observation.getParameter()) {
@@ -151,7 +178,10 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
                         NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
                         spatialFilteringProfileParameter.getValue().setValue(
                                 GeometryHandler.getInstance().transform(
-                                        spatialFilteringProfileParameter.getValue().getValue(), targetCRS));
+                                        spatialFilteringProfileParameter.getValue().getValue(),
+                                        !Double.isNaN(spatialFilteringProfileParameter.getValue().getValue().getCoordinate().z)
+                                        ? target3DCRS
+                                        : targetCRS));
                     }
                 }
             }
@@ -204,5 +234,26 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
             }
         }
     }
+    
+    public void setObservationMerger(ObservationMerger merger) {
+        this.observationMerger = merger;
+    }
+     
+    protected ObservationMerger getObservationMerger() {
+        if (this.observationMerger == null) {
+            setObservationMerger(new ObservationMerger());
+        }
+        return this.observationMerger;
+    }
+    
+    public void setObservationMergeIndicator(ObservationMergeIndicator indicator) {
+        this.observationMergeIndicator = indicator;
+    }
 
+    protected ObservationMergeIndicator getObservationMergeIndicator() {
+        if (this.observationMergeIndicator == null) {
+            setObservationMergeIndicator(new ObservationMergeIndicator());
+        }
+        return this.observationMergeIndicator;
+    }
 }

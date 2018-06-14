@@ -28,14 +28,23 @@
  */
 package org.n52.sos.ogc.sos;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.binding.BindingConstants;
+import org.n52.sos.binding.BindingRepository;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -46,6 +55,7 @@ import com.google.common.collect.Sets;
  *
  */
 public abstract class SosProcedureDescription extends AbstractFeature {
+
     private static final long serialVersionUID = 1144253800787127139L;
     private String sensorDescriptionXmlString;
     private String descriptionFormat;
@@ -56,13 +66,24 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<String> parentProcedures = Sets.newLinkedHashSet();
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
+    private ReferenceType typeOf;
+    private boolean reference;
+
+    /**
+     * Is it an aggregation procedure, e.g. System, PhysicalSystem
+     *
+     * @return <code>true</code>, if this is an aggregation procedure
+     */
+    public boolean isAggragation() {
+        return false;
+    }
 
     @Override
     public SosProcedureDescription setIdentifier(String identifier) {
         super.setIdentifier(identifier);
         return this;
     }
-    
+
     public Set<SosOffering> getOfferings() {
         return offerings;
     }
@@ -74,7 +95,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public SosProcedureDescription addOffering(SosOffering offering) {
         if (offering != null) {
-            this.offerings.add(offering);
+            offerings.add(offering);
         }
         return this;
     }
@@ -105,7 +126,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         this.descriptionFormat = descriptionFormat;
         return this;
     }
-    
+
     public SosProcedureDescription setFeaturesOfInterest(Collection<String> features) {
     	getFeaturesOfInterest().clear();
         getFeaturesOfInterest().addAll(features);
@@ -116,12 +137,12 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         getFeaturesOfInterest().addAll(features);
         return this;
     }
-    
+
     public SosProcedureDescription addFeatureOfInterest(String featureIdentifier) {
         getFeaturesOfInterest().add(featureIdentifier);
         return this;
     }
-    
+
     public Set<String> getFeaturesOfInterest() {
         return featuresOfInterest;
     }
@@ -129,23 +150,23 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public boolean isSetFeaturesOfInterest() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
     }
-    
+
     public SosProcedureDescription setFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
     	this.featuresOfInterestMap.clear();
     	this.featuresOfInterestMap.putAll(featuresOfInterestMap);
         return this;
     }
-    
+
     public SosProcedureDescription addFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
         getFeaturesOfInterestMap().putAll(featuresOfInterestMap);
         return this;
     }
-    
+
     public SosProcedureDescription addFeatureOfInterest(AbstractFeature feature) {
         getFeaturesOfInterestMap().put(feature.getIdentifier(), feature);
         return this;
     }
-    
+
     public Map<String, AbstractFeature> getFeaturesOfInterestMap() {
         return featuresOfInterestMap;
     }
@@ -153,28 +174,28 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public boolean isSetFeaturesOfInterestMap() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterestMap());
     }
-    
+
     public boolean hasAbstractFeatureFor(String identifier) {
         return isSetFeaturesOfInterestMap() && getFeaturesOfInterestMap().containsKey(identifier);
     }
-    
+
     public AbstractFeature getAbstractFeatureFor(String identifier) {
         return getFeaturesOfInterestMap().get(identifier);
     }
 
     public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
     	this.parentProcedures.clear();
-        this.parentProcedures.addAll(parentProcedures);
+    	addParentProcedures(parentProcedures);
         return this;
     }
-    
+
     public SosProcedureDescription addParentProcedures(Collection<String> parentProcedures) {
         this.parentProcedures.addAll(parentProcedures);
         return this;
     }
 
     public SosProcedureDescription addParentProcedure(String parentProcedureIdentifier) {
-        this.parentProcedures.add(parentProcedureIdentifier);
+        parentProcedures.add(parentProcedureIdentifier);
         return this;
     }
 
@@ -194,7 +215,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
 
     public SosProcedureDescription addChildProcedure(SosProcedureDescription childProcedure) {
-        this.childProcedures.add(childProcedure);
+        childProcedures.add(childProcedure);
         return this;
     }
 
@@ -236,42 +257,42 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
 
     public Time getValidTime() {
-        return this.validTime;
+        return validTime;
     }
 
     public SosProcedureDescription addPhenomenon(AbstractPhenomenon phenomenon) {
         getPhenomenon().put(phenomenon.getIdentifier(), phenomenon);
         return this;
     }
-    
+
     public SosProcedureDescription setPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
     	getPhenomenon().clear();
         getPhenomenon().putAll(phenomenons);
         return this;
     }
-    
+
     public SosProcedureDescription addPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
         getPhenomenon().putAll(phenomenons);
         return this;
     }
-    
+
     public Map<String, AbstractPhenomenon> getPhenomenon() {
         return phenomenonMap;
     }
-    
+
     public boolean isSetPhenomenon() {
         return CollectionHelper.isNotEmpty(getPhenomenon());
     }
-    
+
     public boolean hasPhenomenonFor(String identifier) {
         return isSetPhenomenon() && getPhenomenon().containsKey(identifier);
     }
-    
+
     public AbstractPhenomenon getPhenomenonFor(String identifer) {
         return getPhenomenon().get(identifer);
     }
-    
-    
+
+
     /**
      * Copies all values from this object to the copyOf object except XML description and description format
      * @param copyOf {@link SosProcedureDescription} to copy values to
@@ -284,10 +305,52 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         copyOf.setOffetrings(getOfferings());
         copyOf.setParentProcedures(getParentProcedures());
         copyOf.setChildProcedures(getChildProcedures());
+        copyOf.setTypeOf(getTypeOf());
     }
-    
+
     public boolean isSetFeatures() {
         return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
+    }
+
+    /**
+     * @return the typeOf
+     */
+    public ReferenceType getTypeOf() {
+        return typeOf;
+    }
+
+    /**
+     * @param typeOf the typeOf to set
+     */
+    public void setTypeOf(ReferenceType typeOf) {
+        this.typeOf = typeOf;
+    }
+
+
+    /**
+     * @return <code>true</code>, if typeOf is not null
+     */
+    public boolean isSetTypeOf() {
+        return getTypeOf() != null;
+    }
+
+    public String createKvpDescribeSensorOrReturnIdentifier(String identifier) throws CodedException {
+        String href = identifier;
+        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+            final String version =
+                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
+                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                            : Sos1Constants.SERVICEVERSION;
+            try {
+                href =
+                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
+                                identifier, BindingConstants.KVP_BINDING_ENDPOINT, getDescriptionFormat());
+            } catch (final UnsupportedEncodingException uee) {
+                throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL").causedBy(
+                        uee);
+            }
+        }
+        return href;
     }
 
     private void setFeatureOfInterest(Set<String> featuresOfInterest) {
@@ -308,5 +371,57 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     private void setChildProcedures(Set<SosProcedureDescription> childProcedures) {
         this.childProcedures.addAll(childProcedures);
+    }
+
+    public boolean isSetProcedureName() {
+      return isSetName();
+    }
+
+    public String getProcedureName() {
+       if (isSetName()) {
+           return getFirstName().getValue();
+       }
+       return null;
+    }
+
+    public boolean supportsObservablePropertyName() {
+        return false;
+    }
+
+    public boolean isSetObservablePropertyNameFor(String observableProperty) {
+        return false;
+    }
+
+    public String getObservablePropertyNameFor(String observableProperty) {
+        return null;
+    }
+
+    public boolean isSetMobile() {
+        return false;
+    }
+
+    public boolean getMobile() {
+        return false;
+    }
+
+    public boolean isSetInsitu() {
+        return false;
+    }
+
+    public boolean getInsitu() {
+        return true;
+    }
+
+    /**
+     * Flag used by the REST API for displaying reference values. Not used by OGC SOS interface
+     *
+     * @return the reference flag state
+     */
+    public boolean isReference() {
+        return reference;
+    }
+
+    public void setReference(boolean isReference) {
+        reference = isReference;
     }
 }

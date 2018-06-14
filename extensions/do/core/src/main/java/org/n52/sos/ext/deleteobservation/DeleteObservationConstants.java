@@ -28,10 +28,11 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 
 import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -43,9 +44,16 @@ public interface DeleteObservationConstants {
 
     String NS_SOSDO_1_0 = "http://www.opengis.net/sosdo/1.0";
 
-    String NS_SOSDO_1_0_PREFIX = "sosdo";
+    String NS_SOSDO_PREFIX = "sosdo";
+    
+    String NS_SOSDO_2_0 = "http://www.opengis.net/sosdo/2.0";
 
-    String PARAMETER_NAME = "observation";
+    String PARAM_OBSERVATION = "observation";
+    String PARAM_PROCEDURE = "procedure";
+    String PARAM_OBSERVED_PROPERTY= "observedProperty";
+    String PARAM_FEATURE_OF_INTEREST = "featureOfInterest";
+    String PARAM_OFFERING = "offering";
+    String PARAM_TEMPORAL_FILTER = "temporalFilter";
 
     enum Operations {
         DeleteObservation;
@@ -60,11 +68,14 @@ public interface DeleteObservationConstants {
         }
     }
 
-    String CONFORMANCE_CLASS = "http://www.opengis.net/extension/SOSDO/1.0/observationDeletion";
+    String CONFORMANCE_CLASS_10 = "http://www.opengis.net/extension/SOSDO/1.0/observationDeletion";
+    
+    String CONFORMANCE_CLASS_20 = "http://www.opengis.net/extension/SOSDO/2.0/observationDeletion";
 
-    Set<String> CONFORMANCE_CLASSES = unmodifiableSet(singleton(CONFORMANCE_CLASS));
+    Set<String> CONFORMANCE_CLASSES = unmodifiableSet(Sets.newHashSet(CONFORMANCE_CLASS_10, CONFORMANCE_CLASS_20));
 
-    String NS_SOSDO_1_0_SCHEMA_LOCATION =
-            "https://raw.githubusercontent.com/52North/SOS/master/extensions/do/xml/src/main/xsd/sosdo.xsd";
+    String NS_SOSDO_1_0_SCHEMA_LOCATION = "http://52north.org/schema/sosdo/1.0/sosdo.xsd";
+    
+    String NS_SOSDO_2_0_SCHEMA_LOCATION = "http://52north.org/schema/sosdo/2.0/sosdo.xsd";
 
 }

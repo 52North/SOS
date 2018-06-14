@@ -54,6 +54,7 @@ import org.n52.sos.exception.swes.InvalidRequestException;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.util.http.HTTPUtils;
@@ -73,9 +74,9 @@ import com.google.common.collect.Sets;
 
 /**
  * XML utility class TODO add javadoc to public methods.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class XmlHelper {
 
@@ -86,26 +87,26 @@ public final class XmlHelper {
 
     /**
      * Parse XML document from HTTP-Post request.
-     * 
+     *
      * @param request
      *            HTTP-Post request
      * @return XML document
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
     public static XmlObject parseXmlSosRequest(final HttpServletRequest request) throws OwsExceptionReport {
         XmlObject doc;
         try {
-            if (request.getParameterMap().isEmpty()) {
+            if (!request.getParameterMap().isEmpty() && request.getParameterMap().containsKey(RequestParams.request.name())) {
+                doc =
+                        XmlObject.Factory.parse(SosHelper.parseHttpPostBodyWithParameter(request.getParameterNames(),
+                                request.getParameterMap()));
+            } else {
                 final String requestContent =
                         StringHelper.convertStreamToString(HTTPUtils.getInputStream(request),
                                 request.getCharacterEncoding());
                 doc = parseXmlString(requestContent);
-            } else {
-                doc =
-                        XmlObject.Factory.parse(SosHelper.parseHttpPostBodyWithParameter(request.getParameterNames(),
-                                request.getParameterMap()));
             }
         } catch (final XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle).withMessage(
@@ -129,7 +130,7 @@ public final class XmlHelper {
 
     /**
      * Get element Node from NodeList.
-     * 
+     *
      * @param nodeList
      *            NodeList.
      * @return Element Node
@@ -147,10 +148,10 @@ public final class XmlHelper {
 
     /**
      * checks whether the XMLDocument is valid
-     * 
+     *
      * @param doc
      *            the document which should be checked
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if the Document is not valid
      */
@@ -195,6 +196,9 @@ public final class XmlHelper {
                     errors.add(error);
                 }
             }
+            if (errors.isEmpty()) {
+               return true;
+            }
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final XmlError error : errors) {
 
@@ -210,41 +214,41 @@ public final class XmlHelper {
                      * 1.0.0 requests // check, if parameter is missing or value
                      * of parameter // is // invalid to ensure, that correct //
                      * exceptioncode in exception response is used
-                     * 
+                     *
                      * // invalid parameter value if
                      * (message.startsWith("The value")) { exCode =
                      * OwsExceptionCode.InvalidParameterValue;
-                     * 
+                     *
                      * // split message string to get attribute name String[]
                      * messAndAttribute = message.split("attribute '"); if
                      * (messAndAttribute.length == 2) { parameterName =
                      * messAndAttribute[1].replace("'", ""); } }
-                     * 
+                     *
                      * // invalid enumeration value --> InvalidParameterValue
                      * else if
                      * (message.contains("not a valid enumeration value")) {
                      * exCode = OwsExceptionCode.InvalidParameterValue;
-                     * 
+                     *
                      * // get attribute name String[] messAndAttribute =
                      * message.split(" "); parameterName = messAndAttribute[10];
                      * }
-                     * 
+                     *
                      * // mandatory attribute is missing --> //
                      * missingParameterValue else if
                      * (message.startsWith("Expected attribute")) { exCode =
                      * OwsExceptionCode.MissingParameterValue;
-                     * 
+                     *
                      * // get attribute name String[] messAndAttribute =
                      * message.split("attribute: "); if (messAndAttribute.length
                      * == 2) { String[] attrAndRest =
                      * messAndAttribute[1].split(" in"); if (attrAndRest.length
                      * == 2) { parameterName = attrAndRest[0]; } } }
-                     * 
+                     *
                      * // mandatory element is missing --> //
                      * missingParameterValue else if
                      * (message.startsWith("Expected element")) { exCode =
                      * SwesExceptionCode.InvalidRequest;
-                     * 
+                     *
                      * // get element name String[] messAndElements =
                      * message.split(" '"); if (messAndElements.length >= 2) {
                      * String elements = messAndElements[1]; if
@@ -261,7 +265,7 @@ public final class XmlHelper {
                      * elements are invalid } } } // invalidParameterValue else
                      * if (message.startsWith("Element")) { exCode =
                      * OwsExceptionCode.InvalidParameterValue;
-                     * 
+                     *
                      * // get element name String[] messAndElements =
                      * message.split(" '"); if (messAndElements.length >= 2) {
                      * String elements = messAndElements[1]; if
@@ -281,7 +285,7 @@ public final class XmlHelper {
                      * se.addCodedException(SwesExceptionCode.InvalidRequest,
                      * message, "[XmlBeans validation error:] " + message);
                      * LOGGER.error("The request is invalid!", se); throw se; }
-                     * 
+                     *
                      * // create service exception OwsExceptionReport se = new
                      * OwsExceptionReport(); se.addCodedException(exCode,
                      * message, "[XmlBeans validation error:] " + message);
@@ -297,11 +301,11 @@ public final class XmlHelper {
 
     /**
      * Loads a XML document from File.
-     * 
+     *
      * @param file
      *            File
      * @return XML document
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
@@ -329,7 +333,7 @@ public final class XmlHelper {
 
     /**
      * Recurse through a node and its children and make all gml:ids unique
-     * 
+     *
      * @param node
      *            The root node
      */
@@ -339,7 +343,7 @@ public final class XmlHelper {
 
     /**
      * Recurse through a node and its children and make all gml:ids unique
-     * 
+     *
      * @param node
      *            The node to examine
      */
@@ -413,7 +417,7 @@ public final class XmlHelper {
 
     /**
      * Check if attribute or node namespace is a GML id.
-     * 
+     *
      * @param attr
      *            Attribure to check
      * @param nodeNamespace
@@ -436,7 +440,7 @@ public final class XmlHelper {
     /**
      * Check if namespace is not null and equals GML 3.1.1 or GML 3.2.1
      * namespace.
-     * 
+     *
      * @param namespaceToCheck
      *            Namespace to check
      * @param namespaces
@@ -452,7 +456,7 @@ public final class XmlHelper {
 
     /**
      * Get set with GML 3.1.1 and GML 3.2.1 namespaces.
-     * 
+     *
      * @return GML namespace set
      */
     private static Collection<String> getGmlNSs() {
@@ -512,11 +516,8 @@ public final class XmlHelper {
             }
         } else {
             final QName nameOfElement = substitutionElement.schemaType().getName();
-            final String localPart =
-                    nameOfElement.getLocalPart().replace(GmlConstants.EN_PART_TYPE, Constants.EMPTY_STRING);
-            name =
-                    new QName(nameOfElement.getNamespaceURI(), localPart, getPrefixForNamespace(elementToSubstitute,
-                            nameOfElement.getNamespaceURI()));
+            final String localPart = nameOfElement.getLocalPart().replace(GmlConstants.EN_PART_TYPE, Constants.EMPTY_STRING);
+            name = new QName(nameOfElement.getNamespaceURI(), localPart, getPrefixForNamespace(elementToSubstitute, nameOfElement.getNamespaceURI()));
         }
         return substituteElement(elementToSubstitute, substitutionElement.schemaType(), name);
     }
@@ -540,7 +541,7 @@ public final class XmlHelper {
     /**
      * Interface for providing exceptional cases in XML validation (e.g.
      * substitution groups).
-     * 
+     *
      * FIXME Review code and use new procedure from OX-F to validate offending content!
      */
     public enum LaxValidationCase { // FIXME make private again
@@ -573,6 +574,14 @@ public final class XmlHelper {
             public boolean shouldPass(final XmlValidationError xve) {
                 return checkExpectedQNamesContainsQNames(xve.getExpectedQNames(),
                         Lists.newArrayList(GmlConstants.QN_ABSTRACT_TIME_32));
+            }
+        },
+        ABSTRACT_GEOMETRY_GML_3_2_1 {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean shouldPass(final XmlValidationError xve) {
+                return checkExpectedQNamesContainsQNames(xve.getExpectedQNames(),
+                        Lists.newArrayList(GmlConstants.QN_ABSTRACT_GEOMETRY_32));
             }
         },
         SOS_INSERTION_META_DATA {
@@ -615,7 +624,7 @@ public final class XmlHelper {
 
         /**
          * Check if the QName equals expected QName
-         * 
+         *
          * @param qName
          *            QName to check
          * @param expected
@@ -628,7 +637,7 @@ public final class XmlHelper {
 
         /**
          * Check if expected QNames contains one QName
-         * 
+         *
          * @param expected
          *            Expected QNames
          * @param shouldContain
@@ -649,7 +658,7 @@ public final class XmlHelper {
         /**
          * Check if message contains defined pattern or offending QName equals
          * expected
-         * 
+         *
          * @param xve
          *            Xml validation error
          * @param expectedOffendingQname
@@ -667,7 +676,7 @@ public final class XmlHelper {
      * Utility method to append the contents of the child docment to the end of
      * the parent XmlObject. This is useful when dealing with elements without
      * generated methods (like elements with xs:any)
-     * 
+     *
      * @param parent
      *            Parent to append contents to
      * @param childDoc
@@ -688,7 +697,7 @@ public final class XmlHelper {
     /**
      * Remove namespace declarations from an xml fragment (useful for moving all
      * declarations to a document root
-     * 
+     *
      * @param x
      *            The fragment to localize
      */
@@ -706,7 +715,7 @@ public final class XmlHelper {
 
     /**
      * Remove the element from XML document
-     * 
+     *
      * @param element
      *            Element to remove
      * @return <code>true</code>, if element is removed
@@ -769,12 +778,12 @@ public final class XmlHelper {
                                             localName));
                         }
                     }
-                   
+
                 }
             }
         }
         cursor.dispose();
-        
+
     }
 
     public static Map<?, ?> getNamespaces(XmlObject xmlObject) {

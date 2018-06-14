@@ -28,14 +28,14 @@
  */
 package org.n52.sos.converter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.convert.RequestResponseModifier;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
+import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -43,10 +43,18 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.AbstractStreaming;
+import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.PointValuePair;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractComponent;
@@ -66,7 +74,11 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.CoordinateHelper;
 import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.ogc.swe.SweConstants.AltitudeSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.EastingSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
@@ -95,7 +107,6 @@ import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.EpsgConstants;
@@ -104,6 +115,7 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.SweHelper;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -122,16 +134,12 @@ import com.vividsolutions.jts.geom.Point;
  * @since 4.1.0
  * 
  */
-public class CoordinateTransformator implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+public class CoordinateTransformator extends
+        AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
+    private final SweHelper helper = new SweHelper();
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
-    /**
-     * Get the keys
-     * 
-     * @return Set of keys
-     */
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
@@ -276,9 +284,9 @@ public class CoordinateTransformator implements
      */
     private AbstractServiceRequest<?> modifyInsertResultTemplateRequest(InsertResultTemplateRequest request)
             throws OwsExceptionReport {
-        if (request.getObservationTemplate().getFeatureOfInterest() instanceof SamplingFeature) {
-            checkResponseGeometryOfSamplingFeature((SamplingFeature) request.getObservationTemplate()
-                    .getFeatureOfInterest(), getGeomtryHandler().getStorageEPSG());
+        if (request.getObservationTemplate().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+            checkRequestedGeometryOfSamplingFeature((AbstractSamplingFeature) request.getObservationTemplate()
+                    .getFeatureOfInterest());
         }
         return request;
     }
@@ -297,7 +305,7 @@ public class CoordinateTransformator implements
      */
     private AbstractServiceResponse modifyGetFeatureOfInterestResponse(GetFeatureOfInterestRequest request,
             GetFeatureOfInterestResponse response) throws OwsExceptionReport {
-        processAbstractFeature(response.getAbstractFeature(), getRequestedCrs(request));
+        processAbstractFeature(response.getAbstractFeature(), getRequestedCrs(request), getRequested3DCrs(request));
         return response;
     }
 
@@ -316,7 +324,7 @@ public class CoordinateTransformator implements
     private AbstractServiceResponse modifyGetObservationResponse(GetObservationRequest request,
             GetObservationResponse response) throws OwsExceptionReport {
         response.setResponseFormat(request.getResponseFormat());
-        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request));
+        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request), getRequested3DCrs(request));
         return response;
     }
 
@@ -334,7 +342,7 @@ public class CoordinateTransformator implements
      */
     private AbstractServiceResponse modifyGetObservationByIdResponse(GetObservationByIdRequest request,
             GetObservationByIdResponse response) throws OwsExceptionReport {
-        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request));
+        checkResponseObservations(response.getObservationCollection(), getRequestedCrs(request), getRequested3DCrs(request));
         return response;
     }
 
@@ -463,19 +471,30 @@ public class CoordinateTransformator implements
      */
     private void transformPosition(SmlPosition position, int targetCrs) throws OwsExceptionReport {
         int sourceCrs = targetCrs;
-        if (position.isSetReferenceFrame()) {
+        if (position.isSetReferenceFrame() && checkReferenceFrame(position.getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getReferenceFrame());
-        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
+        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()
+                && checkReferenceFrame(position.getVector().getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
-        if (position.isSetPosition()) {
-            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
-        } else if (position.isSetVector()) {
-            SweVector vector = position.getVector();
-            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        if (targetCrs != sourceCrs) {
+            if (position.isSetPosition()) {
+                position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+                position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
+            } else if (position.isSetVector()) {
+                SweVector vector = position.getVector();
+                vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+                vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
+            }
         }
+    }
+
+    @VisibleForTesting
+    protected String transformReferenceFrame(String referenceFrame, int sourceCrs, int targetCrs) {
+        if (sourceCrs > 0 && targetCrs > 0) {
+            return referenceFrame.replace(Integer.toString(sourceCrs), Integer.toString(targetCrs));
+        }
+        return referenceFrame;
     }
 
     /**
@@ -496,49 +515,55 @@ public class CoordinateTransformator implements
         SweCoordinate<?> altitude = null;
         Object easting = null;
         Object northing = null;
+        String eastingName = SweCoordinateName.easting.name();
+        String northingName = SweCoordinateName.northing.name();
         for (SweCoordinate<?> coordinate : position) {
-            if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
+            if (checkAltitudeName(coordinate.getName())) {
                 altitude = coordinate;
-            } else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
+            } else if (checkNorthingName(coordinate.getName())) {
+                northingName = coordinate.getName();
                 northing = coordinate.getValue().getValue();
-            } else if (SweCoordinateName.easting.name().equals(coordinate.getName())) {
+            } else if (checkEastingName(coordinate.getName())) {
+                eastingName = coordinate.getName();
                 easting = coordinate.getValue().getValue();
             }
         }
-        List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
-            coordinates.add(northing);
-            coordinates.add(easting);
-        } else {
-            coordinates.add(easting);
-            coordinates.add(northing);
+        if (easting != null && northing != null) {
+            List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
+                coordinates.add(northing);
+                coordinates.add(easting);
+            } else {
+                coordinates.add(easting);
+                coordinates.add(northing);
+            }
+            Geometry geom =
+                    getGeomtryHandler().transform(
+                            JTSHelper.createGeometryFromWKT(JTSHelper.createWKTPointFromCoordinateString(Joiner.on(
+                                    Constants.SPACE_STRING).join(coordinates)), sourceCrs), targetCrs);
+            double x, y;
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
+                x = geom.getCoordinate().y;
+                y = geom.getCoordinate().x;
+            } else {
+                x = geom.getCoordinate().x;
+                y = geom.getCoordinate().y;
+            }
+            SweQuantity yq =
+                    helper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            SweQuantity xq =
+                    helper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            ArrayList<SweCoordinate<?>> newPosition =
+                    Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(northingName, yq),
+                            new SweCoordinate<Double>(eastingName, xq));
+            if (altitude != null) {
+                newPosition.add(altitude);
+            }
+            return newPosition;
         }
-        Geometry geom =
-                getGeomtryHandler().transform(
-                        JTSHelper.createGeometryFromWKT(
-                                JTSHelper.createWKTPointFromCoordinateString(Joiner.on(Constants.SPACE_STRING).join(
-                                        coordinates)), sourceCrs), targetCrs);
-        double x, y;
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
-            x = geom.getCoordinate().y;
-            y = geom.getCoordinate().x;
-        } else {
-            x = geom.getCoordinate().x;
-            y = geom.getCoordinate().y;
-        }
-        SweQuantity yq =
-                SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        SweQuantity xq =
-                SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        
-        if (altitude != null) {
-            return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                    new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
-        }
-        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq));
+        return position;
     }
 
     /**
@@ -553,6 +578,45 @@ public class CoordinateTransformator implements
      */
     private void transformLocation(SmlLocation location, int targetCrs) throws OwsExceptionReport {
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
+    }
+    
+    /**
+     * Check if the name is a defined altitude name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an altitude name
+     */
+    @VisibleForTesting
+    protected boolean checkAltitudeName(String name) {
+        return AltitudeSweCoordinateName.isAltitudeSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasAltitudeName(name);
+    }
+
+    /**
+     * Check if the name is a defined northing name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is a northing name
+     */
+    @VisibleForTesting
+    protected boolean checkNorthingName(String name) {
+        return NorthingSweCoordinateName.isNorthingSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasNorthingName(name);
+    }
+
+    /**
+     * Check if the name is a defined easting name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an easting name
+     */
+    @VisibleForTesting
+    protected boolean checkEastingName(String name) {
+        return EastingSweCoordinateName.isEastingSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasEastingName(name);
     }
 
     /**
@@ -578,14 +642,14 @@ public class CoordinateTransformator implements
                                     && !Integer.toString(targetCrs).equals(
                                             ((SweEnvelope) field.getElement()).getReferenceFrame())) {
                                 SweEnvelope envelope = (SweEnvelope) field.getElement();
+                                int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 Envelope transformEnvelope =
                                         getGeomtryHandler().transformEnvelope(envelope.toEnvelope(),
-                                                getCrsFromString(envelope.getReferenceFrame()), targetCrs);
+                                        		sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new SosEnvelope(transformEnvelope, targetCrs),
                                                 ProcedureDescriptionSettings.getInstance().getLatLongUom());
-                                newEnvelope.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix()
-                                        + targetCrs);
+                                newEnvelope.setReferenceFrame(transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
                                 field.setElement(newEnvelope);
                             }
                         }
@@ -651,6 +715,14 @@ public class CoordinateTransformator implements
         }
         return getGeomtryHandler().getDefaultResponseEPSG();
     }
+    
+    private int getRequested3DCrs(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+        int crsFrom = getCrsFrom(request);
+        if (crsFrom != EpsgConstants.NOT_SET_EPSG) {
+            return crsFrom;
+        }
+        return getGeomtryHandler().getDefaultResponse3DEPSG();
+    }
 
     /**
      * Get the EPSG code as integer from value
@@ -683,18 +755,17 @@ public class CoordinateTransformator implements
      * @throws OwsExceptionReport
      *             If an error occurs when parsing
      */
-    private int getCrsFromString(String crs) throws OwsExceptionReport {
+    @VisibleForTesting
+    protected int getCrsFromString(String crs) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(crs) && !"NOT_SET".equalsIgnoreCase(crs)) {
-            if (crs.startsWith(Constants.URN) || crs.startsWith(Constants.HTTP)) {
-                crs =
-                        crs.replace(getConfiguration().getSrsNamePrefix(), Constants.EMPTY_STRING).replace(
-                                getConfiguration().getSrsNamePrefixSosV2(), Constants.EMPTY_STRING);
-            }
-            crs =
-                    crs.replace(EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
-                            EpsgConstants.EPSG_PREFIX, Constants.EMPTY_STRING);
+        	int lastIndex = 0;
+			if (crs.startsWith(Constants.HTTP)) {
+				lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
+			} else if (crs.indexOf(Constants.COLON_STRING) != -1) {
+				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
+			}
             try {
-                return Integer.valueOf(crs);
+                return lastIndex == 0 ? Integer.valueOf(crs) : Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
                 String parameter =
                         new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())
@@ -704,13 +775,20 @@ public class CoordinateTransformator implements
                         .causedBy(nfe)
                         .at(parameter)
                         .withMessage(
-                                "Error while parsing '%s' parameter! Parameter has to match "
-                                        + "pattern '%s', '%s', '%s','%s', with appended EPSG code number", parameter,
-                                getConfiguration().getSrsNamePrefix(), getConfiguration().getSrsNamePrefixSosV2(),
-                                EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, EpsgConstants.EPSG_PREFIX);
+                                "Error while parsing '%s' parameter! Parameter has to contain EPSG code number", parameter);
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);
+    }
+
+    private boolean checkReferenceFrame(String referenceFrame) {
+        char[] charArray = referenceFrame.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            if (Character.isDigit(referenceFrame.toCharArray()[i])){
+                return true;
+            }
+        } 
+        return false;
     }
 
     /**
@@ -753,15 +831,14 @@ public class CoordinateTransformator implements
      */
     private void checkRequestedObservations(List<OmObservation> observations) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(observations)) {
-            int storageCRS = getGeomtryHandler().getStorageEPSG();
             for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-                    SamplingFeature samplingFeature =
-                            (SamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest();
+                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
+                    AbstractSamplingFeature samplingFeature =
+                            (AbstractSamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest();
                     checkRequestedGeometryOfSamplingFeature(samplingFeature);
                 }
                 if (omObservation.isSetParameter()) {
-                    checkOmParameterForGeometry(omObservation.getParameter(), storageCRS);
+                    checkOmParameterForGeometry(omObservation.getParameter(), true);
                 }
             }
         }
@@ -773,25 +850,53 @@ public class CoordinateTransformator implements
      * 
      * @param observations
      *            Response {@link OmObservation}s
+     * @param target3DCRS 
      * @param targetCrs
      *            Target EPSG code
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkResponseObservations(List<OmObservation> observations, int targetCRS) throws OwsExceptionReport {
+    private void checkResponseObservations(List<OmObservation> observations, int targetCRS, int target3DCRS) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(observations)) {
             for (OmObservation omObservation : observations) {
-                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature)
-                    checkResponseGeometryOfSamplingFeature((SamplingFeature) omObservation
-                            .getObservationConstellation().getFeatureOfInterest(), targetCRS);
+                if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature)
+                    checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) omObservation
+                            .getObservationConstellation().getFeatureOfInterest(), targetCRS, target3DCRS);
                 if (omObservation.isSetParameter()) {
-                    checkOmParameterForGeometry(omObservation.getParameter(), targetCRS);
+                    checkOmParameterForGeometry(omObservation.getParameter(), false);
                 }
                 if (omObservation.getValue() instanceof AbstractStreaming) {
                     ((AbstractStreaming) omObservation.getValue()).add(OWSConstants.AdditionalRequestParams.crs,
-                            targetCRS);
+                            Lists.newArrayList(targetCRS, target3DCRS));
+                } else if (omObservation.getValue() instanceof MultiObservationValues) {
+                    if (((MultiObservationValues)omObservation.getValue()).getValue() instanceof TLVTValue) {
+                        checkTLVTValueForGeometry((TLVTValue)((MultiObservationValues)omObservation.getValue()).getValue(), targetCRS);
+                    }
+                } else if (omObservation.getValue() instanceof SingleObservationValue) {
+                    SingleObservationValue singleValue = (SingleObservationValue)omObservation.getValue();
+                    if (singleValue.getValue() instanceof CvDiscretePointCoverage) {
+                        checkCvDiscretePointCoverageForGeometry((CvDiscretePointCoverage)singleValue.getValue(),targetCRS);
+                    } else if (((SingleObservationValue)omObservation.getValue()).getValue() instanceof MultiPointCoverage) {
+                        checkMultiPointCoverageForGeometry((MultiPointCoverage)singleValue.getValue(),targetCRS);
+                    }
                 }
             }
+        }
+    }
+
+    private void checkMultiPointCoverageForGeometry(MultiPointCoverage value, int targetCRS) throws OwsExceptionReport {
+        for (PointValuePair pvp : value.getValue()) {
+            pvp.setPoint((Point)getGeomtryHandler().transform(pvp.getPoint(), targetCRS));
+        }
+    }
+
+    private void checkCvDiscretePointCoverageForGeometry(CvDiscretePointCoverage value, int targetCRS) throws OwsExceptionReport {
+        value.getValue().setPoint((Point)getGeomtryHandler().transform(value.getValue().getPoint(), targetCRS));
+    }
+
+    private void checkTLVTValueForGeometry(TLVTValue value, int targetCRS) throws OwsExceptionReport {
+        for (TimeLocationValueTriple tlvt : value.getValue()) {
+            tlvt.setLocation(getGeomtryHandler().transform(tlvt.getLocation(), targetCRS));
         }
     }
 
@@ -804,7 +909,7 @@ public class CoordinateTransformator implements
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkRequestedGeometryOfSamplingFeature(SamplingFeature samplingFeature) throws OwsExceptionReport {
+    private void checkRequestedGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature) throws OwsExceptionReport {
         if (samplingFeature.isSetGeometry()) {
             samplingFeature.setGeometry(getGeomtryHandler().transformToStorageEpsg(samplingFeature.getGeometry()));
         }
@@ -821,11 +926,17 @@ public class CoordinateTransformator implements
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkResponseGeometryOfSamplingFeature(SamplingFeature samplingFeature, int targetCRS)
+    private void checkResponseGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature, int targetCRS, int target3DCRS)
             throws OwsExceptionReport {
         if (samplingFeature.isSetGeometry()) {
-            if (samplingFeature.getGeometry().getSRID() != targetCRS) {
-                samplingFeature.setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), targetCRS));
+            if (Double.isNaN(samplingFeature.getGeometry().getCoordinate().z)) {
+                if (samplingFeature.getGeometry().getSRID() != targetCRS) {
+                    samplingFeature.setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), targetCRS));
+                }
+            } else {
+                if (samplingFeature.getGeometry().getSRID() != target3DCRS) {
+                    samplingFeature.setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), target3DCRS));
+                }
             }
         }
     }
@@ -841,17 +952,17 @@ public class CoordinateTransformator implements
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void processAbstractFeature(AbstractFeature feature, int targetCRS) throws OwsExceptionReport {
+    private void processAbstractFeature(AbstractFeature feature, int targetCRS, int target3DCRS) throws OwsExceptionReport {
         if (feature != null) {
             if (feature instanceof FeatureCollection) {
                 FeatureCollection featureCollection = (FeatureCollection) feature;
                 for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
-                    if (abstractFeature instanceof SamplingFeature) {
-                        checkResponseGeometryOfSamplingFeature((SamplingFeature) abstractFeature, targetCRS);
+                    if (abstractFeature instanceof AbstractSamplingFeature) {
+                        checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) abstractFeature, targetCRS, target3DCRS);
                     }
                 }
-            } else if (feature instanceof SamplingFeature) {
-                checkResponseGeometryOfSamplingFeature((SamplingFeature) feature, targetCRS);
+            } else if (feature instanceof AbstractSamplingFeature) {
+                checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) feature, targetCRS, target3DCRS);
             }
         }
     }
@@ -868,29 +979,27 @@ public class CoordinateTransformator implements
      *             If the transformation fails
      */
     @SuppressWarnings("unchecked")
-    private void checkOmParameterForGeometry(Collection<NamedValue<?>> parameters, int targetCRS)
+    private void checkOmParameterForGeometry(Collection<NamedValue<?>> parameters, boolean request)
             throws OwsExceptionReport {
         for (NamedValue<?> namedValue : parameters) {
             if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                 NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
-                spatialFilteringProfileParameter.getValue().setValue(
-                        getGeomtryHandler().transform(spatialFilteringProfileParameter.getValue().getValue(),
-                                targetCRS));
+                if (request) {
+                    spatialFilteringProfileParameter.getValue().setValue(
+                            getGeomtryHandler().transformToStorageEpsg(spatialFilteringProfileParameter.getValue().getValue()));
+                } else {
+                    spatialFilteringProfileParameter.getValue().setValue(
+                            getGeomtryHandler().transform(spatialFilteringProfileParameter.getValue().getValue(),
+                                    !Double.isNaN(spatialFilteringProfileParameter.getValue().getValue().getCoordinate().z)
+                                        ? getGeomtryHandler().getStorage3DEPSG()
+                                        : getGeomtryHandler().getStorageEPSG()));
+                }
             }
         }
     }
 
     private GeometryHandler getGeomtryHandler() {
         return GeometryHandler.getInstance();
-    }
-
-    private ServiceConfiguration getConfiguration() {
-        return ServiceConfiguration.getInstance();
-    }
-
-    @Override
-    public RequestResponseModifierFacilitator getFacilitator() {
-        return new RequestResponseModifierFacilitator();
     }
 
 }

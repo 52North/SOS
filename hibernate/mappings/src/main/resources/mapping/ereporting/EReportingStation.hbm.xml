@@ -37,5 +37,10 @@
                 <comment>Description of the station, gml:description. Optional</comment>
             </column>
         </property>
+        <property name="geom" type="org.hibernate.spatial.GeometryType" index="stationGeomIdx">
+            <column name="geom">
+                <comment>The geometry of the station (composed of the “latitude” and “longitude”). Optional</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

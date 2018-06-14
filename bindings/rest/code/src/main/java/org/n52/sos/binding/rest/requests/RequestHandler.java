@@ -38,7 +38,7 @@ import net.opengis.swes.x20.AbstractContentsType.Offering;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.RestConstants;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -64,7 +64,7 @@ public abstract class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
     
-    protected Constants bindingConstants = Constants.getInstance();
+    protected RestConstants bindingConstants = RestConstants.getInstance();
     
     public abstract RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException;
     

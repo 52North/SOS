@@ -37,6 +37,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.base.Optional;
 
@@ -154,7 +155,11 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
 
     @Override
     public boolean isApplicable() {
-        return super.isApplicable() && (procedureSettings().isEnrichWithDiscoveryInformation() || isSetLocale());
+        return super.isApplicable() && (procedureSettings().isEnrichWithDiscoveryInformation() || isNotDefaultLocale());
+    }
+    
+    private boolean isNotDefaultLocale() {
+        return isSetLocale() && !getLocale().equals(ServiceConfiguration.getInstance().getDefaultLanguage());
     }
 
 }

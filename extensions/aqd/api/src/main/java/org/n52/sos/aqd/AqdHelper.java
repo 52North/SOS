@@ -49,6 +49,7 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.omg.CORBA.portable.StreamableValue;
 
 @Configurable
 public class AqdHelper {
@@ -136,6 +137,7 @@ public class AqdHelper {
 
     public void processObservation(OmObservation observation, TimeInstant resultTime,
             FeatureCollection featureCollection, AbstractEReportingHeader eReportingHeader, int counter) {
+        observation.setObservationID(Integer.toString(counter));
         observation.setGmlId(getObservationId(counter));
         // add xlink:href to eReportingHeader.content
         eReportingHeader.addContent((AbstractFeature)new OmObservation().setIdentifier(new CodeWithAuthority(getObservationXlink(observation.getGmlId()))));
@@ -202,5 +204,4 @@ public class AqdHelper {
     public boolean isSetVerificationFlags() {
         return CollectionHelper.isNotEmpty(getVerificationFlags());
     }
-    
 }

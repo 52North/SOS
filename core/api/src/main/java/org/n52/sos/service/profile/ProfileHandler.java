@@ -41,4 +41,10 @@ public interface ProfileHandler {
     Map<String, Profile> getAvailableProfiles();
 
     boolean isSetActiveProfile();
+    
+    void activateProfile(String identifier);
+    
+    void persist();
+
+    void reloadProfiles();
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata" table="i18nfeatureOfInterest">
+    <class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NFeatureOfInterestMetadata" table="i18nfeatureofinterest">
         <comment>Table to i18n metadata for the featureOfInterest. Mapping file: mapping/i18n/HibernateI18NFeatureOfInterestMetadata.hbm.xml</comment>
         <id name="id" type="long">
             <column name="id">
@@ -12,7 +12,7 @@
                 <param name="sequence">i18nfeatureOfInterestId_seq</param>
             </generator>
         </id>
-        <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="i18nFeatureFeatureFk">
+        <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" foreign-key="i18nFeatureFeatureFk">
                <column index="i18nFeatureIdx" name="objectId" not-null="true" unique-key="i18nFeatureIdentity">
                 <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>

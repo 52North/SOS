@@ -45,6 +45,7 @@ import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -95,7 +96,7 @@ public class JSONUtils {
                 new ObjectMapper().setNodeFactory(FACTORY).enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
         READER = mapper.reader();
         DefaultPrettyPrinter pp = new DefaultPrettyPrinter();
-        pp.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
+        pp.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
         WRITER = mapper.writer(pp);
     }
 

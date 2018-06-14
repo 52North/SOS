@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosOffering;

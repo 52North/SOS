@@ -28,12 +28,16 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType quantity
- * 
+ *
  * @author Carsten Hollmann
  * @since 4.0.0
  */
@@ -48,6 +52,7 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
      * value
      */
     private RangeValue<Double> value;
+    private Referenceable<SweAllowedValues> constraint;
 
     /**
      * constructor
@@ -57,7 +62,7 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
 
     /**
      * Get axis ID
-     * 
+     *
      * @return the axisID
      */
     public String getAxisID() {
@@ -66,7 +71,7 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
 
     /**
      * set axis ID
-     * 
+     *
      * @param axisID
      *            the axisID to set
      * @return This SweQuantityRange
@@ -124,9 +129,67 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
     public boolean isSetAxisID() {
         return axisID != null && !axisID.isEmpty();
     }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedValues> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedValues constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedValues> constraint) {
+        this.constraint = constraint;
+    }
 
     @Override
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.QuantityRange;
     }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public SweQuantityRange clone() {
+        SweQuantityRange clone = new SweQuantityRange();
+        copyValueTo(clone);
+        if (isSetQuality()) {
+            clone.setQuality(cloneQuality());
+        }
+        if (isSetAxisID()) {
+            clone.setAxisID(getAxisID());
+        }
+        if (isSetValue()) {
+            clone.setValue((RangeValue<Double>)getValue().clone());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
+        }
+        return clone;
+    }
+
 }

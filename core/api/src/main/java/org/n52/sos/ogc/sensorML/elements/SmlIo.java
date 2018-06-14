@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import org.n52.sos.ogc.gml.AbstractReferenceType;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 /**
@@ -37,7 +38,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
  * 
  * @since 4.0.0
  */
-public class SmlIo<T> {
+public class SmlIo<T> extends AbstractReferenceType {
 
     private String ioName;
 

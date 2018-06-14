@@ -32,39 +32,51 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
 import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
-import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
+@Configurable
 public class SosInsertResultTemplateOperatorV20
         extends
         AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateDAO, InsertResultTemplateRequest, InsertResultTemplateResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResultTemplate.name();
-
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
-
+    private boolean allowTemplateWithoutProcedureAndFeature = false;
+    
     public SosInsertResultTemplateOperatorV20() {
         super(OPERATION_NAME, InsertResultTemplateRequest.class);
+    }
+    
+    @Setting(ServiceSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
+    public void setAllowTemplateWithoutProcedureAndFeature(boolean allowTemplateWithoutProcedureAndFeature) {
+        this.allowTemplateWithoutProcedureAndFeature = allowTemplateWithoutProcedureAndFeature;
     }
 
     @Override
@@ -81,6 +93,7 @@ public class SosInsertResultTemplateOperatorV20
 
     @Override
     protected void checkParameters(InsertResultTemplateRequest request) throws OwsExceptionReport {
+        createCompositePhenomenons(request);
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -106,22 +119,62 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check procedure
         try {
-            checkProcedure(request.getObservationTemplate().getProcedure().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name(), true);
+            if (allowTemplateWithoutProcedureAndFeature
+                    && request.getObservationTemplate().getNillableProcedure().isNil()) {
+                if (!request.getObservationTemplate().getNillableProcedure().hasReason()) {
+                    throw new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".procedure.nilReason");
+                } else if (!request.getObservationTemplate().getNillableProcedure().getNilReason().get()
+                        .equals("template")) {
+                    throw new InvalidParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".procedure.nilReason",
+                            request.getObservationTemplate().getNillableProcedure().getNilReason().get());
+                }
+            } else {
+                if (request.getObservationTemplate().getProcedureIdentifier() == null
+                        || request.getObservationTemplate().getProcedureIdentifier() == null
+                        || request.getObservationTemplate().getProcedureIdentifier().isEmpty()) {
+                    exceptions.add(new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".procedure"));
+                }
+                checkTransactionalProcedure(request.getObservationTemplate().getProcedureIdentifier(),
+                        Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         // check observedProperty
         try {
-            checkObservedProperty(request.getObservationTemplate().getObservableProperty().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name(), true);
+            checkObservedProperty(request.getObservationTemplate().getObservablePropertyIdentifier(),
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".observableProperty", true);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        String identifier = request.getObservationTemplate().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
-        if (identifier.isEmpty()) {
-            exceptions.add(new MissingParameterValueException(
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate));
+        // check for observed character of featureOfInterest
+        try {
+            if (allowTemplateWithoutProcedureAndFeature
+                    && request.getObservationTemplate().getNillableFeatureOfInterest().isNil()) {
+                if (!request.getObservationTemplate().getNillableFeatureOfInterest().hasReason()) {
+                    throw new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".featureOfInterest.nilReason");
+                } else if (!request.getObservationTemplate().getNillableFeatureOfInterest().getNilReason().get()
+                        .equals("template")) {
+                    throw new InvalidParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".featureOfInterest.nilReason",
+                            request.getObservationTemplate().getNillableFeatureOfInterest().getNilReason().get());
+                }
+            } else {
+                if (request.getObservationTemplate().getFeatureOfInterest() == null
+                        || request.getObservationTemplate().getFeatureOfInterestIdentifier() == null
+                        || request.getObservationTemplate().getFeatureOfInterestIdentifier().isEmpty()) {
+                    exceptions.add(new MissingParameterValueException(
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".featureOfInterest"));
+                }
+                checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterestIdentifier(),
+                        Sos2Constants.InsertResultTemplateParams.featureOfInterest);
+            }
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
         }
 
         // check identifier
@@ -135,18 +188,18 @@ public class SosInsertResultTemplateOperatorV20
 
         /*
          * check observation template
-         * 
+         *
          * same resultSTructure for procedure, obsProp and Offering
-         * 
+         *
          * empty phenTime, resultTime and result
-         * 
+         *
          * phenTime and resultTime nilReason = 'template'
-         * 
+         *
          * proc, foi, obsProp not empty
-         * 
+         *
          * resultStructure: swe:Time or swe:TimeRange with value
          * "http://www.opengis.net/def/property/OGC/0/PhenomenonTime"
-         * 
+         *
          * If the resultStructure in the SosResultTemplate has a swe:Time
          * component with definition property set to the value
          * "http://www.opengis.net/def/property/OGC/0/ResultTime" then the value
@@ -159,7 +212,7 @@ public class SosInsertResultTemplateOperatorV20
          * each SosResultTemplate). In case the om:phenomenonTime is not a
          * TimeInstant, an InvalidParameterValue exception shall be returned,
          * with locator ‘resultTime’.
-         * 
+         *
          * A client shall encode the om:phenomenonTime as a swe:Time or
          * swe:TimeRange component with definition
          * "http://www.opengis.net/def/property/OGC/0/PhenomenonTime". in the
@@ -170,7 +223,7 @@ public class SosInsertResultTemplateOperatorV20
          * different to the phenomenonTime then the resultStructure of the
          * SosResultTemplate shall also have a swe:Time component with
          * definition "http://www.opengis.net/def/property/OGC/0/ResultTime".
-         * 
+         *
          * If a result template with differing observationType or (SWE Common
          * encoded) result structure is inserted for the same constellation of
          * procedure, observedProperty and ObservationOffering (for which
@@ -180,21 +233,40 @@ public class SosInsertResultTemplateOperatorV20
          */
     }
 
+    private void createCompositePhenomenons(InsertResultTemplateRequest request) throws OwsExceptionReport {
+        if (request.getResultStructure().getResultStructure() instanceof SweDataRecord) {
+            SweDataRecord record = (SweDataRecord) request.getResultStructure().getResultStructure();
+            String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
+            if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
+                if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
+                    ComplexValue cv = new ComplexValue((SweDataRecord)record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
+                    OmObservation observation = new OmObservation();
+                    observation.setObservationConstellation(request.getObservationTemplate());
+                    observation.setValue(new SingleObservationValue<>(cv));
+                    createCompositePhenomenon(observation);
+                }
+            }
+        }
+    }
+
     private void checkResultTemplateIdentifier(String identifier) throws OwsExceptionReport {
         if (getCache().hasResultTemplate(identifier)) {
             throw new DuplicateIdentifierException("resultTemplate", identifier);
         }
-
+        // check for reserved character
+        checkReservedCharacter(identifier, "resultTemplateIdentifier");
     }
 
     private void checkObservationType(InsertResultTemplateRequest request) throws OwsExceptionReport {
         OmObservationConstellation observationConstellation = request.getObservationTemplate();
-        if (!observationConstellation.isSetObservationType()) {
-            observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        if (observationConstellation.isSetObservationType()) {
+            // TODO check why setting SweArray_Observation as type
+            //observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            // check if observation type is supported
+            checkObservationType(observationConstellation.getObservationType(),
+                    Sos2Constants.InsertResultTemplateParams.observationType.name());
         }
-        // check if observation type is supported
-        checkObservationType(observationConstellation.getObservationType(),
-                Sos2Constants.InsertResultTemplateParams.observationType.name());
+       
         Set<String> validObservationTypesForOffering = new HashSet<String>(0);
         for (String offering : observationConstellation.getOfferings()) {
             validObservationTypesForOffering.addAll(Configurator.getInstance().getCache()

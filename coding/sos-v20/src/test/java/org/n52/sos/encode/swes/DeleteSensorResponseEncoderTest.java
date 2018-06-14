@@ -85,7 +85,7 @@ public class DeleteSensorResponseEncoderTest {
     @Test
     public void should_return_correct_encoder_keys() {
         Set<EncoderKey> returnedKeySet = new DeleteSensorResponseEncoder().getEncoderKeyType();
-        assertThat(returnedKeySet.size(), is(3));
+        assertThat(returnedKeySet.size(), is(5));
         assertThat(returnedKeySet, hasItem(new XmlEncoderKey(SwesConstants.NS_SWES_20, DeleteSensorResponse.class)));
         assertThat(returnedKeySet, hasItem(new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                 Sos2Constants.Operations.DeleteSensor, MediaTypes.TEXT_XML)));

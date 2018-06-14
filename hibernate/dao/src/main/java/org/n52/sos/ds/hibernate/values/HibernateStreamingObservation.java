@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-import org.n52.sos.ds.hibernate.dao.ObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Streaming observation class for old concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -51,17 +51,14 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
 
     private static final long serialVersionUID = 3162933935914818428L;
 
-    private final ObservationDAO observationDAO = new ObservationDAO();
-
-    private Set<Long> procedureIds = Sets.newHashSet();
-
-    private Set<Long> observablePropertyIds = Sets.newHashSet();
-
-    private Set<Long> featureIds = Sets.newHashSet();
+    private final LegacyObservationDAO observationDAO = new LegacyObservationDAO();
+    private final Set<Long> procedureIds = Sets.newHashSet();
+    private final Set<Long> observablePropertyIds = Sets.newHashSet();
+    private final Set<Long> featureIds = Sets.newHashSet();
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      */
@@ -70,7 +67,7 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
     }
 
     @Override
-    protected AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation) {
+    protected Observation<?> checkShowMetadataOfEmptyObservations(Observation<?> abstractObservation) {
         if (showMetadataOfEmptyObservation) {
             procedureIds.add(abstractObservation.getProcedure().getProcedureId());
             observablePropertyIds.add(abstractObservation.getObservableProperty().getObservablePropertyId());

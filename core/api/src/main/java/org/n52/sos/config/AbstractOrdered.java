@@ -41,7 +41,7 @@ package org.n52.sos.config;
  */
 public abstract class AbstractOrdered<T extends Ordered<T>> implements Ordered<T> {
 
-    private float order;
+    private float order = Float.MAX_VALUE;
 
     @Override
     public float getOrder() {

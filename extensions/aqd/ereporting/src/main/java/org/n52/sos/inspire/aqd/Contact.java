@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.sos.util.Nillable;
+import org.n52.sos.w3c.Nillable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

@@ -28,11 +28,13 @@
  */
 package org.n52.sos.ogc.swe;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE dataRecord
- * 
+ *
  * @since 4.0.0
  */
 public class SweDataRecord extends SweAbstractDataRecord {
@@ -52,14 +54,36 @@ public class SweDataRecord extends SweAbstractDataRecord {
         final int prime = 42;
         int hash = 7;
         hash = prime * hash + super.hashCode();
-        hash = prime * hash + (getDataComponentType() != null ? getDataComponentType().hashCode() : 0);
+        hash = prime * hash + (getDataComponentType() != null
+                               ? getDataComponentType().hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return String.format("SweDataRecord [fields=%s, definition=%s, label=%s, identifier=%s, xml=%s]", getFields(),
-                getDefinition(), getLabel(), getIdentifier(), getXml());
+        return String
+                .format("SweDataRecord [fields=%s, definition=%s, label=%s, identifier=%s, xml=%s]",
+                        getFields(), getDefinition(), getLabel(), getIdentifier(), getXml());
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+    
+    public SweDataRecord clone() throws CloneNotSupportedException {
+        SweDataRecord clone = new SweDataRecord();
+        copyValueTo(clone);
+        for (SweField field : getFields()) {
+            clone.addField(field.clone());
+        }
+        return clone;
+    }
 }

@@ -35,13 +35,13 @@ import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 
 public interface RequestResponseModifier<T extends AbstractServiceRequest<?>,S extends AbstractServiceResponse> {
-    
+
     Set<RequestResponseModifierKeyType> getRequestResponseModifierKeyTypes();
-    
+
     T modifyRequest(T request) throws OwsExceptionReport;
 
     S modifyResponse(T request, S response) throws OwsExceptionReport;
-    
+
     RequestResponseModifierFacilitator getFacilitator();
-    
+
 }

@@ -90,7 +90,7 @@ public class InstallDatasourceSettingsController extends AbstractController {
             }
             JsonNode settings = enc.encode(enc.sortByGroup(defs));
             ObjectNode jsonObject = node.putObject(dialect);
-            jsonObject.put("settings", settings);
+            jsonObject.set("settings", settings);
             jsonObject.put("needsSchema", d.needsSchema());
             jsonObject.put("selected", selected);
         }
@@ -134,6 +134,8 @@ public class InstallDatasourceSettingsController extends AbstractController {
             case URI:
                 SettingDefinition<?, URI> usd = (SettingDefinition<?, URI>) def;
                 usd.setDefaultValue((URI) val);
+                break;
+            default:
                 break;
             }
         }

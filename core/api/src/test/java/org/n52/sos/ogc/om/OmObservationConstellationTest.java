@@ -28,14 +28,23 @@
  */
 package org.n52.sos.ogc.om;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertThat;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
+import org.n52.sos.ogc.series.wml.Metadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.*;
+import org.n52.sos.ogc.series.wml.WaterMLConstants;
 
 public class OmObservationConstellationTest {
 
@@ -65,11 +74,66 @@ public class OmObservationConstellationTest {
                 .setFeatureOfInterest(new SamplingFeature(new CodeWithAuthority(FEATURE_2)))
                 .setObservableProperty(new OmObservableProperty(OBSERVABLE_PROPERTY_2));
     }
-    
+
     @Test
     public void shouldNotBeEqualHashCode() {
         assertThat(getFirstObservationConstellation().hashCode(), not(getSecondObservationConstellation().hashCode()));
+    }
 
+    @Test
+    public void testChecheckObservationTypeForMerging() {
+        OmObservationConstellation ooc = new OmObservationConstellation();
+        ooc.setObservationType(OmConstants.OBS_TYPE_MEASUREMENT);
+        assertThat(ooc.checkObservationTypeForMerging(), is(true));
+        ooc.setObservationType(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(true));
+        ooc.setObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(true));
+        ooc.setObservationType(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(true));
+        ooc.setObservationType(OmConstants.OBS_TYPE_TEXT_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(true));
+        ooc.setObservationType(OmConstants.OBS_TYPE_TRUTH_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(true));
+        ooc.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(false));
+        ooc.setObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(false));
+        ooc.setObservationType(OmConstants.OBS_TYPE_OBSERVATION);
+        assertThat(ooc.checkObservationTypeForMerging(), is(false));
+        ooc.setObservationType(OmConstants.OBS_TYPE_UNKNOWN);
+        assertThat(ooc.checkObservationTypeForMerging(), is(false));
+
+    }
+    
+    
+    @Test
+    public void shouldSetInterpolationType() {
+        DefaultPointMetadata defaultPointMetadata = new DefaultPointMetadata();
+        DefaultTVPMeasurementMetadata defaultTVPMeasurementMetadata = new DefaultTVPMeasurementMetadata();
+        defaultTVPMeasurementMetadata.setInterpolationtype(WaterMLConstants.InterpolationType.Continuous);
+        defaultPointMetadata.setDefaultTVPMeasurementMetadata(defaultTVPMeasurementMetadata);
+        final OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        omObservationConstellation.setDefaultPointMetadata(defaultPointMetadata);
+        Assert.assertThat(omObservationConstellation.isSetDefaultPointMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().isSetInterpolationType(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata().getInterpolationtype(), Is.is(WaterMLConstants.InterpolationType.Continuous));
+    }
+
+    @Test
+    public void shouldSetPropertyCumulative() {
+        final OmObservationConstellation omObservationConstellation = new OmObservationConstellation();
+        Metadata metadata = new Metadata();
+        MeasurementTimeseriesMetadata timeseriesMetadata = new MeasurementTimeseriesMetadata();
+        timeseriesMetadata.setCumulative(true);
+        metadata.setTimeseriesmetadata(timeseriesMetadata);
+        omObservationConstellation.setMetadata(metadata);
+
+        Assert.assertThat(omObservationConstellation.isSetMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getMetadata().isSetTimeseriesMetadata(), Is.is(true));
+        Assert.assertThat(omObservationConstellation.getMetadata().getTimeseriesmetadata(), CoreMatchers.instanceOf(MeasurementTimeseriesMetadata.class));
+        Assert.assertThat(((MeasurementTimeseriesMetadata)omObservationConstellation.getMetadata().getTimeseriesmetadata()).isCumulative(), Is.is(true));
     }
 
 }

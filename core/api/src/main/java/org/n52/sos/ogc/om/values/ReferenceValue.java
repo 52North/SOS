@@ -28,31 +28,34 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class ReferenceValue implements Value<ReferenceType> {
-    
+
     private static final long serialVersionUID = -4027273330438374298L;
-    
+
     private ReferenceType value;
-    
+
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
-    
     public ReferenceValue() {
     }
-    
+
     public ReferenceValue(ReferenceType value) {
         setValue(value);
     }
 
     @Override
-    public void setValue(ReferenceType value) {
-       this.value = value;
+    public ReferenceValue setValue(ReferenceType value) {
+        this.value = value;
+        return this;
     }
 
     @Override
@@ -62,27 +65,52 @@ public class ReferenceValue implements Value<ReferenceType> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
     }
-    
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
+    }
+
     @Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isSetHref();
     }
 
     @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
-    }
-    
-    @Override
     public String toString() {
-        return String.format("ReferenceValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("ReferenceValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

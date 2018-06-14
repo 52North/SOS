@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Nillable;
+import org.n52.sos.w3c.Nillable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

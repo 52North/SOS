@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureBooleanValuedParameter"
+        extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
+        table="booleanfeatparamvalue" check="value in ('T','F')">
+        <comment>Value table for boolean parameter</comment>
+        <key foreign-key="featParamBooleanValueFk">
+            <column name="parameterId">
+                <comment>Foreign Key (FK) to the related parameter from the
+                    parameter table. Contains "featureParameter".parameterid</comment>
+            </column>
+        </key>
+        <property name="value" type="org.hibernate.type.TrueFalseType">
+            <column name="value" index="booleanFeatParamIdx">
+                <comment>Boolean parameter value</comment>
+            </column>
+        </property>
+    </joined-subclass>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureCategoryValuedParameter"
+        extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
+        table="categoryfeatparamvalue">
+        <comment>Value table for category parameter</comment>
+        <key foreign-key="featParamCategoryValueFk">
+            <column name="parameterId">
+                <comment>Foreign Key (FK) to the related parameter from the
+                    parameter table. Contains "featureParameter".parameterid</comment>
+            </column>
+        </key>
+        <property name="value" type="string">
+            <column name="value" index="categoryFeatParamIdx">
+                <comment>Category parameter value</comment>
+            </column>
+        </property>
+        <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit"
+            fetch="select" lazy="no-proxy" foreign-key="catfeatparamvalueUnitFk">
+            <column name="unitId" not-null="false">
+                <comment>Foreign Key (FK) to the related unit of measure. Contains
+                    "unit".unitid. Optional</comment>
+            </column>
+        </many-to-one>
+    </joined-subclass>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureCountValuedParameter"
+        extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
+        table="countfeatparamvalue">
+        <comment>Value table for count parameter</comment>
+        <key foreign-key="featParamCountValueFk">
+            <column name="parameterId">
+                <comment>Foreign Key (FK) to the related parameter from the
+                    parameter table. Contains "featureParameter".parameterid</comment>
+            </column>
+        </key>
+        <property name="value" type="integer">
+            <column name="value" index="countFeatParamIdx">
+                <comment>Count parameter value</comment>
+            </column>
+        </property>
+    </joined-subclass>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureQuantityValuedParameter"
+        extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
+        table="numericfeatparamvalue">
+        <comment>Value table for numeric/Measurment parameter</comment>
+        <key foreign-key="featParamNumericValueFk">
+            <column name="parameterId">
+                <comment>Foreign Key (FK) to the related parameter from the
+                    parameter table. Contains "featureParameter".parameterid</comment>
+            </column>
+        </key>
+        <property name="value" type="double">
+            <column name="value" index="quantityFeatParamIdx">
+                <comment>Numeric/Quantity parameter value</comment>
+            </column>
+        </property>
+        <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit"
+            fetch="select" lazy="no-proxy" foreign-key="quanfeatparamvalueUnitFk">
+            <column name="unitId" not-null="false">
+                <comment>Foreign Key (FK) to the related unit of measure. Contains
+                    "unit".unitid. Optional</comment>
+            </column>
+        </many-to-one>
+    </joined-subclass>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureTextValuedParameter"
+        extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
+        table="textfeatparamvalue">
+        <comment>Value table for text parameter</comment>
+        <key foreign-key="featParamTextValueFk">
+            <column name="parameterId">
+                <comment>Foreign Key (FK) to the related parameter from the
+                    parameter table. Contains "featureParameter".parameterid</comment>
+            </column>
+        </key>
+        <property name="value" type="string">
+            <column name="value" index="textFeatParamIdx">
+                <comment>Text parameter value</comment>
+            </column>
+        </property>
+    </joined-subclass>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureXmlValuedParameter"
+        extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
+        table="xmlfeatparamvalue">
+        <comment>Value table for XML parameter</comment>
+        <key foreign-key="featParamXmlValueFk">
+            <column name="parameterId">
+                <comment>Foreign Key (FK) to the related parameter from the
+                    parameter table. Contains "featureParameter".parameterid</comment>
+            </column>
+        </key>
+        <property name="value" type="text">
+            <column name="value">
+                <comment>XML parameter value</comment>
+            </column>
+        </property>
+    </joined-subclass>
+</hibernate-mapping>

@@ -1,0 +1,4 @@
+org.n52.sos.convert.InspireOmpr30SensorML20Converter
+org.n52.sos.convert.InspireOmpr30SensorML101Converter
+org.n52.sos.convert.InspireOmpr30WaterML20Converter
+org.n52.sos.convert.InspireOmpr30FeatureConceptConverter

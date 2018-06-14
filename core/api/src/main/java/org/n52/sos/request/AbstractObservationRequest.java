@@ -57,7 +57,9 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      */
     private String responseMode;
     
-    private boolean checkForDuplicity = true;
+    private boolean mergeObservationValues = false;
+    
+    private boolean checkForDuplicity = false;
 
     /**
      * Get response format
@@ -129,6 +131,14 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
     
     public boolean isSetResultModel() {
         return StringHelper.isNotEmpty(getResultModel());
+    }
+    
+    public void setMergeObservationValues(boolean mergeObservationValues) {
+        this.mergeObservationValues = mergeObservationValues;
+    }
+
+    public boolean isSetMergeObservationValues() {
+        return mergeObservationValues;
     }
     
     @Override

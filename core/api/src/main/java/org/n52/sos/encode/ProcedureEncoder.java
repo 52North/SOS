@@ -28,27 +28,16 @@
  */
 package org.n52.sos.encode;
 
-import java.util.Set;
+import org.n52.sos.coding.ProcedureCoder;
 
 /**
+ * <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  * 
  * @param <S>
  * @param <T>
  */
-public interface ProcedureEncoder<S, T> extends Encoder<S, T> {
+public interface ProcedureEncoder<T, S> extends Encoder<T, S>, ProcedureCoder {
 
-    /**
-     * Get the supported procedure description formats for this
-     * {@linkplain ProcedureEncoder} and the specified service and version.
-     * 
-     * @param service
-     *            the service
-     * @param version
-     *            the version
-     * 
-     * @return the procedure description formats
-     */
-    Set<String> getSupportedProcedureDescriptionFormats(String service, String version);
 
 }

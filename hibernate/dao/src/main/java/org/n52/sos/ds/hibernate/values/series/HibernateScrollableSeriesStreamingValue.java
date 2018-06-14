@@ -30,18 +30,19 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Hibernate series streaming value implementation for {@link ScrollableResults}
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -54,7 +55,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -62,7 +63,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      * @param duplicated 
      * @throws CodedException 
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series, boolean duplicated) throws CodedException {
+    public HibernateScrollableSeriesStreamingValue(AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
         super(request, series, duplicated);
     }
 
@@ -84,15 +85,20 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
 
     @Override
-    public SeriesValue nextEntity() throws OwsExceptionReport {
+    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
         checkMaxNumberOfReturnedValues(1);
-        return (SeriesValue) scrollableResult.get()[0];
+        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
+        if (checkValue(resultObject)) {
+            return resultObject;
+        }
+        session.evict(resultObject);
+        return null;
     }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            SeriesValue resultObject = nextEntity();
+            AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             TimeValuePair value = null;
             if (checkValue(resultObject)) {
                 value = resultObject.createTimeValuePairFrom();
@@ -107,12 +113,12 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
     
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
             OmObservation observation = null;
-            SeriesValue resultObject = nextEntity();
+            AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             if (checkValue(resultObject)) {
-                observation = observationTemplate.cloneTemplate();
+                observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
                 resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);
             }
@@ -127,7 +133,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
 
     /**
      * Get the next results from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -154,7 +160,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
 
     /**
      * Set the queried {@link ScrollableResults} to local variable
-     * 
+     *
      * @param scrollableResult
      *            Queried {@link ScrollableResults}
      */

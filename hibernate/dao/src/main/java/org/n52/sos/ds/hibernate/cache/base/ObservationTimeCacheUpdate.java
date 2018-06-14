@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.cache.base;
 
+import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  *
@@ -51,10 +51,13 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
         startStopwatch();
         try {
             AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            getCache().setMinPhenomenonTime(observationDAO.getMinPhenomenonTime(getSession()));
-            getCache().setMaxPhenomenonTime(observationDAO.getMaxPhenomenonTime(getSession()));
-            getCache().setMinResultTime(observationDAO.getMinResultTime(getSession()));
-            getCache().setMaxResultTime(observationDAO.getMaxResultTime(getSession()));
+            TimeExtrema timeExtrema = observationDAO.getObservationTimeExtrema(getSession());
+            if (timeExtrema != null) {
+                getCache().setMinPhenomenonTime(timeExtrema.getMinPhenomenonTime());
+                getCache().setMaxPhenomenonTime(timeExtrema.getMaxPhenomenonTime());
+                getCache().setMinResultTime(timeExtrema.getMinResultTime());
+                getCache().setMaxResultTime(timeExtrema.getMaxResultTime());
+            }
         } catch (OwsExceptionReport ce) {
             getErrors().add(ce);
         }

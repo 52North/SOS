@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @param <T>
  */
-public class RangeValue<T> {
+public class RangeValue<T> implements Comparable<RangeValue<T>>{
 
     private T rangeStart;
 
@@ -75,14 +75,14 @@ public class RangeValue<T> {
     }
 
     public List<T> getRangeAsList() {
-        final List<T> list = new ArrayList<T>();
+        final List<T> list = new ArrayList<>(2);
         list.add(rangeStart);
         list.add(rangeEnd);
         return list;
     }
 
     public List<String> getRangeAsStringList() {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>(2);
         list.add(rangeStart.toString());
         list.add(rangeEnd.toString());
         return list;
@@ -104,43 +104,66 @@ public class RangeValue<T> {
         return builder.toString();
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((rangeEnd == null) ? 0 : rangeEnd.hashCode());
-		result = prime * result
-				+ ((rangeStart == null) ? 0 : rangeStart.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((rangeEnd == null) ? 0 : rangeEnd.hashCode());
+        result = prime * result + ((rangeStart == null) ? 0 : rangeStart.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof RangeValue)) {
-			return false;
-		}
-		final RangeValue<?> other = (RangeValue<?>) obj;
-		if (rangeEnd == null) {
-			if (other.rangeEnd != null) {
-				return false;
-			}
-		} else if (!rangeEnd.equals(other.rangeEnd)) {
-			return false;
-		}
-		if (rangeStart == null) {
-			if (other.rangeStart != null) {
-				return false;
-			}
-		} else if (!rangeStart.equals(other.rangeStart)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof RangeValue)) {
+            return false;
+        }
+        final RangeValue<?> other = (RangeValue<?>) obj;
+        if (rangeEnd == null) {
+            if (other.rangeEnd != null) {
+                return false;
+            }
+        } else if (!rangeEnd.equals(other.rangeEnd)) {
+            return false;
+        }
+        if (rangeStart == null) {
+            if (other.rangeStart != null) {
+                return false;
+            }
+        } else if (!rangeStart.equals(other.rangeStart)) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public RangeValue<?> clone() {
+        return new RangeValue<T>(getRangeStart(), getRangeStart());
+    }
+
+    @Override
+    public int compareTo(RangeValue<T> o) {
+        if (o instanceof RangeValue) {
+            if (checkCompareToParameter(getRangeStart(), o.getRangeEnd())
+                    && checkCompareToParameter(getRangeEnd(), o.getRangeEnd())) {
+                return 0;
+            }
+            return 1;
+        }
+        return -1;
+    }
+    
+    private boolean checkCompareToParameter(T t, T t2) {
+        if (t == null || (t == null && t2 == null)) {
+            return true;
+        }
+        return t != null && t2 != null && t.equals(t2);
+    }
+
 }

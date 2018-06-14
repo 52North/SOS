@@ -36,6 +36,8 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.ServiceConfiguration;
@@ -53,7 +55,7 @@ import org.n52.sos.util.XmlOptionsHelper;
 public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
 
     @Override
-    public void write(SoapChain chain, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public void write(SoapChain chain, OutputStream out, ResponseProxy responseProxy) throws IOException, OwsExceptionReport {
         try {
             Object o = encodeSoapResponse(chain, out);
             if (o != null) {
@@ -64,9 +66,7 @@ public class SoapChainResponseWriter extends AbstractResponseWriter<SoapChain> {
                 }
             }
         } catch (SOAPException soapex) {
-            throw new IOException(soapex);
-        } catch (OwsExceptionReport owsex) {
-            throw new IOException(owsex);
+            throw new NoApplicableCodeException().causedBy(soapex);
         }
     }
 

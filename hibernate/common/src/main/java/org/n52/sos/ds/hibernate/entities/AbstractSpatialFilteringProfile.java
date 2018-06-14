@@ -33,6 +33,7 @@ import java.io.Serializable;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSrid;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -43,7 +44,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     private static final long serialVersionUID = 8483088637171898375L;
 
-    private AbstractObservation observation;
+    private Observation<?> observation;
 
     private long spatialFilteringProfileId;
 
@@ -63,7 +64,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Get SpatialFilteringProfile id
-     * 
+     *
      * @return SpatialFilteringProfile id
      */
     public long getSpatialFilteringProfileId() {
@@ -72,7 +73,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Set SpatialFilteringProfile id
-     * 
+     *
      * @param spatialFilteringProfileId
      *            SpatialFilteringProfile id to set
      */
@@ -82,28 +83,26 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Get related observation
-     * 
+     *
      * @return Related observation
      */
-    public AbstractObservation getObservation() {
+    public Observation<?> getObservation() {
         return observation;
     }
 
     /**
      * Set related observation
-     * 
+     *
      * @param observation
      *            Related observation
-     * @return AbstractSpatialFilteringProfile
      */
-    public AbstractSpatialFilteringProfile setObservation(AbstractObservation observation) {
+    public void setObservation(Observation<?> observation) {
         this.observation = observation;
-        return this;
     }
 
     /**
      * Get definition
-     * 
+     *
      * @return Definition
      */
     public String getDefinition() {
@@ -112,7 +111,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Set definition
-     * 
+     *
      * @param definition
      *            Definition to set
      * @return AbstractSpatialFilteringProfile
@@ -124,7 +123,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Get title
-     * 
+     *
      * @return Title
      */
     public String getTitle() {
@@ -133,7 +132,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Set title
-     * 
+     *
      * @param title
      *            Title to set
      * @return AbstractSpatialFilteringProfile
@@ -145,7 +144,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Is definition set
-     * 
+     *
      * @return <code>true</code>, if definition is set
      */
     public boolean isSetDefinition() {
@@ -154,7 +153,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
 
     /**
      * Is title set
-     * 
+     *
      * @return <code>true</code>, if title is set
      */
     public boolean isSetTitle() {
@@ -167,9 +166,8 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
     }
 
     @Override
-    public AbstractSpatialFilteringProfile setGeom(Geometry geom) {
+    public void setGeom(Geometry geom) {
         this.geom = geom;
-        return this;
     }
 
     @Override
@@ -220,7 +218,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
     public boolean isSetGeometry() {
         return getGeom() != null;
     }
-    
+
     @Override
     public boolean isSetLongLat() {
         return getLongitude() != null && getLatitude() != null;
@@ -235,7 +233,7 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
     public boolean isSetSrid() {
         return getSrid() > 0;
     }
-    
+
     @Override
     public boolean isSpatial() {
         return isSetGeometry() || isSetLongLat();

@@ -64,4 +64,9 @@ public class OmV20XmlStreamWriter extends AbstractOmV20XmlStreamWriter {
             OwsExceptionReport {
         super.writeResult(observation, encodingValues);
     }
+
+    @Override
+    protected void writeAddtitionalNamespaces() throws XMLStreamException {
+        // nothing to write
+    }
 }

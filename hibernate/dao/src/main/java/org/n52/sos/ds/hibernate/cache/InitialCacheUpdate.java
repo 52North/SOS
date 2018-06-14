@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.cache;
 
-import org.n52.sos.ds.hibernate.cache.base.CompositePhenomenonCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.I18NCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.ObservablePropertiesCacheUpdate;
@@ -40,10 +39,10 @@ import org.n52.sos.ds.hibernate.cache.base.ResultTemplateCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
 
 /**
- * 
+ *
  * Fills the initial cache.
  * <p/>
- * 
+ *
  * @see CompositePhenomenonCacheUpdate
  * @see ObservationTimeCacheUpdate
  * @see FeatureOfInterestCacheUpdate
@@ -55,7 +54,7 @@ import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
  * @see SridCacheUpdate
  * @see I18NCacheUpdate
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InitialCacheUpdate extends CompositeCacheUpdate {
@@ -63,9 +62,15 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
     public InitialCacheUpdate(int threadCount) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
-        super(new ParallelCacheUpdate(threadCount, new SridCacheUpdate(), new ObservablePropertiesCacheUpdate(),
-                new FeatureOfInterestCacheUpdate(), new RelatedFeaturesCacheUpdate(), new CompositePhenomenonCacheUpdate(),
-                new ResultTemplateCacheUpdate(), new ObservationTimeCacheUpdate()),
-                new I18NCacheUpdate(),new OfferingCacheUpdate(threadCount), new ProcedureCacheUpdate(threadCount));
+        super(new ParallelCacheUpdate(threadCount,
+                                      new SridCacheUpdate(),
+                                      new ObservablePropertiesCacheUpdate(),
+                                      new FeatureOfInterestCacheUpdate(),
+                                      new RelatedFeaturesCacheUpdate(),
+                                      new ResultTemplateCacheUpdate(),
+                                      new ObservationTimeCacheUpdate()),
+              new I18NCacheUpdate(),
+              new OfferingCacheUpdate(threadCount),
+              new ProcedureCacheUpdate(threadCount));
     }
 }

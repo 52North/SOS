@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.SpatialEntity;
 
 /**
  * Entity for AQD e-Reporting Station
@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity
  * @since 4.3.0
  *
  */
-public class EReportingStation extends AbstractIdentifierNameDescriptionEntity {
+public class EReportingStation extends SpatialEntity {
 
     private static final long serialVersionUID = 8260589363506930631L;
 

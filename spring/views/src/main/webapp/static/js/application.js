@@ -121,6 +121,8 @@ function generateSettings(settings, settingValues, container, tabbed) {
         switch (setting.type) {
         case "integer":
             // TODO slider
+        case "number":
+            // TODO slider
         case "string":
             $input = $("<input>").attr("type", "text").attr("name", setting.id).addClass("span8");
             break;

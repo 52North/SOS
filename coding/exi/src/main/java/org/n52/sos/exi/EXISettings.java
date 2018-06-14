@@ -38,7 +38,7 @@ import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
-import com.siemens.ct.exi.CodingMode;
+import com.siemens.ct.exi.core.CodingMode;
 
 /**
  * Configuration settings for {@link EXIBinding}.
@@ -122,7 +122,7 @@ public class EXISettings implements SettingDefinitionProvider {
 					+ "performance and compression.<ul><li><b>Default"
 					+ "</b>: uses some default options. If any of the other"
 					+ " options is selected, default options is skipped."
-					+ "</li><li><b>Specific</b>: uses the options activated"
+					+ "</li><li><b>Specific</b>: uses the options activated "
 					+ "further down.</li><li><b>Strict</b>: "
 					+ "no namespace prefixes, comments etc are preserved nor"
 					+ " schema deviations are allowed.</li></ul>").

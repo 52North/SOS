@@ -154,4 +154,9 @@ public class BatchOperationDAO extends AbstractOperationDAO {
     public String getDatasourceDaoIdentifier() {
         return IDEPENDET_IDENTIFIER;
     }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
 }

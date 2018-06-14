@@ -30,6 +30,9 @@ package org.n52.sos.ogc.gml;
 
 import java.io.Serializable;
 
+import org.n52.sos.ogc.DefaultEncoding;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -45,7 +48,7 @@ import org.n52.sos.util.StringHelper;
  * @since
  * 
  */
-public abstract class AbstractFeature extends AbstractGML implements Serializable {
+public abstract class AbstractFeature extends AbstractGML implements Serializable, DefaultEncoding<AbstractFeature> {
 
     /**
      * serial number
@@ -53,6 +56,8 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     private static final long serialVersionUID = -6117378246552782214L;
     
     private String defaultEncoding;
+    
+    private boolean wasEncoded = false;
     
     /**
      * constructor
@@ -75,7 +80,7 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
      *            Feature identifier
      */
     public AbstractFeature(CodeWithAuthority featureIdentifier) {
-        super(featureIdentifier);
+        this(featureIdentifier, null);
     }
 
     /**
@@ -106,5 +111,16 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     public boolean isSetDefaultElementEncoding() {
     	return StringHelper.isNotEmpty(getDefaultElementEncoding());
     }
+    
+    public boolean isEncoded() {
+        return wasEncoded;
+    }
+    
+    public void wasEncoded() {
+        this.wasEncoded  = true;
+    }
 
+    public <X> X accept(FeatureOfInterestVisitor<X> visitor) throws OwsExceptionReport {
+        return null;
+    }
 }

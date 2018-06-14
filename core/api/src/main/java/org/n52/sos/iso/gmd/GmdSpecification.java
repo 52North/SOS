@@ -33,7 +33,7 @@ package org.n52.sos.iso.gmd;
  *
  * @author Christian Autermann
  */
-public class GmdSpecification {
+public class GmdSpecification extends AbtractGmd {
 
     private static final GmdSpecification DATA_CAPTURE_SPECIFICATION
             = new GmdSpecification("Data Capture", GmdCitation

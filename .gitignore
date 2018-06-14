@@ -12,3 +12,5 @@ release.properties
 extensions/do/core/configuration.db
 **.*~
 *.tern-project
+extensions/inspire/coding/configuration.db
+console.log

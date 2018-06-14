@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gmd.ExVerticalExtentEntity"
+           table="verticalexextent">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">verticalExExtentId_seq</param>
+            </generator>
+        </id>
+        <property name="nilReason" column="nilReason" type="string" />
+        <property name="href" column="href" type="string" />
+        <property name="type" column="type" type="string" />
+        <property name="role" column="role" type="string" />
+        <property name="arcrole" column="arcrole" type="string" />
+        <property name="title" column="title" type="string" />
+        <property name="show" column="show" type="string" />
+        <property name="actuate" column="actuate" type="string" />
+        <property name="remoteSchema" column="remoteSchema" type="string" />
+        <property name="id" column="id" type="string" />
+        <property name="uuid" column="uuid" type="string" />
+        <property name="minimumValue" column="minimumValue" type="double" length="29"/>
+        <property name="maximumValue" column="maximumValue" type="double" length="29"/>
+        <many-to-one name="verticalCRS"
+                     class="org.n52.sos.ds.hibernate.entities.feature.gml.VerticalCRSEntity"
+                     foreign-key="vevcrsFk">
+            <column index="vevcrsIdx"
+                    name="verticalCRSId"
+                    not-null="false">
+            </column>
+        </many-to-one>
+    </class>
+</hibernate-mapping>

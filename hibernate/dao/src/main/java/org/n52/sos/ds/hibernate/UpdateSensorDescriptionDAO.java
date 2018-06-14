@@ -44,6 +44,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -83,14 +84,18 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionD
             UpdateSensorResponse response = new UpdateSensorResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
+            ProcedureDAO procedureDAO = new ProcedureDAO();
+            Procedure procedure =
+                    procedureDAO.getProcedureForIdentifier(request.getProcedureIdentifier(), session);
             for (SosProcedureDescription procedureDescription : request.getProcedureDescriptions()) {
                 DateTime currentTime = new DateTime(DateTimeZone.UTC);
                 // TODO: check for all validTimes of descriptions for this
                 // identifier
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
-                Procedure procedure =
-                        new ProcedureDAO().getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+//                
+                procedure = procedureDAO.updateProcedure(procedure, procedureDescription, session);
+                
                 if (procedure instanceof TProcedure) {
                     ProcedureDescriptionFormat procedureDescriptionFormat =
                             new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormatObject(
@@ -123,4 +128,9 @@ public class UpdateSensorDescriptionDAO extends AbstractUpdateSensorDescriptionD
         }
     }
 
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
+    }
 }

@@ -34,6 +34,7 @@ import org.n52.sos.ds.AbstractGetResultTemplateDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
@@ -49,6 +50,7 @@ import org.n52.sos.response.GetResultTemplateResponse;
  */
 public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
     private HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private ResultHandlingHelper helper = new ResultHandlingHelper();
 
     /**
      * constructor
@@ -74,9 +76,9 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
                 GetResultTemplateResponse response = new GetResultTemplateResponse();
                 response.setService(request.getService());
                 response.setVersion(request.getVersion());
-                response.setResultEncoding(ResultHandlingHelper.createSosResultEncoding(resultTemplate
+                response.setResultEncoding(helper.createSosResultEncoding(resultTemplate
                         .getResultEncoding()));
-                response.setResultStructure(ResultHandlingHelper.createSosResultStructure(resultTemplate
+                response.setResultStructure(helper.createSosResultStructure(resultTemplate
                         .getResultStructure()));
                 return response;
             }
@@ -88,5 +90,10 @@ public class GetResultTemplateDAO extends AbstractGetResultTemplateDAO {
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
     }
 }

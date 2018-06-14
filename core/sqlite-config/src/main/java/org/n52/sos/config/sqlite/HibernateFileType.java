@@ -30,6 +30,8 @@ package org.n52.sos.config.sqlite;
 
 import java.io.File;
 
+import org.n52.sos.ds.hibernate.type.AbstractStringBasedHibernateUserType;
+
 /**
  * TODO JavaDoc
  *

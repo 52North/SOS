@@ -30,6 +30,8 @@ package org.n52.sos.cache.ctrl.persistence;
 
 import org.n52.sos.cache.ContentCachePersistenceStrategy;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -44,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.base.Optional;
 
@@ -60,7 +63,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
 
     public AbstractPersistingCachePersistenceStrategy(File cacheFile) {
         if (cacheFile == null) {
-            String basePath = Configurator.getInstance().getBasePath();
+            String basePath = getBasePath();
             this.cacheFile = new File(basePath, CACHE_FILE).getAbsolutePath();
         } else {
             this.cacheFile = cacheFile.getAbsolutePath();
@@ -79,8 +82,9 @@ public abstract class AbstractPersistingCachePersistenceStrategy
             LOGGER.debug("Reading cache from temp file '{}'",
                          f.getAbsolutePath());
             ObjectInputStream in = null;
+            long start = System.currentTimeMillis();
             try {
-                in = new ObjectInputStream(new FileInputStream(f));
+                in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(f)));
                 return Optional.of((WritableContentCache) in.readObject());
             } catch (IOException t) {
                 LOGGER.error(String.format("Error reading cache file '%s'",
@@ -90,6 +94,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
                                            f.getAbsolutePath()), t);
             } finally {
                 IOUtils.closeQuietly(in);
+                LOGGER.debug("Loading cache from file with size {} took {} ms!", f.length(), (System.currentTimeMillis() - start));
             }
             f.delete();
         } else {
@@ -102,12 +107,13 @@ public abstract class AbstractPersistingCachePersistenceStrategy
     protected void persistCache(ContentCache cache) {
         File f = getCacheFile();
         if (!f.exists() || f.delete()) {
-            ObjectOutputStream out = null;
             if (cache != null) {
+                ObjectOutputStream out = null;
                 LOGGER.debug("Serializing cache to {}", f.getAbsolutePath());
+                long start = System.currentTimeMillis();
                 try {
                     if (f.createNewFile() && f.canWrite()) {
-                        out = new ObjectOutputStream(new FileOutputStream(f));
+                        out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
                         out.writeObject(cache);
                     } else {
                         LOGGER.error("Can not create writable file {}",
@@ -119,9 +125,18 @@ public abstract class AbstractPersistingCachePersistenceStrategy
                                     f.getAbsolutePath()), t);
                 } finally {
                     IOUtils.closeQuietly(out);
+                    LOGGER.debug("Writing cache to file with size {} took {} ms!", f.length(), (System.currentTimeMillis() - start));
                 }
             }
         }
+    }
+    
+    protected String getBasePath() {
+        File cacheFileFolder = ServiceConfiguration.getInstance().getCacheFileFolder();
+        if (cacheFileFolder != null && cacheFileFolder.exists()) {
+            return cacheFileFolder.getAbsolutePath();
+        }
+        return Configurator.getInstance().getBasePath();
     }
 
     @Override

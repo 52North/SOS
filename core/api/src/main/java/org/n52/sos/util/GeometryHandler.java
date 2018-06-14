@@ -45,7 +45,6 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
-import org.geotools.util.WeakCollectionCleaner;
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
@@ -116,7 +115,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     private CRSAuthorityFactory crsAuthority;
 
-    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
+    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
 
     /**
      * Private constructor
@@ -284,7 +283,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public void setSupportedCRS(final String supportedCRS) throws ConfigurationException {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
-        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+        this.supportedCRS = StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING);
     }
 
     @Setting(FeatureQuerySettingsProvider.AUTHORITY)
@@ -340,19 +339,24 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationException {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
+        List<Range> newEpsgCodes = Lists.newArrayListWithCapacity(splitted.length);
         for (final String entry : splitted) {
             final String[] splittedEntry = entry.split("-");
             Range r = null;
-            if (splittedEntry.length == 1) {
-                r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[0]));
-            } else if (splittedEntry.length == 2) {
-                r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
-            } else {
-                throw new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
-                        FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry));
+            try {
+                if (splittedEntry.length == 1) {
+                    r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[0]));
+                } else if (splittedEntry.length == 2) {
+                    r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
+                } else {
+                    throw createException(entry, null);
+                }
+            } catch (NumberFormatException ex) {
+                throw createException(entry, ex);
             }
-            epsgsWithNorthingFirstAxisOrder.add(r);
+            newEpsgCodes.add(r);
         }
+        epsgsWithNorthingFirstAxisOrder = newEpsgCodes;
     }
 
     /**
@@ -754,6 +758,11 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     public String addOgcCrsPrefix(int crs) {
         return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
+    }
+
+    private ConfigurationException createException(String entry, Throwable ex) {
+        return new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
+                FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);
     }
 
 }

@@ -90,14 +90,14 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  */
-public class RestBinding extends Binding {
+public class RestBinding implements Binding {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestBinding.class);
     private final Set<String> conformanceClasses;
-    private final Constants bindingConstants;
+    private final RestConstants bindingConstants;
 
     public RestBinding() {
-        bindingConstants = Constants.getInstance();
+        bindingConstants = RestConstants.getInstance();
         conformanceClasses = new HashSet<String>(0);
         conformanceClasses.add(bindingConstants.getConformanceClass());
     }
@@ -118,7 +118,7 @@ public class RestBinding extends Binding {
             throws HTTPException, IOException {
         if (request.getPathInfo() == null ||
             request.getPathInfo().isEmpty()) {
-            super.doOptionsOperation(request, response);
+            throw new HTTPException(HTTPStatus.METHOD_NOT_ALLOWED);
         } else {
             doOperation(request, response);
         }
@@ -152,7 +152,17 @@ public class RestBinding extends Binding {
         doOperation(request, response);
     }
 
-     /*
+    @Override
+	public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+			OwsExceptionReport oer) throws HTTPException {
+		try {
+			 return encodeOwsExceptionReport(oer);
+		} catch (IOException e) {
+			throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+		}
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see org.n52.sos.binding.rest.Binding#doGetOperation(javax.servlet.http.
@@ -176,7 +186,8 @@ public class RestBinding extends Binding {
             SosEventBus.fire(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
-        HTTPUtils.writeObject(request, response, serviceResponse);
+        HTTPUtils.writeObject(request, response, serviceResponse, this);
+        
     }
 
     private ServiceResponse encodeOwsExceptionReport(OwsExceptionReport oer) throws HTTPException, IOException {
@@ -316,7 +327,7 @@ public class RestBinding extends Binding {
                 return new ServiceEndpointRequestHandler();
             }
         }
-        throw new MissingParameterValueException(bindingConstants.getResourceType());
+        throw new MissingParameterValueException("resource type");
     }
 
 	private RestDecoder getDecoder() throws OwsExceptionReport {

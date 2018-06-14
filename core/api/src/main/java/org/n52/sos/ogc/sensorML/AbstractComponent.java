@@ -67,4 +67,14 @@ public class AbstractComponent extends AbstractProcess implements HasPosition<Ab
     public boolean isSetLocation() {
         return location != null;
     }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
+    }
 }

@@ -35,6 +35,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -85,18 +86,14 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     public List<OmObservation> create() throws OwsExceptionReport, ConverterException {
         final List<OmObservation> observations = Lists.newLinkedList();
         if (getObservationConstellation() != null && getFeatureIds() != null) {
-            SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure().getIdentifier());
+            SosProcedureDescription procedure = createProcedure(getObservationConstellation().getProcedure());
             OmObservableProperty obsProp = createObservableProperty(getObservationConstellation().getObservableProperty());
             obsProp.setUnit(queryUnit());
             for (final String featureId : getFeatureIds()) {
                 final AbstractFeature feature = createFeatureOfInterest(featureId);
                 final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
                 final OmObservation sosObservation = new OmObservation();
-                sosObservation.setNoDataValue(getNoDataValue());
-                sosObservation.setTokenSeparator(getTokenSeparator());
-                sosObservation.setTupleSeparator(getTupleSeparator());
-                sosObservation.setDecimalSeparator(getDecimalSeparator());
+                addDefaultValuesToObservation(sosObservation);
                 sosObservation.setObservationConstellation(obsConst);
                 final NilTemplateValue value = new NilTemplateValue();
                 value.setUnit(obsProp.getUnit());
@@ -120,6 +117,7 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
 //            return new SosProcedureDescriptionUnknowType(id, pdf, null);
 //        }
 //    }
+
 
     private OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
             OmObservableProperty obsProp, AbstractFeature feature) {

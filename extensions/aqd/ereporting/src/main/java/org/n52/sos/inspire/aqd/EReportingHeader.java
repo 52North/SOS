@@ -37,8 +37,8 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Nillable;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.xlink.Referenceable;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;

@@ -28,11 +28,24 @@
  */
 package org.n52.sos.gda;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractOperationDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
+import org.n52.sos.ogc.sos.ConformanceClasses;
+import org.n52.sos.ogc.sos.ResultFilterConstants;
+import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.sos.SosSpatialFilterConstants;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.SosHelper;
+
+import com.google.common.collect.Sets;
 
 /**
  * DAO to get the DataAvailabilities out of the database.
@@ -45,10 +58,9 @@ import org.n52.sos.ogc.ows.OwsOperation;
 public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDAO {
     
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
-    
     public static final String SHOW_COUNT = "ShowCount";
-    
     private boolean forceValueCount = false;
+    private boolean forceGDAv20Response = false;
 
     public AbstractGetDataAvailabilityDAO(String service) {
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
@@ -57,9 +69,23 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     @Override
     protected void setOperationsMetadata(OwsOperation operation, String service, String version)
             throws OwsExceptionReport {
-        addPublishedProcedureParameter(operation);
+        addQueryableProcedureParameter(operation);
+        //addPublishedProcedureParameter(operation);
         addPublishedObservablePropertyParameter(operation);
         addPublishedFeatureOfInterestParameter(operation, version);
+        addOfferingParameter(operation);
+        operation.addAnyParameterValue(ResultFilterConstants.METADATA_RESULT_FILTER);
+        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
+        SosEnvelope envelope = null;
+        if (featureIDs != null && !featureIDs.isEmpty()) {
+            envelope = getCache().getGlobalEnvelope();
+        }
+        if (envelope != null && envelope.isSetEnvelope()) {
+            operation.addRangeParameterValue(Sos2Constants.GetObservationParams.spatialFilter,
+                    SosHelper.getMinMaxFromEnvelope(envelope.getEnvelope()));
+        } else {
+            operation.addAnyParameterValue(Sos2Constants.GetObservationParams.spatialFilter);
+        }
     }
 
     /**
@@ -89,5 +115,25 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     @Setting(GetDataAvailabilitySettings.FORCE_GDA_VALUE_COUNT)
     public void setForceValueCount(boolean forceValueCount) {
         this.forceValueCount = forceValueCount;
+    }
+    
+    /**
+     * @return the forEachOffering
+     */
+    protected boolean isForceGDAv20Response() {
+        return forceGDAv20Response;
+    }
+
+    /**
+     * @param forceGDAv20Response the forceGDAv20Response to set
+     */
+    @Setting(GetDataAvailabilitySettings.FORCE_GDA_20_RESPONSE)
+    public void setForceGDAv20Response(boolean forceGDAv20Response) {
+        this.forceGDAv20Response = forceGDAv20Response;
+    }
+    
+    @Override
+    public Set<String> getConformanceClasses() {
+        return Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF, SosSpatialFilterConstants.CONFORMANCE_CLASS_SF);
     }
 }

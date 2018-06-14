@@ -17,5 +17,15 @@
                 <comment>The unit of measure of observations. See http://unitsofmeasure.org/ucum.html</comment>
             </column>
         </property>
+        <property name="name" type="string">
+            <column name="name" not-null="false">
+                <comment>The name of the unit of measure of observations</comment>
+            </column>
+        </property>
+        <property name="link" type="string">
+            <column name="link" not-null="false">
+                <comment>The link to an external description of the unit of measure of observations, e.g. a vocabulary</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

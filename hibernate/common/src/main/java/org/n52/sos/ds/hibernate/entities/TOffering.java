@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestTypes;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationTypes;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedFeatures;
 
 /**
@@ -41,12 +40,10 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedFeatures;
  * 
  * @since 4.0.0
  */
-public class TOffering extends Offering implements Serializable, HasObservationTypes, HasFeatureOfInterestTypes,
+public class TOffering extends Offering implements Serializable, HasFeatureOfInterestTypes,
         HasRelatedFeatures {
 
     private static final long serialVersionUID = 6980377588232516858L;
-
-    private Set<ObservationType> observationTypes = new HashSet<ObservationType>(0);
 
     private Set<FeatureOfInterestType> featureOfInterestTypes = new HashSet<FeatureOfInterestType>(0);
 
@@ -54,16 +51,6 @@ public class TOffering extends Offering implements Serializable, HasObservationT
 
     public TOffering() {
         super();
-    }
-
-    @Override
-    public Set<ObservationType> getObservationTypes() {
-        return observationTypes;
-    }
-
-    @Override
-    public void setObservationTypes(final Set<ObservationType> observationTypes) {
-        this.observationTypes = observationTypes;
     }
 
     @Override

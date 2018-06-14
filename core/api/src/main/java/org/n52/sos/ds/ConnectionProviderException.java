@@ -35,9 +35,6 @@ package org.n52.sos.ds;
  */
 public class ConnectionProviderException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1139334322506609081L;
 
     public ConnectionProviderException() {

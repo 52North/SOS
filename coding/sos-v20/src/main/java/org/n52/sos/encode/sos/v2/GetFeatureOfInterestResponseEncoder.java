@@ -28,17 +28,23 @@
  */
 package org.n52.sos.encode.sos.v2;
 
+import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.encode.streaming.sos.v2.GetFeatureOfInterestXmlStreamWriter;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -72,11 +78,22 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
             for (AbstractFeature f : (FeatureCollection) feature) {
                 addFeatureOfInterest(f, xbGetFoiResponse);
             }
-        } else if (feature instanceof SamplingFeature) {
+        } else if (feature instanceof AbstractSamplingFeature) {
             addFeatureOfInterest(feature, xbGetFoiResponse);
         }
         XmlHelper.makeGmlIdsUnique(document.getDomNode());
         return document;
+    }
+    
+    @Override
+    protected void create(GetFeatureOfInterestResponse response, OutputStream outputStream,
+            EncodingValues encodingValues) throws OwsExceptionReport {
+        try {
+            encodingValues.setEncoder(this);
+            new GetFeatureOfInterestXmlStreamWriter().write(response, outputStream, encodingValues);
+        } catch (XMLStreamException xmlse) {
+            throw new NoApplicableCodeException().causedBy(xmlse);
+        }
     }
 
     private void addFeatureOfInterest(AbstractFeature feature, GetFeatureOfInterestResponseType response)

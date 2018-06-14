@@ -48,6 +48,6 @@ public interface MultiValue<T> extends Value<T> {
     Time getPhenomenonTime();
 
     @Override
-    void setValue(T value);
+    MultiValue<T> setValue(T value);
 
 }

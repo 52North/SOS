@@ -1,0 +1,360 @@
+/******************************************************************************
+* Project: SOS
+* Module:  SOS.Styles.css
+* Purpose: Styles for the UI elements of the SOS project
+* Author:  Paul M. Breen
+* Date:    2012-12-12
+* Id:      $Id$
+******************************************************************************/
+
+.sos-plot {
+  width: 760px;
+  height: 340px;
+}
+
+.sos-plot-overview {
+  margin-left: 50px;
+  margin-top: 10px;
+  width: 700px;
+  height: 50px;
+}
+
+.sos-plot-valuebox {
+  display: none;
+  font-size: 0.65em;
+  background: #ffffff;
+  filter: alpha(opacity=80);
+  opacity: 0.8;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  border: thin solid grey;
+  padding: 5px;
+  z-index: 1200;
+}
+
+.sos-plot-rose {
+  width: 550px;
+  height: 340px;
+}
+
+.sos-plot-rose-offset {
+  left: 210px;
+}
+
+.sos-plot-rose-annotation-title {
+  position: absolute;
+  left: 22px;
+  top: 333px;
+}
+
+.sos-plot-rose-annotation-box {
+  float: right;
+  margin-top: -20px;
+  margin-right: 5px;
+}
+
+.sos-plot-rose-annotation-mean, .sos-plot-rose-annotation-calm {
+  font-size: 60%;
+}
+
+.sos-plot-square {
+  width: 500px;
+  height: 500px;
+}
+
+.sos-plot-square-offset {
+  left: 110px;
+}
+
+.sos-control-title {
+  font-weight: bold;
+}
+
+.sos-control-section {
+  margin-bottom: 5px;
+  font-size: 0.9em;
+}
+
+.sos-control-section-container {
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  border: thin solid lightgray;
+  padding: 1px;
+}
+
+.sos-message-container {
+  margin-top: 10px;
+  padding: 0pt 0.7em;
+}
+
+.sos-message-icon {
+  float: left;
+  margin-right: 0.3em;
+}
+
+.sos-selected-interval-stats-table, .sos-embedded-table {
+  font-size: 0.75em;
+}
+
+.sos-selected-interval-stats-plot {
+  width: 300px;
+  height: 150px;
+  font-size: 0.75em;
+  position: absolute;
+  left: 200px;
+  top: 50px;
+}
+
+div.sos-table {
+}
+
+table.sos-table {
+  font-size: 0.75em;
+}
+
+caption.sos-table {
+  text-align: center;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+thead.sos-table {
+}
+
+tfoot.sos-table {
+}
+
+tbody.sos-table {
+}
+
+tr.sos-table {
+}
+
+tr.sos-table-odd {
+  background-color: #f0f0f0;
+}
+
+tr.sos-table-even {
+}
+
+th.sos-table {
+  border-bottom: thin solid grey;
+}
+
+td.sos-table {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+td.sos-table-highlight, td.sos-table-highlight-selected {
+  background-color: #ffff88;
+}
+
+td.sos-table-highlight-selected {
+  border: thin dotted grey;
+}
+
+table.sos-table-scrollable {
+  display: block;
+  width: 760px;
+  height: 305px;
+  overflow: auto;
+}
+
+.sos-map {
+  width: 512px;
+  height: 256px;
+}
+
+.sos-menu-container {
+  height: 240px;
+}
+
+.sos-menu {
+  width: 200px;
+  padding: 5px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  font-size: 0.75em;
+}
+
+.sos-menu-controls-container {
+  height: 180px;
+}
+
+.sos-menu-controls {
+  width: 200px;
+  padding: 5px;
+  position: absolute;
+  left: 0px;
+  top: 240px;
+  font-size: 0.75em;
+}
+
+.sos-menu-select-list {
+  width: 140px;
+}
+
+.sos-menu-search-box {
+  width: 132px;
+}
+
+.sos-menu-icon-button {
+  width: 16px;
+  height: 16px;
+  padding: 0px;
+  margin-left: 5px;
+  margin-right: 2px;
+}
+
+.sos-info-box {
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 6px;
+  background-color: #f2f5f7;
+  border: thin solid #aed0ea;
+  z-index: 1005;
+  filter: alpha(opacity=80);
+  opacity: 0.8;
+}
+
+.sos-info-box a {
+  text-decoration: none;
+}
+
+.sos-info-box a:hover {
+  text-decoration: underline;
+}
+
+.sos-info-box ul {
+  margin: 0px;
+  padding: 0px;
+  margin-left: 1.5em;
+}
+
+.sos-info-box-content {
+}
+
+.sos-info-box-control-section {
+  position: absolute;
+  -moz-border-radius: 6px 6px 0px 0px;
+  -webkit-border-radius: 6px 6px 0px 0px;
+  border-radius: 6px 6px 0px 0px;
+  top: -1px;
+  left: -1px;
+  width: 100%;
+  background-color: #d7ebf9;
+  border-left: thin solid #aed0ea;
+  border-right: thin solid #aed0ea;
+  border-top: thin solid #aed0ea;
+}
+
+.sos-info-box-control, .sos-info-box-control-left {
+  float: left;
+}
+
+.sos-info-box-control-right {
+  float: right;
+}
+
+.sos-info-box-control-section-title {
+  display: inline-block;
+  padding-left: 3px;
+}
+
+.sos-info-right-container {
+  width: 200px;
+  position: absolute;
+  top: 65px;
+  left: 1027px;
+}
+
+.sos-info-metadata-box {
+  padding: 5px;
+  padding-top: 20px;
+  font-size: 0.65em;
+  margin-bottom: 5px;
+}
+
+.sos-info-help-box {
+  padding: 5px;
+  padding-top: 20px;
+  font-size: 0.65em;
+}
+
+.sos-info-title-box {
+  position: absolute;
+  left: 250px;
+  padding: 5px;
+  padding-top: 20px;
+  width: 540px;
+  height: 40px;
+  font-size: 0.95em;
+}
+
+.sos-info-contact-box {
+  position: absolute;
+  left: 0px;
+  top: 310px;
+  width: 188px;
+  padding: 5px;
+  padding-top: 20px;
+  font-size: 0.65em;
+}
+
+.sos-app-container {
+  width: 1024px;
+  height: 768px;
+}
+
+.sos-app {
+  width: 80%;
+  height: 600px;
+  padding: 5px;
+  position: absolute;
+  left: 210px;
+  top: 5px;
+}
+
+.sos-tab-header {
+  font-size: 0.9em;
+}
+
+.sos-watermark {
+  font-style: italic;
+  color: #808080;
+  font-size: 0.9em;
+}
+
+.sos-download-dialog-select-list {
+  float: right;
+  margin-top: -20px;
+  margin-right: 5px;
+}
+
+.sos-download-dialog-control-row {
+  font-size: 0.9em;
+  height: 25px;
+}
+
+/* flot legend styles */
+div.legend {
+  font-size: 0.70em;
+}
+
+/* jquery ui styles */
+div.ui-datepicker {
+  font-size: 62.5%;
+}
+
+.ui-autocomplete {
+  font-size: 75%;
+}
+
+span.ui-icon-disk {
+  margin: -6px;
+}
+

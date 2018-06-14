@@ -36,11 +36,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.binding.OwsExceptionReportHandler;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlEncoderKey;
+import org.n52.sos.event.SosEventBus;
+import org.n52.sos.event.events.ExceptionEvent;
 import org.n52.sos.exception.AdministratorException;
+import org.n52.sos.exception.HTTPException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.response.ServiceResponse;
@@ -59,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 4.0.0
  */
-public class SosAdminService extends ConfiguratedHttpServlet {
+public class SosAdminService extends ConfiguratedHttpServlet implements OwsExceptionReportHandler {
     private static final long serialVersionUID = -3279981432309569992L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosAdminService.class);
@@ -89,7 +93,12 @@ public class SosAdminService extends ConfiguratedHttpServlet {
         } catch (OwsExceptionReport e) {
             sosResp = handleException(e);
         }
-        HTTPUtils.writeObject(req, resp, sosResp);
+        try {
+        	 HTTPUtils.writeObject(req, resp, sosResp, this);
+        } catch (HTTPException exception) {
+            onHttpException(req, resp, exception);
+        }
+       
     }
 
     /**
@@ -154,5 +163,17 @@ public class SosAdminService extends ConfiguratedHttpServlet {
             LOGGER.debug(exceptionText);
         }
         return new ServletException(exceptionText);
+    }
+
+	@Override
+	public Object handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+			OwsExceptionReport oer) throws HTTPException {
+		return null;
+	}
+	
+	protected void onHttpException(HttpServletRequest request, HttpServletResponse response, HTTPException exception)
+            throws IOException {
+        SosEventBus.fire(new ExceptionEvent(exception));
+        response.sendError(exception.getStatus().getCode(), exception.getMessage());
     }
 }

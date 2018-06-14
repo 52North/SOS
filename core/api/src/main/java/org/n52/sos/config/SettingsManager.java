@@ -121,7 +121,7 @@ public abstract class SettingsManager implements CapabilitiesExtensionManager{
      *             if no implementation can be found
      */
     private static SettingsManager createInstance() throws ConfigurationException {
-        List<SettingsManager> settingsManagers = new LinkedList<SettingsManager>();
+        List<SettingsManager> settingsManagers = new LinkedList<>();
         Iterator<SettingsManager> it = ServiceLoader.load(SettingsManager.class).iterator();
         while(it.hasNext()) {
             try {

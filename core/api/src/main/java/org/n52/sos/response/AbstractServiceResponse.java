@@ -28,6 +28,9 @@
  */
 package org.n52.sos.response;
 
+import java.util.Collection;
+
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensions;
@@ -88,9 +91,50 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
         getExtensions().addSwesExtension(extension);
         return this;
     }
+    
+    @Override
+    public AbstractServiceResponse addExtensions(final Collection<SwesExtension<?>> extensions) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extensions);
+        return this;
+    }
 
     @Override
     public boolean isSetExtensions() {
         return extensions != null && !extensions.isEmpty();
+    }
+    
+    @Override
+    public boolean hasExtension(Enum identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean hasExtension(String identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+
+    @Override
+    public SwesExtension<?> getExtension(Enum identifier) throws InvalidParameterValueException {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
+    }
+    
+    @Override
+    public SwesExtension<?> getExtension(String identifier) throws InvalidParameterValueException {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
     }
 }

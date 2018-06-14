@@ -46,7 +46,7 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.sos.SosOffering;
@@ -304,8 +304,8 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
         abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
                     .getIdentifier()));
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
+        if (abstractFeature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) abstractFeature).isSetXmlDescription()) {
+            ((AbstractSamplingFeature) abstractFeature).setXmlDescription(null);
         }
 
     }

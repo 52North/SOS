@@ -53,7 +53,10 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
+import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
+import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TimePrimitiveFieldDescriptor;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -232,17 +235,15 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             TimePrimitiveFieldDescriptor tpfd = TemporalRestrictions.getFields(filter.getValueReference());
             if (filter.getTime() instanceof TimePeriod) {
                 TimePeriod tp = (TimePeriod) filter.getTime();
-                q.setDate(tpfd.getBeginPosition() + count, tp.getStart().toDate());
-                q.setDate(tpfd.getEndPosition() + count, tp.getEnd().toDate());
+                if (q.getComment().contains(":" + TemporalRestriction.START)) {
+                    q.setParameter(TemporalRestriction.START + count, tp.getStart().toDate(), UtcTimestampType.INSTANCE);
+                }
+                if (q.getComment().contains(":" + TemporalRestriction.END)) {
+                    q.setParameter(TemporalRestriction.END + count, tp.getEnd().toDate(), UtcTimestampType.INSTANCE);
+                }
             } if (filter.getTime() instanceof TimeInstant) {
                 TimeInstant ti = (TimeInstant) filter.getTime();
-                if (tpfd.isInstant()) {
-                    q.setDate(tpfd.getBeginPosition() + count, ti.getValue().toDate());
-                }
-                if (tpfd.isPeriod()) {
-                    q.setDate(tpfd.getBeginPosition() + count, ti.getValue().toDate());
-                    q.setDate(tpfd.getEndPosition() + count, ti.getValue().toDate());
-                }
+                q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue().toDate(), UtcTimestampType.INSTANCE);
             }
             count++;
         }

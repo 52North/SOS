@@ -26,7 +26,7 @@
             </gml:TimeInstant>
           </om:phenomenonTime>
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_1"/>
           <om:featureOfInterest gml:id="ssf_test_feature" xlink:href="52NorthWS1" />
           <om:result xsi:type="gml:ReferenceType" xlink:href="test_category_9_2" />
@@ -37,7 +37,7 @@
           <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation"/>
           <om:phenomenonTime xlink:href="#phenomenonTime" />
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_2"/>
           <om:featureOfInterest xlink:href="#ssf_test_feature" />
           <om:result xsi:type="xs:integer">4</om:result>
@@ -48,7 +48,7 @@
           <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
           <om:phenomenonTime xlink:href="#phenomenonTime" />
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_3"/>
           <om:featureOfInterest xlink:href="#ssf_test_feature" />
           <om:result xsi:type="gml:MeasureType" uom="test_unit_9_3">0.29</om:result>
@@ -59,7 +59,7 @@
           <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation"/>
           <om:phenomenonTime xlink:href="#phenomenonTime" />
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_4"/>
           <om:featureOfInterest xlink:href="#ssf_test_feature" />
           <om:result xsi:type="xs:string">text_value_2</om:result>
@@ -70,7 +70,7 @@
           <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation"/>
           <om:phenomenonTime xlink:href="#phenomenonTime" />
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_5"/>
           <om:featureOfInterest xlink:href="#ssf_test_feature" />
           <om:result xsi:type="xs:boolean">false</om:result>

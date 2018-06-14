@@ -133,8 +133,10 @@ This project includes:
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons IO under Apache License, Version 2.0
   Apache Commons Lang under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
+  Apache HttpClient under Apache License, Version 2.0
   Apache HttpClient Mime under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
@@ -165,8 +167,6 @@ This project includes:
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
   ClassLoader Leak Prevention library under Apache 2
-  Commons Codec under The Apache Software License, Version 2.0
-  Commons IO under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
@@ -178,6 +178,7 @@ This project includes:
   EXIficient under MIT License
   EXIficient-Core under MIT License
   EXIficient-Grammars under MIT License
+  FindBugs-Annotations under GNU Lesser Public License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
@@ -190,8 +191,6 @@ This project includes:
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate/c3p0 Integration under GNU Lesser General Public License
-  HttpClient under Apache License
-  HttpCore under Apache License
   httpservices under (MIT-style) netCDF C library license
   HyperSQL Database under HSQLDB License, a BSD open source license
   INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
@@ -217,10 +216,11 @@ This project includes:
   Java Native Access under LGPL, version 2.1 or ASL, version 2
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
-  Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
+  Java Servlet API under CDDL + GPLv2 with classpath exception
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
+  JavaServer Pages(TM) API under CDDL 1.1 or GPL2 w/ CPE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
   JBoss Logging 3 under Apache License, version 2.0
@@ -234,7 +234,6 @@ This project includes:
   JMES Path Query library under Apache License, Version 2.0
   Joda-Time under Apache 2
   JOpt Simple under The MIT License
-  jsp-api under CDDL 1.1 or GPL2 w/ CPE
   jsr-275 under BSD License
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JTS Topology Suite under Lesser General Public License (LGPL)
@@ -297,7 +296,7 @@ This project includes:
   Protocol Buffer Java API under New BSD license
   quartz under The Apache Software License, Version 2.0
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1
-  Reflections under WTFPL
+  Reflections under WTFPL or The New BSD License
   SaxonB under Mozilla Public License Version 1.0
   Series REST API - DAO Mappings module under GNU General Public License, Version 2.0
   Series REST API - DAO module under GNU General Public License, Version 2.0
@@ -306,7 +305,6 @@ This project includes:
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0
   Series REST API - SPI module under GNU General Public License, Version 2.0
-  servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
   software.amazon.ion:ion-java under The Apache License, Version 2.0
   Spring AOP under The Apache Software License, Version 2.0

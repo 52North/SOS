@@ -53,6 +53,9 @@ import org.n52.sos.util.DateTimeHelper;
  * @since 4.0.0
  */
 public abstract class TemporalRestriction {
+    public static final String START = "start";
+    public static final String END = "end";
+    public static final String INSTANT = "instant";
     /**
      * ISO 19108:2002 states (&lt;, &gt;) and not (&le;, &ge;).
      *
@@ -413,29 +416,29 @@ public abstract class TemporalRestriction {
 
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return isSetCount() ? lower(selfEnd, selfBegin) : lower(selfEnd, otherBegin);
+            return isSetCount() ? lower(selfEnd, START) : lower(selfEnd, otherBegin);
         }
 
         @Override
         protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                 boolean isOtherPeriodFromReducedPrecisionInstant) {
-            return isSetCount() ? lower(selfPosition, selfPosition) : lower(selfPosition, otherBegin);
+            return isSetCount() ? lower(selfPosition, START) : lower(selfPosition, otherBegin);
         }
         
         @Override
         protected Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd,
                 boolean isOtherPeriodFromReducedPrecisionInstant) {
-            return isSetCount() ? lower(selfBegin, selfBegin) : lower(selfBegin, otherBegin);
+            return isSetCount() ? lower(selfBegin, START) : lower(selfBegin, otherBegin);
         }
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-            return isSetCount() ? lower(selfEnd, selfEnd) : lower(selfEnd, otherPosition);
+            return isSetCount() ? lower(selfEnd, INSTANT) : lower(selfEnd, otherPosition);
         }
 
         @Override
         protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
-            return isSetCount() ? lower(selfPosition, selfPosition) : lower(selfPosition, otherPosition);
+            return isSetCount() ? lower(selfPosition, INSTANT) : lower(selfPosition, otherPosition);
         }
     };
 
@@ -471,29 +474,29 @@ public abstract class TemporalRestriction {
         
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return isSetCount() ? greater(selfBegin, selfEnd) : greater(selfBegin, otherEnd);
+            return isSetCount() ? greater(selfBegin, END) : greater(selfBegin, otherEnd);
         }
 
         @Override
         protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                 boolean periodFromReducedPrecisionInstant) {
-            return isSetCount() ? greater(selfPosition, selfPosition) : greater(selfPosition, otherEnd);
+            return isSetCount() ? greater(selfPosition, END) : greater(selfPosition, otherEnd);
         }
         
         @Override
         protected Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd,
                 boolean isOtherPeriodFromReducedPrecisionInstant) {
-            return isSetCount() ? greater(selfBegin, selfBegin) : greater(selfBegin, otherEnd);
+            return isSetCount() ? greater(selfBegin, END) : greater(selfBegin, otherEnd);
         }
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-            return isSetCount() ? greater(selfBegin, selfEnd) : greater(selfBegin, otherPosition);
+            return isSetCount() ? greater(selfBegin, INSTANT) : greater(selfBegin, otherPosition);
         }
 
         @Override
         protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
-            return isSetCount() ? greater(selfPosition, selfPosition) : greater(selfPosition, otherPosition);
+            return isSetCount() ? greater(selfPosition, INSTANT) : greater(selfPosition, otherPosition);
         }
     };
 
@@ -530,14 +533,14 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() ? 
-                Restrictions.and(equal(selfBegin, selfBegin), lower(selfEnd, selfEnd)) : 
+                Restrictions.and(equal(selfBegin, START), lower(selfEnd, END)) : 
                 Restrictions.and(equal(selfBegin, otherBegin), lower(selfEnd, otherEnd));
         }
 
         @Override
         protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                 boolean periodFromReducedPrecisionInstant) {
-            return isSetCount() ? equal(selfPosition, selfPosition) : equal(selfPosition, otherBegin);
+            return isSetCount() ? equal(selfPosition, START) : equal(selfPosition, otherBegin);
         }
     };
 
@@ -574,7 +577,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount()
-                    ? Restrictions.and(greater(selfBegin, selfBegin), equal(selfEnd, selfEnd))
+                    ? Restrictions.and(greater(selfBegin, START), equal(selfEnd, END))
                     : Restrictions.and(greater(selfBegin, otherBegin), equal(selfEnd, otherEnd));
         }
 
@@ -582,7 +585,7 @@ public abstract class TemporalRestriction {
         protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                 boolean periodFromReducedPrecisionInstant) {
             return isSetCount() 
-                    ? equal(selfPosition, selfPosition)
+                    ? equal(selfPosition, END)
                     : equal(selfPosition, otherEnd);
         }
     };
@@ -620,14 +623,14 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? Restrictions.and(lower(selfBegin, selfBegin), equal(selfEnd, selfEnd))
+                    ? Restrictions.and(lower(selfBegin, START), equal(selfEnd, END))
                     : Restrictions.and(lower(selfBegin, otherBegin), equal(selfEnd, otherEnd));
         }
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
             return isSetCount() 
-                    ? equal(selfEnd, selfEnd)
+                    ? equal(selfEnd, INSTANT)
                     : equal(selfEnd, otherPosition);
         }
     };
@@ -665,14 +668,14 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? Restrictions.and(equal(selfBegin, selfBegin), greater(selfEnd, selfEnd))
+                    ? Restrictions.and(equal(selfBegin, START), greater(selfEnd, END))
                     : Restrictions.and(equal(selfBegin, otherBegin), greater(selfEnd, otherEnd));
         }
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
             return isSetCount() 
-                    ? equal(selfBegin, selfBegin)
+                    ? equal(selfBegin, INSTANT)
                     : equal(selfBegin, otherPosition);
         }
     };
@@ -711,7 +714,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? Restrictions.and(greater(selfBegin, selfBegin), lower(selfEnd, selfEnd))
+                    ? Restrictions.and(greater(selfBegin, START), lower(selfEnd, END))
                     : Restrictions.and(greater(selfBegin, otherBegin), lower(selfEnd, otherEnd));
         }
 
@@ -719,7 +722,7 @@ public abstract class TemporalRestriction {
         protected Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
                 boolean isOtherPeriodFromReducedPrecisionInstant) {
             return isSetCount() 
-                    ? Restrictions.and(greater(selfPosition, selfPosition), lower(selfPosition, selfPosition))
+                    ? Restrictions.and(greater(selfPosition, START), lower(selfPosition, END))
                     : Restrictions.and(greater(selfPosition, otherBegin), lower(selfPosition, otherEnd));
         }
         
@@ -727,7 +730,7 @@ public abstract class TemporalRestriction {
         protected Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd,
                 boolean periodFromReducedPrecisionInstant) {
             return isSetCount() 
-                    ? Restrictions.and(greater(selfBegin, selfBegin), lower(selfBegin, selfEnd))
+                    ? Restrictions.and(greater(selfBegin, START), lower(selfBegin, END))
                     : Restrictions.and(greater(selfBegin, otherBegin), lower(selfBegin, otherEnd));
         }
     };
@@ -766,7 +769,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? Restrictions.and(equal(selfBegin, selfBegin), equal(selfEnd, selfEnd))
+                    ? Restrictions.and(equal(selfBegin, START), equal(selfEnd, END))
                     : Restrictions.and(equal(selfBegin, otherBegin), equal(selfEnd, otherEnd));
         }
 
@@ -776,7 +779,7 @@ public abstract class TemporalRestriction {
             if (isOtherPeriodFromReducedPrecisionInstant) {
                 //time period was created from a reduced precision instant
                 return isSetCount() 
-                        ? Restrictions.and(greater(selfPosition, selfPosition), lower(selfPosition, selfPosition))
+                        ? Restrictions.and(greater(selfPosition, START), lower(selfPosition, END))
                         : Restrictions.and(greater(selfPosition, otherBegin), lower(selfPosition, otherEnd));
             } else {
                 return null;
@@ -789,7 +792,7 @@ public abstract class TemporalRestriction {
             if (isOtherPeriodFromReducedPrecisionInstant) {
                 //time period was created from a reduced precision instant
                 return isSetCount() 
-                        ? Restrictions.and(greater(selfBegin, selfBegin), lower(selfBegin, selfEnd))
+                        ? Restrictions.and(greater(selfBegin, START), lower(selfBegin, END))
                         : Restrictions.and(greater(selfBegin, otherBegin), lower(selfBegin, otherEnd));
             } else {
                 return null;
@@ -799,7 +802,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
             return isSetCount() 
-                    ? equal(selfPosition, selfPosition)
+                    ? equal(selfPosition, INSTANT)
                     : equal(selfPosition, otherPosition);
         }
     };
@@ -838,14 +841,14 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? Restrictions.and(lower(selfBegin, selfBegin), greater(selfEnd, selfEnd))
+                    ? Restrictions.and(lower(selfBegin, START), greater(selfEnd, END))
                     : Restrictions.and(lower(selfBegin, otherBegin), greater(selfEnd, otherEnd));
         }
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
             return isSetCount() 
-                    ? Restrictions.and(lower(selfBegin, selfBegin), greater(selfEnd, selfEnd))
+                    ? Restrictions.and(lower(selfBegin, INSTANT), greater(selfEnd, INSTANT))
                     : Restrictions.and(lower(selfBegin, otherPosition), greater(selfEnd, otherPosition));
         }
     };
@@ -885,10 +888,10 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ?  Restrictions.and(lower(selfBegin, selfBegin), greater(selfEnd, selfBegin),
-                            lower(selfEnd, selfEnd))
+                    ?  Restrictions.and(lower(selfBegin, START), greater(selfEnd, START),
+                            lower(selfEnd, END))
                     : Restrictions.and(lower(selfBegin, otherBegin), greater(selfEnd, otherBegin),
-                    lower(selfEnd, otherEnd));
+                            lower(selfEnd, otherEnd));
         }
     };
 
@@ -925,7 +928,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? equal(selfEnd, selfBegin)
+                    ? equal(selfEnd, START)
                     : equal(selfEnd, otherBegin);
         }
     };
@@ -963,7 +966,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? equal(selfBegin, selfEnd)
+                    ? equal(selfBegin, START)
                     : equal(selfBegin, otherEnd);
         }
     };
@@ -1003,7 +1006,7 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() 
-                    ? Restrictions.and(greater(selfBegin, selfBegin), lower(selfBegin, selfEnd), greater(selfEnd, selfEnd))
+                    ? Restrictions.and(greater(selfBegin, START), lower(selfBegin, END), greater(selfEnd, END))
                     : Restrictions.and(greater(selfBegin, otherBegin), lower(selfBegin, otherEnd),
                     greater(selfEnd, otherEnd));
         }

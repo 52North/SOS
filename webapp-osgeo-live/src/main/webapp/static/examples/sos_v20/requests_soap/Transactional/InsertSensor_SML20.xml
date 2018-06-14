@@ -14,7 +14,7 @@
       <swes:procedureDescription>
         <sml:PhysicalSystem gml:id="sensor9">
           <!--Unique identifier -->
-          <gml:identifier codeSpace="uniqueID">http://www.52north.org/test/procedure/9</gml:identifier>
+          <gml:identifier codeSpace="uniqueID">52NorthWS1</gml:identifier>
           <sml:identification>
             <sml:IdentifierList>
               <sml:identifier>

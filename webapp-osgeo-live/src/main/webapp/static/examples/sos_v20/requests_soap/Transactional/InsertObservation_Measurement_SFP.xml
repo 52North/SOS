@@ -25,7 +25,7 @@
             </gml:TimeInstant>
           </om:phenomenonTime>
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:parameter>
             <om:NamedValue>
             <om:name xlink:href="http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry"/>
@@ -42,10 +42,10 @@
           <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_3"/>
           <om:featureOfInterest>
             <sams:SF_SpatialSamplingFeature gml:id="ssf_test_feature_9"> 
-              <gml:identifier codeSpace="">http://www.52north.org/test/featureOfInterest/1</gml:identifier> 
+              <gml:identifier codeSpace="">52NorthWS1</gml:identifier> 
               <gml:name>52°North</gml:name>
               <sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/> 
-              <sf:sampledFeature xlink:href="http://www.52north.org/test/featureOfInterest/1"/> 
+              <sf:sampledFeature xlink:href="52NorthWS1"/> 
               <sams:shape> 
                 <gml:Point gml:id="test_feature_9"> 
                   <gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">49.96683 14.95105</gml:pos> 

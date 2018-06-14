@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sosdo:DeleteObservation version="2.0.0" service="SOS" xmlns:sosdo="http://www.opengis.net/sosdo/1.0">
-  <sosdo:observation>osgeolive-observation-must-be-inserted-beforehand</sosdo:observation>
+    <sosdo:observation>osgeolive-observation-must-be-inserted-beforehand</sosdo:observation>
 </sosdo:DeleteObservation>

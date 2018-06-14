@@ -18,7 +18,7 @@
             </gml:TimeInstant>
           </om:phenomenonTime>
           <om:resultTime xlink:href="#phenomenonTime"/>
-          <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+          <om:procedure xlink:href="52NorthWS1"/>
           <om:parameter>
             <om:NamedValue>
             <om:name xlink:href="http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry"/>

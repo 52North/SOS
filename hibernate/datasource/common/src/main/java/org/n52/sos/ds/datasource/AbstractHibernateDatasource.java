@@ -201,8 +201,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 DatabaseConcept.EREPORTING_CONCEPT.getDisplayName());
         choiceSettingDefinition.addOption(DatabaseConcept.OLD_CONCEPT.name(),
                 DatabaseConcept.OLD_CONCEPT.getDisplayName());
-        choiceSettingDefinition.addOption(DatabaseConcept.BGRM_LOG_CONCEPT.name(),
-                DatabaseConcept.BGRM_LOG_CONCEPT.getDisplayName());
+        choiceSettingDefinition.addOption(DatabaseConcept.GEOLOGY_LOG_CONCEPT.name(),
+                DatabaseConcept.GEOLOGY_LOG_CONCEPT.getDisplayName());
         choiceSettingDefinition.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
         return choiceSettingDefinition;
     }
@@ -303,7 +303,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
                 || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept)
-                || DatabaseConcept.BGRM_LOG_CONCEPT.equals(databaseConcept))) {
+                || DatabaseConcept.GEOLOGY_LOG_CONCEPT.equals(databaseConcept))) {
             Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
             if (t != null && t) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
@@ -371,7 +371,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             case OLD_CONCEPT:
                 mappings.add(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
                 break;
-            case BGRM_LOG_CONCEPT:
+            case GEOLOGY_LOG_CONCEPT:
                 mappings.add(HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH);
                 break;
             default:
@@ -391,7 +391,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
                 concept = DatabaseConcept.OLD_CONCEPT.name();
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH)) {
-            concept = DatabaseConcept.BGRM_LOG_CONCEPT.name();
+            concept = DatabaseConcept.GEOLOGY_LOG_CONCEPT.name();
         }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
@@ -740,7 +740,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         DatabaseConcept databaseConcept = getDatabaseConcept(settings);
         if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
                 || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept)
-                || DatabaseConcept.BGRM_LOG_CONCEPT.equals(databaseConcept))) {
+                || DatabaseConcept.GEOLOGY_LOG_CONCEPT.equals(databaseConcept))) {
             Boolean t = (Boolean) settings.get(seriesMetadataDefiniton.getKey());
             if (t != null && t) {
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_METADATA_PATH);

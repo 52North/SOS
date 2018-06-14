@@ -218,8 +218,8 @@ public abstract class AbstractGetDataAvailabilityStreamWriter extends XmlEventWr
 
     protected void writeTime(TimeInstant ti) throws XMLStreamException, DateTimeFormatException {
         start(SweConstants.QN_TIME_SWE_200);
-        writeValue(ti);
         writeUom();
+        writeValue(ti);
         end(SweConstants.QN_TIME_SWE_200);
     }
 

@@ -13,7 +13,7 @@
   },
   "defaultProvider": {
     "serviceID": "1",
-    "url": "http://localhost:8080/52nSOS/api/"
+    "apiUrl": "http://localhost:8080/52nSOS/api/"
   },
   "chartOptions": {
     "yaxis": {

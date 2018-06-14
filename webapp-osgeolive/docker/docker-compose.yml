@@ -1,0 +1,42 @@
+#
+# With this docker-compose file, you get two containers:
+# - a tomcat
+# - a postgresql database server
+#
+# http://localhost:8080/ redirects to the /52n-sos-webapp and uses the latest version of the tomcat M.x branch with Java 8 JRE.
+#
+# When configuring the SOS, please use the following information:
+# - Datasource configuration
+#   - datasource: PostgreSQL/PostGIS
+#   - host: db
+# Everything else could be used with the default values.
+# Feel free to comment out the tomcat version you do not need.
+#
+# Just run docker-compose up in the directory of this file.
+version: '3'
+services:
+  db:
+    image: mdillon/postgis:9.6-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+      - POSTGRES_DB=52nSOS
+  sos:
+    # change to 7- or 9- to change the tomcat version
+    image: tomcat:8.5-jre8-alpine
+    ports:
+      - 8080:8080
+      - 8000:8000
+    links:
+      - db:postgres
+    volumes:
+      - "../target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
+      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+    depends_on:
+      - db
+    environment:
+      - JPDA_ADDRESS=8000
+      - JPDA_TRANSPORT=dt_socket
+    command: ["catalina.sh", "jpda", "run"]

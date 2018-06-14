@@ -26,7 +26,7 @@
 
      1. Deploy and configure ```52nSOS##x.y.z.war``` in any tomcat, having a postgresql server with postgis enabled db running. The database name MUST be ```52nSOS``` with owner ```user``` using password ```user``` (requirements from OSGeo-Live).
 
-        **[i]** This might require a reset because the build version is *pre-configured* via *Admin* &rarr; *Reset*.
+         **[i]** This might require a reset because the build version is *pre-configured* via *Admin* &rarr; *Reset*.
 
          1. Admin user MUST be ```user``` with password ```user```.
 

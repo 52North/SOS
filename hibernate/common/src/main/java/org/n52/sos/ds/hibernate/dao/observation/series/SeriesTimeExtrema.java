@@ -26,44 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.restriction;
+package org.n52.sos.ds.hibernate.dao.observation.series;
 
-import java.util.Date;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
+public class SeriesTimeExtrema extends TimeExtrema {
 
-import org.n52.sos.ds.hibernate.util.TemporalRestriction;
+    private Long series;
 
-/**
- * Creates filters according to the following table.
- * <table>
- * <tr>
- * <td><i>Self/Other</i></td>
- * <td><b>Period</b></td>
- * <td><b>Instant</b></td>
- * </tr>
- * <tr>
- * <td><b>Period</b></td>
- * <td>{@code self.end = other.begin}</td>
- * <td><i>not defined</i></td>
- * </tr>
- * <tr>
- * <td><b>Instant</b></td>
- * <td><i>not defined</i></td>
- * <td><i>not defined</i></td>
- * </tr>
- * </table>
- */
-public class MeetsRestriction implements TemporalRestriction {
-    @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.eq(selfEnd, otherBegin);
+    /**
+     * @return the series
+     */
+    public Long getSeries() {
+        return series;
     }
 
-    @Override
-    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.eq(selfEnd, getStartPlaceHolder(count));
+    /**
+     * @param series
+     *            the series to set
+     */
+    public void setSeries(Long series) {
+        this.series = series;
     }
 
+    public boolean isSetSeries() {
+        return getSeries() != null;
+    }
 }

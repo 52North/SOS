@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
@@ -50,6 +51,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
+import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.locationtech.jts.geom.Envelope;
@@ -61,12 +63,14 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.data.Data;
+import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -83,10 +87,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public abstract class AbstractSeriesObservationDAO extends AbstractObservationDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
+    private final SeriesTimeTransformer transformer = new SeriesTimeTransformer();
 
     public AbstractSeriesObservationDAO(DaoFactory daoFactory) {
         super(daoFactory);
@@ -888,5 +894,58 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         return c.scroll(ScrollMode.FORWARD_ONLY);
     }
 
+
+    public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimes(Set<Dataset> serieses, Session session) {
+        Criteria c = getDefaultObservationTimeCriteria(session);
+        c.add(Restrictions.in(DataEntity.PROPERTY_DATASET, serieses));
+        c.setProjection(Projections.projectionList()
+                .add(Projections.groupProperty(DataEntity.PROPERTY_DATASET))
+                .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
+        c.setResultTransformer(transformer);
+
+        Map<Long, SeriesTimeExtrema> map = Maps.newHashMap();
+        for (SeriesTimeExtrema result : (List<SeriesTimeExtrema>) c.list()) {
+            if (result.isSetSeries()) {
+                map.put(result.getSeries(), result);
+            }
+        }
+        return map;
+    }
+
+    private class SeriesTimeTransformer implements ResultTransformer {
+        private static final long serialVersionUID = -373512929481519459L;
+
+        @Override
+        public SeriesTimeExtrema transformTuple(Object[] tuple, String[] aliases) {
+            SeriesTimeExtrema seriesTimeExtrema = new SeriesTimeExtrema();
+            if (tuple != null) {
+                seriesTimeExtrema.setSeries(((Dataset) tuple[0]).getId());
+                seriesTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
+                seriesTimeExtrema.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
+            }
+            return seriesTimeExtrema;
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes"})
+        public List transformList(List collection) {
+            return collection;
+        }
+    }
+
+    public Data<?> getMinObservation(Dataset series, DateTime time, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, time.toDate()));
+        return (Data<?>) c.uniqueResult();
+    }
+
+    public Object getMaxObservation(Dataset series, DateTime time, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, time.toDate()));
+        return (Data<?>) c.uniqueResult();
+    }
 
 }

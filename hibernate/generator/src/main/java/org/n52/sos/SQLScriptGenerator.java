@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -40,12 +41,9 @@ import java.util.Set;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialectSpatialIndex;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
-import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
-import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialectSpatialIndex;
 import org.n52.sos.ds.datasource.CustomConfiguration;
 
@@ -221,14 +219,19 @@ public class SQLScriptGenerator {
                         .toString();
         boolean duplicate = false;
         List<String> checkedSchema = Lists.newLinkedList();
+        Set<String> set = new HashSet<>();
         for (String string : create) {
             if (string.contains(hexStringToCheck)) {
                 if (!duplicate) {
-                    checkedSchema.add(string);
+                    if (set.add(string)) {
+                        checkedSchema.add(string);
+                    }
                     duplicate = true;
                 }
             } else {
-                checkedSchema.add(string);
+                if (set.add(string)) {
+                    checkedSchema.add(string);
+                }
             }
         }
         return Sets.newLinkedHashSet(checkedSchema);

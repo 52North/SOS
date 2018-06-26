@@ -63,8 +63,18 @@ public class EndedByRestriction implements TemporalRestriction {
     }
 
     @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.and(Restrictions.lt(selfBegin, getStartPlaceHolder(count)),
+                                Restrictions.eq(selfEnd, getEndPlaceHolder(count)));
+    }
+
+    @Override
     public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
         return Restrictions.eq(selfEnd, otherPosition);
     }
 
+    @Override
+    public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.eq(selfEnd, getInstantPlaceHolder(count));
+    }
 }

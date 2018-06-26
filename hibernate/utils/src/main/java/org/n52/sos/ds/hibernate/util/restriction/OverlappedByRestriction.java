@@ -64,4 +64,11 @@ public class OverlappedByRestriction implements TemporalRestriction {
                                 Restrictions.gt(selfEnd, otherEnd));
     }
 
+    @Override
+    public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
+        return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
+                                Restrictions.lt(selfBegin, getEndPlaceHolder(count)),
+                                Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
+    }
+
 }

@@ -69,7 +69,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Table.Cell;
 
 
 public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
@@ -296,7 +295,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
                         getFeature(featureId), offerings);
         if (observationConstellations.containsKey(obsConst.hashCode())) {
-            return observationConstellations.get(obsConst.hashCode());
+            obsConst =  observationConstellations.get(obsConst.hashCode());
         }
         int hashCode = obsConst.hashCode();
         if (!Strings.isNullOrEmpty(getResultModel())) {

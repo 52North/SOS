@@ -34,6 +34,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.NamedQueryDefinition;
@@ -93,6 +94,16 @@ public final class HibernateHelper {
                         factory, criteriaImpl, criteriaImpl.getEntityOrClassName(), session.getLoadQueryInfluencers());
 
         return walker.getSQLString();
+    }
+
+    public static String getSqlString(Criterion criterion, Criteria criteria) {
+        CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
+        SharedSessionContractImplementor session = criteriaImpl.getSession();
+        SessionFactoryImplementor factory = session.getFactory();
+        CriteriaQueryTranslator translator =
+                new CriteriaQueryTranslator(factory, criteriaImpl, criteriaImpl.getEntityOrClassName(),
+                        CriteriaQueryTranslator.ROOT_SQL_ALIAS);
+        return criterion.toSqlString(criteria, translator);
     }
 
     /**

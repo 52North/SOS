@@ -74,7 +74,6 @@ public class DeleteObservationRequestOperator
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
-            checkObservationIDs(sosRequest.getObservationIdentifiers(), DeleteObservationConstants.PARAM_OBSERVATION);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

@@ -47,6 +47,7 @@ import org.n52.sos.ds.hibernate.util.restriction.OverlappedByRestriction;
 import org.n52.sos.ds.hibernate.util.restriction.OverlapsRestriction;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 
 /**
  * TODO JavaDoc
@@ -1090,6 +1091,11 @@ public final class TemporalRestrictions {
         return restriction.getCriterion(property, value);
     }
 
+    private static Criterion filter(TemporalRestriction restriction, TimePrimitiveFieldDescriptor property, Time value, Integer count)
+            throws UnsupportedTimeException {
+        return restriction.getCriterion(property, value, count);
+    }
+
     /**
      * Create a new {@code Criterion} using the specified operator, fields and value
      *
@@ -1107,6 +1113,11 @@ public final class TemporalRestrictions {
         return filter(operator, new TimePrimitiveFieldDescriptor(property), value);
     }
 
+    public static Criterion filter(TimeOperator operator, String property, Time value, Integer count)
+            throws UnsupportedOperatorException, UnsupportedTimeException {
+        return filter(operator, new TimePrimitiveFieldDescriptor(property), value, count);
+    }
+
     /**
      * Create a new {@code Criterion} using the specified operator, fields and value
      *
@@ -1122,6 +1133,11 @@ public final class TemporalRestrictions {
     public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedOperatorException, UnsupportedTimeException {
         return filter(forOperator(operator), property, value);
+    }
+
+    public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value,
+            Integer count) throws UnsupportedOperatorException, UnsupportedTimeException {
+        return filter(forOperator(operator), property, value, count);
     }
 
     private static TemporalRestriction forOperator(TimeOperator operator) throws UnsupportedOperatorException {

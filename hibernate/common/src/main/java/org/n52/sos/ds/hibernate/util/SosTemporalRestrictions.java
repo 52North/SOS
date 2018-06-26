@@ -141,6 +141,10 @@ public class SosTemporalRestrictions {
         return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()), filter.getTime());
     }
 
+    public static Criterion filterHql(TemporalFilter filter, Integer count) throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
+        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()), filter.getTime(), count);
+    }
+
 
     /**
      * Creates a {@link Conjunction} for the specified temporal filters.
@@ -164,6 +168,19 @@ public class SosTemporalRestrictions {
             return disjunctions.iterator().next();
         }
         disjunctions.forEach(conjunction::add);
+        return conjunction;
+    }
+
+    public static Criterion filterHql(Iterable<TemporalFilter> temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        Conjunction conjunction = Restrictions.conjunction();
+        Collection<Disjunction> disjunctions = getDisjunctionHql(temporalFilters);
+        if (disjunctions.size() == 1) {
+            return disjunctions.iterator().next();
+        }
+        for (Disjunction disjunction : disjunctions) {
+            conjunction.add(disjunction);
+        }
         return conjunction;
     }
 
@@ -195,6 +212,23 @@ public class SosTemporalRestrictions {
         return map.values();
     }
 
+    private static Collection<Disjunction> getDisjunctionHql(Iterable<TemporalFilter> temporalFilters)
+            throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
+        Map<String, Disjunction> map = Maps.newHashMap();
+        Integer count = 1;
+        for (TemporalFilter temporalFilter : temporalFilters) {
+            if (map.containsKey(temporalFilter.getValueReference())) {
+                map.get(temporalFilter.getValueReference()).add(filterHql(temporalFilter, count));
+            } else {
+                Disjunction disjunction = Restrictions.disjunction();
+                disjunction.add(filterHql(temporalFilter, count));
+                map.put(temporalFilter.getValueReference(), disjunction);
+            }
+            count++;
+        }
+        return map.values();
+    }
+
     /**
      * Gets the field descriptor for the specified value reference.
      *
@@ -211,7 +245,7 @@ public class SosTemporalRestrictions {
      *
      * @throws UnsupportedValueReferenceException if the {@code valueReference} can not be decoded
      */
-    private static TimePrimitiveFieldDescriptor getFields(String valueReference)
+    public static TimePrimitiveFieldDescriptor getFields(String valueReference)
             throws UnsupportedValueReferenceException {
         if (valueReference.contains(TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE)) {
             return PHENOMENON_TIME_FIELDS;

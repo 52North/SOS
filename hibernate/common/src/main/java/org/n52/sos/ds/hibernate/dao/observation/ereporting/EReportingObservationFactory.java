@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.NotInitializedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingBlobDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingBooleanDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingCategoryDataEntity;
@@ -125,7 +126,7 @@ public class EReportingObservationFactory extends ObservationFactory {
     }
 
     public DatasetEntity series() {
-        return new EReportingDatasetEntity();
+        return new NotInitializedDatasetEntity();
     }
 
     public Class<? extends DatasetEntity> seriesClass() {

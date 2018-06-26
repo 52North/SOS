@@ -138,7 +138,7 @@ public interface HibernateDatasourceConstants {
     public enum DatabaseConcept {
         SERIES_CONCEPT("Series concept"),
         EREPORTING_CONCEPT("eReporting concept (extended Series concept)"),
-        BGRM_LOG_CONCEPT("BRGM - special concept for BRGM log observations");
+        GEOLOGY_LOG_CONCEPT("GWML2:GeologyLogCoverage");
 
         private final String displayName;
 

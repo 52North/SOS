@@ -5,7 +5,23 @@ RELEASE NOTES
  in Observation&Measurement), information about the sensor itself (encoded in a
  SensorML instance document), and information about the sensor mounting platform
  (SensorML as well).
+
+
+    Release 52n-sensorweb-sos-4.4.4
+====================================
  
+  --- New features ---
+
+      * 
+  
+  --- Changes ---
+  
+      * 
+  
+  --- Fixed issues ---
+  
+      * 
+      
  
     Release 52n-sensorweb-sos-4.4.3
 ====================================
@@ -33,6 +49,7 @@ RELEASE NOTES
       * Setting of GDA 2.0 response format if forced
       * Check for FES filter extension
       * Fix support for referenced featureOfInterst (gml:id) in InsertObservation with multiple observations
+      * Some minor fixes
       
  
    Release 52n-sensorweb-sos-4.4.2

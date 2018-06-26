@@ -28,6 +28,7 @@
  */
 package org.n52.sos.request.operator;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -78,10 +79,21 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     protected void checkForCompositeObservableProperty(AbstractPhenomenon observableProperty, Set<String> offerings,
             Enum<?> parameterName) throws InvalidParameterValueException {
         String observablePropertyIdentifier = observableProperty.getIdentifier();
-        if (hasObservations(observablePropertyIdentifier, offerings) && observableProperty.isComposite() != getCache()
-                .isCompositePhenomenon(observablePropertyIdentifier)) {
+        if (hasObservations(observablePropertyIdentifier, offerings)
+                && observableProperty.isComposite() != getCache().isCompositePhenomenon(observablePropertyIdentifier)
+                && checkComponentsIfInserted(((OmCompositePhenomenon) observableProperty).getPhenomenonComponents())) {
             throw new InvalidParameterValueException(parameterName, observablePropertyIdentifier);
         }
+    }
+
+    private boolean checkComponentsIfInserted(List<OmObservableProperty> phenomenonComponents) {
+        for (OmObservableProperty omObservableProperty : phenomenonComponents) {
+            if (getCache().hasObservableProperty(omObservableProperty.getIdentifier()) && !getCache()
+                    .getProceduresForObservableProperty(omObservableProperty.getIdentifier()).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean hasObservations(String observableProperty, Set<String> offerings) {

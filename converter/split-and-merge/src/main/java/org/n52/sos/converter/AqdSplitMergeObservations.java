@@ -37,6 +37,7 @@ import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.ogc.om.ObservationMergeIndicator;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
@@ -70,9 +71,11 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
         if (response instanceof GetObservationResponse) {
-            GetObservationResponse getObservationResponse = (GetObservationResponse) response;
-            getObservationResponse.setMergeObservations(true);
-            getObservationResponse.setObservationCollection(getObservationResponse.getObservationCollection().merge());
+            ObservationMergeIndicator indicator =
+                    ObservationMergeIndicator.sameObservationConstellation().withoutObservationType();
+            GetObservationResponse observationResponse = (GetObservationResponse) response;
+            observationResponse.setMergeObservations(true);
+            observationResponse.setObservationCollection(observationResponse.getObservationCollection().merge(indicator));
         }
         return response;
     }

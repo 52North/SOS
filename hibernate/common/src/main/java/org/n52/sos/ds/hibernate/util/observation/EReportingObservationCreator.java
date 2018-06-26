@@ -43,6 +43,7 @@ import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingGeometryDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
+import org.n52.series.db.beans.ereporting.EReportingReferencedDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingTextDataEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -64,7 +65,10 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
                                     EReportingGeometryDataEntity.class,
                                     EReportingQualityEntity.class,
                                     EReportingDataArrayDataEntity.class,
-                                    EReportingTextDataEntity.class);
+                                    EReportingTextDataEntity.class,
+                                    EReportingReferencedDataEntity.class,
+                                    EReportingDatasetEntity.class);
+
 
     private final EReportingObservationHelper helper = new EReportingObservationHelper();
     private SweHelper sweHelper;

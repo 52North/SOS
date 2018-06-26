@@ -202,7 +202,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                 .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
                 add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_ID)));
-        c.add(Subqueries.propertyIn(EReportingDataEntity.PROPERTY_DATASET, detachedCriteria));
+        c.add(Subqueries.propertyIn(DatasetEntity.PROPERTY_ID, detachedCriteria));
     }
 
     @Override

@@ -141,7 +141,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().setAllowedFeatureOfInterestTypeForOffering(identifier, toStringSet(offering.getFeatureTypes()));
 
         // Spatial Envelope
+        ReferencedEnvelope e = getEnvelopeForOffering(offering);
         getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
+        getCache().updateGlobalEnvelope(e.getEnvelope());
 
         // Temporal extent
         getCache().setMinPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeStart()));

@@ -44,8 +44,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.siemens.ct.exi.api.sax.EXIResult;
-import com.siemens.ct.exi.api.sax.EXISource;
+import com.siemens.ct.exi.main.api.sax.EXIResult;
+import com.siemens.ct.exi.main.api.sax.EXISource;
 
 public class XmlToExiConverter {
     

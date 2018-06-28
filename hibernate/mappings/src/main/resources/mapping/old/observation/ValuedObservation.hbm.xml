@@ -318,7 +318,7 @@
                 </column>
             </key>
             <property name="value" 
-                      type="org.hibernate.type.StringClobType">
+                      type="text">
                  <column name="value">
                      <comment>Text observation value</comment>
                  </column>

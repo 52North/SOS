@@ -178,7 +178,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
         if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
             StringBuilder logArgs = new StringBuilder();
             List<AbstractValuedLegacyObservation<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session, logArgs);
                 addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, logArgs);
@@ -217,7 +217,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             int currentRow, Session session) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
             List<AbstractValuedLegacyObservation<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 StringBuilder logArgs = new StringBuilder();
                 Criteria c = getSeriesValueCriteriaFor(request, series, null, session, logArgs);
                 addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
@@ -258,7 +258,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
         if (request instanceof GetObservationRequest && ((GetObservationRequest) request).hasResultFilter()) {
             StringBuilder logArgs = new StringBuilder();
             List<AbstractValuedSeriesObservation<?>> list = new LinkedList<>();
-            for (SubQueryIdentifier identifier : ResultFilterRestrictions.SubQueryIdentifier.values()) {
+            for (SubQueryIdentifier identifier : ResultFilterRestrictions.getSubQueryIdentifier(getResultFilterClasses())) {
                 Criteria c = getSeriesValueCriteriaFor(request, series, null, session, logArgs);
                 addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, logArgs);

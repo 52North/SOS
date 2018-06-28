@@ -28,25 +28,13 @@
  */
 package org.n52.sos.encode;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-import net.opengis.om.x20.NamedValueDocument;
-import net.opengis.om.x20.NamedValuePropertyType;
-import net.opengis.om.x20.NamedValueType;
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationPropertyType;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.om.x20.OMProcessPropertyType;
-import net.opengis.om.x20.ObservationContextPropertyType;
-import net.opengis.om.x20.ObservationContextType;
-import net.opengis.om.x20.TimeObjectPropertyType;
+
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
@@ -68,7 +56,6 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -118,6 +105,21 @@ import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+import net.opengis.om.x20.NamedValueDocument;
+import net.opengis.om.x20.NamedValuePropertyType;
+import net.opengis.om.x20.NamedValueType;
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationPropertyType;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.OMProcessPropertyType;
+import net.opengis.om.x20.ObservationContextPropertyType;
+import net.opengis.om.x20.ObservationContextType;
+import net.opengis.om.x20.TimeObjectPropertyType;
 
 
 public abstract class AbstractOmEncoderv20
@@ -252,7 +254,6 @@ public abstract class AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    @SuppressWarnings("rawtypes")
     protected XmlObject encodeOmObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         OMObservationType xbObservation = createOmObservationType();
@@ -265,15 +266,7 @@ public abstract class AbstractOmEncoderv20
         if (!sosObservation.isSetGmlID()) {
             sosObservation.setGmlId("o_" + observationID);
         }
-        // set a unique gml:id
-        xbObservation.setId(generateObservationGMLId());
-        if (!sosObservation.isSetObservationID()) {
-            sosObservation.setObservationID(xbObservation.getId().replace("o_", ""));
-            if (sosObservation.getValue() instanceof AbstractObservationValue){
-                ((AbstractObservationValue)sosObservation.getValue()).setObservationID(sosObservation.getObservationID());
-            }
-        }
-        
+        xbObservation.setId(sosObservation.getGmlId());
         setObservationIdentifier(sosObservation, xbObservation);
         setObservationName(sosObservation, xbObservation);
         setDescription(sosObservation, xbObservation);
@@ -709,10 +702,6 @@ public abstract class AbstractOmEncoderv20
 
     protected static XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
-    }
-
-    private static String generateObservationGMLId() {
-        return "o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
     }
 
     private static class NamedValueValueEncoder implements ValueVisitor<XmlObject> {

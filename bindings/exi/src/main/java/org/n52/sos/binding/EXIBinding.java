@@ -61,9 +61,9 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.api.sax.EXISource;
-import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.main.api.sax.EXISource;
 
 /**
  * Binding implementation for EXI - Efficient XML Interchange See See <a

@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,6 +44,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameter
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
@@ -90,9 +90,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
     private final Map<Long, List<Parameter>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
-
-    private HashSet<Object> set;
-
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, Locale language, Session session) {
@@ -337,8 +334,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         Set<String> offerings = Sets.newHashSet();    
         if (hObservation instanceof AbstractSeriesObservation && ((AbstractSeriesObservation<?>) hObservation).getSeries().isSetOffering()) {
              offerings.add(((AbstractSeriesObservation<?>) hObservation).getSeries().getOffering().getIdentifier());
-        } else if (hObservation.isSetOfferings()) {
-            for (Offering offering : hObservation.getOfferings()) {
+        } else if (hObservation instanceof LegacyObservation && ((LegacyObservation)hObservation).isSetOfferings()) {
+            for (Offering offering : ((LegacyObservation)hObservation).getOfferings()) {
                 offerings.add(offering.getIdentifier());
             }
         } else {
@@ -353,24 +350,34 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             String procedureId, String phenomenonId, String featureId, Set<String> offerings) {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating ObservationConstellation...");
-        OmObservationConstellation obsConst =
-                new OmObservationConstellation(getProcedure(procedureId), getObservedProperty(phenomenonId),
-                        getFeature(featureId), offerings);
-        if (observationConstellations.containsKey(obsConst.hashCode())) {
-            return observationConstellations.get(obsConst.hashCode());
+        OmObservationConstellation obsConstCheck = new OmObservationConstellation();
+        obsConstCheck.setProcedure(getProcedure(procedureId));
+        obsConstCheck.setObservableProperty(getObservedProperty(phenomenonId));
+        obsConstCheck.setOfferings(offerings);
+                       
+        if (!observationConstellations.containsKey(obsConstCheck.hashCode())) {
+            if (StringHelper.isNotEmpty(getResultModel())) {
+                obsConstCheck.setObservationType(getResultModel());
+            } else {
+                final ObservationConstellationDAO dao = new ObservationConstellationDAO();
+                final ObservationConstellation hoc =
+                        dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
+                                hObservation.getObservableProperty(), hObservation.getOffering(), getSession());
+                if (hoc != null && hoc.getObservationType() != null) {
+                    obsConstCheck.setObservationType(hoc.getObservationType().getObservationType());
+                }
+            }
+            observationConstellations.put(obsConstCheck.hashCode(), obsConstCheck);
+        } else {
+            obsConstCheck = observationConstellations.get(obsConstCheck.hashCode());
         }
-        int hashCode = obsConst.hashCode();
-        if (StringHelper.isNotEmpty(getResultModel())) {
-            obsConst.setObservationType(getResultModel());
+        OmObservationConstellation obsConst;
+        try {
+            obsConst = obsConstCheck.clone();
+        } catch (CloneNotSupportedException e) {
+            obsConst = obsConstCheck;
         }
-        final ObservationConstellationDAO dao = new ObservationConstellationDAO();
-        final ObservationConstellation hoc =
-                dao.getFirstObservationConstellationForOfferings(hObservation.getProcedure(),
-                        hObservation.getObservableProperty(), hObservation.getOfferings(), getSession());
-        if (hoc != null && hoc.getObservationType() != null) {
-            obsConst.setObservationType(hoc.getObservationType().getObservationType());
-        }
-        observationConstellations.put(hashCode, obsConst);
+        obsConst.setFeatureOfInterest(getFeature(featureId));
         if (hObservation instanceof SeriesObservation<?>) {
             Series series = ((SeriesObservation<?>) hObservation).getSeries();
             if (series.isSetIdentifier()) {

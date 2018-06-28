@@ -46,9 +46,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import com.siemens.ct.exi.EXIFactory;
-import com.siemens.ct.exi.api.sax.EXIResult;
-import com.siemens.ct.exi.exceptions.EXIException;
+import com.siemens.ct.exi.core.EXIFactory;
+import com.siemens.ct.exi.core.exceptions.EXIException;
+import com.siemens.ct.exi.main.api.sax.EXIResult;
 
 /**
  * Writer class for {@link EXIObject}

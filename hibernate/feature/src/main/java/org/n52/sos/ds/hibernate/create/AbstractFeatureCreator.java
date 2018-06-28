@@ -83,11 +83,15 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
                 Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale);
                 if (name.isPresent()) {
                     abstractFeature.addName(name.get().asCodeType());
+                } else {
+                    abstractFeature.addName(featureDAO.getName(feature));
                 }
                 Optional<LocalizedString> description =
                         i18n.getDescription().getLocalizationOrDefault(requestedLocale);
                 if (description.isPresent()) {
                     abstractFeature.setDescription(description.get().getText());
+                } else {
+                    abstractFeature.setDescription(featureDAO.getDescription(feature));
                 }
             } else {
                 if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
@@ -98,6 +102,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
                     Optional<LocalizedString> name = i18n.getName().getDefaultLocalization();
                     if (name.isPresent()) {
                         abstractFeature.addName(name.get().asCodeType());
+                    } else {
+                        abstractFeature.addName(featureDAO.getName(feature));
                     }
                 }
                 // choose always the description in the default locale

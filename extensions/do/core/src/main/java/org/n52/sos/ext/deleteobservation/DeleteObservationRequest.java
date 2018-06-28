@@ -61,7 +61,7 @@ public class DeleteObservationRequest extends AbstractServiceRequest<DeleteObser
 
     private Set<String> offerings = Sets.newHashSet();
 
-    private Set<TemporalFilter> temporalFilters = Sets.newHashSet();
+    private Set<TemporalFilter> temporalFilters = Sets.newLinkedHashSet();
 
     private String responseFormat;
 

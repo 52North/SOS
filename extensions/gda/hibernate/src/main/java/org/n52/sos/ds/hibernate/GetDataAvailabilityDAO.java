@@ -62,6 +62,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
@@ -200,7 +201,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
 
             if (req.isSetOfferings()) {
-                c.createCriteria(ContextualReferencedObservation.OFFERINGS)
+                c.createCriteria(ContextualReferencedLegacyObservation.OFFERINGS)
                         .add(Restrictions.in(Offering.IDENTIFIER, req.getOfferings()));
             }
 
@@ -251,7 +252,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         c.createCriteria(ContextualReferencedObservation.OBSERVABLE_PROPERTY).add(
                 Restrictions.eq(ObservableProperty.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
         if (request.isSetOfferings()) {
-            c.createCriteria(ContextualReferencedObservation.OFFERINGS).add(
+            c.createCriteria(ContextualReferencedLegacyObservation.OFFERINGS).add(
                     Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
@@ -670,10 +671,10 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         Criteria criteria = session.createCriteria(TemporalReferencedSeriesObservation.class)
         		.add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false));
         criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
-        if (request.isSetOfferings()) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
-                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
-        }
+//        if (request.isSetOfferings()) {
+//            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
+//                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+//        }
         criteria.setProjection(Projections.rowCount());
         return (Long) criteria.uniqueResult();
     }

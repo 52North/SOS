@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -228,7 +229,7 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
     }
     
     public SweDataRecord valueAsDataRecord(SweDataRecord dataRecord) {
-        int counter = 0;
+        int counter = 1;
         for (Value<?> value : getValue()) {
             if (value instanceof SweAbstractDataComponent) {
                 SweAbstractDataComponent adc = (SweAbstractDataComponent) value;
@@ -241,6 +242,13 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
                     name = "component_" + counter++;
                 }
                 dataRecord.addField(new SweField(name, adc));
+            }
+        }
+        if (counter == 1 && dataRecord.getFields().size() > 1
+                && dataRecord.getFields().stream().map(f -> f.getName().getValue()).collect(Collectors.toSet())
+                        .size() != dataRecord.getFields().size()) {
+            for (SweField field : dataRecord.getFields()) {
+                    field.getName().setValue(field.getName().getValue() + "_" + counter++);
             }
         }
         return dataRecord;

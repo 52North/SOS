@@ -148,6 +148,16 @@ public class ObservationConstellationDAO {
                 .add(Restrictions.in(ObservationConstellation.OFFERING, offerings))
                 .add(Restrictions.eq(ObservationConstellation.OBSERVABLE_PROPERTY, observableProperty)).list();
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<ObservationConstellation> getObservationConstellationsForOfferings(Procedure procedure,
+            ObservableProperty observableProperty, Offering offering, Session session) {
+        return session.createCriteria(ObservationConstellation.class)
+                .add(Restrictions.eq(ObservationConstellation.DELETED, false))
+                .add(Restrictions.eq(ObservationConstellation.PROCEDURE, procedure))
+                .add(Restrictions.eq(ObservationConstellation.OFFERING, offering))
+                .add(Restrictions.eq(ObservationConstellation.OBSERVABLE_PROPERTY, observableProperty)).list();
+    }
 
     /**
      * Get ObservationConstellations for observableProperty and
@@ -186,6 +196,12 @@ public class ObservationConstellationDAO {
      */
     public ObservationConstellation getFirstObservationConstellationForOfferings(Procedure p, ObservableProperty op,
             Collection<Offering> o, Session session) {
+        final List<ObservationConstellation> oc = getObservationConstellationsForOfferings(p, op, o, session);
+        return oc.isEmpty() ? null : oc.get(0);
+    }
+    
+    public ObservationConstellation getFirstObservationConstellationForOfferings(Procedure p, ObservableProperty op,
+            Offering o, Session session) {
         final List<ObservationConstellation> oc = getObservationConstellationsForOfferings(p, op, o, session);
         return oc.isEmpty() ? null : oc.get(0);
     }

@@ -27,7 +27,6 @@ This project includes:
   52°North SOS - Extension for Inspire - Code Module under GPLv2
   52°North SOS - Extension Modules under GPLv2
   52°North SOS - Flexible identifier convert module under GPLv2
-  52°North SOS - GetCapabilities DAO under GPLv2
   52°North SOS - Handler Module under GPLv2
   52°North SOS - Hibernate c3p0 under GPLv2
   52°North SOS - Hibernate Common under GPLv2
@@ -41,6 +40,7 @@ This project includes:
   52°North SOS - Hibernate MySQL Datasource under GPLv2
   52°North SOS - Hibernate Oracle Datasource under GPLv2
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
+  52°North SOS - Hibernate Session Factory under GPLv2
   52°North SOS - Hibernate SQL Server Datasource under GPLv2
   52°North SOS - Hibernate Utils under GPLv2
   52°North SOS - Identifier Modifier Modules under GPLv2
@@ -66,6 +66,7 @@ This project includes:
   52°North SOS - SOS 2.0.0 Extension Operators under GPLv2
   52°North SOS - SOS API Module under GPLv2
   52°North SOS - Split and Merge observations module under GPLv2
+  52°North SOS - SQLite Configuration under GPLv2
   52°North SOS - Web Admin Controller under GPLv2
   52°North SOS - Web Client Controller under GPLv2
   52°North SOS - Web Common Controller under GPLv2
@@ -75,6 +76,7 @@ This project includes:
   52°North SOS - Webapp under GPLv2
   52°North Svalbard Core under The Apache Software License, Version 2.0
   52°North Svalbard Exi under The Apache Software License, Version 2.0
+  52°North Svalbard JSON Common under The Apache Software License, Version 2.0
   52°North Svalbard JSON encoding under The Apache Software License, Version 2.0
   52°North Svalbard OData under The Apache Software License, Version 2.0
   52°North Svalbard XML Stream under The Apache Software License, Version 2.0
@@ -82,6 +84,7 @@ This project includes:
   abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
   Animal Sniffer Annotations under MIT license
   ANTLR 4 Runtime under BSD 3-Clause License
+  AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
@@ -121,12 +124,15 @@ This project includes:
   cf4j under GNU Lesser General Public License
   ClassLoader Leak Prevention library under Apache 2
   ClassLoader Leak Prevention library for servlet environments under Apache 2
+  ClassMate under The Apache Software License, Version 2.0
   com.vividsolutions:jts-core under GNU Lesser General Public License, Version 2.1
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   Compress-LZF under Apache License 2.0
+  Core Hibernate O/RM functionality under GNU Lesser General Public License
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
+  dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   EJML under The Apache Software License, Version 2.0
   Elasticsearch: Core under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
@@ -134,7 +140,6 @@ This project includes:
   EXIficient under MIT License
   EXIficient-Core under MIT License
   EXIficient-Grammars under MIT License
-  FindBugs-Annotations under GNU Lesser Public License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
@@ -145,6 +150,8 @@ This project includes:
   Hamcrest All under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   HdrHistogram under Public Domain, per Creative Commons CC0
+  Hibernate Commons Annotations under GNU Lesser General Public License
+  Hibernate/c3p0 Integration under GNU Lesser General Public License
   HPPC Collections under The Apache Software License, Version 2.0
   httpservices under (MIT-style) netCDF C library license
   HyperSQL Database under HSQLDB License, a BSD open source license
@@ -169,10 +176,17 @@ This project includes:
   jackson-databind under The Apache Software License, Version 2.0
   Jackson-dataformat-Smile under The Apache Software License, Version 2.0
   Jackson-dataformat-YAML under The Apache Software License, Version 2.0
+  Java Annotation Indexer under Apache License, Version 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Native Access under LGPL, version 2.1 or ASL, version 2
+  Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
+  Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
+  JavaBeans(TM) Activation Framework under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+  JavaMail API jar under CDDL or GPLv2+CE
+  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
+  JBoss Logging 3 under Apache License, version 2.0
   JCL 1.2 implemented over SLF4J under MIT License
   JCommander under The Apache Software License, Version 2.0
   JDOM under Similar to Apache License but with the acknowledgment clause removed
@@ -181,11 +195,13 @@ This project includes:
   JMES Path Query library under Apache License, Version 2.0
   Joda convert under Apache 2
   Joda-Time under Apache 2
+  JOpt Simple under The MIT License
   jsr-275 under BSD License
   JSR166e under CC0 1.0 Universal
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
   JUnit under Eclipse Public License 1.0
+  libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Lucene Common Analyzers under Apache 2
   Lucene Core under Apache 2
@@ -206,9 +222,11 @@ This project includes:
   mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under Lesser General Public License (LGPL)
   Microsoft JDBC Driver for SQL Server under MIT License
+  Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   netcdf4 under (MIT-style) netCDF C library license
   Netty under Apache License, Version 2.0
+  null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
   odata-commons-api under The Apache Software License, Version 2.0
@@ -285,6 +303,7 @@ This project includes:
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
+  SQLite JDBC under The Apache Software License, Version 2.0
   T-Digest under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
@@ -294,6 +313,7 @@ This project includes:
   Xerces2-j under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
+  XML Pull Parsing API under Public Domain
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License

@@ -676,9 +676,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         }
         final List<SosObservationOffering> sosOfferings = new ArrayList<SosObservationOffering>(parentChilds.size());
         for (Entry<String, Set<String>> entry : parentChilds.entrySet()) {
-            final Collection<String> observationTypes = getObservationTypes(entry.getValue());
+            final Collection<String> observationTypes = getObservationTypes(entry);
             if (CollectionHelper.isNotEmpty(observationTypes)) {
-                Collection<String> procedures = getProceduresForOffering(entry.getValue(), version);
+                Collection<String> procedures = getProceduresForOffering(entry, version);
                 if (CollectionHelper.isNotEmpty(procedures)) {
                     Set<String> allOfferings =Sets.newHashSet();
                     allOfferings.addAll(entry.getValue());
@@ -876,10 +876,14 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         return featureIDs;
     }
 
-    private Collection<String> getObservationTypes(Set<String> offerings) {
+    private Collection<String> getObservationTypes(Entry<String, Set<String>> entry) {
         final Set<String> observationTypes = Sets.newHashSet();
-        for (String offering : offerings) {
-            observationTypes.addAll(getObservationTypes(offering));
+        if (!entry.getValue().isEmpty()) {
+            for (String offering : entry.getValue()) {
+                observationTypes.addAll(getObservationTypes(offering));
+            }
+        } else {
+            observationTypes.addAll(getObservationTypes(entry.getKey()));
         }
         return observationTypes;
     }
@@ -1172,10 +1176,14 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         }
     }
 
-    private Collection<String> getProceduresForOffering(Set<String> offerings, String version) throws OwsExceptionReport {
+    private Collection<String> getProceduresForOffering(Entry<String, Set<String>> entry, String version) throws OwsExceptionReport {
         final Collection<String> procedures = Sets.newHashSet();
-        for (String offering : offerings) {
-            procedures.addAll(getProceduresForOffering(offering, version));
+        if (!entry.getValue().isEmpty()) {
+            for (String offering : entry.getValue()) {
+                procedures.addAll(getProceduresForOffering(offering, version));
+            }
+        } else {
+            procedures.addAll(getProceduresForOffering(entry.getKey(), version));
         }
         return procedures;
     }

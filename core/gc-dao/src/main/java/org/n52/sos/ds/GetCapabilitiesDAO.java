@@ -616,9 +616,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         }
         final List<SosObservationOffering> sosOfferings = new ArrayList<SosObservationOffering>(parentChilds.size());
         for (Entry<String, Set<String>> entry : parentChilds.entrySet()) {
-            final Collection<String> observationTypes = getObservationTypes(entry.getValue());
+            final Collection<String> observationTypes = getObservationTypes(entry);
             if (CollectionHelper.isNotEmpty(observationTypes)) {
-                Collection<String> procedures = getProceduresForOffering(entry.getValue(), version);
+                Collection<String> procedures = getProceduresForOffering(entry, version);
                 if (CollectionHelper.isNotEmpty(procedures)) {
                     Set<String> allOfferings =Sets.newHashSet();
                     allOfferings.addAll(entry.getValue());
@@ -822,7 +822,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         return featureIDs;
     }
 
-    private Collection<String> getObservationTypes(Set<String> offerings) {
+    private Collection<String> getObservationTypes(Entry<String, Set<String>> entry) {
         Set<String> observationTypes = new TreeSet<>();
         for (String offering : offerings) {
             observationTypes.addAll(getCache().getObservationTypesForOffering(offering).stream()
@@ -1055,10 +1055,14 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         }
     }
 
-    private Collection<String> getProceduresForOffering(Set<String> offerings, String version) throws OwsExceptionReport {
+    private Collection<String> getProceduresForOffering(Entry<String, Set<String>> entry, String version) throws OwsExceptionReport {
         final Collection<String> procedures = Sets.newHashSet();
-        for (String offering : offerings) {
-            procedures.addAll(getProceduresForOffering(offering, version));
+        if (!entry.getValue().isEmpty()) {
+            for (String offering : entry.getValue()) {
+                procedures.addAll(getProceduresForOffering(offering, version));
+            }
+        } else {
+            procedures.addAll(getProceduresForOffering(entry.getKey(), version));
         }
         return procedures;
     }

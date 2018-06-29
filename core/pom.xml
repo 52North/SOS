@@ -13,7 +13,6 @@
     <modules>
         <module>api</module>
         <module>cache</module>
-        <module>gc-dao</module>
         <module>profile</module>
         <module>sqlite-config</module>
         <module>test</module>

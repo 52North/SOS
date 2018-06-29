@@ -592,22 +592,22 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
                                 // FIXME why a loop? We are in SOS 2.0 context -> offering 1
                                 // <-> 1 procedure!
                                 for (final ProcedureEntity procedure : procedures) {
-    
+
                                     final SosObservationOffering sosObservationOffering = new SosObservationOffering();
-    
+
                                     // insert observationTypes
                                     sosObservationOffering.setObservationTypes(toStringSet(observationTypes));
-    
+
                                     if (offering.isSetGeometry()) {
                                         sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering.getGeometry())));
                                     } else if (getCache().hasEnvelopeForOffering(offering.getIdentifier())) {
                                         sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering.getIdentifier()));
                                     }
-    
+
                                     sosObservationOffering.setProcedures(Collections.singletonList(procedure.getIdentifier()));
-    
+
                                     // TODO: add intended application
-    
+
                                     // add offering to observation offering
                                     addSosOfferingToObservationOffering(offering, sosObservationOffering,
                                             sectionSpecificContentObject.getGetCapabilitiesRequest());
@@ -629,14 +629,14 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
                                                     new CapabilitiesExtension<SosObservationOfferingExtension>().setValue(offeringExtension));
                                         }
                                     }
-    
+
                                     setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
                                     setUpTimeForOffering(offering, sosObservationOffering);
                                     setUpRelatedFeaturesForOffering(offering, sosObservationOffering);
                                     setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
                                     setUpProcedureDescriptionFormatForOffering(sosObservationOffering);
                                     setUpResponseFormatForOffering(sosObservationOffering);
-    
+
                                     sosOfferings.add(sosObservationOffering);
                                 }
                             }
@@ -655,7 +655,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
             sessionStore.returnSession(session);
         }
     }
-    
+
     private Collection<? extends SosObservationOffering> createAndGetParentOfferings(Collection<OfferingEntity> offerings,
             SectionSpecificContentObject sectionSpecificContentObject,
             Map<String, List<SosObservationOfferingExtension>> extensions, Session session) throws OwsExceptionReport, DataAccessException {
@@ -672,7 +672,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
                     final SosObservationOffering sosObservationOffering = new SosObservationOffering();
                     sosObservationOffering.setObservationTypes(observationTypes);
                     sosObservationOffering.setObservedArea(getObservedArea(entry));
-                    
+
                     sosObservationOffering.setProcedures(
                             procedures.stream().map(p -> p.getIdentifier()).collect(Collectors.toSet()));
                     //
@@ -717,8 +717,8 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
                     setUpFeatureOfInterestTypesForOffering(allOfferings, sosObservationOffering);
                     setUpProcedureDescriptionFormatForOffering(sosObservationOffering, Sos2Constants.SERVICEVERSION);
                     setUpResponseFormatForOffering(Sos2Constants.SERVICEVERSION, sosObservationOffering);
-                    
-                    
+
+
                     sosOfferings.add(sosObservationOffering);
                 }
             }
@@ -747,7 +747,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         }
         return parentChilds;
     }
-    
+
     private  Set<OfferingEntity> getAllParents(OfferingEntity entity) {
         Set<OfferingEntity> parents = Sets.newHashSet();
          for (OfferingEntity offeringEntity : entity.getParents()) {
@@ -902,7 +902,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         }
         return featureIDs;
     }
-    
+
     private Collection<String> getObservationTypes(Entry<OfferingEntity, Set<OfferingEntity>> entry) {
         final Set<String> observationTypes = Sets.newHashSet();
         if (!entry.getValue().isEmpty()) {
@@ -988,7 +988,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
     //        // add offering description
     //        I18NHelper.addOfferingDescription(sosOffering, request);
     //    }
-    
+
     protected void setUpPhenomenaForOffering(Set<OfferingEntity> allOfferings, ProcedureEntity procedure,
                 SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
            for (OfferingEntity offering : allOfferings) {
@@ -1062,7 +1062,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         }
         sosOffering.setFeatureOfInterestTypes(types);
     }
-    
+
     protected void setUpFeatureOfInterestTypesForOffering(OfferingEntity offering,
             SosObservationOffering sosOffering) {
         sosOffering.setFeatureOfInterestTypes(toStringSet(offering.getFeatureTypes()));
@@ -1125,7 +1125,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
             throws OwsExceptionReport {
         setUpRelatedFeaturesForOffering(Sets.newHashSet(offering), sosObservationOffering);
     }
-    
+
     private void setUpRelatedFeaturesForOffering(Collection<OfferingEntity> offerings,
             SosObservationOffering sosObservationOffering)
             throws OwsExceptionReport {
@@ -1178,7 +1178,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         sosOffering.setProcedureDescriptionFormat(procedureDescriptionFormatRepository
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, version));
     }
-    
+
     private ReferencedEnvelope getObservedArea(Entry<OfferingEntity, Set<OfferingEntity>> entry) throws CodedException {
         ReferencedEnvelope envelope = new ReferencedEnvelope();
         if (!entry.getValue().isEmpty()) {
@@ -1190,7 +1190,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         }
         return envelope;
     }
-    
+
     private ReferencedEnvelope getObservedArea(String offering)
             throws CodedException {
         if (getCache().hasSpatialFilteringProfileEnvelopeForOffering(offering)) {
@@ -1199,7 +1199,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
             return getCache().getEnvelopeForOffering(offering);
         }
     }
-    
+
     private Collection<ProcedureEntity> getProceduresForOffering(Entry<OfferingEntity, Set<OfferingEntity>> entry, Session session) throws OwsExceptionReport, DataAccessException {
         final Collection<ProcedureEntity> procedures = Sets.newHashSet();
         if (!entry.getValue().isEmpty()) {
@@ -1347,11 +1347,11 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         Stream<OwsValue> allowedValues = languages.stream().map(LocaleHelper::encode).map(OwsValue::new);
         return new OwsDomain(OWSConstants.AdditionalRequestParams.language, new OwsAllowedValues(allowedValues));
     }
-    
+
     private String getGetDataAvailabilityUrl() {
         return new StringBuilder(getBaseGetUrl()).append(getRequest("GetDataAvailability")).toString();
     }
-    
+
     private String getBaseGetUrl() {
         final StringBuilder url = new StringBuilder();
         // service URL
@@ -1367,7 +1367,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
                 .append(Sos2Constants.SERVICEVERSION);
         return url.toString();
     }
-    
+
     private String addParameter(String url, String parameter, String value) {
         return new StringBuilder(url).append('&').append(parameter).append('=').append(value).toString();
     }
@@ -1376,7 +1376,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
         return new StringBuilder().append('&').append(OWSConstants.RequestParams.request.name()).append('=').append(requestName)
                 .toString();
     }
-    
+
     private class SectionSpecificContentObject {
         private GetCapabilitiesRequest request;
         private GetCapabilitiesResponse response;

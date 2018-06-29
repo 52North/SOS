@@ -51,6 +51,7 @@ import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.NotInitializedDatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -298,7 +299,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                     new OmObservableProperty(hObservableProperty.getIdentifier()),
                     sosFeatureOfInterest));
 
-            DatasetEntity hObservationConstellationReferenceSeries = new DatasetEntity();
+            DatasetEntity hObservationConstellationReferenceSeries = new NotInitializedDatasetEntity();
             hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
             hObservationConstellationReferenceSeries.setOffering(hOfferingReferenceSeries);
             hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);

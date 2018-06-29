@@ -2,41 +2,49 @@
 
 1. **Create SOS package**
 
-      1. Check, if [feature/sos-js](https://github.com/EHJ-52n/SOS/tree/feature/sos-js) could be merged if the ```resultModel:=om:Measurement``` [issue is fixed](https://github.com/52North/SOS/pull/429).
-
       1. Checkout the branch:
 
          ```git checkout distribution/osgeolive```
 
-      1. Merge with the latest release (replace ```x.y.z``` with the latest version):
+      1. Merge with the latest release (replace `x.y.z` with the latest version):
 
          ```git merge x.y.z --no-ff```
 
       1. Fix conflicts.
 
-      1. Ensure that in the root ```pom.xml```:
-
-         * ```conf.sos.name``` is set to ```52nSOS``` and
-
-         * ```conf.osgeo.live.version``` in set to the latest OSGeo-Live version e.g. ```12.0```.
-
       1. Build with maven: ```mvn clean install```.
 
 1. **Example Data Update**
 
-     1. Deploy and configure ```52nSOS##x.y.z.war``` in any tomcat, having a postgresql server with postgis enabled db running. The database name MUST be ```52nSOS``` with owner ```user``` using password ```user``` (requirements from OSGeo-Live).
+    1. Identify software versions of OSGeoLive via:
 
-         **[i]** This might require a reset because the build version is *pre-configured* via *Admin* &rarr; *Reset*.
+         1. tomcat version:
+            ```
+            user@osgeolive:~$ /usr/share/tomcat8/bin/version.sh
+            ```
+         1. postgreSQL and PostGIS:
+            ```
+            user@osgeolive:~$ sudo -u postgres psql
+            postgres=# \c 52nSOS
+            52nSOS0# SELECT version(), PostGIS_version();
+            ```
+         1. Update `SOS_REPO/webapp-osgeolive/docker/docker-compose.yml` to match
+            the output of `version.sh`:
+            ```
+            db:
+              image: mdillon/postgis:10-alpine
+            [...]
+            sos:
+              image: tomcat:8.5-jre8-alpine
+            ```
 
-         1. Admin user MUST be ```user``` with password ```user```.
+    1. Insert the sensor using ```insert-sensor.xml``` using *POX* binding
+       (*Client* &rarr; `SOS` &rarr; `2.0.0` &rarr; `POX` &rarr; `InsertSensor`
+       &rarr; `[POX] InsertSensor (SOS 2.0.0)`). Copy paste the request from
+       the **updated** file. Replace height, coordinates and all other date
+       that is not up to date.
 
-         1. Activate in the [operations configuration](http://localhost:8080/52nSOS/admin/operations) (*Admin* &rarr; *Settings* &rarr; *Encodings*) *InsertSensor* and *InsertObservation*.
-
-         1. Disable in the [encoding configuration](http://localhost:8080/52nSOS/admin/encodings) (*Admin* &rarr; *Settings* &rarr; *Operations*) each entry with ```http://dd.eionet.europa.eu/schemaset/id2011850eu-1.0```.
-
-      1. Insert the sensor using ```insert-sensor.xml``` using *POX* binding (*Client* &rarr; `SOS` &rarr; `2.0.0` &rarr; `POX` &rarr; `InsertSensor` &rarr; `[POX] InsertSensor (SOS 2.0.0)`). Copy paste the request from the **updated** file. Replace height, coordinates and all other date that is not up to date.
-
-      1. Update json requests to current year:
+      1. Update json requests (in `src/main/resources/`) to current year:
 
          *Update the search patterns, but ensure to use a month with **31** days*:
 

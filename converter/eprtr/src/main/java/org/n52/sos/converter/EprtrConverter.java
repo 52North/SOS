@@ -31,6 +31,7 @@ package org.n52.sos.converter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.convert.AbstractRequestResponseModifier;
@@ -51,6 +52,8 @@ import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -66,10 +69,10 @@ import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.builder.ObservablePropertyBuilder;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.neovisionaries.i18n.CountryCode;
 
 public class EprtrConverter
         extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
@@ -165,14 +168,34 @@ public class EprtrConverter
     }
 
     private boolean checkForProcedure(OmObservation sosObservation) {
-        return "PollutantRelease".equals(sosObservation.getObservationConstellation().getProcedureIdentifier());
+        return "PollutantRelease".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
+                || "PollutantTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())
+                || "WasteTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier());
     }
 
     private OmObservation convertObservation(OmObservation sosObservation) throws OwsExceptionReport {
         if ("PollutantRelease".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
-            value.setValue(getArrayForPollutantRelease(sosObservation.getValue().getValue().getUnit()));
-            value.addBlock(createBlock(sosObservation));
+            value.setValue(getPollutantReleaseArray(sosObservation.getValue().getValue().getUnit()));
+            value.addBlock(createPollutantReleaseBlock(sosObservation));
+            SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
+            singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
+            sosObservation.setValue(singleObservationValue);
+            sosObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            sosObservation.getObservationConstellation().setObservableProperty(new OmObservableProperty("pollutants"));
+        } else if ("PollutantTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
+            SweDataArrayValue value = new SweDataArrayValue();
+            value.setValue(getPollutantTransferArray(sosObservation.getValue().getValue().getUnit()));
+            value.addBlock(createPollutantTransferBlock(sosObservation));
+            SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
+            singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
+            sosObservation.setValue(singleObservationValue);
+            sosObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            sosObservation.getObservationConstellation().setObservableProperty(new OmObservableProperty("pollutants"));
+        } else if ("WasteTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
+            SweDataArrayValue value = new SweDataArrayValue();
+            value.setValue(getWasteTransferArray(sosObservation.getValue().getValue().getUnit()));
+            value.addBlock(createWasteTransferBlock(sosObservation));
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
@@ -182,7 +205,7 @@ public class EprtrConverter
         return sosObservation;
     }
 
-    private List<String> createBlock(OmObservation sosObservation) {
+    private List<String> createPollutantReleaseBlock(OmObservation sosObservation) {
         List<String> values = new LinkedList<>();
         values.add(getYear(sosObservation.getPhenomenonTime()));
         values.add(getParameter(sosObservation.getParameterHolder(), "MediumCode"));
@@ -197,7 +220,7 @@ public class EprtrConverter
         return values;
     }
 
-    private SweDataArray getArrayForPollutantRelease(String unit) {
+    private SweDataArray getPollutantReleaseArray(String unit) {
         SweDataRecord record = new SweDataRecord();
         record.addName("pollutants");
         record.addField(new SweField("Year", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601).setDefinition("Year")));
@@ -214,9 +237,101 @@ public class EprtrConverter
         array.setElementType(record);
         array.setEncoding(getEncoding());
         return array;
-        
     }
     
+    private List<String> createPollutantTransferBlock(OmObservation sosObservation) {
+        List<String> values = new LinkedList<>();
+        values.add(getYear(sosObservation.getPhenomenonTime()));
+        values.add(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
+        values.add(getParameter(sosObservation.getParameterHolder(), "MethodBasisCode"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "MethodUsed"));
+        values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
+        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialIndicator"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialCode"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
+        return values;
+    }
+    
+    private SweDataArray getPollutantTransferArray(String unit) {
+        SweDataRecord record = new SweDataRecord();
+        record.addName("pollutants");
+        record.addField(new SweField("Year", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601).setDefinition("Year")));
+        record.addField(new SweField("PollutantCode", new SweText().setDefinition("PollutantCode")));
+        record.addField(new SweField("MethodBasisCode", new SweText().setDefinition("MethodBasisCode")));
+        record.addField(new SweField("MethodUsed", new SweText().setDefinition("MethodUsed")));
+        record.addField(new SweField("Quantity", new SweQuantity().setUom(unit).setDefinition("Quantity")));
+        record.addField(new SweField("ConfidentialIndicator", new SweBoolean().setDefinition("ConfidentialIndicator")));
+        record.addField(new SweField("ConfidentialCode", new SweText().setDefinition("ConfidentialCode")));
+        record.addField(new SweField("RemarkText", new SweText().setDefinition("RemarkText")));
+        SweDataArray array = new SweDataArray();
+        array.setElementType(record);
+        array.setEncoding(getEncoding());
+        return array;
+    }
+    
+    private List<String> createWasteTransferBlock(OmObservation sosObservation) {
+        List<String> values = new LinkedList<>();
+        values.add(getYear(sosObservation.getPhenomenonTime()));
+        values.add(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
+        values.add(getWasteTreatmentCode(sosObservation.getObservationConstellation().getOfferings()));
+        values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
+        values.add(getParameter(sosObservation.getParameterHolder(), "MethodBasisCode"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "MethodUsed"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialIndicator"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialCode"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
+        values.add(getParameter(sosObservation.getParameterHolder(), "WasteHandlerParty"));
+        return values;
+    }
+    
+    private SweDataArray getWasteTransferArray(String unit) {
+        SweDataRecord record = new SweDataRecord();
+        record.addName("pollutants");
+        record.addField(new SweField("Year", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601).setDefinition("Year")));
+        record.addField(new SweField("WasteTypeCode", new SweText().setDefinition("WasteTypeCode")));
+        record.addField(new SweField("WasteTreatmentCode", new SweText().setDefinition("WasteTreatmentCode")));
+        record.addField(new SweField("Quantity", new SweQuantity().setUom(unit).setDefinition("Quantity")));
+        record.addField(new SweField("MethodBasisCode", new SweText().setDefinition("MethodBasisCode")));
+        record.addField(new SweField("MethodUsed", new SweText().setDefinition("MethodUsed")));
+        record.addField(new SweField("ConfidentialIndicator", new SweBoolean().setDefinition("ConfidentialIndicator")));
+        record.addField(new SweField("ConfidentialCode", new SweText().setDefinition("ConfidentialCode")));
+        record.addField(new SweField("RemarkText", new SweText().setDefinition("RemarkText")));
+        record.addField(new SweField("WasteHandlerParty", createWasteHandlerPary()));
+        SweDataArray array = new SweDataArray();
+        array.setElementType(record);
+        array.setEncoding(getEncoding());
+        return array;
+    }
+    
+    private String getWasteTreatmentCode(Set<String> offerings) {
+        for (String offering : offerings) {
+            if (offering.length() == 1) {
+                return offering;
+            }
+        }
+        return "";
+    }
+
+    private SweAbstractDataComponent createWasteHandlerPary() {
+        SweDataRecord record = new SweDataRecord();
+        record.setDefinition("WasteHandlerParty");
+        record.addField(new SweField("Name", new SweText().setDefinition("Name")));
+        record.addField(new SweField("Address", createAddressRecord("Address")));
+        record.addField(new SweField("SiteAddress", createAddressRecord("SiteAddress")));
+        return record;
+    }
+
+    private SweAbstractDataComponent createAddressRecord(String definition) {
+        SweDataRecord record = new SweDataRecord();
+        record.setDefinition(definition);
+        record.addField(new SweField("StreetName", new SweText().setDefinition("StreetName")));
+        record.addField(new SweField("BuildingNumber", new SweText().setDefinition("BuildingNumber")));
+        record.addField(new SweField("CityName", new SweText().setDefinition("CityName")));
+        record.addField(new SweField("PostcodeCode", new SweText().setDefinition("PostcodeCode")));
+        record.addField(new SweField("CountryID", new SweText().setDefinition("CountryID")));
+        return record;
+    }
+
     private String getYear(Time phenomenonTime) {
         if (phenomenonTime instanceof TimePeriod) {
             return Integer.toString(((TimePeriod) phenomenonTime).getEnd().getYear());
@@ -228,7 +343,9 @@ public class EprtrConverter
         for (NamedValue<?> namedValue : holder.getParameter()) {
             if (name.equals(namedValue.getName().getHref())) {
                 holder.removeParameter(namedValue);
-                return namedValue.getValue().getValue().toString();
+                if(namedValue.getValue().isSetValue()) {
+                    return namedValue.getValue().getValue().toString();
+                }
             }
         }
         return "";

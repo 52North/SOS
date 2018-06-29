@@ -1,9 +1,40 @@
+################################################################################
+#                                                                              #
+#    Copyright (C) 2018-2018 52°North Initiative for Geospatial Open Source    #
+#    Software GmbH                                                             #
+#                                                                              #
+#    This program is free software; you can redistribute it and/or modify it   #
+#    under the terms of the GNU General Public License version 2 as published  #
+#    by the Free Software Foundation.                                          #
+#                                                                              #
+#    If the program is linked with libraries which are licensed under one of   #
+#    the following licenses, the combination of the program with the linked    #
+#    library is not considered a "derivative work" of the program:             #
+#                                                                              #
+#        - Apache License, version 2.0                                         #
+#        - Apache Software License, version 1.0                                #
+#        - GNU Lesser General Public License, version 3                        #
+#        - Mozilla Public License, versions 1.0, 1.1 and 2.0                   #
+#        - Common Development and Distribution License (CDDL), version 1.0     #
+#                                                                              #
+#    Therefore the distribution of the program linked with libraries licensed  #
+#    under the aforementioned licenses, is permitted by the copyright holders  #
+#    if the distribution is compliant with both the GNU General Public         #
+#    License version 2 and the aforementioned licenses.                        #
+#                                                                              #
+#    This program is distributed in the hope that it will be useful, but       #
+#    WITHOUT ANY WARRANTY; without even the implied warranty of                #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General  #
+#    Public License for more details.                                          #
+#                                                                              #
+################################################################################
 #
 # With this docker-compose file, you get two containers:
 # - a tomcat
 # - a postgresql database server
 #
-# http://localhost:8080/ redirects to the /52n-sos-webapp and uses the latest version of the tomcat M.x branch with Java 8 JRE.
+# http://localhost:8080/ redirects to the /52n-sos-webapp and uses the latest
+# version of the tomcat M.x branch with Java 8 JRE.
 #
 # When configuring the SOS, please use the following information:
 # - Datasource configuration
@@ -13,32 +44,74 @@
 # Feel free to comment out the tomcat version you do not need.
 #
 # Just run docker-compose up in the directory of this file.
+################################################################################
 version: '3'
+################################################################################
+#                                                                              #
+#                     Services                                                 #
+#                                                                              #
+################################################################################
 services:
+################################################################################
+#
+#     DATABASE
+#
+#
   db:
-    image: mdillon/postgis:9.6-alpine
+    image: mdillon/postgis:10-alpine
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=user
       - POSTGRES_DB=52nSOS
+    volumes:
+      - "${PWD}/sos-init.sql:/docker-entrypoint-initdb.d/zz_sos_init.sql"
+    networks:
+      network:
+        ipv4_address: 172.52.23.100
+################################################################################
+#
+#     SOS
+#
+#
   sos:
-    # change to 7- or 9- to change the tomcat version
-    image: tomcat:8.5-jre8-alpine
+    image: tomcat:8.5.30-jre8-alpine
     ports:
       - 8080:8080
       - 8000:8000
     links:
       - db:postgres
     volumes:
-      - "${PWD}/webapp-osgeolive/target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
-      - "${PWD}/webapp-osgeolive/docker/tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
-      - "${PWD}/webapp-osgeolive/docker/datasource.properties:/usr/local/tomcat/webapps/52nSOS/WEB-INF/datasource.properties"
-      - "${PWD}/webapp-osgeolive/docker/application.properties:/usr/local/tomcat/webapps/52nSOS/WEB-INF/classes/application.properties"
+      #- "${PWD}/../../webapp/target/52n-sos-webapp:/usr/local/tomcat/webapps/52nSOS"
+      #- "${PWD}/../src/main/webapp/configuration.db:/usr/local/tomcat/webapps/52nSOS/configuration.db"
+      - "${PWD}/../target/52nSOS:/usr/local/tomcat/webapps/52nSOS"
+      #
+      - "${PWD}/tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+      - "${PWD}/datasource.properties:/usr/local/tomcat/webapps/52nSOS/WEB-INF/datasource.properties"
+      - "${PWD}/application.properties:/usr/local/tomcat/webapps/52nSOS/WEB-INF/classes/application.properties"
+    networks:
+      network:
+        ipv4_address: 172.52.23.200
     depends_on:
       - db
     environment:
       - JPDA_ADDRESS=8000
       - JPDA_TRANSPORT=dt_socket
     command: ["catalina.sh", "jpda", "run"]
+################################################################################
+#                                                                              #
+#                     Networks                                                 #
+#                                                                              #
+################################################################################
+networks:
+  network:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.52.23.0/24
+################################################################################
+#                                                                              #
+#                     END OF FILE                                              #
+#                                                                              #
+################################################################################

@@ -23,7 +23,7 @@
                             <om:phenomenonTime nilReason="template" />
                             <om:resultTime nilReason="template" />
                             <om:procedure xlink:href="52NorthWS10" />
-                            <om:observedProperty xlink:href="Temperature0_8" />
+                            <om:observedProperty xlink:href="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8" />
                             <om:featureOfInterest xlink:href="http://www.52north.org/test/featureOfInterest/Glider_Journy_10" xlink:title="Glider_Journy_10"/>
                             <om:result />
                         </om:OM_Observation>
@@ -37,25 +37,25 @@
                                 </swe:Time>
                             </swe:field>
                             <swe:field name="test_observable_property_10_8">
-                                <swe:DataRecord definition="Temperature0_8">
+                                <swe:DataRecord definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8">
                                     <swe:field name="test_observable_property_10_8_1">
-                                        <swe:Quantity definition="Temperature0_8_1">
+                                        <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8_1">
                                             <swe:uom code="test_unit_10_8_1"/>
                                         </swe:Quantity>
                                     </swe:field>
                                     <swe:field name="test_observable_property_10_8_2">
-                                        <swe:Category definition="Temperature0_8_2">
+                                        <swe:Category definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8_2">
                                             <swe:codeSpace xlink:href="NOT_DEFINED" />
                                         </swe:Category>
                                     </swe:field>
                                     <swe:field name="test_observable_property_10_8_3">
-                                        <swe:Count definition="Temperature0_8_3"/>
+                                        <swe:Count definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8_3"/>
                                     </swe:field>
                                     <swe:field name="test_observable_property_10_8_4">
-                                        <swe:Text definition="Temperature0_8_4"/>
+                                        <swe:Text definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8_4"/>
                                     </swe:field>
                                     <swe:field name="test_observable_property_10_8_5">
-                                        <swe:Boolean definition="Temperature0_8_5"/>
+                                        <swe:Boolean definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_8_5"/>
                                     </swe:field>
                                 </swe:DataRecord>
                             </swe:field>

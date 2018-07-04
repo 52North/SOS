@@ -3,5 +3,5 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
   <sos:offering>weather-data-muenster</sos:offering>
-  <sos:observedProperty>Temperature</sos:observedProperty>
+  <sos:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</sos:observedProperty>
 </sos:GetResultTemplate>

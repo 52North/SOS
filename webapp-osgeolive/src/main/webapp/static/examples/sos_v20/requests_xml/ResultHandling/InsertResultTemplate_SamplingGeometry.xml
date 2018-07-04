@@ -20,7 +20,7 @@
 					<om:phenomenonTime nilReason="template" />
 					<om:resultTime nilReason="template" />
 					<om:procedure xlink:href="52NorthWS10" />
-					<om:observedProperty xlink:href="Temperature0_1" />
+					<om:observedProperty xlink:href="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_1" />
 					<om:featureOfInterest xlink:href="http://www.52north.org/test/featureOfInterest/Glider_Journy_10_1" xlink:title="Glider_Journy_10_1"/>
                     <om:result/>
 				</om:OM_Observation>
@@ -34,7 +34,7 @@
 						</swe:Time>
 					</swe:field>
 					<swe:field name="test_observable_property_10">
-						<swe:Quantity definition="Temperature0_1">
+						<swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/621010_1">
 							<swe:uom code="test_unit_10" />
 						</swe:Quantity>
 					</swe:field>

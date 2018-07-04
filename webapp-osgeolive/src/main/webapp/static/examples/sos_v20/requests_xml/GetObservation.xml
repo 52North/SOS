@@ -49,7 +49,7 @@
   <sos:offering>weather-data-muenster</sos:offering>
 
   <!-- optional, multiple values possible -->
-  <sos:observedProperty>Temperature</sos:observedProperty>
+  <sos:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</sos:observedProperty>
   <sos:observedProperty>BarometricPressure</sos:observedProperty>
 
   <!-- optional -->

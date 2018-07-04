@@ -17,7 +17,7 @@
   <sos:procedure>52NorthWS1</sos:procedure>
 
   <!-- optional, multiple values possible -->
-  <sos:observedProperty>Temperature</sos:observedProperty>
+  <sos:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</sos:observedProperty>
   <sos:observedProperty>BarometricPressure</sos:observedProperty>
 
   <!-- optional, multiple values possible -->

@@ -5,7 +5,7 @@
     <sos:GetResultTemplate service="SOS" version="2.0.0" xmlns:sos="http://www.opengis.net/sos/2.0"
       xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
       <sos:offering>weather-data-muenster</sos:offering>
-      <sos:observedProperty>Temperature</sos:observedProperty>
+      <sos:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</sos:observedProperty>
     </sos:GetResultTemplate>
   </env:Body>
 </env:Envelope>

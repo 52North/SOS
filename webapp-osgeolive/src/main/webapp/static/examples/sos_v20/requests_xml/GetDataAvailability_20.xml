@@ -95,9 +95,9 @@
     </swes:extension>
      -->
 	<gda:procedure>52NorthWS1</gda:procedure>
-	<gda:observedProperty>Temperature</gda:observedProperty>
-	<gda:observedProperty>WindSpeed</gda:observedProperty>
-	<gda:observedProperty>WindDirection</gda:observedProperty>
+	<gda:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</gda:observedProperty>
+	<gda:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</gda:observedProperty>
+	<gda:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61102</gda:observedProperty>
 	<gda:featureOfInterest>52NorthWS1</gda:featureOfInterest>
 	<gda:offering>weather-data-muenster</gda:offering>
 	<gda:offering></gda:offering>

@@ -55,7 +55,7 @@
   <procedure>52NorthWS1</procedure>
 
   <!-- mandatory, multiple values possible -->
-  <observedProperty>Temperature</observedProperty>
+  <observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</observedProperty>
 
   <!-- optional, multiple values possible -->
   <featureOfInterest>

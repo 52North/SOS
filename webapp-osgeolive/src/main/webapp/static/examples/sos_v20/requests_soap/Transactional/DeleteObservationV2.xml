@@ -24,8 +24,8 @@
             <sosdo:procedure>http://www.52north.org/test/procedure/2</sosdo:procedure>
             
             <!-- optional, multiple values possible -->
-            <sosdo:observedProperty>Temperature</sosdo:observedProperty>
-            <sosdo:observedProperty>WindSpeed</sosdo:observedProperty>
+            <sosdo:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</sosdo:observedProperty>
+            <sosdo:observedProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</sosdo:observedProperty>
         
             <!-- optional, multiple values possible -->
             <sosdo:featureOfInterest>52NorthWS1</sosdo:featureOfInterest>

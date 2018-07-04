@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<swes:InsertSensor service="SOS" version="2.0.0"
-    xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.opengis.net/sos/2.0"
-    xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-    xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+<swes:InsertSensor
+  service="SOS"
+  version="2.0.0"
+  xmlns:swes="http://www.opengis.net/swes/2.0"
+  xmlns:sos="http://www.opengis.net/sos/2.0"
+  xmlns:swe="http://www.opengis.net/swe/1.0.1"
+  xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+  xmlns:gml="http://www.opengis.net/gml"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd
     http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
   <swes:procedureDescriptionFormat>http://www.opengis.net/sensorML/1.0.1</swes:procedureDescriptionFormat>
   <swes:procedureDescription>
-    <sml:SensorML version="1.0.1">
+    <sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:sos="http://www.opengis.net/sos/1.0" version="1.0.1">
       <sml:member>
         <sml:System>
-
-          <!-- optional; generated if not present -->
           <sml:identification>
             <sml:IdentifierList>
               <sml:identifier name="uniqueID">
@@ -22,49 +25,125 @@
               </sml:identifier>
               <sml:identifier name="longName">
                 <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
-                  <sml:value>52°North Initiative for Geospatial Open Source
-                    Software GmbH (http://52north.org)</sml:value>
+                  <sml:value>This is a WS2500 weather station setup at 52North, Münster in Germany. Moved to different locations for each OSGeo-Live release.</sml:value>
                 </sml:Term>
               </sml:identifier>
               <sml:identifier name="shortName">
                 <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
-                  <sml:value>52°North GmbH</sml:value>
+                  <sml:value>52North HWS 1</sml:value>
+                </sml:Term>
+              </sml:identifier>
+              <sml:identifier name="productName">
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                  <sml:value>ELV Radio Weather Station WS 2500</sml:value>
+                </sml:Term>
+              </sml:identifier>
+              <sml:identifier name="modelNumber">
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:modelNumber">
+                  <sml:value>53759</sml:value>
+                </sml:Term>
+              </sml:identifier>
+              <sml:identifier name="manufacturer">
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:manufacturer">
+                  <sml:value>ELV Elektronik AG</sml:value>
+                </sml:Term>
+              </sml:identifier>
+              <sml:identifier name="operator">
+                <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:operator">
+                  <sml:value>52North, Münster, Germany.</sml:value>
                 </sml:Term>
               </sml:identifier>
             </sml:IdentifierList>
           </sml:identification>
-
+          <sml:classification>
+            <sml:ClassifierList>
+              <sml:classifier name="intendedApplication">
+                <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:application">
+                  <sml:value>weather</sml:value>
+                </sml:Term>
+              </sml:classifier>
+              <sml:classifier name="sensorType">
+                <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                  <sml:value>thermometer</sml:value>
+                </sml:Term>
+              </sml:classifier>
+              <sml:classifier name="sensorType">
+                <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                  <sml:value>rain gauge</sml:value>
+                </sml:Term>
+              </sml:classifier>
+              <sml:classifier name="sensorType">
+                <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                  <sml:value>barometer</sml:value>
+                </sml:Term>
+              </sml:classifier>
+              <sml:classifier name="sensorType">
+                <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                  <sml:value>anemometer</sml:value>
+                </sml:Term>
+              </sml:classifier>
+              <sml:classifier name="sensorType">
+                <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                  <sml:value>Luminance Sensor</sml:value>
+                </sml:Term>
+              </sml:classifier>
+            </sml:ClassifierList>
+          </sml:classification>
           <sml:capabilities name="offerings">
-            <!-- Special capabilities used to specify offerings. -->
-            <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
-              added during DescribeSensor. -->
-            <!-- Offering is generated if not specified. -->
+        <!--
+            Special capabilities used to specify offerings.
+            Parsed and removed during InsertSensor/UpdateSensorDescription,
+            added during DescribeSensor.
+            Offering is generated if not specified.
+        -->
             <swe:SimpleDataRecord>
               <!-- Field name or gml:name is used for the offering's name -->
-              <swe:field name="Offering for sensor 9">
+              <swe:field name="weather-data-muenster">
                 <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
-                  <gml:name>Offering for sensor 9</gml:name>
-                  <swe:value>http://www.52north.org/test/offering/9</swe:value>
+                    <gml:name>Weather data from Münster</gml:name>
+                  <swe:value>weather-data-muenster</swe:value>
                 </swe:Text>
               </swe:field>
             </swe:SimpleDataRecord>
           </sml:capabilities>
-          <sml:capabilities name="parentProcedures">
-            <!-- Special capabilities used to specify parent procedures. -->
-            <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
-              added during DescribeSensor. -->
-            <swe:SimpleDataRecord>
-              <swe:field name="parentProcedure">
-                <swe:Text>
-                  <swe:value>52NorthWS1</swe:value>
+          <sml:capabilities>
+            <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+              <!--station is collecting data-->
+              <swe:field name="status">
+                <swe:Boolean>
+                  <swe:value>false</swe:value>
+                </swe:Boolean>
+              </swe:field>
+              <swe:field name="mobile">
+                <swe:Boolean>
+                  <swe:value>false</swe:value>
+                </swe:Boolean>
+              </swe:field>
+              <swe:field name="measuringInterval">
+                <swe:Quantity definition="urn:ogc:def:property:OGC:1.0:measuringInterval">
+                  <gml:description>The measuring interval of the weather station.</gml:description>
+                  <swe:uom code="min" xlink:href="urn:x-ogc:def:uom:OGC:min"/>
+                  <swe:value>3</swe:value>
+                </swe:Quantity>
+              </swe:field>
+              <swe:field name="transmissionFrequency">
+                <swe:Quantity definition="urn:ogc:def:property:OGC:1.0:transmissionFrequency">
+                  <gml:description>The transmission frequency of the weather station.</gml:description>
+                  <swe:uom code="MHz" xlink:href="urn:x-ogc:def:uom:OGC:MHz"/>
+                  <swe:value>433.92</swe:value>
+                </swe:Quantity>
+              </swe:field>
+              <swe:field name="powerSupply">
+                <swe:Text definition="urn:ogc:def:property:OGC:1.0:powerSupply">
+                  <gml:description>The power supply of the weather station.</gml:description>
+                  <swe:value>4 Baby cells 1.5V = 7,5 V / 500 mA</swe:value>
                 </swe:Text>
               </swe:field>
             </swe:SimpleDataRecord>
           </sml:capabilities>
           <sml:capabilities name="featuresOfInterest">
             <!-- Special capabilities used to specify features of interest. -->
-            <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
-              added during DescribeSensor. -->
+            <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, added during DescribeSensor. -->
             <swe:SimpleDataRecord>
               <swe:field name="featureOfInterestID">
                 <swe:Text>
@@ -73,27 +152,65 @@
               </swe:field>
             </swe:SimpleDataRecord>
           </sml:capabilities>
-
-          <sml:position name="sensorPosition">
-            <swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">
+          <sml:contact>
+            <sml:ResponsibleParty gml:id="contact">
+              <sml:individualName>Jürrens, Eike Hinderk</sml:individualName>
+              <sml:organizationName>52North, Münster, Germany.</sml:organizationName>
+              <sml:contactInfo>
+                <sml:phone>
+                  <sml:voice>+49 251 39 63 71 33</sml:voice>
+                  <sml:facsimile>+49 251 39 63 71 11</sml:facsimile>
+                </sml:phone>
+                <sml:address>
+                  <sml:deliveryPoint>Martin-Luther-King-Weg 24</sml:deliveryPoint>
+                  <sml:city>Münster</sml:city>
+                  <sml:administrativeArea>North Rhine-Westfalia</sml:administrativeArea>
+                  <sml:postalCode>49151</sml:postalCode>
+                  <sml:country>Germany</sml:country>
+                  <sml:electronicMailAddress>e.h.juerrens@52north.org</sml:electronicMailAddress>
+                </sml:address>
+              </sml:contactInfo>
+            </sml:ResponsibleParty>
+          </sml:contact>
+          <sml:documentation xlink:role="urn:ogc:def:object:OGC:1.0:image">
+            <sml:Document>
+              <gml:description>photo of the weather station</gml:description>
+              <sml:format>image/jpg</sml:format>
+              <sml:onlineResource xlink:href="http://ifgi.uni-muenster.de/~e_juer01/WS2500.jpg"/>
+            </sml:Document>
+          </sml:documentation>
+          <sml:history>
+            <sml:EventList>
+              <sml:member name="deployDate">
+                <sml:Event>
+                  <sml:date>2007-06-01</sml:date>
+                  <gml:description>Event of deploying the weather station.</gml:description>
+                  <sml:contact xlink:href="#contact"/>
+                </sml:Event>
+              </sml:member>
+            </sml:EventList>
+          </sml:history>
+          <sml:position name="stationPosition">
+            <swe:Position fixed="false" referenceFrame="urn:ogc:def:crs:EPSG:4326">
               <swe:location>
                 <swe:Vector gml:id="STATION_LOCATION">
-                  <swe:coordinate name="easting">
-                    <swe:Quantity axisID="x">
-                      <swe:uom code="degree" />
-                      <swe:value>13.95105</swe:value>
+                  <swe:coordinate name="latitude">
+                    <swe:Quantity axisID="y">
+                      <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>
+                      <swe:value>48.56683</swe:value>
                     </swe:Quantity>
                   </swe:coordinate>
-                  <swe:coordinate name="northing">
-                    <swe:Quantity axisID="y">
-                      <swe:uom code="degree" />
-                      <swe:value>48.96683</swe:value>
+                  <swe:coordinate name="longitude">
+                    <swe:Quantity axisID="x">
+                      <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>
+                      <swe:value>13.45105</swe:value>
                     </swe:Quantity>
                   </swe:coordinate>
                   <swe:coordinate name="altitude">
                     <swe:Quantity axisID="z">
-                      <swe:uom code="m" />
-                      <swe:value>52.0</swe:value>
+                      <!--200-->
+                      <swe:uom code="m" xlink:href="urn:x-ogc:def:uom:OGC:m"/>
+                      <swe:value>320</swe:value>
                     </swe:Quantity>
                   </swe:coordinate>
                 </swe:Vector>
@@ -102,74 +219,474 @@
           </sml:position>
           <sml:inputs>
             <sml:InputList>
-              <sml:input name="test_observable_property_9">
-                <swe:ObservableProperty
-                  definition="http://www.52north.org/test/observableProperty/9" />
+              <sml:input name="precipitation">
+                <swe:ObservableProperty definition="Precipitation"/>
+              </sml:input>
+                  <sml:input name="atmosphericTemperature">
+                    <swe:ObservableProperty definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101"/>
+              </sml:input>
+              <sml:input name="atmosphericPressure">
+                <swe:ObservableProperty definition="AtmosphericPressure"/>
+              </sml:input>
+              <sml:input name="wind">
+                <swe:ObservableProperty definition="Wind"/>
+              </sml:input>
+              <sml:input name="luminance">
+                <swe:ObservableProperty definition="Luminance"/>
+              </sml:input>
+              <sml:input name="humidity">
+                <swe:ObservableProperty definition="RelativeHumidity"/>
               </sml:input>
             </sml:InputList>
           </sml:inputs>
           <sml:outputs>
             <sml:OutputList>
-              <sml:output name="test_observable_property_9_1">
-                <swe:Category
-                  definition="http://www.52north.org/test/observableProperty/9_1">
-                  <swe:codeSpace xlink:href="NOT_DEFINED" />
-                </swe:Category>
-              </sml:output>
-              <sml:output name="test_observable_property_9_2">
-                <swe:Count definition="http://www.52north.org/test/observableProperty/9_2" />
-              </sml:output>
-              <sml:output name="test_observable_property_9_3">
-                <swe:Quantity
-                  definition="http://www.52north.org/test/observableProperty/9_3">
-                  <swe:uom code="NOT_DEFINED" />
+              <sml:output name="precipitation">
+                <swe:Quantity definition="Precipitation1Hour">
+                  <swe:uom code="mm" xlink:href="urn:x-ogc:def:uom:OGC:mm"/>
                 </swe:Quantity>
               </sml:output>
-              <sml:output name="test_observable_property_9_4">
-                <swe:Text definition="http://www.52north.org/test/observableProperty/9_4" />
+              <sml:output name="windDirection">
+                <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61102">
+                  <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>
+                </swe:Quantity>
               </sml:output>
-              <sml:output name="test_observable_property_9_5">
-                <swe:Boolean
-                  definition="http://www.52north.org/test/observableProperty/9_5" />
+              <sml:output name="windSpeed">
+                <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101">
+                  <swe:uom code="m/s" xlink:href="urn:x-ogc:def:uom:OGC:m_s"/>
+                </swe:Quantity>
               </sml:output>
-              <sml:output name="test_observable_property_9_7">
-                <swe:DataArray>
-                  <swe:elementCount>
-                    <swe:Count/>
-                  </swe:elementCount>
-                  <swe:elementType name="defs">
-                    <swe:DataRecord>
-                      <swe:field name="phenomenonTime">
-                        <swe:Time
-                          definition="http://www.opengis.net/def/property/OGC/0/PhenomenonTime">
-                          <swe:uom
-                            xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
-                        </swe:Time>
-                      </swe:field>
-                      <swe:field name="test_observable_property_6">
-                        <swe:Quantity
-                          definition="http://www.52north.org/test/observableProperty/6">
-                          <swe:uom code="test_unit_6" />
-                        </swe:Quantity>
-                      </swe:field>
-                    </swe:DataRecord>
-                  </swe:elementType>
-                </swe:DataArray>
+              <sml:output name="barometricPressure">
+                <swe:Quantity definition="BarometricPressure">
+                  <swe:uom code="hPa" xlink:href="urn:x-ogc:def:uom:OGC:hPa"/>
+                </swe:Quantity>
+              </sml:output>
+              <sml:output name="temperature">
+                <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101">
+                  <swe:uom code="C" xlink:href="urn:x-ogc:def:uom:OGC:degC"/>
+                </swe:Quantity>
+              </sml:output>
+              <sml:output name="luminance">
+                <swe:Quantity definition="Luminance">
+                  <swe:uom code="lx" xlink:href="urn:x-ogc:def:uom:OGC:lx"/>
+                </swe:Quantity>
+              </sml:output>
+              <sml:output name="relativeHumidity">
+                <swe:Quantity definition="RelativeHumidity">
+                  <swe:uom code="%" xlink:href="urn:x-ogc:def:uom:OGC:percent"/>
+                </swe:Quantity>
               </sml:output>
             </sml:OutputList>
           </sml:outputs>
+          <sml:components>
+            <sml:ComponentList>
+              <sml:component name="rain-gauge">
+                <sml:Component>
+                  <sml:identification>
+                    <sml:IdentifierList>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                          <sml:value>urn:ogc:object:feature:Sensor:52North-HWS:rain-gauge-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                          <sml:value>Rain-Gauge at weather station 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                          <sml:value>Rain-Gauge 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="productName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                          <sml:value>S2000R-1 precipitation sensor</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                    </sml:IdentifierList>
+                  </sml:identification>
+                  <sml:classification>
+                    <sml:ClassifierList>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>Precipitation</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                    </sml:ClassifierList>
+                  </sml:classification>
+                  <sml:capabilities>
+                    <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+                      <swe:field name="status">
+                        <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">
+                          <gml:description>The operating status of the sensor.</gml:description>
+                          <swe:value>active</swe:value>
+                        </swe:Text>
+                      </swe:field>
+                    </swe:SimpleDataRecord>
+                  </sml:capabilities>
+                  <sml:inputs>
+                    <sml:InputList>
+                      <sml:input name="precipitation">
+                        <swe:ObservableProperty definition="Precipitation"/>
+                      </sml:input>
+                    </sml:InputList>
+                  </sml:inputs>
+                  <sml:outputs>
+                    <sml:OutputList>
+                      <sml:output name="precipitation">
+                        <swe:Quantity definition="Precipitation1Hour">
+                          <swe:uom code="mm" xlink:href="urn:x-ogc:def:uom:OGC:mm"/>
+                        </swe:Quantity>
+                      </sml:output>
+                    </sml:OutputList>
+                  </sml:outputs>
+                </sml:Component>
+              </sml:component>
+              <sml:component name="radiometer">
+                <sml:Component>
+                  <sml:identification>
+                    <sml:IdentifierList>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                          <sml:value>urn:ogc:object:feature:Sensor:52North-HWS:radiometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="longName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                          <sml:value>
+                            Radiometer at weather station 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="shortName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                          <sml:value>
+                            Radiometer 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="productName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                          <sml:value>S2500H luminance sensor</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                    </sml:IdentifierList>
+                  </sml:identification>
+                  <sml:classification>
+                    <sml:ClassifierList>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>radiometer</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                    </sml:ClassifierList>
+                  </sml:classification>
+                  <sml:capabilities>
+                    <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+                      <swe:field name="status">
+                        <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">
+                          <gml:description>The operating status of the sensor.</gml:description>
+                          <swe:value>active</swe:value>
+                        </swe:Text>
+                      </swe:field>
+                    </swe:SimpleDataRecord>
+                  </sml:capabilities>
+                  <sml:inputs>
+                    <sml:InputList>
+                      <sml:input name="luminance">
+                        <swe:ObservableProperty definition="Luminance"/>
+                      </sml:input>
+                    </sml:InputList>
+                  </sml:inputs>
+                  <sml:outputs>
+                    <sml:OutputList>
+                      <sml:output name="luminance">
+                        <swe:Quantity definition="Luminance">
+                          <swe:uom code="lx" xlink:href="urn:x-ogc:def:uom:OGC:lx"/>
+                        </swe:Quantity>
+                      </sml:output>
+                    </sml:OutputList>
+                  </sml:outputs>
+                </sml:Component>
+              </sml:component>
+              <sml:component name="hygrometer">
+                <sml:Component>
+                  <sml:identification>
+                    <sml:IdentifierList>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                          <sml:value>urn:ogc:object:feature:Sensor:52North-HWS:hygrometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="longName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                          <sml:value>Hygrometer at weather station 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="shortName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                          <sml:value>Hygrometer 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="productName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                          <sml:value>S2500H humidity sensor</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                    </sml:IdentifierList>
+                  </sml:identification>
+                  <sml:classification>
+                    <sml:ClassifierList>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>hygrometer</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                    </sml:ClassifierList>
+                  </sml:classification>
+                  <sml:capabilities>
+                    <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+                      <swe:field name="status">
+                        <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">
+                          <gml:description>The operating status of the sensor.</gml:description>
+                          <swe:value>active</swe:value>
+                        </swe:Text>
+                      </swe:field>
+                    </swe:SimpleDataRecord>
+                  </sml:capabilities>
+                  <sml:inputs>
+                    <sml:InputList>
+                      <sml:input name="humidity">
+                        <swe:ObservableProperty definition="Humidity"/>
+                      </sml:input>
+                    </sml:InputList>
+                  </sml:inputs>
+                  <sml:outputs>
+                    <sml:OutputList>
+                      <sml:output name="relativeHumidity">
+                        <swe:Quantity definition="RelativeHumidity">
+                          <swe:uom code="%" xlink:href="urn:x-ogc:def:uom:OGC:percent"/>
+                        </swe:Quantity>
+                      </sml:output>
+                    </sml:OutputList>
+                  </sml:outputs>
+                </sml:Component>
+              </sml:component>
+              <sml:component name="aenometer">
+                <sml:Component>
+                  <sml:identification>
+                    <sml:IdentifierList>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                          <sml:value>urn:ogc:object:feature:Sensor:52North-HWS:aenometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                          <sml:value>Aenometer at weather station 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                          <sml:value>Aenometer 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="productName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                          <sml:value>S2000W windsensor</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                    </sml:IdentifierList>
+                  </sml:identification>
+                  <sml:classification>
+                    <sml:ClassifierList>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>windSpeed</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>windDirection</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                    </sml:ClassifierList>
+                  </sml:classification>
+                  <sml:capabilities>
+                    <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+                      <swe:field name="status">
+                        <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">
+                          <gml:description>The operating status of the sensor.</gml:description>
+                          <swe:value>active</swe:value>
+                        </swe:Text>
+                      </swe:field>
+                    </swe:SimpleDataRecord>
+                  </sml:capabilities>
+                  <sml:inputs>
+                    <sml:InputList>
+                      <sml:input name="wind">
+                        <swe:ObservableProperty definition="Wind"/>
+                      </sml:input>
+                    </sml:InputList>
+                  </sml:inputs>
+                  <sml:outputs>
+                    <sml:OutputList>
+                      <sml:output name="windSpeed">
+                        <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101">
+                          <swe:uom code="m/s" xlink:href="urn:x-ogc:def:uom:OGC:m_s"/>
+                        </swe:Quantity>
+                      </sml:output>
+                      <sml:output name="windDirection">
+                        <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61102">
+                          <swe:uom code="deg" xlink:href="urn:x-ogc:def:uom:OGC:deg"/>
+                        </swe:Quantity>
+                      </sml:output>
+                    </sml:OutputList>
+                  </sml:outputs>
+                </sml:Component>
+              </sml:component>
+              <sml:component name="barmometer">
+                <sml:Component>
+                  <sml:identification>
+                    <sml:IdentifierList>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                          <sml:value>urn:ogc:object:feature:Sensor:52North-HWS:barometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="longName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                          <sml:value>Barometer at weather station 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="shortName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                          <sml:value>Barometer 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="productName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                          <sml:value>S2000B pressure sensor</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                    </sml:IdentifierList>
+                  </sml:identification>
+                  <sml:classification>
+                    <sml:ClassifierList>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>barometer</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                    </sml:ClassifierList>
+                  </sml:classification>
+                  <sml:capabilities>
+                    <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+                      <swe:field name="status">
+                        <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">
+                          <gml:description>The operating status of the sensor.</gml:description>
+                          <swe:value>active</swe:value>
+                        </swe:Text>
+                      </swe:field>
+                    </swe:SimpleDataRecord>
+                  </sml:capabilities>
+                  <sml:inputs>
+                    <sml:InputList>
+                      <sml:input name="atmosphericPressure">
+                        <swe:ObservableProperty definition="AtmospericPressure"/>
+                      </sml:input>
+                    </sml:InputList>
+                  </sml:inputs>
+                  <sml:outputs>
+                    <sml:OutputList>
+                      <sml:output name="barometricPressure">
+                        <swe:Quantity definition="BarometricPressure">
+                          <swe:uom code="hPa" xlink:href="urn:x-ogc:def:uom:OGC:hPa"/>
+                        </swe:Quantity>
+                      </sml:output>
+                    </sml:OutputList>
+                  </sml:outputs>
+                </sml:Component>
+              </sml:component>
+              <sml:component name="thermometer">
+                <sml:Component>
+                  <sml:identification>
+                    <sml:IdentifierList>
+                      <sml:identifier>
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:uniqueID">
+                          <sml:value>urn:ogc:object:feature:Sensor:52North-HWS:thermometer-3d3b239f-7696-4864-9d07-15447eae2b93</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="longName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+                          <sml:value>Thermometer at weather station 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="shortName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+                          <sml:value>Thermometer 52N HWS 1</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                      <sml:identifier name="productName">
+                        <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:productName">
+                          <sml:value>S2001IA temperature sensor</sml:value>
+                        </sml:Term>
+                      </sml:identifier>
+                    </sml:IdentifierList>
+                  </sml:identification>
+                  <sml:classification>
+                    <sml:ClassifierList>
+                      <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:ogc:def:classifier:OGC:1.0:sensorType">
+                          <sml:value>thermometer</sml:value>
+                        </sml:Term>
+                      </sml:classifier>
+                    </sml:ClassifierList>
+                  </sml:classification>
+                  <sml:capabilities>
+                    <swe:SimpleDataRecord definition="urn:ogc:def:property:status">
+                      <swe:field name="status">
+                        <swe:Text definition="urn:ogc:def:property:OGC:1.0:status">
+                          <gml:description>The operating status of the sensor.</gml:description>
+                          <swe:value>active</swe:value>
+                        </swe:Text>
+                      </swe:field>
+                    </swe:SimpleDataRecord>
+                  </sml:capabilities>
+                  <sml:inputs>
+                    <sml:InputList>
+                          <sml:input name="atmosphericTemperature">
+                            <swe:ObservableProperty definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101"/>
+                      </sml:input>
+                    </sml:InputList>
+                  </sml:inputs>
+                  <sml:outputs>
+                    <sml:OutputList>
+                      <sml:output name="temperature">
+                        <swe:Quantity definition="http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101">
+                          <swe:uom code="C" xlink:href="urn:x-ogc:def:uom:OGC:degC"/>
+                        </swe:Quantity>
+                      </sml:output>
+                    </sml:OutputList>
+                  </sml:outputs>
+                </sml:Component>
+              </sml:component>
+            </sml:ComponentList>
+          </sml:components>
         </sml:System>
       </sml:member>
     </sml:SensorML>
   </swes:procedureDescription>
   <!-- multiple values possible -->
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_1</swes:observableProperty>
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_2</swes:observableProperty>
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_3</swes:observableProperty>
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_4</swes:observableProperty>
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_5</swes:observableProperty>
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_6</swes:observableProperty>
-  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_7</swes:observableProperty>
+  <swes:observableProperty>Luminance</swes:observableProperty>
+  <swes:observableProperty>BarometricPressure</swes:observableProperty>
+  <swes:observableProperty>Precipitation1Hour</swes:observableProperty>
+  <swes:observableProperty>RelativeHumidity</swes:observableProperty>
+  <!-- wind direction -->
+  <swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61102</swes:observableProperty>
+  <!-- wind speed -->
+  <swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110</swes:observableProperty>
+  <!-- temperature -->
+  <swes:observableProperty>http://dd.eionet.europa.eu/vocabulary/aq/pollutant/62101</swes:observableProperty>
   <swes:metadata>
     <sos:SosInsertionMetadata>
       <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>

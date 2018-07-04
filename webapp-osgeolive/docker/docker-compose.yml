@@ -76,7 +76,7 @@ services:
 #
 #
   sos:
-    image: tomcat:8.5.30-jre8-alpine
+    image: tomcat:8.5.30-jre8
     ports:
       - 8080:8080
       - 8000:8000

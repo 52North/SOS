@@ -7,7 +7,7 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest": {
                 "identifier": {
                   "value": "52NorthWS1",
@@ -25,8 +25,8 @@
                 "geometry": {
                   "type": "Point",
                   "coordinates": [
-                    48.56683,
-                    13.45105
+                    YY.YYYY,
+                    XX.XXXX
                   ],
                   "crs": {
                     "type": "name",
@@ -36,8 +36,8 @@
                   }
                 }
             },
-            "phenomenonTime":"2017-03-01T00:30:00+00:00",
-            "resultTime":"2017-03-01T00:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T00:30:00+00:00",
+            "resultTime":"YYYY-MM-01T00:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.5
@@ -46,10 +46,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T04:45:00+00:00",
-            "resultTime":"2017-03-01T04:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T04:45:00+00:00",
+            "resultTime":"YYYY-MM-01T04:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":22.3
@@ -58,10 +58,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T05:30:00+00:00",
-            "resultTime":"2017-03-01T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T05:30:00+00:00",
+            "resultTime":"YYYY-MM-01T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.6
@@ -70,10 +70,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T09:45:00+00:00",
-            "resultTime":"2017-03-01T09:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T09:45:00+00:00",
+            "resultTime":"YYYY-MM-01T09:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":20.0
@@ -82,10 +82,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T10:45:00+00:00",
-            "resultTime":"2017-03-01T10:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T10:45:00+00:00",
+            "resultTime":"YYYY-MM-01T10:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.6
@@ -94,10 +94,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T15:00:00+00:00",
-            "resultTime":"2017-03-01T15:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T15:00:00+00:00",
+            "resultTime":"YYYY-MM-01T15:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.6
@@ -106,10 +106,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T19:00:00+00:00",
-            "resultTime":"2017-03-01T19:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T19:00:00+00:00",
+            "resultTime":"YYYY-MM-01T19:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.1
@@ -118,10 +118,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T20:30:00+00:00",
-            "resultTime":"2017-03-01T20:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T20:30:00+00:00",
+            "resultTime":"YYYY-MM-01T20:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.2
@@ -130,10 +130,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-01T20:45:00+00:00",
-            "resultTime":"2017-03-01T20:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-01T20:45:00+00:00",
+            "resultTime":"YYYY-MM-01T20:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.3
@@ -142,10 +142,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T01:00:00+00:00",
-            "resultTime":"2017-03-02T01:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T01:00:00+00:00",
+            "resultTime":"YYYY-MM-02T01:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.2
@@ -154,10 +154,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T05:30:00+00:00",
-            "resultTime":"2017-03-02T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T05:30:00+00:00",
+            "resultTime":"YYYY-MM-02T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.8
@@ -166,10 +166,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T05:15:00+00:00",
-            "resultTime":"2017-03-02T05:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T05:15:00+00:00",
+            "resultTime":"YYYY-MM-02T05:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.8
@@ -178,10 +178,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T06:45:00+00:00",
-            "resultTime":"2017-03-02T06:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T06:45:00+00:00",
+            "resultTime":"YYYY-MM-02T06:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.6
@@ -190,10 +190,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T10:15:00+00:00",
-            "resultTime":"2017-03-02T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T10:15:00+00:00",
+            "resultTime":"YYYY-MM-02T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.4
@@ -202,10 +202,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T11:46:00+00:00",
-            "resultTime":"2017-03-02T11:46:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T11:46:00+00:00",
+            "resultTime":"YYYY-MM-02T11:46:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.7
@@ -214,10 +214,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T15:15:00+00:00",
-            "resultTime":"2017-03-02T15:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T15:15:00+00:00",
+            "resultTime":"YYYY-MM-02T15:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.1
@@ -226,10 +226,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T16:45:00+00:00",
-            "resultTime":"2017-03-02T16:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T16:45:00+00:00",
+            "resultTime":"YYYY-MM-02T16:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.4
@@ -238,10 +238,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T20:00:00+00:00",
-            "resultTime":"2017-03-02T20:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T20:00:00+00:00",
+            "resultTime":"YYYY-MM-02T20:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.6
@@ -250,10 +250,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T01:15:00+00:00",
-            "resultTime":"2017-03-03T01:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T01:15:00+00:00",
+            "resultTime":"YYYY-MM-03T01:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.9
@@ -262,10 +262,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-02T23:15:00+00:00",
-            "resultTime":"2017-03-02T23:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-02T23:15:00+00:00",
+            "resultTime":"YYYY-MM-02T23:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.1
@@ -274,10 +274,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T04:00:00+00:00",
-            "resultTime":"2017-03-03T04:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T04:00:00+00:00",
+            "resultTime":"YYYY-MM-03T04:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.6
@@ -286,10 +286,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T06:00:00+00:00",
-            "resultTime":"2017-03-03T06:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T06:00:00+00:00",
+            "resultTime":"YYYY-MM-03T06:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.6
@@ -298,10 +298,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T08:30:00+00:00",
-            "resultTime":"2017-03-03T08:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T08:30:00+00:00",
+            "resultTime":"YYYY-MM-03T08:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.2
@@ -310,10 +310,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T11:30:00+00:00",
-            "resultTime":"2017-03-03T11:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T11:30:00+00:00",
+            "resultTime":"YYYY-MM-03T11:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.2
@@ -322,10 +322,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T14:16:00+00:00",
-            "resultTime":"2017-03-03T14:16:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T14:16:00+00:00",
+            "resultTime":"YYYY-MM-03T14:16:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.6
@@ -334,10 +334,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T17:01:00+00:00",
-            "resultTime":"2017-03-03T17:01:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T17:01:00+00:00",
+            "resultTime":"YYYY-MM-03T17:01:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.5
@@ -346,10 +346,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T20:00:00+00:00",
-            "resultTime":"2017-03-03T20:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T20:00:00+00:00",
+            "resultTime":"YYYY-MM-03T20:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":2.8
@@ -358,10 +358,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-03T21:15:00+00:00",
-            "resultTime":"2017-03-03T21:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-03T21:15:00+00:00",
+            "resultTime":"YYYY-MM-03T21:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.8
@@ -370,10 +370,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T00:16:00+00:00",
-            "resultTime":"2017-03-04T00:16:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T00:16:00+00:00",
+            "resultTime":"YYYY-MM-04T00:16:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.6
@@ -382,10 +382,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T03:01:00+00:00",
-            "resultTime":"2017-03-04T03:01:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T03:01:00+00:00",
+            "resultTime":"YYYY-MM-04T03:01:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.0
@@ -394,10 +394,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T06:01:00+00:00",
-            "resultTime":"2017-03-04T06:01:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T06:01:00+00:00",
+            "resultTime":"YYYY-MM-04T06:01:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -406,10 +406,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T07:16:00+00:00",
-            "resultTime":"2017-03-04T07:16:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T07:16:00+00:00",
+            "resultTime":"YYYY-MM-04T07:16:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.2
@@ -418,10 +418,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T10:16:00+00:00",
-            "resultTime":"2017-03-04T10:16:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T10:16:00+00:00",
+            "resultTime":"YYYY-MM-04T10:16:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.2
@@ -430,10 +430,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T13:01:00+00:00",
-            "resultTime":"2017-03-04T13:01:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T13:01:00+00:00",
+            "resultTime":"YYYY-MM-04T13:01:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.0
@@ -442,10 +442,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T16:00:00+00:00",
-            "resultTime":"2017-03-04T16:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T16:00:00+00:00",
+            "resultTime":"YYYY-MM-04T16:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":22.1
@@ -454,10 +454,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T17:15:00+00:00",
-            "resultTime":"2017-03-04T17:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T17:15:00+00:00",
+            "resultTime":"YYYY-MM-04T17:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":20.6
@@ -466,10 +466,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T20:15:00+00:00",
-            "resultTime":"2017-03-04T20:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T20:15:00+00:00",
+            "resultTime":"YYYY-MM-04T20:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.6
@@ -478,10 +478,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-04T23:00:00+00:00",
-            "resultTime":"2017-03-04T23:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-04T23:00:00+00:00",
+            "resultTime":"YYYY-MM-04T23:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.1
@@ -490,10 +490,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T02:01:00+00:00",
-            "resultTime":"2017-03-05T02:01:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T02:01:00+00:00",
+            "resultTime":"YYYY-MM-05T02:01:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":26.6
@@ -502,10 +502,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T03:16:00+00:00",
-            "resultTime":"2017-03-05T03:16:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T03:16:00+00:00",
+            "resultTime":"YYYY-MM-05T03:16:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.5
@@ -514,10 +514,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T06:16:00+00:00",
-            "resultTime":"2017-03-05T06:16:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T06:16:00+00:00",
+            "resultTime":"YYYY-MM-05T06:16:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.9
@@ -526,10 +526,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T09:00:00+00:00",
-            "resultTime":"2017-03-05T09:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T09:00:00+00:00",
+            "resultTime":"YYYY-MM-05T09:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.1
@@ -538,10 +538,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T12:00:00+00:00",
-            "resultTime":"2017-03-05T12:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T12:00:00+00:00",
+            "resultTime":"YYYY-MM-05T12:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.2
@@ -550,10 +550,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T13:45:00+00:00",
-            "resultTime":"2017-03-05T13:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T13:45:00+00:00",
+            "resultTime":"YYYY-MM-05T13:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.6
@@ -562,10 +562,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T16:15:00+00:00",
-            "resultTime":"2017-03-05T16:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T16:15:00+00:00",
+            "resultTime":"YYYY-MM-05T16:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.1
@@ -574,10 +574,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T18:30:00+00:00",
-            "resultTime":"2017-03-05T18:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T18:30:00+00:00",
+            "resultTime":"YYYY-MM-05T18:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.3
@@ -586,10 +586,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T21:30:00+00:00",
-            "resultTime":"2017-03-05T21:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T21:30:00+00:00",
+            "resultTime":"YYYY-MM-05T21:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.1
@@ -598,10 +598,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-05T23:45:00+00:00",
-            "resultTime":"2017-03-05T23:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-05T23:45:00+00:00",
+            "resultTime":"YYYY-MM-05T23:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.9
@@ -610,10 +610,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T02:15:00+00:00",
-            "resultTime":"2017-03-06T02:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T02:15:00+00:00",
+            "resultTime":"YYYY-MM-06T02:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.2
@@ -622,10 +622,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T04:45:00+00:00",
-            "resultTime":"2017-03-06T04:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T04:45:00+00:00",
+            "resultTime":"YYYY-MM-06T04:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.5
@@ -634,10 +634,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T07:15:00+00:00",
-            "resultTime":"2017-03-06T07:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T07:15:00+00:00",
+            "resultTime":"YYYY-MM-06T07:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.7
@@ -646,10 +646,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T09:45:00+00:00",
-            "resultTime":"2017-03-06T09:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T09:45:00+00:00",
+            "resultTime":"YYYY-MM-06T09:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.7
@@ -658,10 +658,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T11:15:00+00:00",
-            "resultTime":"2017-03-06T11:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T11:15:00+00:00",
+            "resultTime":"YYYY-MM-06T11:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.1
@@ -670,10 +670,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T14:45:00+00:00",
-            "resultTime":"2017-03-06T14:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T14:45:00+00:00",
+            "resultTime":"YYYY-MM-06T14:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.8
@@ -682,10 +682,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T17:30:00+00:00",
-            "resultTime":"2017-03-06T17:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T17:30:00+00:00",
+            "resultTime":"YYYY-MM-06T17:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.0
@@ -694,10 +694,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T19:14:00+00:00",
-            "resultTime":"2017-03-06T19:14:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T19:14:00+00:00",
+            "resultTime":"YYYY-MM-06T19:14:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.2
@@ -706,10 +706,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-06T21:45:00+00:00",
-            "resultTime":"2017-03-06T21:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-06T21:45:00+00:00",
+            "resultTime":"YYYY-MM-06T21:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.6
@@ -718,10 +718,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T01:15:00+00:00",
-            "resultTime":"2017-03-07T01:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T01:15:00+00:00",
+            "resultTime":"YYYY-MM-07T01:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":4.6
@@ -730,10 +730,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T03:15:00+00:00",
-            "resultTime":"2017-03-07T03:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T03:15:00+00:00",
+            "resultTime":"YYYY-MM-07T03:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.0
@@ -742,10 +742,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T05:15:00+00:00",
-            "resultTime":"2017-03-07T05:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T05:15:00+00:00",
+            "resultTime":"YYYY-MM-07T05:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.7
@@ -754,10 +754,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T08:45:00+00:00",
-            "resultTime":"2017-03-07T08:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T08:45:00+00:00",
+            "resultTime":"YYYY-MM-07T08:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.3
@@ -766,10 +766,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T09:45:00+00:00",
-            "resultTime":"2017-03-07T09:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T09:45:00+00:00",
+            "resultTime":"YYYY-MM-07T09:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.6
@@ -778,10 +778,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T15:15:00+00:00",
-            "resultTime":"2017-03-07T15:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T15:15:00+00:00",
+            "resultTime":"YYYY-MM-07T15:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":3.2
@@ -790,10 +790,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T13:45:00+00:00",
-            "resultTime":"2017-03-07T13:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T13:45:00+00:00",
+            "resultTime":"YYYY-MM-07T13:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.2
@@ -802,10 +802,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T21:30:00+00:00",
-            "resultTime":"2017-03-07T21:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T21:30:00+00:00",
+            "resultTime":"YYYY-MM-07T21:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":3.2
@@ -814,10 +814,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-07T19:45:00+00:00",
-            "resultTime":"2017-03-07T19:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-07T19:45:00+00:00",
+            "resultTime":"YYYY-MM-07T19:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":4.1
@@ -826,10 +826,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T00:00:00+00:00",
-            "resultTime":"2017-03-08T00:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T00:00:00+00:00",
+            "resultTime":"YYYY-MM-08T00:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":4.2
@@ -838,10 +838,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T01:30:00+00:00",
-            "resultTime":"2017-03-08T01:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T01:30:00+00:00",
+            "resultTime":"YYYY-MM-08T01:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -850,10 +850,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T05:30:00+00:00",
-            "resultTime":"2017-03-08T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T05:30:00+00:00",
+            "resultTime":"YYYY-MM-08T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.1
@@ -862,10 +862,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T04:00:00+00:00",
-            "resultTime":"2017-03-08T04:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T04:00:00+00:00",
+            "resultTime":"YYYY-MM-08T04:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.0
@@ -874,10 +874,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T10:15:00+00:00",
-            "resultTime":"2017-03-08T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T10:15:00+00:00",
+            "resultTime":"YYYY-MM-08T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.1
@@ -886,10 +886,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T08:45:00+00:00",
-            "resultTime":"2017-03-08T08:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T08:45:00+00:00",
+            "resultTime":"YYYY-MM-08T08:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.8
@@ -898,10 +898,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T13:30:00+00:00",
-            "resultTime":"2017-03-08T13:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T13:30:00+00:00",
+            "resultTime":"YYYY-MM-08T13:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.2
@@ -910,10 +910,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T18:15:00+00:00",
-            "resultTime":"2017-03-08T18:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T18:15:00+00:00",
+            "resultTime":"YYYY-MM-08T18:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":30.6
@@ -922,10 +922,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-08T19:15:00+00:00",
-            "resultTime":"2017-03-08T19:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-08T19:15:00+00:00",
+            "resultTime":"YYYY-MM-08T19:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":25.8
@@ -934,10 +934,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T01:45:00+00:00",
-            "resultTime":"2017-03-09T01:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T01:45:00+00:00",
+            "resultTime":"YYYY-MM-09T01:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":37.9
@@ -946,10 +946,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T00:45:00+00:00",
-            "resultTime":"2017-03-09T00:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T00:45:00+00:00",
+            "resultTime":"YYYY-MM-09T00:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":37.3
@@ -958,10 +958,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T02:00:00+00:00",
-            "resultTime":"2017-03-09T02:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T02:00:00+00:00",
+            "resultTime":"YYYY-MM-09T02:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":33.5
@@ -970,10 +970,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T05:15:00+00:00",
-            "resultTime":"2017-03-09T05:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T05:15:00+00:00",
+            "resultTime":"YYYY-MM-09T05:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":25.6
@@ -982,10 +982,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T10:15:00+00:00",
-            "resultTime":"2017-03-09T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T10:15:00+00:00",
+            "resultTime":"YYYY-MM-09T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":30.7
@@ -994,10 +994,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T09:45:00+00:00",
-            "resultTime":"2017-03-09T09:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T09:45:00+00:00",
+            "resultTime":"YYYY-MM-09T09:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":36.3
@@ -1006,10 +1006,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T14:00:00+00:00",
-            "resultTime":"2017-03-09T14:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T14:00:00+00:00",
+            "resultTime":"YYYY-MM-09T14:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":27.8
@@ -1018,10 +1018,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T16:15:00+00:00",
-            "resultTime":"2017-03-09T16:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T16:15:00+00:00",
+            "resultTime":"YYYY-MM-09T16:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":31.0
@@ -1030,10 +1030,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T18:45:00+00:00",
-            "resultTime":"2017-03-09T18:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T18:45:00+00:00",
+            "resultTime":"YYYY-MM-09T18:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":27.5
@@ -1042,10 +1042,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T17:45:00+00:00",
-            "resultTime":"2017-03-09T17:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T17:45:00+00:00",
+            "resultTime":"YYYY-MM-09T17:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":22.5
@@ -1054,10 +1054,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T02:00:00+00:00",
-            "resultTime":"2017-03-10T02:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T02:00:00+00:00",
+            "resultTime":"YYYY-MM-10T02:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":28.5
@@ -1066,10 +1066,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-09T22:45:00+00:00",
-            "resultTime":"2017-03-09T22:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-09T22:45:00+00:00",
+            "resultTime":"YYYY-MM-09T22:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":31.2
@@ -1078,10 +1078,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T05:45:00+00:00",
-            "resultTime":"2017-03-10T05:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T05:45:00+00:00",
+            "resultTime":"YYYY-MM-10T05:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.8
@@ -1090,10 +1090,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T04:15:00+00:00",
-            "resultTime":"2017-03-10T04:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T04:15:00+00:00",
+            "resultTime":"YYYY-MM-10T04:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.5
@@ -1102,10 +1102,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T10:45:00+00:00",
-            "resultTime":"2017-03-10T10:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T10:45:00+00:00",
+            "resultTime":"YYYY-MM-10T10:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.0
@@ -1114,10 +1114,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T09:15:00+00:00",
-            "resultTime":"2017-03-10T09:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T09:15:00+00:00",
+            "resultTime":"YYYY-MM-10T09:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.8
@@ -1126,10 +1126,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T17:01:00+00:00",
-            "resultTime":"2017-03-10T17:01:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T17:01:00+00:00",
+            "resultTime":"YYYY-MM-10T17:01:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.1
@@ -1138,10 +1138,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T16:15:00+00:00",
-            "resultTime":"2017-03-10T16:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T16:15:00+00:00",
+            "resultTime":"YYYY-MM-10T16:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.9
@@ -1150,10 +1150,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T19:00:00+00:00",
-            "resultTime":"2017-03-10T19:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T19:00:00+00:00",
+            "resultTime":"YYYY-MM-10T19:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.8
@@ -1162,10 +1162,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-10T20:30:00+00:00",
-            "resultTime":"2017-03-10T20:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-10T20:30:00+00:00",
+            "resultTime":"YYYY-MM-10T20:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.0
@@ -1174,10 +1174,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T01:15:00+00:00",
-            "resultTime":"2017-03-11T01:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T01:15:00+00:00",
+            "resultTime":"YYYY-MM-11T01:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.6
@@ -1186,10 +1186,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T03:45:00+00:00",
-            "resultTime":"2017-03-11T03:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T03:45:00+00:00",
+            "resultTime":"YYYY-MM-11T03:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.6
@@ -1198,10 +1198,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T07:00:00+00:00",
-            "resultTime":"2017-03-11T07:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T07:00:00+00:00",
+            "resultTime":"YYYY-MM-11T07:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.8
@@ -1210,10 +1210,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T06:45:00+00:00",
-            "resultTime":"2017-03-11T06:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T06:45:00+00:00",
+            "resultTime":"YYYY-MM-11T06:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.0
@@ -1222,10 +1222,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T11:00:00+00:00",
-            "resultTime":"2017-03-11T11:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T11:00:00+00:00",
+            "resultTime":"YYYY-MM-11T11:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.0
@@ -1234,10 +1234,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T12:15:00+00:00",
-            "resultTime":"2017-03-11T12:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T12:15:00+00:00",
+            "resultTime":"YYYY-MM-11T12:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.2
@@ -1246,10 +1246,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T18:00:00+00:00",
-            "resultTime":"2017-03-11T18:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T18:00:00+00:00",
+            "resultTime":"YYYY-MM-11T18:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.5
@@ -1258,10 +1258,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T14:30:00+00:00",
-            "resultTime":"2017-03-11T14:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T14:30:00+00:00",
+            "resultTime":"YYYY-MM-11T14:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.0
@@ -1270,10 +1270,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T19:45:00+00:00",
-            "resultTime":"2017-03-11T19:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T19:45:00+00:00",
+            "resultTime":"YYYY-MM-11T19:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.2
@@ -1282,10 +1282,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-11T19:30:00+00:00",
-            "resultTime":"2017-03-11T19:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-11T19:30:00+00:00",
+            "resultTime":"YYYY-MM-11T19:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.0
@@ -1294,10 +1294,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T03:15:00+00:00",
-            "resultTime":"2017-03-12T03:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T03:15:00+00:00",
+            "resultTime":"YYYY-MM-12T03:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.1
@@ -1306,10 +1306,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T02:15:00+00:00",
-            "resultTime":"2017-03-12T02:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T02:15:00+00:00",
+            "resultTime":"YYYY-MM-12T02:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -1318,10 +1318,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T08:15:00+00:00",
-            "resultTime":"2017-03-12T08:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T08:15:00+00:00",
+            "resultTime":"YYYY-MM-12T08:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.4
@@ -1330,10 +1330,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T08:30:00+00:00",
-            "resultTime":"2017-03-12T08:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T08:30:00+00:00",
+            "resultTime":"YYYY-MM-12T08:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.8
@@ -1342,10 +1342,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T13:00:00+00:00",
-            "resultTime":"2017-03-12T13:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T13:00:00+00:00",
+            "resultTime":"YYYY-MM-12T13:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.6
@@ -1354,10 +1354,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T11:15:00+00:00",
-            "resultTime":"2017-03-12T11:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T11:15:00+00:00",
+            "resultTime":"YYYY-MM-12T11:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.1
@@ -1366,10 +1366,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T18:30:00+00:00",
-            "resultTime":"2017-03-12T18:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T18:30:00+00:00",
+            "resultTime":"YYYY-MM-12T18:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":24.6
@@ -1378,10 +1378,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T18:45:00+00:00",
-            "resultTime":"2017-03-12T18:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T18:45:00+00:00",
+            "resultTime":"YYYY-MM-12T18:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.6
@@ -1390,10 +1390,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T19:30:00+00:00",
-            "resultTime":"2017-03-12T19:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T19:30:00+00:00",
+            "resultTime":"YYYY-MM-12T19:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.5
@@ -1402,10 +1402,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-12T21:15:00+00:00",
-            "resultTime":"2017-03-12T21:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-12T21:15:00+00:00",
+            "resultTime":"YYYY-MM-12T21:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":22.3
@@ -1414,10 +1414,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T02:15:00+00:00",
-            "resultTime":"2017-03-13T02:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T02:15:00+00:00",
+            "resultTime":"YYYY-MM-13T02:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.4
@@ -1426,10 +1426,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T05:15:00+00:00",
-            "resultTime":"2017-03-13T05:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T05:15:00+00:00",
+            "resultTime":"YYYY-MM-13T05:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":27.2
@@ -1438,10 +1438,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T06:45:00+00:00",
-            "resultTime":"2017-03-13T06:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T06:45:00+00:00",
+            "resultTime":"YYYY-MM-13T06:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":27.3
@@ -1450,10 +1450,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T07:15:00+00:00",
-            "resultTime":"2017-03-13T07:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T07:15:00+00:00",
+            "resultTime":"YYYY-MM-13T07:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.3
@@ -1462,10 +1462,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T15:00:00+00:00",
-            "resultTime":"2017-03-13T15:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T15:00:00+00:00",
+            "resultTime":"YYYY-MM-13T15:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":29.1
@@ -1474,10 +1474,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T14:00:00+00:00",
-            "resultTime":"2017-03-13T14:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T14:00:00+00:00",
+            "resultTime":"YYYY-MM-13T14:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":35.5
@@ -1486,10 +1486,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T17:00:00+00:00",
-            "resultTime":"2017-03-13T17:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T17:00:00+00:00",
+            "resultTime":"YYYY-MM-13T17:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.4
@@ -1498,10 +1498,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T20:00:00+00:00",
-            "resultTime":"2017-03-13T20:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T20:00:00+00:00",
+            "resultTime":"YYYY-MM-13T20:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.6
@@ -1510,10 +1510,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-13T23:30:00+00:00",
-            "resultTime":"2017-03-13T23:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-13T23:30:00+00:00",
+            "resultTime":"YYYY-MM-13T23:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.6
@@ -1522,10 +1522,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T00:15:00+00:00",
-            "resultTime":"2017-03-14T00:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T00:15:00+00:00",
+            "resultTime":"YYYY-MM-14T00:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.2
@@ -1534,10 +1534,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T05:00:00+00:00",
-            "resultTime":"2017-03-14T05:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T05:00:00+00:00",
+            "resultTime":"YYYY-MM-14T05:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.8
@@ -1546,10 +1546,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T04:00:00+00:00",
-            "resultTime":"2017-03-14T04:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T04:00:00+00:00",
+            "resultTime":"YYYY-MM-14T04:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.3
@@ -1558,10 +1558,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T11:00:00+00:00",
-            "resultTime":"2017-03-14T11:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T11:00:00+00:00",
+            "resultTime":"YYYY-MM-14T11:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.4
@@ -1570,10 +1570,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T07:45:00+00:00",
-            "resultTime":"2017-03-14T07:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T07:45:00+00:00",
+            "resultTime":"YYYY-MM-14T07:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.4
@@ -1582,10 +1582,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T12:15:00+00:00",
-            "resultTime":"2017-03-14T12:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T12:15:00+00:00",
+            "resultTime":"YYYY-MM-14T12:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.3
@@ -1594,10 +1594,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T15:45:00+00:00",
-            "resultTime":"2017-03-14T15:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T15:45:00+00:00",
+            "resultTime":"YYYY-MM-14T15:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.4
@@ -1606,10 +1606,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T19:45:00+00:00",
-            "resultTime":"2017-03-14T19:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T19:45:00+00:00",
+            "resultTime":"YYYY-MM-14T19:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.0
@@ -1618,10 +1618,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-14T21:15:00+00:00",
-            "resultTime":"2017-03-14T21:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-14T21:15:00+00:00",
+            "resultTime":"YYYY-MM-14T21:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.2
@@ -1630,10 +1630,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T00:45:00+00:00",
-            "resultTime":"2017-03-15T00:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T00:45:00+00:00",
+            "resultTime":"YYYY-MM-15T00:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.9
@@ -1642,10 +1642,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T02:30:00+00:00",
-            "resultTime":"2017-03-15T02:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T02:30:00+00:00",
+            "resultTime":"YYYY-MM-15T02:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.3
@@ -1654,10 +1654,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T03:00:00+00:00",
-            "resultTime":"2017-03-15T03:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T03:00:00+00:00",
+            "resultTime":"YYYY-MM-15T03:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.2
@@ -1666,10 +1666,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T03:15:00+00:00",
-            "resultTime":"2017-03-15T03:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T03:15:00+00:00",
+            "resultTime":"YYYY-MM-15T03:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.8
@@ -1678,10 +1678,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T10:00:00+00:00",
-            "resultTime":"2017-03-15T10:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T10:00:00+00:00",
+            "resultTime":"YYYY-MM-15T10:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":2.1
@@ -1690,10 +1690,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T12:45:00+00:00",
-            "resultTime":"2017-03-15T12:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T12:45:00+00:00",
+            "resultTime":"YYYY-MM-15T12:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.3
@@ -1702,10 +1702,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T12:15:00+00:00",
-            "resultTime":"2017-03-15T12:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T12:15:00+00:00",
+            "resultTime":"YYYY-MM-15T12:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.7
@@ -1714,10 +1714,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T16:15:00+00:00",
-            "resultTime":"2017-03-15T16:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T16:15:00+00:00",
+            "resultTime":"YYYY-MM-15T16:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.4
@@ -1726,10 +1726,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T19:00:00+00:00",
-            "resultTime":"2017-03-15T19:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T19:00:00+00:00",
+            "resultTime":"YYYY-MM-15T19:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":4.1
@@ -1738,10 +1738,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-15T21:45:00+00:00",
-            "resultTime":"2017-03-15T21:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-15T21:45:00+00:00",
+            "resultTime":"YYYY-MM-15T21:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.9
@@ -1750,10 +1750,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T01:15:00+00:00",
-            "resultTime":"2017-03-16T01:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T01:15:00+00:00",
+            "resultTime":"YYYY-MM-16T01:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.1
@@ -1762,10 +1762,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T03:00:00+00:00",
-            "resultTime":"2017-03-16T03:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T03:00:00+00:00",
+            "resultTime":"YYYY-MM-16T03:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.0
@@ -1774,10 +1774,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T07:15:00+00:00",
-            "resultTime":"2017-03-16T07:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T07:15:00+00:00",
+            "resultTime":"YYYY-MM-16T07:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.8
@@ -1786,10 +1786,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T08:15:00+00:00",
-            "resultTime":"2017-03-16T08:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T08:15:00+00:00",
+            "resultTime":"YYYY-MM-16T08:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.6
@@ -1798,10 +1798,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T10:15:00+00:00",
-            "resultTime":"2017-03-16T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T10:15:00+00:00",
+            "resultTime":"YYYY-MM-16T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.1
@@ -1810,10 +1810,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T12:15:00+00:00",
-            "resultTime":"2017-03-16T12:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T12:15:00+00:00",
+            "resultTime":"YYYY-MM-16T12:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.1
@@ -1822,10 +1822,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T16:00:00+00:00",
-            "resultTime":"2017-03-16T16:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T16:00:00+00:00",
+            "resultTime":"YYYY-MM-16T16:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.9
@@ -1834,10 +1834,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T15:00:00+00:00",
-            "resultTime":"2017-03-16T15:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T15:00:00+00:00",
+            "resultTime":"YYYY-MM-16T15:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.1
@@ -1846,10 +1846,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T22:00:00+00:00",
-            "resultTime":"2017-03-16T22:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T22:00:00+00:00",
+            "resultTime":"YYYY-MM-16T22:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.5
@@ -1858,10 +1858,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-16T19:15:00+00:00",
-            "resultTime":"2017-03-16T19:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-16T19:15:00+00:00",
+            "resultTime":"YYYY-MM-16T19:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.5
@@ -1870,10 +1870,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T03:45:00+00:00",
-            "resultTime":"2017-03-17T03:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T03:45:00+00:00",
+            "resultTime":"YYYY-MM-17T03:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.7
@@ -1882,10 +1882,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T02:15:00+00:00",
-            "resultTime":"2017-03-17T02:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T02:15:00+00:00",
+            "resultTime":"YYYY-MM-17T02:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.9
@@ -1894,10 +1894,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T06:15:00+00:00",
-            "resultTime":"2017-03-17T06:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T06:15:00+00:00",
+            "resultTime":"YYYY-MM-17T06:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.0
@@ -1906,10 +1906,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T06:00:00+00:00",
-            "resultTime":"2017-03-17T06:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T06:00:00+00:00",
+            "resultTime":"YYYY-MM-17T06:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.1
@@ -1918,10 +1918,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T12:15:00+00:00",
-            "resultTime":"2017-03-17T12:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T12:15:00+00:00",
+            "resultTime":"YYYY-MM-17T12:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.0
@@ -1930,10 +1930,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T12:00:00+00:00",
-            "resultTime":"2017-03-17T12:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T12:00:00+00:00",
+            "resultTime":"YYYY-MM-17T12:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.1
@@ -1942,10 +1942,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T15:00:00+00:00",
-            "resultTime":"2017-03-17T15:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T15:00:00+00:00",
+            "resultTime":"YYYY-MM-17T15:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":25.4
@@ -1954,10 +1954,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T19:45:00+00:00",
-            "resultTime":"2017-03-17T19:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T19:45:00+00:00",
+            "resultTime":"YYYY-MM-17T19:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.2
@@ -1966,10 +1966,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-17T23:30:00+00:00",
-            "resultTime":"2017-03-17T23:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-17T23:30:00+00:00",
+            "resultTime":"YYYY-MM-17T23:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.0
@@ -1978,10 +1978,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T00:45:00+00:00",
-            "resultTime":"2017-03-18T00:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T00:45:00+00:00",
+            "resultTime":"YYYY-MM-18T00:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.7
@@ -1990,10 +1990,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T03:00:00+00:00",
-            "resultTime":"2017-03-18T03:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T03:00:00+00:00",
+            "resultTime":"YYYY-MM-18T03:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.5
@@ -2002,10 +2002,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T05:30:00+00:00",
-            "resultTime":"2017-03-18T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T05:30:00+00:00",
+            "resultTime":"YYYY-MM-18T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.3
@@ -2014,10 +2014,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T05:45:00+00:00",
-            "resultTime":"2017-03-18T05:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T05:45:00+00:00",
+            "resultTime":"YYYY-MM-18T05:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.4
@@ -2026,10 +2026,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T09:15:00+00:00",
-            "resultTime":"2017-03-18T09:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T09:15:00+00:00",
+            "resultTime":"YYYY-MM-18T09:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.3
@@ -2038,10 +2038,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T10:30:00+00:00",
-            "resultTime":"2017-03-18T10:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T10:30:00+00:00",
+            "resultTime":"YYYY-MM-18T10:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.5
@@ -2050,10 +2050,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T11:15:00+00:00",
-            "resultTime":"2017-03-18T11:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T11:15:00+00:00",
+            "resultTime":"YYYY-MM-18T11:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.0
@@ -2062,10 +2062,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T16:30:00+00:00",
-            "resultTime":"2017-03-18T16:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T16:30:00+00:00",
+            "resultTime":"YYYY-MM-18T16:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":26.0
@@ -2074,10 +2074,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T18:15:00+00:00",
-            "resultTime":"2017-03-18T18:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T18:15:00+00:00",
+            "resultTime":"YYYY-MM-18T18:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.0
@@ -2086,10 +2086,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-18T21:15:00+00:00",
-            "resultTime":"2017-03-18T21:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-18T21:15:00+00:00",
+            "resultTime":"YYYY-MM-18T21:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.7
@@ -2098,10 +2098,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T00:00:00+00:00",
-            "resultTime":"2017-03-19T00:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T00:00:00+00:00",
+            "resultTime":"YYYY-MM-19T00:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.7
@@ -2110,10 +2110,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T02:30:00+00:00",
-            "resultTime":"2017-03-19T02:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T02:30:00+00:00",
+            "resultTime":"YYYY-MM-19T02:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":20.8
@@ -2122,10 +2122,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T04:30:00+00:00",
-            "resultTime":"2017-03-19T04:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T04:30:00+00:00",
+            "resultTime":"YYYY-MM-19T04:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.8
@@ -2134,10 +2134,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T08:45:00+00:00",
-            "resultTime":"2017-03-19T08:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T08:45:00+00:00",
+            "resultTime":"YYYY-MM-19T08:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.9
@@ -2146,10 +2146,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T07:30:00+00:00",
-            "resultTime":"2017-03-19T07:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T07:30:00+00:00",
+            "resultTime":"YYYY-MM-19T07:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.8
@@ -2158,10 +2158,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T13:45:00+00:00",
-            "resultTime":"2017-03-19T13:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T13:45:00+00:00",
+            "resultTime":"YYYY-MM-19T13:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.4
@@ -2170,10 +2170,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T13:00:00+00:00",
-            "resultTime":"2017-03-19T13:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T13:00:00+00:00",
+            "resultTime":"YYYY-MM-19T13:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.4
@@ -2182,10 +2182,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T19:30:00+00:00",
-            "resultTime":"2017-03-19T19:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T19:30:00+00:00",
+            "resultTime":"YYYY-MM-19T19:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -2194,10 +2194,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T19:00:00+00:00",
-            "resultTime":"2017-03-19T19:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T19:00:00+00:00",
+            "resultTime":"YYYY-MM-19T19:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":3.6
@@ -2206,10 +2206,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-19T22:15:00+00:00",
-            "resultTime":"2017-03-19T22:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-19T22:15:00+00:00",
+            "resultTime":"YYYY-MM-19T22:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -2218,10 +2218,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T01:00:00+00:00",
-            "resultTime":"2017-03-20T01:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T01:00:00+00:00",
+            "resultTime":"YYYY-MM-20T01:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -2230,10 +2230,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T05:30:00+00:00",
-            "resultTime":"2017-03-20T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T05:30:00+00:00",
+            "resultTime":"YYYY-MM-20T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":4.7
@@ -2242,10 +2242,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T07:00:00+00:00",
-            "resultTime":"2017-03-20T07:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T07:00:00+00:00",
+            "resultTime":"YYYY-MM-20T07:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.7
@@ -2254,10 +2254,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T10:15:00+00:00",
-            "resultTime":"2017-03-20T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T10:15:00+00:00",
+            "resultTime":"YYYY-MM-20T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.2
@@ -2266,10 +2266,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T09:45:00+00:00",
-            "resultTime":"2017-03-20T09:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T09:45:00+00:00",
+            "resultTime":"YYYY-MM-20T09:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.8
@@ -2278,10 +2278,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T12:15:00+00:00",
-            "resultTime":"2017-03-20T12:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T12:15:00+00:00",
+            "resultTime":"YYYY-MM-20T12:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.8
@@ -2290,10 +2290,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T14:45:00+00:00",
-            "resultTime":"2017-03-20T14:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T14:45:00+00:00",
+            "resultTime":"YYYY-MM-20T14:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.1
@@ -2302,10 +2302,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T16:45:00+00:00",
-            "resultTime":"2017-03-20T16:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T16:45:00+00:00",
+            "resultTime":"YYYY-MM-20T16:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.5
@@ -2314,10 +2314,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-20T21:00:00+00:00",
-            "resultTime":"2017-03-20T21:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-20T21:00:00+00:00",
+            "resultTime":"YYYY-MM-20T21:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.5
@@ -2326,10 +2326,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T00:30:00+00:00",
-            "resultTime":"2017-03-21T00:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T00:30:00+00:00",
+            "resultTime":"YYYY-MM-21T00:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.9
@@ -2338,10 +2338,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T04:30:00+00:00",
-            "resultTime":"2017-03-21T04:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T04:30:00+00:00",
+            "resultTime":"YYYY-MM-21T04:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.3
@@ -2350,10 +2350,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T04:00:00+00:00",
-            "resultTime":"2017-03-21T04:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T04:00:00+00:00",
+            "resultTime":"YYYY-MM-21T04:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.6
@@ -2362,10 +2362,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T05:30:00+00:00",
-            "resultTime":"2017-03-21T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T05:30:00+00:00",
+            "resultTime":"YYYY-MM-21T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.7
@@ -2374,10 +2374,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T11:15:00+00:00",
-            "resultTime":"2017-03-21T11:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T11:15:00+00:00",
+            "resultTime":"YYYY-MM-21T11:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.1
@@ -2386,10 +2386,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T13:30:00+00:00",
-            "resultTime":"2017-03-21T13:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T13:30:00+00:00",
+            "resultTime":"YYYY-MM-21T13:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.5
@@ -2398,10 +2398,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T16:00:00+00:00",
-            "resultTime":"2017-03-21T16:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T16:00:00+00:00",
+            "resultTime":"YYYY-MM-21T16:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":15.3
@@ -2410,10 +2410,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T17:15:00+00:00",
-            "resultTime":"2017-03-21T17:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T17:15:00+00:00",
+            "resultTime":"YYYY-MM-21T17:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.7
@@ -2422,10 +2422,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T19:45:00+00:00",
-            "resultTime":"2017-03-21T19:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T19:45:00+00:00",
+            "resultTime":"YYYY-MM-21T19:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.8
@@ -2434,10 +2434,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-21T23:30:00+00:00",
-            "resultTime":"2017-03-21T23:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-21T23:30:00+00:00",
+            "resultTime":"YYYY-MM-21T23:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.6
@@ -2446,10 +2446,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T00:45:00+00:00",
-            "resultTime":"2017-03-22T00:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T00:45:00+00:00",
+            "resultTime":"YYYY-MM-22T00:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.0
@@ -2458,10 +2458,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T01:45:00+00:00",
-            "resultTime":"2017-03-22T01:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T01:45:00+00:00",
+            "resultTime":"YYYY-MM-22T01:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.7
@@ -2470,10 +2470,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T06:15:00+00:00",
-            "resultTime":"2017-03-22T06:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T06:15:00+00:00",
+            "resultTime":"YYYY-MM-22T06:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.3
@@ -2482,10 +2482,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T08:15:00+00:00",
-            "resultTime":"2017-03-22T08:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T08:15:00+00:00",
+            "resultTime":"YYYY-MM-22T08:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.0
@@ -2494,10 +2494,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T09:30:00+00:00",
-            "resultTime":"2017-03-22T09:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T09:30:00+00:00",
+            "resultTime":"YYYY-MM-22T09:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.6
@@ -2506,10 +2506,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T11:45:00+00:00",
-            "resultTime":"2017-03-22T11:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T11:45:00+00:00",
+            "resultTime":"YYYY-MM-22T11:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.8
@@ -2518,10 +2518,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T14:30:00+00:00",
-            "resultTime":"2017-03-22T14:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T14:30:00+00:00",
+            "resultTime":"YYYY-MM-22T14:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.4
@@ -2530,10 +2530,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T17:30:00+00:00",
-            "resultTime":"2017-03-22T17:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T17:30:00+00:00",
+            "resultTime":"YYYY-MM-22T17:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.6
@@ -2542,10 +2542,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T22:00:00+00:00",
-            "resultTime":"2017-03-22T22:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T22:00:00+00:00",
+            "resultTime":"YYYY-MM-22T22:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.6
@@ -2554,10 +2554,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-22T21:00:00+00:00",
-            "resultTime":"2017-03-22T21:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-22T21:00:00+00:00",
+            "resultTime":"YYYY-MM-22T21:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.9
@@ -2566,10 +2566,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T01:30:00+00:00",
-            "resultTime":"2017-03-23T01:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T01:30:00+00:00",
+            "resultTime":"YYYY-MM-23T01:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.0
@@ -2578,10 +2578,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T03:00:00+00:00",
-            "resultTime":"2017-03-23T03:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T03:00:00+00:00",
+            "resultTime":"YYYY-MM-23T03:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.0
@@ -2590,10 +2590,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T07:45:00+00:00",
-            "resultTime":"2017-03-23T07:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T07:45:00+00:00",
+            "resultTime":"YYYY-MM-23T07:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.6
@@ -2602,10 +2602,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T08:45:00+00:00",
-            "resultTime":"2017-03-23T08:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T08:45:00+00:00",
+            "resultTime":"YYYY-MM-23T08:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.8
@@ -2614,10 +2614,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T10:45:00+00:00",
-            "resultTime":"2017-03-23T10:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T10:45:00+00:00",
+            "resultTime":"YYYY-MM-23T10:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.1
@@ -2626,10 +2626,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T14:00:00+00:00",
-            "resultTime":"2017-03-23T14:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T14:00:00+00:00",
+            "resultTime":"YYYY-MM-23T14:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.5
@@ -2638,10 +2638,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T18:30:00+00:00",
-            "resultTime":"2017-03-23T18:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T18:30:00+00:00",
+            "resultTime":"YYYY-MM-23T18:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.8
@@ -2650,10 +2650,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T17:45:00+00:00",
-            "resultTime":"2017-03-23T17:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T17:45:00+00:00",
+            "resultTime":"YYYY-MM-23T17:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":18.8
@@ -2662,10 +2662,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T21:00:00+00:00",
-            "resultTime":"2017-03-23T21:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T21:00:00+00:00",
+            "resultTime":"YYYY-MM-23T21:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":16.2
@@ -2674,10 +2674,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-23T22:45:00+00:00",
-            "resultTime":"2017-03-23T22:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-23T22:45:00+00:00",
+            "resultTime":"YYYY-MM-23T22:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.2
@@ -2686,10 +2686,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T03:30:00+00:00",
-            "resultTime":"2017-03-24T03:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T03:30:00+00:00",
+            "resultTime":"YYYY-MM-24T03:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.5
@@ -2698,10 +2698,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T02:00:00+00:00",
-            "resultTime":"2017-03-24T02:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T02:00:00+00:00",
+            "resultTime":"YYYY-MM-24T02:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.5
@@ -2710,10 +2710,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T10:15:00+00:00",
-            "resultTime":"2017-03-24T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T10:15:00+00:00",
+            "resultTime":"YYYY-MM-24T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.6
@@ -2722,10 +2722,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T08:15:00+00:00",
-            "resultTime":"2017-03-24T08:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T08:15:00+00:00",
+            "resultTime":"YYYY-MM-24T08:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.9
@@ -2734,10 +2734,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T13:30:00+00:00",
-            "resultTime":"2017-03-24T13:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T13:30:00+00:00",
+            "resultTime":"YYYY-MM-24T13:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.1
@@ -2746,10 +2746,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T16:45:00+00:00",
-            "resultTime":"2017-03-24T16:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T16:45:00+00:00",
+            "resultTime":"YYYY-MM-24T16:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":7.6
@@ -2758,10 +2758,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T17:00:00+00:00",
-            "resultTime":"2017-03-24T17:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T17:00:00+00:00",
+            "resultTime":"YYYY-MM-24T17:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.0
@@ -2770,10 +2770,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T20:45:00+00:00",
-            "resultTime":"2017-03-24T20:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T20:45:00+00:00",
+            "resultTime":"YYYY-MM-24T20:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.8
@@ -2782,10 +2782,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T22:30:00+00:00",
-            "resultTime":"2017-03-24T22:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T22:30:00+00:00",
+            "resultTime":"YYYY-MM-24T22:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.9
@@ -2794,10 +2794,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-24T23:00:00+00:00",
-            "resultTime":"2017-03-24T23:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-24T23:00:00+00:00",
+            "resultTime":"YYYY-MM-24T23:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.5
@@ -2806,10 +2806,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T01:30:00+00:00",
-            "resultTime":"2017-03-25T01:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T01:30:00+00:00",
+            "resultTime":"YYYY-MM-25T01:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.4
@@ -2818,10 +2818,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T06:30:00+00:00",
-            "resultTime":"2017-03-25T06:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T06:30:00+00:00",
+            "resultTime":"YYYY-MM-25T06:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.2
@@ -2830,10 +2830,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T10:45:00+00:00",
-            "resultTime":"2017-03-25T10:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T10:45:00+00:00",
+            "resultTime":"YYYY-MM-25T10:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.1
@@ -2842,10 +2842,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T09:30:00+00:00",
-            "resultTime":"2017-03-25T09:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T09:30:00+00:00",
+            "resultTime":"YYYY-MM-25T09:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.6
@@ -2854,10 +2854,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T11:45:00+00:00",
-            "resultTime":"2017-03-25T11:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T11:45:00+00:00",
+            "resultTime":"YYYY-MM-25T11:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.6
@@ -2866,10 +2866,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T15:00:00+00:00",
-            "resultTime":"2017-03-25T15:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T15:00:00+00:00",
+            "resultTime":"YYYY-MM-25T15:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.3
@@ -2878,10 +2878,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T20:15:00+00:00",
-            "resultTime":"2017-03-25T20:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T20:15:00+00:00",
+            "resultTime":"YYYY-MM-25T20:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.7
@@ -2890,10 +2890,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-25T20:00:00+00:00",
-            "resultTime":"2017-03-25T20:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-25T20:00:00+00:00",
+            "resultTime":"YYYY-MM-25T20:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.0
@@ -2902,10 +2902,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T00:15:00+00:00",
-            "resultTime":"2017-03-26T00:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T00:15:00+00:00",
+            "resultTime":"YYYY-MM-26T00:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.7
@@ -2914,10 +2914,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T01:00:00+00:00",
-            "resultTime":"2017-03-26T01:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T01:00:00+00:00",
+            "resultTime":"YYYY-MM-26T01:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.1
@@ -2926,10 +2926,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T05:00:00+00:00",
-            "resultTime":"2017-03-26T05:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T05:00:00+00:00",
+            "resultTime":"YYYY-MM-26T05:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":14.0
@@ -2938,10 +2938,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T07:45:00+00:00",
-            "resultTime":"2017-03-26T07:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T07:45:00+00:00",
+            "resultTime":"YYYY-MM-26T07:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":17.3
@@ -2950,10 +2950,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T09:15:00+00:00",
-            "resultTime":"2017-03-26T09:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T09:15:00+00:00",
+            "resultTime":"YYYY-MM-26T09:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":11.5
@@ -2962,10 +2962,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T11:30:00+00:00",
-            "resultTime":"2017-03-26T11:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T11:30:00+00:00",
+            "resultTime":"YYYY-MM-26T11:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":13.6
@@ -2974,10 +2974,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T16:15:00+00:00",
-            "resultTime":"2017-03-26T16:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T16:15:00+00:00",
+            "resultTime":"YYYY-MM-26T16:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":12.5
@@ -2986,10 +2986,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T18:00:00+00:00",
-            "resultTime":"2017-03-26T18:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T18:00:00+00:00",
+            "resultTime":"YYYY-MM-26T18:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":10.2
@@ -2998,10 +2998,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T22:15:00+00:00",
-            "resultTime":"2017-03-26T22:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T22:15:00+00:00",
+            "resultTime":"YYYY-MM-26T22:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":8.7
@@ -3010,10 +3010,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-26T21:00:00+00:00",
-            "resultTime":"2017-03-26T21:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-26T21:00:00+00:00",
+            "resultTime":"YYYY-MM-26T21:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":6.5
@@ -3022,10 +3022,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T02:00:00+00:00",
-            "resultTime":"2017-03-27T02:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T02:00:00+00:00",
+            "resultTime":"YYYY-MM-27T02:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -3034,10 +3034,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T03:00:00+00:00",
-            "resultTime":"2017-03-27T03:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T03:00:00+00:00",
+            "resultTime":"YYYY-MM-27T03:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":0.0
@@ -3046,10 +3046,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T07:00:00+00:00",
-            "resultTime":"2017-03-27T07:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T07:00:00+00:00",
+            "resultTime":"YYYY-MM-27T07:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.6
@@ -3058,10 +3058,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T08:00:00+00:00",
-            "resultTime":"2017-03-27T08:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T08:00:00+00:00",
+            "resultTime":"YYYY-MM-27T08:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":5.9
@@ -3070,10 +3070,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T09:30:00+00:00",
-            "resultTime":"2017-03-27T09:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T09:30:00+00:00",
+            "resultTime":"YYYY-MM-27T09:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":9.1
@@ -3082,10 +3082,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T15:30:00+00:00",
-            "resultTime":"2017-03-27T15:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T15:30:00+00:00",
+            "resultTime":"YYYY-MM-27T15:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":43.7
@@ -3094,10 +3094,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T16:15:00+00:00",
-            "resultTime":"2017-03-27T16:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T16:15:00+00:00",
+            "resultTime":"YYYY-MM-27T16:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":33.2
@@ -3106,10 +3106,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T18:15:00+00:00",
-            "resultTime":"2017-03-27T18:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T18:15:00+00:00",
+            "resultTime":"YYYY-MM-27T18:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":46.5
@@ -3118,10 +3118,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T23:00:00+00:00",
-            "resultTime":"2017-03-27T23:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T23:00:00+00:00",
+            "resultTime":"YYYY-MM-27T23:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":43.1
@@ -3130,10 +3130,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-27T22:45:00+00:00",
-            "resultTime":"2017-03-27T22:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-27T22:45:00+00:00",
+            "resultTime":"YYYY-MM-27T22:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":46.3
@@ -3142,10 +3142,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T02:15:00+00:00",
-            "resultTime":"2017-03-28T02:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T02:15:00+00:00",
+            "resultTime":"YYYY-MM-28T02:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":41.1
@@ -3154,10 +3154,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T03:15:00+00:00",
-            "resultTime":"2017-03-28T03:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T03:15:00+00:00",
+            "resultTime":"YYYY-MM-28T03:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":40.5
@@ -3166,10 +3166,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T06:45:00+00:00",
-            "resultTime":"2017-03-28T06:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T06:45:00+00:00",
+            "resultTime":"YYYY-MM-28T06:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":32.0
@@ -3178,10 +3178,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T07:00:00+00:00",
-            "resultTime":"2017-03-28T07:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T07:00:00+00:00",
+            "resultTime":"YYYY-MM-28T07:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":26.7
@@ -3190,10 +3190,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T12:30:00+00:00",
-            "resultTime":"2017-03-28T12:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T12:30:00+00:00",
+            "resultTime":"YYYY-MM-28T12:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.1
@@ -3202,10 +3202,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T13:15:00+00:00",
-            "resultTime":"2017-03-28T13:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T13:15:00+00:00",
+            "resultTime":"YYYY-MM-28T13:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":34.7
@@ -3214,10 +3214,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T16:00:00+00:00",
-            "resultTime":"2017-03-28T16:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T16:00:00+00:00",
+            "resultTime":"YYYY-MM-28T16:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":25.2
@@ -3226,10 +3226,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T20:45:00+00:00",
-            "resultTime":"2017-03-28T20:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T20:45:00+00:00",
+            "resultTime":"YYYY-MM-28T20:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":32.5
@@ -3238,10 +3238,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T21:45:00+00:00",
-            "resultTime":"2017-03-28T21:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T21:45:00+00:00",
+            "resultTime":"YYYY-MM-28T21:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.6
@@ -3250,10 +3250,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-28T23:00:00+00:00",
-            "resultTime":"2017-03-28T23:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-28T23:00:00+00:00",
+            "resultTime":"YYYY-MM-28T23:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":24.5
@@ -3262,10 +3262,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T05:30:00+00:00",
-            "resultTime":"2017-03-29T05:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T05:30:00+00:00",
+            "resultTime":"YYYY-MM-29T05:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.2
@@ -3274,10 +3274,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T00:15:00+00:00",
-            "resultTime":"2017-03-29T00:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T00:15:00+00:00",
+            "resultTime":"YYYY-MM-29T00:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.2
@@ -3286,10 +3286,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T04:15:00+00:00",
-            "resultTime":"2017-03-29T04:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T04:15:00+00:00",
+            "resultTime":"YYYY-MM-29T04:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.0
@@ -3298,10 +3298,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T09:00:00+00:00",
-            "resultTime":"2017-03-29T09:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T09:00:00+00:00",
+            "resultTime":"YYYY-MM-29T09:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":20.8
@@ -3310,10 +3310,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T15:30:00+00:00",
-            "resultTime":"2017-03-29T15:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T15:30:00+00:00",
+            "resultTime":"YYYY-MM-29T15:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":30.5
@@ -3322,10 +3322,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T10:15:00+00:00",
-            "resultTime":"2017-03-29T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T10:15:00+00:00",
+            "resultTime":"YYYY-MM-29T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.3
@@ -3334,10 +3334,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T14:15:00+00:00",
-            "resultTime":"2017-03-29T14:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T14:15:00+00:00",
+            "resultTime":"YYYY-MM-29T14:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":29.5
@@ -3346,10 +3346,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T19:00:00+00:00",
-            "resultTime":"2017-03-29T19:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T19:00:00+00:00",
+            "resultTime":"YYYY-MM-29T19:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":23.2
@@ -3358,10 +3358,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-30T01:30:00+00:00",
-            "resultTime":"2017-03-30T01:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-30T01:30:00+00:00",
+            "resultTime":"YYYY-MM-30T01:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":28.7
@@ -3370,10 +3370,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-29T20:15:00+00:00",
-            "resultTime":"2017-03-29T20:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-29T20:15:00+00:00",
+            "resultTime":"YYYY-MM-29T20:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":27.2
@@ -3382,10 +3382,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-30T00:15:00+00:00",
-            "resultTime":"2017-03-30T00:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-30T00:15:00+00:00",
+            "resultTime":"YYYY-MM-30T00:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":30.0
@@ -3394,10 +3394,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-30T05:00:00+00:00",
-            "resultTime":"2017-03-30T05:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-30T05:00:00+00:00",
+            "resultTime":"YYYY-MM-30T05:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.0
@@ -3406,10 +3406,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-30T04:45:00+00:00",
-            "resultTime":"2017-03-30T04:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-30T04:45:00+00:00",
+            "resultTime":"YYYY-MM-30T04:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":19.0
@@ -3418,10 +3418,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-31T10:15:00+00:00",
-            "resultTime":"2017-03-31T10:15:00+00:00",
+            "phenomenonTime":"YYYY-MM-31T10:15:00+00:00",
+            "resultTime":"YYYY-MM-31T10:15:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":33.2
@@ -3430,10 +3430,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-31T11:45:00+00:00",
-            "resultTime":"2017-03-31T11:45:00+00:00",
+            "phenomenonTime":"YYYY-MM-31T11:45:00+00:00",
+            "resultTime":"YYYY-MM-31T11:45:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":36.8
@@ -3442,10 +3442,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-31T16:30:00+00:00",
-            "resultTime":"2017-03-31T16:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-31T16:30:00+00:00",
+            "resultTime":"YYYY-MM-31T16:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":36.4
@@ -3454,10 +3454,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-31T23:00:00+00:00",
-            "resultTime":"2017-03-31T23:00:00+00:00",
+            "phenomenonTime":"YYYY-MM-31T23:00:00+00:00",
+            "resultTime":"YYYY-MM-31T23:00:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":27.3
@@ -3466,10 +3466,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-31T18:30:00+00:00",
-            "resultTime":"2017-03-31T18:30:00+00:00",
+            "phenomenonTime":"YYYY-MM-31T18:30:00+00:00",
+            "resultTime":"YYYY-MM-31T18:30:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":26.5
@@ -3478,10 +3478,10 @@
         {
             "type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
             "procedure":"52NorthWS1",
-            "observedProperty":"WindSpeed",
+            "observedProperty":"http://dd.eionet.europa.eu/vocabulary/aq/pollutant/61110",
             "featureOfInterest":"52NorthWS1",
-            "phenomenonTime":"2017-03-31T22:46:00+00:00",
-            "resultTime":"2017-03-31T22:46:00+00:00",
+            "phenomenonTime":"YYYY-MM-31T22:46:00+00:00",
+            "resultTime":"YYYY-MM-31T22:46:00+00:00",
             "result":{
                 "uom":"m/s",
                 "value":21.9

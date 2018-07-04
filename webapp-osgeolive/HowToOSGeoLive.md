@@ -48,15 +48,15 @@
 
          *Update the search patterns, but ensure to use a month with **31** days*:
 
-         ```$ find . -name "*.json" -exec sed -i s/2017-03/yyyy-mm/g {} \;```
+         ```$ find . -name "*.json" -exec sed -i s/YYYY-MM/thisYear-ExampleMonth/g {} \;```
 
       1. Update json requests to current location:
 
          *Update the search patterns to match the latest used location!*
 
          ```
-         $ find . -name "*.json" -exec sed -i s/51.9348,/yy.yyyy,/g {} \;
-         $ find . -name "*.json" -exec sed -i s/7.6524,/xx.xxxx,/g {} \;
+         $ find . -name "*.json" -exec sed -i s/YY.YYYY,/new.Location,/g {} \;
+         $ find . -name "*.json" -exec sed -i s/XX.XXXX/new.Location/g {} \;
          ```
 
       1. Insert all data using the ```data-request_*.json``` files with the *JSON* binding via *Client* &rarr; `SOS` &rarr; `2.0.0` &rarr; `JSON` &rarr; `InsertObservation` &rarr; `[JSON] InsertObservation (SOS 2.0.0)`.

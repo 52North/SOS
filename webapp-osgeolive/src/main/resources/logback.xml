@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+	<!-- refer to http://logback.qos.ch/manual/appenders.html -->
+
+	<property name="logFile" value="${catalina.base}/logs/52n-sos-webapp"/>
+
+	<!-- 
+		the following assumptions are made by the Adminstrator:
+		* The name of a file appender is FILE
+		* The name of a console appender is STDOUT
+		* The appender named FILE is of type ch.qos.logback.core.rolling.RollingFileAppender
+			and has a maxHistory and a timeBasedFileNamingAndTriggeringPolicy > maxFileSize
+			property
+		* All variables in the file property of the FILE appender are fully resolvable
+			by the properties defined in this file and the Java system properties.
+
+		Additional appenders can be defined freely.
+	-->
+
+	<appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="FILE">
+		<file>${logFile}.log</file>
+		
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+			<!-- keep 30 days' worth of history -->
+			<maxHistory>30</maxHistory>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger level="DEBUG" name="org.n52"/>
+	<logger level="WARN" name="org.springframework"/>
+  <logger level="ERROR" name="org.hibernate.engine.internal.StatefulPersistenceContext"/>
+
+	<root level="INFO">
+		<appender-ref ref="FILE"/>
+	</root>
+</configuration>

@@ -33,23 +33,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.ogc.BBOXType;
-import net.opengis.ogc.BinarySpatialOpType;
-import net.opengis.ogc.BinaryTemporalOpType;
-import net.opengis.ogc.PropertyNameDocument;
-import net.opengis.ogc.PropertyNameType;
-import net.opengis.ogc.SpatialOperatorType;
-import net.opengis.ogc.TemporalOperatorType;
-import net.opengis.ogc.impl.BBOXTypeImpl;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.FilterConstants;
+import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
@@ -69,6 +63,21 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
+
+import net.opengis.ogc.BBOXType;
+import net.opengis.ogc.BinaryComparisonOpType;
+import net.opengis.ogc.BinarySpatialOpType;
+import net.opengis.ogc.BinaryTemporalOpType;
+import net.opengis.ogc.ComparisonOpsType;
+import net.opengis.ogc.LiteralType;
+import net.opengis.ogc.PropertyIsBetweenType;
+import net.opengis.ogc.PropertyIsLikeType;
+import net.opengis.ogc.PropertyIsNullType;
+import net.opengis.ogc.PropertyNameDocument;
+import net.opengis.ogc.PropertyNameType;
+import net.opengis.ogc.SpatialOperatorType;
+import net.opengis.ogc.TemporalOperatorType;
+import net.opengis.ogc.impl.BBOXTypeImpl;
 
 /**
  * @since 4.0.0
@@ -122,6 +131,9 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
         }
         if (xmlObject instanceof BBOXType) {
             return parseBBOXFilterType((BBOXTypeImpl) xmlObject);
+        }
+        if (xmlObject instanceof ComparisonOpsType) {
+            return parseComparisonOpsType((ComparisonOpsType) xmlObject);
         }
         if (xmlObject instanceof BBOXTypeImpl) {
             return parseBBOXFilterType((BBOXTypeImpl) xmlObject);
@@ -288,5 +300,153 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
             throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error while parsing spatial filter!");
         }
         return spatialFilter;
+    }
+    
+    private ComparisonFilter parseComparisonOpsType(ComparisonOpsType comparisonOpsType) throws OwsExceptionReport {
+        if (comparisonOpsType instanceof BinaryComparisonOpType) {
+            return parseBinaryComparisonFilter((BinaryComparisonOpType) comparisonOpsType);
+        } else if (comparisonOpsType instanceof PropertyIsLikeType) {
+            return parsePropertyIsLikeFilter((PropertyIsLikeType) comparisonOpsType);
+        } else if (comparisonOpsType instanceof PropertyIsNullType) {
+            return parsePropertyIsNullFilter((PropertyIsNullType) comparisonOpsType);
+        } else if (comparisonOpsType instanceof PropertyIsBetweenType) {
+            return parsePropertyIsBetweenFilter((PropertyIsBetweenType) comparisonOpsType);
+        } else {
+            throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+        }
+    }
+
+    private ComparisonFilter parseBinaryComparisonFilter(BinaryComparisonOpType comparisonOpsType) throws OwsExceptionReport {
+        ComparisonFilter comparisonFilter = new ComparisonFilter();
+        String localName = XmlHelper.getLocalName(comparisonOpsType);
+        if (ComparisonOperator.PropertyIsEqualTo.name().equals(localName)) {
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsEqualTo);
+        } else if (ComparisonOperator.PropertyIsNotEqualTo.name().equals(localName)) {
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsNotEqualTo);
+        } else if (ComparisonOperator.PropertyIsLessThan.name().equals(localName)) {
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsLessThan);
+        } else if (ComparisonOperator.PropertyIsGreaterThan.name().equals(localName)) {
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsGreaterThan);
+        } else if (ComparisonOperator.PropertyIsLessThanOrEqualTo.name().equals(localName)) {
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsLessThanOrEqualTo);
+        } else if (ComparisonOperator.PropertyIsGreaterThanOrEqualTo.name().equals(localName)) {
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsGreaterThanOrEqualTo);
+        } else {
+            throw new UnsupportedDecoderInputException(this, comparisonOpsType);
+        }
+        if (comparisonOpsType.isSetMatchCase()) {
+            comparisonFilter.setMatchCase(comparisonOpsType.getMatchCase());
+        }
+        parseExpressions(comparisonOpsType.getExpressionArray(), comparisonFilter);
+        return comparisonFilter;
+    }
+
+    private ComparisonFilter parsePropertyIsLikeFilter(PropertyIsLikeType comparisonOpsType) throws OwsExceptionReport {
+        try {
+            ComparisonFilter comparisonFilter = new ComparisonFilter();
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsLike);
+            comparisonFilter.setEscapeString(comparisonOpsType.getEscapeChar());
+            comparisonFilter.setSingleChar(comparisonOpsType.getSingleChar());
+            comparisonFilter.setWildCard(comparisonOpsType.getWildCard());
+            comparisonFilter.setValueReference(parsePropertyName(comparisonOpsType.getPropertyName()));
+            parseExpressions(comparisonOpsType.getLiteral(), comparisonFilter);
+            return comparisonFilter;
+        } catch (XmlException xmle) {
+            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
+                    "Error while parsing propertyName element!");
+        }
+    }
+
+    private ComparisonFilter parsePropertyIsNullFilter(PropertyIsNullType comparisonOpsType)
+            throws CodedException {
+        try {
+            ComparisonFilter comparisonFilter = new ComparisonFilter();
+            comparisonFilter.setOperator(ComparisonOperator.PropertyIsNull);
+            comparisonFilter.setValueReference(parsePropertyName(comparisonOpsType.getPropertyName()));
+            return comparisonFilter;
+        } catch (XmlException xmle) {
+            throw new NoApplicableCodeException().causedBy(xmle)
+                    .withMessage("Error while parsing propertyName element!");
+        }
+    }
+
+    private ComparisonFilter parsePropertyIsBetweenFilter(PropertyIsBetweenType comparisonOpsType) throws OwsExceptionReport {
+        ComparisonFilter comparisonFilter = new ComparisonFilter();
+        comparisonFilter.setOperator(ComparisonOperator.PropertyIsBetween);
+        try {
+            comparisonFilter.setValueReference(parsePropertyName(comparisonOpsType.getExpression()));
+            comparisonFilter.setValue(parseStringFromExpression(comparisonOpsType.getLowerBoundary()));
+            comparisonFilter.setValueUpper(parseStringFromExpression(comparisonOpsType.getUpperBoundary()));
+        } catch (XmlException xmle) {
+            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
+                    "Error while parsing between filter element!");
+        }
+         return comparisonFilter;
+    }
+    
+    /**
+     * Parse XML expression array
+     * 
+     * @param expressionArray
+     *            XML expression array
+     * @param comparisonFilter
+     *            SOS comparison filter
+     * @throws OwsExceptionReport
+     *             if an error occurs
+     */
+    private void parseExpressions(XmlObject[] expressionArray, ComparisonFilter comparisonFilter)
+            throws OwsExceptionReport {
+        for (XmlObject xmlObject : expressionArray) {
+            parseExpressions(xmlObject, comparisonFilter);
+        }
+    }
+    
+    private void parseExpressions(XmlObject xmlObject, ComparisonFilter comparisonFilter)
+            throws OwsExceptionReport {
+        if (isPropertyNameExpression(xmlObject)) {
+            try {
+                comparisonFilter.setValueReference(parsePropertyName(xmlObject));
+            } catch (XmlException xmle) {
+                throw new NoApplicableCodeException().causedBy(xmle).withMessage(
+                        "Error while parsing propertyName element!");
+            }
+        } else if (xmlObject instanceof LiteralType) {
+            // TODO is this the best way?
+            comparisonFilter.setValue(parseLiteralValue((LiteralType) xmlObject));
+        }
+    }
+    
+    
+    private String parseLiteralValue(LiteralType literalType) {
+        return literalType.getDomNode().getFirstChild().getNodeValue();
+    }
+
+    /**
+     * Check if the XmlObject is a propertyName element
+     * 
+     * @param xmlObject
+     *            Element to check
+     * @return <code>true</code>, if XmlObject is a propertyName element
+     */
+    private boolean isPropertyNameExpression(XmlObject xmlObject) {
+        return FilterConstants.EN_PROPERTY_NAME.equals(XmlHelper.getLocalName(xmlObject));
+    }
+    
+    /**
+     * Parse XML propertyName element
+     * 
+     * @param xmlObject
+     *            XML propertyName
+     * @return ValueReference string
+     * @throws XmlException
+     *             If an error occurs
+     */
+    private String parsePropertyName(XmlObject xmlObject) throws XmlException {
+        PropertyNameDocument propertyName = PropertyNameDocument.Factory.parse(xmlObject.getDomNode());
+        return parseStringFromExpression(propertyName.getPropertyName());
+    }
+    
+    private String parseStringFromExpression(XmlObject xmlObject) throws XmlException {
+        return xmlObject.getDomNode().getFirstChild().getNodeValue().trim();
     }
 }

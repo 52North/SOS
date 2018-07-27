@@ -56,6 +56,8 @@ public interface FilterConstants {
     String EN_TEQUALS = "TEquals";
     
     String EN_VALUE_REFERENCE = "ValueReference";
+    
+    String EN_PROPERTY_NAME = "PropertyName";
 
     String EN_LITERAL = "Literal";
     

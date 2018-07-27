@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetObservation version="1.0.0" service="SOS" xmlns:sos="http://www.opengis.net/sos/1.0">
+  <sos:offering>Public</sos:offering>
+  <sos:eventTime>
+    <ogc:TM_During xsi:type="ogc:BinaryTemporalOpType" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <ogc:PropertyName>om:samplingTime</ogc:PropertyName>
+      <gml:TimePeriod xsi:type="gml:TimePeriodType" xmlns:gml="http://www.opengis.net/gml">
+        <gml:beginPosition>2018-06-26T09:44:48</gml:beginPosition>
+        <gml:endPosition>2018-06-27T09:44:48</gml:endPosition>
+      </gml:TimePeriod>
+    </ogc:TM_During>
+  </sos:eventTime>
+  <sos:procedure>RU_K_001</sos:procedure>
+  <sos:observedProperty>AirTemperature_2m_Avg10min</sos:observedProperty>
+  <sos:result>
+    <ogc:PropertyIsLessThan matchCase="false" xmlns:ogc="http://www.opengis.net/ogc">
+      <ogc:PropertyName>IsLessThan</ogc:PropertyName>
+      <ogc:Literal>7.52</ogc:Literal>
+    </ogc:PropertyIsLessThan>
+  </sos:result>
+  <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
+  <sos:resultModel xmlns:ns="http://www.opengis.net/om/1.0">ns:Observation</sos:resultModel>
+  <sos:responseMode>inline</sos:responseMode>
+</sos:GetObservation>
+ 

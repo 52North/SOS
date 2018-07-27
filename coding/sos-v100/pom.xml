@@ -40,5 +40,10 @@
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sos-v100</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

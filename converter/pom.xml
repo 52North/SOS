@@ -15,5 +15,6 @@
         <module>identifier-modifier</module>
         <module>split-and-merge</module>
         <module>seriestype</module>
+        <module>eprtr</module>
     </modules>
 </project>

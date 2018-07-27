@@ -168,6 +168,8 @@ public class ServiceConfiguration {
 
     private boolean checkForDuplicatedObservations = true;
 
+    private boolean mergeForEprtr = false;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -529,6 +531,15 @@ public class ServiceConfiguration {
 
     public boolean isConvertComplexProfileToSingleProfiles() {
         return this.convertComplexProfileToSingleProfiles;
+    }
+    
+    @Setting(MiscSettings.MERGE_FOR_EPRTR)
+    public void setMergeForEprtr(boolean mergeForEprtr) {
+        this.mergeForEprtr  = mergeForEprtr;
+    }
+
+    public boolean isMergeForEprtr() {
+        return this.mergeForEprtr;
     }
     
     @Setting(ServiceSettings.REQUEST_TIMEOUT)

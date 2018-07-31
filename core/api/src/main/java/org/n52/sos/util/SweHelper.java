@@ -309,7 +309,7 @@ public final class SweHelper {
      *            Decimal separator
      * @return TextEncoding
      */
-    private SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
+    public SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
         SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(tupleSeparator);
         sosTextEncoding.setTokenSeparator(tokenSeparator);

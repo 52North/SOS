@@ -56,6 +56,9 @@ public class InsertResultResponseEncoder extends AbstractSosResponseEncoder<Inse
     protected XmlObject create(InsertResultResponse response) throws OwsExceptionReport {
         final InsertResultResponseDocument doc = InsertResultResponseDocument.Factory.newInstance(getXmlOptions());
         doc.addNewInsertResultResponse();
+        if (response.isSetExtensions()) {
+            createExtension(doc.getInsertResultResponse(), response.getExtensions());
+        }
         return doc;
     }
 

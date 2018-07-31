@@ -43,6 +43,7 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
@@ -50,6 +51,9 @@ import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
@@ -79,6 +83,9 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
             GetObservationResponse response) throws OwsExceptionReport {
         GetObservationResponseDocument doc = GetObservationResponseDocument.Factory.newInstance(getXmlOptions());
         GetObservationResponseType xbResponse = doc.addNewGetObservationResponse();
+        if (response.isSetExtensions()) {
+            createExtension(xbResponse, response.getExtensions());
+        }
         if (!response.isSetMergeObservation()) {
             response.setMergeObservations(encoder.shouldObservationsWithSameXBeMerged());
         }

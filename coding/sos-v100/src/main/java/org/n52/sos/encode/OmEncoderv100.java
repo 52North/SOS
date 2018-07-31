@@ -49,6 +49,7 @@ import org.joda.time.DateTime;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -72,8 +73,12 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
@@ -229,11 +234,11 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         } else if (element instanceof GetObservationResponse) {
             GetObservationResponse response = (GetObservationResponse) element;
             encodedObject =
-                    createObservationCollection(response.getObservationCollection(), response.getResultModel());
+                    createObservationCollection(response, response.getResultModel());
         } else if (element instanceof GetObservationByIdResponse) {
             GetObservationByIdResponse response = (GetObservationByIdResponse) element;
             encodedObject =
-                    createObservationCollection(response.getObservationCollection(), response.getResultModel());
+                    createObservationCollection(response, response.getResultModel());
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -277,12 +282,16 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         return OmConstants.OBS_TYPE_OBSERVATION;
     }
 
-    private XmlObject createObservationCollection(List<OmObservation> sosObservationCollection, String resultModel)
+    private XmlObject createObservationCollection(AbstractObservationResponse response, String resultModel)
             throws OwsExceptionReport {
         ObservationCollectionDocument xbObservationCollectionDoc =
                 ObservationCollectionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         ObservationCollectionType xbObservationCollection = xbObservationCollectionDoc.addNewObservationCollection();
         xbObservationCollection.setId(SosConstants.OBS_COL_ID_PREFIX + new DateTime().getMillis());
+        if (response.isSetExtensions()) {
+            createMetadataProperty(xbObservationCollection, response.getExtensions());
+        }
+        List<OmObservation> sosObservationCollection = response.getObservationCollection();
         if (CollectionHelper.isNotEmpty(sosObservationCollection)) {
             SosEnvelope sosEnvelope = getEnvelope(sosObservationCollection);
             Encoder<XmlObject, SosEnvelope> envEncoder = CodingHelper.getEncoder(GmlConstants.NS_GML, sosEnvelope);
@@ -587,5 +596,15 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
         XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, feature, additionalValues);
         observation.addNewFeatureOfInterest().set(encodeObjectToXml);
+    }
+
+    private void createMetadataProperty(ObservationCollectionType xbObservationCollection, SwesExtensions extensions)
+            throws OwsExceptionReport {
+        for (SwesExtension<?> extension : extensions.getExtensions()) {
+            if (extension.getValue() instanceof SweAbstractDataComponent) {
+                xbObservationCollection.addNewMetaDataProperty()
+                        .set(encodeGML311(new GenericMetaData(extension.getValue())));
+            }
+        }
     }
 }

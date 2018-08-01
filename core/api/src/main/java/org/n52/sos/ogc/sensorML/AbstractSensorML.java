@@ -81,16 +81,14 @@ public class AbstractSensorML extends SosProcedureDescription {
     }
 
     public AbstractSensorML setKeywords(final List<String> keywords) {
-        this.keywords = keywords;
-        return this;
+        if (isSetKeywords()) {
+            this.keywords.clear();
+        }
+        return addKeywords(keywords);
     }
 
     public AbstractSensorML addKeywords(final List<String> keywords) {
-        if (isSetKeywords()) {
-            this.keywords.addAll(keywords);
-        } else {
-            this.keywords = keywords;
-        }
+        this.keywords.addAll(keywords);
         return this;
     }
 

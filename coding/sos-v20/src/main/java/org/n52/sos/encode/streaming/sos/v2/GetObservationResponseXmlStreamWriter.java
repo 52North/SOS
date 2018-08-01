@@ -51,6 +51,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -66,7 +67,7 @@ import com.google.common.collect.Sets;
  * @since 4.1.0
  *
  */
-public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetObservationResponse> implements StreamingDataEncoder {
+public class GetObservationResponseXmlStreamWriter extends AbstractSwesXmlStreamWriter<GetObservationResponse> implements StreamingDataEncoder {
 
     private GetObservationResponse response;
 
@@ -139,6 +140,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         start(Sos2StreamingConstants.GET_OBSERVATION_RESPONSE);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
+        namespace(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
         // get observation encoder
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(response.getResponseFormat());
         encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
@@ -146,6 +148,10 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         // write schemaLocation
         schemaLocation(getSchemaLocation(encodingValues, encoder, response));
         writeNewLine();
+        if (response.isSetExtensions()) {
+            writeExtensions(response.getExtensions());
+            writeNewLine();
+        }
         // Map<HelperValues, String> additionalValues = Maps.newHashMap();
         // additionalValues.put(HelperValues.DOCUMENT, null);
         // EncodingValues encodingValues = new
@@ -250,7 +256,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         end(Sos2StreamingConstants.OBSERVATION_DATA);
         indent++;
     }
-
+    
     /**
      * Finds a O&Mv2 compatible {@link ObservationEncoder}
      *

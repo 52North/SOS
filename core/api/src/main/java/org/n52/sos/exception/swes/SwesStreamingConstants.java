@@ -26,44 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.sos.v2;
+package org.n52.sos.exception.swes;
 
-import java.util.Set;
+import javax.xml.namespace.QName;
 
-import net.opengis.sos.x20.InsertResultResponseDocument;
+import org.n52.sos.ogc.swes.SwesConstants;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.response.InsertResultResponse;
-import org.n52.sos.w3c.SchemaLocation;
+public interface SwesStreamingConstants extends SwesConstants {
 
-import com.google.common.collect.Sets;
+    public static final String EN_EXTENSION = "extension";
 
-/**
- * TODO JavaDoc
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 4.0.0
- */
-public class InsertResultResponseEncoder extends AbstractSosResponseEncoder<InsertResultResponse> {
-    public InsertResultResponseEncoder() {
-        super(Sos2Constants.Operations.InsertResult.name(), InsertResultResponse.class);
-    }
-
-    @Override
-    protected XmlObject create(InsertResultResponse response) throws OwsExceptionReport {
-        final InsertResultResponseDocument doc = InsertResultResponseDocument.Factory.newInstance(getXmlOptions());
-        doc.addNewInsertResultResponse();
-        if (response.isSetExtensions()) {
-            createExtension(doc.getInsertResultResponse(), response.getExtensions());
-        }
-        return doc;
-    }
-
-    @Override
-    public Set<SchemaLocation> getConcreteSchemaLocations() {
-        return Sets.newHashSet(Sos2Constants.SOS_INSERT_RESULT_SCHEMA_LOCATION);
-    }
+    public static final QName QN_EXTENSION = new QName(NS_SWES_20, EN_EXTENSION, NS_SWES_PREFIX);
 }

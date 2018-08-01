@@ -45,6 +45,16 @@ public class SweField extends SweAbstractDataComponent {
      */
     private SweAbstractDataComponent element;
 
+    public SweField(final String name) {
+        super();
+        setName(name);
+    }
+
+    public SweField(final CodeType name) {
+        super();
+        setName(name);
+    }
+    
     /**
      * constructor
      *

@@ -59,6 +59,9 @@ public class InsertResultTemplateResponseEncoder extends AbstractSosResponseEnco
                 InsertResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
         InsertResultTemplateResponseType irtr = doc.addNewInsertResultTemplateResponse();
         irtr.setAcceptedTemplate(response.getAcceptedTemplate());
+        if (response.isSetExtensions()) {
+            createExtension(irtr, response.getExtensions());
+        }
         return doc;
     }
 

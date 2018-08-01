@@ -214,8 +214,9 @@ public class EprtrConverter
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodUsed"));
         values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
         values.add(getParameter(sosObservation.getParameterHolder(), "AccidentalQuantity"));
-        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialIndicator"));
-        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialCode"));
+        String confidentialCode = getParameter(sosObservation.getParameterHolder(), "ConfidentialCode");
+        values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
+        values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
         return values;
     }
@@ -246,8 +247,9 @@ public class EprtrConverter
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodBasisCode"));
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodUsed"));
         values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
-        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialIndicator"));
-        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialCode"));
+        String confidentialCode = getParameter(sosObservation.getParameterHolder(), "ConfidentialCode");
+        values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
+        values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
         return values;
     }
@@ -277,13 +279,23 @@ public class EprtrConverter
         values.add(JavaHelper.asString(sosObservation.getValue().getValue().getValue()));
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodBasisCode"));
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodUsed"));
-        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialIndicator"));
-        values.add(getParameter(sosObservation.getParameterHolder(), "ConfidentialCode"));
+        String confidentialCode = getParameter(sosObservation.getParameterHolder(), "ConfidentialCode");
+        values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
+        values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
         values.add(getParameter(sosObservation.getParameterHolder(), "WasteHandlerParty"));
         return values;
     }
     
+    private String getConfidentialIndicator(String confidentialCode, ParameterHolder parameterHolder) {
+        String confidentialIndicator = getParameter(parameterHolder, "ConfidentialIndicator");
+        return confidentialIndicator != null && !confidentialIndicator.isEmpty() 
+                ? confidentialIndicator
+                : confidentialCode != null && !confidentialCode.isEmpty()
+                        ? "true" 
+                        : "false";
+    }
+
     private SweDataArray getWasteTransferArray(String unit) {
         SweDataRecord record = new SweDataRecord();
         record.addName("pollutants");

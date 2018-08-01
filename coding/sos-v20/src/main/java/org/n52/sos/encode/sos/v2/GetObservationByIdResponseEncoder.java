@@ -77,6 +77,9 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         GetObservationByIdResponseDocument doc =
                 GetObservationByIdResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         GetObservationByIdResponseType xbResponse = doc.addNewGetObservationByIdResponse();
+        if (response.isSetExtensions()) {
+            createExtension(xbResponse, response.getExtensions());
+        }
         List<OmObservation> oc = getObservationsAndCheckForStreaming(response, encoder);
         HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<CodeWithAuthority, String>(oc.size());
         for (OmObservation observation : oc) {

@@ -70,6 +70,9 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
     protected XmlObject create(GetResultTemplateResponse response) throws OwsExceptionReport {
         GetResultTemplateResponseDocument doc = GetResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
         GetResultTemplateResponseType xbResponse = doc.addNewGetResultTemplateResponse();
+        if (response.isSetExtensions()) {
+            createExtension(xbResponse, response.getExtensions());
+        }
         xbResponse.setResultEncoding(createResultEncoding(response.getResultEncoding()));
         xbResponse.setResultStructure(createResultStructure(response.getResultStructure()));
         return doc;

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.sos.v2;
+package org.n52.sos.encode.streaming.sos.v2;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
@@ -34,8 +34,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -45,6 +47,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.SettingsManager;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmConstants;
@@ -59,28 +62,17 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.DefaultProfileHandler;
-import org.n52.sos.util.SweHelper;
 
 import com.google.common.collect.Lists;
 
 import net.opengis.sos.x20.GetObservationResponseDocument;
-import net.opengis.swe.x20.DataArrayPropertyType;
-import net.opengis.swe.x20.DataArrayType;
-import net.opengis.swe.x20.DataRecordType;
 
-public class GetObservationResponseEncoderTest {
-
-    private GetObservationResponseEncoder encoder = new GetObservationResponseEncoder();
+public class GetObservationResponseXmlStreamWriterTest extends AbstractMetadataTest {
+    private GetObservationResponseXmlStreamWriter encoder = new  GetObservationResponseXmlStreamWriter();
     
     @BeforeClass
     public final static void init() {
@@ -96,20 +88,15 @@ public class GetObservationResponseEncoderTest {
     }
     
     @Test
-    public void testMetadataEncoding() throws OwsExceptionReport, XmlException {
-        XmlObject encode = encoder.encode(createResponse());
-        assertThat(encode, instanceOf(GetObservationResponseDocument.class));
-        GetObservationResponseDocument gord = (GetObservationResponseDocument) encode;
-        assertThat(gord.getGetObservationResponse() != null, is(true));
-        assertThat(gord.getGetObservationResponse().getExtensionArray() != null, is(true));
-        assertThat(gord.getGetObservationResponse().getExtensionArray().length, is(1));
-        XmlObject parse = XmlObject.Factory.parse(gord.getGetObservationResponse().getExtensionArray(0).xmlText());
-        assertThat(parse, instanceOf(DataArrayPropertyType.class));
-        DataArrayPropertyType dad = (DataArrayPropertyType) parse;
-        assertThat(dad.getDataArray1(), instanceOf(DataArrayType.class));
-        DataArrayType dat = (DataArrayType) dad.getDataArray1();
-        assertThat(dat.getElementType().isSetAbstractDataComponent(), is (true));
-        assertThat(dat.getElementType().getAbstractDataComponent(), instanceOf(DataRecordType.class));
+    public void testMetadataEncoding() throws XmlException, XMLStreamException, IOException, OwsExceptionReport {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            encoder.write(createResponse(), baos, new EncodingValues());
+            XmlObject encode = XmlObject.Factory.parse(new String(baos.toByteArray()));
+            assertThat(encode, instanceOf(GetObservationResponseDocument.class));
+            GetObservationResponseDocument gord = (GetObservationResponseDocument) encode;
+            assertThat(gord.getGetObservationResponse() != null, is(true));
+            checkMetadataResponse(gord.getGetObservationResponse().getExtensionArray());
+        }
     }
     
     private GetObservationResponse createResponse() {
@@ -140,34 +127,5 @@ public class GetObservationResponseEncoderTest {
         swesExtensions.addSwesExtension(createExtension());
         response.setExtensions(swesExtensions);
         return response;
-    }
-    
-    private SwesExtension<SweDataArray> createExtension() {
-        SweDataArray sweDataArray = new SweDataArray();
-        sweDataArray.setElementCount(new SweCount().setValue(2));
-        sweDataArray.setEncoding(new SweHelper().createTextEncoding(";", ",", "."));
-
-        SweSimpleDataRecord dataRecord = new SweSimpleDataRecord();
-        dataRecord.setDefinition("Components");
-        dataRecord.addField(new SweField("test_id"));
-        dataRecord.addField(new SweField("test_code"));
-        dataRecord.addField(new SweField("test_desc"));
-        sweDataArray.setElementType(dataRecord);
-
-        LinkedList<List<String>> values = new LinkedList<List<String>>();
-        List<String> blockOfTokens_1 = new LinkedList<>();
-        blockOfTokens_1.add("1");
-        blockOfTokens_1.add("code_1");
-        blockOfTokens_1.add("desc_1");
-        values.add(blockOfTokens_1);
-        List<String> blockOfTokens_2 = new LinkedList<>();
-        blockOfTokens_2.add("2");
-        blockOfTokens_2.add("code_2");
-        blockOfTokens_2.add("desc_2");
-        values.add(blockOfTokens_2);
-
-        sweDataArray.setValues(values);
-        return new SwesExtensionImpl<SweDataArray>().setValue(sweDataArray).setIdentifier("test")
-                .setDefinition("test");
     }
 }

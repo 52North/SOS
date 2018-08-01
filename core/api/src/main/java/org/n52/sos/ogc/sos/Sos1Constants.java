@@ -84,7 +84,7 @@ public interface Sos1Constants extends SosConstants {
      * supported by all versions
      */
     enum GetObservationParams {
-        eventTime, resultModel;
+        eventTime, resultModel, result;
     }
 
     /**

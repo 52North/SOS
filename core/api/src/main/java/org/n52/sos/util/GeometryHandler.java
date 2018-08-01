@@ -604,7 +604,8 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     private Geometry transform(final Geometry geometry, final int targetSRID,
             final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
-        if (sourceCRS.equals(targetCRS)) {
+        if (sourceCRS.equals(targetCRS)
+                || sourceCRS.getCoordinateSystem().getDimension() != targetCRS.getCoordinateSystem().getDimension()) {
             return geometry;
         }
         Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(geometry, targetSRID);
@@ -614,13 +615,16 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
             transformed.setSRID(targetSRID);
             return transformed;
         } catch (FactoryException fe) {
-            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
+            throw new NoApplicableCodeException().causedBy(fe).withMessage(
+                    "Error when transforming geometry from EPSG code '%s' to EPSG code '%s'!",
+                    switchedCoordiantes.getSRID(), targetSRID);
         } catch (MismatchedDimensionException mde) {
-            throw new NoApplicableCodeException().causedBy(mde).withMessage("The EPSG code '%s' is not supported!",
+            throw new NoApplicableCodeException().causedBy(mde).withMessage(
+                    "Error when transforming geometry from EPSG code '%s' to EPSG code '%s'!",
                     switchedCoordiantes.getSRID());
         } catch (TransformException te) {
-            throw new NoApplicableCodeException().causedBy(te).withMessage("The EPSG code '%s' is not supported!",
+            throw new NoApplicableCodeException().causedBy(te).withMessage(
+                    "Error when transforming geometry from EPSG code '%s' to EPSG code '%s'!",
                     switchedCoordiantes.getSRID());
         }
     }

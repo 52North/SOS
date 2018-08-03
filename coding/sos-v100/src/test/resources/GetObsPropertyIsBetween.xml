@@ -15,8 +15,12 @@
   <sos:result>
     <ogc:PropertyIsBetween xmlns:ogc="http://www.opengis.net/ogc">
       <ogc:PropertyName>IsBetween</ogc:PropertyName>
-      <ogc:LowerBoundary>1</ogc:LowerBoundary>
-      <ogc:UpperBoundary>10</ogc:UpperBoundary>
+      <ogc:LowerBoundary>
+        <ogc:Literal>1</ogc:Literal>
+      </ogc:LowerBoundary>
+      <ogc:UpperBoundary>
+        <ogc:Literal>10</ogc:Literal>
+      </ogc:UpperBoundary>
     </ogc:PropertyIsBetween>
   </sos:result>
   <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>

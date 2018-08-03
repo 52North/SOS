@@ -375,8 +375,8 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsBetween);
         try {
             comparisonFilter.setValueReference(parsePropertyName(comparisonOpsType.getExpression()));
-            comparisonFilter.setValue(parseStringFromExpression(comparisonOpsType.getLowerBoundary()));
-            comparisonFilter.setValueUpper(parseStringFromExpression(comparisonOpsType.getUpperBoundary()));
+            comparisonFilter.setValue(parseStringFromExpression(comparisonOpsType.getLowerBoundary().getExpression()));
+            comparisonFilter.setValueUpper(parseStringFromExpression(comparisonOpsType.getUpperBoundary().getExpression()));
         } catch (XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle).withMessage(
                     "Error while parsing between filter element!");
@@ -418,7 +418,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
     
     
     private String parseLiteralValue(LiteralType literalType) {
-        return literalType.getDomNode().getFirstChild().getNodeValue();
+        return parseStringFromExpression(literalType);
     }
 
     /**
@@ -446,7 +446,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
         return parseStringFromExpression(propertyName.getPropertyName());
     }
     
-    private String parseStringFromExpression(XmlObject xmlObject) throws XmlException {
+    private String parseStringFromExpression(XmlObject xmlObject) {
         return xmlObject.getDomNode().getFirstChild().getNodeValue().trim();
     }
 }

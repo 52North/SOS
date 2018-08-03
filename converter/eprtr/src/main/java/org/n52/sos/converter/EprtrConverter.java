@@ -31,12 +31,13 @@ package org.n52.sos.converter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -48,11 +49,12 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.ParameterHolder;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.swe.DataRecord;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
@@ -63,8 +65,10 @@ import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
@@ -72,7 +76,6 @@ import org.n52.sos.util.JavaHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.neovisionaries.i18n.CountryCode;
 
 public class EprtrConverter
         extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
@@ -83,9 +86,9 @@ public class EprtrConverter
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
         keys.add(new RequestResponseModifierKeyType(Sos2Constants.SOS, Sos2Constants.SERVICEVERSION,
-                new GetObservationRequest()));
-        keys.add(new RequestResponseModifierKeyType(Sos2Constants.SOS, Sos2Constants.SERVICEVERSION,
                 new GetObservationRequest(), new GetObservationResponse()));
+        keys.add(new RequestResponseModifierKeyType(Sos2Constants.SOS, Sos2Constants.SERVICEVERSION,
+                new GetFeatureOfInterestRequest(), new GetFeatureOfInterestResponse()));
         return keys;
     }
 
@@ -102,17 +105,94 @@ public class EprtrConverter
     @Override
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
+        if (response instanceof GetObservationResponse) {
+            if (mergeForEprtr()) {
+                return mergeObservations((GetObservationResponse) response);
+            } else {
+                return checkGetObservationFeatures((GetObservationResponse) response);
+            }
+        }
         if (response instanceof GetObservationResponse && mergeForEprtr()) {
-            return mergeObservations((GetObservationResponse) response);
+            return checkFeatures((GetFeatureOfInterestResponse) response);
         }
         return response;
     }
 
     private AbstractServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         response.setObservationCollection(mergeObservations(mergeStreamingData(response.getObservationCollection())));
+        checkObservationFeatures(response.getObservationCollection());
         return response;
     }
     
+    private AbstractServiceResponse checkGetObservationFeatures(GetObservationResponse response) {
+        checkObservationFeatures(response.getObservationCollection());
+        return response;
+    }
+
+    private void checkObservationFeatures(List<OmObservation> observationCollection) {
+        for (OmObservation omObservation : observationCollection) {
+            checkFeature(omObservation.getObservationConstellation().getFeatureOfInterest());
+        }
+    }
+
+    private AbstractServiceResponse checkFeatures(GetFeatureOfInterestResponse response) {
+        AbstractFeature abstractFeature = response.getAbstractFeature();
+        if (abstractFeature instanceof FeatureCollection) {
+            for (AbstractFeature feature : ((FeatureCollection) abstractFeature).getMembers().values()) {
+                checkFeature(feature);
+            }
+        } else {
+            checkFeature(abstractFeature);
+        }
+        return response;
+    }
+
+    private void checkFeature(AbstractFeature abstractFeature) {
+        if (abstractFeature instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature asf = (AbstractSamplingFeature) abstractFeature;
+            if (asf.isSetParameter() && isPrtr(asf.getParameters())
+                    && !containsConfidentialIndicator(asf.getParameters())) {
+                NamedValue<Boolean> confidentialIndicator = new NamedValue<>();
+                confidentialIndicator.setName(new ReferenceType("ConfidentialIndicator"));
+                if (containsConfidentialCode(asf.getParameters())) {
+                    confidentialIndicator.setValue(new BooleanValue(true));
+                } else {
+                    confidentialIndicator.setValue(new BooleanValue(false));
+                }
+                asf.addParameter(confidentialIndicator);
+            }
+        }
+    }
+
+    private boolean isPrtr(List<NamedValue<?>> parameters) {
+        for (NamedValue<?> namedValue : parameters) {
+            if (namedValue.getName().getHref().equalsIgnoreCase("MethodBasisCode") ||
+                namedValue.getName().getHref().equalsIgnoreCase("AccidentalQuantity") ||
+                namedValue.getName().getHref().equalsIgnoreCase("MediumCode")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsConfidentialCode(List<NamedValue<?>> parameters) {
+        for (NamedValue<?> namedValue : parameters) {
+            if (namedValue.getName().getHref().equalsIgnoreCase("ConfidentialCode")) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean containsConfidentialIndicator(List<NamedValue<?>> parameters) {
+        for (NamedValue<?> namedValue : parameters) {
+            if (namedValue.getName().getHref().equalsIgnoreCase("ConfidentialIndicator")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private List<OmObservation> mergeStreamingData(List<OmObservation> obs) throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(obs)) {
             List<OmObservation> observations = Lists.newArrayList();

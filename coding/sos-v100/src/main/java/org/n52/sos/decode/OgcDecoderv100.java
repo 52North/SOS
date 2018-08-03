@@ -89,7 +89,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(OGCConstants.NS_OGC,
             SpatialOperatorType.class, TemporalOperatorType.class, BinarySpatialOpType.class,
-            BinaryTemporalOpType.class, BBOXType.class, PropertyNameDocument.class);
+            BinaryTemporalOpType.class, BBOXType.class, PropertyNameDocument.class, ComparisonOpsType.class);
 
     public OgcDecoderv100() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")

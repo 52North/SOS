@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.convert.AbstractRequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
@@ -71,9 +72,11 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -351,7 +354,7 @@ public class EprtrConverter
         return array;
     }
     
-    private List<String> createWasteTransferBlock(OmObservation sosObservation) {
+    private List<String> createWasteTransferBlock(OmObservation sosObservation) throws OwsExceptionReport {
         List<String> values = new LinkedList<>();
         values.add(getYear(sosObservation.getPhenomenonTime()));
         values.add(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
@@ -363,7 +366,7 @@ public class EprtrConverter
         values.add(getConfidentialIndicator(confidentialCode, sosObservation.getParameterHolder()));
         values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
-        values.add(getParameter(sosObservation.getParameterHolder(), "WasteHandlerParty"));
+        values.add(getWasteHandlerPartyParameter(sosObservation.getParameterHolder(), "WasteHandlerParty"));
         return values;
     }
     
@@ -432,15 +435,48 @@ public class EprtrConverter
     }
 
     private String getParameter(ParameterHolder holder, String name) {
+        Object parameterObject = getParameterObject(holder, name);
+        return parameterObject != null ? parameterObject.toString() : "";
+    }
+    
+    private Object getParameterObject(ParameterHolder holder, String name) {
         for (NamedValue<?> namedValue : holder.getParameter()) {
             if (name.equals(namedValue.getName().getHref())) {
                 holder.removeParameter(namedValue);
                 if(namedValue.getValue().isSetValue()) {
-                    return namedValue.getValue().getValue().toString();
+                    return namedValue.getValue().getValue();
                 }
             }
         }
-        return "";
+        return null;
+    }
+
+    private String getWasteHandlerPartyParameter(ParameterHolder parameterHolder, String name) throws OwsExceptionReport {
+        Object parameterObject = getParameterObject(parameterHolder, name);
+        if (parameterObject != null && parameterObject instanceof XmlObject) {
+            Object xml = CodingHelper.decodeXmlObject((XmlObject) parameterObject);
+            if (xml instanceof SweDataRecord) {
+                List<String> values = getValuesFromRecord((SweDataRecord) xml);
+                if (!values.isEmpty()) {
+                    return Joiner.on(",").join(values);
+                }
+            }
+        }
+        return ",,,,,,,,,,";
+    }
+    
+    private List<String> getValuesFromRecord( SweDataRecord record) {
+        List<String> values = new LinkedList<>();
+        if (record.isSetFields()) {
+            for (SweField field : record.getFields()) {
+                if (field.getElement() instanceof SweText) {
+                    values.add(((SweText) field.getElement()).getValue());
+                } else if (field.getElement() instanceof SweDataRecord) {
+                    values.addAll(getValuesFromRecord((SweDataRecord) field.getElement()));
+                }
+            }
+        }
+        return values;
     }
 
     private SweTextEncoding getEncoding() {
@@ -455,6 +491,9 @@ public class EprtrConverter
         SweDataArray value = (SweDataArray) sosObservation.getValue().getValue().getValue();
         if (value.isSetValues()) {
             combinedValue.addAll(value.getValues());
+            if (combinedSosObs.getPhenomenonTime() instanceof TimePeriod) {
+                ((TimePeriod) combinedSosObs.getPhenomenonTime()).extendToContain(sosObservation.getPhenomenonTime());
+            }
         }
     }
 

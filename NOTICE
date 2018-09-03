@@ -148,6 +148,7 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under MPL 2.0 or EPL 1.0
   Hamcrest All under New BSD License
+  Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   HdrHistogram under Public Domain, per Creative Commons CC0
   Hibernate Commons Annotations under GNU Lesser General Public License
@@ -176,6 +177,7 @@ This project includes:
   jackson-databind under The Apache Software License, Version 2.0
   Jackson-dataformat-Smile under The Apache Software License, Version 2.0
   Jackson-dataformat-YAML under The Apache Software License, Version 2.0
+  Jackson-datatype-jts under The Apache Software License, Version 2.0
   Java Annotation Indexer under Apache License, Version 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Native Access under LGPL, version 2.1 or ASL, version 2
@@ -289,7 +291,7 @@ This project includes:
   Spring Aspects under Apache License, Version 2.0
   Spring Beans under Apache License, Version 2.0
   Spring Context under Apache License, Version 2.0
-  Spring Context Support under The Apache Software License, Version 2.0
+  Spring Context Support under Apache License, Version 2.0
   Spring Core under Apache License, Version 2.0
   Spring Expression Language (SpEL) under Apache License, Version 2.0
   Spring JDBC under Apache License, Version 2.0

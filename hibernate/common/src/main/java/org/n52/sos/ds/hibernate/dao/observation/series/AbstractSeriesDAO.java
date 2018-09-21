@@ -56,6 +56,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
+import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
@@ -69,6 +70,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
@@ -1120,6 +1122,52 @@ public abstract class AbstractSeriesDAO
         LOGGER.debug("QUERY getObservationConstellation(omObservationConstellation): {}",
                 HibernateHelper.getSqlString(criteria));
         return (DatasetEntity) criteria.uniqueResult();
+    }
+
+    /**
+     * Query unit for parameter
+     *
+     * @param request
+     *            {@link AbstractObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param session
+     *            Hibernate Session
+     * @return Unit or null if no unit is set
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the unit
+     */
+    public String getUnit(long series, Session session) throws OwsExceptionReport {
+        StringBuilder logArgs = new StringBuilder();
+        DatasetEntity dataset = (DatasetEntity) session.get(getSeriesClass(), series);
+        if (dataset != null && dataset.hasUnit()) {
+            return dataset.getUnit().getIdentifier();
+        }
+        return null;
+    }
+
+    /**
+     * Query unit for parameter
+     *
+     * @param request
+     *            {@link AbstractObservationRequest}
+     * @param series
+     *            Datasource series id
+     * @param session
+     *            Hibernate Session
+     * @return Unit or null if no unit is set
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the unit
+     */
+    public String getUnit(Set<Long> series, Session session) throws OwsExceptionReport {
+        StringBuilder logArgs = new StringBuilder();
+        for (Long s : series) {
+            DatasetEntity dataset = (DatasetEntity) session.get(getSeriesClass(), s);
+            if (dataset != null && dataset.hasUnit()) {
+                return dataset.getUnit().getIdentifier();
+            }
+        }
+        return null;
     }
 
 }

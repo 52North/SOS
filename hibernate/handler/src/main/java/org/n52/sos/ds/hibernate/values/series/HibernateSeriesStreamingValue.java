@@ -35,6 +35,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
@@ -56,6 +57,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
+    protected final AbstractSeriesDAO seriesDAO;
     protected long series;
 
     /**
@@ -73,6 +75,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         this.series = series;
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
+        this.seriesDAO = daoFactory.getSeriesDAO();
     }
 
     @Override
@@ -102,8 +105,8 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     protected void queryUnit() {
         Session s = null;
         try {
-           s = sessionHolder.getSession();
-            setUnit(seriesValueDAO.getUnit((GetObservationRequest)request, series, s));
+            s = sessionHolder.getSession();
+            setUnit(seriesDAO.getUnit(series, s));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         } finally {

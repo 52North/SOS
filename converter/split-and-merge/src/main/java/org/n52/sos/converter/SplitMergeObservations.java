@@ -385,7 +385,7 @@ public class SplitMergeObservations
                 }
             }
 
-            if (encoder != null && encoder.shouldObservationsWithSameXBeMerged()) {
+            if (encoder != null && encoder.shouldObservationsWithSameXBeMerged() && !encoder.supportsResultStreamingForMergedValues()) {
                 if (Sos1Constants.SERVICEVERSION.equals(response.getVersion())) {
                     return checkResultModel(response);
                 }

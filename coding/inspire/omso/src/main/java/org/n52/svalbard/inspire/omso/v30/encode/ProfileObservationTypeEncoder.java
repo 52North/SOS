@@ -48,6 +48,7 @@ import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.inspire.base.InspireBaseConstants;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import org.n52.svalbard.inspire.omso.ProfileObservation;
 
@@ -124,5 +125,11 @@ public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     protected OMObservationType createOmObservationType() {
         return ProfileObservationType.Factory.newInstance(getXmlOptions());
+    }
+    
+    @Override
+    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
+        super.addNamespacePrefixToMap(nameSpacePrefixMap);
+        nameSpacePrefixMap.put(GmlConstants.NS_GML_33_CE, GmlConstants.SCHEMA_LOCATION_URL_GML_33_CE);
     }
 }

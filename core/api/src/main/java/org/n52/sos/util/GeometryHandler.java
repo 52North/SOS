@@ -576,12 +576,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return transform(geometry, targetSRID, sourceCRS, targetCRS);
     }
 
-    private Geometry transform(final Geometry geometry, final int targetSRID,
-                               final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
-            throws OwsExceptionReport {
-        return transform(JTSConverter.convert(geometry), targetSRID, sourceCRS, targetCRS);
-    }
-
     /**
      * Transform geometry.
      *
@@ -594,17 +588,17 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      *
      * @throws OwsExceptionReport
      */
-    private Geometry transform(final com.vividsolutions.jts.geom.Geometry geometry, final int targetSRID,
+    private Geometry transform(final Geometry geometry, final int targetSRID,
                                final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
         if (sourceCRS.equals(targetCRS)) {
-            return JTSConverter.convert(geometry);
+            return geometry;
         }
-        Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(JTSConverter.convert(geometry), targetSRID);
+        Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(geometry, targetSRID);
         try {
             MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-            Geometry transformed = JTSConverter.convert(JTS
-                    .transform(JTSConverter.convert(switchedCoordiantes), transform));
+            Geometry transformed = JTS
+                    .transform(switchedCoordiantes, transform);
             transformed.setSRID(targetSRID);
             return transformed;
         } catch (FactoryException | MismatchedDimensionException | TransformException fe) {
@@ -664,10 +658,6 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return crsAuthority;
     }
 
-    public Envelope transformEnvelope(Envelope envelope, int sourceSRID, int targetSRID) throws OwsExceptionReport {
-        return transformEnvelope(JTSConverter.convert(envelope), sourceSRID, targetSRID);
-    }
-
     /**
      * Transform envelope from source to target EPSG code.
      *
@@ -679,14 +669,13 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      *
      * @throws CodedException If the geometry EPSG code is not supported
      */
-    public Envelope transformEnvelope(com.vividsolutions.jts.geom.Envelope envelope, int sourceSRID, int targetSRID)
-            throws OwsExceptionReport {
+    public Envelope transformEnvelope(Envelope envelope, int sourceSRID, int targetSRID) throws OwsExceptionReport {
         if (envelope != null && !envelope.isNull() && targetSRID > 0 && sourceSRID != targetSRID) {
             CoordinateReferenceSystem sourceCRS = getCRS(sourceSRID);
             CoordinateReferenceSystem targetCRS = getCRS(targetSRID);
             try {
                 MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-                Envelope transformed = JTSConverter.convert(JTS.transform(envelope, transform));
+                Envelope transformed = JTS.transform(envelope, transform);
                 return transformed;
             } catch (FactoryException fe) {
                 throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
@@ -699,7 +688,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
                         "TTransformation from EPSG code '%s' to '%s' fails!", sourceSRID, targetSRID);
             }
         }
-        return JTSConverter.convert(envelope);
+        return envelope;
     }
 
     /**

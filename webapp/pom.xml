@@ -734,6 +734,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>eprtr</artifactId>
+             <scope>runtime</scope>
         </dependency>
         <!-- netCDF -->
         <dependency>

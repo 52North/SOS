@@ -66,6 +66,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.MinMax;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.shetland.util.SosQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -349,18 +350,18 @@ public class SosHelper {
                 new OwsValue(joiner.join(envelope.getMaxX(), envelope.getMaxY())),
                 new OwsValue(joiner.join(envelope.getMinX(), envelope.getMinY())));
     }
-    
-    public static MinMax<String> getMinMaxFromEnvelope(final SosEnvelope envelope) {
+
+    public static MinMax<String> getMinMaxFromEnvelope(final ReferencedEnvelope envelope) {
         if (envelope.isSetEnvelope()) {
             if (envelope.isSetMinMaxZ()) {
                 return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
-                        .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+                        .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ()));
             } else {
                 return getMinMaxFromEnvelope(envelope.getEnvelope());
             }
         }
         return new MinMax<String>();
-        
+
     }
 
     /**

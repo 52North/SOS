@@ -91,10 +91,10 @@
         <hibernate.spatial.version>5.2.12-52N.1</hibernate.spatial.version>
         <sqlite.version>3.21.0.1</sqlite.version>
         <c3p0.version>0.9.5.2</c3p0.version>
-        <geotools.version>19.0</geotools.version>
+        <geotools.version>20.0</geotools.version>
         <jackson.version>2.9.2</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
-        <sqljdbc.version>6.2.1.jre8</sqljdbc.version>
+        <sqljdbc.version>7.0.0.jre8</sqljdbc.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.5.0</n52.common.xml.version>
@@ -770,7 +770,7 @@
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
                 <artifactId>jts-core</artifactId>
-                <version>1.15.0</version>
+                <version>1.16.0</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -1448,7 +1448,7 @@
             <dependency>
                 <groupId>org.opengeo</groupId>
                 <artifactId>geodb</artifactId>
-                <version>0.8</version>
+                <version>0.9</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.vividsolutions</groupId>

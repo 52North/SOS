@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,13 +31,16 @@ package org.n52.sos.converter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -45,6 +48,7 @@ import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationMergeIndicator;
+import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -54,6 +58,7 @@ import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
@@ -74,18 +79,24 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NoDecoderForKeyException;
+import org.w3c.dom.Node;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 public class EprtrConverter
-        implements RequestResponseModifier {
+    implements RequestResponseModifier {
 
     public static final String MERGE_FOR_EPRTR = "misc.merge.eprtr";
-    
-    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKey();
+
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEYS = getKey();
     private static final ObservationMergeIndicator indicator = new ObservationMergeIndicator().setFeatureOfInterest(true).setProcedure(true);
 
     private static Set<RequestResponseModifierKey> getKey() {
@@ -97,9 +108,27 @@ public class EprtrConverter
         return keys;
     }
 
+    private DecoderRepository decoderRepository;
+    private boolean mergeForEprtr = false;
+
+    @Setting(MERGE_FOR_EPRTR)
+    public void setMergeForEprtr(boolean mergeForEprtr) {
+        this.mergeForEprtr  = mergeForEprtr;
+    }
+
+    public DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+
     @Override
     public Set<RequestResponseModifierKey> getKeys() {
-        return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
+        return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEYS);
     }
 
     @Override
@@ -129,20 +158,24 @@ public class EprtrConverter
     }
 
     private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
-        response.setObservationCollection(mergeObservations(mergeStreamingData(response.getObservationCollection())));
-        checkObservationFeatures(response.getObservationCollection());
-        return response;
-    }
-    
-    private OwsServiceResponse checkGetObservationFeatures(GetObservationResponse response) {
+        response.setObservationCollection(ObservationStream.of((mergeObservations(mergeStreamingData(response.getObservationCollection())))));
         checkObservationFeatures(response.getObservationCollection());
         return response;
     }
 
-    private void checkObservationFeatures(List<OmObservation> observationCollection) {
-        for (OmObservation omObservation : observationCollection) {
+    private OwsServiceResponse checkGetObservationFeatures(GetObservationResponse response) throws NoSuchElementException, OwsExceptionReport {
+        response.setObservationCollection(ObservationStream.of(checkObservationFeatures(response.getObservationCollection())));
+        return response;
+    }
+
+    private List<OmObservation> checkObservationFeatures(ObservationStream observationStream) throws NoSuchElementException, OwsExceptionReport {
+        List<OmObservation> processed = new LinkedList<>();
+        while (observationStream.hasNext()) {
+            OmObservation omObservation = observationStream.next();
             checkFeature(omObservation.getObservationConstellation().getFeatureOfInterest());
+            processed.add(omObservation);
         }
+        return processed;
     }
 
     private OwsServiceResponse checkFeatures(GetFeatureOfInterestResponse response) {
@@ -193,7 +226,7 @@ public class EprtrConverter
         }
         return false;
     }
-    
+
     private boolean containsConfidentialIndicator(List<NamedValue<?>> parameters) {
         for (NamedValue<?> namedValue : parameters) {
             if (namedValue.getName().getHref().equalsIgnoreCase("ConfidentialIndicator")) {
@@ -203,27 +236,20 @@ public class EprtrConverter
         return false;
     }
 
-    private List<OmObservation> mergeStreamingData(List<OmObservation> obs) throws OwsExceptionReport {
-        if (CollectionHelper.isNotEmpty(obs)) {
-            List<OmObservation> observations = Lists.newArrayList();
-            if (hasStreamingData(obs.iterator().next())) {
-                for (OmObservation observation : obs) {
-                    AbstractStreaming values = (AbstractStreaming) observation.getValue();
-                    if (values.hasNextValue()) {
-                        observations.addAll(values.getObservation());
-                    }
+    private List<OmObservation> mergeStreamingData(ObservationStream observationStream) throws OwsExceptionReport {
+        List<OmObservation> processed = new LinkedList<>();
+        while (observationStream.hasNext()) {
+            OmObservation observation = observationStream.next();
+            if (observation.getValue() instanceof AbstractStreaming) {
+                ObservationStream valueStream = ((AbstractStreaming) observation.getValue()).merge(indicator);
+                while (valueStream.hasNext()) {
+                    processed.add(valueStream.next());
                 }
+            } else {
+                processed.add(observation);
             }
-            return observations;
         }
-        return obs;
-    }
-
-    private boolean hasStreamingData(OmObservation omObservation) {
-        if (omObservation != null) {
-            return omObservation.getValue() instanceof AbstractStreaming;
-        }
-        return false;
+        return processed;
     }
 
     private List<OmObservation> mergeObservations(List<OmObservation> observations) throws OwsExceptionReport {
@@ -329,7 +355,7 @@ public class EprtrConverter
         array.setEncoding(getEncoding());
         return array;
     }
-    
+
     private List<String> createPollutantTransferBlock(OmObservation sosObservation) {
         List<String> values = new LinkedList<>();
         values.add(getYear(sosObservation.getPhenomenonTime()));
@@ -343,7 +369,7 @@ public class EprtrConverter
         values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
         return values;
     }
-    
+
     private SweDataArray getPollutantTransferArray(String unit) {
         SweDataRecord record = new SweDataRecord();
         record.addName("pollutants");
@@ -360,7 +386,7 @@ public class EprtrConverter
         array.setEncoding(getEncoding());
         return array;
     }
-    
+
     private List<String> createWasteTransferBlock(OmObservation sosObservation) throws OwsExceptionReport {
         List<String> values = new LinkedList<>();
         values.add(getYear(sosObservation.getPhenomenonTime()));
@@ -376,13 +402,13 @@ public class EprtrConverter
         values.add(getWasteHandlerPartyParameter(sosObservation.getParameterHolder(), "WasteHandlerParty"));
         return values;
     }
-    
+
     private String getConfidentialIndicator(String confidentialCode, ParameterHolder parameterHolder) {
         String confidentialIndicator = getParameter(parameterHolder, "ConfidentialIndicator");
-        return confidentialIndicator != null && !confidentialIndicator.isEmpty() 
+        return confidentialIndicator != null && !confidentialIndicator.isEmpty()
                 ? confidentialIndicator
                 : confidentialCode != null && !confidentialCode.isEmpty()
-                        ? "true" 
+                        ? "true"
                         : "false";
     }
 
@@ -404,7 +430,7 @@ public class EprtrConverter
         array.setEncoding(getEncoding());
         return array;
     }
-    
+
     private String getWasteTreatmentCode(Set<String> offerings) {
         for (String offering : offerings) {
             if (offering.length() == 1) {
@@ -445,7 +471,7 @@ public class EprtrConverter
         Object parameterObject = getParameterObject(holder, name);
         return parameterObject != null ? parameterObject.toString() : "";
     }
-    
+
     private Object getParameterObject(ParameterHolder holder, String name) {
         for (NamedValue<?> namedValue : holder.getParameter()) {
             if (name.equals(namedValue.getName().getHref())) {
@@ -461,17 +487,21 @@ public class EprtrConverter
     private String getWasteHandlerPartyParameter(ParameterHolder parameterHolder, String name) throws OwsExceptionReport {
         Object parameterObject = getParameterObject(parameterHolder, name);
         if (parameterObject != null && parameterObject instanceof XmlObject) {
-            Object xml = CodingHelper.decodeXmlObject((XmlObject) parameterObject);
-            if (xml instanceof SweDataRecord) {
-                List<String> values = getValuesFromRecord((SweDataRecord) xml);
-                if (!values.isEmpty()) {
-                    return Joiner.on(",").join(values);
+            try {
+                Object xml = decodeXmlObject((XmlObject) parameterObject);
+                if (xml instanceof SweDataRecord) {
+                    List<String> values = getValuesFromRecord((SweDataRecord) xml);
+                    if (!values.isEmpty()) {
+                        return Joiner.on(",").join(values);
+                    }
                 }
+            } catch (DecodingException e) {
+                throw new NoApplicableCodeException().causedBy(e);
             }
         }
         return ",,,,,,,,,,";
     }
-    
+
     private List<String> getValuesFromRecord( SweDataRecord record) {
         List<String> values = new LinkedList<>();
         if (record.isSetFields()) {
@@ -519,9 +549,9 @@ public class EprtrConverter
             merge = merge && checkForFeatureOfInterest(observation, observationToAdd);
         }
         return merge;
-        
+
     }
-    
+
     private boolean checkForProcedure(OmObservation observation, OmObservation observationToAdd) {
         return observation.getObservationConstellation().getProcedure().equals(observationToAdd.getObservationConstellation().getProcedure());
     }
@@ -529,9 +559,42 @@ public class EprtrConverter
     private boolean checkForFeatureOfInterest(OmObservation observation, OmObservation observationToAdd) {
         return observation.getObservationConstellation().getFeatureOfInterest().equals(observationToAdd.getObservationConstellation().getFeatureOfInterest());
     }
-    
+
     private boolean mergeForEprtr() {
         return mergeForEprtr;
     }
 
+    private <T> T decodeXmlObject(XmlObject xbObject) throws DecodingException {
+        DecoderKey key = getDecoderKey(xbObject);
+        Decoder<T, XmlObject> decoder = getDecoderRepository().getDecoder(key);
+        if (decoder == null) {
+            DecoderKey schemaTypeKey = new XmlNamespaceDecoderKey(xbObject.schemaType().getName().getNamespaceURI(),
+                                                                  xbObject.getClass());
+            decoder = getDecoderRepository().getDecoder(schemaTypeKey);
+        }
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xbObject);
+    }
+
+    private DecoderKey getDecoderKey(XmlObject doc) {
+
+        Node domNode = doc.getDomNode();
+        String namespaceURI = domNode.getNamespaceURI();
+        if (namespaceURI == null && domNode.getFirstChild() != null) {
+            namespaceURI = domNode.getFirstChild().getNamespaceURI();
+        }
+        /*
+         * if document starts with a comment, get next sibling (and ignore
+         * initial comment)
+         */
+        if (namespaceURI == null &&
+            domNode.getFirstChild() != null &&
+            domNode.getFirstChild().getNextSibling() != null) {
+            namespaceURI = domNode.getFirstChild().getNextSibling().getNamespaceURI();
+        }
+
+        return new XmlNamespaceDecoderKey(namespaceURI, doc.getClass());
+    }
 }

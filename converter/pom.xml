@@ -17,5 +17,6 @@
         <module>procedure-description</module>
         <module>observation</module>
         <module>seriestype</module>
+        <module>eprtr</module>
     </modules>
 </project>

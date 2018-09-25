@@ -23,6 +23,7 @@ This project includes:
   52°North SOS - Converter Modules under GPLv2
   52°North SOS - Coordinate transformation module under GPLv2
   52°North SOS - Core Modules under GPLv2
+  52°North SOS - E-PRTR merge observations module under GPLv2
   52°North SOS - eReporting Prefixed identifier convert module under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
   52°North SOS - Extension Modules under GPLv2
@@ -226,6 +227,7 @@ This project includes:
   Microsoft JDBC Driver for SQL Server under MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
+  Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
   netcdf4 under (MIT-style) netCDF C library license
   Netty under Apache License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="misc.merge.eprtr" />
+        <property name="title" value="Should the SOS merge observations for E-PRTR?" />
+        <property name="description" value="Should the SOS merge observations for E-PRTR?" />
+        <property name="order" value="20.0" />
+        <property name="group" ref="miscellaneousSettingDefinitionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+</beans>

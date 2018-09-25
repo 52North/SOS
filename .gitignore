@@ -13,3 +13,4 @@ extensions/do/core/configuration.db
 **.*~
 *.tern-project
 console.log
+coding/sos-v100/configuration.db

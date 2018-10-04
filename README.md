@@ -53,7 +53,7 @@ In the [Sensor Web Suite database project](https://github.com/52North/series-hib
 
 ## User Guide
 
- An OGC SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial) is available.
+ The official OGC SOS 2.0 tutorial [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial) is currently not available, see http://www.ogcnetwork.net.
 
 ## Demo
 

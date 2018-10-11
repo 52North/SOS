@@ -199,7 +199,6 @@ This project includes:
   Joda convert under Apache 2
   Joda-Time under Apache 2
   JOpt Simple under The MIT License
-  jsr-275 under BSD License
   JSR166e under CC0 1.0 Universal
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
@@ -227,7 +226,6 @@ This project includes:
   Microsoft JDBC Driver for SQL Server under MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
-  Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
   netcdf4 under (MIT-style) netCDF C library license
   Netty under Apache License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
@@ -285,6 +283,8 @@ This project includes:
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0
   Series REST API - SPI module under GNU General Public License, Version 2.0
+  SI Quantities under BSD
+  SI Units for Java SE 8 under BSD
   SLF4J API Module under MIT License
   SnakeYAML under Apache License Version 2.0
   software.amazon.ion:ion-java under The Apache License, Version 2.0
@@ -310,6 +310,10 @@ This project includes:
   SQLite JDBC under The Apache Software License, Version 2.0
   T-Digest under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
+  Units of Measurement API under BSD
+  Units of Measurement Common Library under BSD
+  Units of Measurement Common Unit Systems for Java 8 under BSD
+  Units of Measurement Implementation for Java SE under BSD
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0

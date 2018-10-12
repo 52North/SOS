@@ -213,7 +213,7 @@ public class SplitMergeObservations
                         observationConstellation.getObservableProperty()));
                 // split into single observation
                 for (final List<String> block : sweDataArrayValue.getValue().getValues()) {
-                    LOGGER.debug("Processing block {}/{}", ++counter, sweDataArrayValue.getValue().getValues().size());
+                    LOGGER.trace("Processing block {}/{}", ++counter, sweDataArrayValue.getValue().getValues().size());
                     final OmObservation newObservation = new OmObservation();
                     newObservation.setObservationConstellation(observationConstellation);
                     // identifier

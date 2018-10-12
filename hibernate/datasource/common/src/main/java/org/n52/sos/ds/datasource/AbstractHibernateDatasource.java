@@ -31,6 +31,7 @@ package org.n52.sos.ds.datasource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -422,7 +423,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
-            List<String> readAllLines = Files.readAllLines(createTempFile);
+            List<String> readAllLines = Files.readAllLines(createTempFile, Charset.defaultCharset());
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
             String[] pre = getPreSchemaScript();
             String[] post = getPostSchemaScript();

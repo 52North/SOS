@@ -341,7 +341,14 @@ public class SampleDataInserter implements Sos2Constants {
                 InsertSensorResponse response = (InsertSensorResponse) insertSensorOperator.receiveRequest(request);
                 insertedSensors.put(response.getAssignedProcedure(), response.getAssignedOffering());
             } catch (OwsExceptionReport e) {
-                exceptions.add(e);
+                if (e.getMessage().equals("The offering with the identifier '"
+                        + request.getProcedureDescription().getIdentifier()
+                        + "' still exists in this service and it is not allowed to insert more than one procedure to an offering!")) {
+                    insertedSensors.put(request.getProcedureDescription().getIdentifier(),
+                            request.getProcedureDescription().getIdentifier());
+                } else {
+                    exceptions.add(e);
+                }
             }
         }
     }

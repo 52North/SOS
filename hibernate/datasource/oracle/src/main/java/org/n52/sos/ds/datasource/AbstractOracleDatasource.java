@@ -43,12 +43,12 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.internal.util.config.ConfigurationException;
 import org.hibernate.spatial.HibernateSpatialConfigurationSettings;
 import org.hibernate.tool.hbm2ddl.SchemaValidator;
+import org.n52.hibernate.spatial.dialect.oracle.TimestampWithTimeZoneOracleSpatial10gDialect;
 import org.n52.iceland.ds.Datasource;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
 import oracle.jdbc.OracleDriver;
 
 
@@ -235,7 +235,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
 
     @Override
     protected Dialect createDialect() {
-        return new OracleSpatial10gDoubleFloatDialect();
+        return new TimestampWithTimeZoneOracleSpatial10gDialect();
     }
 
     @Override

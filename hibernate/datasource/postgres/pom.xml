@@ -20,6 +20,10 @@
             <artifactId>hibernate-session-factory</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.series.db</groupId>
+            <artifactId>dialects</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe</artifactId>
         </dependency>
@@ -51,6 +55,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

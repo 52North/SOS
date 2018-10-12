@@ -33,11 +33,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 
-import oracle.jdbc.OracleConnection;
-
 import org.geolatte.geom.codec.db.oracle.ConnectionFinder;
 
 import com.mchange.v2.c3p0.C3P0ProxyConnection;
+
+import oracle.jdbc.OracleConnection;
 
 /**
  * @since 4.0.0

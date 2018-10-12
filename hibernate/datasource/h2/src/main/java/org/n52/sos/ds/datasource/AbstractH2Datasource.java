@@ -42,16 +42,13 @@ import java.util.regex.Pattern;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-import org.hibernate.spatial.dialect.h2geodb.GeoDBDialectSpatialIndex;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
+import org.n52.hibernate.spatial.dialect.h2geodb.TimestampWithTimeZoneGeoDBDialect;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.faroe.ConfigurationError;
 
 import geodb.GeoDB;
-
-
 
 /**
  * TODO JavaDoc
@@ -63,7 +60,7 @@ import geodb.GeoDB;
 public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     protected static final String H2_DRIVER_CLASS = "org.h2.Driver";
 
-    protected static final String H2_DIALECT_CLASS = GeoDBDialectSpatialIndex.class.getName();
+    protected static final String H2_DIALECT_CLASS = TimestampWithTimeZoneGeoDBDialect.class.getName();
 
     protected static final String DEFAULT_USERNAME = "sa";
 
@@ -74,7 +71,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     @Override
     protected Dialect createDialect() {
-        return new GeoDBDialectSpatialIndex();
+        return new TimestampWithTimeZoneGeoDBDialect();
     }
 
     @Override

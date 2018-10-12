@@ -43,8 +43,8 @@ import java.util.regex.Pattern;
 import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.n52.faroe.ConfigurationError;
+import org.n52.hibernate.spatial.dialect.postgis.TimestampWithTimeZonePostgisPG95Dialect;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +109,7 @@ public abstract class AbstractPostgresDatasource
 
     @Override
     protected Dialect createDialect() {
-        return new PostgisDialectSpatialIndex();
+        return new TimestampWithTimeZonePostgisPG95Dialect();
     }
 
     @Override

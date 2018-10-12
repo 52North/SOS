@@ -277,6 +277,7 @@ This project includes:
   Reflections under WTFPL or The New BSD License
   Saxon-HE under Mozilla Public License Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0
+  Series Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
   Series REST API - DAO module under GNU General Public License, Version 2.0
   Series REST API - DAO Webapp under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0

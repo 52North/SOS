@@ -175,8 +175,9 @@ public class AbstractObservationDAOTest {
         }
 
         @Override
-        protected void addObservationContextToObservation(ObservationContext ctx,
+        protected DatasetEntity addObservationContextToObservation(ObservationContext ctx,
                 Data<?> observation, Session session) throws CodedException {
+            return null;
         }
 
         @Override

@@ -472,7 +472,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         observationContext.setFeatureOfInterest(featureOfInterest);
 
         daos.observation().fillObservationContext(observationContext, omObservation, session);
-        daos.observation().addObservationContextToObservation(observationContext, observation, session);
+        DatasetEntity persitedDataset = daos.observation().addObservationContextToObservation(observationContext, observation, session);
         if (omObservation.isSetParameter()) {
             Set<Parameter<?>> insertParameter = daos.parameter().insertParameter(omObservation.getParameter(),
                     caches.units, session);
@@ -481,7 +481,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         session.saveOrUpdate(observation);
         session.flush();
         session.refresh(observation);
-        daos.dataset.updateSeriesWithFirstLatestValues(dataset, (DataEntity<?>) observation, session);
+        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, (DataEntity<?>) observation, session);
 
         return observation;
     }

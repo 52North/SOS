@@ -45,7 +45,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.locationtech.jts.geom.Geometry;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
@@ -56,7 +55,6 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.QuantityDatasetEntity;
-import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
@@ -315,16 +313,21 @@ public abstract class AbstractSeriesDAO
             dataset = (DatasetEntity) criteria.uniqueResult();
         }
         if (dataset != null) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("update ")
-                .append(getSeriesClass().getSimpleName())
-                .append(" set valueType = :valueType")
-                .append(" where id = :id");
-            session.createQuery(builder.toString())
-                .setParameter( "valueType", getDatasetFactory().visit(observation).getValueType())
-                .setParameter( "id", dataset.getId())
-                .executeUpdate();
+            Dataset concrete = getDatasetFactory().visit(observation);
+            concrete.copy(dataset);
+//            StringBuilder builder = new StringBuilder();
+//            builder.append("update ")
+//                .append(getSeriesClass().getSimpleName())
+//                .append(" set valueType = :valueType")
+//                .append(" where id = :id");
+//            session.createQuery(builder.toString())
+//                .setParameter( "valueType", getDatasetFactory().visit(observation).getValueType())
+//                .setParameter( "id", dataset.getId())
+//                .executeUpdate();
+            session.saveOrUpdate(concrete);
+            session.delete(dataset);
             session.flush();
+            return (DatasetEntity) concrete;
         }
         return dataset;
     }

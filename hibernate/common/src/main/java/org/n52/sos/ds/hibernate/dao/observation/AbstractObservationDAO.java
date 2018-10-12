@@ -142,10 +142,11 @@ public abstract class AbstractObservationDAO
      * @param observation
      *            Observation to add identifiers
      * @param session
+     * @return
      *
      * @throws OwsExceptionReport
      */
-    protected abstract void addObservationContextToObservation(ObservationContext observationIdentifiers,
+    protected abstract DatasetEntity addObservationContextToObservation(ObservationContext observationIdentifiers,
             Data<?> observation, Session session) throws OwsExceptionReport;
 
     /**
@@ -560,19 +561,24 @@ public abstract class AbstractObservationDAO
      *                                  Map based unit object cache to prevent redundant queries
      * @param session
      *                                  Hibernate session
+     * @return
      *
      * @throws OwsExceptionReport
      *                            If an error occurs
      */
-    public void insertObservationMultiValue(DatasetEntity observationConstellation,
+    public DatasetEntity insertObservationMultiValue(DatasetEntity observationConstellation,
             AbstractFeatureEntity feature, OmObservation containerObservation,
                                             Map<String, CodespaceEntity> codespaceCache,
                                             Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = new ObservationUnfolder(containerObservation, getDaoFactory().getSweHelper()).unfold();
         for (OmObservation sosObservation : unfoldObservations) {
-            insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
+            DatasetEntity dataset = insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
                                          session);
+            if (!dataset.equals(observationConstellation)) {
+                observationConstellation = dataset;
+            }
         }
+        return observationConstellation;
     }
 
     /**
@@ -587,13 +593,14 @@ public abstract class AbstractObservationDAO
      *                                   SOS observation to insert
      * @param session
      *                                   Hibernate session
+     * @return
      *
      * @throws OwsExceptionReport
      */
-    public void insertObservationSingleValue(DatasetEntity hObservationConstellation,
+    public DatasetEntity insertObservationSingleValue(DatasetEntity hObservationConstellation,
             AbstractFeatureEntity hFeature, OmObservation sosObservation, Session session)
             throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, session);
+        return insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, session);
     }
 
     /**
@@ -613,11 +620,12 @@ public abstract class AbstractObservationDAO
      *                                   Map cache for unit objects (to prevent redundant querying)
      * @param session
      *                                   Hibernate session
+     * @return
      *
      * @throws OwsExceptionReport
      */
     @SuppressWarnings("rawtypes")
-    public void insertObservationSingleValue(DatasetEntity hObservationConstellation,
+    public DatasetEntity insertObservationSingleValue(DatasetEntity hObservationConstellation,
                                              AbstractFeatureEntity hFeature, OmObservation sosObservation,
                                              Map<String, CodespaceEntity> codespaceCache,
                                              Map<UoM, UnitEntity> unitCache, Session session)
@@ -636,7 +644,7 @@ public abstract class AbstractObservationDAO
                 getOfferings(hObservationConstellation),
                 session
         );
-        value.getValue().accept(persister);
+        return value.getValue().accept(persister).getDataset();
     }
 
     private Set<OfferingEntity> getOfferings(DatasetEntity hObservationConstellation) {

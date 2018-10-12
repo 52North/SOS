@@ -52,6 +52,7 @@ import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -233,14 +234,18 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
                 cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
             }
             AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            DatasetEntity dataset = null;
             if (sosObservation.getValue() instanceof SingleObservationValue) {
-                observationDAO.insertObservationSingleValue(
+                dataset = observationDAO.insertObservationSingleValue(
                         hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                observationDAO.insertObservationMultiValue(
+                dataset = observationDAO.insertObservationMultiValue(
                         hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
+            }
+            if (dataset != null && !cache.get(sosObsConst, offeringID).equals(dataset)) {
+                cache.putConstellation(sosObsConst, offeringID, dataset);
             }
         }
     }

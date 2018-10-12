@@ -99,7 +99,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     }
 
     @Override
-    protected void addObservationContextToObservation(ObservationContext ctx,
+    protected DatasetEntity addObservationContextToObservation(ObservationContext ctx,
             Data<?> observation, Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         DatasetEntity series = seriesDAO.getOrInsertSeries(ctx, observation, session);
@@ -107,6 +107,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
         OfferingDAO offeringDAO = getDaoFactory().getOfferingDAO();
         offeringDAO.updateOfferingMetadata(series.getOffering(), observation, session);
+        return series;
     }
 
     @Override

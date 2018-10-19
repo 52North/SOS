@@ -105,8 +105,8 @@
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <dataset.hibernate.version>1-SNAPSHOT</dataset.hibernate.version>
         
-        <org.springframework.security.version>4.2.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>4.3.18.RELEASE</org.springframework.version>
+        <org.springframework.security.version>4.2.9.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.3.20.RELEASE</org.springframework.version>
         <aspectj.version>1.8.9</aspectj.version>
         <saxon.version>9.8.0-3</saxon.version>
         <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>

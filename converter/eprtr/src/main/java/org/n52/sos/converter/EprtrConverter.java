@@ -31,6 +31,7 @@ package org.n52.sos.converter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -48,6 +49,7 @@ import org.n52.sos.ogc.om.ObservationMergeIndicator;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.ParameterHolder;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.FeatureCollection;
@@ -75,6 +77,8 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -82,6 +86,9 @@ import com.google.common.collect.Sets;
 
 public class EprtrConverter
         extends AbstractRequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+    
+    private static final Logger LOGGER = 
+            LoggerFactory.getLogger(EprtrConverter.class);
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
     private static final ObservationMergeIndicator indicator = new ObservationMergeIndicator().setFeatureOfInterest(true).setProcedure(true);
@@ -264,8 +271,14 @@ public class EprtrConverter
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
-            sosObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-            sosObservation.getObservationConstellation().setObservableProperty(new OmObservableProperty("pollutants"));
+            try {
+                OmObservationConstellation obsConst = sosObservation.getObservationConstellation().clone();
+                obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+                obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
+                sosObservation.setObservationConstellation(obsConst);
+            } catch (CloneNotSupportedException e) {
+                LOGGER.error("Error while merging ePRTR data!", e);
+            }
         } else if ("PollutantTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
             value.setValue(getPollutantTransferArray(sosObservation.getValue().getValue().getUnit()));
@@ -273,8 +286,14 @@ public class EprtrConverter
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
-            sosObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-            sosObservation.getObservationConstellation().setObservableProperty(new OmObservableProperty("pollutants"));
+            try {
+                OmObservationConstellation obsConst = sosObservation.getObservationConstellation().clone();
+                obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+                obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
+                sosObservation.setObservationConstellation(obsConst);
+            } catch (CloneNotSupportedException e) {
+                LOGGER.error("Error while merging ePRTR data!", e);
+            }
         } else if ("WasteTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
             value.setValue(getWasteTransferArray(sosObservation.getValue().getValue().getUnit()));
@@ -282,8 +301,14 @@ public class EprtrConverter
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
-            sosObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-            sosObservation.getObservationConstellation().setObservableProperty(new OmObservableProperty("pollutants"));
+            try {
+                OmObservationConstellation obsConst = sosObservation.getObservationConstellation().clone();
+                obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+                obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
+                sosObservation.setObservationConstellation(obsConst);
+            } catch (CloneNotSupportedException e) {
+                LOGGER.error("Error while merging ePRTR data!", e);
+            }
         }
         return sosObservation;
     }
@@ -291,7 +316,9 @@ public class EprtrConverter
     private List<String> createPollutantReleaseBlock(OmObservation sosObservation) {
         List<String> values = new LinkedList<>();
         values.add(getYear(sosObservation.getPhenomenonTime()));
-        values.add(getParameter(sosObservation.getParameterHolder(), "MediumCode"));
+        // MediumCode
+        values.add(getMediumCode(sosObservation.getObservationConstellation()));
+        // PollutantCode
         values.add(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodBasisCode"));
         values.add(getParameter(sosObservation.getParameterHolder(), "MethodUsed"));
@@ -302,6 +329,14 @@ public class EprtrConverter
         values.add(confidentialCode);
         values.add(getParameter(sosObservation.getParameterHolder(), "RemarkText"));
         return values;
+    }
+
+    private String getMediumCode(OmObservationConstellation observationConstellation) {
+        if (observationConstellation.isSetOfferings()) {
+            Optional<String> offering = observationConstellation.getOfferings().stream().findFirst();
+            return offering.isPresent() ? offering.get() : "AIR";
+        }
+        return "AIR";
     }
 
     private SweDataArray getPollutantReleaseArray(String unit) {

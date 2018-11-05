@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -52,6 +53,7 @@ import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.ParameterHolder;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
@@ -95,9 +97,6 @@ import com.google.common.collect.Sets;
 
 public class EprtrConverter
     implements RequestResponseModifier {
-    
-    private static final Logger LOGGER = 
-            LoggerFactory.getLogger(EprtrConverter.class);
 
     public static final String MERGE_FOR_EPRTR = "misc.merge.eprtr";
 
@@ -294,7 +293,8 @@ public class EprtrConverter
                 || "WasteTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier());
     }
 
-    private OmObservation convertObservation(OmObservation sosObservation) throws OwsExceptionReport {
+    private OmObservation convertObservation(OmObservation sosObservation)
+            throws OwsExceptionReport {
         if ("PollutantRelease".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
             value.setValue(getPollutantReleaseArray(sosObservation.getValue().getValue().getUnit()));
@@ -302,14 +302,10 @@ public class EprtrConverter
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
-            try {
-                OmObservationConstellation obsConst = sosObservation.getObservationConstellation().clone();
-                obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-                obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
-                sosObservation.setObservationConstellation(obsConst);
-            } catch (CloneNotSupportedException e) {
-                LOGGER.error("Error while merging ePRTR data!", e);
-            }
+            OmObservationConstellation obsConst = sosObservation.getObservationConstellation().copy();
+            obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
+            sosObservation.setObservationConstellation(obsConst);
         } else if ("PollutantTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
             value.setValue(getPollutantTransferArray(sosObservation.getValue().getValue().getUnit()));
@@ -317,14 +313,10 @@ public class EprtrConverter
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
-            try {
-                OmObservationConstellation obsConst = sosObservation.getObservationConstellation().clone();
-                obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-                obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
-                sosObservation.setObservationConstellation(obsConst);
-            } catch (CloneNotSupportedException e) {
-                LOGGER.error("Error while merging ePRTR data!", e);
-            }
+            OmObservationConstellation obsConst = sosObservation.getObservationConstellation().copy();
+            obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
+            sosObservation.setObservationConstellation(obsConst);
         } else if ("WasteTransfer".equals(sosObservation.getObservationConstellation().getProcedureIdentifier())) {
             SweDataArrayValue value = new SweDataArrayValue();
             value.setValue(getWasteTransferArray(sosObservation.getValue().getValue().getUnit()));
@@ -332,14 +324,10 @@ public class EprtrConverter
             SingleObservationValue<SweDataArray> singleObservationValue = new SingleObservationValue<>(value);
             singleObservationValue.setPhenomenonTime(sosObservation.getPhenomenonTime());
             sosObservation.setValue(singleObservationValue);
-            try {
-                OmObservationConstellation obsConst = sosObservation.getObservationConstellation().clone();
-                obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
-                obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
-                sosObservation.setObservationConstellation(obsConst);
-            } catch (CloneNotSupportedException e) {
-                LOGGER.error("Error while merging ePRTR data!", e);
-            }
+            OmObservationConstellation obsConst = sosObservation.getObservationConstellation().copy();
+            obsConst.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            obsConst.setObservableProperty(new OmObservableProperty("pollutants"));
+            sosObservation.setObservationConstellation(obsConst);
         }
         return sosObservation;
     }

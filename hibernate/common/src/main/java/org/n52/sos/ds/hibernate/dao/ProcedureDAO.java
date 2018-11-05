@@ -782,15 +782,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             }
             procedure.setType(isType);
             procedure.setAggregation(procedureDescription.isAggregation());
-            if (procedureDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                AbstractSensorML sml = (AbstractSensorML) procedureDescription.getProcedureDescription();
-                if (sml.isSetMobile()) {
-                    procedure.setMobile(sml.getMobile());
-                }
-                if (sml.isSetInsitu()) {
-                    procedure.setInsitu(sml.getInsitu());
-                }
-            }
             procedure.setReference(procedureDescription.isReference());
         }
         procedure.setDeleted(false);

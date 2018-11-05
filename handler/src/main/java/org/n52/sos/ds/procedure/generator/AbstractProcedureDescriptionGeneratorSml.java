@@ -255,11 +255,22 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
+    private DbQuery createDbQueryWithLimit(ProcedureEntity procedure) {
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
+        map.put(IoParameters.LIMIT, Long.toString(1));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+    }
+
     protected boolean isStation(ProcedureEntity procedure, Session session) throws DataAccessException {
-        if (procedure.isInsitu() && !procedure.isMobile()) {
-            List<FeatureEntity> allInstances = new FeatureDao(session).getAllInstances(createDbQuery(procedure));
-            if (allInstances != null && allInstances.size() == 1) {
-                return allInstances.iterator().next().isSetGeometry();
+        List<DatasetEntity> datasets = new DatasetDao<>(session).getAllInstances(createDbQueryWithLimit(procedure));
+        if (datasets != null && !datasets.isEmpty()) {
+            DatasetEntity dataset = datasets.iterator().next();
+            if (dataset.isInsitu() && !dataset.isMobile()) {
+                List<FeatureEntity> features = new FeatureDao(session).getAllInstances(createDbQuery(procedure));
+                if (features != null && features.size() == 1) {
+                    return features.iterator().next().isSetGeometry();
+                }
             }
         }
         return false;

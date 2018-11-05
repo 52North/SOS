@@ -82,16 +82,13 @@ This project includes:
   52°North Svalbard OData under The Apache Software License, Version 2.0
   52°North Svalbard XML Stream under The Apache Software License, Version 2.0
   52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
-  abego TreeLayout Core under BSD 3-Clause "New" or "Revised" License (BSD-3-Clause)
   Animal Sniffer Annotations under MIT license
-  ANTLR 4 Runtime under BSD 3-Clause License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
   Apache Commons Compress under Apache License, Version 2.0
   Apache Commons IO under Apache License, Version 2.0
-  Apache Commons Lang under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
@@ -180,6 +177,7 @@ This project includes:
   Jackson-dataformat-YAML under The Apache Software License, Version 2.0
   Jackson-datatype-jts under The Apache Software License, Version 2.0
   Java Annotation Indexer under Apache License, Version 2.0
+  Java Architecture for XML Binding under CDDL 1.1 or GPL2 w/ CPE
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Native Access under LGPL, version 2.1 or ASL, version 2
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
@@ -228,6 +226,7 @@ This project includes:
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   netcdf4 under (MIT-style) netCDF C library license
   Netty under Apache License, Version 2.0
+  Netty/All-in-One under Apache License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
@@ -266,6 +265,8 @@ This project includes:
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC XML schemas under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
+  Old JAXB Core under CDDL+GPL License
+  Old JAXB Runtime under CDDL+GPL License
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
@@ -290,6 +291,7 @@ This project includes:
   SnakeYAML under Apache License Version 2.0
   software.amazon.ion:ion-java under The Apache License, Version 2.0
   Spatial4J under The Apache Software License, Version 2.0
+  SpotBugs Annotations under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Spring AOP under Apache License, Version 2.0
   Spring Aspects under Apache License, Version 2.0
   Spring Beans under Apache License, Version 2.0

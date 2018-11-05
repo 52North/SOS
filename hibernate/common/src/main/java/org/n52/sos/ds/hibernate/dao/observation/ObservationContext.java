@@ -64,6 +64,9 @@ public class ObservationContext {
     private boolean publish = true;
     private FormatEntity observationType;
     private UnitEntity unit;
+    private boolean mobile;
+    private boolean insitu = true;
+
 
     /**
      * Indicates that the series of the observation should be published
@@ -246,6 +249,8 @@ public class ObservationContext {
             contextual.setUnit(getUnit());
         }
         contextual.setHidden(isHiddenChild());
+        contextual.setMobile(isMobile());
+        contextual.setInsitu(isInsitu());
     }
 
     public ObservationContext setHiddenChild(boolean hiddenChild) {
@@ -255,6 +260,24 @@ public class ObservationContext {
 
     public boolean isHiddenChild() {
         return hiddenChild;
+    }
+
+    public boolean isMobile() {
+        return mobile;
+    }
+
+    public ObservationContext setMobile(boolean mobile) {
+        this.mobile = mobile;
+        return this;
+    }
+
+    public boolean isInsitu() {
+        return insitu;
+    }
+
+    public ObservationContext setInsitu(boolean insitu) {
+        this.insitu = insitu;
+        return this;
     }
 
 }

@@ -193,6 +193,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                         new ObservationContext().setCategory(hCategory).setOffering(hOffering)
                                                 .setPhenomenon(hObservableProperty).setProcedure(hProcedure)
                                                 .setPublish(false).setHiddenChild(assignedOffering.isParentOffering());
+                                checkForMobileInsituFlags(ctx, request.getProcedureDescription().getProcedureDescription());
                                 if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
                                     ctx.setUnit(hUnits.get(hObservableProperty.getIdentifier()));
                                 }
@@ -415,6 +416,27 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             return procedureDescription.getXml();
         }
         return "";
+    }
+
+    /**
+     * Check whether the procedure description provides flags for mobile and
+     * insitu and add it to the {@link ObservationContext}.
+     *
+     * @param ctx
+     *            the {@link ObservationContext} to add flags
+     * @param procedureDescription
+     *            the procedure description to check for
+     */
+    private void checkForMobileInsituFlags(ObservationContext ctx, AbstractFeature procedureDescription) {
+        if (procedureDescription instanceof AbstractSensorML) {
+            AbstractSensorML sml = (AbstractSensorML) procedureDescription;
+            if (sml.isSetMobile()) {
+                ctx.setMobile(sml.getMobile());
+            }
+            if (sml.isSetInsitu()) {
+                ctx.setInsitu(sml.getInsitu());
+            }
+        }
     }
 
     private GeometryHandler getGeometryHandler() {

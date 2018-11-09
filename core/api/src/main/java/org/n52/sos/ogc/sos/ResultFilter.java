@@ -29,6 +29,7 @@
 package org.n52.sos.ogc.sos;
 
 import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.swes.SwesExtension;
 
 /**
@@ -37,27 +38,34 @@ import org.n52.sos.ogc.swes.SwesExtension;
  * @since 4.4.1
  *
  */
-public class ResultFilter implements SwesExtension<ComparisonFilter> {
+public class ResultFilter implements SwesExtension<Filter<?>> {
     
-    private ComparisonFilter filter;
+    private Filter<?> filter;
+    private String namespace = ResultFilterConstants.NS_RF;
 
-    public ResultFilter(ComparisonFilter filter) {
+    public ResultFilter(Filter<?> filter) {
         setValue(filter);
+    }
+    
+    public ResultFilter(Filter<?> filter, String namespace) {
+        this(filter);
+        setNamespace(namespace);
     }
     
     @Override
     public String getNamespace() {
-        return ResultFilterConstants.NS_RF;
+        return namespace;
     }
 
     @Override
     public ResultFilter setNamespace(String namespace) {
+        this.namespace = namespace;
         return this;
     }
 
     @Override
     public boolean isSetNamespace() {
-        return true;
+        return getNamespace() != null && !getNamespace().isEmpty();
     }
 
     @Override
@@ -91,12 +99,12 @@ public class ResultFilter implements SwesExtension<ComparisonFilter> {
     }
 
     @Override
-    public ComparisonFilter getValue() {
+    public Filter<?> getValue() {
         return filter;
     }
 
     @Override
-    public ResultFilter setValue(ComparisonFilter value) {
+    public ResultFilter setValue(Filter<?> value) {
         this.filter = value;
         return this;
     }

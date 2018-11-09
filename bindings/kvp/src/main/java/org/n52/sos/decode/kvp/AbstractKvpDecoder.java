@@ -55,9 +55,11 @@ import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.ogc.filter.BinaryLogicFilter;
 import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.FilterConstants;
+import org.n52.sos.ogc.filter.FilterConstants.BinaryLogicOperator;
 import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
@@ -468,10 +470,10 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         try {
             List<Filter<?>> filters = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
             for (Filter<?> f : filters) {
-                if (f instanceof ComparisonFilter) {
-                    request.addExtension(new ResultFilter((ComparisonFilter) f));
-                } else if (f instanceof SpatialFilter) {
+                if (f instanceof SpatialFilter) {
                     request.addExtension(new SosSpatialFilter((SpatialFilter) f));
+                } else {
+                    request.addExtension(new ResultFilter(f));
                 }
             }
             return true;
@@ -496,9 +498,10 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter) {
             list.add(convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter));
         } else if (filter instanceof org.n52.shetland.ogc.filter.BinaryLogicFilter) {
-            if (!filter.getOperator().equals(org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And)) {
-                throw new OptionNotSupportedException().at("$filter").withMessage("Currently, only the AND operator is supported!");
-            }
+//            if (!filter.getOperator().equals(org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And)) {
+//                throw new OptionNotSupportedException().at("$filter").withMessage("Currently, only the AND operator is supported!");
+//            }
+            BinaryLogicFilter binaryLogicFilter = new BinaryLogicFilter(convertBinaryLogicOperator((org.n52.shetland.ogc.filter.BinaryLogicFilter) filter));
             for (org.n52.shetland.ogc.filter.Filter<?> f : ((org.n52.shetland.ogc.filter.BinaryLogicFilter) filter).getFilterPredicates()) {
                 list.addAll(convertFilter(f));
             }
@@ -594,6 +597,11 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
             default:
                 return null;
         }
+    }
+
+    private BinaryLogicOperator convertBinaryLogicOperator(org.n52.shetland.ogc.filter.BinaryLogicFilter filter) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private List<Filter<?>> checkForBetweenComparisonFilter(List<Filter<?>> set)

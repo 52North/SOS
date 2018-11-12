@@ -32,7 +32,7 @@ public interface ResultFilterConstants {
     
     String NS_RF = "http://www.opengis.net/sosrf/1.0";
     
-    String NS_RF_20 = "http://www.opengis.net/sosrf/3.0";
+    String NS_RF_20 = "http://www.opengis.net/sosrf/2.0";
     
     String RESULT_FILTER = "ResultFilter";
     

@@ -63,7 +63,7 @@ import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
-import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -760,7 +760,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
     }
     
-    private void addResultfilter(Criteria c, ComparisonFilter resultFilter, SubQueryIdentifier identifier) throws CodedException {
+    private void addResultfilter(Criteria c, Filter<?> resultFilter, SubQueryIdentifier identifier) throws CodedException {
         Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
                 getResultFilterClasses(), Series.ID, AbstractSeriesObservation.SERIES, identifier);
         if (resultFilterExpression != null) {

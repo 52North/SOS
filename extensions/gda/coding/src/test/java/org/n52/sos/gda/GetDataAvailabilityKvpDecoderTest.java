@@ -36,6 +36,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20;
+import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.FilterConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
@@ -79,8 +80,9 @@ public class GetDataAvailabilityKvpDecoderTest  {
 
         assertThat(request.hasResultFilter(), is(true));
         assertThat(request.getResultFilter().getValueReference(), is("om:result"));
-        assertThat(request.getResultFilter().getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name())); 
-        assertThat(request.getResultFilter().getValue(), is("10.5")); 
+        assertThat(request.getResultFilter() instanceof ComparisonFilter, is(true));
+        assertThat(((ComparisonFilter) request.getResultFilter()).getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name())); 
+        assertThat(((ComparisonFilter) request.getResultFilter()).getValue(), is("10.5")); 
     }
     
     @Test
@@ -91,9 +93,10 @@ public class GetDataAvailabilityKvpDecoderTest  {
         
         assertThat(request.hasResultFilter(), is(true));
         assertThat(request.getResultFilter().getValueReference(), is("om:result"));
-        assertThat(request.getResultFilter().getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsBetween.name())); 
-        assertThat(request.getResultFilter().getValue(), is("10.0")); 
-        assertThat(request.getResultFilter().getValueUpper(), is("20.0")); 
+        assertThat(request.getResultFilter() instanceof ComparisonFilter, is(true));
+        assertThat(((ComparisonFilter) request.getResultFilter()).getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsBetween.name())); 
+        assertThat(((ComparisonFilter) request.getResultFilter()).getValue(), is("10.0")); 
+        assertThat(((ComparisonFilter) request.getResultFilter()).getValueUpper(), is("20.0")); 
     }
     
     @Test

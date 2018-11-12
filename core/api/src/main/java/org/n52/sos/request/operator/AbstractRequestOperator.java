@@ -57,7 +57,10 @@ import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
+import org.n52.sos.ogc.filter.BinaryLogicFilter;
 import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
@@ -860,7 +863,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
     }
     
-    protected void checkResultFilterExtension(AbstractServiceRequest request) throws CodedOwsException {
+    protected void checkResultFilterExtension(AbstractServiceRequest request) throws CodedException {
         if (request.isSetExtensions() && request.hasExtension(ResultFilterConstants.RESULT_FILTER)) {
             if (request.getExtensionCount(ResultFilterConstants.RESULT_FILTER) > 1) {
                 throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, "duplicated");
@@ -869,22 +872,44 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             if (extension.getValue() == null) {
                 throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER);
             }
-            ComparisonFilter filter = ((ResultFilter)extension).getValue();
-            if (!filter.hasValueReference()) {
-                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
-            } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
-                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
-            }
-            if (filter.getOperator() == null) {
-                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
-            }
-            
-            if (filter.getValue() == null) {
-                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
+            Filter<?> filter = ((ResultFilter) extension).getValue();
+            if (filter instanceof BinaryLogicFilter) {
+               checkBinaryLogicFilter((BinaryLogicFilter) filter);
+            } else if (filter instanceof ComparisonFilter) {
+                checkFilter((ComparisonFilter) filter);
+            } else {
+                throw new NotYetSupportedException().withMessage("The %s does not yet support filters of type '%s'", ResultFilterConstants.RESULT_FILTER, filter);
             }
         }
     }
     
+    private void checkBinaryLogicFilter(BinaryLogicFilter filter) throws CodedException {
+        for (Filter<?> f : filter.getFilterPredicates()) {
+            if (f instanceof BinaryLogicFilter) {
+                checkBinaryLogicFilter((BinaryLogicFilter) f);
+             } else if (f instanceof ComparisonFilter) {
+                 checkFilter((ComparisonFilter) f);
+             } else {
+                 throw new NotYetSupportedException().withMessage("The %s does not yet support filters of type '%s'", ResultFilterConstants.RESULT_FILTER, f);
+             }
+        }
+    }
+
+    private void checkFilter(ComparisonFilter filter) throws CodedException {
+        if (!filter.hasValueReference()) {
+            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
+        } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
+            throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
+        }
+        if (filter.getOperator() == null) {
+            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
+        }
+        
+        if (filter.getValue() == null) {
+            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
+        }
+    }
+
     protected void checkSpatialFilterExtension(AbstractServiceRequest request) throws CodedOwsException {
         if (request.isSetExtensions() && request.hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
             if (request.getExtensionCount(SosSpatialFilterConstants.SPATIAL_FILTER) > 1) {

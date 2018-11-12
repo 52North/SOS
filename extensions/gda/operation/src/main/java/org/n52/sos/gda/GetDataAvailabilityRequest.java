@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.n52.sos.gda.v20.GetDataAvailabilityV20Response;
 import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ResultFilter;
@@ -240,7 +241,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
                 && getExtension(ResultFilterConstants.RESULT_FILTER) instanceof ResultFilter;
     }
     
-    public ComparisonFilter getResultFilter() {
+    public Filter<?> getResultFilter() {
         if (hasResultFilter()) {
             return ((ResultFilter)getExtension(ResultFilterConstants.RESULT_FILTER)).getValue();
         }

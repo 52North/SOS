@@ -31,9 +31,10 @@ package org.n52.sos.decode.kvp;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -55,9 +56,12 @@ import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
+import org.n52.sos.ogc.filter.BinaryLogicFilter;
 import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.FilterConstants;
+import org.n52.sos.ogc.filter.FilterConstants.BinaryLogicOperator;
 import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
@@ -466,12 +470,22 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
 
     protected boolean parseODataFes(AbstractServiceRequest<?> request, String parameterValues, String parameterName) throws OwsExceptionReport {
         try {
-            List<Filter<?>> filters = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
-            for (Filter<?> f : filters) {
-                if (f instanceof ComparisonFilter) {
-                    request.addExtension(new ResultFilter((ComparisonFilter) f));
-                } else if (f instanceof SpatialFilter) {
-                    request.addExtension(new SosSpatialFilter((SpatialFilter) f));
+            Filter<?> filter = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
+            if (filter instanceof BinaryLogicFilter) {
+                for (Filter<?> f : ((BinaryLogicFilter) filter).getFilterPredicates()) {
+                    if (f instanceof SpatialFilter) {
+                        request.addExtension(new SosSpatialFilter((SpatialFilter) f));
+                    } else {
+                        request.addExtension(new ResultFilter(f));
+                    }
+                }
+            } else {
+                if (filter instanceof SpatialFilter) {
+                    request.addExtension(new SosSpatialFilter((SpatialFilter) filter));
+                } else if (filter instanceof ComparisonFilter){
+                    request.addExtension(new ResultFilter(filter));
+                } else {
+                    throw new OptionNotSupportedException().at("$filter");
                 }
             }
             return true;
@@ -489,22 +503,35 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
                 .replaceAll(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE, "samplingGeometry");
     }
 
-    private List<Filter<?>> convertFilter(org.n52.shetland.ogc.filter.Filter<?> filter) throws OwsExceptionReport {
-        List<Filter<?>> list = new LinkedList<>();
+    private Filter<?> convertFilter(org.n52.shetland.ogc.filter.Filter<?> filter) throws OwsExceptionReport {
+//        List<Filter<?>> list = new LinkedList<>();
         if (filter instanceof org.n52.shetland.ogc.filter.ComparisonFilter) {
-            list.add(convertComparisonFilter((org.n52.shetland.ogc.filter.ComparisonFilter) filter));
+            return convertComparisonFilter((org.n52.shetland.ogc.filter.ComparisonFilter) filter);
         } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter) {
-            list.add(convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter));
+            return convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter);
         } else if (filter instanceof org.n52.shetland.ogc.filter.BinaryLogicFilter) {
-            if (!filter.getOperator().equals(org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And)) {
-                throw new OptionNotSupportedException().at("$filter").withMessage("Currently, only the AND operator is supported!");
+//            if (!filter.getOperator().equals(org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And)) {
+//                throw new OptionNotSupportedException().at("$filter").withMessage("Currently, only the AND operator is supported!");
+//            }
+            BinaryLogicFilter binaryLogicFilter = new BinaryLogicFilter(convertBinaryLogicOperator((org.n52.shetland.ogc.filter.BinaryLogicFilter) filter));
+            Set<Filter<?>> convertFilters = convertFilters(((org.n52.shetland.ogc.filter.BinaryLogicFilter) filter).getFilterPredicates());
+            Set<Filter<?>> checkForBetweenComparisonFilter = checkForBetweenComparisonFilter(convertFilters);
+            if (checkForBetweenComparisonFilter.size() == 1 && checkForBetweenComparisonFilter.iterator().next() instanceof ComparisonFilter) {
+                return checkForBetweenComparisonFilter.iterator().next();
             }
-            for (org.n52.shetland.ogc.filter.Filter<?> f : ((org.n52.shetland.ogc.filter.BinaryLogicFilter) filter).getFilterPredicates()) {
-                list.addAll(convertFilter(f));
-            }
-            return checkForBetweenComparisonFilter(list);
+            return binaryLogicFilter.addFilterPredicates(checkForBetweenComparisonFilter);
         }
-       return list;
+        throw new NotYetSupportedException(filter.toString());
+    }
+
+    private Set<Filter<?>> convertFilters(Collection<org.n52.shetland.ogc.filter.Filter<?>> filters) throws OwsExceptionReport {
+        Set<Filter<?>> convertedFilters = new LinkedHashSet<>();
+        if (filters != null) {
+            for (org.n52.shetland.ogc.filter.Filter<?> filter : filters) {
+                convertedFilters.add(convertFilter(filter));
+            }
+        }
+        return convertedFilters;
     }
 
     private ComparisonFilter convertComparisonFilter(org.n52.shetland.ogc.filter.ComparisonFilter filter) {
@@ -596,9 +623,20 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
         }
     }
 
-    private List<Filter<?>> checkForBetweenComparisonFilter(List<Filter<?>> set)
+    private BinaryLogicOperator convertBinaryLogicOperator(org.n52.shetland.ogc.filter.BinaryLogicFilter filter) throws NotYetSupportedException {
+        switch (filter.getOperator()) {
+        case And:
+            return BinaryLogicOperator.And;
+        case Or:
+            return BinaryLogicOperator.And;
+        default:
+           throw new NotYetSupportedException(filter.getOperator().name());
+        }
+    }
+
+    private Set<Filter<?>> checkForBetweenComparisonFilter(Collection<Filter<?>> set)
             throws OwsExceptionReport {
-        List<Filter<?>> prepared = new LinkedList<>();
+        Set<Filter<?>> prepared = new LinkedHashSet<>();
         ComparisonFilter ge = null;
         for (Filter<?> filter : set) {
             if (filter instanceof ComparisonFilter) {

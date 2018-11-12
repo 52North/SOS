@@ -91,6 +91,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
@@ -1231,7 +1232,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             SubQueryIdentifier identifier, Session session)
             throws OwsExceptionReport {
         if (request.hasResultFilter()) {
-            ComparisonFilter resultFilter = request.getResultFilter();
+            Filter<?> resultFilter = request.getResultFilter();
             Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
                     getResultFilterClasses(), BaseObservation.OBS_ID, identifier);
             if (resultFilterExpression != null) {

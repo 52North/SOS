@@ -44,16 +44,16 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
-import net.opengis.sosrf.x10.ResultFilterDocument;
-import net.opengis.sosrf.x10.ResultFilterPropertyType;
-import net.opengis.sosrf.x10.ResultFilterType;
+import net.opengis.sosrf.x20.ResultFilterDocument;
+import net.opengis.sosrf.x20.ResultFilterPropertyType;
+import net.opengis.sosrf.x20.ResultFilterType;
 
-public class ResultFilterDecoder extends AbstractXmlDecoder<ResultFilter> {
+public class ResultFilterDecoderv20 extends AbstractXmlDecoder<ResultFilter> {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResultFilterDecoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResultFilterDecoderv20.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
-            ResultFilterConstants.NS_RF, ResultFilterDocument.class, ResultFilterPropertyType.class, ResultFilterType.class);
+            ResultFilterConstants.NS_RF_20, ResultFilterDocument.class, ResultFilterPropertyType.class, ResultFilterType.class);
 
     @Override
     public Set<DecoderKey> getDecoderKeyTypes() {
@@ -76,11 +76,11 @@ public class ResultFilterDecoder extends AbstractXmlDecoder<ResultFilter> {
     }
 
     private ResultFilter parseType(ResultFilterType xmlObject) throws OwsExceptionReport {
-        return new ResultFilter((Filter<?>)CodingHelper.decodeXmlElement(xmlObject.getComparisonOps()), ResultFilterConstants.NS_RF);
+        return new ResultFilter((Filter<?>)CodingHelper.decodeXmlElement(xmlObject.getFilter()), ResultFilterConstants.NS_RF_20);
     }
 
     @Override
     public Set<String> getConformanceClasses() {
-        return Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_XML);
+        return Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_XML_20);
     }
 }

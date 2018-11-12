@@ -30,7 +30,7 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ page import="org.n52.sos.service.AbstractLoggingConfigurator.Level" %>
+<%@ page import="org.n52.sos.web.admin.AbstractLoggingConfigurator.Level"%>
 <jsp:include page="../common/header.jsp">
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>
@@ -218,7 +218,7 @@
                 $modal.remove();
                 callback(false);
         }).appendTo($header);
-        $("<h3>").text("Are you really shure?").appendTo($header);
+        $("<h3>").text("Are you really sure?").appendTo($header);
         var $body = $("<div>").addClass("modal-body");
         $("<p>")
             .html("This will remove the logger <code>" + logger + "</code>.")

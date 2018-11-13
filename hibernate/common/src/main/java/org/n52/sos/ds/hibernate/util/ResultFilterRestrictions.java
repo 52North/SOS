@@ -37,11 +37,14 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.HibernateCriterionHelper;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -218,6 +221,39 @@ public class ResultFilterRestrictions {
             } else {
                 return getSubquery(list.iterator().next(), subqueryColumn);
             }
+        }
+        return null;
+    }
+
+    public static Criterion getResultFilterExpression(Filter<?> resultFilter, ResultFilterClasses resultFilterClasses,
+            String column, SubQueryIdentifier identifier)
+            throws CodedException {
+        return getResultFilterExpression(resultFilter, resultFilterClasses, column, column, identifier);
+    }
+
+    public static Criterion getResultFilterExpression(Filter<?> resultFilter, ResultFilterClasses resultFilterClasses,
+            String subqueryColumn, String column, SubQueryIdentifier identifier)
+            throws CodedException {
+        if (resultFilter instanceof ComparisonFilter) {
+            return getResultFilterExpression(((ComparisonFilter) resultFilter), resultFilterClasses, subqueryColumn,
+                    column, identifier);
+        }
+        if (resultFilter instanceof BinaryLogicFilter) {
+            Junction junction = null;
+            switch (((BinaryLogicFilter) resultFilter).getOperator()) {
+            case And:
+                junction = Restrictions.conjunction();
+                break;
+            case Or:
+                junction = Restrictions.disjunction();
+                break;
+            default:
+                throw new NoApplicableCodeException().withMessage("BinaryLogicalOpserator '%s' is not supported!", ((BinaryLogicFilter) resultFilter).getOperator().name());
+            }
+            for (Filter<?> filter : ((BinaryLogicFilter) resultFilter).getFilterPredicates()) {
+                junction.add(getResultFilterExpression(filter, resultFilterClasses, subqueryColumn, column, identifier));
+            }
+            return junction;
         }
         return null;
     }

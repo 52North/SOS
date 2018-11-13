@@ -35,6 +35,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
@@ -78,8 +79,10 @@ public class GetDataAvailabilityKvpDecoderTest  {
 
         assertThat(request.hasResultFilter(), is(true));
         assertThat(request.getResultFilter().getValueReference(), is("om:result"));
-        assertThat(request.getResultFilter().getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name()));
-        assertThat(request.getResultFilter().getValue(), is("10.5"));
+        assertThat(request.getResultFilter() instanceof ComparisonFilter, is(true));
+        ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
+        assertThat(filter.getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name()));
+        assertThat(filter.getValue(), is("10.5"));
     }
 
     @Test
@@ -90,9 +93,11 @@ public class GetDataAvailabilityKvpDecoderTest  {
 
         assertThat(request.hasResultFilter(), is(true));
         assertThat(request.getResultFilter().getValueReference(), is("om:result"));
-        assertThat(request.getResultFilter().getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsBetween.name()));
-        assertThat(request.getResultFilter().getValue(), is("10.0"));
-        assertThat(request.getResultFilter().getValueUpper(), is("20.0"));
+        assertThat(request.getResultFilter() instanceof ComparisonFilter, is(true));
+        ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
+        assertThat(filter.getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsBetween.name()));
+        assertThat(filter.getValue(), is("10.0"));
+        assertThat(filter.getValueUpper(), is("20.0"));
     }
 
     @Test

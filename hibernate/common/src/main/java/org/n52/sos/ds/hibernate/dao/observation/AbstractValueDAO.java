@@ -38,7 +38,7 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -102,9 +102,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session, StringBuilder logArgs)
             throws OwsExceptionReport {
-        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
-            ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
-            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), DataEntity.PROPERTY_ID, identifier);
+        if (request.hasResultFilter()) {
+            Filter<?> resultFilter = request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
+                    getResultFilterClasses(), DataEntity.PROPERTY_ID, identifier);
             if (resultFilterExpression != null) {
                 c.add(resultFilterExpression);
                 logArgs.append(", resultFilter");

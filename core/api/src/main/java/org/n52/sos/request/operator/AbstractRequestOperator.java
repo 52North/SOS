@@ -56,7 +56,9 @@ import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.event.EventBus;
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -71,6 +73,7 @@ import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
 import org.n52.shetland.ogc.ows.exception.MissingVersionParameterException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
 import org.n52.shetland.ogc.ows.extension.Extension;
@@ -1069,7 +1072,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
     }
 
-    protected void checkResultFilterExtension(OwsServiceRequest request) throws CodedOwsException {
+    protected void checkResultFilterExtension(OwsServiceRequest request) throws CodedException {
         if (request.hasExtension(ResultFilterConstants.RESULT_FILTER)) {
             if (request.getExtensionCount(ResultFilterConstants.RESULT_FILTER) > 1) {
                 throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, "duplicated");
@@ -1078,19 +1081,41 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             if (extension.isPresent() && extension.get().getValue() == null) {
                 throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER);
             }
-            ComparisonFilter filter = ((ResultFilter) extension.get()).getValue();
-            if (!filter.hasValueReference()) {
-                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
-            } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
-                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
+            Filter<?> filter = ((ResultFilter) extension.get()).getValue();
+            if (filter instanceof BinaryLogicFilter) {
+               checkBinaryLogicFilter((BinaryLogicFilter) filter);
+            } else if (filter instanceof ComparisonFilter) {
+                checkFilter((ComparisonFilter) filter);
+            } else {
+                throw new OptionNotSupportedException().withMessage("The %s does not yet support filters of type '%s'", ResultFilterConstants.RESULT_FILTER, filter);
             }
-            if (filter.getOperator() == null) {
-                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
-            }
+        }
+    }
 
-            if (filter.getValue() == null) {
-                throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
-            }
+    private void checkBinaryLogicFilter(BinaryLogicFilter filter) throws CodedException {
+        for (Filter<?> f : filter.getFilterPredicates()) {
+            if (f instanceof BinaryLogicFilter) {
+                checkBinaryLogicFilter((BinaryLogicFilter) f);
+             } else if (f instanceof ComparisonFilter) {
+                 checkFilter((ComparisonFilter) f);
+             } else {
+                 throw new OptionNotSupportedException().withMessage("The %s does not yet support filters of type '%s'", ResultFilterConstants.RESULT_FILTER, f);
+             }
+        }
+    }
+
+    private void checkFilter(ComparisonFilter filter) throws CodedException {
+        if (!filter.hasValueReference()) {
+            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
+        } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
+            throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
+        }
+        if (filter.getOperator() == null) {
+            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
+        }
+
+        if (filter.getValue() == null) {
+            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
         }
     }
 

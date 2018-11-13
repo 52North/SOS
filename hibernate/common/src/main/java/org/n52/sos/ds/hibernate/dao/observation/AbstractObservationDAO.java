@@ -65,7 +65,7 @@ import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.parameter.Parameter;
 import org.n52.shetland.ogc.UoM;
-import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -1279,9 +1279,10 @@ public abstract class AbstractObservationDAO
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
             SubQueryIdentifier identifier, Session session)
             throws OwsExceptionReport {
-        if (request.hasResultFilter() && request.getResultFilter() instanceof ComparisonFilter) {
-            ComparisonFilter resultFilter = (ComparisonFilter) request.getResultFilter();
-            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter, getResultFilterClasses(), DataEntity.PROPERTY_ID);
+        if (request.hasResultFilter()) {
+            Filter<?> resultFilter = request.getResultFilter();
+            Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
+                    getResultFilterClasses(), DataEntity.PROPERTY_ID, identifier);
             if (resultFilterExpression != null) {
                 c.add(resultFilterExpression);
             }

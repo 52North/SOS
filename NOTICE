@@ -254,6 +254,7 @@ This project includes:
   OGC SOS GetDataAvailability schema 2.0 under The Apache Software License, Version 2.0
   OGC SOS RelatedOfferings schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS Result Filtering schema 1.0 under The Apache Software License, Version 2.0
+  OGC SOS Result Filtering schema 2.0 under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SOS Spatial Filtering schema 1.0 under The Apache Software License, Version 2.0
@@ -279,12 +280,12 @@ This project includes:
   Saxon-HE under Mozilla Public License Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0
   Series Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
-  Series REST API - DAO module under GNU General Public License, Version 2.0
-  Series REST API - DAO Webapp under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0
   Series REST API - SPI module under GNU General Public License, Version 2.0
+  Series REST API DAO - DAO under GNU General Public License, Version 2.0
+  Series REST API DAO - Webapp under GNU General Public License, Version 2.0
   SI Quantities under BSD
   SI Units for Java SE 8 under BSD
   SLF4J API Module under MIT License

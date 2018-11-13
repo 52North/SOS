@@ -59,6 +59,7 @@ import org.n52.series.db.beans.data.Data;
 import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.series.db.beans.dataset.NotInitializedDataset;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
@@ -979,7 +980,7 @@ public abstract class AbstractSeriesDAO
         }
     }
 
-    private void addResultfilter(Criteria c, ComparisonFilter resultFilter, SubQueryIdentifier identifier) throws CodedException {
+    private void addResultfilter(Criteria c, Filter<?> resultFilter, SubQueryIdentifier identifier) throws CodedException {
         Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
                 getResultFilterClasses(), DatasetEntity.PROPERTY_ID, DataEntity.PROPERTY_DATASET, identifier);
         if (resultFilterExpression != null) {

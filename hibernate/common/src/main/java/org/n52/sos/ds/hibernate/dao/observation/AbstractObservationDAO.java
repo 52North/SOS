@@ -272,7 +272,7 @@ public abstract class AbstractObservationDAO
      * Get Hibernate Criteria for {@link TemporalReferencedObservation} with
      * restrictions observation identifiers
      *
-     * @param bservation
+     * @param observation
      *
      * @param observationConstellation
      *            The observation with restriction values
@@ -549,7 +549,7 @@ public abstract class AbstractObservationDAO
      * a multi value observation for observation constellations and
      * featureOfInterest
      *
-     * @param observationConstellations
+     * @param observationConstellation
      *                                  Observation constellation objects
      * @param feature
      *                                  FeatureOfInterest object
@@ -585,7 +585,7 @@ public abstract class AbstractObservationDAO
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
      *
-     * @param hObservationConstellations
+     * @param hObservationConstellation
      *                                   Observation constellation objects
      * @param hFeature
      *                                   FeatureOfInterest object
@@ -607,7 +607,7 @@ public abstract class AbstractObservationDAO
      * Insert a single observation for observation constellations and
      * featureOfInterest with local caching for codespaces and units
      *
-     * @param hObservationConstellations
+     * @param hObservationConstellation
      *                                   Observation constellation objects
      * @param hFeature
      *                                   FeatureOfInterest object

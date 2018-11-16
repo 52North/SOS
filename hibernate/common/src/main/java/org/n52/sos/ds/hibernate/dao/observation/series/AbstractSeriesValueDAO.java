@@ -228,7 +228,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *            Temporal filter {@link Criterion}
      * @param session
      *            Hibernate Session
-     * @param logArgs2
+     * @param logArgs
      * @return Resulting {@link Criteria}
      * @throws OwsExceptionReport
      *             If an error occurs when adding Spatial Filtering Profile
@@ -252,7 +252,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      *            Temporal filter {@link Criterion}
      * @param session
      *            Hibernate Session
-     * @param logArgs2
+     * @param logArgs
      * @return Resulting {@link Criteria}
      * @throws OwsExceptionReport
      *             If an error occurs when adding Spatial Filtering Profile

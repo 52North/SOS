@@ -363,6 +363,9 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      */
     public AbstractFeatureEntity checkOrInsert(AbstractFeature featureOfInterest, Session session)
             throws OwsExceptionReport {
+        if (featureOfInterest == null) {
+            throw new NoApplicableCodeException().withMessage("The feature to check or insert is null.");
+        }
         AbstractFeatureEntity feature = getFeature(featureOfInterest.getIdentifier(), session);
         if (feature != null) {
             return feature;
@@ -499,11 +502,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
         private AbstractFeatureEntity getFeatureOfInterest(AbstractSamplingFeature value) throws OwsExceptionReport {
             final String newId = value.getIdentifierCodeWithAuthority().getValue();
-            Geometry geom = null;
-            if (value instanceof FeatureWithGeometry) {
-                geom = ((FeatureWithGeometry) value).getGeometry();
-
-            }
+            Geometry geom = ((FeatureWithGeometry) value).getGeometry();
             return dao.getFeatureOfInterest(newId, geom, session);
         }
     }

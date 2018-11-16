@@ -155,7 +155,7 @@ public class EprtrConverter
                 return checkGetObservationFeatures((GetObservationResponse) response);
             }
         }
-        if (response instanceof GetObservationResponse && mergeForEprtr()) {
+        if (response instanceof GetFeatureOfInterestResponse && mergeForEprtr()) {
             return checkFeatures((GetFeatureOfInterestResponse) response);
         }
         return response;

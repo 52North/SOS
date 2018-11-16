@@ -270,7 +270,7 @@ public class ObservationUnfolder {
                                     resultTime, iValue));
                         }
                         for (OmObservation newObservation : newObservations) {
-                            if (samplingGeometry != null && samplingGeometry.hasGeometry()) {
+                            if (samplingGeometry.hasGeometry()) {
                                 try {
                                     newObservation.addSpatialFilteringProfileParameter(samplingGeometry.getGeometry());
                                 } catch (ParseException e) {
@@ -380,6 +380,9 @@ public class ObservationUnfolder {
         boolean tokenIndexIncreased = false;
         for (SweField field : record.getFields()) {
             String token = block.get(tokenIndex.get());
+            if (field == null) {
+                throw new NoApplicableCodeException().withMessage("sweField is null");
+            }
             if (field.getElement() instanceof SweQuantity) {
                 if (checkDefinitionForDephtHeight(field)) {
                     parseFieldAsParameter(field, token, parameterHolder);
@@ -466,6 +469,9 @@ public class ObservationUnfolder {
             }
             boolean tokenIndexIncreased = false;
             for (SweCoordinate<?> coordinate : sweVector.getCoordinates()) {
+                if (coordinate == null) {
+                    throw new NoApplicableCodeException().withMessage("sweCoordinate is null");
+                }
                 String token = block.get(tokenIndex.get());
                 if (coordinate.getValue() instanceof SweQuantity) {
                     double value = Double.parseDouble(token);
@@ -477,7 +483,7 @@ public class ObservationUnfolder {
                         holder.setLongitude(value);
                     }
                 } else {
-                    throw new NoApplicableCodeException().withMessage("sweField type '%s' not yet supported",
+                    throw new NoApplicableCodeException().withMessage("sweCoordinate type '%s' not yet supported",
                             coordinate != null ? coordinate.getClass().getName() : "null");
                 }
                 tokenIndex.incrementAndGet();
@@ -508,6 +514,9 @@ public class ObservationUnfolder {
 
     private boolean parseFieldAsParameter(SweField field, String token, ParameterHolder parameterHolder) throws CodedException {
         Value<?> value = null;
+        if (field == null) {
+            throw new NoApplicableCodeException().withMessage("sweField is null");
+        }
         ReferenceType name = new ReferenceType(field.getElement().getDefinition());
         if (field.getElement() instanceof SweQuantity) {
             value = new QuantityValue(Double.parseDouble(token), ((SweQuantity) field.getElement()).getUomObject());
@@ -525,7 +534,7 @@ public class ObservationUnfolder {
         }
         parameterHolder.addParameter(new NamedValue<>(getParameterName(name), value));
         return true;
-    }
+}
 
     private Value<?> convertToProfileValue(Value<?> value, GeometryHolder samplingGeometry, Time phenomenonTime,
             ParameterHolder parameterHolder) throws OwsExceptionReport {

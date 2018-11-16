@@ -2341,7 +2341,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public void addCompositePhenomenonForOffering(String offering, String compositePhenomenon) {
         notNullOrEmpty(OFFERING, offering);
         notNullOrEmpty(COMPOSITE_PHENOMENON, compositePhenomenon);
-        LOG.trace("Adding composite phenomenon {} to offering {}", offering);
+        LOG.trace("Adding composite phenomenon {} to offering {}", compositePhenomenon, offering);
         this.compositePhenomenonsForOffering.computeIfAbsent(offering, createSynchronizedSet()).add(compositePhenomenon);
         addCompositePhenomenon(compositePhenomenon);
     }
@@ -2350,7 +2350,7 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache implements 
     public void addCompositePhenomenonForOffering(String offering, Collection<String> compositePhenomenon) {
         notNullOrEmpty(OFFERING, offering);
         noNullOrEmptyValues(COMPOSITE_PHENOMENON, compositePhenomenon);
-        LOG.trace("Adding composite phenomenon {} to offering {}", offering);
+        LOG.trace("Adding composite phenomenon {} to offering {}", compositePhenomenon,  offering);
         this.compositePhenomenonsForOffering.computeIfAbsent(offering, createSynchronizedSet())
                 .addAll(compositePhenomenon);
         addCompositePhenomenon(compositePhenomenon);

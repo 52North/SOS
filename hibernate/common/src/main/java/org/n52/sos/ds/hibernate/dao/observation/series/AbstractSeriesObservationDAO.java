@@ -411,7 +411,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         }
         criteria.setProjection(Projections.distinct(Projections.property(DataEntity.PROPERTY_RESULT_TIME)));
         criteria.addOrder(Order.asc(DataEntity.PROPERTY_RESULT_TIME));
-        LOGGER.debug("QUERY getResultTimesForSeriesObservation({}): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.debug("QUERY getResultTimesForSeriesObservation(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 

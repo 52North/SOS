@@ -1131,8 +1131,6 @@ public abstract class AbstractSeriesDAO
     /**
      * Query unit for parameter
      *
-     * @param request
-     *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
      * @param session
@@ -1153,10 +1151,8 @@ public abstract class AbstractSeriesDAO
     /**
      * Query unit for parameter
      *
-     * @param request
-     *            {@link AbstractObservationRequest}
      * @param series
-     *            Datasource series id
+     *            Datasource series ids
      * @param session
      *            Hibernate Session
      * @return Unit or null if no unit is set

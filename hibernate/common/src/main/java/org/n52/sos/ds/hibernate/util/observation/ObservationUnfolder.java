@@ -307,7 +307,8 @@ public class ObservationUnfolder {
                 }
             }
             if (isProfileObservations()) {
-                if (complex) {
+                if (complex
+                        || observationCollection.get(0).getObservationConstellation().getProcedure().isSetMobile()) {
                     List<OmObservation> observations = new ArrayList<>();
                     for (List<OmObservation> list : getProfileLists(observationCollection)) {
                         observations.addAll(new ObservationMerger().mergeObservations(list,
@@ -315,8 +316,12 @@ public class ObservationUnfolder {
                     }
                     return observations;
                 } else {
-                    return new ObservationMerger().mergeObservations(observationCollection,
-                            ObservationMergeIndicator.defaultObservationMergerIndicator().setPhenomenonTime(true));
+                    List<OmObservation> observations = new ArrayList<>();
+                    for (List<OmObservation> list : getProfileLists(observationCollection, 1)) {
+                        observations.addAll(new ObservationMerger().mergeObservations(list,
+                                ObservationMergeIndicator.defaultObservationMergerIndicator()));
+                    }
+                    return observations;
                 }
             }
             return observationCollection;
@@ -324,30 +329,38 @@ public class ObservationUnfolder {
     }
 
     private List<List<OmObservation>> getProfileLists(List<OmObservation> observationCollection) {
+        return getProfileLists(observationCollection, 5);
+    }
+    
+    private List<List<OmObservation>> getProfileLists(List<OmObservation> observationCollection, int time) {
         List<List<OmObservation>> list = new ArrayList<>();
-        Map<DateTime, OmObservation> map = getMap(observationCollection);
+        Map<DateTime, List<OmObservation>> map = getMap(observationCollection);
         DateTime currentTime = null;
         List<OmObservation> currentObservations = new ArrayList<>();
-        for (Entry<DateTime, OmObservation> entry : map.entrySet()) {
-            if (currentTime != null && Minutes.minutesBetween(currentTime, entry.getKey()).getMinutes() > 5) {
+        for (Entry<DateTime, List<OmObservation>> entry : map.entrySet()) {
+            if (currentTime != null && Minutes.minutesBetween(currentTime, entry.getKey()).getMinutes() > time) {
                 list.add(Lists.newArrayList(currentObservations));
                 currentObservations.clear();
             }
-            currentObservations.add(entry.getValue());
+            currentObservations.addAll(entry.getValue());
             currentTime = entry.getKey();
         }
         list.add(Lists.newArrayList(currentObservations));
         return list;
     }
 
-    private Map<DateTime, OmObservation> getMap(List<OmObservation> observationCollection) {
-        Map<DateTime, OmObservation> map = new TreeMap<>();
+    private Map<DateTime, List<OmObservation>> getMap(List<OmObservation> observationCollection) {
+        Map<DateTime, List<OmObservation>> map = new TreeMap<>();
         for (OmObservation omObservation : observationCollection) {
+            DateTime time = null;
             if (omObservation.getPhenomenonTime() instanceof TimeInstant) {
-                map.put(((TimeInstant) omObservation.getPhenomenonTime()).getValue(), omObservation);
+                time = ((TimeInstant) omObservation.getPhenomenonTime()).getValue();
             } else if (omObservation.getPhenomenonTime() instanceof TimePeriod) {
-                map.put(((TimePeriod) omObservation.getPhenomenonTime()).getStart(), omObservation);
+                time = ((TimePeriod) omObservation.getPhenomenonTime()).getStart();
             }
+            List list = map.containsKey(time) ? map.get(time) : new LinkedList<>();
+            list.add(omObservation);
+            map.put(time, list);
         }
         return map;
     }

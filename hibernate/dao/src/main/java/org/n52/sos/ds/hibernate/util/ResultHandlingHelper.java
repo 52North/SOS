@@ -30,10 +30,13 @@ package org.n52.sos.ds.hibernate.util;
 
 import static org.n52.sos.util.DateTimeHelper.formatDateTime2IsoString;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.joda.time.DateTime;
@@ -46,10 +49,13 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.ParameterHolder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosResultEncoding;
@@ -134,50 +140,67 @@ public class ResultHandlingHelper {
      * @throws OwsExceptionReport
      *             If creation fails
      */
-    public String createResultValuesFromObservations(final List<Observation<?>> observations,
+    public String createResultValuesFromObservations(final Collection<Observation<?>> observations,
             final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure)
+            throws OwsExceptionReport {
+        final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
+        return createResultValuesFromObservations(observations, sosResultEncoding, sosResultStructure, valueOrder, true);
+        
+    }
+    
+    private String createResultValuesFromObservations(final Collection<Observation<?>> observations,
+            final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure, Map<Integer, String> valueOrder, boolean addCount)
             throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
         if (CollectionHelper.isNotEmpty(observations)) {
             final String tokenSeparator = getTokenSeparator(sosResultEncoding.getEncoding());
             final String blockSeparator = getBlockSeparator(sosResultEncoding.getEncoding());
-            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
-            addElementCount(builder, observations.size(), blockSeparator);
+            if (addCount) {
+                addElementCount(builder, observations.size(), blockSeparator);
+            }
             for (final Observation<?> observation : observations) {
-                for (final Integer intger : valueOrder.keySet()) {
-                    final String definition = valueOrder.get(intger);
-                    switch (definition) {
-                        case PHENOMENON_TIME:
-                            builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
-                                                                          observation.getPhenomenonTimeEnd()));
-                            break;
-                        case RESULT_TIME:
-                            builder.append(getTimeStringForResultTime(observation.getResultTime()));
-                            break;
-                        case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
-                            builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.getResultStructure()));
-                            break;
-                        case OM_PROCEDURE:
-                            if (observation.getProcedure() != null && observation.getProcedure().isSetIdentifier()) {
-                                builder.append(observation.getProcedure().getIdentifier());
-                            } else {
-                                builder.append("");
-                            }
-                            break;
-                        case OM_FEATURE_OF_INTEREST:
-                            if (observation.getFeatureOfInterest() != null && observation.getFeatureOfInterest().isSetIdentifier()) {
-                                builder.append(observation.getFeatureOfInterest().getIdentifier());
-                            } else {
-                                builder.append("");
-                            }
-                            break;
-                        default:
-                            builder.append(getValueAsStringForObservedProperty(observation, definition));
-                            break;
+                if (observation instanceof ProfileObservation) {
+                    builder.append(createResultValuesFromObservations(((ProfileObservation) observation).getValue(), sosResultEncoding, sosResultStructure, valueOrder, false));
+                } else {
+                    for (final Integer intger : valueOrder.keySet()) {
+                        final String definition = valueOrder.get(intger);
+                        switch (definition) {
+                            case PHENOMENON_TIME:
+                                builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
+                                                                              observation.getPhenomenonTimeEnd()));
+                                break;
+                            case RESULT_TIME:
+                                builder.append(getTimeStringForResultTime(observation.getResultTime()));
+                                break;
+                            case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
+                                builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.getResultStructure()));
+                                break;
+                            case OmConstants.OM_PARAMETER:
+                            case OmConstants.PARAMETER:
+                                builder.append(getParameters(observation, tokenSeparator, sosResultStructure.getResultStructure()));
+                                break;
+                            case OM_PROCEDURE:
+                                if (observation.getProcedure() != null && observation.getProcedure().isSetIdentifier()) {
+                                    builder.append(observation.getProcedure().getIdentifier());
+                                } else {
+                                    builder.append("");
+                                }
+                                break;
+                            case OM_FEATURE_OF_INTEREST:
+                                if (observation.getFeatureOfInterest() != null && observation.getFeatureOfInterest().isSetIdentifier()) {
+                                    builder.append(observation.getFeatureOfInterest().getIdentifier());
+                                } else {
+                                    builder.append("");
+                                }
+                                break;
+                            default:
+                                builder.append(getValueAsStringForObservedProperty(observation, definition));
+                                break;
+                        }
+                        builder.append(tokenSeparator);
                     }
-                    builder.append(tokenSeparator);
+                    builder.delete(builder.lastIndexOf(tokenSeparator), builder.length());
                 }
-                builder.delete(builder.lastIndexOf(tokenSeparator), builder.length());
                 builder.append(blockSeparator);
             }
             if (builder.length() > 0) {
@@ -328,10 +351,16 @@ public class ResultHandlingHelper {
                 }
                 tokenIndex.increment();
             } else if (element instanceof SweDataRecord) {
-                addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
+                if (element.isSetDefinition() && element.getDefinition().contains(OmConstants.PARAMETER)) {
+                    addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
+                    tokenIndex.increment();
+                } else {
+                    addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
+                }
             } else if (element instanceof SweVector) {
                 if (element.isSetDefinition()) {
                     addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
+                    tokenIndex.increment();
                 }
 //                addOrderAndVectorDefinitionToMap(((SweVector) element).getCoordinates(), valueOrder, tokenIndex);
             }
@@ -456,6 +485,60 @@ public class ResultHandlingHelper {
         for (SweField sweField : fields) {
             if (isVector(sweField) && checkVectorForSamplingGeometry(sweField)) {
                 return (SweVector)sweField.getElement();
+            }
+        }
+        return null;
+    }
+
+    private String getParameters(Observation<?> observation, String tokenSeparator,
+            SweAbstractDataComponent resultStructure) {
+        SweDataRecord record = null;
+        if (resultStructure instanceof SweDataArray
+                && ((SweDataArray) resultStructure).getElementType() instanceof SweDataRecord) {
+            final SweDataArray dataArray = (SweDataArray) resultStructure;
+            record = (SweDataRecord) dataArray.getElementType();
+        } else if (resultStructure instanceof SweDataRecord) {
+            record = (SweDataRecord) resultStructure;
+        }
+        Map<Integer, String> valueOrder = getParameterDataRecord(record.getFields());
+        StringBuilder builder = new StringBuilder();
+        if (valueOrder != null) {
+            for (Entry<Integer, String> order : valueOrder.entrySet()) {
+                if (observation.hasParameters() && hasParameter(observation.getParameters(), order.getValue())) {
+                    builder.append(getParameterValue(observation.getParameters(), order.getValue())).append(tokenSeparator);
+                } else {
+                    builder.append("").append(tokenSeparator);
+                }
+            }
+            return builder.delete(builder.lastIndexOf(tokenSeparator), builder.length()).toString();
+        }
+        return "";
+    }
+    
+    private Object getParameterValue(Set<Parameter> parameters, String value) {
+        for (Parameter parameter : parameters) {
+            if (parameter.getName().equals(value)) {
+                return parameter.getValueAsString();
+            }
+        }
+        return "";
+    }
+
+    private boolean hasParameter(Set<Parameter> parameters, String value) {
+        for (Parameter parameter : parameters) {
+            if (parameter.getName().equals(value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Map<Integer, String> getParameterDataRecord(List<SweField> list) {
+        for (SweField sweField : list) {
+            if (isDataRecord(sweField) && checkDefinition(sweField, OmConstants.PARAMETER)) {
+                return getValueOrderMap(sweField.getElement());
+            } else  if (isDataRecord(sweField) && checkDefinition(sweField, OmConstants.OM_PARAMETER)) {
+                return getValueOrderMap(sweField.getElement());
             }
         }
         return null;

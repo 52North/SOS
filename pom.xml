@@ -92,7 +92,7 @@
         <sqlite.version>3.21.0.1</sqlite.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <geotools.version>20.0</geotools.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.0.0.jre8</sqljdbc.version>
 

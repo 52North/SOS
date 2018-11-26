@@ -465,8 +465,8 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
             observationContext.setOffering(dataset.getOffering());
             observationContext.setCategory(dataset.getCategory());
         }
-
-        if (childObservation) {
+        // currently only profiles with one observedProperty are supported
+        if (childObservation && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
         }
         observationContext.setFeatureOfInterest(featureOfInterest);

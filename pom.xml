@@ -1847,6 +1847,7 @@
                             <goal>timestamp-property</goal>
                         </goals>
                         <configuration>
+                            <locale>en_US</locale>
                             <name>currentYearDynamic</name>
                             <pattern>yyyy</pattern>
                         </configuration>

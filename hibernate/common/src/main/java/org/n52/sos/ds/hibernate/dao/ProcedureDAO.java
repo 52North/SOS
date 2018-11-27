@@ -58,6 +58,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -1020,7 +1021,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (procedureDescription.getProcedureDescription() instanceof AbstractFeature) {
             AbstractFeature af = (AbstractFeature) procedureDescription.getProcedureDescription();
             if (af.isSetName()) {
-                if (!procedure.isSetName() || (procedure.isSetName() && !af.getName().equals(procedure.getName()))) {
+                if (!procedure.isSetName() || (procedure.isSetName() &&  !checkForName(af.getName(), procedure.getName()))) {
                     procedure.setName(af.getFirstName().getValue());
                 }
                 if (af.isSetDescription() && !af.getDescription().equals(procedure.getDescription())) {
@@ -1032,6 +1033,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             session.refresh(procedure);
         }
         return procedure;
-
     }
+
+    private boolean checkForName(List<CodeType> names, String name) {
+        return names.stream().filter(n -> n.getValue().equals(name)).findFirst().isPresent();
+    }
+    
 }

@@ -269,7 +269,6 @@ public class GetResultHandler extends AbstractGetResultHandler {
 
     private void addParentChildRestriction(Criteria c) {
         c.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
-        c.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, true));
     }
 
 

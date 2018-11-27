@@ -440,7 +440,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
     }
 
     private GeometryHandler getGeometryHandler() {
-        return getDaoFactory().getGeometryHandler();
+        return daoFactory.getGeometryHandler();
     }
 
     @Override

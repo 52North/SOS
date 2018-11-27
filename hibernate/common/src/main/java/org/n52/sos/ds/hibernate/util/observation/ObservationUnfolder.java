@@ -755,7 +755,7 @@ public class ObservationUnfolder {
         }
 
         private GeometryHandler getGeomtryHandler() {
-            return getDaoFactory().getGeometryHandler();
+            return GeometryHandler.getInstance();
         }
 
         public boolean hasGeometry() {

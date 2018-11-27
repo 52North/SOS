@@ -85,11 +85,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
             Session session, StringBuilder logArgs) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
             if (((GetObservationRequest)request).hasSpatialFilteringProfileSpatialFilter()) {
-                if (getDaoFactory().getGeometryHandler().isSpatialDatasource()) {
+                if (GeometryHandler.getInstance().isSpatialDatasource()) {
                     c.add(SpatialRestrictions.filter(
                             DataEntity.PROPERTY_GEOMETRY_ENTITY,
                             ((GetObservationRequest)request).getSpatialFilter().getOperator(),
-                            getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
                                     ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
                     logArgs.append(", spatialFilter");
                 } else {

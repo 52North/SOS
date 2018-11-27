@@ -393,7 +393,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(GeometryHandler.getInstance()
+        namedValue.setValue(new GeometryValue(daoFactory.getGeometryHandler()
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }

@@ -992,7 +992,7 @@ public abstract class AbstractSeriesDAO
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
-            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            Geometry geometry = getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
                 DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
                 dc.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, filter.getOperator(),
@@ -1013,7 +1013,7 @@ public abstract class AbstractSeriesDAO
             Session session) throws OwsExceptionReport {
         if (request.isSetSpatialFilter()) {
             SpatialFilter filter = request.getSpatialFilter();
-            Geometry geometry = GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
+            Geometry geometry = getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry());
             if (filter.getValueReference().equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE)) {
                 DetachedCriteria dc = DetachedCriteria.forClass(getObservationFactory().observationClass());
                 dc.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, filter.getOperator(),

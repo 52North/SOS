@@ -140,7 +140,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(c));
             return (AbstractFeatureEntity) c.uniqueResult();
         } else {
-            c.add(SpatialRestrictions.eq(AbstractFeatureEntity.GEOMETRY, GeometryHandler.getInstance()
+            c.add(SpatialRestrictions.eq(AbstractFeatureEntity.GEOMETRY, getDaoFactory().getGeometryHandler()
                             .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
             LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(c));
             return (AbstractFeatureEntity) c.uniqueResult();

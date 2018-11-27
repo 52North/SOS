@@ -64,8 +64,10 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread *
      *
-     * @param identifier
-     *            Procedure identifier
+     * @param procedure
+     *            Procedure entity
+     * @param datasets
+     *            metadata of the related entities
      */
     ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<DatasetEntity> datasets) {
         this.procedure = procedure;

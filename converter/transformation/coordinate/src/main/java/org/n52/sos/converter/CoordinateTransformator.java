@@ -170,7 +170,7 @@ public class CoordinateTransformator
      * Check all geometries in the response {@link OmObservation} and transform
      * to requested or default response EPSG code if necessary
      *
-     * @param observation
+     * @param omObservation
      *            Response {@link OmObservation}
      * @param targetCRS
      * @param target3DCRS
@@ -1008,13 +1008,13 @@ public class CoordinateTransformator
     }
 
     /**
-     * Check if the O&M parameter contains a geometry and transform to target
+     * Checks if the O&M parameter contains a geometry and transform to target
      * EPSG code, e.g. SOS 2.0 Spatial Filtering Profile
      *
      * @param parameters
      *            O&M parameter to check
-     * @param targetCRS
-     *            Target EPSG code
+     * @param request
+     *            If the parameter is transformed for a request or a response.
      * @throws OwsExceptionReport
      *             If the transformation fails
      */

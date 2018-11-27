@@ -37,10 +37,10 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 public interface InsertFeatureVisitor {
 
     default FeatureEntity visit(AbstractFeature f) throws OwsExceptionReport {
-        if (f instanceof SamplingFeature) {
-            return visit((SamplingFeature) f);
-        } else if (f instanceof SfSpecimen) {
+        if (f instanceof SfSpecimen) {
             return visit((SfSpecimen) f);
+        } else if (f instanceof SamplingFeature) {
+            return visit((SamplingFeature) f);
         }
         return null;
     }

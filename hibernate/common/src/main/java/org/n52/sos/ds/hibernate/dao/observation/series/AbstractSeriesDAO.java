@@ -189,7 +189,7 @@ public abstract class AbstractSeriesDAO
      * @return Series list
      */
     public abstract List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering,
-            Collection<String> featureIdentifiers, Session session);
+            Collection<String> features, Session session);
 
     /**
      * Create series for parameter

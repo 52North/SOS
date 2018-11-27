@@ -257,7 +257,6 @@ public class GetResultDAO extends AbstractGetResultDAO {
 
     private void addParentChildRestriction(Criteria c) {
         c.add(Restrictions.eq(Observation.CHILD, false));
-        c.add(Restrictions.eq(Observation.PARENT, true));
     }
 
     /**

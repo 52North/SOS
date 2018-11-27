@@ -1038,5 +1038,5 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     private boolean checkForName(List<CodeType> names, String name) {
         return names.stream().filter(n -> n.getValue().equals(name)).findFirst().isPresent();
     }
-    
+
 }

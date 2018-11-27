@@ -112,7 +112,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     /**
      * Get identifiers from featureOfInterest entities
      *
-     * @param featuresOfInterest
+     * @param features
      *            FeatureOfInterest entities
      * @return Identifiers from featureOfInterest entities
      */

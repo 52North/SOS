@@ -81,10 +81,13 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * by a session in a different thread
      *
      * @param offering
-     *            Offering identifier
-     * @param observationConstellationInfos
-     *            Observation Constellation info collection, passed in from
-     *            parent update if supported
+     *            Offering entity
+     * @param datasets
+     *            metadtat of the related entities
+     * @param defaultLanguage
+     *            the default language
+     * @param i18NDAORepository
+     *            the i18n repository
      */
     public OfferingCacheUpdateTask(OfferingEntity offering,
                                    Collection<DatasetEntity> datasets,
@@ -286,7 +289,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getErrors().add(owse);
         } catch (Exception e) {
             getErrors().add(new GenericThrowableWrapperException(e)
-                    .withMessage(String.format("Error while processing offering cache update task for '%s'!"), identifier));
+                    .withMessage("Error while processing offering cache update task for '%s'!", identifier));
         }
     }
 }

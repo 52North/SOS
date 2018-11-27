@@ -1346,7 +1346,7 @@ public abstract class AbstractObservationDAO
                     }
                 }
                 if (!envelope.isNull()) {
-                    return new ReferencedEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
+                    return new ReferencedEnvelope(envelope, getDaoFactory().getGeometryHandler().getStorageEPSG());
                 }
 
             }

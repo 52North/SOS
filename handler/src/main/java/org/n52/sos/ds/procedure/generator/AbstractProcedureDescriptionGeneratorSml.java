@@ -291,7 +291,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
             SmlPosition position = new SmlPosition();
             position.setName(POSITION_NAME);
             position.setFixed(true);
-            int srid = GeometryHandler.getInstance().getDefaultResponseEPSG();
+            int srid = geometryHandler.getDefaultResponseEPSG();
             if (features != null && features.size() == 1) {
                 FeatureEntity feature = features.iterator().next();
                 if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {

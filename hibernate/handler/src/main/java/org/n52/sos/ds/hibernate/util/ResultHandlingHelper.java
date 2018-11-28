@@ -148,6 +148,10 @@ public class ResultHandlingHelper {
                             case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
                                 builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.get().get(), noDataPlaceholder));
                                 break;
+                            case OmConstants.OM_PARAMETER:
+                            case OmConstants.PARAMETER:
+                                builder.append(getParameters(observation, tokenSeparator, sosResultStructure.get().get()));
+                                break;
                             case OM_PROCEDURE:
                                 if (observation.getDataset().getProcedure() != null && observation.getDataset().getProcedure().isSetIdentifier()) {
                                     builder.append(observation.getDataset().getProcedure().getIdentifier());
@@ -408,7 +412,7 @@ public class ResultHandlingHelper {
                 final String definition = valueOrder.get(intger);
                 if (samplingGeometry != null && samplingGeometry instanceof Point) {
                     Coordinate coordinate = samplingGeometry.getCoordinate();
-                    if (helper.hasAltitudeName(definition) && checkCoordinate(coordinate.z)) {
+                    if (helper.hasAltitudeName(definition) && checkCoordinate(coordinate.getZ())) {
                         builder.append(coordinate.z);
                     } else if (helper.hasNorthingName(definition)) {
                         if (getGeomtryHandler().isNorthingFirstEpsgCode(samplingGeometry.getSRID())) {
@@ -471,6 +475,8 @@ public class ResultHandlingHelper {
             record = (SweDataRecord) dataArray.getElementType();
         } else if (resultStructure instanceof SweDataRecord) {
             record = (SweDataRecord) resultStructure;
+        } else {
+            return "";
         }
         Map<Integer, String> valueOrder = getParameterDataRecord(record.getFields());
         StringBuilder builder = new StringBuilder();
@@ -488,8 +494,8 @@ public class ResultHandlingHelper {
         return "";
     }
 
-    private Object getParameterValue(Set<Parameter<?>> set, String value) {
-        for (Parameter parameter : set) {
+    private String getParameterValue(Set<Parameter<?>> set, String value) {
+        for (Parameter<?> parameter : set) {
             if (parameter.getName().equals(value)) {
                 return parameter.getValueAsString();
             }
@@ -498,7 +504,7 @@ public class ResultHandlingHelper {
     }
 
     private boolean hasParameter(Set<Parameter<?>> set, String value) {
-        for (Parameter parameter : set) {
+        for (Parameter<?> parameter : set) {
             if (parameter.getName().equals(value)) {
                 return true;
             }

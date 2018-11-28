@@ -1007,6 +1007,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
                 for (PhenomenonEntity child : observableProperty.getChildren()) {
                     childs.add(child.getIdentifier());
                 }
+                phens4CompPhens.put(observableProperty.getIdentifier(), childs);
             }
         }
         sosOffering.setObservableProperties(phenomenons);

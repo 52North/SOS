@@ -411,7 +411,7 @@ public class ObservationUnfolder {
                 ((SweCount) field.getElement()).setValue(Integer.parseInt(token));
             } else {
                 throw new NoApplicableCodeException().withMessage("sweField type '%s' not yet supported",
-                        field != null ? field.getClass().getName() : "null");
+                        field.getClass().getName());
             }
             tokenIndex.incrementAndGet();
             tokenIndexIncreased = true;
@@ -496,7 +496,7 @@ public class ObservationUnfolder {
                     }
                 } else {
                     throw new NoApplicableCodeException().withMessage("sweCoordinate type '%s' not yet supported",
-                            coordinate != null ? coordinate.getClass().getName() : "null");
+                            coordinate.getClass().getName());
                 }
                 tokenIndex.incrementAndGet();
                 tokenIndexIncreased = true;
@@ -542,7 +542,7 @@ public class ObservationUnfolder {
             value = new CountValue(Integer.parseInt(token));
         } else {
             throw new NoApplicableCodeException().withMessage("sweField type '%s' not yet supported",
-                    field != null ? field.getClass().getName() : "null");
+                    field.getClass().getName());
         }
         parameterHolder.addParameter(new NamedValue<>(getParameterName(name), value));
         return true;

@@ -53,7 +53,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.cl
         if (HibernateHelper.isEntitySupported(RelatedDatasetEntity.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Restrictions.eq(RelatedDatasetEntity.PROPERTY_ITEM, series));
-            LOGGER.debug("QUERY getRelatedSeries(): {series}", HibernateHelper.getSqlString(c));
+            LOGGER.debug("QUERY getRelatedSeries(): {}", HibernateHelper.getSqlString(c));
             return c.list();
         }
         return Collections.EMPTY_LIST;

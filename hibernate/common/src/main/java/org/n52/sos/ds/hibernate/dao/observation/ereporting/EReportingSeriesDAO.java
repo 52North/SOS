@@ -240,7 +240,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (null == flow) {
-                throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
+                throw new OptionNotSupportedException().withMessage("The request does not conatain an e-Reporting flow parameter!");
             } else {
                 switch (flow) {
                     case E1A:

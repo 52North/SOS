@@ -284,7 +284,8 @@ public class ResultTemplateDAO {
                                         procedure.getIdentifier(), observableProperty, offering);
                     }
                 }
-                if (request.getIdentifier() != null && !storedIdentifiers.contains(request.getIdentifier())) {
+                if (request.getIdentifier() != null && request.getIdentifier().isSetValue()
+                        && !storedIdentifiers.contains(request.getIdentifier().getValue())) {
                     /* save it only if the identifier is different */
                     createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest,
                             session);

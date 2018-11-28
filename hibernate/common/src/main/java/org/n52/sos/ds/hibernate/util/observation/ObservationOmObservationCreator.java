@@ -186,14 +186,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private void addParameter(OmObservation observation, DataEntity<?> hObservation) throws OwsExceptionReport {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating Parameter...");
-        if (hObservation instanceof DataEntity) {
-            DatasetEntity series = ((DataEntity) hObservation).getDataset();
-            if (!seriesParameter.containsKey(series.getId()) && series.hasParameters()) {
-                seriesParameter.put(series.getId(), series.getParameters());
-            }
-            if (seriesParameter.get(series.getId()) != null && !seriesParameter.get(series.getId()).isEmpty()) {
-                new DatasetParameterAdder(observation, seriesParameter.get(series.getId())).add();
-            }
+        DatasetEntity series = ((DataEntity<?>) hObservation).getDataset();
+        if (!seriesParameter.containsKey(series.getId()) && series.hasParameters()) {
+            seriesParameter.put(series.getId(), series.getParameters());
+        }
+        if (seriesParameter.get(series.getId()) != null && !seriesParameter.get(series.getId()).isEmpty()) {
+            new DatasetParameterAdder(observation, seriesParameter.get(series.getId())).add();
         }
         new ParameterAdder(observation, hObservation).add();
         LOGGER.trace("Creating Parameter done in {} ms.", System.currentTimeMillis() - start);

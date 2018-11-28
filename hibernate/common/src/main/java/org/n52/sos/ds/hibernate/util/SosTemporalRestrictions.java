@@ -215,7 +215,7 @@ public class SosTemporalRestrictions {
     private static Collection<Disjunction> getDisjunctionHql(Iterable<TemporalFilter> temporalFilters)
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         Map<String, Disjunction> map = Maps.newHashMap();
-        Integer count = 1;
+        Integer count = Integer.valueOf(1);
         for (TemporalFilter temporalFilter : temporalFilters) {
             if (map.containsKey(temporalFilter.getValueReference())) {
                 map.get(temporalFilter.getValueReference()).add(filterHql(temporalFilter, count));

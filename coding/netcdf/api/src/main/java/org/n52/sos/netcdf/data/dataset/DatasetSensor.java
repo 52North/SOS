@@ -69,7 +69,7 @@ public abstract class DatasetSensor implements Comparable<DatasetSensor> {
     public int hashCode() {
         int h = 0;
         int len = getSensorIdentifier().length();
-        if (h == 0 && len > 0) {
+        if (len > 0) {
             int off = 0;
             char val[] = getSensorIdentifier().toCharArray();
 

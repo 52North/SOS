@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" ng-class="{in: showMobileNav}" ng-click="showMobileNav = !showMobileNav">
         <ul class="nav navbar-nav">
             <li ng-repeat="route in routes" ng-class="{active: activeRoute(route)}">
-                <a ng-if="!route.modal" href="#{{route.path}}">{{route.label | translate}}</a>
+                <a ng-if="!route.modal" ng-href="#{{route.path}}">{{route.label | translate}}</a>
                 <a ng-if="route.modal" ng-click="open(route.modal)">{{route.label | translate}}</a>
             </li>
         </ul>

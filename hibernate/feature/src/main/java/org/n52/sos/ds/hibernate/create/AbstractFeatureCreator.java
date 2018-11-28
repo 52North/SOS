@@ -166,21 +166,15 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity>
                             List<Coordinate> coordinates = Lists.newLinkedList();
                             Geometry lastGeoemtry = null;
                             for (Geometry geometry : geometries) {
-                                if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-                                    coordinates.add(getContext().getGeometryHandler()
-                                            .switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                                    lastGeoemtry = geometry;
+                                if (geometry != null) {
+                                    if ((lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
+                                        coordinates.add(getContext().getGeometryHandler()
+                                                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                        lastGeoemtry = geometry;
+                                    }
                                     if (geometry.getSRID() != srid) {
                                         srid = geometry.getSRID();
                                     }
-                                }
-                                if (geometry.getSRID() != srid) {
-                                    srid = geometry.getSRID();
-                                }
-                                if (!geometry.equalsTopo(lastGeoemtry)) {
-                                    coordinates.add(getContext().getGeometryHandler()
-                                            .switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                                    lastGeoemtry = geometry;
                                 }
                             }
                             Geometry geom = null;

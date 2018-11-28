@@ -260,6 +260,10 @@
             <artifactId>xmlbeans</artifactId>
         </dependency>
         <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

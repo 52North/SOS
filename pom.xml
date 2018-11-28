@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.n52</groupId>
         <artifactId>parent</artifactId>
-        <version>13</version>
+        <version>14</version>
     </parent>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
@@ -93,7 +93,7 @@
         <sqlite.version>3.21.0.1</sqlite.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <geotools.version>20.0</geotools.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.0.0.jre8</sqljdbc.version>
 
@@ -229,28 +229,12 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- 
-            <dependency>
-                <groupId>org.n52.series-api</groupId>
-                <artifactId>proxy-dao</artifactId>
-                <version>${dataset.proxy.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring-tx</artifactId>
-                    </exclusion>
-                    <exclusion>
-                         <groupId>commons-codec</groupId>
-                        <artifactId>commons-codec</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.series-api</groupId>
-                <artifactId>proxy-mappings</artifactId>
-                <version>${dataset.proxy.version}</version>
-            </dependency>
-              -->
+            <!-- <dependency> <groupId>org.n52.series-api</groupId> <artifactId>proxy-dao</artifactId> 
+                <version>${dataset.proxy.version}</version> <exclusions> <exclusion> <groupId>org.springframework</groupId> 
+                <artifactId>spring-tx</artifactId> </exclusion> <exclusion> <groupId>commons-codec</groupId> 
+                <artifactId>commons-codec</artifactId> </exclusion> </exclusions> </dependency> 
+                <dependency> <groupId>org.n52.series-api</groupId> <artifactId>proxy-mappings</artifactId> 
+                <version>${dataset.proxy.version}</version> </dependency> -->
             <dependency>
                 <groupId>org.n52.series-api.db</groupId>
                 <artifactId>dao</artifactId>
@@ -1286,18 +1270,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${org.springframework.version}</version>
-                <scope>runtime</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjtools</artifactId>
                 <version>${aspectj.version}</version>
@@ -1521,7 +1493,12 @@
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>3.0.1</version>
+                <version>3.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>3.1.8</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1546,7 +1523,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>23.4-jre</version>
+                <version>27.0-jre</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -1793,10 +1770,12 @@
                         <phase>validate</phase>
                         <configuration>
                             <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
-                            <!-- Only changing prefix since properties conflicts with jgit above <prefix>git-commit-id</prefix> -->
+                            <!-- Only changing prefix since properties conflicts 
+                                with jgit above <prefix>git-commit-id</prefix> -->
                             <!-- We're using a pom in this example <skipPoms>false</skipPoms> -->
                             <gitDescribe>
-                                <!-- Faster to get just branch if skip = true -->
+                                <!-- Faster to get just branch if skip = 
+                                    true -->
                                 <!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
                                 <skip>true</skip>
                             </gitDescribe>
@@ -1887,17 +1866,8 @@
                         <year>${project.inceptionYear}-${currentYearDynamic}</year>
                     </properties>
                 </configuration>
-                <!-- 
-                <executions>
-                    <execution>
-                        <id>check-license</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                 -->
+                <!-- <executions> <execution> <id>check-license</id> <phase>initialize</phase> 
+                    <goals> <goal>format</goal> </goals> </execution> </executions> -->
             </plugin>
             <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
             <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true 
@@ -1938,8 +1908,9 @@
             <plugins>
                 <!-- FIXME remove this once all problems are resolved -->
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>3.1.7</version>
                     <configuration>
                         <failOnError>false</failOnError>
                     </configuration>
@@ -2099,20 +2070,21 @@
         </profile>
         <profile>
             <id>dist-custom</id>
-            <!-- The profile is used to customize the distribution management. The
-            official sourceforge server ist quite slow, so the deploy, release and site-deploy
-            goals often fail with a timeout exception. So with the help of this profile
-            you can specify your own servers for the distribution management and later
-            copy the files to the official server. If this profile is activated, then
-            the deploy goals will look for some enviroment variables to get the server
-            urls and ids. -->
+            <!-- The profile is used to customize the distribution management. 
+                The official sourceforge server ist quite slow, so the deploy, release and 
+                site-deploy goals often fail with a timeout exception. So with the help of 
+                this profile you can specify your own servers for the distribution management 
+                and later copy the files to the official server. If this profile is activated, 
+                then the deploy goals will look for some enviroment variables to get the 
+                server urls and ids. -->
             <activation>
                 <property>
                     <name>dist</name>
                     <value>custom</value>
                 </property>
             </activation>
-            <!-- here the repositories where the project should deployed to -->
+            <!-- here the repositories where the project should deployed 
+                to -->
             <distributionManagement>
                 <repository>
                     <id>${dist.releases.id}</id>
@@ -2144,13 +2116,9 @@
                                 <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
                                 <param>misc/license-mappings.xml</param>
                             </licenseMapping>
-                            <!-- 
-                            <generateChildNotices>false</generateChildNotices>
-                            <excludeScopes>
-                                <excludeScopes>test</excludeScopes>
-                                <excludeScopes>provided</excludeScopes>
-                            </excludeScopes>
-                             -->
+                            <!-- <generateChildNotices>false</generateChildNotices> 
+                                <excludeScopes> <excludeScopes>test</excludeScopes> <excludeScopes>provided</excludeScopes> 
+                                </excludeScopes> -->
                         </configuration>
                         <executions>
                             <execution>

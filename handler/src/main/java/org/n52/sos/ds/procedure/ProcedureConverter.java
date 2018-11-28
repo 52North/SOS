@@ -176,8 +176,8 @@ public class ProcedureConverter
      *            the version
      * @param format
      *            the format
-     * @param cache
-     *            the procedure cache
+     * @param validTime
+     *            the time for which the description shoul dbe valid
      * @param language
      *            the language
      * @param session
@@ -188,9 +188,7 @@ public class ProcedureConverter
      *             if the enrichment fails
      */
     private void enrich(SosProcedureDescription<?> desc, ProcedureEntity procedure, String version, String format,
-            TimePeriod validTime, Locale language,
-            Session session)
-            throws OwsExceptionReport {
+            TimePeriod validTime, Locale language, Session session) throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
                 new ProcedureDescriptionEnrichments(language, serviceProvider, ctx);
         enrichments.setIdentifier(procedure.getIdentifier())

@@ -193,6 +193,7 @@ public class GetResultHandler extends AbstractGetResultHandler {
             Collection<String> featureIdentifiers, Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(DataEntity.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
+        addParentChildRestriction(c);
 
         List<DatasetEntity> series = daoFactory.getSeriesDAO().getSeries(request, featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
@@ -265,6 +266,11 @@ public class GetResultHandler extends AbstractGetResultHandler {
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
                 .addOrder(Order.asc(DataEntity.PROPERTY_SAMPLING_TIME_START));
     }
+
+    private void addParentChildRestriction(Criteria c) {
+        c.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
+    }
+
 
     /**
      * @param criteria

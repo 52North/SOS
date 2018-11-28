@@ -41,6 +41,7 @@ import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.dataset.Dataset;
@@ -175,10 +176,11 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     /**
      * Get {@link DataAvailability}s for each series
      *
-     * @param series
-     *            Series to get {@link DataAvailability}s for
+     * @param entity
+     *           the {@link DatasetEntity} to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
+     * @param session Hibernate session
      * @throws OwsExceptionReport
      *             If an error occurs
      */
@@ -192,8 +194,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     /**
      * Get {@link DataAvailability}s for each offering of a series
      *
-     * @param series
-     *            Series to get {@link DataAvailability}s for
+     * @param entity
+     *           the {@link DatasetEntity} to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
      * @throws OwsExceptionReport

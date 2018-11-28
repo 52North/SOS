@@ -42,18 +42,6 @@ public class HibernateGeometryCreator {
     public HibernateGeometryCreator() {
     }
 
-    /**
-     * Get the geometry from featureOfInterest object.
-     *
-     * @param feature
-     * @return geometry
-     * @throws OwsExceptionReport
-     */
-    @Deprecated
-    public Geometry createGeometry(HasCoordinate coodinates) throws OwsExceptionReport {
-        return createGeometry(coodinates, GeometryHandler.getInstance());
-    }
-
     public Geometry createGeometry(final HasCoordinate coodinates, GeometryHandler geometryHandler) throws OwsExceptionReport {
       if (coodinates.isSetLongLat()) {
             int epsg = geometryHandler.getStorageEPSG();

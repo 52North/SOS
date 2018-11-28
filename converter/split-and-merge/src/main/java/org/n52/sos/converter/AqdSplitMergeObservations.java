@@ -98,7 +98,7 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
      *
      * @param sosObservation
      *            Observation to merge
-     * @param sosObservation2
+     * @param sosObservation
      */
     private void mergeResultTimes(final OmObservation combinedSosObs, OmObservation sosObservation) {
         if (combinedSosObs.isSetResultTime() && sosObservation.isSetResultTime()) {

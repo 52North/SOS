@@ -438,11 +438,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
     /**
      * Get the contents for SOS 1.0.0 capabilities
      *
-     * @param version
-     *                Requested service version
-     *
-     * @return Offerings for contents
-     *
+     * @return sectionSpecificContentObject metadata holder to get contents
      *
      * @throws OwsExceptionReport
      *             * If an error occurs
@@ -555,11 +551,7 @@ public class GetCapabilitiesHandler extends AbstractGetCapabilitiesHandler imple
     /**
      * Get the contents for SOS 2.0 capabilities
      *
-     * @param version
-     *                Requested service version
-     *
-     * @return Offerings for contents
-     *
+     * @return sectionSpecificContentObject metadata holder to get contents
      *
      * @throws OwsExceptionReport
      *             * If an error occurs

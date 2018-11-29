@@ -98,7 +98,7 @@
         <sqljdbc.version>7.0.0.jre8</sqljdbc.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.6.0-SNAPSHOT</n52.common.xml.version>
+        <n52.common.xml.version>2.6.1</n52.common.xml.version>
         <arctic-sea.version>5.1.0-SNAPSHOT</arctic-sea.version>
 
         <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>

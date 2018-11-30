@@ -39,27 +39,26 @@ import static org.n52.sos.util.builder.ObservationBuilder.anObservation;
 import java.util.List;
 
 import org.junit.Test;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.values.MultiValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.values.MultiValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swes.SwesExtension;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
@@ -109,7 +108,7 @@ public class SplitMergeObservationsTest {
         ObservationValue<MultiValue<SweDataArray>> value = new MultiObservationValues<>();
         value.setValue(valueValue);
 
-        SwesExtension<SweBoolean> extension = new SwesExtensionImpl<>();
+        SwesExtension<SweBoolean> extension = new SwesExtension<>();
         extension.setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
         extension.setValue(new SweBoolean().setValue(true));
 
@@ -125,7 +124,7 @@ public class SplitMergeObservationsTest {
         /*
          * TEST
          */
-        AbstractServiceRequest<?> modifiedRequest = new SplitMergeObservations().modifyRequest(request);
+        OwsServiceRequest modifiedRequest = new SplitMergeObservations().modifyRequest(request);
 
         /*
          * VERIFY

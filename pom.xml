@@ -77,9 +77,9 @@
 
         <!-- 52N dependency versions -->
         <arctic-sea.version>5.0.0</arctic-sea.version>
-        <n52.common.xml.version>2.5.0</n52.common.xml.version>
-        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
-        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+        <n52.common.xml.version>2.6.1</n52.common.xml.version>
+        <org.springframework.security.version>4.1.5.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.9.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
@@ -833,7 +833,7 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosrf-v20</artifactId>
-                <version>2.6.0-SNAPSHOT</version>
+                <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>

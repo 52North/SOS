@@ -449,8 +449,8 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
             observationContext.setProcedure(observationConstellation.getProcedure());
             observationContext.setOffering(observationConstellation.getOffering());
         }
-
-        if (childObservation) {
+        // currently only profiles with one observedProperty are supported
+        if (childObservation && !isProfileObservation()) {
             observationContext.setHiddenChild(true);
         }
         observationContext.setFeatureOfInterest(featureOfInterest);

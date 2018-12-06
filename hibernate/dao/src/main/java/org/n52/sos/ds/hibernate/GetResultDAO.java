@@ -186,6 +186,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
             final Set<String> featureIdentifiers, String procedure, final Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(AbstractLegacyObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
+        addParentChildRestriction(c);
 
         if (isEmpty(featureIdentifiers)) {
             return null; // because no features where found regarding the
@@ -236,6 +237,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
             Collection<String> featureIdentifiers, String procedure, Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(AbstractSeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
+        addParentChildRestriction(c);
 
         List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(procedure, request.getObservedProperty(), request.getOffering(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
@@ -243,6 +245,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
         } else {
             c.add(Restrictions.in(AbstractSeriesObservation.SERIES, series));
         }
+        
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
             addTemporalFilter(c, request.getTemporalFilter());
         }
@@ -250,6 +253,10 @@ public class GetResultDAO extends AbstractGetResultDAO {
         LOGGER.debug("QUERY queryObservation(request, featureIdentifiers): {}", HibernateHelper.getSqlString(c));
         return c.list();
 
+    }
+
+    private void addParentChildRestriction(Criteria c) {
+        c.add(Restrictions.eq(Observation.CHILD, false));
     }
 
     /**

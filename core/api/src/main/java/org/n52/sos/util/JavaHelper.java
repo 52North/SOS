@@ -127,15 +127,15 @@ public final class JavaHelper {
         if (object instanceof String) {
             return (String) object;
         } else if (object instanceof BigDecimal) {
-            final BigDecimal bdValue = (BigDecimal) object;
-            return Double.toString(bdValue.doubleValue());
+            return ((BigDecimal) object).toPlainString();
         } else if (object instanceof Double) {
-            return ((Double) object).toString();
+            return BigDecimal.valueOf(((Double) object)).toPlainString();
         } else if (object instanceof Integer) {
             return ((Integer) object).toString();
+        } else if (object instanceof Boolean) {
+            return ((Boolean)object).toString();
         }
-        // TODO why not object.toString()?
-        return Constants.EMPTY_STRING;
+        return object.toString();
     }
 
     /**

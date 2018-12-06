@@ -214,7 +214,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * @return result filters
      */
     @Deprecated
-    public ComparisonFilter getResult() {
+    public Filter<?> getResult() {
         return getResultFilter();
     }
 
@@ -227,21 +227,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     @Deprecated
     public void setResult(ComparisonFilter result) {
         this.setResultFilter(result);
-    }
-
-
-    /**
-     * Add result filter(s)
-     * 
-     * @param resultFilter
-     *            result filter(s)
-     */
-    @SuppressWarnings("rawtypes")
-    @Deprecated
-    public void setResultFilter(Filter resultFilter) {
-        if (resultFilter instanceof ComparisonFilter) {
-            setResultFilter((ComparisonFilter)resultFilter);
-        }
     }
 
     /**
@@ -438,14 +423,14 @@ public class GetObservationRequest extends AbstractObservationRequest implements
                 && getExtension(ResultFilterConstants.RESULT_FILTER) instanceof ResultFilter;
     }
     
-    public ComparisonFilter getResultFilter() {
+    public Filter<?> getResultFilter() {
         if (hasResultFilter()) {
             return ((ResultFilter)getExtension(ResultFilterConstants.RESULT_FILTER)).getValue();
         }
         return null;
     }
 
-    public GetObservationRequest setResultFilter(ComparisonFilter filter) {
+    public GetObservationRequest setResultFilter(Filter<?> filter) {
         addExtension(new ResultFilter(filter));
         return this;
     }

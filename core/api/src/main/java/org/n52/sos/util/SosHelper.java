@@ -611,11 +611,15 @@ public class SosHelper implements Constants {
     }
     
     public static MinMax<String> getMinMaxFromEnvelope(final SosEnvelope envelope) {
-        if (envelope.isSetMinMaxZ()) {
-            return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
-                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+        if (envelope.isSetEnvelope()) {
+            if (envelope.isSetMinMaxZ()) {
+                return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
+                        .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+            } else {
+                return getMinMaxFromEnvelope(envelope.getEnvelope());
+            }
         }
-        return getMinMaxFromEnvelope(envelope.getEnvelope());
+        return new MinMax<String>();
         
     }
 

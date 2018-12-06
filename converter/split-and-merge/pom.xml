@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>converter</artifactId>
-		  <version>4.4.3</version>
+		  <version>4.4.4</version>
 	</parent>
 	<artifactId>split-and-merge</artifactId>
 	<packaging>jar</packaging>
@@ -12,8 +12,30 @@
 	<description>52°North SOS - Module to support split and merge observations</description>
 	<dependencies>
 		<dependency>
+		    <groupId>${project.groupId}</groupId>
+		    <artifactId>api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <scope>test</scope>
+		    <exclusions>
+		        <exclusion>
+		            <groupId>org.hamcrest</groupId>
+		            <artifactId>hamcrest-core</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.hamcrest</groupId>
+		    <artifactId>hamcrest-all</artifactId>
+		    <scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

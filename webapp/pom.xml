@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.4.3</version>
+        <version>4.4.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -640,6 +640,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>aqd-split-and-merge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eprtr</artifactId>
         </dependency>
         <!-- flexible identifiers -->
         <dependency>

@@ -168,6 +168,8 @@ public final class N52XmlHelper implements Constants {
                 if (qn != null) {
                     namespaces.add(qn.getNamespaceURI());
                 }
+            } else if (evt == TokenType.NAMESPACE) {
+                namespaces.add(newCursor.getName().getNamespaceURI());
             }
         }
         return namespaces;

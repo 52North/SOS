@@ -44,6 +44,7 @@ import org.n52.sos.exception.ows.concrete.InvalidOutputFormatParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.om.OmConstants;
@@ -83,6 +84,7 @@ import net.opengis.sos.x10.GetObservationByIdDocument.GetObservationById;
 import net.opengis.sos.x10.GetObservationDocument;
 import net.opengis.sos.x10.GetObservationDocument.GetObservation;
 import net.opengis.sos.x10.GetObservationDocument.GetObservation.FeatureOfInterest;
+import net.opengis.sos.x10.GetObservationDocument.GetObservation.Result;
 import net.opengis.sos.x10.ResponseModeType.Enum;
 
 /**
@@ -282,9 +284,8 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
             } 
         }
 
-        // TODO implement result filtering
         if (getObs.isSetResult()) {
-            throw new NotYetSupportedException("Result filtering");
+            getObsRequest.setResultFilter(parseResultFilter(getObs.getResult()));
         }
 
         // return error message
@@ -443,6 +444,16 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
             }
         }
         return sosTemporalFilters;
+    }
+
+    private ComparisonFilter parseResultFilter(Result result) throws OwsExceptionReport {
+        if (result != null && result.getComparisonOps() != null) {
+            Object decodeXmlElement = CodingHelper.decodeXmlElement(result.getComparisonOps());
+            if (decodeXmlElement instanceof ComparisonFilter) {
+                return (ComparisonFilter) decodeXmlElement;
+            }
+        }
+        return null;
     }
 
 }

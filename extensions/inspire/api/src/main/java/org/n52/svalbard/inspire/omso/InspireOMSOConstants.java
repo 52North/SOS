@@ -45,7 +45,9 @@ public interface InspireOMSOConstants {
 
     String NS_OMSO_PREFIX = "omso";
 
-    String SCHEMA_LOCATION_URL_OMSO = "http://inspire.ec.europa.eu/schemas/omso/3.0/SpecialisedObservations.xsd";
+    //String SCHEMA_LOCATION_URL_OMSO = "http://inspire.ec.europa.eu/schemas/omso/3.0/SpecialisedObservations.xsd";
+    // Fixed schema
+    String SCHEMA_LOCATION_URL_OMSO = "https://52north.org/schema/inspire/omso/3.0.1/SpecialisedObservations.xsd";
 
     SchemaLocation OMSO_SCHEMA_LOCATION = new SchemaLocation(NS_OMSO_30, SCHEMA_LOCATION_URL_OMSO);
 

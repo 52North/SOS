@@ -47,7 +47,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.w3c.dom.Node;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -76,8 +75,8 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.DefaultProfileHandler;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
@@ -187,7 +186,7 @@ public class OmEncoderv20Test {
         observation.setValue(new SingleObservationValue<>(phenomenonTime, complexValue));
         return observation;
     }
-
+    
     @Before
     public void init() {
         Configurator configurator = mock(Configurator.class);

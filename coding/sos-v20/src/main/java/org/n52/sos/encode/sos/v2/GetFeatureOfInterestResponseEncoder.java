@@ -73,6 +73,9 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
         GetFeatureOfInterestResponseDocument document =
                 GetFeatureOfInterestResponseDocument.Factory.newInstance(getXmlOptions());
         GetFeatureOfInterestResponseType xbGetFoiResponse = document.addNewGetFeatureOfInterestResponse();
+        if (response.isSetExtensions()) {
+            createExtension(xbGetFoiResponse, response.getExtensions());
+        }
         AbstractFeature feature = response.getAbstractFeature();
         if (feature instanceof FeatureCollection) {
             for (AbstractFeature f : (FeatureCollection) feature) {

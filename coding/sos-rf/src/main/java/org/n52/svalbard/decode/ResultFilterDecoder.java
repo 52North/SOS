@@ -34,7 +34,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.decode.AbstractXmlDecoder;
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ResultFilter;
 import org.n52.sos.ogc.sos.ResultFilterConstants;
@@ -76,7 +76,7 @@ public class ResultFilterDecoder extends AbstractXmlDecoder<ResultFilter> {
     }
 
     private ResultFilter parseType(ResultFilterType xmlObject) throws OwsExceptionReport {
-        return new ResultFilter((ComparisonFilter)CodingHelper.decodeXmlElement(xmlObject.getComparisonOps()));
+        return new ResultFilter((Filter<?>)CodingHelper.decodeXmlElement(xmlObject.getComparisonOps()), ResultFilterConstants.NS_RF);
     }
 
     @Override

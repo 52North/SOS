@@ -32,13 +32,21 @@ public interface ResultFilterConstants {
     
     String NS_RF = "http://www.opengis.net/sosrf/1.0";
     
+    String NS_RF_20 = "http://www.opengis.net/sosrf/2.0";
+    
     String RESULT_FILTER = "ResultFilter";
     
     String METADATA_RESULT_FILTER = "resultFilter";
 
-    String CONFORMANCE_CLASS_RF= "http://www.opengis.net/spec/sosrf/1.0/conf/rf";
+    String CONFORMANCE_CLASS_RF = "http://www.opengis.net/spec/sosrf/1.0/conf/rf";
 
     String CONFORMANCE_CLASS_KVP = "http://www.opengis.net/spec/sosrf/1.0/conf/kvp";
     
     String CONFORMANCE_CLASS_XML = "http://www.opengis.net/spec/sosrf/1.0/conf/xml";
+    
+    String CONFORMANCE_CLASS_RF_20 = "http://www.opengis.net/spec/sosrf/1.0/conf/rf";
+
+    String CONFORMANCE_CLASS_KVP_20 = "http://www.opengis.net/spec/sosrf/1.0/conf/kvp";
+    
+    String CONFORMANCE_CLASS_XML_20 = "http://www.opengis.net/spec/sosrf/1.0/conf/xml";
 }

@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.4.3</version>
+    <version>4.4.4</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -71,15 +71,15 @@
         <c3p0.version>0.9.5.2</c3p0.version>
         <sqlite.version>3.23.1</sqlite.version>
         <geotools.version>14.0</geotools.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>6.4.0.jre7</sqljdbc.version>
 
         <!-- 52N dependency versions -->
         <arctic-sea.version>5.0.0</arctic-sea.version>
-        <n52.common.xml.version>2.5.0</n52.common.xml.version>
-        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
-        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+        <n52.common.xml.version>2.6.1</n52.common.xml.version>
+        <org.springframework.security.version>4.1.5.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.9.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
@@ -485,6 +485,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>eprtr</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>4.0.1</version>
@@ -823,6 +828,11 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sossf-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosrf-v20</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>

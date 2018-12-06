@@ -551,9 +551,19 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     private XmlObject createEnvelope(SosEnvelope sosEnvelope) {
         EnvelopeType envelopeType = EnvelopeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         MinMax<String> minmax = SosHelper.getMinMaxFromEnvelope(sosEnvelope);
-        envelopeType.addNewLowerCorner().setStringValue(minmax.getMinimum());
-        envelopeType.addNewUpperCorner().setStringValue(minmax.getMaximum());
-        envelopeType.setSrsName(ServiceConfiguration.getInstance().getSrsNamePrefix() + sosEnvelope.getSrid());
+        if (minmax.getMinimum() != null && !minmax.getMinimum().isEmpty()) {
+            envelopeType.addNewLowerCorner().setStringValue(minmax.getMinimum());
+        } else {
+            envelopeType.addNewLowerCorner().setNil();
+        }
+        if (minmax.getMaximum() != null && !minmax.getMaximum().isEmpty()) {
+            envelopeType.addNewUpperCorner().setStringValue(minmax.getMaximum());
+        } else {
+            envelopeType.addNewUpperCorner().setNil();
+        }
+        if (sosEnvelope.isSetSrid()) {
+            envelopeType.setSrsName(ServiceConfiguration.getInstance().getSrsNamePrefix() + sosEnvelope.getSrid());
+        }
         return envelopeType;
     }
 

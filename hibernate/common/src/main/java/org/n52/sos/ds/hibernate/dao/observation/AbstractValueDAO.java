@@ -47,7 +47,7 @@ import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.CodedException;
-import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
@@ -106,7 +106,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
     protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session, StringBuilder logArgs)
             throws OwsExceptionReport {
         if (request.hasResultFilter()) {
-            ComparisonFilter resultFilter = request.getResultFilter();
+            Filter<?> resultFilter = request.getResultFilter();
             Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
                     getResultFilterClasses(), BaseObservation.OBS_ID, identifier);
             if (resultFilterExpression != null) {

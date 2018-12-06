@@ -79,6 +79,8 @@ public class MiscSettings implements SettingDefinitionProvider {
     public static final String RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST = "profile.hydrology.overallExtrema";
 
     public static final String CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES = "misc.convertComplexProfileToSingleProfiles";
+    
+    public static final String MERGE_FOR_EPRTR = "misc.merge.eprtr";
 
     public static final SettingDefinitionGroup GROUP = 
     		new SettingDefinitionGroup()
@@ -220,6 +222,16 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setTitle("Should the SOS convert complex profiles to single profiles?")
                     .setDescription(
                             "Should the SOS convert complex profiles to single profiles?");
+    
+    public static final BooleanSettingDefinition MERGE_FOR_EPRTR_DEFINITION =
+            new BooleanSettingDefinition()
+                    .setGroup(GROUP)
+                    .setOrder(ORDER_18)
+                    .setKey(MERGE_FOR_EPRTR)
+                    .setDefaultValue(false)
+                    .setTitle("Should the SOS merge observations for E-PRTR?")
+                    .setDescription(
+                            "Should the SOS merge observations for E-PRTR?");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
@@ -227,7 +239,7 @@ public class MiscSettings implements SettingDefinitionProvider {
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
             HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION,
             HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION,
-            CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES_DEFINITION
+            CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES_DEFINITION, MERGE_FOR_EPRTR_DEFINITION
             /*, RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION */);
 
     @Override

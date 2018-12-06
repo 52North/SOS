@@ -12,15 +12,29 @@ RELEASE NOTES
  
   --- New features ---
 
-      * 
+      * Add support for ResultFiltering for SOS 1.0.0
+      * E-PRTR support
+      * Add encoding of swes:Extensions as MetadataProperty
+      * Implement SOS 2.0 ResultFiltering extension 2.0 to support other filter instead of only ComparisonFilter
   
   --- Changes ---
   
-      * 
+      * Do not transform geometries if the CS have different dimensions
   
   --- Fixed issues ---
   
-      * 
+      * Fix issue with observation identifier becomes to long when using split swe data array feature
+      * Fix version of 3rd-party library jackson
+      * Fix insertion and requesting of profiles via result handling operations
+      * Fix INSPIRE OMSO schemaLocation
+      * Add GML 3.3 namespace and schemaLocaiton to INSPIRE OMSO encoder
+      * Get all NAMESPACE tokens when checking for schemaLocations
+      * Fix issue with duplicate encoding of SensorML characteristics
+      * FIx issue when SensorML contact is not of type responsible party
+      * Fix overwriting of SensorML keywords
+      * FIX NPE when envelope is null
+      * Fix swe:Fields that does not contain an element
+      * Fixed mixed hierarchical and non-hierarchical offerings in Capabilites
       
  
     Release 52n-sensorweb-sos-4.4.3

@@ -66,19 +66,4 @@
             </map>
         </property>
     </bean>
-
-    <bean id="reportingHeaderSQLiteManager"
-          class="org.n52.sos.config.sqlite.ReportingHeaderSQLiteManager">
-        <property name="sessionFactory">
-            <bean class="org.n52.sos.config.sqlite.SQLiteSessionFactory">
-                <property name="databaseName" value="eReportingHeader" />
-                <property name="annotatedClasses">
-                    <array>
-                        <value>org.n52.sos.config.sqlite.entities.JSONFragment</value>
-                    </array>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
 </beans>

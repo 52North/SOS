@@ -3,9 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <bean id="xmlResponseWriterFactory"
-          class="org.n52.iceland.response.XmlResponseWriterFactory" />
-
     <bean id="abstractServiceResponseWriterFactory"
           class="org.n52.sos.coding.encode.AbstractServiceResponseWriterFactory"/>
 

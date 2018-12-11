@@ -35,6 +35,7 @@
             <artifactId>sqlite-config</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
     </dependencies>
 </project>
+

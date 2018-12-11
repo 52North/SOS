@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+	<env:Body>
+		<swes:InsertSensor service="SOS" version="2.0.0"
+			xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.opengis.net/sos/2.0"
+			xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:sml="http://www.opengis.net/sensorml/2.0"
+			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco"
+			xmlns:gmd="http://www.isotc211.org/2005/gmd"
+			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+			<swes:extension>
+		        <swe:Boolean definition="isType">
+		            <swe:value>true</swe:value>
+		        </swe:Boolean>
+		    </swes:extension>
+			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
+			<swes:procedureDescription>
+				<sml:PhysicalSystem gml:id="hydrophone_Type_123456B" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sml="http://www.opengis.net/sensorml/2.0" xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/sensorml/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
+				   <!--Short textual description of the hydrophone type-->
+				   <gml:description>Description of hydrophone type 123456B</gml:description>
+				   <!--Unique identifier -->
+				   <gml:identifier codeSpace="uniqueID">hydrophone_Type_123456B</gml:identifier>
+				   <!--Identifiers of the hydrophone type-->
+				   <sml:identification>
+				      <sml:IdentifierList>
+				         <!--Name of the manufacturer of the hydrophone type-->
+				         <sml:identifier>
+				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#manufacturerName">
+				               <sml:label>Manufacturer Name</sml:label>
+				               <sml:value>Hydrophone Company</sml:value>
+				            </sml:Term>
+				         </sml:identifier>
+				         <!--The model number of the manufacturer of the hydrophone type-->
+				         <sml:identifier>
+				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#modelNumber">
+				               <sml:label>Model Number</sml:label>
+				               <sml:value>123456B</sml:value>
+				            </sml:Term>
+				         </sml:identifier>
+				         <!--The model ID of the manufacturer of the hydrophone type-->
+				         <sml:identifier>
+				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#modelID">
+				               <sml:label>Model ID</sml:label>
+				               <sml:value>123456B</sml:value>
+				            </sml:Term>
+				         </sml:identifier>
+				      </sml:IdentifierList>
+				   </sml:identification>
+				   <!--Classifiers describing the hydrophone-->
+				   <sml:classification>
+				      <sml:ClassifierList>
+				         <!--Classifier for the platform type-->
+				         <sml:classifier>
+				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#platformType">
+				               <sml:label>Platform type</sml:label>
+				               <sml:value>http://vocab.ndg.nerc.ac.uk/term/L061/4/11</sml:value>
+				            </sml:Term>
+				         </sml:classifier>
+				         <!--Classifier for the sensor type-->
+				         <sml:classifier>
+				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#sensorType">
+				               <sml:label>Sensor type</sml:label>
+				               <sml:value>http://vocab.ndg.nerc.ac.uk/term/P101/current/GI000767</sml:value>
+				            </sml:Term>
+				         </sml:classifier>
+				         <!--Classifier for the deployment role-->
+				         <sml:classifier>
+				            <sml:Term definition="http://www.nexosproject.eu/dictionary/definitions.html#deploymentRole">
+				               <sml:label>Deployment role</sml:label>
+				               <sml:value>Instrument</sml:value>
+				            </sml:Term>
+				         </sml:classifier>
+				      </sml:ClassifierList>
+				   </sml:classification>
+				   <!--The characteristics of the hydrophone type-->
+				   <sml:characteristics name="ExampleHydrophone1Characteristics">
+				      <sml:CharacteristicList>
+				         <!--The weight of the hydrophone-->
+				         <sml:characteristic name="weight">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#weight">
+				               <swe:label>Weight (kg)</swe:label>
+				               <swe:uom code="kg"/>
+				               <swe:value>0.423</swe:value>
+				            </swe:Quantity>
+				         </sml:characteristic>
+				         <!--The length of the hydrophone-->
+				         <sml:characteristic name="length">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#length">
+				               <swe:label>Length (mm)</swe:label>
+				               <swe:uom code="mm"/>
+				               <swe:value>35</swe:value>
+				            </swe:Quantity>
+				         </sml:characteristic>
+				         <!--The width of the hydrophone-->
+				         <sml:characteristic name="width">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#width">
+				               <swe:label>Width (mm)</swe:label>
+				               <swe:uom code="mm"/>
+				               <swe:value>36</swe:value>
+				            </swe:Quantity>
+				         </sml:characteristic>
+				         <!--The height of the hydrophone-->
+				         <sml:characteristic name="height">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#height">
+				               <swe:label>Height (mm)</swe:label>
+				               <swe:uom code="mm"/>
+				               <swe:value>220</swe:value>
+				            </swe:Quantity>
+				         </sml:characteristic>
+				         <!--The material of the hydrophone-->
+				         <sml:characteristic name="material">
+				            <swe:Text definition="http://www.nexosproject.eu/dictionary/definitions.html#material">
+				               <swe:label>Material</swe:label>
+				               <swe:value>Encapsulated polymer</swe:value>
+				            </swe:Text>
+				         </sml:characteristic>
+				         <!--The storage type of the hydrophone-->
+				         <sml:characteristic name="storageType">
+				            <swe:Text definition="http://www.nexosproject.eu/dictionary/definitions.html#storageType">
+				               <swe:label>Storage Type</swe:label>
+				               <swe:value>SSD</swe:value>
+				            </swe:Text>
+				         </sml:characteristic>
+				         <!--The storage capacity of the hydrophone-->
+				         <sml:characteristic name="storageCapacity">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#storageCapacity">
+				               <swe:label>Storage Capacity (By)</swe:label>
+				               <swe:uom code="By"/>
+				               <swe:value>1000000000</swe:value>
+				            </swe:Quantity>
+				         </sml:characteristic>
+				         <!--The battery current of the hydrophone-->
+				         <sml:characteristic name="batteryCurrent">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#batteryCurrent">
+				               <swe:label>Battery Current (mA)</swe:label>
+				               <swe:uom code="mA"/>
+				               <swe:value>22</swe:value>
+				            </swe:Quantity>
+				         </sml:characteristic>
+				      </sml:CharacteristicList>
+				   </sml:characteristics>
+				   <!--The capabilities of the hydrophone type-->
+				   <sml:capabilities name="ExampleHydrophone1Capabilities">
+				      <sml:CapabilityList>
+				         <!--The operating depth capability of the hydrophone-->
+				         <sml:capability name="operatingDepthCapability">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#operatingDepthCapability">
+				               <swe:label>Operating Depth Capabiliyty (m)</swe:label>
+				               <swe:uom code="m"/>
+				               <swe:value>2500</swe:value>
+				            </swe:Quantity>
+				         </sml:capability>
+				         <!--The survival depth capability of the hydrophone-->
+				         <sml:capability name="survivalDepthCapability">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#survivalDepthCapability">
+				               <swe:label>Survival Depth Capability (m)</swe:label>
+				               <swe:uom code="m"/>
+				               <swe:value>3000</swe:value>
+				            </swe:Quantity>
+				         </sml:capability>
+				         <!--The pressure dynamic range of the hydrophone-->
+				         <sml:capability name="pressureDynamicRange">
+				            <swe:QuantityRange definition="http://www.nexosproject.eu/dictionary/definitions.html#pressureDynamicRange">
+				               <swe:label>Pressure Dynamic Range (dB[1.uPa]) [min max])</swe:label>
+				               <swe:uom code="dB[1uPa]"/>
+				               <swe:value>48.5 179.0</swe:value>
+				            </swe:QuantityRange>
+				         </sml:capability>
+				         <!--The quantization resolution of the hydrophone-->
+				         <sml:capability name="quantizationResolution">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#quantizationResolution">
+				               <swe:label>Quantization Resolution (bit)</swe:label>
+				               <swe:uom code="bit"/>
+				               <swe:value>24</swe:value>
+				            </swe:Quantity>
+				         </sml:capability>
+				         <!--The sample rate of the hydrophone-->
+				         <sml:capability name="sampleRate">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#sampleRate">
+				               <swe:label>Sample Rate (Hz)</swe:label>
+				               <swe:uom code="Hz"/>
+				               <swe:value>96000</swe:value>
+				            </swe:Quantity>
+				         </sml:capability>
+				      </sml:CapabilityList>
+				   </sml:capabilities>
+				   <!--Contact details for this hydrophone type; this should only contain the manufacturer of this hydrophone type-->
+				   <sml:contacts>
+				      <sml:ContactList>
+				         <!--Contact details for the manufacturer-->
+				         <sml:contact xlink:title="manufacturer">
+				            <gmd:CI_ResponsibleParty>
+				               <!--Name of the company which has manufactured the hydrophone-->
+				               <gmd:organisationName>
+				                  <gco:CharacterString>Test Manufacturer</gco:CharacterString>
+				               </gmd:organisationName>
+				               <!--Contact details of the company which has manufactured the hydrophone-->
+				               <gmd:contactInfo>
+				                  <gmd:CI_Contact>
+				                     <gmd:phone>
+				                        <gmd:CI_Telephone>
+				                           <!--Phone number of the company which has manufactured the hydrophone-->
+				                           <gmd:voice>
+				                              <gco:CharacterString>+49-(0)-251-396371-31</gco:CharacterString>
+				                           </gmd:voice>
+				                           <!--Fax number of the company which has manufactured the hydrophone-->
+				                           <gmd:facsimile>
+				                              <gco:CharacterString>+49-(0)-251-396371-11</gco:CharacterString>
+				                           </gmd:facsimile>
+				                        </gmd:CI_Telephone>
+				                     </gmd:phone>
+				                     <!--Address of the company which has manufactured the component-->
+				                     <gmd:address>
+				                        <gmd:CI_Address>
+				                           <!--Street and house numer where the company which has manufactured the hydrophone is located-->
+				                           <gmd:deliveryPoint>
+				                              <gco:CharacterString>Martin-Luther-King-Weg 24</gco:CharacterString>
+				                           </gmd:deliveryPoint>
+				                           <!--City where the company which has manufactured the hydrophone is located-->
+				                           <gmd:city>
+				                              <gco:CharacterString>Münster</gco:CharacterString>
+				                           </gmd:city>
+				                           <!--Admnistrative area where the company which has manufactured the hydrophone is located (e.g. the federal state within a country)-->
+				                           <gmd:administrativeArea>
+				                              <gco:CharacterString>North Rhine-Westphalia</gco:CharacterString>
+				                           </gmd:administrativeArea>
+				                           <!--Postal code of the area where the company which has manufactured the hydrophone is located-->
+				                           <gmd:postalCode>
+				                              <gco:CharacterString>48155</gco:CharacterString>
+				                           </gmd:postalCode>
+				                           <!--Country where the company which has manufactured the hydrophone is located-->
+				                           <gmd:country>
+				                              <gco:CharacterString>Germany</gco:CharacterString>
+				                           </gmd:country>
+				                           <!--Email contact of the company which has manufactured the hydrophone-->
+				                           <gmd:electronicMailAddress>
+				                              <gco:CharacterString>jirka@52north.org</gco:CharacterString>
+				                           </gmd:electronicMailAddress>
+				                        </gmd:CI_Address>
+				                     </gmd:address>
+				                  </gmd:CI_Contact>
+				               </gmd:contactInfo>
+				               <!--For the manufacturer the role should be originator-->
+				               <gmd:role>
+				                  <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode/" codeListValue="originator">Manufacturer</gmd:CI_RoleCode>
+				               </gmd:role>
+				            </gmd:CI_ResponsibleParty>
+				         </sml:contact>
+				      </sml:ContactList>
+				   </sml:contacts>
+				   <!--References to the documentation of the hydrophone type.-->
+				   <sml:documentation>
+				      <sml:DocumentList>
+				         <sml:document>
+				            <gmd:CI_OnlineResource>
+				               <!--Link to the an online resource containing documentation-->
+				               <gmd:linkage>
+				                  <gmd:URL>http://52north.org</gmd:URL>
+				               </gmd:linkage>
+				               <!--Description of the linked resource (in this case a statement that the link leads to a web site containing the documentation-->
+				               <gmd:description>
+				                  <gco:CharacterString>Web site with documentation</gco:CharacterString>
+				               </gmd:description>
+				            </gmd:CI_OnlineResource>
+				         </sml:document>
+				      </sml:DocumentList>
+				   </sml:documentation>
+				   <!--Description of the inputs of the system-->
+				   <sml:inputs>
+				      <sml:InputList>
+				         <!--The hydrophone has one input: the sound pressure-->
+				         <sml:input xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#soundPressure" name="soundPressure"/>
+				      </sml:InputList>
+				   </sml:inputs>
+				   <!--Description of the outputs and interfaces of the hydrophone-->
+				   <sml:outputs>
+				      <sml:OutputList>
+				         <sml:output name="hydrophoneOutput">
+				            <sml:DataInterface>
+				               <!--The outputs are already defined in the components. Thus, an empty data element is provided.-->
+				               <sml:data/>
+				               <!--Description of the interfaces of the hydrophone-->
+				               <sml:interfaceParameters>
+				                  <swe:DataRecord>
+				                     <!--Textual description of the interface-->
+				                     <swe:field name="interfaceDescription">
+				                        <swe:Text definition="http://www.nexosproject.eu/dictionary/definitions.html#interfaceDescription">
+				                           <swe:label>Interface Description</swe:label>
+				                           <swe:value>serial</swe:value>
+				                        </swe:Text>
+				                     </swe:field>
+				                     <!--Name of the protocol of the interface-->
+				                     <swe:field name="protocol">
+				                        <swe:Text definition="http://www.nexosproject.eu/dictionary/definitions.html#protocol">
+				                           <swe:label>Protocol</swe:label>
+				                           <swe:value> SPDIF</swe:value>
+				                        </swe:Text>
+				                     </swe:field>
+				                  </swe:DataRecord>
+				               </sml:interfaceParameters>
+				            </sml:DataInterface>
+				         </sml:output>
+				      </sml:OutputList>
+				   </sml:outputs>
+				   <!--Definition of a local spatial reference frame. Based on this frame the location of components within the system/platform can be described.-->
+				   <sml:localReferenceFrame>
+				      <sml:SpatialFrame id="hydrophoneFrame">
+				         <!--Description where the origin of the hydrophone is located.-->
+				         <sml:origin>
+				            Origin is at the center of the hydrophone.
+				        </sml:origin>
+				         <!--Description where the X axis runs-->
+				         <sml:axis name="X">
+				           Runs parallel to the sensor front and rear through the center of the hydrophone.
+				        </sml:axis>
+				         <!--Description where the Y axis runs-->
+				         <sml:axis name="Y">
+				         Runs from the front to the rear of the hydrophone.
+				         </sml:axis>
+				         <!--Description where the Z axis runs-->
+				         <sml:axis name="Z">
+				            Runs along the upright side of the hydrophone.
+				        </sml:axis>
+				      </sml:SpatialFrame>
+				   </sml:localReferenceFrame>
+				   <!--Components that belong to this hydrophone type-->
+				   <sml:components>
+				      <sml:ComponentList>
+				         <sml:component name="pressureDetector_Type_XY123"/>
+				      </sml:ComponentList>
+				   </sml:components>
+				</sml:PhysicalSystem>
+			</swes:procedureDescription>
+			<!-- Not required for the insertion of a procedure/sensor type -->
+			<swes:observableProperty>not_defined</swes:observableProperty>
+		</swes:InsertSensor>
+	</env:Body>
+</env:Envelope>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+	<env:Body>
+		<swes:InsertSensor service="SOS" version="2.0.0"
+			xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.opengis.net/sos/2.0"
+			xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:sml="http://www.opengis.net/sensorml/2.0"
+			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco"
+			xmlns:gmd="http://www.isotc211.org/2005/gmd"
+			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
+			<swes:procedureDescription>
+				<sml:PhysicalComponent gml:id="pressureDetector_of_ExampleHydrophone1" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sml="http://www.opengis.net/sensorml/2.0" xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.opengis.net/sensorml/2.0 http://schemas.opengis.net/sensorML/2.0/sensorML.xsd http://www.opengis.net/swe/2.0 http://schemas.opengis.net/sweCommon/2.0/swe.xsd">
+					<!--Unique identifier -->
+				   <gml:identifier codeSpace="uniqueID">pressureDetector_of_ExampleHydrophone1</gml:identifier>
+				   <!--Reference to the description of the component type. The referenced URL links to a SensorML document describing all properties which are the same for all components of this type.-->
+				   <sml:typeOf xlink:title="pressureDetector_Type_XY123" />
+				   <!--Parameters of the component-->
+				   <sml:parameters>
+				      <sml:ParameterList>
+				         <!--The preamplifier gain of the component-->
+				         <sml:parameter name="preamplifierGain">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#preamplifierGain">
+				               <swe:label>Preamplifier Gain</swe:label>
+				               <swe:uom code="dB"/>
+				               <swe:value>20</swe:value>
+				            </swe:Quantity>
+				         </sml:parameter>
+				         <sml:parameter name="offset">
+				            <!--The offset of the component-->
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#offset">
+				               <swe:label>Offset</swe:label>
+				               <swe:uom code="V"/>
+				               <swe:value>0</swe:value>
+				            </swe:Quantity>
+				         </sml:parameter>
+				         <sml:parameter name="highPassFilter">
+				            <!--The high pass filter of the component-->
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#highPassFilter">
+				               <swe:label>High Pass Filter</swe:label>
+				               <swe:uom code="Hz_[-3.dB]"/>
+				               <swe:value>15</swe:value>
+				            </swe:Quantity>
+				         </sml:parameter>
+				         <sml:parameter name="lowPassFilter">
+				            <!--The low pass filter of the component-->
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#lowPassFilter">
+				               <swe:label>Low Pass Filter</swe:label>
+				               <swe:uom code="Hz_[-3.dB]"/>
+				               <swe:value>150000</swe:value>
+				            </swe:Quantity>
+				         </sml:parameter>
+				         <sml:parameter name="outputVoltage">
+				            <!--The output voltage of the component-->
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#outputVoltage">
+				               <swe:label>OutputVoltage</swe:label>
+				               <swe:uom code="V"/>
+				               <swe:value>2</swe:value>
+				            </swe:Quantity>
+				         </sml:parameter>
+				         <sml:parameter name="accuracy">
+				            <!--The accuracy of the component-->
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#accuracy">
+				               <swe:label>Accuracy</swe:label>
+				               <swe:uom code="dB"/>
+				               <swe:value>1.5</swe:value>
+				            </swe:Quantity>
+				         </sml:parameter>
+				      </sml:ParameterList>
+				   </sml:parameters>
+				   <!--This element refers to the sensor system or platform to which this component is attached. When following this link, a SensorML document containing all metadata on system/platform level is returned.-->
+				   <sml:attachedTo xlink:title="ExampleHydrophone1" />
+				   <sml:position>
+				      <!--A vector describing the location of the sensor in a system/on a platform. The referenceFrame refers to the local reference frame defined on system/platform level.-->
+				      <swe:Vector referenceFrame="hydrophoneFrame">
+				         <!--The X coordinate describing the location of the sensor within the system/on the platform (in metres)-->
+				         <swe:coordinate name="X">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#distance">
+				               <swe:uom code="m"/>
+				               <swe:value>0.5</swe:value>
+				            </swe:Quantity>
+				         </swe:coordinate>
+				         <!--The Y coordinate describing the location of the sensor within the system/on the platform (in metres)-->
+				         <swe:coordinate name="Y">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#distance">
+				               <swe:uom code="m"/>
+				               <swe:value>-0.2</swe:value>
+				            </swe:Quantity>
+				         </swe:coordinate>
+				         <!--The Z coordinate describing the location of the sensor within the system/on the platform (in metres)-->
+				         <swe:coordinate name="Z">
+				            <swe:Quantity definition="http://www.nexosproject.eu/dictionary/definitions.html#distance">
+				               <swe:uom code="m"/>
+				               <swe:value>0.4</swe:value>
+				            </swe:Quantity>
+				         </swe:coordinate>
+				      </swe:Vector>
+				   </sml:position>
+				</sml:PhysicalComponent>
+			</swes:procedureDescription>
+			<!-- multiple values possible -->
+		    <swes:observableProperty>http://www.nexosproject.eu/dictionary/definitions.html#voltage</swes:observableProperty>
+		    <swes:metadata>
+		        <sos:SosInsertionMetadata>
+		            <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
+		            <sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</sos:featureOfInterestType>
+		        </sos:SosInsertionMetadata>
+		    </swes:metadata>
+		</swes:InsertSensor>
+	</env:Body>
+</env:Envelope>

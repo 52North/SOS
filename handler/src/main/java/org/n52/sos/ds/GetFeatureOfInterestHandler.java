@@ -159,7 +159,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     private FeatureCollection getFeatures(GetFeatureOfInterestRequest request, Session session)
             throws OwsExceptionReport {
         Set<AbstractFeatureEntity> featureEntities = new HashSet<>(queryFeaturesForParameter(request, session));
-        if (featureEntities == null || featureEntities.isEmpty()) {
+        if (featureEntities.isEmpty()) {
             return new FeatureCollection();
         }
         if (dao != null) {

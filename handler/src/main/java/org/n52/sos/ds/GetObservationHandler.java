@@ -97,7 +97,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
             response.setResponseFormat(request.getResponseFormat());
             response.setResultModel(request.getResultModel());
             List<FeatureEntity> features = new FeatureDao(session).getAllInstances(createDbQuery(request));
-            if (features == null || (features != null && features.isEmpty())) {
+            if (features == null || features.isEmpty()) {
                 return response;
             }
             request.setFeatureIdentifiers(features.stream().map(f -> f.getIdentifier()).collect(Collectors.toList()));

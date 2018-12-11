@@ -212,15 +212,19 @@ public class SplitMergeObservations
                         (SweDataRecord) sweDataArrayValue.getValue().getElementType(),
                         observationConstellation.getObservableProperty()));
                 // split into single observation
+                CodeWithAuthority metaIdentifier = null;
+                if (observation.isSetIdentifier()) {
+                    metaIdentifier = observation.getIdentifierCodeWithAuthority();
+                }
+
                 for (final List<String> block : sweDataArrayValue.getValue().getValues()) {
                     LOGGER.trace("Processing block {}/{}", ++counter, sweDataArrayValue.getValue().getValues().size());
                     final OmObservation newObservation = new OmObservation();
                     newObservation.setObservationConstellation(observationConstellation);
                     // identifier
                     if (observation.isSetIdentifier()) {
-                        final CodeWithAuthority identifier = observation.getIdentifierCodeWithAuthority();
-                        newObservation.setIdentifier(new CodeWithAuthority(identifier.getValue() + counter,
-                                identifier.getCodeSpace()));
+                        newObservation.setIdentifier(new CodeWithAuthority(metaIdentifier.getValue() + counter,
+                                metaIdentifier.getCodeSpace()));
                     }
                     // phen time
                     Time phenomenonTime;

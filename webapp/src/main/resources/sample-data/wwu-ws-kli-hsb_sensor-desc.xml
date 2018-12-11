@@ -48,7 +48,7 @@
             <sml:identifier>
                 <sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
                     <sml:label>Long name</sml:label>
-                    <sml:value>52North Weatherstation ELV WS2500 (internal sensors)</sml:value>
+                    <sml:value>WWU Klima Station, Heisenbergstrasse</sml:value>
                 </sml:Term>
             </sml:identifier>
         </sml:IdentifierList>

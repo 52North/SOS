@@ -375,9 +375,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             String featureIdentifier = getFeatureQueryHandler().insertFeature(sf, session);
             return getFeature(featureOfInterest.getIdentifier(), session);
         } else {
-            Object type = featureOfInterest != null ? featureOfInterest.getClass().getName() : featureOfInterest;
-            throw new NoApplicableCodeException().withMessage("The used feature type '%s' is not supported.", type)
-                    .setStatus(BAD_REQUEST);
+            throw new NoApplicableCodeException().withMessage("The used feature type '%s' is not supported.",
+                    featureOfInterest.getClass().getName()).setStatus(BAD_REQUEST);
         }
     }
 

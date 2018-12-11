@@ -28,6 +28,7 @@
  */
 package org.n52.sos.cache;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.shetland.util.ReferencedEnvelope;
@@ -46,19 +47,16 @@ public interface SpatialCache {
     /**
      * Get the envelope associated with the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      *
      * @return the envelope
      */
     ReferencedEnvelope getEnvelopeForOffering(String offering);
 
     /**
-     * Get the Spatial Filtering Profile envelope associated with the specified
-     * offering.
+     * Get the Spatial Filtering Profile envelope associated with the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      *
      * @return the envelope
      */
@@ -67,23 +65,26 @@ public interface SpatialCache {
     /**
      * Checks whether the specified offering has a envelope.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      *
      * @return {@code true} if it has a envelope
      */
-    boolean hasEnvelopeForOffering(String offering);
+    default boolean hasEnvelopeForOffering(String offering) {
+        return Optional.ofNullable(getEnvelopeForOffering(offering))
+                .filter(ReferencedEnvelope::isSetEnvelope).isPresent();
+    }
 
     /**
-     * Checks whether the specified offering has a Spatial Filtering Profile
-     * envelope.
+     * Checks whether the specified offering has a Spatial Filtering Profile envelope.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      *
      * @return {@code true} if it has a envelope
      */
-    boolean hasSpatialFilteringProfileEnvelopeForOffering(String offering);
+    default boolean hasSpatialFilteringProfileEnvelopeForOffering(String offering) {
+        return Optional.ofNullable(getSpatialFilteringProfileEnvelopeForOffering(offering))
+                .filter(ReferencedEnvelope::isSetEnvelope).isPresent();
+    }
 
     /**
      * @return the global spatial envelope (never null)
@@ -93,7 +94,10 @@ public interface SpatialCache {
     /**
      * @return whether the global spatial envelope is set or not
      */
-    boolean hasGlobalEnvelope();
+    default boolean hasGlobalEnvelope() {
+        return Optional.ofNullable(getGlobalEnvelope())
+                .filter(ReferencedEnvelope::isSetEnvelope).isPresent();
+    }
 
     /**
      * @return all EPSG codes
@@ -103,10 +107,11 @@ public interface SpatialCache {
     /**
      * Checks whether the specified EPSG code exists.
      *
-     * @param epsgCode
-     *                 the EPSG code
+     * @param epsgCode the EPSG code
      *
      * @return {@code true} if it exists
      */
-    boolean hasEpsgCode(Integer epsgCode);
+    default boolean hasEpsgCode(Integer epsgCode) {
+        return getEpsgCodes().contains(epsgCode);
+    }
 }

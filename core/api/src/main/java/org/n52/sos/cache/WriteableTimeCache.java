@@ -28,9 +28,17 @@
  */
 package org.n52.sos.cache;
 
+import static org.n52.sos.cache.CacheConstants.EVENT_TIME;
+import static org.n52.sos.cache.CacheConstants.OFFERING;
+import static org.n52.sos.cache.CacheConstants.PROCEDURE;
+
+import java.util.Objects;
+
 import org.joda.time.DateTime;
 
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 /**
  * TODO JavaDoc
@@ -71,229 +79,260 @@ public interface WriteableTimeCache extends TemporalCache {
     /**
      * Sets the global maximal phenomenon time.
      *
-     * @param maxEventTime
-     *                     the max phenomenon time
+     * @param maxEventTime the max phenomenon time
      */
     void setMaxPhenomenonTime(DateTime maxEventTime);
 
     /**
-     * Sets the maximal phenomenon time for the specified offering to the
-     * specified time.
+     * Sets the maximal phenomenon time for the specified offering to the specified time.
      *
-     * @param offering
-     *                 the offering
-     * @param maxTime
-     *                 the max phenomenon time
+     * @param offering the offering
+     * @param maxTime  the max phenomenon time
      */
     void setMaxPhenomenonTimeForOffering(String offering, DateTime maxTime);
 
     /**
-     * Sets the maximal phenomenon time for the specified procedure to the
-     * specified time.
+     * Sets the maximal phenomenon time for the specified procedure to the specified time.
      *
-     * @param procedure
-     *                  the procedure
-     * @param maxTime
-     *                  the max phenomenon time
+     * @param procedure the procedure
+     * @param maxTime   the max phenomenon time
      */
     void setMaxPhenomenonTimeForProcedure(String procedure, DateTime maxTime);
 
     /**
      * Sets the global minimal phenomenon time.
      *
-     * @param minEventTime
-     *                     the min phenomenon time
+     * @param minEventTime the min phenomenon time
      */
     void setMinPhenomenonTime(DateTime minEventTime);
 
     /**
-     * Sets the minimal phenomenon time for the specified offering to the
-     * specified time.
+     * Sets the minimal phenomenon time for the specified offering to the specified time.
      *
-     * @param offering
-     *                 the offering
-     * @param minTime
-     *                 the min phenomenon time
+     * @param offering the offering
+     * @param minTime  the min phenomenon time
      */
     void setMinPhenomenonTimeForOffering(String offering, DateTime minTime);
 
     /**
-     * Sets the minimal phenomenon time for the specified procedure to the
-     * specified time.
+     * Sets the minimal phenomenon time for the specified procedure to the specified time.
      *
-     * @param procedure
-     *                  the procedure
-     * @param minTime
-     *                  the min phenomenon time
+     * @param procedure the procedure
+     * @param minTime   the min phenomenon time
      */
     void setMinPhenomenonTimeForProcedure(String procedure, DateTime minTime);
 
     /**
-     * Updates the phenomenon time envelope of the specified offering to include
-     * the specified event time.
+     * Updates the phenomenon time envelope of the specified offering to include the specified event time.
      *
-     * @param offering
-     *                  the offering
-     * @param eventTime
-     *                  the time to include
+     * @param offering  the offering
+     * @param eventTime the time to include
      */
-    void updatePhenomenonTimeForOffering(String offering, Time eventTime);
+    default void updatePhenomenonTimeForOffering(String offering, Time eventTime) {
+        CacheValidation.notNullOrEmpty(OFFERING, offering);
+        Objects.requireNonNull(eventTime, EVENT_TIME);
+        final TimePeriod tp = toTimePeriod(eventTime);
+        if (!hasMaxPhenomenonTimeForOffering(offering) ||
+            getMaxPhenomenonTimeForOffering(offering).isBefore(tp.getEnd())) {
+            setMaxPhenomenonTimeForOffering(offering, tp.getEnd());
+        }
+        if (!hasMinPhenomenonTimeForOffering(offering) ||
+            getMinPhenomenonTimeForOffering(offering).isAfter(tp.getStart())) {
+            setMinPhenomenonTimeForOffering(offering, tp.getStart());
+        }
+    }
 
     /**
-     * Updates the phenomenon time envelope of the specified procedure to
-     * include the specified event time.
+     * Updates the phenomenon time envelope of the specified procedure to include the specified event time.
      *
-     * @param procedure
-     *                  the procedure
-     * @param eventTime
-     *                  the time to include
+     * @param procedure the procedure
+     * @param eventTime the time to include
      */
-    void updatePhenomenonTimeForProcedure(String procedure, Time eventTime);
+    default void updatePhenomenonTimeForProcedure(String procedure, Time eventTime) {
+        CacheValidation.notNullOrEmpty(PROCEDURE, procedure);
+        Objects.requireNonNull(eventTime, EVENT_TIME);
+        final TimePeriod tp = toTimePeriod(eventTime);
+        if (!hasMaxPhenomenonTimeForProcedure(procedure) ||
+            getMaxPhenomenonTimeForProcedure(procedure).isBefore(tp.getEnd())) {
+            setMaxPhenomenonTimeForProcedure(procedure, tp.getEnd());
+        }
+        if (!hasMinPhenomenonTimeForProcedure(procedure) ||
+            getMinPhenomenonTimeForProcedure(procedure).isAfter(tp.getStart())) {
+            setMinPhenomenonTimeForProcedure(procedure, tp.getStart());
+        }
+    }
 
     /**
      * Sets the global maximal result time.
      *
-     * @param maxResultTime
-     *                      the max result time
+     * @param maxResultTime the max result time
      */
     void setMaxResultTime(DateTime maxResultTime);
 
     /**
-     * Sets the maximal result time for the specified offering to the specified
-     * time.
+     * Sets the maximal result time for the specified offering to the specified time.
      *
-     * @param offering
-     *                 the offering
-     * @param maxTime
-     *                 the max result time
+     * @param offering the offering
+     * @param maxTime  the max result time
      */
     void setMaxResultTimeForOffering(String offering, DateTime maxTime);
 
     /**
      * Sets the global minimal result time.
      *
-     * @param minResultTime
-     *                      the min result time
+     * @param minResultTime the min result time
      */
     void setMinResultTime(DateTime minResultTime);
 
     /**
-     * Sets the minimal result time for the specified offering to the specified
-     * time.
+     * Sets the minimal result time for the specified offering to the specified time.
      *
-     * @param offering
-     *                 the offering
-     * @param minTime
-     *                 the min result time
+     * @param offering the offering
+     * @param minTime  the min result time
      */
     void setMinResultTimeForOffering(String offering, DateTime minTime);
 
     /**
-     * Updates the result time envelope of the specified offering to include the
-     * specified result time.
+     * Updates the result time envelope of the specified offering to include the specified result time.
      *
-     * @param offering
-     *                   the offering
-     * @param resultTime
-     *                   the time to include
+     * @param offering   the offering
+     * @param resultTime the time to include
      */
-    void updateResultTimeForOffering(String offering, Time resultTime);
+    default void updateResultTimeForOffering(String offering, Time resultTime) {
+        CacheValidation.notNullOrEmpty(OFFERING, offering);
+        if (resultTime == null) {
+            return;
+        }
+        final TimePeriod tp = toTimePeriod(resultTime);
+        if (!hasMaxResultTimeForOffering(offering) || getMaxResultTimeForOffering(offering).isBefore(tp.getEnd())) {
+            setMaxResultTimeForOffering(offering, tp.getEnd());
+        }
+        if (!hasMinResultTimeForOffering(offering) || getMinResultTimeForOffering(offering).isAfter(tp.getStart())) {
+            setMinResultTimeForOffering(offering, tp.getStart());
+        }
+    }
 
     /**
      * Sets the new global phenomenon envelope.
      *
-     * @param min
-     *            the minimal phenomenon time
-     * @param max
-     *            the maximal phenomenon time
+     * @param min the minimal phenomenon time
+     * @param max the maximal phenomenon time
      */
-    void setPhenomenonTime(DateTime min, DateTime max);
+    default void setPhenomenonTime(DateTime min, DateTime max) {
+        setMinPhenomenonTime(min);
+        setMaxPhenomenonTime(max);
+    }
 
     /**
-     * Update the global phenomenon time by extending the global envelope to
-     * include the specified {@code ITime}.
+     * Update the global phenomenon time by extending the global envelope to include the specified {@code ITime}.
      *
-     * @param eventTime
-     *                  the time to include
+     * @param eventTime the time to include
      */
-    void updatePhenomenonTime(Time eventTime);
+    default void updatePhenomenonTime(Time eventTime) {
+        Objects.requireNonNull(eventTime, EVENT_TIME);
+        final TimePeriod tp = toTimePeriod(eventTime);
+        if (!hasMinPhenomenonTime() || getMinPhenomenonTime().isAfter(tp.getStart())) {
+            setMinPhenomenonTime(tp.getStart());
+        }
+        if (!hasMaxPhenomenonTime() || getMaxPhenomenonTime().isBefore(tp.getEnd())) {
+            setMaxPhenomenonTime(tp.getEnd());
+        }
+    }
 
     /**
-     * Recalculates the global phenomenon time envelope based on the current
-     * offering phenomenon time envelopes.
+     * Recalculates the global phenomenon time envelope based on the current offering phenomenon time envelopes.
      */
     void recalculatePhenomenonTime();
 
     /**
      * Sets the new global result envelope.
      *
-     * @param min
-     *            the minimal result time
-     * @param max
-     *            the maximal result time
+     * @param min the minimal result time
+     * @param max the maximal result time
      */
-    void setResultTime(DateTime min, DateTime max);
+    default void setResultTime(DateTime min, DateTime max) {
+        setMinResultTime(min);
+        setMaxResultTime(max);
+    }
 
     /**
-     * Update the global result time by extending the global envelope to include
-     * the specified {@code ITime}.
+     * Update the global result time by extending the global envelope to include the specified {@code ITime}.
      *
-     * @param eventTime
-     *                  the time to include
+     * @param resultTime the time to include
      */
-    void updateResultTime(Time eventTime);
+    default void updateResultTime(Time resultTime) {
+        if (resultTime == null) {
+            return;
+        }
+        final TimePeriod tp = toTimePeriod(resultTime);
+        if (!hasMinResultTime() || getMinResultTime().isAfter(tp.getStart())) {
+            setMinResultTime(tp.getStart());
+        }
+        if (!hasMaxResultTime() || getMaxResultTime().isBefore(tp.getEnd())) {
+            setMaxResultTime(tp.getEnd());
+        }
+    }
 
     /**
-     * Recalculates the global result time envelope based on the current
-     * offering result time envelopes.
+     * Recalculates the global result time envelope based on the current offering result time envelopes.
      */
     void recalculateResultTime();
 
     /**
      * Remove the maximal phenomenon time for the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      */
     void removeMaxPhenomenonTimeForOffering(String offering);
 
     /**
      * Remove the minimal phenomenon time for the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      */
     void removeMinPhenomenonTimeForOffering(String offering);
 
     /**
      * Remove the maximal phenomenon time for the specified procedure.
      *
-     * @param procedure
-     *                  the procedure
+     * @param procedure the procedure
      */
     void removeMaxPhenomenonTimeForProcedure(String procedure);
 
     /**
      * Remove the minimal phenomenon time for the specified procedure.
      *
-     * @param procedure
-     *                  the procedure
+     * @param procedure the procedure
      */
     void removeMinPhenomenonTimeForProcedure(String procedure);
 
     /**
      * Remove the maximal result time for the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      */
     void removeMaxResultTimeForOffering(String offering);
 
     /**
      * Remove the minimal result time for the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      */
     void removeMinResultTimeForOffering(String offering);
+
+    /**
+     * Creates a {@code TimePeriod} for the specified {@code ITime}.
+     *
+     * @param time the abstract time
+     *
+     * @return the period describing the abstract time
+     */
+    public static TimePeriod toTimePeriod(Time time) {
+        if (time instanceof TimeInstant) {
+            DateTime instant = ((TimeInstant) time).getValue();
+            return new TimePeriod(instant, instant);
+        } else {
+            return (TimePeriod) time;
+        }
+    }
 }

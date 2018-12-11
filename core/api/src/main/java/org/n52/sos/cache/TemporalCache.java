@@ -44,46 +44,43 @@ public interface TemporalCache {
     /**
      * @return if the maximal phenomenon time is set
      */
-    boolean hasMaxPhenomenonTime();
+    default boolean hasMaxPhenomenonTime() {
+        return getMaxPhenomenonTime() != null;
+    }
 
     /**
      * Returns the maximal phenomenon time for the specified offering.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return the maximal phenomenon time for or null if it is not set
      */
     DateTime getMaxPhenomenonTimeForOffering(String offering);
 
     /**
-     * Returns the whether or not the maximal phenomenon time for the specified
-     * offering is set.
+     * Returns the whether or not the maximal phenomenon time for the specified offering is set.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return if the maximal phenomenon time is set
      */
-    boolean hasMaxPhenomenonTimeForOffering(String offering);
+    default boolean hasMaxPhenomenonTimeForOffering(String offering) {
+        return getMaxPhenomenonTimeForOffering(offering) != null;
+    }
 
     /**
      * Returns the maximal phenomenon time period for the specified procedure.
      *
-     * @param procedure
-     *                  the procedure identifier
+     * @param procedure the procedure identifier
      *
-     * @return the maximal phenomenon time for the specified procedure or null
-     *         if it is not set
+     * @return the maximal phenomenon time for the specified procedure or null if it is not set
      */
     DateTime getMaxPhenomenonTimeForProcedure(String procedure);
 
     /**
-     * Returns the whether or not the maximal phenomenon time for the specified
-     * procedure is set.
+     * Returns the whether or not the maximal phenomenon time for the specified procedure is set.
      *
-     * @param procedure
-     *                  the procedure identifier
+     * @param procedure the procedure identifier
      *
      * @return if the maximal phenomenon time is set
      */
@@ -97,46 +94,43 @@ public interface TemporalCache {
     /**
      * @return if the minimal phenomenon time is set
      */
-    boolean hasMinPhenomenonTime();
+    default boolean hasMinPhenomenonTime() {
+        return getMinPhenomenonTime() != null;
+    }
 
     /**
      * Returns the minimal phenomenon time for the specified offering.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return the minimal phenomenon time for or null if it is not set
      */
     DateTime getMinPhenomenonTimeForOffering(String offering);
 
     /**
-     * Returns the whether or not the minimal phenomenon time for the specified
-     * offering is set.
+     * Returns the whether or not the minimal phenomenon time for the specified offering is set.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return if the minimal phenomenon time is set
      */
-    boolean hasMinPhenomenonTimeForOffering(String offering);
+    default boolean hasMinPhenomenonTimeForOffering(String offering) {
+        return getMinPhenomenonTimeForOffering(offering) != null;
+    }
 
     /**
      * Returns the minimal phenomenon time period for the specified procedure.
      *
-     * @param procedure
-     *                  the procedure identifier
+     * @param procedure the procedure identifier
      *
-     * @return the minimal phenomenon time for the specified procedure or null
-     *         if it is not set
+     * @return the minimal phenomenon time for the specified procedure or null if it is not set
      */
     DateTime getMinPhenomenonTimeForProcedure(String procedure);
 
     /**
-     * Returns the whether or not the minimal phenomenon time for the specified
-     * procedure is set.
+     * Returns the whether or not the minimal phenomenon time for the specified procedure is set.
      *
-     * @param procedure
-     *                  the procedure identifier
+     * @param procedure the procedure identifier
      *
      * @return if the minimal phenomenon time is set
      */
@@ -150,28 +144,29 @@ public interface TemporalCache {
     /**
      * @return if the maximal result time is set
      */
-    boolean hasMaxResultTime();
+    default boolean hasMaxResultTime() {
+        return getMaxResultTime() != null;
+    }
 
     /**
      * Returns the maximal result time for the specified offering.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return the maximal result time for or null if it is not set
      */
     DateTime getMaxResultTimeForOffering(String offering);
 
     /**
-     * Returns the whether or not the maximal result time for the specified
-     * offering is set.
+     * Returns the whether or not the maximal result time for the specified offering is set.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return if the maximal result time is set
      */
-    boolean hasMaxResultTimeForOffering(String offering);
+    default boolean hasMaxResultTimeForOffering(String offering) {
+        return getMaxResultTimeForOffering(offering) != null;
+    }
 
     /**
      * @return the minimal result time for all observations
@@ -181,27 +176,28 @@ public interface TemporalCache {
     /**
      * @return if the minimal result time is set
      */
-    boolean hasMinResultTime();
+    default boolean hasMinResultTime() {
+        return getMinResultTime() != null;
+    }
 
     /**
      * Returns the minimal result time for the specified offering.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return the minimal result time for or null if it is not set
      */
     DateTime getMinResultTimeForOffering(String offering);
 
     /**
-     * Returns the whether or not the minimal result time for the specified
-     * offering is set.
+     * Returns the whether or not the minimal result time for the specified offering is set.
      *
-     * @param offering
-     *                 the offering identifier
+     * @param offering the offering identifier
      *
      * @return if the minimal result time is set
      */
-    boolean hasMinResultTimeForOffering(String offering);
+    default boolean hasMinResultTimeForOffering(String offering) {
+        return getMinResultTimeForOffering(offering) != null;
+    }
 
 }

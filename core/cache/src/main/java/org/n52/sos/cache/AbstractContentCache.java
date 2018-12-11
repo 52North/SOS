@@ -37,23 +37,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 
-import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Envelope;
+
 import org.n52.iceland.cache.ContentCache;
 import org.n52.janmayen.stream.Streams;
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import org.locationtech.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc
@@ -62,6 +57,9 @@ import org.locationtech.jts.geom.Envelope;
  */
 public abstract class AbstractContentCache implements ContentCache {
     private static final long serialVersionUID = -5233383843446821643L;
+
+    protected AbstractContentCache() {
+    }
 
     /**
      * Creates a new synchronized map from the specified map.
@@ -169,104 +167,6 @@ public abstract class AbstractContentCache implements ContentCache {
             return null;
         } else {
             return new ReferencedEnvelope(e.getEnvelope() == null ? null : new Envelope(e.getEnvelope()), e.getSrid());
-        }
-    }
-
-    /**
-     * Throws a {@code NullPointerExceptions} if value is null or a {@code IllegalArgumentException} if value is <= 0.
-     *
-     * @param name  the name of the value
-     * @param value the value to check
-     *
-     * @throws NullPointerException     if value is null
-     * @throws IllegalArgumentException if value is <= 0
-     */
-    protected static void greaterZero(String name, Integer value)
-            throws NullPointerException, IllegalArgumentException {
-        if (Objects.requireNonNull(value, name) <= 0) {
-            throw new IllegalArgumentException(name + " may not less or equal 0!");
-        }
-    }
-
-    /**
-     * Throws a {@code NullPointerExceptions} if value is null or a {@code IllegalArgumentException} if value is empty.
-     *
-     * @param name  the name of the value
-     * @param value the value to check
-     *
-     * @throws NullPointerException     if value is null
-     * @throws IllegalArgumentException if value is empty
-     */
-    protected static void notNullOrEmpty(String name, String value)
-            throws NullPointerException, IllegalArgumentException {
-        if (Objects.requireNonNull(value, name).isEmpty()) {
-            throw new IllegalArgumentException(name + " may not be empty!");
-        }
-    }
-
-    /**
-     * Throws a {@code NullPointerExceptions} if value is null or any value within is null.
-     *
-     * @param name  the name of the value
-     * @param value the value to check
-     *
-     * @throws NullPointerException if value == null or value contains null
-     */
-    protected static void noNullValues(String name, Collection<?> value)
-            throws NullPointerException {
-        if (Objects.requireNonNull(value, name).stream().anyMatch(Objects::isNull)) {
-            throw new NullPointerException(name + " may not contain null elements!");
-        }
-    }
-
-    /**
-     * Throws a {@code NullPointerExceptions} if value is null or any value within is null or empty.
-     *
-     * @param name  the name of the value
-     * @param value the value to check
-     *
-     * @throws NullPointerException     if value == null or value contains null
-     * @throws IllegalArgumentException if any value is empty
-     */
-    protected static void noNullOrEmptyValues(String name, Collection<String> value)
-            throws NullPointerException, IllegalArgumentException {
-        Objects.requireNonNull(value, name).forEach((String o) -> {
-            if (o == null) {
-                throw new NullPointerException(name + " may not contain null elements!");
-            }
-            if (o.isEmpty()) {
-                throw new IllegalArgumentException(name + " may not contain empty elements!");
-            }
-        });
-    }
-
-    /**
-     * Throws a {@code NullPointerExceptions} if value is null or any key or value within is null.
-     *
-     * @param name  the name of the value
-     * @param value the value to check
-     *
-     * @throws NullPointerException if value == null or value contains null values
-     */
-    protected static void noNullValues(String name, Map<?, ?> value) throws NullPointerException {
-        if (Objects.requireNonNull(value, name).entrySet().stream().anyMatch(e -> isNull(e))) {
-            throw new NullPointerException(name + " may not contain null elements!");
-        }
-    }
-
-    /**
-     * Creates a {@code TimePeriod} for the specified {@code ITime}.
-     *
-     * @param time the abstract time
-     *
-     * @return the period describing the abstract time
-     */
-    protected static TimePeriod toTimePeriod(Time time) {
-        if (time instanceof TimeInstant) {
-            DateTime instant = ((TimeInstant) time).getValue();
-            return new TimePeriod(instant, instant);
-        } else {
-            return (TimePeriod) time;
         }
     }
 

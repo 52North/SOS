@@ -43,7 +43,7 @@ public interface ApiQueryHelper {
     }
 
     default Set<String> toStringSet(Collection<FormatEntity> formats) {
-        return formats.stream().map(t -> t.getFormat()).collect(Collectors.toSet());
+        return formats.stream().map(FormatEntity::getFormat).collect(Collectors.toSet());
     }
 
 }

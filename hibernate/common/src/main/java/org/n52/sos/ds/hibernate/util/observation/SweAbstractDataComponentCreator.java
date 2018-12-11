@@ -165,11 +165,8 @@ public class SweAbstractDataComponentCreator
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(
             T component, Data<?> valuedObservation) throws CodedException {
-
-        if (valuedObservation instanceof Data) {
-            Data observation
-                    = (Data) valuedObservation;
-            PhenomenonEntity op = observation.getDataset().getPhenomenon();
+        if (valuedObservation != null) {
+            PhenomenonEntity op = valuedObservation.getDataset().getPhenomenon();
             component.setIdentifier(op.getIdentifier());
             component.setDefinition(op.getIdentifier());
             component.setDescription(op.getDescription());
@@ -184,12 +181,12 @@ public class SweAbstractDataComponentCreator
             } else {
                 component.setName(op.getName());
             }
-        }
-
-        if (valuedObservation.getDataset().hasUnit() &&
-            component instanceof SweAbstractUomType) {
-            SweAbstractUomType<?> uomType = (SweAbstractUomType) component;
-            uomType.setUom(valuedObservation.getDataset().getUnit().getUnit());
+    
+            if (valuedObservation.getDataset().hasUnit() &&
+                component instanceof SweAbstractUomType) {
+                SweAbstractUomType<?> uomType = (SweAbstractUomType<?>) component;
+                uomType.setUom(valuedObservation.getDataset().getUnit().getUnit());
+            }
         }
         return component;
     }

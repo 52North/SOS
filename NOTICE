@@ -84,7 +84,6 @@ This project includes:
   52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
   Animal Sniffer Annotations under MIT license
   AntLR Parser Generator under BSD License
-  AOP alliance under Public Domain
   Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
   Apache Commons Compress under Apache License, Version 2.0
@@ -120,6 +119,7 @@ This project includes:
   c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
+  Checker Qual under The MIT License
   ClassLoader Leak Prevention library under Apache 2
   ClassLoader Leak Prevention library for servlet environments under Apache 2
   ClassMate under The Apache Software License, Version 2.0
@@ -143,6 +143,8 @@ This project includes:
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   geolatte-geom under LGPL 3.0
+  Guava InternalFutureFailureAccess and InternalFutures under The Apache Software License, Version 2.0
+  Guava ListenableFuture only under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under MPL 2.0 or EPL 1.0
   Hamcrest All under New BSD License
@@ -296,6 +298,7 @@ This project includes:
   Spring AOP under Apache License, Version 2.0
   Spring Aspects under Apache License, Version 2.0
   Spring Beans under Apache License, Version 2.0
+  Spring Commons Logging Bridge under Apache License, Version 2.0
   Spring Context under Apache License, Version 2.0
   Spring Context Support under Apache License, Version 2.0
   Spring Core under Apache License, Version 2.0

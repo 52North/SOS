@@ -2393,7 +2393,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
         CacheValidation.notNullOrEmpty(PUBLISHED_FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Adding published FeatureOfInterest {}", featureOfInterest);
         publishedFeatureOfInterest.add(featureOfInterest);
-        addFeatureOfInterest(featureOfInterest);
     }
 
     @Override

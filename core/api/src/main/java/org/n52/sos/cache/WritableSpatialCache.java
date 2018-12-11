@@ -28,11 +28,13 @@
  */
 package org.n52.sos.cache;
 
+import static org.n52.sos.cache.CacheConstants.EPSG_CODES;
+
 import java.util.Collection;
 
-import org.n52.shetland.util.ReferencedEnvelope;
-
 import org.locationtech.jts.geom.Envelope;
+
+import org.n52.shetland.util.ReferencedEnvelope;
 
 /**
  * TODO JavaDoc
@@ -43,51 +45,40 @@ public interface WritableSpatialCache {
     /**
      * Sets the default EPSG code.
      *
-     * @param defaultEPSGCode
-     *                        the new default ESPG code
+     * @param defaultEPSGCode the new default ESPG code
      */
     void setDefaultEPSGCode(int defaultEPSGCode);
 
     /**
      * Sets the specified envelope for the specified offering.
      *
-     * @param offering
-     *                 the offering
-     * @param envelope
-     *                 the envelope
+     * @param offering the offering
+     * @param envelope the envelope
      */
     void setEnvelopeForOffering(String offering, ReferencedEnvelope envelope);
 
     /**
      * Sets the specified envelope for the specified offering.
      *
-     * @param offering
-     *                 the offering
-     * @param envelope
-     *                 the envelope
+     * @param offering the offering
+     * @param envelope the envelope
      */
     void setSpatialFilteringProfileEnvelopeForOffering(String offering,
                                                        ReferencedEnvelope envelope);
 
     /**
-     * Updates the Spatial Filtering Profile envelope for the specified offering
-     * to include the specified envelope.
+     * Updates the Spatial Filtering Profile envelope for the specified offering to include the specified envelope.
      *
-     * @param offering
-     *                 the offering
-     * @param envelope
-     *                 the envelope to include
+     * @param offering the offering
+     * @param envelope the envelope to include
      */
     void updateEnvelopeForOffering(String offering, Envelope envelope);
 
     /**
-     * Updates the Spatial Filtering Profile envelope for the specified offering
-     * to include the specified envelope.
+     * Updates the Spatial Filtering Profile envelope for the specified offering to include the specified envelope.
      *
-     * @param offering
-     *                 the offering
-     * @param envelope
-     *                 the envelope to include
+     * @param offering the offering
+     * @param envelope the envelope to include
      */
     void updateSpatialFilteringProfileEnvelopeForOffering(String offering,
                                                           Envelope envelope);
@@ -95,54 +86,50 @@ public interface WritableSpatialCache {
     /**
      * Remove the envelope for the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      */
     void removeEnvelopeForOffering(String offering);
 
     /**
      * Remove the Spatial Filtering Profile envelope for the specified offering.
      *
-     * @param offering
-     *                 the offering
+     * @param offering the offering
      */
     void removeSpatialFilteringProfileEnvelopeForOffering(String offering);
 
     /**
      * Remove the specified epsg code.
      *
-     * @param epsgCode
-     *                 the epsg code
+     * @param epsgCode the epsg code
      */
     void removeEpsgCode(Integer epsgCode);
 
     /**
      * Remove the specified epsg codes.
      *
-     * @param epsgCode
-     *                 the epsg codes
+     * @param epsgCodes the epsg codes
      */
-    void removeEpsgCodes(Collection<Integer> epsgCode);
+    default void removeEpsgCodes(Collection<Integer> epsgCodes) {
+        CacheValidation.noNullValues(EPSG_CODES, epsgCodes);
+        epsgCodes.forEach(this::removeEpsgCode);
+    }
 
     /**
      * Sets the global spatial envelope.
      *
-     * @param globalEnvelope
-     *                       the new spatial envelope
+     * @param globalEnvelope the new spatial envelope
      */
     void setGlobalEnvelope(ReferencedEnvelope globalEnvelope);
 
     /**
      * Updates the global spatial envelope to include the specified envelope.
      *
-     * @param e
-     *          the envelope
+     * @param e the envelope
      */
     void updateGlobalEnvelope(Envelope e);
 
     /**
-     * Recalculates the global spatial envelope based on the current offering
-     * spatial envelopes.
+     * Recalculates the global spatial envelope based on the current offering spatial envelopes.
      */
     void recalculateGlobalEnvelope();
 
@@ -159,16 +146,17 @@ public interface WritableSpatialCache {
     /**
      * Add the specified epsg code.
      *
-     * @param epsgCode
-     *                 the new epsg code
+     * @param epsgCode the new epsg code
      */
     void addEpsgCode(Integer epsgCode);
 
     /**
      * Add the specified epsg codes.
      *
-     * @param epsgCodes
-     *                  the new epsg codes
+     * @param epsgCodes the new epsg codes
      */
-    void addEpsgCodes(Collection<Integer> epsgCodes);
+    default void addEpsgCodes(Collection<Integer> epsgCodes) {
+        CacheValidation.noNullValues(EPSG_CODES, epsgCodes);
+        epsgCodes.forEach(this::addEpsgCode);
+    }
 }

@@ -103,7 +103,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- 
+            <!--
             <plugin>
               <groupId>com.googlecode.maven-download-plugin</groupId>
               <artifactId>download-maven-plugin</artifactId>
@@ -165,7 +165,7 @@
                             <includes>
                                 <include>WEB-INF/spring/*</include>
                                 <include>WEB-INF/classes/**</include>
-                                <!-- 
+                                <!--
                                 <include>WEB-INF/classes/*.json</include>
                                 <include>WEB-INF/classes/*.properties</include>
                                 <include>WEB-INF/classes/*.txt</include>
@@ -195,7 +195,7 @@
         </plugins>
     </build>
     <dependencies>
-    <!-- copied from REST-API series-dao-webapp -->  
+    <!-- copied from REST-API series-dao-webapp -->
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-oxm</artifactId>
@@ -479,7 +479,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>handler</artifactId>
@@ -490,7 +490,7 @@
             <artifactId>hibernate-handler</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- 
+        <!--
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>gc-dao</artifactId>
@@ -532,9 +532,9 @@
             <artifactId>hibernate-datasource-mysql</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- CONVERTER -->
-        
+
         <!-- coordinates -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -548,7 +548,7 @@
             <artifactId>procedure-description-converter</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- Split and Merge observations -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -560,7 +560,7 @@
             <artifactId>observation-converter</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- flexible identifiers -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -582,14 +582,14 @@
             <artifactId>ereporting-identifier</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- BINDINGS -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>seriestype</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- INSERT FEATUREOFINTEREST -->
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
@@ -766,7 +766,7 @@
             <artifactId>coding-oceansites</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!-- REST API Dependencies -->
         <dependency>
           <groupId>org.n52.series-api</groupId>
@@ -946,7 +946,7 @@
             <scope>runtime</scope>
         </dependency>
 	</dependencies>
-            
+
     <profiles>
         <profile>
             <id>oracle</id>
@@ -1092,7 +1092,7 @@
                             </container>
                             <configuration>
                                 <type>runtime</type>
-                                <!-- <cargo.hostname>${remote.server}</cargo.hostname> <cargo.servlet.port>${remote.port}</cargo.servlet.port> <cargo.remote.username>${remote.user}</cargo.remote.username> 
+                                <!-- <cargo.hostname>${remote.server}</cargo.hostname> <cargo.servlet.port>${remote.port}</cargo.servlet.port> <cargo.remote.username>${remote.user}</cargo.remote.username>
                                 <cargo.remote.password>${remote.password}</cargo.remote.password> -->
                             </configuration>
                             <deployables>

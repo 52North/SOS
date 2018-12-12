@@ -28,22 +28,24 @@
  */
 package org.n52.sos.cache;
 
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 
 import org.n52.iceland.cache.ContentCache;
+import org.n52.janmayen.function.Predicates;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 
-
 /**
- * This encapsulates relationships between the different metadata components of
- * this SOS (e.g. fois 4 offerings). The intention is to achieve better
- * performance in getting this information from this cache than to query always
- * the DB for this information. (Usually the informations stored here do not
- * often change)
+ * This encapsulates relationships between the different metadata components of this SOS (e.g. fois 4 offerings). The
+ * intention is to achieve better performance in getting this information from this cache than to query always the DB
+ * for this information. (Usually the informations stored here do not often change)
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -51,10 +53,10 @@ import org.n52.janmayen.i18n.MultilingualString;
  * @since 4.0.0
  */
 public interface SosContentCache
-            extends ContentCache,
-            TemporalCache,
-            SpatialCache,
-            CompositePhenomenonCache {
+        extends ContentCache,
+                TemporalCache,
+                SpatialCache,
+                CompositePhenomenonCache {
     /**
      * @return the last cache update time
      */
@@ -73,19 +75,16 @@ public interface SosContentCache
     /**
      * Returns the allowed observation types for the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the allowed observation types
      */
     Set<String> getAllowedObservationTypesForOffering(String offering);
 
-
     /**
      * Returns the all observation types for the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the all observation types
      */
@@ -94,8 +93,7 @@ public interface SosContentCache
     /**
      * Returns the allowed featureOfInterest types for the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the allowed featureOfInterest types
      */
@@ -109,18 +107,18 @@ public interface SosContentCache
     /**
      * Checks whether the specified featureOfInterest type exists.
      *
-     * @param featureOfInterestType
-     *            the observation type
+     * @param featureOfInterestType the observation type
      *
      * @return {@code true} if it exists
      */
-    boolean hasFeatureOfInterestType(String featureOfInterestType);
+    default boolean hasFeatureOfInterestType(String featureOfInterestType) {
+        return getFeatureOfInterestTypes().contains(featureOfInterestType);
+    }
 
     /**
      * Get the featureOfInterest types associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the featureOfInterest types
      */
@@ -129,8 +127,7 @@ public interface SosContentCache
     /**
      * Checks whether or not the specified feature is contained in this cache.
      *
-     * @param featureOfInterest
-     *            the feature
+     * @param featureOfInterest the feature
      *
      * @return {@code true} if it is contained
      */
@@ -139,19 +136,16 @@ public interface SosContentCache
     /**
      * Returns all FeaturesOfInterest for the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the features associated with the offering
      */
     Set<String> getFeaturesOfInterestForOffering(String offering);
 
-
     /**
      * Returns all offerings for the specified featureOfInterest.
      *
-     * @param featureOfInterest
-     *            the featureOfInterest
+     * @param featureOfInterest the featureOfInterest
      *
      * @return the offerings associated with the featureOfInterest
      */
@@ -160,8 +154,7 @@ public interface SosContentCache
     /**
      * Returns all FeaturesOfInterest for the specified SosResultTemplate.
      *
-     * @param resultTemplate
-     *            the resultTemplate
+     * @param resultTemplate the resultTemplate
      *
      * @return the features associated with the resulte SosResultTemplate
      */
@@ -180,18 +173,18 @@ public interface SosContentCache
     /**
      * Checks whether the specified ObservableProperty is known.
      *
-     * @param observableProperty
-     *            the observable property
+     * @param observableProperty the observable property
      *
      * @return {@code true} if it is contained
      */
-    boolean hasObservableProperty(String observableProperty);
+    default boolean hasObservableProperty(String observableProperty) {
+        return getObservableProperties().contains(observableProperty);
+    }
 
     /**
      * Get the observable properties associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the observable properties
      */
@@ -200,8 +193,7 @@ public interface SosContentCache
     /**
      * Get the observable properties associated with the specified procedure.
      *
-     * @param procedure
-     *            the offering
+     * @param procedure the offering
      *
      * @return the observable properties
      */
@@ -225,37 +217,34 @@ public interface SosContentCache
     /**
      * Checks whether the specified observation type exists.
      *
-     * @param observationType
-     *            the observation type
+     * @param observationType the observation type
      *
      * @return {@code true} if it exists
      */
-    boolean hasObservationType(String observationType);
+    default boolean hasObservationType(String observationType) {
+        return getObservationTypes().contains(observationType);
+    }
 
     /**
      * Get the observation types associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the observation types
      */
     Set<String> getObservationTypesForOffering(String offering);
 
     /**
-     * Get the observable properties associated with the specified result
-     * template.
+     * Get the observable properties associated with the specified result template.
      *
-     * @param resultTemplate
-     *            the result template
+     * @param resultTemplate the result template
      *
      * @return the observable properties
      */
     Set<String> getObservablePropertiesForResultTemplate(String resultTemplate);
 
     /**
-     * @return all observable properties that are associated with a result
-     *         template
+     * @return all observable properties that are associated with a result template
      */
     Set<String> getObservablePropertiesWithResultTemplate();
 
@@ -267,8 +256,7 @@ public interface SosContentCache
     /**
      * Checks whether the specified offering exists.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return {@code true} if it exists
      */
@@ -277,8 +265,7 @@ public interface SosContentCache
     /**
      * Get the offerings associated with the specified observable property.
      *
-     * @param observableProperty
-     *            the observable property
+     * @param observableProperty the observable property
      *
      * @return the offerings
      */
@@ -287,23 +274,23 @@ public interface SosContentCache
     /**
      * Get the offerings associated with the specified procedure.
      *
-     * @param procedure
-     *            the procedure
+     * @param procedure the procedure
      *
      * @return the offerings
      */
     Set<String> getOfferingsForProcedure(String procedure);
 
-
     /**
      * Get the offerings associated with the specified procedures.
      *
-     * @param procedures
-     *            the procedures
+     * @param procedures the procedures
      *
      * @return the offerings
      */
-    Set<String> getOfferingsForProcedures(Set<String> procedures);
+    default Set<String> getOfferingsForProcedures(Set<String> procedures) {
+        return Optional.ofNullable(procedures).orElseGet(Collections::emptySet).stream()
+                .map(this::getOfferingsForProcedure).flatMap(Set::stream).collect(toSet());
+    }
 
     /**
      * @return all offerings that are associated with a result template
@@ -318,8 +305,7 @@ public interface SosContentCache
     /**
      * Checks whether the specified procedure exists.
      *
-     * @param procedure
-     *            the procedure
+     * @param procedure the procedure
      *
      * @return {@code true} if it exists
      */
@@ -328,8 +314,7 @@ public interface SosContentCache
     /**
      * Get the procedures associated with the specified feature of interest.
      *
-     * @param featureOfInterest
-     *            the feature of interest
+     * @param featureOfInterest the feature of interest
      *
      * @return the procedures
      */
@@ -338,8 +323,7 @@ public interface SosContentCache
     /**
      * Get the procedures associated with the specified observable property.
      *
-     * @param observableProperty
-     *            the observable property
+     * @param observableProperty the observable property
      *
      * @return the procedures
      */
@@ -348,8 +332,7 @@ public interface SosContentCache
     /**
      * Get the procedures associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the procedures
      */
@@ -358,8 +341,7 @@ public interface SosContentCache
     /**
      * Get the hidden child procedures associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the hidden child procedures
      */
@@ -373,18 +355,18 @@ public interface SosContentCache
     /**
      * Checks whether the specified related feature exists.
      *
-     * @param relatedFeature
-     *            the related feature
+     * @param relatedFeature the related feature
      *
      * @return {@code true} if it exists
      */
-    boolean hasRelatedFeature(String relatedFeature);
+    default boolean hasRelatedFeature(String relatedFeature) {
+        return getRelatedFeatures().contains(relatedFeature);
+    }
 
     /**
      * Get the related features associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the related features
      */
@@ -398,8 +380,7 @@ public interface SosContentCache
     /**
      * Checks whether the specified result template exists.
      *
-     * @param resultTemplate
-     *            the result template
+     * @param resultTemplate the result template
      *
      * @return {@code true} if it exists
      */
@@ -408,8 +389,7 @@ public interface SosContentCache
     /**
      * Get the result templates associated with the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the result templates
      */
@@ -418,19 +398,16 @@ public interface SosContentCache
     /**
      * Get the roles associated with the specified related feature.
      *
-     * @param relatedFeature
-     *            the related feature
+     * @param relatedFeature the related feature
      *
      * @return the roles
      */
     Set<String> getRolesForRelatedFeature(String relatedFeature);
 
-
     /**
      * Gets the name of the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
      *
      * @return the name of the offering or null
      */
@@ -439,10 +416,9 @@ public interface SosContentCache
     /**
      * Get the name in the specified language of the specified offering.
      *
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
+     * @param offering the offering
+     * @param i18n     the language
+     *
      * @return the name of the offering or null
      */
     LocalizedString getI18nNameForOffering(String offering, Locale i18n);
@@ -450,8 +426,8 @@ public interface SosContentCache
     /**
      * Get all names of the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
+     *
      * @return the names of the offering or null
      */
     MultilingualString getI18nNamesForOffering(String offering);
@@ -459,10 +435,9 @@ public interface SosContentCache
     /**
      * Check if there are I18N names for the specified offering and language.
      *
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
+     * @param offering the offering
+     * @param i18n     the language
+     *
      * @return <code>true</code>, if there are I18N names for the
      */
     boolean hasI18NNamesForOffering(String offering, Locale i18n);
@@ -470,10 +445,9 @@ public interface SosContentCache
     /**
      * Get the description in the specified language of the specified offering.
      *
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
+     * @param offering the offering
+     * @param i18n     the language
+     *
      * @return the description of the offering or null
      */
     LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n);
@@ -481,10 +455,9 @@ public interface SosContentCache
     /**
      * Check if there is a I18N description for the specified offering and language.
      *
-     * @param offering
-     *            the offering
-     * @param i18n
-     *            the language
+     * @param offering the offering
+     * @param i18n     the language
+     *
      * @return <code>true</code>, if there are I18N names for the
      */
     boolean hasI18NDescriptionForOffering(String offering, Locale i18n);
@@ -492,8 +465,8 @@ public interface SosContentCache
     /**
      * Get all descriptions of the specified offering.
      *
-     * @param offering
-     *            the offering
+     * @param offering the offering
+     *
      * @return the names of the offering or null
      */
     MultilingualString getI18nDescriptionsForOffering(String offering);
@@ -504,217 +477,166 @@ public interface SosContentCache
     Set<String> getFeaturesOfInterest();
 
     /**
-     * Returns collection containing parent features for the passed feature,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing parent features for the passed feature, optionally navigating the full hierarchy
+     * and including itself.
      *
-     * @param featureOfInterest
-     *            the feature id to find parents for
-     * @param fullHierarchy
-     *            whether or not to navigate the full feature hierarchy
-     * @param includeSelf
-     *            whether or not to include the passed feature id in the result
+     * @param featureOfInterest the feature id to find parents for
+     * @param fullHierarchy     whether or not to navigate the full feature hierarchy
+     * @param includeSelf       whether or not to include the passed feature id in the result
      *
-     * @return a set containing the passed features id's parents (and optionally
-     *         itself)
+     * @return a set containing the passed features id's parents (and optionally itself)
      */
     Set<String> getParentFeatures(String featureOfInterest, boolean fullHierarchy, boolean includeSelf);
 
     /**
-     * Returns collection containing parent features for the passed features,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing parent features for the passed features, optionally navigating the full hierarchy
+     * and including itself.
      *
-     * @param featuresOfInterest
-     *            the feature id's to find parents for
-     * @param fullHierarchy
-     *            whether or not to traverse the full feature hierarchy in one
-     *            direction starting from <tt>featureOfInterest</tt>
-     * @param includeSelves
-     *            whether or not to include the passed feature id's in the
-     *            result
+     * @param featuresOfInterest the feature id's to find parents for
+     * @param fullHierarchy      whether or not to traverse the full feature hierarchy in one direction starting from
+     * <tt>featureOfInterest</tt>
+     * @param includeSelves      whether or not to include the passed feature id's in the result
      *
-     * @return a set containing the passed procedure id's parents (and
-     *         optionally itself)
+     * @return a set containing the passed procedure id's parents (and optionally itself)
      */
     Set<String> getParentFeatures(Set<String> featuresOfInterest, boolean fullHierarchy, boolean includeSelves);
 
     /**
-     * Returns collection containing child features for the passed feature,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing child features for the passed feature, optionally navigating the full hierarchy and
+     * including itself.
      *
-     * @param featureOfInterest
-     *            feature id to find children for
-     * @param fullHierarchy
-     *            whether or not to traverse the full feature hierarchy in one
-     *            direction starting from <tt>featureOfInterest</tt>
-     * @param includeSelf
-     *            whether or not to include the passed feature id in the result
+     * @param featureOfInterest feature id to find children for
+     * @param fullHierarchy     whether or not to traverse the full feature hierarchy in one direction starting from
+     * <tt>featureOfInterest</tt>
+     * @param includeSelf       whether or not to include the passed feature id in the result
      *
-     * @return Collection containing the passed feature id's children
-     *         (and optionally itself)
+     * @return Collection containing the passed feature id's children (and optionally itself)
      */
     Set<String> getChildFeatures(String featureOfInterest, boolean fullHierarchy, boolean includeSelf);
 
     /**
-     * Returns collection containing parent procedures for the passed procedure,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing parent procedures for the passed procedure, optionally navigating the full
+     * hierarchy and including itself.
      *
-     * @param procedure
-     *            the procedure id to find parents for
-     * @param fullHierarchy
-     *            whether or not to traverse the full procedure hierarchy in one
-     *            direction starting from <tt>procedure</tt>
-     * @param includeSelf
-     *            whether or not to include the passed procedure id in the
-     *            result
+     * @param procedure     the procedure id to find parents for
+     * @param fullHierarchy whether or not to traverse the full procedure hierarchy in one direction starting from
+     * <tt>procedure</tt>
+     * @param includeSelf   whether or not to include the passed procedure id in the result
      *
-     * @return a set containing the passed procedure id's parents (and
-     *         optionally itself)
+     * @return a set containing the passed procedure id's parents (and optionally itself)
      */
     Set<String> getParentProcedures(String procedure, boolean fullHierarchy, boolean includeSelf);
 
     /**
-     * Returns collection containing parent procedures for the passed
-     * procedures, optionally navigating the full hierarchy and including
-     * itself.
+     * Returns collection containing parent procedures for the passed procedures, optionally navigating the full
+     * hierarchy and including itself.
      *
-     * @param procedures
-     *            the procedure id's to find parents for
-     * @param fullHierarchy
-     *            whether or not to traverse the full procedure hierarchy in one
-     *            direction starting from <tt>procedure</tt>
-     * @param includeSelves
-     *            whether or not to include the passed procedure id in the
-     *            result
+     * @param procedures    the procedure id's to find parents for
+     * @param fullHierarchy whether or not to traverse the full procedure hierarchy in one direction starting from
+     * <tt>procedure</tt>
+     * @param includeSelves whether or not to include the passed procedure id in the result
      *
-     * @return a set containing the passed procedure id's parents (and
-     *         optionally itself)
+     * @return a set containing the passed procedure id's parents (and optionally itself)
      */
     Set<String> getParentProcedures(Set<String> procedures, boolean fullHierarchy, boolean includeSelves);
 
     /**
-     * Returns collection containing child procedures for the passed procedures,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing child procedures for the passed procedures, optionally navigating the full
+     * hierarchy and including itself.
      *
-     * @param procedure
-     *            procedure id to find children for
-     * @param fullHierarchy
-     *            whether or not to navigate the full procedure hierarchy
-     * @param includeSelf
-     *            whether or not to include the passed procedure id in the
-     *            result
+     * @param procedure     procedure id to find children for
+     * @param fullHierarchy whether or not to navigate the full procedure hierarchy
+     * @param includeSelf   whether or not to include the passed procedure id in the result
      *
-     * @return Collection containing the passed procedure id's children
-     *         (and optionally itself)
+     * @return Collection containing the passed procedure id's children (and optionally itself)
      */
     Set<String> getChildProcedures(String procedure, boolean fullHierarchy, boolean includeSelf);
 
     /**
-     * Returns collection containing child procedures for the passed procedures,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing child procedures for the passed procedures, optionally navigating the full
+     * hierarchy and including itself.
      *
-     * @param procedure
-     *            procedure ids to find children for
-     * @param fullHierarchy
-     *            whether or not to navigate the full procedure hierarchy
-     * @param includeSelves
-     *            whether or not to include the passed procedure ids in the
-     *            result
+     * @param procedure     procedure ids to find children for
+     * @param fullHierarchy whether or not to navigate the full procedure hierarchy
+     * @param includeSelves whether or not to include the passed procedure ids in the result
      *
-     * @return Collection containing the passed procedure ids' children
-     *         (and optionally themselves)
+     * @return Collection containing the passed procedure ids' children (and optionally themselves)
      */
     Set<String> getChildProcedures(Set<String> procedure, boolean fullHierarchy, boolean includeSelves);
 
     /**
-     * Returns collection containing parent offerings for the passed offering,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing parent offerings for the passed offering, optionally navigating the full hierarchy
+     * and including itself.
      *
-     * @param offering
-     *            the offering id to find parents for
-     * @param fullHierarchy
-     *            whether or not to traverse the full offering hierarchy in one
-     *            direction starting from <tt>offering</tt>
-     * @param includeSelf
-     *            whether or not to include the passed offering id in the
-     *            result
+     * @param offering      the offering id to find parents for
+     * @param fullHierarchy whether or not to traverse the full offering hierarchy in one direction starting from
+     * <tt>offering</tt>
+     * @param includeSelf   whether or not to include the passed offering id in the result
      *
-     * @return a set containing the passed offering id's parents (and
-     *         optionally itself)
+     * @return a set containing the passed offering id's parents (and optionally itself)
      */
     Set<String> getParentOfferings(String offering, boolean fullHierarchy, boolean includeSelf);
 
     /**
-     * Returns collection containing parent offerings for the passed
-     * offerings, optionally navigating the full hierarchy and including
-     * itself.
+     * Returns collection containing parent offerings for the passed offerings, optionally navigating the full hierarchy
+     * and including itself.
      *
-     * @param offerings
-     *            the offering id's to find parents for
-     * @param fullHierarchy
-     *            whether or not to traverse the full offering hierarchy in one
-     *            direction starting from <tt>offering</tt>
-     * @param includeSelves
-     *            whether or not to include the passed offering id in the
-     *            result
+     * @param offerings     the offering id's to find parents for
+     * @param fullHierarchy whether or not to traverse the full offering hierarchy in one direction starting from
+     * <tt>offering</tt>
+     * @param includeSelves whether or not to include the passed offering id in the result
      *
-     * @return a set containing the passed offering id's parents (and
-     *         optionally itself)
+     * @return a set containing the passed offering id's parents (and optionally itself)
      */
     Set<String> getParentOfferings(Set<String> offerings, boolean fullHierarchy, boolean includeSelves);
 
     /**
-     * Returns collection containing child offerings for the passed offerings,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing child offerings for the passed offerings, optionally navigating the full hierarchy
+     * and including itself.
      *
-     * @param offering
-     *            offering id to find children for
-     * @param fullHierarchy
-     *            whether or not to navigate the full offering hierarchy
-     * @param includeSelf
-     *            whether or not to include the passed offering id in the
-     *            result
+     * @param offering      offering id to find children for
+     * @param fullHierarchy whether or not to navigate the full offering hierarchy
+     * @param includeSelf   whether or not to include the passed offering id in the result
      *
-     * @return Collection containing the passed offering id's children
-     *         (and optionally itself)
+     * @return Collection containing the passed offering id's children (and optionally itself)
      */
     Set<String> getChildOfferings(String offering, boolean fullHierarchy, boolean includeSelf);
 
     /**
-     * Returns collection containing child offerings for the passed offerings,
-     * optionally navigating the full hierarchy and including itself.
+     * Returns collection containing child offerings for the passed offerings, optionally navigating the full hierarchy
+     * and including itself.
      *
-     * @param offering
-     *            offering ids to find children for
-     * @param fullHierarchy
-     *            whether or not to navigate the full offering hierarchy
-     * @param includeSelves
-     *            whether or not to include the passed offering ids in the
-     *            result
+     * @param offering      offering ids to find children for
+     * @param fullHierarchy whether or not to navigate the full offering hierarchy
+     * @param includeSelves whether or not to include the passed offering ids in the result
      *
-     * @return Collection containing the passed offering ids' children
-     *         (and optionally themselves)
+     * @return Collection containing the passed offering ids' children (and optionally themselves)
      */
     Set<String> getChildOfferings(Set<String> offering, boolean fullHierarchy, boolean includeSelves);
 
     /**
      * Returns <code>true</code> if the passed offering has parent offerings.
      *
-     * @param offering
-     *            offering id to check for parents
+     * @param offering offering id to check for parents
+     *
      * @return <code>true</code> if the passed offering has parent offerings.
      */
     boolean hasParentOfferings(String offering);
 
     /**
-     * Checks whether the specified related feature has been used as sampling
-     * feature
+     * Checks whether the specified related feature has been used as sampling feature
      *
-     * @param relatedFeatureIdentifier
-     *            the relatedFeature identifier
-     * @return <tt>true</tt>, if the relatedFeature is related to any feature
-     *         which is part of an observation.
+     * @param relatedFeatureIdentifier the relatedFeature identifier
+     *
+     * @return <tt>true</tt>, if the relatedFeature is related to any feature which is part of an observation.
      */
-    boolean isRelatedFeatureSampled(String relatedFeatureIdentifier);
+    default boolean isRelatedFeatureSampled(String relatedFeatureIdentifier) {
+        return Optional.ofNullable(relatedFeatureIdentifier)
+                .filter(Predicates.not(String::isEmpty))
+                .filter(getRelatedFeatures()::contains)
+                .filter(id -> !getChildFeatures(id, true, false).isEmpty())
+                .isPresent();
+    }
 
     /**
      * Get the supported languages
@@ -733,8 +655,8 @@ public interface SosContentCache
     /**
      * Is the specific language supported
      *
-     * @param language
-     *            Language to check
+     * @param language Language to check
+     *
      * @return <code>true</code>, if the specific lanugage is supported
      */
     boolean isLanguageSupported(Locale language);
@@ -744,16 +666,18 @@ public interface SosContentCache
      *
      * @return Supported requestable procedure description format
      */
-    public Set<String> getRequestableProcedureDescriptionFormat();
+    Set<String> getRequestableProcedureDescriptionFormat();
 
     /**
      * Is the specific requestable procedure description format supported
      *
-     * @param format
-     *            format to check
+     * @param format format to check
+     *
      * @return <code>true</code>, if the specific format is supported
      */
-    public boolean hasRequestableProcedureDescriptionFormat(String format);
+    default boolean hasRequestableProcedureDescriptionFormat(String format) {
+        return getRequestableProcedureDescriptionFormat().contains(format);
+    }
 
     String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
 
@@ -772,23 +696,23 @@ public interface SosContentCache
     String getOfferingHumanReadableNameForIdentifier(String identifier);
 
     /**
-     * Get procedures usable for transactional insert observation operations
-     * (InsertObservation, InsertResultTemplate).
+     * Get procedures usable for transactional insert observation operations (InsertObservation, InsertResultTemplate).
      *
      * @return the procedures
      */
     Set<String> getTransactionalObservationProcedures();
 
     /**
-     * Checks whether the specified procedure exists for transactional insert
-     * observation operations (InsertObservation, InsertResultTemplate).
+     * Checks whether the specified procedure exists for transactional insert observation operations (InsertObservation,
+     * InsertResultTemplate).
      *
-     * @param procedureID
-     *            the procedure
+     * @param procedureID the procedure
      *
      * @return {@code true} if it exists
      */
-    boolean hasTransactionalObservationProcedure(String procedureID);
+    default boolean hasTransactionalObservationProcedure(String procedureID) {
+        return getTransactionalObservationProcedures().contains(procedureID);
+    }
 
     /**
      * Get procedures usable for querying.
@@ -800,11 +724,13 @@ public interface SosContentCache
     /**
      * Checks whether the specified procedure exists for querying.
      *
-     * @param procedureID
-     *            the procedure
+     * @param procedureID the procedure
+     *
      * @return {@code true} if it exists
      */
-    boolean hasQueryableProcedure(String procedureID);
+    default boolean hasQueryableProcedure(String procedureID) {
+        return getQueryableProcedures().contains(procedureID);
+    }
 
     Set<String> getTypeInstanceProcedure(TypeInstance typeInstance);
 
@@ -825,11 +751,13 @@ public interface SosContentCache
     Set<String> getPublishedObservableProperties();
 
     enum TypeInstance {
-        TYPE, INSTANCE;
+        TYPE,
+        INSTANCE;
     }
 
     enum ComponentAggregation {
-        COMPONENT, AGGREGATION;
+        COMPONENT,
+        AGGREGATION;
     }
 
 }

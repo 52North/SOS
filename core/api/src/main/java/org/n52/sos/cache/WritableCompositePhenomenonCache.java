@@ -41,56 +41,59 @@ public interface WritableCompositePhenomenonCache extends
 
     void addCompositePhenomenon(Collection<String> compositePhenomenon);
 
-    void setCompositePhenomenon(Collection<String> compositePhenomenon);
+    default void setCompositePhenomenon(Collection<String> compositePhenomenon) {
+        clearCompositePhenomenon();
+        addCompositePhenomenon(compositePhenomenon);
+    }
 
     void clearCompositePhenomenon();
 
-    void addCompositePhenomenonForProcedure(String procedure,
-                                            String compositePhenomenon);
+    void addCompositePhenomenonForProcedure(String procedure, String compositePhenomenon);
 
-    void addCompositePhenomenonForProcedure(String procedure,
-                                            Collection<String> compositePhenomenon);
+    void addCompositePhenomenonForProcedure(String procedure, Collection<String> compositePhenomenon);
 
-    void setCompositePhenomenonForProcedure(String procedure,
-                                            Collection<String> compositePhenomenon);
+    default void setCompositePhenomenonForProcedure(String procedure,
+                                                    Collection<String> compositePhenomenon) {
+        clearCompositePhenomenonForProcedure(procedure);
+        addCompositePhenomenonForProcedure(procedure, compositePhenomenon);
+    }
 
     void clearCompositePhenomenonForProcedure(String procedure);
 
     void clearCompositePhenomenonForProcedures();
 
-    void addCompositePhenomenonForOffering(String offering,
-                                           String compositePhenomenon);
+    void addCompositePhenomenonForOffering(String offering, String compositePhenomenon);
 
-    void addCompositePhenomenonForOffering(String offering,
-                                           Collection<String> compositePhenomenon);
+    void addCompositePhenomenonForOffering(String offering, Collection<String> compositePhenomenon);
 
-    void setCompositePhenomenonForOffering(String offering,
-                                           Collection<String> compositePhenomenon);
+    default void setCompositePhenomenonForOffering(String offering, Collection<String> compositePhenomenon) {
+        clearCompositePhenomenonForOffering(offering);
+        addCompositePhenomenonForProcedure(offering, compositePhenomenon);
+    }
 
     void clearCompositePhenomenonForOffering(String offering);
 
     void clearCompositePhenomenonForOfferings();
 
-    void addObservablePropertyForCompositePhenomenon(String compositePhenomenon,
-                                                     String observableProperty);
+    void addObservablePropertyForCompositePhenomenon(String compositePhenomenon, String observableProperty);
 
-    void addCompositePhenomenonForObservableProperty(String observableProperty,
-                                                     String compositePhenomenon);
+    void addCompositePhenomenonForObservableProperty(String observableProperty, String compositePhenomenon);
 
-    void addObservablePropertiesForCompositePhenomenon(
-            String compositePhenomenon, Collection<String> observableProperty);
+    void addObservablePropertiesForCompositePhenomenon(String compositePhenomenon,
+                                                       Collection<String> observableProperty);
 
-    void setObservablePropertiesForCompositePhenomenon(
-            String compositePhenomenon, Collection<String> observableProperty);
+    default void setObservablePropertiesForCompositePhenomenon(String compositePhenomenon,
+                                                               Collection<String> observableProperty) {
+        clearObservablePropertiesForCompositePhenomenon(compositePhenomenon);
+        addObservablePropertiesForCompositePhenomenon(compositePhenomenon, observableProperty);
+    }
 
-    void clearObservablePropertiesForCompositePhenomenon(
-            String compositePhenomenon);
+    void clearObservablePropertiesForCompositePhenomenon(String compositePhenomenon);
 
     void clearObservablePropertiesForCompositePhenomenon();
 
     void clearCompositePhenomenonsForObservableProperty();
 
     void clearCompositePhenomenonsForObservableProperty(String observableProperty);
-
 
 }

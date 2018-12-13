@@ -1745,16 +1745,11 @@
         <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
-                <!-- execute "install" goal during release:prepare (instead 
-                    of "integration-test") -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
                 <configuration>
                     <preparationGoals>clean</preparationGoals>
-                    <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <tagNameFormat>v@{project.version}</tagNameFormat>
-                    <releaseProfiles>oracle</releaseProfiles>
+                    <releaseProfiles>check,sign,oracle</releaseProfiles>
                 </configuration>
             </plugin>
             <plugin>
@@ -1909,7 +1904,6 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>3.1.7</version>
                     <configuration>
                         <failOnError>false</failOnError>
                     </configuration>
@@ -1926,7 +1920,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20</version>
                     <configuration>
                         <testFailureIgnore>true</testFailureIgnore>
                     </configuration>
@@ -1934,20 +1927,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
                     <configuration>
                         <failOnViolation>false</failOnViolation>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1983,7 +1965,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.6</version>
                     <configuration>
                         <descriptors>
                             <descriptor>misc/assembly.xml</descriptor>

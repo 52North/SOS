@@ -56,6 +56,7 @@
     </licenses>
 
     <modules>
+        <module>bindings</module>
         <module>core</module>
         <module>coding</module>
         <module>converter</module>

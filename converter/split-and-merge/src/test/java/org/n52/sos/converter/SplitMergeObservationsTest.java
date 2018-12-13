@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *

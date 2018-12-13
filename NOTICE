@@ -282,12 +282,12 @@ This project includes:
   Saxon-HE under Mozilla Public License Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0
   Series Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
+  Series REST API - DAO module under GNU General Public License, Version 2.0
+  Series REST API - DAO Webapp under GNU General Public License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
   Series REST API - SOS DAO module under GNU General Public License, Version 2.0
   Series REST API - SPI module under GNU General Public License, Version 2.0
-  Series REST API DAO - DAO under GNU General Public License, Version 2.0
-  Series REST API DAO - Webapp under GNU General Public License, Version 2.0
   SI Quantities under BSD
   SI Units for Java SE 8 under BSD
   SLF4J API Module under MIT License
@@ -315,6 +315,7 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
+  StAX API under The Apache Software License, Version 2.0
   T-Digest under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
   Units of Measurement API under BSD

@@ -11,22 +11,13 @@
     <name>52°North SOS - Hibernate Module</name>
     <description>52°North SOS Hibernate Module</description>
     <modules>
-        <module>mappings</module>
         <module>session-factory</module>
         <module>common</module>
         <module>handler</module>
         <module>feature</module>
-		<module>h2</module>
-		<module>datasource</module>
+		    <module>h2</module>
+		    <module>datasource</module>
         <module>utils</module>
         <module>c3p0</module>
     </modules>
-	<profiles>
-        <profile>
-            <id>generator</id>
-			 <modules>
-				<module>generator</module>
-			</modules>
-		</profile>
-	</profiles>
 </project>

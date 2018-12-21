@@ -63,50 +63,51 @@ public class RelatedProceduresEnrichment
 
         Set<AbstractSensorML> childProcedures = Sets.newHashSet();
         for (ProcedureEntity child : getProcedure().getChildren()) {
+            if (child != null) {
+                // if child has valid vpts, use the most recent one within
+                // the validTime to create the child procedure
+                ProcedureHistoryEntity childHistory = null;
+                for (ProcedureHistoryEntity cph : child.getProcedureHistory()) {
+                    TimePeriod thisCvptValidTime = new TimePeriod(cph.getStartTime(), cph.getEndTime());
 
-            // if child has valid vpts, use the most recent one within
-            // the validTime to create the child procedure
-            ProcedureHistoryEntity childHistory = null;
-            for (ProcedureHistoryEntity cph : child.getProcedureHistory()) {
-                TimePeriod thisCvptValidTime = new TimePeriod(cph.getStartTime(), cph.getEndTime());
-
-                if (getValidTime() != null && !getValidTime().isSetEnd() && !thisCvptValidTime.isSetEnd()) {
-                    childHistory = cph;
-                } else {
-                    // make sure this child's validtime is within the
-                    // parent's valid time,
-                    // if parent has one
-                    if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())) {
-                        continue;
-                    }
-
-                    if (childHistory == null || cph.getEndTime() == null || (cph.getEndTime() != null
-                            && childHistory.getEndTime() != null && cph.getEndTime().after(childHistory.getEndTime()))) {
+                    if (getValidTime() != null && !getValidTime().isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childHistory = cph;
+                    } else {
+                        // make sure this child's validtime is within the
+                        // parent's valid time,
+                        // if parent has one
+                        if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())) {
+                            continue;
+                        }
+
+                        if (childHistory == null || cph.getEndTime() == null || (cph.getEndTime() != null
+                                && childHistory.getEndTime() != null && cph.getEndTime().after(childHistory.getEndTime()))) {
+                            childHistory = cph;
+                        }
                     }
                 }
-            }
 
-            if (childHistory != null) {
-                // matching child validProcedureTime was found, use it to build
-                // procedure description
-                SosProcedureDescription<?> childDescription = ((HibernateProcedureConverter) getConverter())
-                        .createSosProcedureDescriptionFromValidProcedureTime(child, getProcedureDescriptionFormat(),
-                                childHistory, getVersion(), getLocale(), getSession());
-                if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                    childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
-                }
-            } else if (child != null) {
-                // no matching child validProcedureTime, generate the procedure
-                // description
-                SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(child,
-                        getProcedureDescriptionFormat(), getVersion(), getLocale(), getSession());
-                // TODO check if call is necessary because it is also called in
-                // createSosProcedureDescription()
-                // addValuesToSensorDescription(childProcID,childProcedureDescription,
-                // version, outputFormat, session);
-                if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
-                    childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
+                if (childHistory != null) {
+                    // matching child validProcedureTime was found, use it to build
+                    // procedure description
+                    SosProcedureDescription<?> childDescription = ((HibernateProcedureConverter) getConverter())
+                            .createSosProcedureDescriptionFromValidProcedureTime(child, getProcedureDescriptionFormat(),
+                                    childHistory, getVersion(), getLocale(), getSession());
+                    if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
+                        childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
+                    }
+                } else {
+                    // no matching child validProcedureTime, generate the procedure
+                    // description
+                    SosProcedureDescription<?> childDescription = getConverter().createSosProcedureDescription(child,
+                            getProcedureDescriptionFormat(), getVersion(), getLocale(), getSession());
+                    // TODO check if call is necessary because it is also called in
+                    // createSosProcedureDescription()
+                    // addValuesToSensorDescription(childProcID,childProcedureDescription,
+                    // version, outputFormat, session);
+                    if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
+                        childProcedures.add((AbstractSensorML) childDescription.getProcedureDescription());
+                    }
                 }
             }
         }

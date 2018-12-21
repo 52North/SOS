@@ -18,6 +18,7 @@ This project includes:
   52°North Shetland under The Apache Software License, Version 2.0
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
   52°North SOS - AQD 1.0.0 Operator under GPLv2
+  52°North SOS - Binding Modules under GPLv2
   52°North SOS - Cache under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Converter Modules under GPLv2
@@ -27,6 +28,7 @@ This project includes:
   52°North SOS - eReporting Prefixed identifier convert module under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
   52°North SOS - Extension Modules under GPLv2
+  52°North SOS - Extension register Binding under GPLv2
   52°North SOS - Flexible identifier convert module under GPLv2
   52°North SOS - Handler Module under GPLv2
   52°North SOS - Hibernate c3p0 under GPLv2
@@ -147,7 +149,6 @@ This project includes:
   Guava ListenableFuture only under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under MPL 2.0 or EPL 1.0
-  Hamcrest All under New BSD License
   Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   HdrHistogram under Public Domain, per Creative Commons CC0
@@ -202,7 +203,6 @@ This project includes:
   JSR166e under CC0 1.0 Universal
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
-  JUnit under Eclipse Public License 1.0
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Lucene Common Analyzers under Apache 2

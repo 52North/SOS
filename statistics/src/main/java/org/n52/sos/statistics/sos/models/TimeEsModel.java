@@ -122,7 +122,7 @@ public class TimeEsModel extends AbstractElasticsearchModel {
     }
 
     private boolean checkDates(DateTime start, DateTime end) {
-        if (start == null && end == null) {
+        if (start == null || end == null) {
             return false;
         }
         if (!start.isBefore(end)) {

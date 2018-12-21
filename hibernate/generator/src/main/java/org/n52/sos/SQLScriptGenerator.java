@@ -258,7 +258,7 @@ public class SQLScriptGenerator {
                                 printToScreen("ERROR: " + e.getMessage());
                                 System.exit(1);
                             }
-                        }   
+                        }
                     }
                 }
             } else if (select == 3) {
@@ -292,7 +292,7 @@ public class SQLScriptGenerator {
                     System.exit(1);
                 }
             }
-            
+
         } catch (IOException ioe) {
             printToScreen("ERROR: IO error trying to read your input!");
             System.exit(1);
@@ -361,7 +361,7 @@ public class SQLScriptGenerator {
             }
         }
     }
-    
+
     private String getDialectSelection(int i) {
         if (i == 1) {
             return "postgre";
@@ -376,7 +376,7 @@ public class SQLScriptGenerator {
         }
         return Integer.toString(i);
     }
-    
+
     private String getModelSelection(int i) {
         if (i == 1) {
             return "core";
@@ -387,7 +387,7 @@ public class SQLScriptGenerator {
         }
         return Integer.toString(i);
     }
-    
+
     private String getConceptSelection(int i) {
         if (i == 1) {
             return "old";

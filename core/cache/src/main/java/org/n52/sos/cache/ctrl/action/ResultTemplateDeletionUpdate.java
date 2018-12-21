@@ -68,7 +68,7 @@ public class ResultTemplateDeletionUpdate extends InMemoryCacheUpdate {
     public ResultTemplateDeletionUpdate(DeleteResultTemplateResponse response) {
         if (response == null) {
             String msg =
-                    String.format("Missing argument: '%s': %s; '%s': %s",
+                    String.format("Missing argument: '%s': %s;",
                             DeleteResultTemplateResponse.class.getName(),
                             response);
             LOGGER.error(msg);

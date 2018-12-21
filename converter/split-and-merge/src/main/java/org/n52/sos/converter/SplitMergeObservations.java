@@ -222,7 +222,7 @@ public class SplitMergeObservations
                     final OmObservation newObservation = new OmObservation();
                     newObservation.setObservationConstellation(observationConstellation);
                     // identifier
-                    if (observation.isSetIdentifier()) {
+                    if (metaIdentifier != null) {
                         newObservation.setIdentifier(new CodeWithAuthority(metaIdentifier.getValue() + counter,
                                 metaIdentifier.getCodeSpace()));
                     }

@@ -62,7 +62,6 @@ import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -620,7 +619,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         Map<String, TimeExtrema> procedureTimeExtrema = Maps.newHashMap();
         if (CollectionHelper.isNotEmpty(results)) {
             for (ProcedureTimeExtrema pte : results) {
-                if (pte.isSetProcedure()) {
+                if (pte != null && pte.isSetProcedure()) {
                     procedureTimeExtrema.put(pte.getProcedure(), pte);
                 }
             }

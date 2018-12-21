@@ -446,20 +446,20 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
 
         String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity)observation);
 
-        if (!isProfileObservation(dataset) || (isProfileObservation(dataset) && !childObservation)) {
-            offerings.add(dataset.getOffering());
-            if (!daos.dataset().checkObservationType(dataset, observationType, session)) {
-                throw new InvalidParameterValueException().withMessage(
-                        "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
-                        observationType, observation.getDataset().getProcedure().getIdentifier(),
-                        dataset.getObservableProperty().getIdentifier(), dataset.getOffering().getIdentifier(),
-                        dataset.getObservationType().getFormat());
-            }
-        }
-
         observationContext.setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
 
         if (dataset != null) {
+            if (!isProfileObservation(dataset) || (isProfileObservation(dataset) && !childObservation)) {
+                offerings.add(dataset.getOffering());
+                if (!daos.dataset().checkObservationType(dataset, observationType, session)) {
+                    throw new InvalidParameterValueException().withMessage(
+                            "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
+                            observationType, observation.getDataset().getProcedure().getIdentifier(),
+                            dataset.getObservableProperty().getIdentifier(), dataset.getOffering().getIdentifier(),
+                            dataset.getObservationType().getFormat());
+                }
+            }
+
             observationContext.setPhenomenon(dataset.getObservableProperty());
             observationContext.setProcedure(dataset.getProcedure());
             observationContext.setOffering(dataset.getOffering());

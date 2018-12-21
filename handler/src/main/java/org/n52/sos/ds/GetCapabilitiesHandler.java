@@ -91,7 +91,6 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.util.I18NHelper;
-import org.n52.sos.util.JTSConverter;
 
 
 /**
@@ -143,8 +142,8 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                     // only if fois are contained for the offering set the values of
                     // the envelope
                     if (offering.isSetGeometry()) {
-                        sosObservationOffering.setObservedArea(processObservedArea(JTSConverter.convert(offering
-                                .getGeometry())));
+                        sosObservationOffering.setObservedArea(processObservedArea(offering
+                                .getGeometry()));
                     } else if (getCache().hasEnvelopeForOffering(offering.getIdentifier())) {
                         sosObservationOffering.setObservedArea(getCache().getEnvelopeForOffering(offering
                                 .getIdentifier()));
@@ -253,8 +252,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                                     sosObservationOffering.setObservationTypes(toStringSet(observationTypes));
 
                                     if (offering.isSetGeometry()) {
-                                        sosObservationOffering.setObservedArea(processObservedArea(JTSConverter
-                                                .convert(offering.getGeometry())));
+                                        sosObservationOffering.setObservedArea(processObservedArea(offering.getGeometry()));
                                     } else if (getCache().hasEnvelopeForOffering(offering.getIdentifier())) {
                                         sosObservationOffering.setObservedArea(getCache()
                                                 .getEnvelopeForOffering(offering.getIdentifier()));

@@ -54,10 +54,8 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.QuantityDatasetEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.Dataset;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -260,7 +258,7 @@ public abstract class AbstractSeriesDAO
      *
      * @throws OwsExceptionReport
      */
-    public abstract DatasetEntity getOrInsertSeries(ObservationContext ctx, Data<?> observation, final Session session)
+    public abstract DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation, final Session session)
             throws OwsExceptionReport;
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request)
@@ -274,14 +272,14 @@ public abstract class AbstractSeriesDAO
         return getOrInsert(ctx, null, session);
     }
 
-    protected DatasetEntity getOrInsert(ObservationContext ctx, Data<?> observation, Session session) throws OwsExceptionReport {
+    protected DatasetEntity getOrInsert(ObservationContext ctx, DataEntity<?> observation, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         ctx.addIdentifierRestrictionsToCritera(criteria);
         criteria.setMaxResults(1);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure, offering): {}",
                 HibernateHelper.getSqlString(criteria));
         DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
-        if (series == null || series instanceof NotInitializedDataset) {
+        if (series == null || series.getDatasetType().equals(DatasetType.not_initialized)) {
             series = preCheckDataset(ctx, observation, series, session);
         }
         if (series == null || (series.isSetFeature() && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
@@ -305,7 +303,7 @@ public abstract class AbstractSeriesDAO
         return series;
     }
 
-    private DatasetEntity preCheckDataset(ObservationContext ctx, Data<?> observation, DatasetEntity dataset, Session session) throws OwsExceptionReport {
+    private DatasetEntity preCheckDataset(ObservationContext ctx, DataEntity<?> observation, DatasetEntity dataset, Session session) throws OwsExceptionReport {
         if (dataset == null) {
             Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
             ctx.addIdentifierRestrictionsToCritera(criteria, false);
@@ -314,7 +312,7 @@ public abstract class AbstractSeriesDAO
             dataset = (DatasetEntity) criteria.uniqueResult();
         }
         if (dataset != null) {
-            Dataset concrete = getDatasetFactory().visit(observation);
+            DatasetEntity concrete = getDatasetFactory().visit(observation);
             concrete.copy(dataset);
 //            StringBuilder builder = new StringBuilder();
 //            builder.append("update ")
@@ -383,7 +381,7 @@ public abstract class AbstractSeriesDAO
                 throw new InvalidParameterValueException().at(parameterName).withMessage(
                         "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
                         observationType, sosOC.getProcedureIdentifier(), observablePropertyIdentifier,
-                        sosOC.getOfferings(), hoc.getObservationType().getFormat());
+                        sosOC.getOfferings(), hoc.getOmObservationType().getFormat());
             }
             if (hObsConst == null) {
                 if (sosOC.isSetProcedure()) {
@@ -750,7 +748,7 @@ public abstract class AbstractSeriesDAO
             series.setFirstValueAt(null);
             series.setLastObservation(null);
             series.setLastValueAt(null);
-            if (series instanceof QuantityDatasetEntity) {
+            if (series.getValueType().equals(ValueType.quantity)) {
                 series.setFirstQuantityValue(null);
                 series.setLastQuantityValue(null);
             }
@@ -1060,7 +1058,7 @@ public abstract class AbstractSeriesDAO
     }
 
     public boolean checkObservationType(DatasetEntity dataset, String observationType, Session session) {
-        String hObservationType = dataset.getObservationType() == null ? null : dataset.getObservationType().getFormat();
+        String hObservationType = dataset.getObservationType() == null ? null : dataset.getOmObservationType().getFormat();
         if (hObservationType == null || hObservationType.isEmpty() || hObservationType.equals("NOT_DEFINED")) {
             updateSeries(dataset, observationType, session);
         } else  if (!hObservationType.equals(observationType)) {
@@ -1071,7 +1069,7 @@ public abstract class AbstractSeriesDAO
 
     private void updateSeries(DatasetEntity dataset, String observationType, Session session) {
         FormatEntity obsType = new FormatDAO().getFormatEntityObject(observationType, session);
-        dataset.setObservationType(obsType);
+        dataset.setOmObservationType(obsType);
         session.saveOrUpdate(dataset);
 
         // update hidden child observation constellations
@@ -1094,7 +1092,7 @@ public abstract class AbstractSeriesDAO
                     HibernateHelper.getSqlString(c));
             List<DatasetEntity> hiddenChildObsConsts = c.list();
             for (DatasetEntity hiddenChildObsConst : hiddenChildObsConsts) {
-                hiddenChildObsConst.setObservationType(obsType);
+                hiddenChildObsConst.setOmObservationType(obsType);
                 session.saveOrUpdate(hiddenChildObsConst);
             }
         }

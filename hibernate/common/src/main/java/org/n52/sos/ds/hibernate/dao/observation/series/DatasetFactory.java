@@ -30,152 +30,138 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import java.util.Optional;
 
+import org.n52.series.db.beans.BlobDataEntity;
+import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryDataEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.data.Data.BlobData;
-import org.n52.series.db.beans.data.Data.BooleanData;
-import org.n52.series.db.beans.data.Data.CategoryData;
-import org.n52.series.db.beans.data.Data.ComplexData;
-import org.n52.series.db.beans.data.Data.CountData;
-import org.n52.series.db.beans.data.Data.DataArrayData;
-import org.n52.series.db.beans.data.Data.GeometryData;
-import org.n52.series.db.beans.data.Data.ProfileData;
-import org.n52.series.db.beans.data.Data.QuantityData;
-import org.n52.series.db.beans.data.Data.ReferencedData;
-import org.n52.series.db.beans.data.Data.TextData;
-import org.n52.series.db.beans.dataset.BlobDataset;
-import org.n52.series.db.beans.dataset.BooleanDataset;
-import org.n52.series.db.beans.dataset.CategoryDataset;
-import org.n52.series.db.beans.dataset.ComplexDataset;
-import org.n52.series.db.beans.dataset.CountDataset;
-import org.n52.series.db.beans.dataset.DataArrayDataset;
-import org.n52.series.db.beans.dataset.Dataset;
-import org.n52.series.db.beans.dataset.GeometryDataset;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
-import org.n52.series.db.beans.dataset.ProfileDataset;
-import org.n52.series.db.beans.dataset.QuantityDataset;
-import org.n52.series.db.beans.dataset.ReferencedDataset;
-import org.n52.series.db.beans.dataset.TextDataset;
+import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
+import org.n52.series.db.beans.TextDataEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public abstract class DatasetFactory {
 
-    public abstract Class<? extends Dataset> datasetClass();
+    public abstract Class<? extends DatasetEntity> datasetClass();
 
-    private Dataset dataset()
+    private DatasetEntity dataset()
             throws OwsExceptionReport {
         return instantiate(datasetClass());
     }
 
-    public abstract Class<? extends NotInitializedDataset> notInitializedClass();
+    public abstract Class<? extends DatasetEntity> notInitializedClass();
 
-    private NotInitializedDataset notInitialized()
+    private DatasetEntity notInitialized()
             throws OwsExceptionReport {
         return instantiate(notInitializedClass());
     }
 
-    public abstract Class<? extends BlobDataset> blobClass();
+    public abstract Class<? extends DatasetEntity> blobClass();
 
-    public BlobDataset blob()
+    public DatasetEntity blob()
             throws OwsExceptionReport {
         return instantiate(blobClass());
     }
 
-    public abstract Class<? extends BooleanDataset> truthClass();
+    public abstract Class<? extends DatasetEntity> truthClass();
 
-    public BooleanDataset truth()
+    public DatasetEntity truth()
             throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public abstract Class<? extends CategoryDataset> categoryClass();
+    public abstract Class<? extends DatasetEntity> categoryClass();
 
-    public CategoryDataset category()
+    public DatasetEntity category()
             throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public abstract Class<? extends CountDataset> countClass();
+    public abstract Class<? extends DatasetEntity> countClass();
 
-    public CountDataset count()
+    public DatasetEntity count()
             throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public abstract Class<? extends GeometryDataset> geometryClass();
+    public abstract Class<? extends DatasetEntity> geometryClass();
 
-    public GeometryDataset geometry()
+    public DatasetEntity geometry()
             throws OwsExceptionReport {
         return instantiate(geometryClass());
     }
 
-    public abstract Class<? extends QuantityDataset> numericClass();
+    public abstract Class<? extends DatasetEntity> numericClass();
 
-    public QuantityDataset numeric()
+    public DatasetEntity numeric()
             throws OwsExceptionReport {
         return instantiate(numericClass());
     }
 
-    public abstract Class<? extends DataArrayDataset> sweDataArrayClass();
+    public abstract Class<? extends DatasetEntity> sweDataArrayClass();
 
-    public DataArrayDataset sweDataArray()
+    public DatasetEntity sweDataArray()
             throws OwsExceptionReport {
         return instantiate(sweDataArrayClass());
     }
 
-    public abstract Class<? extends TextDataset> textClass();
+    public abstract Class<? extends DatasetEntity> textClass();
 
-    public TextDataset text()
+    public DatasetEntity text()
             throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
-    public abstract Class<? extends ComplexDataset> complexClass();
+    public abstract Class<? extends DatasetEntity> complexClass();
 
-    public ComplexDataset complex()
+    public DatasetEntity complex()
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
 
-    public abstract Class<? extends ProfileDataset> profileClass();
+    public abstract Class<? extends DatasetEntity> profileClass();
 
-    public ProfileDataset profile()
+    public DatasetEntity profile()
             throws OwsExceptionReport {
         return instantiate(profileClass());
     }
 
-    public abstract Class<? extends ProfileDataset> textProfileClass();
+    public abstract Class<? extends DatasetEntity> textProfileClass();
 
-    public Dataset textProfile()
+    public DatasetEntity textProfile()
             throws OwsExceptionReport {
         return instantiate(textProfileClass());
     }
 
-    public abstract Class<? extends ProfileDataset> categoryProfileClass();
+    public abstract Class<? extends DatasetEntity> categoryProfileClass();
 
-    public Dataset categoryProfile()
+    public DatasetEntity categoryProfile()
             throws OwsExceptionReport {
         return instantiate(categoryProfileClass());
     }
 
-    public abstract Class<? extends ProfileDataset> quantityProfileClass();
+    public abstract Class<? extends DatasetEntity> quantityProfileClass();
 
-    public Dataset quantityProfile()
+    public DatasetEntity quantityProfile()
             throws OwsExceptionReport {
         return instantiate(quantityProfileClass());
     }
 
-    public abstract Class<? extends ReferencedDataset> referenceClass();
+    public abstract Class<? extends DatasetEntity> referenceClass();
 
-    public ReferencedDataset reference()
+    public DatasetEntity reference()
             throws OwsExceptionReport {
         return instantiate(referenceClass());
     }
 
-    private <T extends Dataset> T instantiate(Class<T> c)
+    private <T extends DatasetEntity> T instantiate(Class<T> c)
             throws OwsExceptionReport {
         try {
             return c.newInstance();
@@ -185,7 +171,7 @@ public abstract class DatasetFactory {
         }
     }
 
-    public Class<? extends Dataset> classForObservationType(
+    public Class<? extends DatasetEntity> classForObservationType(
             String observationType) {
         if (observationType != null) {
             switch (observationType) {
@@ -216,45 +202,45 @@ public abstract class DatasetFactory {
         return datasetClass();
     }
 
-    public Dataset forObservationType(String observationType)
+    public DatasetEntity forObservationType(String observationType)
             throws OwsExceptionReport {
         return instantiate(classForObservationType(observationType));
     }
 
-    public Dataset visit(Data<?> o)
+    public DatasetEntity visit(DataEntity<?> o)
             throws OwsExceptionReport {
         if (o != null) {
-            if (o instanceof QuantityData) {
+            if (o instanceof QuantityDataEntity) {
                 return numeric();
-            } else if (o instanceof BlobData) {
+            } else if (o instanceof BlobDataEntity) {
                 return blob();
-            } else if (o instanceof BooleanData) {
+            } else if (o instanceof BooleanDataEntity) {
                 return truth();
-            } else if (o instanceof CategoryData) {
+            } else if (o instanceof CategoryDataEntity) {
                 return category();
-            } else if (o instanceof CountData) {
+            } else if (o instanceof CountDataEntity) {
                 return count();
-            } else if (o instanceof GeometryData) {
+            } else if (o instanceof GeometryDataEntity) {
                 return geometry();
-            } else if (o instanceof DataArrayData) {
+            } else if (o instanceof DataArrayDataEntity) {
                 return sweDataArray();
-            } else if (o instanceof TextData) {
+            } else if (o instanceof TextDataEntity) {
                 return text();
-            } else if (o instanceof ComplexData) {
+            } else if (o instanceof ComplexDataEntity) {
                 return complex();
-            } else if (o instanceof ProfileData) {
+            } else if (o instanceof ProfileDataEntity) {
                 Optional<DataEntity<?>> value = ((ProfileDataEntity)o).getValue().stream().findFirst();
                 if (value.isPresent()) {
-                    if (value.get() instanceof QuantityData) {
+                    if (value.get() instanceof QuantityDataEntity) {
                         return quantityProfile();
-                    } else if (value.get() instanceof CategoryData) {
+                    } else if (value.get() instanceof CategoryDataEntity) {
                         return categoryProfile();
-                    } else if (value.get() instanceof TextData) {
+                    } else if (value.get() instanceof TextDataEntity) {
                         return textProfile();
                     }
                 }
                 return profile();
-            } else if (o instanceof ReferencedData) {
+            } else if (o instanceof ReferencedDataEntity) {
                 return reference();
             }
         }

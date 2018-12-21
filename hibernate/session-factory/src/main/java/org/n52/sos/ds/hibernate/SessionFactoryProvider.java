@@ -38,23 +38,17 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
-import org.geotools.metadata.sql.MetadataSource;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.Metadata;
-import org.hibernate.boot.MetadataSources;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.tool.hbm2ddl.SchemaUpdate;
-import org.hibernate.tool.schema.TargetType;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
@@ -162,8 +156,8 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
                 }
             } else {
                 // keep this as default/fallback
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_CORE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_CORE_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_DATASET_PATH).toURI()));
 //              configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH).toURI()));
 //              configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
             }

@@ -36,7 +36,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.PhenomenonDao;
@@ -80,7 +80,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
 
 
                 if (datasets != null && !datasets.isEmpty()) {
-                    if (datasets.stream().anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
+                    if (datasets.stream().anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
                         getCache().addPublishedObservableProperty(identifier);
                     }
                     getCache().setOfferingsForObservableProperty(identifier,

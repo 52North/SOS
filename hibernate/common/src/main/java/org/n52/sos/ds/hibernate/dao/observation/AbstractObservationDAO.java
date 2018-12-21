@@ -62,8 +62,7 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
@@ -105,7 +104,6 @@ import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,7 +145,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      */
     protected abstract DatasetEntity addObservationContextToObservation(ObservationContext observationIdentifiers,
-            Data<?> observation, Session session) throws OwsExceptionReport;
+            DataEntity<?> observation, Session session) throws OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for querying observations with parameters
@@ -536,9 +534,10 @@ public abstract class AbstractObservationDAO
 
 
         if (!isIncludeChildObservableProperties()) {
-            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
+            criteria.add(Restrictions.isNull(DataEntity.PROPERTY_PARENT));
         } else {
-            criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
+            // TODO how to map
+//            criteria.add(Restrictions.eq(DataEntity.PROERTY_V, false));
         }
         criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -1089,7 +1088,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected void addPhenomeonTimeAndResultTimeToObservation(Data<?> observation, Time phenomenonTime,
+    protected void addPhenomeonTimeAndResultTimeToObservation(DataEntity<?> observation, Time phenomenonTime,
             TimeInstant resultTime) throws OwsExceptionReport {
         addPhenomenonTimeToObservation(observation, phenomenonTime);
         addResultTimeToObservation(observation, resultTime, phenomenonTime);
@@ -1106,7 +1105,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected void addTime(OmObservation sosObservation, Data<?> observation) throws OwsExceptionReport {
+    protected void addTime(OmObservation sosObservation, DataEntity<?> observation) throws OwsExceptionReport {
         addPhenomeonTimeAndResultTimeToObservation(observation, sosObservation.getPhenomenonTime(),
                 sosObservation.getResultTime());
         addValidTimeToObservation(observation, sosObservation.getValidTime());
@@ -1121,41 +1120,41 @@ public abstract class AbstractObservationDAO
      *            SOS phenomenon time
      * @throws OwsExceptionReport
      */
-    public void addPhenomenonTimeToObservation(Data<?> observation, Time phenomenonTime)
+    public void addPhenomenonTimeToObservation(DataEntity<?> observation, Time phenomenonTime)
             throws OwsExceptionReport {
         if (phenomenonTime instanceof TimeInstant) {
             TimeInstant time = (TimeInstant) phenomenonTime;
             if (time.isSetValue()) {
-                observation.setPhenomenonTimeStart(time.getValue().toDate());
-                observation.setPhenomenonTimeEnd(time.getValue().toDate());
+                observation.setSamplingTimeStart(time.getValue().toDate());
+                observation.setSamplingTimeEnd(time.getValue().toDate());
             } else if (time.isSetIndeterminateValue()) {
                 Date now = getDateForTimeIndeterminateValue(time.getIndeterminateValue(),
                         "gml:TimeInstant/gml:timePosition[@indeterminatePosition]");
-                observation.setPhenomenonTimeStart(now);
-                observation.setPhenomenonTimeEnd(now);
+                observation.setSamplingTimeStart(now);
+                observation.setSamplingTimeEnd(now);
             } else {
                 throw new MissingParameterValueException("gml:TimeInstant/gml:timePosition");
             }
         } else if (phenomenonTime instanceof TimePeriod) {
             TimePeriod time = (TimePeriod) phenomenonTime;
             if (time.isSetStart()) {
-                observation.setPhenomenonTimeStart(time.getStart().toDate());
+                observation.setSamplingTimeStart(time.getStart().toDate());
             } else if (time.isSetStartIndeterminateValue()) {
-                observation.setPhenomenonTimeStart(getDateForTimeIndeterminateValue(time.getStartIndet(),
+                observation.setSamplingTimeStart(getDateForTimeIndeterminateValue(time.getStartIndet(),
                         "gml:TimePeriod/gml:beginPosition[@indeterminatePosition]"));
             } else {
                 throw new MissingParameterValueException("gml:TimePeriod/gml:beginPosition");
             }
             if (time.isSetEnd()) {
-                observation.setPhenomenonTimeEnd(time.getEnd().toDate());
+                observation.setSamplingTimeEnd(time.getEnd().toDate());
             } else if (time.isSetEndIndeterminateValue()) {
-                observation.setPhenomenonTimeEnd(getDateForTimeIndeterminateValue(time.getEndIndet(),
+                observation.setSamplingTimeEnd(getDateForTimeIndeterminateValue(time.getEndIndet(),
                         "gml:TimePeriod/gml:endPosition[@indeterminatePosition]"));
             } else {
                 throw new MissingParameterValueException("gml:TimePeriod/gml:endPosition");
             }
 
-            observation.setPhenomenonTimeEnd(time.getEnd().toDate());
+            observation.setSamplingTimeEnd(time.getEnd().toDate());
         }
     }
 
@@ -1172,7 +1171,7 @@ public abstract class AbstractObservationDAO
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public void addResultTimeToObservation(Data<?> observation, TimeInstant resultTime, Time phenomenonTime)
+    public void addResultTimeToObservation(DataEntity<?> observation, TimeInstant resultTime, Time phenomenonTime)
             throws CodedException {
         if (resultTime != null) {
             if (resultTime.isSetValue()) {
@@ -1220,7 +1219,7 @@ public abstract class AbstractObservationDAO
      * @param validTime
      *            SOS valid time
      */
-    protected void addValidTimeToObservation(Data<?> observation, TimePeriod validTime) {
+    protected void addValidTimeToObservation(DataEntity<?> observation, TimePeriod validTime) {
         if (validTime != null) {
             observation.setValidTimeStart(validTime.getStart().toDate());
             observation.setValidTimeEnd(validTime.getEnd().toDate());
@@ -1321,7 +1320,7 @@ public abstract class AbstractObservationDAO
                 criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
                 LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
                         HibernateHelper.getSqlString(criteria));
-                Geometry geom = JTSConverter.convert((com.vividsolutions.jts.geom.Geometry) criteria.uniqueResult());
+                Geometry geom = (Geometry) criteria.uniqueResult();
                 geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
                 if (geom != null) {
                     return new ReferencedEnvelope(geom.getEnvelopeInternal(), getGeometryHandler().getStorageEPSG());
@@ -1339,7 +1338,7 @@ public abstract class AbstractObservationDAO
                             .map(DataEntity::getGeometryEntity).filter(Objects::nonNull)
                             .filter(geom -> (geom != null && !geom.isEmpty()))
                             .forEachOrdered((geom) -> {
-                                envelope.expandToInclude(JTSConverter.convert(geom.getGeometry().getEnvelopeInternal()));
+                                envelope.expandToInclude(geom.getGeometry().getEnvelopeInternal());
                             });
                     if (!envelope.isNull()) {
                         return new ReferencedEnvelope(envelope, getGeometryHandler().getStorageEPSG());
@@ -1421,17 +1420,17 @@ public abstract class AbstractObservationDAO
         DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
         addParameterNameRestriction(detachedCriteria, name);
         addParameterValueRestriction(detachedCriteria, value);
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.PROPERTY_ID)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(ParameterEntity.PROPERTY_ID)));
         return detachedCriteria;
     }
 
     protected DetachedCriteria addParameterNameRestriction(DetachedCriteria detachedCriteria, String name) {
-        detachedCriteria.add(Restrictions.eq(Parameter.NAME, name));
+        detachedCriteria.add(Restrictions.eq(ParameterEntity.NAME, name));
         return detachedCriteria;
     }
 
     protected DetachedCriteria addParameterValueRestriction(DetachedCriteria detachedCriteria, Object value) {
-        detachedCriteria.add(Restrictions.eq(Parameter.VALUE, value));
+        detachedCriteria.add(Restrictions.eq(ParameterEntity.VALUE, value));
         return detachedCriteria;
     }
 

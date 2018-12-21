@@ -38,7 +38,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -82,7 +82,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             String identifier = procedure.getIdentifier();
             getCache().addProcedure(identifier);
             if (!datasets.isEmpty() && datasets.stream()
-                    .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset && !d.isDeleted())) {
+                    .anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
                 getCache().addPublishedProcedure(identifier);
             }
             if (procedure.isSetName()) {

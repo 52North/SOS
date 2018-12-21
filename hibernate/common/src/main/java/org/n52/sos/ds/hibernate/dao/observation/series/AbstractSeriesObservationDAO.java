@@ -62,8 +62,6 @@ import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -81,7 +79,6 @@ import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
-import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +97,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     @Override
     protected DatasetEntity addObservationContextToObservation(ObservationContext ctx,
-            Data<?> observation, Session session) throws OwsExceptionReport {
+            DataEntity<?> observation, Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
         DatasetEntity series = seriesDAO.getOrInsertSeries(ctx, observation, session);
         ((DataEntity) observation).setDataset(series);
@@ -273,7 +270,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             List<org.locationtech.jts.geom.Geometry> samplingGeometries = new LinkedList<>();
             LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
             for (DataEntity element : (List<DataEntity>)criteria.list()) {
-                samplingGeometries.add(JTSConverter.convert(element.getGeometryEntity().getGeometry()));
+                samplingGeometries.add(element.getGeometryEntity().getGeometry());
             }
             return samplingGeometries;
         }
@@ -309,7 +306,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 criteria.setProjection(SpatialProjections.extent(DataEntity.PROPERTY_GEOMETRY_ENTITY));
                 LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
                         HibernateHelper.getSqlString(criteria));
-                return JTSConverter.convert((com.vividsolutions.jts.geom.Envelope) criteria.uniqueResult());
+                return (Envelope) criteria.uniqueResult();
             }
         } else if (HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), DataEntity.PROPERTY_GEOMETRY_ENTITY)) {
             criteria.add(Restrictions.isNotNull(DataEntity.PROPERTY_GEOMETRY_ENTITY));
@@ -318,7 +315,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                     HibernateHelper.getSqlString(criteria));
             Envelope envelope = new Envelope();
             for (com.vividsolutions.jts.geom.Geometry geom : (List<com.vividsolutions.jts.geom.Geometry>) criteria.list()) {
-                envelope.expandToInclude(JTSConverter.convert(geom.getEnvelopeInternal()));
+                envelope.expandToInclude(geom.getEnvelopeInternal());
             }
             return envelope;
         } else if (HibernateHelper.isColumnSupported(getObservationFactory().temporalReferencedClass(), GeometryEntity.PROPERTY_LAT)
@@ -896,7 +893,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     }
 
 
-    public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimes(Set<Dataset> serieses, Session session) {
+    public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimes(Set<DatasetEntity> serieses, Session session) {
         Criteria c = getDefaultObservationTimeCriteria(session);
         c.add(Restrictions.in(DataEntity.PROPERTY_DATASET, serieses));
         c.setProjection(Projections.projectionList()
@@ -921,7 +918,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         public SeriesTimeExtrema transformTuple(Object[] tuple, String[] aliases) {
             SeriesTimeExtrema seriesTimeExtrema = new SeriesTimeExtrema();
             if (tuple != null) {
-                seriesTimeExtrema.setSeries(((Dataset) tuple[0]).getId());
+                seriesTimeExtrema.setSeries(((DatasetEntity) tuple[0]).getId());
                 seriesTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
                 seriesTimeExtrema.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
             }
@@ -935,18 +932,18 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         }
     }
 
-    public Data<?> getMinObservation(Dataset series, DateTime time, Session session) {
+    public DataEntity<?> getMinObservation(DatasetEntity series, DateTime time, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
         c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, time.toDate()));
-        return (Data<?>) c.uniqueResult();
+        return (DataEntity<?>) c.uniqueResult();
     }
 
-    public Object getMaxObservation(Dataset series, DateTime time, Session session) {
+    public Object getMaxObservation(DatasetEntity series, DateTime time, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
         c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, time.toDate()));
-        return (Data<?>) c.uniqueResult();
+        return (DataEntity<?>) c.uniqueResult();
     }
 
 }

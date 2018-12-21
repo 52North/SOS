@@ -50,7 +50,7 @@ import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.FeatureDao;
@@ -72,7 +72,6 @@ import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -188,7 +187,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         }
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
             sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                    JTSConverter.convert(feature.getGeometryEntity().getGeometry())));
+                    feature.getGeometryEntity().getGeometry()));
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -218,7 +217,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         if (datasets != null) {
             return datasets.stream()
                     .filter(d -> d.isSetFeature() && (d.isPublished() || !d.isPublished()
-                            && d.getValueType().equalsIgnoreCase(NotInitializedDataset.DATASET_TYPE)))
+                            && d.getDatasetType().equals(DatasetType.not_initialized)))
                     .map(d -> d.getFeature()).collect(Collectors.toSet());
         }
         return Collections.emptySet();

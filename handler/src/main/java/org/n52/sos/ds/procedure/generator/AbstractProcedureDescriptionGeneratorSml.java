@@ -35,6 +35,8 @@ import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -46,6 +48,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.FeatureDao;
@@ -77,8 +80,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract generator class for SensorML procedure descriptions
@@ -187,8 +188,8 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
      * @param observationType
      *            Name of not supported class
      */
-    private void logTypeNotSupported(String observationType) {
-        LOGGER.debug("ObservationType '{}' is not supported by the current implementation", observationType);
+    private void logTypeNotSupported(ValueType observationType) {
+        LOGGER.debug("ObservationType '{}' is not supported by the current implementation", observationType.name());
     }
 
     @SuppressWarnings("rawtypes")
@@ -202,23 +203,23 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         DatasetEntity dataset = allInstances.iterator().next();
         SweAbstractSimpleType simpleType = null;
         switch (dataset.getValueType()) {
-        case "measurement":
+        case quantity:
             final SweQuantity quantity = new SweQuantity();
             if (dataset.getUnit() != null) {
                 quantity.setUom(dataset.getUnit().getName());
             }
             simpleType = quantity;
             break;
-        case "truth":
+        case bool:
             simpleType = new SweBoolean();
             break;
-        case "count":
+        case count:
             simpleType = new SweCount();
             break;
-        case "text":
+        case text:
             simpleType = new SweText();
             break;
-        case "category":
+        case category:
             final SweCategory category = new SweCategory();
             if (dataset.getUnit() != null) {
                 category.setUom(dataset.getUnit().getIdentifier());

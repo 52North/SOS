@@ -50,7 +50,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
-import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
@@ -147,9 +146,9 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
             if (getProcedureCreationContext().getGeometryHandler() != null) {
                 sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler()
                         .switchCoordinateAxisFromToDatasourceIfNeeded(
-                                JTSConverter.convert(feature.getGeometryEntity().getGeometry())));
+                                feature.getGeometryEntity().getGeometry()));
             } else {
-                sampFeat.setGeometry(JTSConverter.convert(feature.getGeometryEntity().getGeometry()));
+                sampFeat.setGeometry(feature.getGeometryEntity().getGeometry());
             }
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();

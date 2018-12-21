@@ -87,8 +87,8 @@ public class H2FileDatasource extends AbstractH2Datasource {
         AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(
                 "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
                 System.getProperty("user.home") + File.separator + "sos");
-        return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
-                getSeriesMetadataDefiniton());
+        return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(),
+                getDatabaseExtensionDefinition(), getFeatureConceptDefinition());
     }
 
     private StringSettingDefinition getDatabaseDefinition() {

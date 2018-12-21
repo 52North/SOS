@@ -71,10 +71,8 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         set.add(createBatchSizeDefinition(batchSizeDefault));
         set.add(createProvidedJdbcDriverDefinition(providedJdbc));
         set.add(getDatabaseConceptDefinition());
+        set.add(getDatabaseExtensionDefinition());
         set.add(getFeatureConceptDefinition());
-        if (isSeriesMetadataDatasource()) {
-            set.add(getSeriesMetadataDefiniton());
-        }
         return set;
     }
 

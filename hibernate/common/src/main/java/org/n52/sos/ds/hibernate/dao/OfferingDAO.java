@@ -54,7 +54,6 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
-import org.n52.series.db.beans.data.Data;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -715,7 +714,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         return getDefaultCriteria(session);
     }
 
-    public OfferingEntity updateOfferingMetadata(OfferingEntity offering, Data<?> observation, Session session) {
+    public OfferingEntity updateOfferingMetadata(OfferingEntity offering, DataEntity<?> observation, Session session) {
         if (offering.getSamplingTimeStart() == null || (offering.getSamplingTimeStart() != null
                 && observation.getSamplingTimeStart() != null
                 && offering.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {

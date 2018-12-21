@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.hibernate.c3p0.internal.C3P0ConnectionProvider;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;

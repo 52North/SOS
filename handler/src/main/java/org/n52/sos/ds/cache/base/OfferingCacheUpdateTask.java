@@ -47,7 +47,7 @@ import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -56,7 +56,6 @@ import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
-import org.n52.sos.util.JTSConverter;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -112,7 +111,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         getCache().addOffering(identifier);
         if (datasets != null && !datasets.isEmpty() && datasets.stream()
-                .anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset && !d.isDeleted())) {
+                .anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
             getCache().addPublishedOffering(identifier);
         }
         addOfferingNamesAndDescriptionsToCache(identifier, session);
@@ -250,7 +249,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
         if (offering.isSetGeometry()) {
-            return new ReferencedEnvelope(JTSConverter.convert(offering.getGeometry()).getEnvelopeInternal(), offering.getGeometry().getSRID());
+            return new ReferencedEnvelope(offering.getGeometry().getEnvelopeInternal(), offering.getGeometry().getSRID());
         } else if (datasets != null && !datasets.isEmpty()) {
             Envelope e = new Envelope();
             int srid = -1;
@@ -259,7 +258,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                     if (srid < 0 ) {
                         srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();
                     }
-                    e.expandToInclude(JTSConverter.convert(de.getFeature().getGeometryEntity().getGeometry()).getEnvelopeInternal());
+                    e.expandToInclude(de.getFeature().getGeometryEntity().getGeometry().getEnvelopeInternal());
                 }
             }
             return new ReferencedEnvelope(e, srid);
@@ -272,7 +271,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     private Collection<String> getObservationTypes() {
-        return datasets.stream().filter(d -> d.isSetObservationType()).map(d -> d.getObservationType().getFormat())
+        return datasets.stream().filter(d -> d.isSetOmObservationtype()).map(d -> d.getOmObservationType().getFormat())
                 .collect(Collectors.toSet());
     }
 

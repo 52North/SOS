@@ -62,8 +62,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getFeatureConceptDefinition(),
-                getSeriesMetadataDefiniton());
+        return ImmutableSet.<SettingDefinition<?>> of(getDatabaseConceptDefinition(), getDatabaseExtensionDefinition(),
+                getFeatureConceptDefinition());
     }
 
     @Override

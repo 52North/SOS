@@ -55,7 +55,7 @@ import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.feature.SpecimenEntity;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -79,7 +79,6 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -451,8 +450,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 if (abstractFeature instanceof FeatureWithGeometry) {
                     if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
                         feature.setGeometry(
-                                JTSConverter.convert(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
-                                        ((FeatureWithGeometry) abstractFeature).getGeometry())));
+                                geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                                        ((FeatureWithGeometry) abstractFeature).getGeometry()));
                     }
                 }
                 if (abstractFeature.isSetXml()) {
@@ -465,7 +464,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 }
                 if (abstractFeature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
                     Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
-                    Set<Parameter<?>> parameter = new ParameterDAO().insertParameter(((AbstractSamplingFeature) abstractFeature).getParameters(),
+                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(((AbstractSamplingFeature) abstractFeature).getParameters(),
                            unitCache, session);
                     feature.setParameters(parameter);
                 }
@@ -510,7 +509,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         if (featureOfInterest.isSetGeometry()) {
             if (geom instanceof Point) {
                 List<Coordinate> coords = Lists.newArrayList();
-                Geometry convert = JTSConverter.convert(featureOfInterest.getGeometry());
+                Geometry convert = featureOfInterest.getGeometry();
                 if (convert instanceof Point) {
                     coords.add(convert.getCoordinate());
                 } else if (convert instanceof LineString) {
@@ -521,11 +520,11 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     Geometry newGeometry =
                             new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
                     newGeometry.setSRID(featureOfInterest.getGeometry().getSRID());
-                    featureOfInterest.setGeometry(JTSConverter.convert(newGeometry));
+                    featureOfInterest.setGeometry(newGeometry);
                 }
             }
         } else {
-            featureOfInterest.setGeometry(JTSConverter.convert(geom));
+            featureOfInterest.setGeometry(geom);
         }
         session.saveOrUpdate(featureOfInterest);
     }

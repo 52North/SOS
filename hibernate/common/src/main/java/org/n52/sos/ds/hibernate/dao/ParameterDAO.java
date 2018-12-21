@@ -39,7 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.RootEntityResultTransformer;
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.series.db.beans.parameter.ValuedParameter;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -85,8 +85,8 @@ public class ParameterDAO {
     private static final Logger LOG = LoggerFactory
             .getLogger(ParameterDAO.class);
 
-    public Set<Parameter<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
-        Set<Parameter<?>> parameters = new HashSet<>();
+    public Set<ParameterEntity<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
+        Set<ParameterEntity<?>> parameters = new HashSet<>();
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                 ParameterPersister persister = new ParameterPersister(
@@ -142,7 +142,7 @@ public class ParameterDAO {
         return ParameterFactory.getInstance();
     }
 
-    public static class ParameterPersister implements ValueVisitor<Parameter<?>, OwsExceptionReport> {
+    public static class ParameterPersister implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
         private final Caches caches;
         private final Session session;
         private final NamedValue<?> namedValue;
@@ -188,7 +188,7 @@ public class ParameterDAO {
             }
         }
 
-        private <V, T extends Parameter<V>> T setUnitAndPersist(T parameter, Value<V> value) throws OwsExceptionReport {
+        private <V, T extends ParameterEntity<V>> T setUnitAndPersist(T parameter, Value<V> value) throws OwsExceptionReport {
             if (parameter instanceof HasUnit) {
                 ((HasUnit)parameter).setUnit(getUnit(value));
             }
@@ -199,11 +199,11 @@ public class ParameterDAO {
             return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
         }
 
-        private <V, T extends Parameter<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
+        private <V, T extends ParameterEntity<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
             return persist(parameter, value.getValue());
         }
 
-        private <V, T extends Parameter<V>> T persist(T parameter, V value) throws OwsExceptionReport {
+        private <V, T extends ParameterEntity<V>> T persist(T parameter, V value) throws OwsExceptionReport {
             Criteria c = session.createCriteria(parameter.getClass())
                     .setResultTransformer(RootEntityResultTransformer.INSTANCE)
                     .add(Restrictions.eq(ValuedParameter.NAME, namedValue.getName().getHref()))
@@ -214,7 +214,7 @@ public class ParameterDAO {
             }
             LOG.trace("QUERY parameter: {}",
                     HibernateHelper.getSqlString(c));
-            Parameter p = (Parameter) c.uniqueResult();
+            ParameterEntity p = (ParameterEntity) c.uniqueResult();
             if (p != null) {
                 return (T) p;
             }
@@ -225,107 +225,107 @@ public class ParameterDAO {
         }
 
         @Override
-        public Parameter<?> visit(BooleanValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
             return persist(parameterFactory.truth(), value);
         }
 
         @Override
-        public Parameter<?> visit(CategoryValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(CategoryValue value) throws OwsExceptionReport {
             return setUnitAndPersist(parameterFactory.category(), value);
         }
 
         @Override
-        public Parameter<?> visit(ComplexValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(CountValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(CountValue value) throws OwsExceptionReport {
             return persist(parameterFactory.count(), value);
         }
 
         @Override
-        public Parameter<?> visit(GeometryValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(GeometryValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(NilTemplateValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(NilTemplateValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(QuantityValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
             return setUnitAndPersist(parameterFactory.quantity(), value);
         }
 
         @Override
-        public Parameter<?> visit(ReferenceValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(ReferenceValue value) throws OwsExceptionReport {
             return persist(parameterFactory.category(), value.getValue().getHref());
         }
 
         @Override
-        public Parameter<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(TVPValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(TVPValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(TextValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(TextValue value) throws OwsExceptionReport {
             return persist(parameterFactory.text(), value);
         }
 
         @Override
-        public Parameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(UnknownValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(UnknownValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(TLVTValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(TLVTValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(ProfileValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(XmlValue<?> value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
         @Override
-        public Parameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+        public ParameterEntity<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 

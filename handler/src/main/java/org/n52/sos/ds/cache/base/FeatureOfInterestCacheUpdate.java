@@ -37,7 +37,7 @@ import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.FeatureDao;
@@ -69,7 +69,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 getCache().addFeatureOfInterest(identifier);
                 Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
                 if (datasets != null && !datasets.isEmpty()) {
-                    if (datasets.stream().anyMatch(d -> d.isPublished() || d instanceof NotInitializedDataset)) {
+                    if (datasets.stream().anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
                         getCache().addPublishedFeatureOfInterest(identifier);
                     }
                     getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(datasets));

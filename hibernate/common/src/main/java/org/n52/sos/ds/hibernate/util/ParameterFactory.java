@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.n52.series.db.beans.parameter.Parameter;
-import org.n52.series.db.beans.parameter.ParameterBoolean;
-import org.n52.series.db.beans.parameter.ParameterCategory;
-import org.n52.series.db.beans.parameter.ParameterCount;
-import org.n52.series.db.beans.parameter.ParameterQuantity;
-import org.n52.series.db.beans.parameter.ParameterText;
+import org.n52.series.db.beans.parameter.ParameterBooleanEntity;
+import org.n52.series.db.beans.parameter.ParameterCategoryEntity;
+import org.n52.series.db.beans.parameter.ParameterCountEntity;
+import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.series.db.beans.parameter.ParameterQuantityEntity;
+import org.n52.series.db.beans.parameter.ParameterTextEntity;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
@@ -60,48 +60,48 @@ import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-public class ParameterFactory implements ValueVisitor<Parameter<?>, OwsExceptionReport> {
+public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
 
     protected ParameterFactory() {
     }
 
-    public Class<? extends ParameterBoolean> truthClass() {
-        return ParameterBoolean.class;
+    public Class<? extends ParameterBooleanEntity> truthClass() {
+        return ParameterBooleanEntity.class;
     }
 
-    public ParameterBoolean truth() throws OwsExceptionReport {
+    public ParameterBooleanEntity truth() throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public Class<? extends ParameterCategory> categoryClass() {
-        return ParameterCategory.class;
+    public Class<? extends ParameterCategoryEntity> categoryClass() {
+        return ParameterCategoryEntity.class;
     }
 
-    public ParameterCategory category() throws OwsExceptionReport {
+    public ParameterCategoryEntity category() throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public Class<? extends ParameterCount> countClass() {
-        return ParameterCount.class;
+    public Class<? extends ParameterCountEntity> countClass() {
+        return ParameterCountEntity.class;
     }
 
-    public ParameterCount count() throws OwsExceptionReport {
+    public ParameterCountEntity count() throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public Class<? extends ParameterQuantity> quantityClass() {
-        return ParameterQuantity.class;
+    public Class<? extends ParameterQuantityEntity> quantityClass() {
+        return ParameterQuantityEntity.class;
     }
 
-    public ParameterQuantity quantity() throws OwsExceptionReport {
+    public ParameterQuantityEntity quantity() throws OwsExceptionReport {
         return instantiate(quantityClass());
     }
 
-    public Class<? extends ParameterText> textClass() {
-        return ParameterText.class;
+    public Class<? extends ParameterTextEntity> textClass() {
+        return ParameterTextEntity.class;
     }
 
-    public ParameterText text() throws OwsExceptionReport {
+    public ParameterTextEntity text() throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
@@ -113,7 +113,7 @@ public class ParameterFactory implements ValueVisitor<Parameter<?>, OwsException
 //        return instantiate(xmlClass());
 //    }
 
-    private <T extends Parameter<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
+    private <T extends ParameterEntity<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
 
         try {
             return c.newInstance();
@@ -124,107 +124,107 @@ public class ParameterFactory implements ValueVisitor<Parameter<?>, OwsException
     }
 
     @Override
-    public Parameter<?> visit(BooleanValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
         return truth();
     }
 
     @Override
-    public Parameter<?> visit(CategoryValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(CategoryValue value) throws OwsExceptionReport {
         return category();
     }
 
     @Override
-    public Parameter<?> visit(ComplexValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(CountValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(CountValue value) throws OwsExceptionReport {
         return count();
     }
 
     @Override
-    public Parameter<?> visit(GeometryValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(GeometryValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(NilTemplateValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(NilTemplateValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(QuantityValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
         return quantity();
     }
 
     @Override
-    public Parameter<?> visit(ReferenceValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(ReferenceValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(TVPValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(TVPValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(TextValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(TextValue value) throws OwsExceptionReport {
         return text();
     }
 
     @Override
-    public Parameter<?> visit(UnknownValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(UnknownValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(TLVTValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(TLVTValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(ProfileValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(XmlValue<?> value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(XmlValue<?> value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Parameter<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+    public ParameterEntity<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

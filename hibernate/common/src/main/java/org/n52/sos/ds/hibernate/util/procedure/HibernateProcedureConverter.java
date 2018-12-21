@@ -105,8 +105,10 @@ public class HibernateProcedureConverter
      *            Hibernate procedure entity
      * @param requestedDescriptionFormat
      *            Requested procedure descriptionFormat
-     * @param requestedServiceVersion
+     * @param version
      *            Requested SOS version
+     * @param i18n
+     *            Requested language
      * @param session
      *            Hibernate session
      *
@@ -296,8 +298,6 @@ public class HibernateProcedureConverter
      *            the format
      * @param validTime
      *            the valid time
-     * @param cache
-     *            the procedure cache
      * @param language
      *            the language
      * @param session

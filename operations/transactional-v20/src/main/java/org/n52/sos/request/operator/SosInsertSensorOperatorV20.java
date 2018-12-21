@@ -438,11 +438,8 @@ public class SosInsertSensorOperatorV20 extends
      * Process standard formatted capabilities insertion metadata into a map
      * (key=identifier, value=name)
      *
-     * @param dataRecord
-     *            The DataRecord to examine
-     * @param xbCapabilities
-     *            The original capabilites xml object, used for exception
-     *            throwing
+     * @param caps
+     *            The capabilities to examine
      * @return Map of insertion metadata (key=identifier, value=name)
      * @throws DecodingException
      *             thrown if the DataRecord fields are in an incorrect format

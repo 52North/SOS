@@ -266,7 +266,7 @@ public abstract class AbstractOmObservationCreator {
     /**
      * Get procedure object from series
      *
-     * @param identifier
+     * @param hProcedure
      *
      * @return Procedure object
      *
@@ -333,7 +333,7 @@ public abstract class AbstractOmObservationCreator {
     /**
      * Get featureOfInterest object from series
      *
-     * @param identifier
+     * @param foi
      *
      * @return FeatureOfInerest object
      *
@@ -377,7 +377,7 @@ public abstract class AbstractOmObservationCreator {
     /**
      * Get featureOfInterest object from series
      *
-     * @param identifier
+     * @param featureOfInterest
      * @return FeatureOfInerest object
      * @throws OwsExceptionReport
      *             If an error occurs

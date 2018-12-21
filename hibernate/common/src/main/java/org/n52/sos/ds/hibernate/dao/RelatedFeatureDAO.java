@@ -115,7 +115,7 @@ public class RelatedFeatureDAO {
      *
      * @param feature
      *            Related feature
-     * @param roles
+     * @param role
      *            Related feature role objects
      * @param session
      *            Hibernate session

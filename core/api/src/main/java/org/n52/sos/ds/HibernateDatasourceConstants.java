@@ -136,13 +136,28 @@ public interface HibernateDatasourceConstants {
     String HIBERNATE_DATASOURCE_TIME_STRING_Z  = "hibernate.datasource.timeStringZ";
 
     public enum DatabaseConcept {
-        SERIES_CONCEPT("Series concept"),
-        EREPORTING_CONCEPT("eReporting concept (extended Series concept)"),
-        GEOLOGY_LOG_CONCEPT("GWML2:GeologyLogCoverage");
+        SIMPLE("Simple database model"),
+        TRANSATCTIONAL("Transactional database model"),
+        EREPORTING("eReporting database model");
 
         private final String displayName;
 
         private DatabaseConcept(String displayName) {
+           this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+    }
+    
+    public enum DatabaseExtension {
+        DEFAULT("Default database model"),
+        SAMPLING("Extended model to support Samplings/MeasuringPrograms");
+
+        private final String displayName;
+
+        private DatabaseExtension(String displayName) {
            this.displayName = displayName;
         }
 

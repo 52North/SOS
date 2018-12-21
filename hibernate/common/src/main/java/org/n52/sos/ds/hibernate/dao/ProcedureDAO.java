@@ -785,7 +785,6 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             procedure.setAggregation(procedureDescription.isAggregation());
             procedure.setReference(procedureDescription.isReference());
         }
-        procedure.setDeleted(false);
         session.saveOrUpdate(procedure);
         session.flush();
         session.refresh(procedure);

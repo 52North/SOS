@@ -59,7 +59,7 @@ public class HibernateDataSourceHarvestJobFactory {
     }
 
     /**
-     * @param updateDefinition the updateDefinition to set
+     * @param cronExpression the cronExpression to set
      */
     @Setting(ScheduledContentCacheControllerSettings.CAPABILITIES_CACHE_UPDATE)
     public void setCronExpression(String cronExpression) {

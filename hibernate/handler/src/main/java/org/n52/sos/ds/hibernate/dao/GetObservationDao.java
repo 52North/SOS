@@ -160,7 +160,6 @@ public class GetObservationDao
      *
      * @param request
      *            GetObservation request
-     * @param observationDAO
      * @param session
      *            Hibernate session
      * @return List of internal Observations

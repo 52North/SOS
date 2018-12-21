@@ -36,13 +36,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.hibernate.Criteria;
-import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
@@ -61,7 +61,6 @@ import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
@@ -594,7 +593,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     /**
      * Add offering identifier restriction to Hibernate Criteria
      *
-     * @param criteria
+     * @param c
      *            Hibernate Criteria to add restriction
      * @param offering
      *            Offering identifier
@@ -676,7 +675,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     /**
      * Add offering identifier restriction to Hibernate Criteria
      *
-     * @param criteria
+     * @param c
      *            Hibernate Criteria to add restriction
      * @param offering
      *            Offering identifier

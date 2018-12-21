@@ -213,7 +213,7 @@ public abstract class AbstractSeriesDAO
      *            Procedures to get series for
      * @param observedProperties
      *            ObservedProperties to get series for
-     * @param features
+     * @param featuresOfInterest
      *            FeaturesOfInterest to get series for
      * @param offerings
      *            Offerings to get series for
@@ -248,7 +248,7 @@ public abstract class AbstractSeriesDAO
      * Insert or update and get series for procedure, observable property and
      * featureOfInterest
      *
-     * @param identifiers
+     * @param ctx
      *            identifiers object
      * @param observation
      * @param session

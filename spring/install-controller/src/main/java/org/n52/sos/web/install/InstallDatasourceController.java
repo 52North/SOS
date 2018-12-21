@@ -97,9 +97,8 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                             try {
                                 datasource.validateSchema(c.getDatabaseSettings());
                             } catch (ConfigurationError e) {
-                                throw new InstallationSettingsError(c, String.format(
-                                                                    ErrorMessages.EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA, e
-                                                                            .getMessage()), e);
+                                throw new InstallationSettingsError(c,
+                                        ErrorMessages.EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA, e);
                             }
                         }
                     }
@@ -118,8 +117,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                             (e.getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB) || e
                              .getMessage().contains(ErrorMessages.TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB))) {
                             throw new InstallationSettingsError(
-                                    c, String.format(ErrorMessages.EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA,
-                                                     e.getMessage()), e);
+                                    c, ErrorMessages.EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA, e);
                         } else if (!forceUpdateTables) {
                             throw new InstallationSettingsError(
                                     c, String.format(ErrorMessages.EXISTING_SCHEMA_REQUIRES_UPDATE, e.getMessage()), e);

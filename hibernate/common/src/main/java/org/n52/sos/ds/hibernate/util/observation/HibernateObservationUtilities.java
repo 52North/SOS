@@ -85,16 +85,19 @@ public class HibernateObservationUtilities {
      *            ObservationConstellation object
      * @param fois
      *            List of featureOfInterest identifiers
+     * @param r
+     *            request
      * @param pdf
-     * @param version
-     *            Service version
+     *            procedure description format
+     * @param ctx
+     *            observation context
      * @param session
      *            Hibernate session
      * @return SOS internal observation
      * @throws OwsExceptionReport
-     *             If an error octxurs
+     *             If an error occurs
      * @throws ConverterException
-     *             If procedure creation fails
+     *             If observation creation fails
      */
     public static ObservationStream createSosObservationFromObservationConstellation(DatasetEntity oc,
             List<String> fois, AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx, Session session)
@@ -115,8 +118,12 @@ public class HibernateObservationUtilities {
      *
      * @param series
      *            Series object
-     * @param request
+     * @param r
      *            The request
+     * @param pdf
+     *            procedure description format
+     * @param ctx
+     *            observation context
      * @param session
      *            Hibernate session
      * @return SOS internal observation

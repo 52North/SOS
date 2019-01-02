@@ -128,7 +128,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         }
         saveServiceSettings(c);
         createAdministratorUser(c);
-        datasource.checkPostCreation(properties);
+        datasource.checkPostCreation(properties, c.getDatabaseSettings());
         saveDatabaseProperties(properties, c);
         saveInstallationDate();
         instantiateConfigurator(properties, c);

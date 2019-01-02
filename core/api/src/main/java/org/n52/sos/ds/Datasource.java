@@ -279,6 +279,6 @@ public interface Datasource extends ConnectionProviderIdentificator, DatasourceD
 
     void executePostCreateSchema(Map<String, Object> databaseSettings);
     
-    void checkPostCreation(Properties properties);
+    void checkPostCreation(Properties properties, Map<String, Object> databaseSettings);
     
 }

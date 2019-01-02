@@ -200,15 +200,15 @@ public class MockDatasource implements Datasource {
     }
 
     @Override
-    public void checkPostCreation(Properties properties) {
+    public void checkPostCreation(Properties properties, Map<String, Object> databaseSettings) {
         // TODO Auto-generated method stub
 
     }
 
-	@Override
-	public Map<String, Object> parseDatasourceProperties(Properties current) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

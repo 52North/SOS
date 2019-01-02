@@ -419,7 +419,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     public Properties getDatasourceProperties(Properties current, Map<String, Object> changed) {
         return getDatasourceProperties(mergeProperties(current, changed));
     }
-
+    
     /**
      * Merge current properties with changed settings
      *

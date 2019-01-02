@@ -76,6 +76,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (isSeriesMetadataDatasource()) {
             set.add(getSeriesMetadataDefiniton());
         }
+        set.add(getCategoryDefiniton());
         return set;
     }
 

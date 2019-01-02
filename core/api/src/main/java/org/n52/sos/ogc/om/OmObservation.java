@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -42,6 +43,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
@@ -860,5 +862,44 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
+    }
+    
+    /**
+     * Check whether category parameter is set
+     * 
+     * @return <code>true</code>, if category parameter is set
+     */
+    public boolean isSetCategoryParameter() {
+        return parameterHolder.hasParameter("category");
+    }
+    
+    /**
+     * Remove category parameter
+     */
+    public void removeCategoryParameter() {
+        if (isSetCategoryParameter()) {
+            removeParameter(getCategoryParameter());
+        }
+    }
+    
+    /**
+     * Add category to observation
+     * 
+     * @param samplingGeometry
+     *            The sampling geometry to set
+     * @return this
+     */
+    public OmObservation addCategoryParameter(String category) {
+        parameterHolder.addParameter(new NamedValue<String>(new ReferenceType("categroy"), new TextValue(category)));
+        return this;
+    }
+
+    /**
+     * Get category parameter
+     * 
+     * @return category parameter
+     */
+    public NamedValue<?> getCategoryParameter() {
+        return parameterHolder.getParameter("category");
     }
 }

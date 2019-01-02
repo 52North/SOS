@@ -133,6 +133,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String SERIES_METADATA_KEY = "sos.series.metadata";
 
     protected static final boolean SERIES_METADATA_DEFAULT_VALUE = false;
+    
+    protected static final String CATEGORY_SUPPORT_TITLE = "Category support";
+
+    protected static final String CATEGORY_SUPPORT_DESCRIPTION = "Should the database support category? This is an additional grouping feature to group series.";
+
+    protected static final String CATEGORY_SUPPORT_KEY = "sos.category";
+
+    protected static final boolean CATEGORY_SUPPORT_DEFAULT_VALUE = false;
 
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
@@ -170,6 +178,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
 
     private boolean seriesMetadataDatasource = true;
+    
+    private final BooleanSettingDefinition categorySupportDefiniton = createCategorySupportDefinition();
+
     /**
      * Create settings definition for username
      *
@@ -237,14 +248,25 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
     
     /**
-     * Create settings definition for transactional support
+     * Create settings definition for sereis metadata support
      *
-     * @return Transactional support settings definition
+     * @return Series metadata support settings definition
      */
     protected BooleanSettingDefinition createSeriesMetadataDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(SERIES_METADATA_DEFAULT_VALUE)
                 .setTitle(SERIES_METADATA_TITLE).setDescription(SERIES_METADATA_DESCRIPTION).setGroup(ADVANCED_GROUP)
                 .setOrder(SettingDefinitionProvider.ORDER_6).setKey(SERIES_METADATA_KEY);
+    }
+    
+    /**
+     * Create settings definition for category support
+     *
+     * @return Category support settings definition
+     */
+    protected BooleanSettingDefinition createCategorySupportDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(CATEGORY_SUPPORT_DEFAULT_VALUE)
+                .setTitle(CATEGORY_SUPPORT_TITLE).setDescription(CATEGORY_SUPPORT_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_7).setKey(CATEGORY_SUPPORT_KEY);
     }
 
     /**
@@ -597,12 +619,20 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
-    public void checkPostCreation(Properties properties) {
+    public void checkPostCreation(Properties properties, Map<String, Object> settings) {
         if (checkIfExtensionDirectoryExists()) {
             StringBuilder builder =
                     new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
-            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+            if (DatabaseConcept.SERIES_CONCEPT.equals(getDatabaseConcept(settings))) {
+                Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
+                if (t != null && t) {
+                    builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                            .append(HIBERNATE_MAPPING_EXTENSION_READONLY_CATEGORY_PATH);
+                } else {
+                    builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                            .append(HIBERNATE_MAPPING_EXTENSION_READONLY_DEFAULT_PATH);
+                }
+            }
         }
     }
 
@@ -746,6 +776,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_METADATA_PATH);
             }
         }
+        if (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)) {
+            Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
+            if (t != null && t) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CATEGORY_PATH);
+            } else {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_DEFAULT_PATH);
+            }
+        }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
     
@@ -808,6 +846,28 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected BooleanSettingDefinition getSeriesMetadataDefiniton() {
         return seriesMetadataDefiniton;
+    }
+    
+    /**
+     * Check if properties contains category mapping path
+     *
+     * @param properties
+     *            Datasource properties
+     * @return <code>true</code>, if properties contains category mapping
+     *         path
+     */
+    protected boolean isCategory(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_SERIES_CATEGORY_PATH);
+    }
+
+    /**
+     * Get category setting definition
+     *
+     * @return Category setting definition
+     */
+    protected BooleanSettingDefinition getCategoryDefiniton() {
+        return categorySupportDefiniton;
     }
 
     private String[] concat(String[] first, String[]... rest) {
@@ -908,7 +968,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void setSeriesMetadataDatasource(boolean seriesMetadataDatasource) {
         this.seriesMetadataDatasource = seriesMetadataDatasource;
     }
-
+    
     /**
      * Remove duplicated foreign key definition for table observationHasOffering
      * otherwise database model creation fails in Oracle

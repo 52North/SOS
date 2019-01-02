@@ -133,7 +133,7 @@ public class H2Configuration {
 //            resources.add("/mapping/old/observation/TemporalReferencedObservation.hbm.xml");
 //            resources.add("/mapping/old/observation/ContextualReferencedObservation.hbm.xml");
             resources.add("/mapping/series/observation/ValuedObservation.hbm.xml");
-            resources.add("/mapping/series/observation/Series.hbm.xml");
+            resources.add("/mapping/series/default/Series.hbm.xml");
             resources.add("/mapping/series/observation/RelatedObservations.hbm.xml");
             resources.add("/mapping/series/observation/Observation.hbm.xml");
             resources.add("/mapping/series/observation/TemporalReferencedObservation.hbm.xml");

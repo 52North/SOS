@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -41,6 +42,7 @@ import org.joda.time.DateTimeZone;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.CategoryDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -52,9 +54,9 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureRoleDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
-import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationPersister;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
@@ -311,11 +313,15 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                     Collections.singleton(hFeature.getIdentifier()),
                     session).get(0);
             session.update(hReferenceSeries);
-            ObservationContext ctx = new ObservationContext();
+            SeriesObservationContext ctx = new SeriesObservationContext();
             ctx.setObservableProperty(hObservableProperty);
             ctx.setFeatureOfInterest(hFeature);
             ctx.setProcedure(hProcedure);
             ctx.setOffering(hOffering);
+            // category
+            if (HibernateHelper.isColumnSupported(Series.class, Series.CATEGORY)) {
+                ctx.setCategory(new CategoryDAO().getOrInsertCategory(hObservableProperty, session));
+            }
             ctx.setPublish(false);
             Series hSeries = seriesDAO.getOrInsertSeries(ctx, session);
             hSeries.setReferenceValues(Collections.singletonList(hReferenceSeries));

@@ -331,6 +331,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
             }
         }
+        if (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)) {
+            Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
+            if (t != null && t) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CATEGORY_PATH));
+            } else {
+                config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_DEFAULT_PATH));
+            }
+        }
         if (isSetSchema(settings)) {
             Properties properties = new Properties();
             properties.put(HibernateConstants.DEFAULT_SCHEMA, settings.get(HibernateConstants.DEFAULT_SCHEMA));
@@ -413,15 +421,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
                 concept = DatabaseConcept.OLD_CONCEPT.name();
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH)) {
-            concept = DatabaseConcept.GEOLOGY_LOG_CONCEPT.name();
-        }
+                concept = DatabaseConcept.GEOLOGY_LOG_CONCEPT.name();
+            }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-                    databaseConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-                    concept,
-                    databaseConceptDefinition.getKey(),
-                    concept);
+                    databaseConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
+                    databaseConceptDefinition.getKey(), concept);
         }
         return DatabaseConcept.valueOf(concept);
     }
@@ -632,6 +637,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     builder.append(SessionFactoryProvider.PATH_SEPERATOR)
                             .append(HIBERNATE_MAPPING_EXTENSION_READONLY_DEFAULT_PATH);
                 }
+                properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
             }
         }
     }

@@ -126,14 +126,14 @@ public class H2Configuration {
             resources.add("/mapping/transactional/TOffering.hbm.xml");
             resources.add("/mapping/transactional/ValidProcedureTime.hbm.xml");
 //            resources.add("/mapping/transactional/TFeatureOfInterest.hbm.xml");
-            resources.add("/mapping/transactional/ResultTemplate.hbm.xml");
             resources.add("/mapping/transactional/TProcedure.hbm.xml");
 //            resources.add("/mapping/old/observation/ValuedObservation.hbm.xml");
 //            resources.add("/mapping/old/observation/Observation.hbm.xml");
 //            resources.add("/mapping/old/observation/TemporalReferencedObservation.hbm.xml");
 //            resources.add("/mapping/old/observation/ContextualReferencedObservation.hbm.xml");
             resources.add("/mapping/series/observation/ValuedObservation.hbm.xml");
-            resources.add("/mapping/series/observation/Series.hbm.xml");
+            resources.add("/mapping/series/default/Series.hbm.xml");
+            resources.add("/mapping/series/default/ResultTemplate.hbm.xml");
             resources.add("/mapping/series/observation/RelatedObservations.hbm.xml");
             resources.add("/mapping/series/observation/Observation.hbm.xml");
             resources.add("/mapping/series/observation/TemporalReferencedObservation.hbm.xml");

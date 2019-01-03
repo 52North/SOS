@@ -77,6 +77,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
@@ -384,6 +385,12 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
         final OmObservation observation = new OmObservation();
         observation.setObservationConstellation(getSosObservationConstellation(resultTemplate, session));
+        if (resultTemplate.isSetCategory()) {
+            TextValue textValue = new TextValue(resultTemplate.getCategory().getIdentifier());
+            textValue.setName(resultTemplate.getCategory().getName());
+            textValue.setDescription(resultTemplate.getCategory().getDescription());
+            observation.addCategoryParameter(textValue);
+        }
         observation.setResultType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         observation.setValue(sosValues);
         return observation;

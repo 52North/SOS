@@ -40,7 +40,7 @@ import static org.n52.sos.coding.json.JSONConstants.TOKEN_SEPARATOR;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -76,17 +76,16 @@ public class InsertResultTemplateRequestDecoder extends AbstractSosRequestDecode
         if (!node.path(IDENTIFIER).isMissingNode()) {
             irtr.setIdentifier(node.path(IDENTIFIER).textValue());
         }
-        irtr.setObservationTemplate(parseObservationTemplate(node));
+        irtr.setObservation(parseObservationTemplate(node));
         irtr.setResultStructure(parseResultStructure(node.path(RESULT_STRUCTURE)));
         irtr.setResultEncoding(parseResultEncoding(node.path(RESULT_ENCODING)));
         return irtr;
     }
 
-    private OmObservationConstellation parseObservationTemplate(JsonNode node) throws OwsExceptionReport {
-        final OmObservationConstellation oc =
-                observationDecoder.parseObservationConstellation(node.path(OBSERVATION_TEMPLATE));
-        oc.addOffering(node.path(OFFERING).textValue());
-        return oc;
+    private OmObservation parseObservationTemplate(JsonNode node) throws OwsExceptionReport {
+        OmObservation observation = observationDecoder.decodeJSON(node.path(OBSERVATION_TEMPLATE), false);
+        observation.getObservationConstellation().addOffering(node.path(OFFERING).textValue());
+        return observation;
     }
 
     private SosResultStructure parseResultStructure(JsonNode node) throws OwsExceptionReport {

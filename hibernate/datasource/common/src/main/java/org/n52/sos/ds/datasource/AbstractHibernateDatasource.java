@@ -86,7 +86,8 @@ import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  *
  * @since 4.0.0
  */
@@ -281,7 +282,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public CustomConfiguration getConfig(Map<String, Object> settings) {
         CustomConfiguration config = new CustomConfiguration();
-//        config.configure("/hibernate.cfg.xml");
+        // config.configure("/hibernate.cfg.xml");
         for (File path : getMappingPaths(settings)) {
             config.addDirectory(path);
         }
@@ -298,7 +299,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected Set<File> getMappingPaths(Map<String, Object> settings) {
-        Set<File> paths  = new HashSet<>();
+        Set<File> paths = new HashSet<>();
         paths.add(resource(HIBERNATE_MAPPING_CORE_PATH));
         for (String resource : getDatabaseConceptMappingDirectory(settings)) {
             paths.add(resource(resource));
@@ -314,20 +315,17 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {
-        String concept = (String)settings.get(this.featureConceptDefinition.getKey());
+        String concept = (String) settings.get(this.featureConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_PATH)) {
-                    concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
+                concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
             }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-                    featureConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-                    concept,
-                    featureConceptDefinition.getKey(),
-                    concept);
+                    featureConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
+                    featureConceptDefinition.getKey(), concept);
         }
         switch (FeatureConcept.valueOf(concept)) {
         case EXTENDED_FEATURE_CONCEPT:
@@ -357,7 +355,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     private DatabaseConcept getDatabaseConcept(Map<String, Object> settings) {
-        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+        String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = DatabaseConcept.SIMPLE.name();
@@ -368,11 +366,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-                    databaseConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-                    concept,
-                    databaseConceptDefinition.getKey(),
-                    concept);
+                    databaseConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
+                    databaseConceptDefinition.getKey(), concept);
         }
         return DatabaseConcept.valueOf(concept);
     }
@@ -452,16 +447,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Metadata metadata = getMetadata(settings);
             createTempFile = Files.createTempFile("create", ".tmp");
             SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
+                    .setOutputFile(createTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
             List<String> readAllLines = Files.readAllLines(createTempFile, Charset.defaultCharset());
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
             String[] pre = getPreSchemaScript();
             String[] post = getPostSchemaScript();
 
-            script =
-                    (pre == null) ? (post == null) ? script : concat(script, post) : (post == null) ? concat(pre, script)
-                            : concat(pre, script, post);
+            script = (pre == null) ? (post == null) ? script : concat(script, post)
+                    : (post == null) ? concat(pre, script) : concat(pre, script, post);
 
             return checkCreateSchema(script);
         } catch (IOException e) {
@@ -485,7 +480,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Metadata metadata = getMetadata(settings);
             dropTempFile = Files.createTempFile("drop", ".tmp");
             SchemaExport schemaExport = new SchemaExport();
-            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(dropTempFile.toString());
+            schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
+                    .setOutputFile(dropTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
             List<String> readAllLines = Files.readAllLines(dropTempFile);
             return readAllLines.toArray(new String[readAllLines.size()]);
@@ -509,7 +505,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Metadata metadata = getMetadata(settings);
             createTempFile = Files.createTempFile("update", ".tmp");
             SchemaUpdate schemaUpdate = new SchemaUpdate();
-            schemaUpdate.setDelimiter(";").setFormat(false).setHaltOnError(true).setOutputFile(createTempFile.toString());
+            schemaUpdate.setDelimiter(";").setFormat(false).setHaltOnError(true)
+                    .setOutputFile(createTempFile.toString());
             schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata);
             Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
             return nonDublicated.toArray(new String[nonDublicated.size()]);
@@ -539,8 +536,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
     }
 
-    protected Metadata getMetadata(Connection conn, Map<String, Object> settings)
-            throws SQLException {
+    protected Metadata getMetadata(Connection conn, Map<String, Object> settings) throws SQLException {
         return getMetadata(settings);
     }
 
@@ -563,11 +559,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
             settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
             registryBuilder.applySettings(settings);
-            registry =  registryBuilder.build();
+            registry = registryBuilder.build();
         }
         return registry;
     }
-
 
     @Override
     public boolean checkIfSchemaExists(Map<String, Object> settings) {
@@ -608,12 +603,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (!Strings.isNullOrEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
+                if (!Strings.isNullOrEmpty(rs.getString("TABLE_SCHEM"))
+                        && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
             }
             if (!Strings.isNullOrEmpty(schema)) {
-                throw new ConfigurationError(String.format("Requested schema (%s) is not contained in the database!", schema));
+                throw new ConfigurationError(
+                        String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
         return null;
@@ -694,28 +691,33 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             StandardServiceRegistryBuilder.destroy(registry);
             registry = null;
         }
-//        if (checkIfExtensionDirectoryExists()) {
-//            StringBuilder builder =
-//                    new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-//            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
-//        }
+        // if (checkIfExtensionDirectoryExists()) {
+        // StringBuilder builder =
+        // new
+        // StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
+        // properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY,
+        // builder.toString());
+        // }
     }
 
-//    private boolean checkIfExtensionDirectoryExists() {
-//        URL dirUrl = Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
-//        if (dirUrl != null) {
-//            try {
-//                return new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString())).exists();
-//            } catch (UnsupportedEncodingException e) {
-//                throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
-//            }
-//        }
-//        return false;
-//    }
+    // private boolean checkIfExtensionDirectoryExists() {
+    // URL dirUrl =
+    // Thread.currentThread().getContextClassLoader().getResource(HIBERNATE_MAPPING_EXTENSION_READONLY);
+    // if (dirUrl != null) {
+    // try {
+    // return new File(URLDecoder.decode(dirUrl.getPath(),
+    // Charset.defaultCharset().toString())).exists();
+    // } catch (UnsupportedEncodingException e) {
+    // throw new ConfigurationError("Unable to encode directory URL " + dirUrl +
+    // "!");
+    // }
+    // }
+    // return false;
+    // }
 
     protected Set<SettingDefinition<?>> filter(Set<SettingDefinition<?>> definitions, Set<String> keysToExclude) {
         Iterator<SettingDefinition<?>> iterator = definitions.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             if (keysToExclude.contains(iterator.next().getKey())) {
                 iterator.remove();
             }
@@ -819,8 +821,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                    featureConceptMappingDirectory);
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(featureConceptMappingDirectory);
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
@@ -838,7 +839,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
     
     private String[] concat(String[] first, String[]... rest) {
-                int length = first.length;
+        int length = first.length;
         for (int i = 0; i < rest.length; ++i) {
             length += rest[i].length;
         }
@@ -925,15 +926,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected String[] checkScriptForGeneratedAndDuplicatedEntries(String[] script) {
         // creates upper case hexStrings from table names hashCode() with prefix
         // 'FK'
-        Set<String> generatedForeignKeys =
-                Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
-                        getGeneratedForeignKeyFor("relatedFeatureHasRole"),
-                        getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
-                        getGeneratedForeignKeyFor("offeringAllowedObservationType"),
-                        getGeneratedForeignKeyFor("observationhasoffering"),
-                        getGeneratedForeignKeyFor("relatedfeaturehasrole"),
-                        getGeneratedForeignKeyFor("offeringallowedfeaturetype"),
-                        getGeneratedForeignKeyFor("offeringallowedobservationtype"));
+        Set<String> generatedForeignKeys = Sets.newHashSet(getGeneratedForeignKeyFor("observationHasOffering"),
+                getGeneratedForeignKeyFor("relatedFeatureHasRole"),
+                getGeneratedForeignKeyFor("offeringAllowedFeatureType"),
+                getGeneratedForeignKeyFor("offeringAllowedObservationType"),
+                getGeneratedForeignKeyFor("observationhasoffering"),
+                getGeneratedForeignKeyFor("relatedfeaturehasrole"),
+                getGeneratedForeignKeyFor("offeringallowedfeaturetype"),
+                getGeneratedForeignKeyFor("offeringallowedobservationtype"));
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : script) {
             if (string.startsWith("alter table")) {
@@ -961,8 +961,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *
      * @param tableName
      *            Table name
-     * @return Beginning characters of a generated foreign key like
-     *         "FK + table name hasCode()"
+     * @return Beginning characters of a generated foreign key like "FK + table
+     *         name hasCode()"
      */
     private String getGeneratedForeignKeyFor(String tableName) {
         return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
@@ -982,12 +982,17 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     /**
      * Create quoted string with schema.table
-     * @param settings Datasource settings
-     * @param conn SQL connection
+     *
+     * @param settings
+     *            Datasource settings
+     * @param conn
+     *            SQL connection
      * @return {@link List} with table names
-     * @throws SQLException If an error occurs while checking catalog/schema
+     * @throws SQLException
+     *             If an error occurs while checking catalog/schema
      */
-    protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn) throws SQLException {
+    protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn)
+            throws SQLException {
         String catalog = checkCatalog(conn);
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
@@ -1075,8 +1080,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @param settings
      *            Datasource settings
      */
-    protected abstract void validatePrerequisites(Connection con, Metadata metadata,
-            Map<String, Object> settings);
+    protected abstract void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings);
 
     /**
      * Create a new Hibernate dialect

@@ -42,10 +42,6 @@ public interface HibernateDatasourceConstants {
 
     String OGM_DATASOURCE_DAO_IDENTIFIER = OGM_CONNECTION_PROVIDER_IDENTIFIER;
 
-//    String HIBERNATE_MAPPING_BASE = "/base";
-//
-//    String HIBERNATE_MAPPING_VALUE = "/value";
-
     String HIBERNATE_MAPPING_PATH = "/hbm";
 
     // Database concept paths

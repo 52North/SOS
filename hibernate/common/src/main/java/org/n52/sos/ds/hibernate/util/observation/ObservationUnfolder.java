@@ -154,7 +154,7 @@ public class ObservationUnfolder {
                     final Map<Value<?>, String> definitionsForObservedValues = Maps.newHashMap();
                     Value<?> observedValue = null;
                     GeometryHolder samplingGeometry = new GeometryHolder();
-                    ParameterHolder parameterHolder = new ParameterHolder();
+                    ParameterHolder parameterHolder = getParameterHolder(multiObservation.getParameterHolder());
                     String featureOfInterest = null;
                     String procedure = null;
                     for (SweField field : elementType.getFields()) {
@@ -628,6 +628,14 @@ public class ObservationUnfolder {
             return (ReferenceType) new ReferenceType().setHref("to");
         }
         return name;
+    }
+
+    private ParameterHolder getParameterHolder(ParameterHolder parameterHolder) {
+        ParameterHolder parameter = new ParameterHolder();
+        if (parameterHolder.isSetParameter()) {
+            parameter.addParameter(parameterHolder.getParameter());
+        }
+        return parameter;
     }
 
     protected int getCrsFromString(String crs) throws OwsExceptionReport {

@@ -81,6 +81,13 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
                 .getOrInsertCodespace(codespace, session));
     }
 
+    public void addIdentifier(IdentifierNameDescriptionEntity entity, String identifier, Session session) {
+        String value = identifier != null && !identifier.isEmpty() ? identifier : null;
+        String codespace = OGCConstants.UNKNOWN;
+        entity.setIdentifier(value);
+        entity.setIdentifierCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
+    }
+
     public void addName(AbstractGML abstractFeature,
             IdentifierNameDescriptionEntity entity,
                         Session session) {
@@ -110,11 +117,12 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         }
     }
 
-    public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
+    public AbstractGML getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
             IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
+        return abstractFeature;
     }
 
     public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {

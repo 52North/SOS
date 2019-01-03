@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -574,7 +575,6 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
 
     private static class Caches {
         private final Map<String, CodespaceEntity> codespaces;
-
         private final Map<UoM, UnitEntity> units;
 
         Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units) {
@@ -589,6 +589,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         public Map<UoM, UnitEntity> units() {
             return units;
         }
+
     }
 
     private static class DAOs {

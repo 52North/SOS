@@ -870,7 +870,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return <code>true</code>, if category parameter is set
      */
     public boolean isSetCategoryParameter() {
-        return parameterHolder.hasParameter("category");
+        return parameterHolder.hasParameter(OmConstants.PARAMETER_NAME_CATEGORY);
     }
     
     /**
@@ -885,12 +885,19 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     /**
      * Add category to observation
      * 
-     * @param samplingGeometry
-     *            The sampling geometry to set
+     * @param category
+     *            The category to set
      * @return this
      */
     public OmObservation addCategoryParameter(String category) {
-        parameterHolder.addParameter(new NamedValue<String>(new ReferenceType("categroy"), new TextValue(category)));
+        parameterHolder.addParameter(new NamedValue<String>(new ReferenceType(OmConstants.PARAMETER_NAME_CATEGORY),
+                new TextValue(category)));
+        return this;
+    }
+    
+    public OmObservation addCategoryParameter(TextValue category) {
+        parameterHolder.addParameter(new NamedValue<String>(new ReferenceType(OmConstants.PARAMETER_NAME_CATEGORY),
+                category));
         return this;
     }
 
@@ -900,6 +907,6 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return category parameter
      */
     public NamedValue<?> getCategoryParameter() {
-        return parameterHolder.getParameter("category");
+        return parameterHolder.getParameter(OmConstants.PARAMETER_NAME_CATEGORY);
     }
 }

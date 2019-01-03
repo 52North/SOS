@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.entities.observation.series;
 import java.util.Date;
 import java.util.List;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.Category;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
@@ -67,6 +68,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public static String ID = "seriesId";
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
     public static String LAST_TIME_STAMP = "lastTimeStamp";
+    public static String CATEGORY = "category";
 
     public static final String ALIAS = "s";
 
@@ -77,6 +79,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Offering offering;
+    private Category category;
 
     private Boolean deleted = false;
     private Boolean published = true;
@@ -137,6 +140,14 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     @Override
     public void setProcedure(final Procedure procedure) {
         this.procedure = procedure;
+    }
+    
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public Category getCategory() {
+        return category;
     }
 
     @Override

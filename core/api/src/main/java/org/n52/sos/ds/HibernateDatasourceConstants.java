@@ -105,7 +105,7 @@ public interface HibernateDatasourceConstants {
 
     public enum DatabaseConcept {
         SIMPLE("Simple database model"),
-        TRANSATCTIONAL("Transactional database model"),
+        TRANSACTIONAL("Transactional database model"),
         EREPORTING("eReporting database model");
 
         private final String displayName;

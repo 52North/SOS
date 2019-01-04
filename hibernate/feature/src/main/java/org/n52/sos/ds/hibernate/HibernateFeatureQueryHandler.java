@@ -83,7 +83,6 @@ import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,19 +241,18 @@ public class HibernateFeatureQueryHandler
                     // HibernateHelper.getSqlString(featureExtentCriteria));
                     // Geometry geom = (Geometry)
                     // featureExtentCriteria.uniqueResult();
-                    com.vividsolutions.jts.geom.Geometry geometry
-                            = (com.vividsolutions.jts.geom.Geometry) session
+                    Geometry geometry
+                            = (Geometry) session
                             .createCriteria(AbstractFeatureEntity.class)
                             .add(QueryHelper.getCriterionForObjects(AbstractFeatureEntity.IDENTIFIER,
                                     queryObject.getFeatures()))
                             .setProjection(SpatialProjections.extent(AbstractFeatureEntity.GEOMETRY))
                             .uniqueResult();
                     if (geometry != null) {
-                        Geometry geom = JTSConverter.convert(geometry);
-                        int srid = geom.getSRID() > 0 ? geom.getSRID() : getStorageEPSG();
-                        geom.setSRID(srid);
-                        geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
-                        return new ReferencedEnvelope(geom.getEnvelopeInternal(), srid);
+                        int srid = geometry.getSRID() > 0 ? geometry.getSRID() : getStorageEPSG();
+                        geometry.setSRID(srid);
+                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+                        return new ReferencedEnvelope(geometry.getEnvelopeInternal(), srid);
                     }
                 } else {
                     final Envelope envelope = new Envelope();

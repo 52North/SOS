@@ -34,17 +34,7 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingBlobDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingBooleanDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingCategoryDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingCountDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataArrayDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingGeometryDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
-import org.n52.series.db.beans.ereporting.EReportingReferencedDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingTextDataEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -57,17 +47,8 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     private static final Set<AdditionalObservationCreatorKey> KEYS
             = AdditionalObservationCreatorRepository
             .encoderKeysForElements(AqdConstants.NS_AQD,
-                                    EReportingDataEntity.class,
-                                    EReportingBlobDataEntity.class,
-                                    EReportingBooleanDataEntity.class,
-                                    EReportingCategoryDataEntity.class,
-                                    EReportingCountDataEntity.class,
-                                    EReportingGeometryDataEntity.class,
-                                    EReportingQualityEntity.class,
-                                    EReportingDataArrayDataEntity.class,
-                                    EReportingTextDataEntity.class,
-                                    EReportingReferencedDataEntity.class,
-                                    EReportingDatasetEntity.class);
+                                    DataEntity.class,
+                                    EReportingQualityEntity.class);
 
 
     private final EReportingObservationHelper helper = new EReportingObservationHelper();
@@ -84,11 +65,10 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
 
     @Override
     public OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException {
-        if (observation instanceof EReportingDataEntity) {
-            EReportingDataEntity<?> eReportingObservation = (EReportingDataEntity<?>) observation;
-            create(omObservation, eReportingObservation.getDataset());
+        if (observation.hasEreportingProfile()) {
+            create(omObservation, observation.getDataset());
             add(omObservation, observation);
-            omObservation.setValue(new EReportingHelper(sweHelper).createSweDataArrayValue(omObservation, eReportingObservation));
+            omObservation.setValue(new EReportingHelper(sweHelper).createSweDataArrayValue(omObservation, observation));
             omObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         }
         return omObservation;
@@ -96,8 +76,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
 
     @Override
     public OmObservation create(OmObservation omObservation, DatasetEntity series) {
-        EReportingDatasetEntity ereportingSeries = (EReportingDatasetEntity) series;
-        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(ereportingSeries)) {
+        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series.getEreportingProfile())) {
             omObservation.addParameter(namedValue);
         }
         return omObservation;
@@ -115,9 +94,8 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
 
     @Override
     public OmObservation add(OmObservation omObservation, DataEntity<?> observation) {
-        if (observation instanceof EReportingDataEntity) {
-            EReportingDataEntity<?> eReportingObservation = (EReportingDataEntity<?>) observation;
-            omObservation.setAdditionalMergeIndicator(eReportingObservation.getPrimaryObservation());
+        if (observation.hasEreportingProfile()) {
+            omObservation.setAdditionalMergeIndicator(observation.getEreportingProfile().getPrimaryObservation());
         }
         return omObservation;
     }

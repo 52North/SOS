@@ -50,11 +50,8 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 //import org.n52.shetland.util.ReverseOf;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * TODO JavaDoc
@@ -103,7 +100,7 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         featureOfInterest.setIdentifier(identifier);
         featureOfInterest.setId(id);
         // featureOfInterest.setNames(name);
-        featureOfInterest.setGeometry(JTSConverter.convert(geom));
+        featureOfInterest.setGeometry(geom);
         featureOfInterest.setUrl(url);
         featureOfInterest.setFeatureType(type);
         return featureOfInterest;

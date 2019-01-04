@@ -41,8 +41,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.parameter.Parameter;
-import org.n52.series.db.beans.parameter.ParameterText;
+import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.series.db.beans.parameter.ParameterTextEntity;
 import org.n52.shetland.ogc.filter.BinaryLogicFilter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
@@ -148,18 +148,18 @@ public class ExtensionFesFilterCriteriaAdder {
     private DetachedCriteria getDetachedCriteria(Class<?> clazz, Map<NameValue, Set<String>> map) {
         DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
         if (map.containsKey(NameValue.NAME)) {
-            detachedCriteria.add(getRestrictionIn(Parameter.NAME, map.get(NameValue.NAME)));
+            detachedCriteria.add(getRestrictionIn(ParameterEntity.NAME, map.get(NameValue.NAME)));
         }
         if (map.containsKey(NameValue.VALUE)) {
-            detachedCriteria.add(getRestrictionIn(Parameter.VALUE, map.get(NameValue.VALUE)));
+            detachedCriteria.add(getRestrictionIn(ParameterEntity.VALUE, map.get(NameValue.VALUE)));
         }
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.PROPERTY_ID)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(ParameterEntity.PROPERTY_ID)));
         return detachedCriteria;
     }
 
     private Class<?> getClassFor(String value, ComparisonOperator operator) {
         // TODO check for other types
-        return ParameterText.class;
+        return ParameterTextEntity.class;
     }
 
     private Criterion getRestrictionIn(String name, Set<String> values) {

@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,18 +40,17 @@ import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
+import org.n52.series.db.beans.ComplexDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProfileDataEntity;
+import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.data.Data.ComplexData;
-import org.n52.series.db.beans.data.Data.GeometryData;
-import org.n52.series.db.beans.data.Data.ProfileData;
-import org.n52.series.db.beans.data.Data.ReferencedData;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gwml.GWMLConstants;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -101,9 +99,8 @@ import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 
-public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionReport>, ProfileLevelVisitor<Data<?>> {
+public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExceptionReport>, ProfileLevelVisitor<DataEntity<?>> {
 
     private final DatasetEntity dataset;
     private final AbstractFeatureEntity featureOfInterest;
@@ -160,55 +157,55 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
 
 
     @Override
-    public Data<?> visit(BooleanValue value) throws OwsExceptionReport {
+    public DataEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.truth(), value);
     }
 
     @Override
-    public Data<?> visit(CategoryValue value)
+    public DataEntity<?> visit(CategoryValue value)
             throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.category(), value);
     }
 
     @Override
-    public Data<?> visit(CountValue value)
+    public DataEntity<?> visit(CountValue value)
             throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.count(), value);
     }
 
     @Override
-    public Data<?> visit(GeometryValue value)
+    public DataEntity<?> visit(GeometryValue value)
             throws OwsExceptionReport {
-        GeometryData geometry = observationFactory.geometry();
-        return persist((Data)geometry, JTSConverter.convert(value.getValue()));
+        GeometryDataEntity geometry = observationFactory.geometry();
+        return persist((DataEntity)geometry,value.getValue());
     }
 
     @Override
-    public Data<?> visit(QuantityValue value)
+    public DataEntity<?> visit(QuantityValue value)
             throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.numeric(), value);
     }
 
 
     @Override
-    public Data<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
+    public DataEntity<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(TextValue value)
+    public DataEntity<?> visit(TextValue value)
             throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.text(), value);
     }
 
     @Override
-    public Data<?> visit(UnknownValue value)
+    public DataEntity<?> visit(UnknownValue value)
             throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.blob(), value);
     }
 
     @Override
-    public Data<?> visit(SweDataArrayValue value)
+    public DataEntity<?> visit(SweDataArrayValue value)
             throws OwsExceptionReport {
         // return persist(observationFactory.sweDataArray(), value.getValue());
         // TODO
@@ -216,64 +213,62 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
     }
 
     @Override
-    public Data<?> visit(ComplexValue value)
+    public DataEntity<?> visit(ComplexValue value)
             throws OwsExceptionReport {
-        ComplexData complex = observationFactory.complex();
-        complex.setParent(true);
-        return persist((Data)complex, persistChildren(value.getValue()));
+        ComplexDataEntity complex = observationFactory.complex();
+        return persist((DataEntity)complex, persistChildren(value.getValue()));
     }
 
     @Override
-    public Data<?> visit(HrefAttributeValue value)
+    public DataEntity<?> visit(HrefAttributeValue value)
             throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(NilTemplateValue value)
+    public DataEntity<?> visit(NilTemplateValue value)
             throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(ReferenceValue value)
+    public DataEntity<?> visit(ReferenceValue value)
             throws OwsExceptionReport {
-        ReferencedData reference = observationFactory.reference();
+        ReferencedDataEntity reference = observationFactory.reference();
         reference.setName(value.getValue().getTitle());
         return persist(reference, value.getValue().getHref());
     }
 
     @Override
-    public Data<?> visit(TVPValue value)
+    public DataEntity<?> visit(TVPValue value)
             throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(TLVTValue value)
+    public DataEntity<?> visit(TLVTValue value)
             throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+    public DataEntity<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+    public DataEntity<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+    public DataEntity<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(ProfileValue value) throws OwsExceptionReport {
-        ProfileData profile = observationFactory.profile();
-        profile.setParent(true);
+    public DataEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
+        ProfileDataEntity profile = observationFactory.profile();
         if (value.isSetFromLevel()) {
             profile.setVerticalFrom(value.getFromLevel().getValue());
             profile.setVerticalFromName(value.getFromLevel().getDefinition());
@@ -289,15 +284,15 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
             }
         }
         omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
-        return persist((Data)profile, persistChildren(value.getValue()));
+        return persist((DataEntity)profile, persistChildren(value.getValue()));
     }
 
     @Override
-    public Collection<Data<?>> visit(ProfileLevel value) throws OwsExceptionReport {
-        List<Data<?>> childObservations = new ArrayList<>();
+    public Collection<DataEntity<?>> visit(ProfileLevel value) throws OwsExceptionReport {
+        List<DataEntity<?>> childObservations = new ArrayList<>();
         if (value.isSetValue()) {
             for (Value<?> v : value.getValue()) {
-                Data<?> d = v.accept(this);
+                DataEntity<?> d = v.accept(this);
                 if (value.isSetLevelStart()) {
                     d.setVerticalFrom(value.getLevelStart().getValue());
                 }
@@ -312,19 +307,19 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
     }
 
     @Override
-    public Data<?> visit(XmlValue value)
+    public DataEntity<?> visit(XmlValue value)
             throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public Data<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+    public DataEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
-    private Set<Data<?>> persistChildren(SweAbstractDataRecord dataRecord)
+    private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord)
             throws HibernateException, OwsExceptionReport {
-        Set<Data<?>> children = new TreeSet<>();
+        Set<DataEntity<?>> children = new TreeSet<>();
         for (SweField field : dataRecord.getFields()) {
             PhenomenonEntity  observableProperty = getObservablePropertyForField(field);
             ObservationPersister childPersister = createChildPersister(observableProperty);
@@ -334,8 +329,8 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         return children;
     }
 
-    private Set<Data<?>> persistChildren(List<ProfileLevel> values) throws OwsExceptionReport {
-        Set<Data<?>> children = new TreeSet<>();
+    private Set<DataEntity<?>> persistChildren(List<ProfileLevel> values) throws OwsExceptionReport {
+        Set<DataEntity<?>> children = new TreeSet<>();
         for (ProfileLevel level : values) {
             if (level.isSetValue()) {
 //                for (Value<?> v : level.getValue()) {
@@ -412,7 +407,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         return daos.observableProperty().getOrInsertObservableProperty(observableProperty, session);
     }
 
-    private <V, T extends Data<V>> T setUnitAndPersist(T observation, Value<V> value) throws OwsExceptionReport {
+    private <V, T extends DataEntity<V>> T setUnitAndPersist(T observation, Value<V> value) throws OwsExceptionReport {
         if (!dataset.hasUnit()) {
             dataset.setUnit(getUnit(value));
         }
@@ -423,13 +418,11 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         return value.isSetUnit() ? daos.observation().getUnit(value.getUnitObject(), caches.units(), session) : null;
     }
 
-    private <V, T extends Data<V>> T persist(T observation, V value) throws OwsExceptionReport {
+    private <V, T extends DataEntity<V>> T persist(T observation, V value) throws OwsExceptionReport {
         observation.setDeleted(false);
 
         if (!childObservation) {
             daos.observation().addIdentifier(omObservation, observation, session);
-        } else {
-            observation.setChild(true);
         }
 
         daos.observation().addName(omObservation, observation, session);
@@ -438,7 +431,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         observation.setValue(value);
         if (samplingGeometry != null) {
             GeometryEntity geometryEntity = new GeometryEntity();
-            geometryEntity.setGeometry(JTSConverter.convert(samplingGeometry));
+            geometryEntity.setGeometry(samplingGeometry);
             observation.setGeometryEntity(geometryEntity);
             checkUpdateFeatureOfInterestGeometry();
             omObservation.removeSpatialFilteringProfileParameter();
@@ -457,7 +450,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
                             "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
                             observationType, observation.getDataset().getProcedure().getIdentifier(),
                             dataset.getObservableProperty().getIdentifier(), dataset.getOffering().getIdentifier(),
-                            dataset.getObservationType().getFormat());
+                            dataset.getOmObservationType().getFormat());
                 }
             }
 
@@ -475,7 +468,7 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
         daos.observation().fillObservationContext(observationContext, omObservation, session);
         DatasetEntity persitedDataset = daos.observation().addObservationContextToObservation(observationContext, observation, session);
         if (omObservation.isSetParameter()) {
-            Set<Parameter<?>> insertParameter = daos.parameter().insertParameter(omObservation.getParameter(),
+            Set<ParameterEntity<?>> insertParameter = daos.parameter().insertParameter(omObservation.getParameter(),
                     caches.units, session);
             observation.setParameters(insertParameter);
         }
@@ -488,11 +481,11 @@ public class ObservationPersister implements ValueVisitor<Data<?>, OwsExceptionR
     }
 
     private boolean isProfileObservation(DatasetEntity observationConstellation) {
-        return observationConstellation.isSetObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
-                .equals(observationConstellation.getObservationType().getFormat())
-                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(observationConstellation.getObservationType().getFormat())
+        return observationConstellation.isSetOmObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
+                .equals(observationConstellation.getOmObservationType().getFormat())
+                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(observationConstellation.getOmObservationType().getFormat())
                 || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE
-                        .equals(observationConstellation.getObservationType().getFormat()));
+                        .equals(observationConstellation.getOmObservationType().getFormat()));
     }
 
     private Geometry getSamplingGeometryFromLevel(ProfileLevel level)

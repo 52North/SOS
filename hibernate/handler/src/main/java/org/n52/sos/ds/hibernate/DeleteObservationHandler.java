@@ -49,7 +49,6 @@ import org.n52.series.db.beans.CompositeDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.dataset.Dataset;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -205,7 +204,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
     private void deleteObservation(Collection<DatasetEntity> serieses, Collection<TemporalFilter> filters,
             Session session) throws OwsExceptionReport {
         boolean temporalFilters = filters != null && !filters.isEmpty();
-        Set<Dataset> modifiedSeries = new HashSet<>();
+        Set<DatasetEntity> modifiedSeries = new HashSet<>();
         StringBuilder builder = new StringBuilder();
         builder.append("update ");
         builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
@@ -214,7 +213,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         if (temporalFilters) {
             builder.append(" AND (" + SosTemporalRestrictions.filterHql(filters).toString()).append(")");
         }
-        for (Dataset s : serieses) {
+        for (DatasetEntity s : serieses) {
             Query<?> q = session.createQuery(builder.toString()).setParameter(DataEntity.PROPERTY_DELETED, true)
                     .setParameter(DataEntity.PROPERTY_DATASET, s);
             if (temporalFilters) {
@@ -262,11 +261,11 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
      *            Hibernate session
      * @throws OwsExceptionReport
      */
-    private void checkSeriesForFirstLatest(Set<Dataset> serieses, Session session) throws OwsExceptionReport {
+    private void checkSeriesForFirstLatest(Set<DatasetEntity> serieses, Session session) throws OwsExceptionReport {
         if (!serieses.isEmpty()) {
             AbstractSeriesObservationDAO observationDAO = daoFactory.getObservationDAO();
             Map<Long, SeriesTimeExtrema> minMaxTimes = observationDAO.getMinMaxSeriesTimes(serieses, session);
-            for (Dataset series : serieses) {
+            for (DatasetEntity series : serieses) {
                 boolean update = false;
                 if (minMaxTimes.containsKey(series.getId())) {
                     SeriesTimeExtrema extrema = minMaxTimes.get(series.getId());

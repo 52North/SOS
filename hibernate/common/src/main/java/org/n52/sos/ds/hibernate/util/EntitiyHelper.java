@@ -30,9 +30,8 @@ package org.n52.sos.ds.hibernate.util;
 
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 
+@Deprecated
 public class EntitiyHelper {
 
     /**
@@ -50,8 +49,7 @@ public class EntitiyHelper {
     }
 
     public boolean isSeriesObservationSupported() {
-        return HibernateHelper.isEntitySupported(EReportingDataEntity.class)
-                || HibernateHelper.isEntitySupported(DataEntity.class);
+        return HibernateHelper.isEntitySupported(DataEntity.class);
     }
 
     public boolean isObservationInfoSupported() {
@@ -60,14 +58,12 @@ public class EntitiyHelper {
 
     public boolean isSeriesObservationInfoSupported() {
         return isObservationInfoSupported() &&
-               (HibernateHelper.isEntitySupported(EReportingDataEntity.class) ||
-                HibernateHelper.isEntitySupported(DataEntity.class));
+                HibernateHelper.isEntitySupported(DataEntity.class);
     }
 
     public boolean isSeriesObservationTimeSupported() {
         return isObservationTimeSupported() &&
-               (HibernateHelper.isEntitySupported(EReportingDataEntity.class) ||
-                HibernateHelper.isEntitySupported(DataEntity.class));
+                HibernateHelper.isEntitySupported(DataEntity.class);
     }
 
     public boolean isObservationTimeSupported() {
@@ -83,54 +79,42 @@ public class EntitiyHelper {
     }
 
     public Class<?> getSeriesEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingDatasetEntity.class)) {
-            return EReportingDatasetEntity.class;
-        } else if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
+        if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
             return DatasetEntity.class;
         }
         return null;
     }
 
     public Class<?> getObservationEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
-            return EReportingDataEntity.class;
-        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
+        if (HibernateHelper.isEntitySupported(DataEntity.class)) {
             return DataEntity.class;
         }
         return null;
     }
 
     public Class<?> getObservationInfoEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
-            return EReportingDataEntity.class;
-        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
+        if (HibernateHelper.isEntitySupported(DataEntity.class)) {
             return DataEntity.class;
         }
         return null;
     }
 
     public Class<?> getObservationTimeEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
-            return EReportingDataEntity.class;
-        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
+       if (HibernateHelper.isEntitySupported(DataEntity.class)) {
             return DataEntity.class;
         }
         return null;
     }
 
     public Class<?> getValueEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
-            return EReportingDataEntity.class;
-        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
+        if (HibernateHelper.isEntitySupported(DataEntity.class)) {
             return DataEntity.class;
         }
         return null;
     }
 
     public Class<?> getValueTimeEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingDataEntity.class)) {
-            return EReportingDataEntity.class;
-        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
+        if (HibernateHelper.isEntitySupported(DataEntity.class)) {
             return DataEntity.class;
         }
         return null;

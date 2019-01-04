@@ -46,11 +46,11 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public abstract class ObservationFactory {
 
-    public abstract Class<? extends DataEntity<?>> observationClass();
+    public abstract Class<? extends DataEntity> observationClass();
 
-    public abstract Class<? extends DataEntity<?>> contextualReferencedClass();
+    public abstract Class<? extends DataEntity> contextualReferencedClass();
 
-    public abstract Class<? extends DataEntity<?>> temporalReferencedClass();
+    public abstract Class<? extends DataEntity> temporalReferencedClass();
 
     public abstract Class<? extends BlobDataEntity> blobClass();
 

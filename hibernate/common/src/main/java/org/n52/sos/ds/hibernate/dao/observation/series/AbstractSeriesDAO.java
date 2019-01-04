@@ -67,7 +67,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
-import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
@@ -85,7 +84,6 @@ import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,9 +98,13 @@ public abstract class AbstractSeriesDAO
         super(daoFactory);
     }
 
-    public abstract Class<?> getSeriesClass();
+    public Class<?> getSeriesClass() {
+        return DatasetEntity.class;
+    }
 
-    public abstract Class<?> getNotInitializedDatasetClass();
+    public Class<?> getNotInitializedDatasetClass() {
+        return DatasetEntity.class;
+    }
 
     /**
      * Get series for GetObservation request and featuresOfInterest
@@ -1053,7 +1055,7 @@ public abstract class AbstractSeriesDAO
 
     public DatasetEntity checkOrInsertSeries(ProcedureEntity procedure, PhenomenonEntity observableProperty,
             OfferingEntity offering, boolean hiddenChild, Session session) throws OwsExceptionReport {
-        CategoryEntity category = getDaoFactory().getObservablePropertyDAO().getOrInsertCategory(observableProperty, session);
+        CategoryEntity category = getDaoFactory().getCategoryDAO().getOrInsertCategory(observableProperty, session);
         return checkOrInsertSeries(procedure, observableProperty, offering, category, hiddenChild, session);
     }
 

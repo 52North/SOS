@@ -44,8 +44,7 @@ import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
@@ -196,9 +195,9 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     }
 
     private void addAssessmentType(Criteria c, String assessmentType) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingDatasetEntity.class);
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria(EReportingDatasetEntity.SAMPLING_POINT)
+        detachedCriteria.createCriteria(getSamplingPointAssociationPath())
                 .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
                 add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_ID)));
@@ -252,7 +251,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation observation) {
         String identifier = getSamplingPointIdentifier(observation);
         if (!Strings.isNullOrEmpty(identifier)) {
-            c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT)
+            c.createCriteria(getSamplingPointAssociationPath())
                     .add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, identifier));
         }
         return c;

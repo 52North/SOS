@@ -11,10 +11,6 @@
     <dependencies>
         
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>svalbard</artifactId>
         </dependency>
@@ -64,8 +60,9 @@
             <artifactId>elasticsearch</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
+            <groupId>org.elasticsearch.plugin</groupId>
+            <artifactId>transport-netty4-client</artifactId>
+            <scope>runtime</scope>
         </dependency>
          <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

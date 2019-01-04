@@ -29,7 +29,7 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.observation.ParameterVisitor;
@@ -47,7 +47,7 @@ public class FeatureParameterAdder {
 
     public void add() throws OwsExceptionReport {
         if (feature.hasParameters()) {
-            for (Parameter parameter : feature.getParameters()) {
+            for (ParameterEntity parameter : feature.getParameters()) {
                 abstractSamplingFeature.addParameter(visitor.visit(parameter));
             }
         }

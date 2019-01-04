@@ -329,8 +329,8 @@ public class InsertResultHandler
         final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
         for (DatasetEntity obsConst : obsConsts) {
-            if (observationType == null && obsConst.isSetObservationType()) {
-                observationType = obsConst.getObservationType().getFormat();
+            if (observationType == null && obsConst.isSetOmObservationType()) {
+                observationType = obsConst.getOmObservationType().getFormat();
             }
         }
         OmObservationConstellation omObservationConstellation = new OmObservationConstellation()
@@ -569,13 +569,13 @@ public class InsertResultHandler
                 .getOrInsertObservableProperty(o.getObservationConstellation().getObservableProperty(), session);
         OfferingEntity offering = daoFactory.getOfferingDAO()
                 .getOfferingForIdentifier(o.getObservationConstellation().getOfferings().iterator().next(), session);
-        CategoryEntity category = daoFactory.getObservablePropertyDAO()
+        CategoryEntity category = daoFactory.getCategoryDAO()
                 .getOrInsertCategory(observableProperty, session);
 
         DatasetEntity oc = obsConstDao.checkOrInsertSeries(procedure, observableProperty,
                 offering, category, false, session);
         if (o.getObservationConstellation().isSetObservationType()) {
-            oc.setObservationType(obsTypeDao
+            oc.setOmObservationType(obsTypeDao
                     .getFormatEntityObject(o.getObservationConstellation().getObservationType(), session));
         }
         return oc;

@@ -34,8 +34,6 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -53,9 +51,9 @@ public class WaterMLObservationCreator
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = Sets.union(
             AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20, DataEntity.class,
-                    EReportingDataEntity.class, DatasetEntity.class, EReportingDatasetEntity.class),
+                    DatasetEntity.class),
             AdditionalObservationCreatorRepository.encoderKeysForElements("application/uvf", DataEntity.class,
-                    EReportingDataEntity.class, DatasetEntity.class, EReportingDatasetEntity.class));
+                    DatasetEntity.class));
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {

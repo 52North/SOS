@@ -30,29 +30,18 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.ProfileDataset;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
-import org.n52.series.db.beans.ereporting.EReportingBlobDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingBooleanDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingCategoryDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingComplexDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingCountDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataArrayDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingGeometryDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingNotInitializedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingQuantityDatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingReferencedDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
-import org.n52.series.db.beans.ereporting.EReportingTextDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -64,26 +53,17 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.DatasetFactory;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
-public class EReportingSeriesDAO extends AbstractSeriesDAO {
+public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReportingDaoHelper {
 
     public EReportingSeriesDAO(DaoFactory daoFactory) {
         super(daoFactory);
-    }
-
-    @Override
-    public Class<?> getSeriesClass() {
-        return EReportingDatasetEntity.class;
-    }
-
-    @Override
-    public Class<?> getNotInitializedDatasetClass() {
-        return EReportingNotInitializedDatasetEntity.class;
     }
 
     @Override
@@ -183,19 +163,20 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public EReportingDatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
+    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) {
-        return (EReportingDatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
+        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
         return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
     }
 
     @Override
-    public EReportingDatasetEntity getOrInsertSeries(ObservationContext identifiers, Data<?> observation, Session session) throws OwsExceptionReport {
-        return (EReportingDatasetEntity) super.getOrInsert(identifiers, observation, session);
+    public DatasetEntity getOrInsertSeries(ObservationContext identifiers, DataEntity<?> observation, Session session) throws OwsExceptionReport {
+        return (DatasetEntity) super.getOrInsert(identifiers, observation, session);
     }
 
     /**
@@ -207,7 +188,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      *            EReportingSamplingPoint identifier to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, String samplingPoint) {
-        c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, samplingPoint));
+        c.createCriteria(getSamplingPointAssociationPath()).add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, samplingPoint));
 
     }
 
@@ -220,7 +201,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      *            EReportingSamplingPoint to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, EReportingSamplingPointEntity samplingPoint) {
-        c.add(Restrictions.eq(EReportingDatasetEntity.SAMPLING_POINT, samplingPoint));
+        c.add(Restrictions.eq(getSamplingPointAssociationPath(), samplingPoint));
     }
 
     /**
@@ -232,7 +213,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
      *            EReportingSamplingPoint identifiers to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
-        c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).add(Restrictions.in(EReportingSamplingPointEntity.IDENTIFIER, samplingPoints));
+        c.createCriteria(getSamplingPointAssociationPath()).add(Restrictions.in(EReportingSamplingPointEntity.IDENTIFIER, samplingPoints));
     }
 
     @Override
@@ -263,10 +244,9 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     private void addAssessmentType(Criteria c, String assessmentType) {
-        c.createCriteria(EReportingDatasetEntity.SAMPLING_POINT).createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
+        c.createCriteria(getSamplingPointAssociationPath()).createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
         add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
     }
-
 
     @Override
     public DatasetFactory getDatasetFactory() {
@@ -281,83 +261,83 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
         }
 
         @Override
-        public Class<? extends EReportingDatasetEntity> datasetClass() {
-            return EReportingDatasetEntity.class;
+        public Class<? extends DatasetEntity> datasetClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingBlobDatasetEntity> blobClass() {
-            return EReportingBlobDatasetEntity.class;
+        public Class<? extends DatasetEntity> blobClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingBooleanDatasetEntity> truthClass() {
-            return EReportingBooleanDatasetEntity.class;
+        public Class<? extends DatasetEntity> truthClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingCategoryDatasetEntity> categoryClass() {
-            return EReportingCategoryDatasetEntity.class;
+        public Class<? extends DatasetEntity> categoryClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingCountDatasetEntity> countClass() {
-            return EReportingCountDatasetEntity.class;
+        public Class<? extends DatasetEntity> countClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingGeometryDatasetEntity> geometryClass() {
-            return EReportingGeometryDatasetEntity.class;
+        public Class<? extends DatasetEntity> geometryClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingQuantityDatasetEntity> numericClass() {
-            return EReportingQuantityDatasetEntity.class;
+        public Class<? extends DatasetEntity> numericClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingDataArrayDatasetEntity> sweDataArrayClass() {
-            return EReportingDataArrayDatasetEntity.class;
+        public Class<? extends DatasetEntity> sweDataArrayClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingTextDatasetEntity> textClass() {
-            return EReportingTextDatasetEntity.class;
+        public Class<? extends DatasetEntity> textClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingComplexDatasetEntity> complexClass() {
-            return EReportingComplexDatasetEntity.class;
+        public Class<? extends DatasetEntity> complexClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingProfileDatasetEntity> profileClass() {
-            return EReportingProfileDatasetEntity.class;
+        public Class<? extends DatasetEntity> profileClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends ProfileDataset> textProfileClass() {
+        public Class<? extends DatasetEntity> textProfileClass() {
             return profileClass();
         }
 
         @Override
-        public Class<? extends ProfileDataset> categoryProfileClass() {
+        public Class<? extends DatasetEntity> categoryProfileClass() {
             return  profileClass();
         }
 
         @Override
-        public Class<? extends ProfileDataset> quantityProfileClass() {
+        public Class<? extends DatasetEntity> quantityProfileClass() {
             return profileClass();
         }
 
         @Override
-        public Class<? extends EReportingReferencedDatasetEntity> referenceClass() {
-            return EReportingReferencedDatasetEntity.class;
+        public Class<? extends DatasetEntity> referenceClass() {
+            return DatasetEntity.class;
         }
 
         @Override
-        public Class<? extends EReportingNotInitializedDatasetEntity> notInitializedClass() {
-            return EReportingNotInitializedDatasetEntity.class;
+        public Class<? extends DatasetEntity> notInitializedClass() {
+            return DatasetEntity.class;
         }
 
         public static EReportingDatasetFactory getInstance() {
@@ -371,6 +351,16 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
             }
         }
 
+    }
+
+    @Override
+    public Set<Integer> getVerificationFlags() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Integer> getValidityFlags() {
+        return Collections.emptySet();
     }
 
 }

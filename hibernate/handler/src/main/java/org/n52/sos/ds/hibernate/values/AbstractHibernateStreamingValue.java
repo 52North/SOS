@@ -44,7 +44,6 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
-import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingData;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -80,7 +79,6 @@ import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ds.hibernate.util.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
@@ -252,10 +250,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      */
     protected Time createPhenomenonTime(DataEntity<?> abstractValue) {
         // create time element
-        final DateTime phenStartTime = new DateTime(abstractValue.getPhenomenonTimeStart(), DateTimeZone.UTC);
+        final DateTime phenStartTime = new DateTime(abstractValue.getSamplingTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
-        if (abstractValue.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(abstractValue.getPhenomenonTimeEnd(), DateTimeZone.UTC);
+        if (abstractValue.getSamplingTimeEnd() != null) {
+            phenEndTime = new DateTime(abstractValue.getSamplingTimeEnd(), DateTimeZone.UTC);
         } else {
             phenEndTime = phenStartTime;
         }
@@ -274,10 +272,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     protected Time createPhenomenonTime(DataEntity<?> minTime, DataEntity<?> maxTime) {
         // create time element
 
-        final DateTime phenStartTime = DateTimeHelper.makeDateTime(minTime.getPhenomenonTimeStart());
+        final DateTime phenStartTime = DateTimeHelper.makeDateTime(minTime.getSamplingTimeStart());
         DateTime phenEndTime;
-        if (maxTime.getPhenomenonTimeEnd() != null) {
-            phenEndTime = DateTimeHelper.makeDateTime(minTime.getPhenomenonTimeEnd());
+        if (maxTime.getSamplingTimeEnd() != null) {
+            phenEndTime = DateTimeHelper.makeDateTime(minTime.getSamplingTimeEnd());
         } else {
             phenEndTime = phenStartTime;
         }
@@ -448,7 +446,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         observation.setResultTime(createResutlTime(o.getResultTime()));
         observation.setValidTime(createValidTime(o.getValidTimeStart(), o.getValidTimeEnd()));
         if (o.isSetGeometryEntity()) {
-            observation.addParameter(createSpatialFilteringProfileParameter(JTSConverter.convert(o.getGeometryEntity().getGeometry())));
+            observation.addParameter(createSpatialFilteringProfileParameter(o.getGeometryEntity().getGeometry()));
         }
         addRelatedObservation(o, observation);
         addParameter(o, observation);
@@ -478,13 +476,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     public OmObservation mergeValueToObservation(DataEntity<?> o, OmObservation observation, String responseFormat)
             throws OwsExceptionReport {
-        if (checkResponseFormat(responseFormat) && o instanceof EReportingData) {
+        if (checkResponseFormat(responseFormat) && o.hasEreportingProfile()) {
             if (!observation.isSetValue()) {
                 addValuesToObservation(o, observation, responseFormat);
             } else {
                 checkTime(o, observation);
                 helper.mergeValues((SweDataArray) observation.getValue().getValue().getValue(),
-                        helper.createSweDataArray(observation, (EReportingData) o));
+                        helper.createSweDataArray(observation, o));
             }
             if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
                     .getObservationType())) {
@@ -510,14 +508,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     public void addValueSpecificDataToObservation(DataEntity<?> o, OmObservation observation, Session session, Extensions extensions)
             throws OwsExceptionReport {
-        if (o instanceof EReportingData) {
+        if (o.hasEreportingProfile()) {
             if (ReportObligations.hasFlow(extensions)) {
                 ReportObligationType flow = ReportObligations.getFlow(extensions);
                 if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
-                    int year = DateTimeHelper.makeDateTime(o.getPhenomenonTimeStart()).getYear();
+                    int year = DateTimeHelper.makeDateTime(o.getSamplingTimeStart()).getYear();
                     EReportingQualityEntity eReportingQuality =
                             new EReportingQualityDAO().getEReportingQuality(o.getDataset().getId(), year,
-                                    ((EReportingData)o).getPrimaryObservation(), session);
+                                    o.getEreportingProfile().getPrimaryObservation(), session);
                     if (eReportingQuality != null) {
                         observation.setResultQuality(helper.getGmdDomainConsistency(eReportingQuality, true));
                     } else {
@@ -536,7 +534,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 observation.getObservationConstellation().setObservationType(
                         OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
-            observation.setValue(helper.createSweDataArrayValue(observation, (EReportingData) o));
+            observation.setValue(helper.createSweDataArrayValue(observation, o));
         } else {
             observation.setValue(getSingleObservationValue(o, value));
         }
@@ -547,8 +545,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     public String getDiscriminator(DataEntity<?> o) {
-        if (o instanceof EReportingData) {
-            return ((EReportingData) o).getPrimaryObservation();
+        if (o.hasEreportingProfile()) {
+            return o.getEreportingProfile().getPrimaryObservation();
         }
         return null;
     }

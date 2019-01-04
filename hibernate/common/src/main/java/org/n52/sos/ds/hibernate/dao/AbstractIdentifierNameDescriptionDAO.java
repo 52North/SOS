@@ -94,6 +94,13 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         addName(entity, abstractFeature.getFirstName(), session);
     }
 
+    public void addName(IdentifierNameDescriptionEntity entity, String name, Session session) {
+        String value = name != null && !name.isEmpty() ? name : null;
+        String codespace = OGCConstants.UNKNOWN;
+        entity.setName(value);
+        entity.setNameCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
+    }
+
     public void addName(IdentifierNameDescriptionEntity entity, CodeType name,
                         Session session) {
         String value = name != null && name.isSetValue()

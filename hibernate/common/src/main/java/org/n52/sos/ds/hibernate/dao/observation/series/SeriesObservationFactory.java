@@ -37,7 +37,6 @@ import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.GeometryDataEntity;
-import org.n52.series.db.beans.NotInitializedDatasetEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
@@ -125,7 +124,7 @@ public class SeriesObservationFactory extends ObservationFactory {
     }
 
     public DatasetEntity series() {
-        return new NotInitializedDatasetEntity();
+        return new DatasetEntity();
     }
 
     public Class<? extends DatasetEntity> seriesClass() {

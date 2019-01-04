@@ -53,8 +53,7 @@ import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
-import org.n52.series.db.beans.data.Data.ProfileData;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -76,7 +75,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
-import org.n52.sos.util.JTSConverter;
 import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.base.Strings;
@@ -133,7 +131,7 @@ public class ResultHandlingHelper {
             }
             for (final DataEntity<?> observation : observations) {
                 for (final Integer intger : valueOrder.keySet()) {
-                    if (observation instanceof ProfileData) {
+                    if (observation instanceof ProfileDataEntity) {
                         builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(), sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false));
                     } else {
                         final String definition = valueOrder.get(intger);
@@ -387,7 +385,7 @@ public class ResultHandlingHelper {
                 return String.valueOf(((TextDataEntity) observation).getValue());
             } else if (observation instanceof GeometryDataEntity) {
                 final WKTWriter writer = new WKTWriter();
-                return writer.write(JTSConverter.convert(((GeometryDataEntity) observation).getValue().getGeometry()));
+                return writer.write(((GeometryDataEntity) observation).getValue().getGeometry());
             } else if (observation instanceof BlobDataEntity) {
                 return String.valueOf(((BlobDataEntity) observation).getValue());
             }
@@ -406,7 +404,7 @@ public class ResultHandlingHelper {
             Geometry samplingGeometry = null;
             if (observation.isSetGeometryEntity()) {
                 samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                        JTSConverter.convert(observation.getGeometryEntity().getGeometry()));
+                        observation.getGeometryEntity().getGeometry());
             }
             for (final Integer intger : valueOrder.keySet()) {
                 final String definition = valueOrder.get(intger);
@@ -494,8 +492,8 @@ public class ResultHandlingHelper {
         return "";
     }
 
-    private String getParameterValue(Set<Parameter<?>> set, String value) {
-        for (Parameter<?> parameter : set) {
+    private String getParameterValue(Set<ParameterEntity<?>> set, String value) {
+        for (ParameterEntity<?> parameter : set) {
             if (parameter.getName().equals(value)) {
                 return parameter.getValueAsString();
             }
@@ -503,8 +501,8 @@ public class ResultHandlingHelper {
         return "";
     }
 
-    private boolean hasParameter(Set<Parameter<?>> set, String value) {
-        for (Parameter<?> parameter : set) {
+    private boolean hasParameter(Set<ParameterEntity<?>> set, String value) {
+        for (ParameterEntity<?> parameter : set) {
             if (parameter.getName().equals(value)) {
                 return true;
             }

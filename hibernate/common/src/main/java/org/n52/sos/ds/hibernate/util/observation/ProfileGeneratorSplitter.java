@@ -34,10 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.data.Data.ProfileData;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -47,7 +46,6 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.util.JTSConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +60,7 @@ public class ProfileGeneratorSplitter {
         this.creator = creator;
     }
 
-    public ProfileValue create(ProfileData entity) throws OwsExceptionReport {
+    public ProfileValue create(ProfileDataEntity entity) throws OwsExceptionReport {
         ProfileValue profileValue = new ProfileValue("");
         profileValue.setGmlId("pv" + entity.getId());
         UoM uom = null;
@@ -86,11 +84,11 @@ public class ProfileGeneratorSplitter {
         return profileValue;
     }
 
-    public SweAbstractDataComponent createValue(ProfileData entity) throws OwsExceptionReport {
+    public SweAbstractDataComponent createValue(ProfileDataEntity entity) throws OwsExceptionReport {
         return create(entity).asDataRecord();
     }
 
-    private List<ProfileLevel> createProfileLevel(ProfileData entity) throws OwsExceptionReport {
+    private List<ProfileLevel> createProfileLevel(ProfileDataEntity entity) throws OwsExceptionReport {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
@@ -113,7 +111,7 @@ public class ProfileGeneratorSplitter {
                         profileLevel.setLevelStart(levelStart);
                         profileLevel.setLevelEnd(levelEnd);
                         if (observation.isSetGeometryEntity()) {
-                            profileLevel.setLocation(JTSConverter.convert(observation.getGeometryEntity().getGeometry()));
+                            profileLevel.setLocation(observation.getGeometryEntity().getGeometry());
                         }
                         profileLevel.addValue(value);
                         map.put(key, profileLevel);
@@ -134,8 +132,8 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings("rawtypes")
-    private QuantityValue getLevelStart(Set<Parameter<?>> parameters) throws OwsExceptionReport {
-        for (Parameter<?> parameter : parameters) {
+    private QuantityValue getLevelStart(Set<ParameterEntity<?>> parameters) throws OwsExceptionReport {
+        for (ParameterEntity<?> parameter : parameters) {
             if (checkParameterForStartLevel(parameter.getName())) {
                 NamedValue namedValue = new ParameterVisitor().visit(parameter);
                 if (namedValue.getValue() instanceof QuantityValue) {
@@ -150,8 +148,8 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings("rawtypes")
-    private QuantityValue getLevelEnd(Set<Parameter<?>> parameters) throws OwsExceptionReport {
-        for (Parameter<?> parameter : parameters) {
+    private QuantityValue getLevelEnd(Set<ParameterEntity<?>> parameters) throws OwsExceptionReport {
+        for (ParameterEntity<?> parameter : parameters) {
             if (checkParameterForEndLevel(parameter.getName())) {
                 NamedValue namedValue = new ParameterVisitor().visit(parameter);
                 if (namedValue.getValue() instanceof QuantityValue) {

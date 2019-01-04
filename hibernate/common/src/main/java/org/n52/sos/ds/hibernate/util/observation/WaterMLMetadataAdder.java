@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Optional;
 
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.series.DefaultPointMetadata;
@@ -132,7 +132,7 @@ public class WaterMLMetadataAdder {
     private Optional<Object> getMetadataElement(DatasetEntity dataset, String domain,
             String name) {
         if (dataset.hasParameters()) {
-            for (Parameter<?> parameter : dataset.getParameters()) {
+            for (ParameterEntity<?> parameter : dataset.getParameters()) {
                 if (domain.equals(parameter.getDomain()) && name.equals(parameter.getName())) {
                     return Optional.ofNullable(parameter.getValue());
                 }

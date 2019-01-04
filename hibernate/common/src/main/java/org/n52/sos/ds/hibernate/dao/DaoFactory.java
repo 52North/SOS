@@ -197,6 +197,10 @@ public class DaoFactory {
         return new ProcedureDAO(this);
     }
 
+    public CategoryDAO getCategoryDAO() {
+        return new CategoryDAO(this);
+    }
+
     public ObservablePropertyDAO getObservablePropertyDAO() {
         return new ObservablePropertyDAO(this);
     }

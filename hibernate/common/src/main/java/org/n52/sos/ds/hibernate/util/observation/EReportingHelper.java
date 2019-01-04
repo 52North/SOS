@@ -30,9 +30,9 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
 import java.util.Set;
-
-import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingData;
 import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingQualityData;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.PrimaryObservation;
 import org.n52.shetland.aqd.AqdUomRepository;
@@ -96,13 +96,13 @@ public class EReportingHelper {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
-            EReportingData observation) throws CodedException {
+            DataEntity observation) throws CodedException {
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         sweDataArrayValue.setValue(createSweDataArray(omObservation, observation));
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
         observationValue.setPhenomenonTime(getPhenomenonTime(omObservation,
                 DataTimeCreator.createPhenomenonTime(observation)));
-        addQuality(observation, observationValue);
+        addQuality(observation.getEreportingProfile(), observationValue);
         return observationValue;
     }
 
@@ -115,10 +115,10 @@ public class EReportingHelper {
      *            {@link EReportingValue} to create {@link SweDataArray} from
      * @return Created {@link SweDataArray}
      */
-    public SweDataArray createSweDataArray(OmObservation omObservation, EReportingData observation) {
+    public SweDataArray createSweDataArray(OmObservation omObservation, DataEntity observation) {
         SweDataArray sweDataArray = new SweDataArray();
         sweDataArray.setElementCount(createElementCount(omObservation));
-        PrimaryObservation primaryObservation = PrimaryObservation.from(observation.getPrimaryObservation());
+        PrimaryObservation primaryObservation = PrimaryObservation.from(observation.getEreportingProfile().getPrimaryObservation());
         sweDataArray.setElementType(createElementType(primaryObservation, getUnit(omObservation, observation)));
         sweDataArray.setEncoding(createEncoding(omObservation));
         sweDataArray.setValues(createValue(omObservation, observation, primaryObservation));
@@ -141,7 +141,7 @@ public class EReportingHelper {
         return combinedValue;
     }
 
-    private String getUnit(OmObservation omObservation, EReportingData observation) {
+    private String getUnit(OmObservation omObservation, DataEntity observation) {
         if (omObservation.isSetValue() && omObservation.getValue().getValue().isSetUnit()) {
             return omObservation.getValue().getValue().getUnit();
         } else if (observation.getDataset().hasUnit()) {
@@ -236,27 +236,27 @@ public class EReportingHelper {
         }
     }
 
-    private void addValue(List<String> value, EReportingData observation, OmObservation omObservation) {
-        if (observation.isSetValue()) {
+    private void addValue(List<String> value, DataEntity observation, OmObservation omObservation) {
+        if (observation.getValue() != null) {
             // TODO check if this is the best solution
             if (omObservation.isSetDecimalSeparator() && omObservation.getDecimalSeparator() != ".") {
-                value.add(observation.getValueAsString().replace(".", omObservation.getDecimalSeparator()));
+                value.add(observation.getValue().toString().replace(".", omObservation.getDecimalSeparator()));
             } else {
-                value.add(observation.getValueAsString());
+                value.add(observation.getValue().toString());
             }
         } else {
             value.add("");
         }
     }
 
-    private List<List<String>> createValue(OmObservation omObservation, EReportingData observation, PrimaryObservation primaryObservation) {
+    private List<List<String>> createValue(OmObservation omObservation, DataEntity observation, PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
         addTimes(value, DataTimeCreator.createPhenomenonTime(observation));
-        addIntegerValue(value, observation.getVerification());
-        addIntegerValue(value, observation.getValidation());
+        addIntegerValue(value, observation.getEreportingProfile().getVerification());
+        addIntegerValue(value, observation.getEreportingProfile().getValidation());
         addValue(value, observation, omObservation);
         if (primaryObservation.isMultyDayPrimaryObservation()) {
-            addDoubleValue(value, observation.getDataCapture());
+            addDoubleValue(value, observation.getEreportingProfile().getDataCapture());
         }
         List<List<String>> list = Lists.newArrayList();
         list.add(value);
@@ -292,25 +292,25 @@ public class EReportingHelper {
         return time;
     }
 
-    private void addQuality(EReportingData eReportingObservation, SingleObservationValue<?> value) throws CodedException {
-        value.addQualityList(getGmdDomainConsistency(eReportingObservation, false));
+    private void addQuality(EReportingProfileDataEntity eReportingProfileDataEntity, SingleObservationValue<?> value) throws CodedException {
+        value.addQualityList(getGmdDomainConsistency(eReportingProfileDataEntity, false));
     }
 
-    public Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) throws CodedException {
+    public Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingQualityData, boolean force) throws CodedException {
         Set<OmResultQuality> set = Sets.newHashSet();
-        if (eReportingObservation.isSetDataCaptureFlag()) {
-            set.add(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCaptureFlag()));
+        if (eReportingQualityData.isSetDataCaptureFlag()) {
+            set.add(GmdDomainConsistency.dataCapture(eReportingQualityData.getDataCaptureFlag()));
         } else if (force) {
             set.add(GmdDomainConsistency.dataCapture(GmlConstants.NilReason.unknown));
         }
-        if (eReportingObservation.isSetTimeCoverageFlag()) {
-            set.add(GmdDomainConsistency.timeCoverage(eReportingObservation.getTimeCoverageFlag()));
+        if (eReportingQualityData.isSetTimeCoverageFlag()) {
+            set.add(GmdDomainConsistency.timeCoverage(eReportingQualityData.getTimeCoverageFlag()));
         }
         else if (force) {
             set.add(GmdDomainConsistency.timeCoverage(GmlConstants.NilReason.unknown));
         }
-        if (eReportingObservation.isSetUncertaintyEstimation()) {
-            set.add(GmdDomainConsistency.uncertaintyEstimation(eReportingObservation.getUncertaintyEstimation()));
+        if (eReportingQualityData.isSetUncertaintyEstimation()) {
+            set.add(GmdDomainConsistency.uncertaintyEstimation(eReportingQualityData.getUncertaintyEstimation()));
         } else if (force) {
             set.add(GmdDomainConsistency.uncertaintyEstimation(GmlConstants.NilReason.unknown));
         }

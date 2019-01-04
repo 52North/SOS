@@ -114,7 +114,6 @@ public class AbstractHibernateFullDBDatasourceTest
             boolean timeFormat) {
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
-        boolean seriesMetadata = keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -130,7 +129,6 @@ public class AbstractHibernateFullDBDatasourceTest
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
-        assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_Z_KEY));
@@ -143,9 +141,6 @@ public class AbstractHibernateFullDBDatasourceTest
                 counter--;
             }
             if (!featureConcept) {
-                counter--;
-            }
-            if (!seriesMetadata) {
                 counter--;
             }
             if (settingsDefinitions) {

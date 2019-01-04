@@ -36,6 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
@@ -49,16 +50,15 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
-import org.n52.series.db.beans.NotInitializedDatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.QuantityDataset;
+import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.PhenomenonNameDescriptionProvider;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -74,6 +74,7 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
@@ -89,6 +90,8 @@ import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
@@ -188,7 +191,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                             assignedOffering.getOfferingName()), hRelatedFeatures, observationTypes,
                                             featureOfInterestTypes, session);
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
-                                CategoryEntity hCategory = daoFactory.getObservablePropertyDAO().getOrInsertCategory(hObservableProperty, session);
+                                CategoryEntity hCategory = getCategory(hObservableProperty, request, session);
                                 ObservationContext ctx =
                                         new ObservationContext().setCategory(hCategory).setOffering(hOffering)
                                                 .setPhenomenon(hObservableProperty).setProcedure(hProcedure)
@@ -300,7 +303,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                     new OmObservableProperty(hObservableProperty.getIdentifier()),
                     sosFeatureOfInterest));
 
-            DatasetEntity hObservationConstellationReferenceSeries = new NotInitializedDatasetEntity();
+            DatasetEntity hObservationConstellationReferenceSeries = new DatasetEntity();
             hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
             hObservationConstellationReferenceSeries.setOffering(hOfferingReferenceSeries);
             hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
@@ -318,7 +321,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                     Collections.singleton(hOfferingReferenceSeries),
                     session
                     );
-            Data<?> observation = sosValue.getValue().accept(persister);
+            DataEntity<?> observation = sosValue.getValue().accept(persister);
             DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
                     hObservableProperty.getIdentifier(),
                     hOfferingReferenceSeries.getIdentifier(),
@@ -333,8 +336,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             ctxReferenced.setOffering(hOffering);
             ctxReferenced.setPublish(false);
             DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
-            if (hSeries instanceof QuantityDataset) {
-                ((QuantityDataset)hSeries).setReferenceValues(Lists.newArrayList(hReferenceSeries));
+            if (hSeries.getValueType().equals(ValueType.quantity)) {
+                hSeries.setReferenceValues(Lists.newArrayList(hReferenceSeries));
             }
             session.update(hSeries);
         }
@@ -437,6 +440,17 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                 ctx.setInsitu(sml.getInsitu());
             }
         }
+    }
+
+    private CategoryEntity getCategory(PhenomenonEntity hObservableProperty, InsertSensorRequest request,
+            Session session) {
+        if (request.hasExtension("category")) {
+            Optional<Extension<?>> extension = request.getExtension("category");
+            if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
+                daoFactory.getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(), session);
+            }
+        }
+        return daoFactory.getCategoryDAO().getOrInsertCategory(hObservableProperty, session);
     }
 
     private GeometryHandler getGeometryHandler() {

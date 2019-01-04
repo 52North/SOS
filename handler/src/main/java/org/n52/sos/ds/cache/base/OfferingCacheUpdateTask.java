@@ -56,6 +56,7 @@ import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
+import org.springframework.context.annotation.Conditional;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -145,6 +146,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
 
         // Temporal extent
+        // TODO get from datasets
         getCache().setMinPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeStart()));
         getCache().setMaxPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeEnd()));
         getCache().setMinResultTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getResultTimeStart()));
@@ -271,11 +273,13 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     }
 
     private Collection<String> getObservationTypes() {
+        // TODO get OmObservationTypes from Observation-/ValueType
         return datasets.stream().filter(d -> d.isSetOmObservationtype()).map(d -> d.getOmObservationType().getFormat())
                 .collect(Collectors.toSet());
     }
 
     private Collection<String> getFeatureTypes() {
+        // TODO get FeatureTypes from Geometries
         return datasets.stream().filter(d -> d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
                 .map(d -> d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
     }

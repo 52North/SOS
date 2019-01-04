@@ -32,7 +32,10 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -48,15 +51,19 @@ public interface EReportingDaoHelper {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 if (isSetValidityFlags()) {
-                    c.add(Restrictions.in(EReportingDataEntity.VALIDATION, getValidityFlags()));
+                    c.add(Restrictions.in(DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION, getValidityFlags()));
                     logArgs.append(", validationFlag");
                 }
                 if (isSetVerificationFlags()) {
-                    c.add(Restrictions.in(EReportingDataEntity.VERIFICATION, getVerificationFlags()));
+                    c.add(Restrictions.in(DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION, getVerificationFlags()));
                     logArgs.append(", verification");
                 }
             }
         }
+    }
+
+    default String getSamplingPointAssociationPath() {
+        return DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDatasetEntity.SAMPLING_POINT;
     }
 
     Set<Integer> getVerificationFlags();

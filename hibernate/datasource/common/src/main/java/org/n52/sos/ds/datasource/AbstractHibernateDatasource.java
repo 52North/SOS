@@ -111,7 +111,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String DATABASE_CONCEPT_KEY = "sos.database.concept";
 
     protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SIMPLE.name();
-    
+
     protected static final String DATABASE_EXTENSION_TITLE = "Database extension";
 
     protected static final String DATABASE_EXTENSION_DESCRIPTION = "Select the database extension this SOS should use";
@@ -150,7 +150,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private Dialect dialect;
 
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
-    
+
     private final ChoiceSettingDefinition databaseExtensionDefinition = createDatabaseExtensionDefinition();
 
     private final ChoiceSettingDefinition featureConceptDefinition = createFeatureConceptDefinition();
@@ -203,12 +203,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                       DatabaseConcept.SIMPLE.getDisplayName());
         def.addOption(DatabaseConcept.EREPORTING.name(),
                       DatabaseConcept.EREPORTING.getDisplayName());
-        def.addOption(DatabaseConcept.TRANSATCTIONAL.name(),
-                DatabaseConcept.TRANSATCTIONAL.getDisplayName());
+        def.addOption(DatabaseConcept.TRANSACTIONAL.name(),
+                DatabaseConcept.TRANSACTIONAL.getDisplayName());
         def.setDefaultValue(DatabaseConcept.SIMPLE.name());
         return def;
     }
-    
+
     protected ChoiceSettingDefinition createDatabaseExtensionDefinition() {
         ChoiceSettingDefinition def = new ChoiceSettingDefinition();
         def.setTitle(DATABASE_EXTENSION_TITLE);
@@ -300,7 +300,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected Set<File> getMappingPaths(Map<String, Object> settings) {
         Set<File> paths = new HashSet<>();
-        paths.add(resource(HIBERNATE_MAPPING_CORE_PATH));
         for (String resource : getDatabaseConceptMappingDirectory(settings)) {
             paths.add(resource(resource));
         }
@@ -344,7 +343,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             case EREPORTING:
                 mappings.add(HIBERNATE_MAPPING_EREPORTING_CORE_PATH);
                 break;
-            case TRANSATCTIONAL:
+            case TRANSACTIONAL:
                 mappings.add(HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH);
                 break;
             default:
@@ -362,7 +361,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH)) {
                 concept = DatabaseConcept.EREPORTING.name();
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
-            concept = DatabaseConcept.TRANSATCTIONAL.name();
+            concept = DatabaseConcept.TRANSACTIONAL.name();
         }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
@@ -371,24 +370,24 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
         return DatabaseConcept.valueOf(concept);
     }
-    
+
     private String getDatabaseConceptBasePath(Map<String, Object> settings) {
        return getDatabaseConceptBasePath(getDatabaseConcept(settings));
     }
-    
+
     private String getDatabaseConceptBasePath(DatabaseConcept conept) {
         switch (conept) {
         case SIMPLE:
             return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
         case EREPORTING:
             return HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH;
-        case TRANSATCTIONAL:
+        case TRANSACTIONAL:
             return HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH;
         default:
             return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
         }
     }
-    
+
     protected Set<String> getDatabaseExtensionMappingDirectory(Map<String, Object> settings) {
         String basePath = getDatabaseConceptBasePath(settings);
         HashSet<String> mappings = Sets.newHashSet();
@@ -407,22 +406,19 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     private DatabaseExtension getDatabaseExtension(Map<String, Object> settings) {
-        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
-        if (concept == null || concept.isEmpty()) {
+        String extension = (String) settings.get(this.databaseExtensionDefinition.getKey());
+        if (extension == null || extension.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
-            concept = DatabaseExtension.DEFAULT.name();
+            extension = DatabaseExtension.DEFAULT.name();
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_SAMPLING_PATH)) {
-                concept = DatabaseExtension.SAMPLING.name();
-        }
+                extension = DatabaseExtension.SAMPLING.name();
+            }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-                    databaseConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-                    concept,
-                    databaseConceptDefinition.getKey(),
-                    concept);
+                    databaseExtensionDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, extension,
+                    databaseExtensionDefinition.getKey(), extension);
         }
-        return DatabaseExtension.valueOf(concept);
+        return DatabaseExtension.valueOf(extension);
     }
 
     /**
@@ -837,7 +833,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected ChoiceSettingDefinition getDatabaseExtensionDefinition() {
         return databaseExtensionDefinition;
     }
-    
+
     private String[] concat(String[] first, String[]... rest) {
         int length = first.length;
         for (int i = 0; i < rest.length; ++i) {

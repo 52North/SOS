@@ -49,7 +49,6 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.QuantityDatasetEntity;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -120,7 +119,7 @@ public class HibernateObservationUtilitiesTest
             PhenomenonEntity hObservableProperty = new PhenomenonEntity();
             FormatEntity hObservationType = new FormatEntity();
             OfferingEntity hOffering = new OfferingEntity();
-            DatasetEntity hObservationConstellation = new QuantityDatasetEntity();
+            DatasetEntity hObservationConstellation = new DatasetEntity();
             CodespaceEntity hCodespace = new CodespaceEntity();
             ProcedureEntity hProcedure = new ProcedureEntity();
             QuantityDataEntity hObservation = new QuantityDataEntity();
@@ -139,7 +138,7 @@ public class HibernateObservationUtilitiesTest
             hObservationConstellation.setProcedure(hProcedure);
             hObservationConstellation.setOffering(hOffering);
             hObservationConstellation.setObservableProperty(hObservableProperty);
-            hObservationConstellation.setObservationType(hObservationType);
+            hObservationConstellation.setOmObservationType(hObservationType);
             hObservationConstellation.setFeature(hFeatureOfInterest);
             hObservationConstellation.setDeleted(false);
             hObservationConstellation.setHidden(false);

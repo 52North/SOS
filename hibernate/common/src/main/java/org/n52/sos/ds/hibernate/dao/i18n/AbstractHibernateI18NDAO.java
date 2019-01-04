@@ -248,7 +248,10 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     protected Collection<S> createSosObject(List<H> hi18ns) {
         Map<String, S> map = Maps.newHashMap();
         for (H h18n : hi18ns) {
-            String id = h18n.getEntity().getIdentifier();
+            String id = h18n.getId().toString();
+            if (h18n.getEntity() instanceof DescribableEntity) {
+                id = ((DescribableEntity) h18n.getEntity()).getIdentifier();
+            }
             S i18n = map.get(id);
             if (i18n == null) {
                 i18n = createSosObject(id);

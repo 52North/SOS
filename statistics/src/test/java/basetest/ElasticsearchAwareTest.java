@@ -30,6 +30,7 @@ package basetest;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -37,8 +38,10 @@ import org.apache.commons.io.FileUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.InternalSettingsPreparer;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.node.NodeValidationException;
+import org.elasticsearch.plugins.Plugin;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -67,10 +70,10 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
     protected ElasticsearchAdminHandler adminHandler;
 
     @BeforeClass
-    public static void init() throws IOException, InterruptedException {
+    public static void init() throws IOException, InterruptedException, NodeValidationException {
         logger.debug("Starting embedded node");
         Settings settings
-                = Settings.settingsBuilder().put("cluster.name", "elasiticsearch")
+                = Settings.builder().put("cluster.name", "elasiticsearch")
                         .put("discovery.zen.ping.multicast.enabled", "false")
                         .put("http.cors.enabled", "false")
                         .put("path.data", tempFolder.getRoot().toPath().resolve("data").toString())
@@ -84,10 +87,8 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
 //                        .loadFromStream("elasticsearch_embedded.yml",
 //                                ElasticsearchAwareTest.class.getResourceAsStream("/elasticsearch_embedded.yml"))
 //                        .build();
-        embeddedNode = NodeBuilder.nodeBuilder().settings(settings).build();
+        embeddedNode = new TestNode(settings);
         embeddedNode.start();
-
-
 
         logger.debug("Started embedded node");
 

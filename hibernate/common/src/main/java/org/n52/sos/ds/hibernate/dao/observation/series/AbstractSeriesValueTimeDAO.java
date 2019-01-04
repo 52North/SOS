@@ -70,7 +70,9 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *
      * @return The concrete {@link DataEntity} class
      */
-    protected abstract Class<?> getSeriesValueTimeClass();
+    protected Class<?> getSeriesValueTimeClass() {
+        return DataEntity.class;
+    }
 
     /**
      * Get {@link ObservationTimeExtrema} for a {@link Series} with temporal

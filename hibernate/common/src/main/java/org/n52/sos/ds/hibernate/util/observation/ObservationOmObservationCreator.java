@@ -41,7 +41,7 @@ import org.joda.time.DateTimeZone;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -59,8 +59,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
-import org.n52.shetland.util.StringHelper;
-import org.n52.sos.util.JTSConverter;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +78,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final Map<String, AbstractPhenomenon> observedProperties = Maps.newHashMap();
     private final Map<String, SosProcedureDescription<?>> procedures = Maps.newHashMap();
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
-    private final Map<Long, Set<Parameter<?>>> seriesParameter = Maps.newHashMap();
+    private final Map<Long, Set<ParameterEntity<?>>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
 
     public ObservationOmObservationCreator(
@@ -165,7 +163,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // add SpatialFilteringProfile
             if (hObservation.isSetGeometryEntity()) {
                 sosObservation.addSpatialFilteringProfileParameter(getGeometryHandler()
-                        .switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(hObservation.getGeometryEntity().getGeometry())));
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getGeometryEntity().getGeometry()));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);
@@ -299,8 +297,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (!Strings.isNullOrEmpty(getResultModel())) {
             obsConst.setObservationType(getResultModel());
         }
-        if (hObservation.getDataset().isSetObservationType()) {
-            obsConst.setObservationType(hObservation.getDataset().getObservationType().getFormat());
+        if (hObservation.getDataset().isSetOmObservationType()) {
+            obsConst.setObservationType(hObservation.getDataset().getOmObservationType().getFormat());
         }
         observationConstellations.put(hashCode, obsConst);
         if (hObservation instanceof DataEntity<?>) {

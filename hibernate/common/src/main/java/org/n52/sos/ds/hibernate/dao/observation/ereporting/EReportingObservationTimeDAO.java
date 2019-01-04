@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 
 public class EReportingObservationTimeDAO extends SeriesObservationTimeDAO {
 
     @Override
     protected Class<?> getObservationTimeClass() {
-        return EReportingDataEntity.class;
+        return DataEntity.class;
     }
 }

@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
@@ -56,11 +55,6 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO implements ERepor
     @Override
     public Set<Integer> getValidityFlags() {
         return this.validityFlags;
-    }
-
-    @Override
-    protected Class<?> getSeriesValueClass() {
-        return EReportingDataEntity.class;
     }
 
     @Override

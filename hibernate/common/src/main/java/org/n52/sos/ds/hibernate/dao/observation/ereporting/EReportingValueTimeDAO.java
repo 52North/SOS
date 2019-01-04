@@ -36,8 +36,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
@@ -58,10 +58,6 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
         this.verificationFlags = verificationFlags;
         this.validityFlags = validityFlags;
-    }
-    @Override
-    protected Class<?> getSeriesValueTimeClass() {
-        return EReportingDataEntity.class;
     }
 
     @Override
@@ -111,8 +107,8 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
 
     private void addPhenomenonTimeProjection(Criteria c) {
         ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.min(EReportingDataEntity.PROPERTY_SAMPLING_TIME_START));
-        projectionList.add(Projections.max(EReportingDataEntity.PROPERTY_SAMPLING_TIME_END));
+        projectionList.add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START));
+        projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END));
         c.setProjection(projectionList);
     }
 

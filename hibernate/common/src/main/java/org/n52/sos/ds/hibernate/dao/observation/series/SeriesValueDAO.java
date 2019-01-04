@@ -51,11 +51,6 @@ public class SeriesValueDAO extends AbstractSeriesValueDAO {
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
         // nothing  to add
-}
-
-    @Override
-    protected Class<?> getSeriesValueClass() {
-        return DataEntity.class;
     }
 
     @Override

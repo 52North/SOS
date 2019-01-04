@@ -26,30 +26,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package basetest;
 
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
 
-public class ParameterAdder {
-
-    private ParameterVisitor visitor = new ParameterVisitor();
-    private OmObservation observation;
-    private DataEntity<?> hObservation;
-
-    public ParameterAdder(OmObservation observation, DataEntity hObservation) {
-        this.observation = observation;
-        this.hObservation = hObservation;
+public class TestNode extends Node {
+    public TestNode(Settings settings) {
+        super(settings);
     }
 
-    public void add() throws OwsExceptionReport {
-        if (hObservation.hasParameters()) {
-            for (ParameterEntity parameter : hObservation.getParameters()) {
-                observation.addParameter(visitor.visit(parameter));
-            }
-        }
+    @Override
+    protected void registerDerivedNodeNameWithLogger(String nodeName) {
+        // TODO Auto-generated method stub
     }
-
 }

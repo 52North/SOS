@@ -36,6 +36,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.n52.series.db.beans.BooleanDataEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -46,11 +47,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.data.Data.BooleanData;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
-import org.n52.series.db.beans.ereporting.EReportingDataEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -59,7 +56,6 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationFactory;
 
 import com.google.common.collect.Lists;
-
 
 public class HibernateObservationBuilder {
     public static final String CODESPACE = "Codespace";
@@ -82,12 +78,13 @@ public class HibernateObservationBuilder {
         this.daoFactory = daoFactory;
     }
 
-    public Data<?> createObservation(Data<?> observation, String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
-            Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
+    public DataEntity<?> createObservation(DataEntity<?> observation, String id, Date phenomenonTimeStart,
+            Date phenomenonTimeEnd, Date resultTime, Date validTimeStart, Date validTimeEnd)
+            throws OwsExceptionReport {
         observation.setDeleted(false);
         observation.setIdentifier(id);
-        observation.setPhenomenonTimeStart(phenomenonTimeStart);
-        observation.setPhenomenonTimeEnd(phenomenonTimeEnd);
+        observation.setSamplingTimeStart(phenomenonTimeStart);
+        observation.setSamplingTimeEnd(phenomenonTimeEnd);
         observation.setResultTime(resultTime);
         observation.setValidTimeStart(validTimeStart);
         observation.setValidTimeEnd(validTimeEnd);
@@ -97,9 +94,9 @@ public class HibernateObservationBuilder {
         return observation;
     }
 
-    public List<Data<?>> createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
+    public List<DataEntity<?>> createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
-        List<Data<?>> observations = Lists.newArrayList();
+        List<DataEntity<?>> observations = Lists.newArrayList();
         for (OfferingEntity offering : getOfferings()) {
              observations.add(createObservation(createObservation(offering), offering.getIdentifier() + "/" + id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
                     phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
@@ -109,39 +106,37 @@ public class HibernateObservationBuilder {
         return observations;
     }
 
-    public List<Data<?>> createObservation(String id, DateTime s, DateTime e) throws OwsExceptionReport {
+    public List<DataEntity<?>> createObservation(String id, DateTime s, DateTime e) throws OwsExceptionReport {
         return createObservation(id, s, e, s, s, e);
     }
 
-    public List<Data<?>> createObservation(String id, DateTime s) throws OwsExceptionReport {
+    public List<DataEntity<?>> createObservation(String id, DateTime s) throws OwsExceptionReport {
         return createObservation(id, s, s, s, s, s);
     }
 
-    public List<Data<?>> createObservation(Enum<?> id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
+    public List<DataEntity<?>> createObservation(Enum<?> id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
         return createObservation(id.name(), phenomenonTimeStart, phenomenonTimeEnd, resultTime, validTimeStart,
                 validTimeEnd);
     }
 
-    public List<Data<?>> createObservation(Enum<?> id, DateTime begin, DateTime end) throws OwsExceptionReport {
+    public List<DataEntity<?>> createObservation(Enum<?> id, DateTime begin, DateTime end) throws OwsExceptionReport {
         return createObservation(id.name(), begin, end);
     }
 
-    public List<Data<?>> createObservation(Enum<?> id, DateTime time) throws OwsExceptionReport {
+    public List<DataEntity<?>> createObservation(Enum<?> id, DateTime time) throws OwsExceptionReport {
         return createObservation(id.name(), time);
     }
 
-    protected Data<?> createObservation(OfferingEntity offering) throws OwsExceptionReport {
+    protected DataEntity<?> createObservation(OfferingEntity offering) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         ObservationFactory observationFactory = observationDAO.getObservationFactory();
-        BooleanData observation = observationFactory.truth();
+        BooleanDataEntity observation = observationFactory.truth();
         observation.setValue(true);
         observation.setDataset(getSeries(offering, observation));
-        if (observation instanceof EReportingDataEntity) {
-            EReportingDataEntity abstractEReportingObservation =
-                    (EReportingDataEntity) observation;
-            abstractEReportingObservation.setValidation(1);
-            abstractEReportingObservation.setVerification(1);
+        if (observation.hasEreportingProfile()) {
+            observation.getEreportingProfile().setValidation(1);
+            observation.getEreportingProfile().setVerification(1);
         }
         return observation;
     }
@@ -244,7 +239,7 @@ public class HibernateObservationBuilder {
         return codespace;
     }
 
-    protected DatasetEntity getSeries(OfferingEntity offering, Data o) throws OwsExceptionReport {
+    protected DatasetEntity getSeries(OfferingEntity offering, DataEntity o) throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
 
         SeriesObservationFactory observationFactory = (SeriesObservationFactory) observationDAO.getObservationFactory();
@@ -265,9 +260,8 @@ public class HibernateObservationBuilder {
             series.setDeleted(false);
             series.setPublished(true);
 
-            if (series instanceof EReportingDatasetEntity) {
-                EReportingDatasetEntity eReportingSeries = (EReportingDatasetEntity) series;
-                eReportingSeries.setSamplingPoint(getEReportingSamplingPoint());
+            if (series.hasEreportingProfile()) {
+                series.getEreportingProfile().setSamplingPoint(getEReportingSamplingPoint());
             }
 
             session.save(series);

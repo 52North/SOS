@@ -36,11 +36,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.UnitEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -62,7 +60,9 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesValueDAO.class);
 
-    protected abstract Class<?> getSeriesValueClass();
+    protected Class<?> getSeriesValueClass() {
+        return DataEntity.class;
+    }
 
     /**
      * Query streaming value for parameter as chunk {@link List}

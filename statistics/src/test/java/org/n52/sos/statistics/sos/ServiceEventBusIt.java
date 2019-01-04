@@ -100,7 +100,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
-        Assert.assertThat(hit.sourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
+        Assert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
 
     }
 
@@ -134,7 +134,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
-        Assert.assertThat(hit.sourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
+        Assert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
     }
 
     @Override

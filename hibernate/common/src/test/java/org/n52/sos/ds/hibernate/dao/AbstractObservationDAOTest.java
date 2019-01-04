@@ -41,7 +41,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
-import org.n52.series.db.beans.data.Data;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -56,9 +55,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 
 public class AbstractObservationDAOTest {
 
-
     TestObservationDAO dao = new TestObservationDAO(new DaoFactory());
-
 
     /*
      * PhenomenonTime with TimeInstant
@@ -69,8 +66,8 @@ public class AbstractObservationDAOTest {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant phenomenonTime = new TimeInstant(new DateTime());
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
-        Assert.assertTrue(observation.getPhenomenonTimeStart() != null);
-        Assert.assertTrue(observation.getPhenomenonTimeEnd() != null);
+        Assert.assertTrue(observation.getSamplingTimeStart() != null);
+        Assert.assertTrue(observation.getSamplingTimeEnd() != null);
     }
 
     @Test
@@ -78,8 +75,8 @@ public class AbstractObservationDAOTest {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant phenomenonTime = new TimeInstant(IndeterminateValue.NOW);
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
-        Assert.assertTrue(observation.getPhenomenonTimeStart() != null);
-        Assert.assertTrue(observation.getPhenomenonTimeEnd() != null);
+        Assert.assertTrue(observation.getSamplingTimeStart() != null);
+        Assert.assertTrue(observation.getSamplingTimeEnd() != null);
     }
 
     @Test(expected=InvalidParameterValueException.class)
@@ -176,7 +173,7 @@ public class AbstractObservationDAOTest {
 
         @Override
         protected DatasetEntity addObservationContextToObservation(ObservationContext ctx,
-                Data<?> observation, Session session) throws CodedException {
+                DataEntity<?> observation, Session session) throws CodedException {
             return null;
         }
 

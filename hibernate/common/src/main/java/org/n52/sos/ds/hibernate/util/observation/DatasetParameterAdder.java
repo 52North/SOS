@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Set;
 
-import org.n52.series.db.beans.parameter.Parameter;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
@@ -38,16 +38,16 @@ import org.n52.shetland.util.CollectionHelper;
 public class DatasetParameterAdder {
 
     private OmObservation observation;
-    private Set<Parameter<?>> hParameters;
+    private Set<ParameterEntity<?>> hParameters;
 
-    public DatasetParameterAdder(OmObservation observation, Set<Parameter<?>> hParameters) {
+    public DatasetParameterAdder(OmObservation observation, Set<ParameterEntity<?>> hParameters) {
         this.observation = observation;
         this.hParameters = hParameters;
     }
 
     public void add() throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(hParameters)) {
-            for (Parameter parameter : hParameters) {
+            for (ParameterEntity parameter : hParameters) {
                 if (!parameter.isSetDomain()) {
                     observation.addParameter(new ParameterVisitor().visit(parameter));
                 }

@@ -32,7 +32,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.series.db.beans.HibernateRelations.HasPhenomenonTime;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -41,11 +41,11 @@ import org.n52.svalbard.util.GmlHelper;
 
 public interface DataTimeCreator {
 
-    static Time createPhenomenonTime(HasPhenomenonTime data) {
+    static Time createPhenomenonTime(DataEntity data) {
         // create time element
         DateTime end = DateTimeHelper.makeDateTime(data.getSamplingTimeEnd());
         DateTime start = null;
-        if (data.hasSamplingTimeStart()) {
+        if (data.getSamplingTimeStart() != null) {
             start = DateTimeHelper.makeDateTime(data.getSamplingTimeStart());
         } else {
             start = end;

@@ -242,8 +242,8 @@ public class ObservationContext {
         if (contextual.getCategory() == null && isSetCategory()) {
             contextual.setCategory(getCategory());
         }
-        if (!contextual.isSetObservationType() && isSetObservationType()) {
-            contextual.setObservationType(getObservationType());
+        if (!contextual.isSetOmObservationType() && isSetObservationType()) {
+            contextual.setOmObservationType(getObservationType());
         }
         if (!contextual.hasUnit() && isSetUnit()) {
             contextual.setUnit(getUnit());

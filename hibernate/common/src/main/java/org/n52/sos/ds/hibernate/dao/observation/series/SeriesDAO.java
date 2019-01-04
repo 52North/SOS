@@ -34,25 +34,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.n52.series.db.beans.BlobDatasetEntity;
-import org.n52.series.db.beans.BooleanDatasetEntity;
-import org.n52.series.db.beans.CategoryDatasetEntity;
-import org.n52.series.db.beans.CategoryProfileDatasetEntity;
-import org.n52.series.db.beans.ComplexDatasetEntity;
-import org.n52.series.db.beans.CountDatasetEntity;
-import org.n52.series.db.beans.DataArrayDatasetEntity;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.GeometryDatasetEntity;
-import org.n52.series.db.beans.NotInitializedDatasetEntity;
-import org.n52.series.db.beans.ProfileDatasetEntity;
-import org.n52.series.db.beans.QuantityDatasetEntity;
-import org.n52.series.db.beans.QuantityProfileDatasetEntity;
-import org.n52.series.db.beans.ReferencedDatasetEntity;
-import org.n52.series.db.beans.TextDatasetEntity;
-import org.n52.series.db.beans.TextProfileDatasetEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.ProfileDataset;
-import org.n52.series.db.beans.dataset.QuantityDataset;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
@@ -179,23 +162,14 @@ public class SeriesDAO extends AbstractSeriesDAO {
         return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
     }
 
+    @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
         return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
     }
 
     @Override
-    public DatasetEntity getOrInsertSeries(ObservationContext ctx, Data<?> observation, final Session session) throws OwsExceptionReport {
+    public DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation, final Session session) throws OwsExceptionReport {
         return getOrInsert(ctx, observation, session);
-    }
-
-    @Override
-    public Class<?> getSeriesClass() {
-        return DatasetEntity.class;
-    }
-
-    @Override
-    public Class<?> getNotInitializedDatasetClass() {
-        return NotInitializedDatasetEntity.class;
     }
 
     @Override
@@ -225,78 +199,78 @@ public class SeriesDAO extends AbstractSeriesDAO {
         }
 
         @Override
-        public Class<? extends BlobDatasetEntity> blobClass() {
-            return BlobDatasetEntity.class;
+        public Class<? extends DatasetEntity> blobClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends BooleanDatasetEntity> truthClass() {
-            return BooleanDatasetEntity.class;
+        public Class<? extends DatasetEntity> truthClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends CategoryDatasetEntity> categoryClass() {
-            return CategoryDatasetEntity.class;
+        public Class<? extends DatasetEntity> categoryClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends CountDatasetEntity> countClass() {
-            return CountDatasetEntity.class;
+        public Class<? extends DatasetEntity> countClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends GeometryDatasetEntity> geometryClass() {
-            return GeometryDatasetEntity.class;
+        public Class<? extends DatasetEntity> geometryClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends QuantityDataset> numericClass() {
-            return QuantityDatasetEntity.class;
+        public Class<? extends DatasetEntity> numericClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends DataArrayDatasetEntity> sweDataArrayClass() {
-            return DataArrayDatasetEntity.class;
+        public Class<? extends DatasetEntity> sweDataArrayClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends TextDatasetEntity> textClass() {
-            return TextDatasetEntity.class;
+        public Class<? extends DatasetEntity> textClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends ComplexDatasetEntity> complexClass() {
-            return ComplexDatasetEntity.class;
+        public Class<? extends DatasetEntity> complexClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends ProfileDatasetEntity> profileClass() {
-            return ProfileDatasetEntity.class;
+        public Class<? extends DatasetEntity> profileClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends ProfileDataset> textProfileClass() {
-            return TextProfileDatasetEntity.class;
+        public Class<? extends DatasetEntity> textProfileClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends ProfileDataset> categoryProfileClass() {
-            return CategoryProfileDatasetEntity.class;
+        public Class<? extends DatasetEntity> categoryProfileClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends ProfileDataset> quantityProfileClass() {
-            return QuantityProfileDatasetEntity.class;
+        public Class<? extends DatasetEntity> quantityProfileClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends ReferencedDatasetEntity> referenceClass() {
-            return ReferencedDatasetEntity.class;
+        public Class<? extends DatasetEntity> referenceClass() {
+            return datasetClass();
         }
 
         @Override
-        public Class<? extends NotInitializedDatasetEntity> notInitializedClass() {
-            return NotInitializedDatasetEntity.class;
+        public Class<? extends DatasetEntity> notInitializedClass() {
+            return datasetClass();
         }
 
         public static DefaultDatasetFactory getInstance() {

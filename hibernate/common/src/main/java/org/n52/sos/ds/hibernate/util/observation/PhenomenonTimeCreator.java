@@ -60,10 +60,10 @@ public class PhenomenonTimeCreator {
 
     private Time createFromObservation() {
         // create time element
-        final DateTime phenStartTime = new DateTime(hObservation.getPhenomenonTimeStart(), DateTimeZone.UTC);
+        final DateTime phenStartTime = new DateTime(hObservation.getSamplingTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
-        if (hObservation.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(hObservation.getPhenomenonTimeEnd(), DateTimeZone.UTC);
+        if (hObservation.getSamplingTimeEnd() != null) {
+            phenEndTime = new DateTime(hObservation.getSamplingTimeEnd(), DateTimeZone.UTC);
         } else {
             phenEndTime = phenStartTime;
         }

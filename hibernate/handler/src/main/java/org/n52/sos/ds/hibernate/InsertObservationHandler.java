@@ -52,8 +52,7 @@ import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.data.Data;
-import org.n52.series.db.beans.dataset.NotInitializedDataset;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.MultiObservationValues;
@@ -356,7 +355,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         public void clearConstellation() {
             Set<Cell<OmObservationConstellation, String, DatasetEntity>> removable = new HashSet<>();
             for (Cell<OmObservationConstellation, String, DatasetEntity> cell : this.obsConstOfferingHibernateObsConstTable.cellSet()) {
-                if (cell.getValue() instanceof NotInitializedDataset) {
+                if (cell.getValue().getDatasetType().equals(DatasetType.not_initialized)) {
                     removable.add(cell);
                 }
             }

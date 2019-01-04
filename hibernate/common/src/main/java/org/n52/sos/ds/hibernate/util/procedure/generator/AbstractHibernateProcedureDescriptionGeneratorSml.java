@@ -218,8 +218,8 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         if (CollectionHelper.isNotEmpty(observationConstellations)) {
             DatasetEntity oc = observationConstellations.iterator().next();
             String unit = queryUnit(oc, session);
-            if (oc.isSetObservationType()) {
-                final String observationType = oc.getObservationType().getFormat();
+            if (oc.isSetOmObservationType()) {
+                final String observationType = oc.getOmObservationType().getFormat();
                 if (null != observationType) {
                     switch (observationType) {
                         case OmConstants.OBS_TYPE_MEASUREMENT:

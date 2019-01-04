@@ -101,9 +101,13 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
 
             TimePeriod phenomenonTime = new TimePeriod();
             for (DatasetEntity dataset : datasets) {
-                OfferingEntity offering = dataset.getOffering();
-                    phenomenonTime.extendToContain(
-                            new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
+                if (dataset.getOffering().hasSamplingTimeStart() && dataset.getOffering().hasSamplingTimeEnd()) {
+                    phenomenonTime.extendToContain(new TimePeriod(dataset.getOffering().getSamplingTimeStart(),
+                            dataset.getOffering().getSamplingTimeEnd()));
+                } else if (dataset.getFirstValueAt() != null && dataset.getLastValueAt() != null) {
+                    phenomenonTime
+                            .extendToContain(new TimePeriod(dataset.getFirstValueAt(), dataset.getLastValueAt()));
+                }
             }
             getCache().setMinPhenomenonTimeForProcedure(identifier, phenomenonTime.getStart());
             getCache().setMaxPhenomenonTimeForProcedure(identifier, phenomenonTime.getEnd());

@@ -28,6 +28,7 @@
  */
 package custom;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,20 +38,20 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.Settings.Builder;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import basetest.TestNode;
 
 public class KibanaImpExp {
 
     @Test
-    public void exportSettings() throws JsonProcessingException {
-        Builder settingsBuilder = Settings.settingsBuilder();
+    public void exportSettings() throws IOException {
+        Builder settingsBuilder = Settings.builder();
         settingsBuilder.put("discovery.zen.ping.unicast.hosts", "localhost");
-        Node node = NodeBuilder.nodeBuilder().client(true).settings(settingsBuilder).clusterName("ogc-statistics-cluster").node();
+        Node node = new TestNode(settingsBuilder.build());
         Client c = node.client();
 
         KibanaConfigHolder holder = new KibanaConfigHolder();

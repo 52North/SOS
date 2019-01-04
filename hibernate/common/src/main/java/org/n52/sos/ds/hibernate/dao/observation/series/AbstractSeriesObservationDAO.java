@@ -55,6 +55,7 @@ import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -314,7 +315,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
                     HibernateHelper.getSqlString(criteria));
             Envelope envelope = new Envelope();
-            for (com.vividsolutions.jts.geom.Geometry geom : (List<com.vividsolutions.jts.geom.Geometry>) criteria.list()) {
+            for (Geometry geom : (List<Geometry>) criteria.list()) {
                 envelope.expandToInclude(geom.getEnvelopeInternal());
             }
             return envelope;

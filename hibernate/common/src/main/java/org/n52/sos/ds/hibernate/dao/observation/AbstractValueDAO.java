@@ -228,10 +228,14 @@ public abstract class AbstractValueDAO extends TimeCreator {
         Criteria criteria = session.createCriteria(clazz)
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
+        // FIXME check if this works
         if (!isIncludeChildObservableProperties()) {
-            criteria.add(Restrictions.eq(DataEntity.PROPERTY_CHILD, false));
+            criteria.add(Restrictions.isNull(DataEntity.PROPERTY_PARENT));
         } else {
-            criteria.add(Restrictions.eq(DataEntity.PROPERTY_PARENT, false));
+            criteria.add(Restrictions.or(Restrictions.isNotNull(DataEntity.PROPERTY_PARENT),
+                    Restrictions.and(Restrictions.isNull(DataEntity.PROPERTY_PARENT),
+                            Restrictions.sizeEq(DataEntity.PROPERTY_VALUE, 0))));
+//            criteria.add(Restrictions.isNotNull(DataEntity.PROPERTY_PARENT));
         }
         criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

@@ -48,16 +48,14 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.util.JTSConverter;
 
 import com.google.common.collect.Lists;
 
-
-public abstract class AbstractFeatureCreator<T extends FeatureEntity>
-        implements FeatureCreator<T> {
+public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements FeatureCreator<T> {
 
     public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS =
             "service.createFeatureGeometryFromSamplingGeometries";
+
     private FeatureVisitorContext context;
 
     public AbstractFeatureCreator(FeatureVisitorContext context) {
@@ -113,7 +111,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity>
                     abstractFeature.addName(new CodeType(name));
                 }
                 // choose always the description in the default locale
-                Optional<LocalizedString> description = i18n.getDescription().getLocalization(getContext().getDefaultLanguage());
+                Optional<LocalizedString> description =
+                        i18n.getDescription().getLocalization(getContext().getDefaultLanguage());
                 if (description.isPresent()) {
                     abstractFeature.setDescription(description.get().getText());
                 }
@@ -153,15 +152,17 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity>
      */
     protected Geometry createGeometryFrom(FeatureEntity feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
-            return getContext().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(JTSConverter.convert(feature.getGeometryEntity().getGeometry()));
+            return getContext().getGeometryHandler()
+                    .switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry());
         } else {
             if (!feature.isSetUrl() && getContext().getSession() != null) {
                 if (getContext().createFeatureGeometryFromSamplingGeometries()) {
                     int srid = getContext().getGeometryHandler().getStorageEPSG();
-                    if (getContext().getDaoFactory().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), getContext().getSession())
+                    if (getContext().getDaoFactory().getObservationDAO()
+                            .getSamplingGeometriesCount(feature.getIdentifier(), getContext().getSession())
                             .longValue() < 100) {
-                        List<Geometry> geometries =
-                                getContext().getDaoFactory().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), getContext().getSession());
+                        List<Geometry> geometries = getContext().getDaoFactory().getObservationDAO()
+                                .getSamplingGeometries(feature.getIdentifier(), getContext().getSession());
                         if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                             List<Coordinate> coordinates = Lists.newLinkedList();
                             Geometry lastGeoemtry = null;
@@ -169,7 +170,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity>
                                 if (geometry != null) {
                                     if ((lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
                                         coordinates.add(getContext().getGeometryHandler()
-                                                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)
+                                                .getCoordinate());
                                         lastGeoemtry = geometry;
                                     }
                                     if (geometry.getSRID() != srid) {

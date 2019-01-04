@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Collection;
 
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
-import org.n52.series.db.beans.ereporting.EReportingDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingNetworkEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.series.db.beans.ereporting.EReportingStationEntity;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
 
 public class EReportingObservationHelper {
 
-    public Collection<NamedValue<?>> createOmParameterForEReporting(EReportingDatasetEntity series) {
+    public Collection<NamedValue<?>> createOmParameterForEReporting(EReportingProfileDatasetEntity series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayList(createSamplingPointParameter(series));
         EReportingSamplingPointEntity samplingPoint = series.getSamplingPoint();
         if (samplingPoint.isSetStation()) {
@@ -59,7 +59,7 @@ public class EReportingObservationHelper {
         return namedValues;
     }
 
-    public Collection<NamedValue<?>> createSamplingPointParameter(EReportingDatasetEntity series) {
+    public Collection<NamedValue<?>> createSamplingPointParameter(EReportingProfileDatasetEntity series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayListWithCapacity(2);
         namedValues.add(getAssessmentType(series.getSamplingPoint()));
         namedValues.add(getAssesmentMethod(series.getSamplingPoint()));

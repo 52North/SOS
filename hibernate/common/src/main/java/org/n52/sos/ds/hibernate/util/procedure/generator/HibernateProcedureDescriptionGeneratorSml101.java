@@ -67,7 +67,7 @@ public class HibernateProcedureDescriptionGeneratorSml101 extends AbstractHibern
             .set(new HibernateProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
                  new HibernateProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
 
-    private String processMethodRulesDefinitionDescriptionTemplate;
+    private String processMethodRulesDefinitionDescriptionTemplate = "The procedure '%s' generates the following output(s): '%s'. The input(s) is/are unknown (this description is generated).";
 
     public HibernateProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler,
                                                         GeometryHandler geometryHandler,

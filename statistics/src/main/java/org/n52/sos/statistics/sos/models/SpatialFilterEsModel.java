@@ -112,7 +112,8 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         if (points.length != 1) {
             throw new IllegalArgumentException("Invalid number of coordinates in geometry. It should be a point. Got " + points.length);
         }
-        PointBuilder point = new PointBuilder(points[0].x, points[0].y);
+        PointBuilder point = PointBuilder.newPoint(points[0].x, points[0].y);
+//        PointBuilder point = new PointBuilder(points[0].x, points[0].y);
         createSpatialFilter(filter, point);
     }
 
@@ -123,8 +124,12 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
      * @param filter
      */
     private void createBbox(SpatialFilter filter) {
-        PolygonBuilder polygon =
-                new PolygonBuilder(new CoordinatesBuilder().coordinates(filter.getGeometry().getCoordinates()));
+        PolygonBuilder polygon = PolygonBuilder.newPolygon();
+        for (Coordinate coord : filter.getGeometry().getCoordinates()) {
+            polygon.point(coord.getX(), coord.getY());
+        }
+//        PolygonBuilder polygon =
+//                new PolygonBuilder(new CoordinatesBuilder().coordinates(filter.getGeometry().getCoordinates()));
         createSpatialFilter(filter, polygon);
 
     }

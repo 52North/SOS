@@ -35,9 +35,9 @@ public class TestNode extends Node {
     public TestNode(Settings settings) {
         super(settings);
     }
-
-    @Override
-    protected void registerDerivedNodeNameWithLogger(String nodeName) {
-        // TODO Auto-generated method stub
-    }
+//
+//    @Override
+//    protected void registerDerivedNodeNameWithLogger(String nodeName) {
+//        // TODO Auto-generated method stub
+//    }
 }

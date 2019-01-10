@@ -85,7 +85,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml101
                                                                    getDaoFactory(),
                                                                    getI18NDAORepository(),
                                                                    getCacheController());
-        getSettingsService().configureOnce(key);
+        getSettingsService().configureOnce(generator);
         return generator;
     }
 

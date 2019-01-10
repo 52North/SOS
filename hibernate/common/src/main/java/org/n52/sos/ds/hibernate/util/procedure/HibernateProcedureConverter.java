@@ -52,6 +52,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
@@ -201,7 +202,10 @@ public class HibernateProcedureConverter
     }
 
     private String getFormat(HasProcedureDescriptionFormat hpdf) {
-        return hpdf.getFormat().getFormat();
+        if (hpdf.getFormat() != null && hpdf.getFormat().isSetFormat()) {
+            return hpdf.getFormat().getFormat();
+        }
+        return null;
     }
 
     /**
@@ -226,7 +230,7 @@ public class HibernateProcedureConverter
     boolean checkOutputFormatWithDescriptionFormat(String identifier, HasProcedureDescriptionFormat procedure,
             String requestedFormat, String descriptionFormat)
             throws OwsExceptionReport {
-        if ((procedure instanceof HasXml  && ((HasXml)procedure).isSetXml()) || checkForDescriptionFile(procedure)) {
+        if ((procedure instanceof HasXml && descriptionFormat != null && ((HasXml)procedure).isSetXml()) || checkForDescriptionFile(procedure)) {
             if (requestedFormat.equalsIgnoreCase(descriptionFormat)
                     || existConverter(descriptionFormat, requestedFormat)) {
                 return true;

@@ -810,14 +810,23 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected void addMappingFileDirectories(Map<String, Object> settings, Properties p) {
         StringBuilder builder = new StringBuilder();
         for (String path : getDatabaseConceptMappingDirectory(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(path);
+            if (builder.length() != 0) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR);
+            }
+            builder.append(path);
         }
         for (String path : getDatabaseExtensionMappingDirectory(settings)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(path);
+            if (builder.length() != 0) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR);
+            }
+            builder.append(path);
         }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(featureConceptMappingDirectory);
+            if (builder.length() != 0) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR);
+            }
+            builder.append(featureConceptMappingDirectory);
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }

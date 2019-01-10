@@ -106,7 +106,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     @Override
     public QuantityValue visit(QuantityDataEntity o) {
-        QuantityValue v = new QuantityValue(o.getValue().doubleValue());
+        QuantityValue v = new QuantityValue(o.hasValue() ? o.getValue().doubleValue() : null);
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
@@ -158,7 +158,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     @Override
     public GeometryValue visit(GeometryDataEntity o) throws OwsExceptionReport {
-        GeometryValue v = new GeometryValue(o.getValue().getGeometry());
+        GeometryValue v = new GeometryValue(o.hasValue() ? o.getValue().getGeometry() : null);
         if (o.getDataset().hasUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }

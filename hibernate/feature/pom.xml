@@ -19,7 +19,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>handler</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
         </dependency>

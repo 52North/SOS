@@ -65,6 +65,7 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
@@ -281,7 +282,9 @@ public abstract class AbstractOmObservationCreator {
         // getDaoFactory().getProcedureDAO().getProcedureForIdentifier(identifier,
         // getSession());
         String pdf = !Strings.isNullOrEmpty(this.pdf) ? this.pdf
-                : hProcedure.getFormat().getFormat();
+                : hProcedure.getFormat() != null && hProcedure.getFormat().isSetFormat()
+                        ? hProcedure.getFormat().getFormat()
+                        : SensorML20Constants.NS_SML_20;
         if (getActiveProfile().isEncodeProcedureInObservation()) {
             return getCreatorContext().getProcedureConverter().createSosProcedureDescription(hProcedure, pdf,
                     getVersion(), i18n, getSession());

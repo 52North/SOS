@@ -38,10 +38,11 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.DatabaseQueryHelper;
 import org.n52.sos.ds.hibernate.util.FeatureParameterAdder;
 import org.n52.sos.util.SosHelper;
 
-public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> extends AbstractFeatureCreator<T> {
+public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> extends AbstractFeatureCreator<T> implements DatabaseQueryHelper{
 
         public AbstractFeatureOfInerestCreator(FeatureVisitorContext context) {
         super(context);
@@ -52,12 +53,12 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> e
             if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(f.getIdentifier(), getContext().getVersion())) {
                 identifier.setValue(null);
             }
-            final AbstractFeature absFeat = getFeatureType(identifier);
+            final AbstractFeature absFeat = createFeature(identifier);
             addNameAndDescription(getContext().getRequestedLanguage(), f, absFeat);
             if (absFeat instanceof AbstractSamplingFeature) {
                 AbstractSamplingFeature absSampFeat = (AbstractSamplingFeature) absFeat;
                 absSampFeat.setGeometry(createGeometryFrom(f));
-                absSampFeat.setFeatureType(f.getFeatureType().getFormat());
+                absSampFeat.setFeatureType(getFeatureTypes(f));
                 absSampFeat.setUrl(f.getUrl());
                 if (f.isSetXml()) {
                     absSampFeat.setXml(f.getXml());
@@ -75,9 +76,9 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> e
             return absFeat;
         }
 
+        protected abstract AbstractFeature createFeature(CodeWithAuthority identifier);
+
         protected void addParameter(AbstractSamplingFeature absSampFeat, FeatureEntity f) throws OwsExceptionReport {
             new FeatureParameterAdder(absSampFeat, f).add();
         }
-
-        protected abstract AbstractFeature getFeatureType(CodeWithAuthority identifier);
 }

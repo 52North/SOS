@@ -240,7 +240,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                     for (OfferingEntity offering : offerings) {
                         Collection<ProcedureEntity> procedures = getProceduresForOfferingEntity(offering, session);
                         if (!procedures.isEmpty()) {
-                            Collection<FormatEntity> observationTypes = offering.getObservationTypes();
+                            Collection<String> observationTypes = getObservationTypes(offering);
                             if (observationTypes != null && !observationTypes.isEmpty()) {
                                 // FIXME why a loop? We are in SOS 2.0 context -> offering 1
                                 // <-> 1 procedure!
@@ -249,7 +249,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                                     SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
                                     // insert observationTypes
-                                    sosObservationOffering.setObservationTypes(toStringSet(observationTypes));
+                                    sosObservationOffering.setObservationTypes(observationTypes);
 
                                     if (offering.isSetGeometry()) {
                                         sosObservationOffering.setObservedArea(processObservedArea(offering.getGeometry()));
@@ -402,11 +402,18 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         I18NHelper.addOfferingDescription(sosOffering, getRequestedLocale(request), Locale.ROOT, getCache());
     }
 
+    private Collection<String> getObservationTypes(OfferingEntity offering) {
+        if (offering.hasObservationTypes()) {
+            return toStringSet(offering.getObservationTypes());
+        } else {
+            return getCache().getAllObservationTypesForOffering(offering.getIdentifier());
+        }
+    }
+
     private Collection<String> getObservationTypes(Entry<OfferingEntity, Set<OfferingEntity>> entry) {
         Set<String> observationTypes = new HashSet<>();
         entry.getValue().stream()
-                .map(OfferingEntity::getIdentifier)
-                .map(this::getObservationTypes)
+                .map(v -> getObservationTypes(v))
                 .forEach(observationTypes::addAll);
         observationTypes.addAll(getObservationTypes(entry.getKey().getIdentifier()));
         return observationTypes;
@@ -453,13 +460,21 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
     protected void setUpFeatureOfInterestTypesForOffering(Collection<OfferingEntity> offerings,
                                                           SosObservationOffering sosOffering) {
-        sosOffering.setFeatureOfInterestTypes(offerings.stream().map(OfferingEntity::getFeatureTypes)
-                .flatMap(Set::stream).map(FormatEntity::getFormat).collect(toSet()));
+        sosOffering.setFeatureOfInterestTypes(offerings.stream().map(o -> getFeatureOfInterstTypesForOffering(o))
+                .flatMap(Set::stream).collect(toSet()));
     }
 
     protected void setUpFeatureOfInterestTypesForOffering(OfferingEntity offering,
-                                                          SosObservationOffering sosOffering) {
-        sosOffering.setFeatureOfInterestTypes(toStringSet(offering.getFeatureTypes()));
+            SosObservationOffering sosOffering) {
+        sosOffering.setFeatureOfInterestTypes(getFeatureOfInterstTypesForOffering(offering));
+    }
+
+    private Set<String> getFeatureOfInterstTypesForOffering(OfferingEntity offering) {
+        if (offering.hasFeatureTypes()) {
+            return toStringSet(offering.getFeatureTypes());
+        } else {
+            return getCache().getAllowedFeatureOfInterestTypesForOffering(offering.getIdentifier());
+        }
     }
 
     private void setUpRelatedFeaturesForOffering(OfferingEntity offering, SosObservationOffering sosObservationOffering)

@@ -58,7 +58,7 @@ public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<Mon
     }
 
     @Override
-    protected AbstractFeature getFeatureType(CodeWithAuthority identifier) {
+    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
         return new WmlMonitoringPoint(identifier);
     }
 

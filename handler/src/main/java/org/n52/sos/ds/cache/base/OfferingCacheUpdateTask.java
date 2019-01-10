@@ -48,11 +48,13 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.ApiQueryHelper;
+import org.n52.sos.ds.DatabaseQueryHelper;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
@@ -67,7 +69,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate implements ApiQueryHelper {
+public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate implements ApiQueryHelper, DatabaseQueryHelper {
 
 //    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String identifier;
@@ -129,8 +131,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().setObservablePropertiesForOffering(identifier, getObservablePropertyIdentifier(session));
 
         // Observation types
-        getCache().setObservationTypesForOffering(identifier, getObservationTypes());
-        getCache().setAllowedObservationTypeForOffering(identifier, toStringSet(offering.getObservationTypes()));
+        getCache().setObservationTypesForOffering(identifier, getObservationTypes(datasets));
+        if (offering.hasObservationTypes()) {
+            getCache().setAllowedObservationTypeForOffering(identifier, toStringSet(offering.getObservationTypes()));
+        }
 
         // Related features
         if (offering.hasRelatedFeatures()) {
@@ -139,8 +143,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         // Features of Interest
         getCache().setFeaturesOfInterestForOffering(identifier, DatasourceCacheUpdateHelper.getAllFeatureIdentifiersFromDatasets(datasets));
-        getCache().setFeatureOfInterestTypesForOffering(identifier, getFeatureTypes());
-        getCache().setAllowedFeatureOfInterestTypeForOffering(identifier, toStringSet(offering.getFeatureTypes()));
+        getCache().setFeatureOfInterestTypesForOffering(identifier, getFeatureTypes(datasets));
+        if (offering.hasFeatureTypes()) {
+            getCache().setAllowedFeatureOfInterestTypeForOffering(identifier, toStringSet(offering.getFeatureTypes()));
+        }
 
         // Spatial Envelope
         getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
@@ -272,17 +278,24 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return relatedFeatures.stream().map(rf -> rf.getFeature().getIdentifier()).collect(Collectors.toSet());
     }
 
-    private Collection<String> getObservationTypes() {
-        // TODO get OmObservationTypes from Observation-/ValueType
-        return datasets.stream().filter(d -> d.isSetOmObservationtype()).map(d -> d.getOmObservationType().getFormat())
-                .collect(Collectors.toSet());
-    }
-
-    private Collection<String> getFeatureTypes() {
-        // TODO get FeatureTypes from Geometries
-        return datasets.stream().filter(d -> d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
-                .map(d -> d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
-    }
+//    private Collection<String> getObservationTypes() {
+//        Set<String> observationTypes = datasets.stream().filter(d -> d.isSetOmObservationtype()).map(d -> d.getOmObservationType().getFormat())
+//                .collect(Collectors.toSet());
+//        if (!datasets.isEmpty() && observationTypes.isEmpty()) {
+//            datasets.stream().filter(d -> !d.getValueType().equals(ValueType.not_initialized)).map(d -> d.getOmObservationType().getFormat())
+//            .collect(Collectors.toSet());
+//        }
+//        return getObservationTypes();
+//    }
+//
+//    private Collection<String> getFeatureTypes() {
+//        Set<String> featureTypes = datasets.stream().filter(d -> d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
+//                .map(d -> d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
+//        if (!datasets.isEmpty() && featureTypes.isEmpty()) {
+//
+//        }
+//        return featureTypes;
+//    }
 
     @Override
     public void execute() {

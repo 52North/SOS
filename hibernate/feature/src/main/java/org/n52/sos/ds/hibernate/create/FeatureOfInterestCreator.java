@@ -53,7 +53,7 @@ public class FeatureOfInterestCreator extends AbstractFeatureOfInerestCreator<Fe
     }
 
     @Override
-    protected AbstractFeature getFeatureType(CodeWithAuthority identifier) {
+    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
         return new SamplingFeature(identifier);
     }
 

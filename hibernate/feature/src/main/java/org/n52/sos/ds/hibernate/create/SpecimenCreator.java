@@ -122,7 +122,7 @@ public class SpecimenCreator extends AbstractFeatureOfInerestCreator<SpecimenEnt
     }
 
     @Override
-    protected AbstractFeature getFeatureType(CodeWithAuthority identifier) {
+    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
         return new SfSpecimen(identifier);
     }
 

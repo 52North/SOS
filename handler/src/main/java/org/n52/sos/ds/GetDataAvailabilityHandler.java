@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,8 +43,8 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -53,6 +54,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
@@ -67,7 +69,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler implements ApiQueryHelper {
+public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandler implements ApiQueryHelper, DatabaseQueryHelper {
 
     private HibernateSessionStore sessionStore;
     private Optional<GetDataAvailabilityDao> dao = Optional.empty();
@@ -391,20 +393,33 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
 
     private FormatDescriptor getFormatDescriptor(GDARequestContext context, DatasetEntity entity) {
         return new FormatDescriptor(
-                new ProcedureDescriptionFormatDescriptor(
-                        entity.getProcedure().getFormat().getFormat()),
-                getObservationFormatDescriptors(entity.getOffering(), context));
+                getProcedureDescriptionFormatDescriptor(entity.getProcedure()),
+                getObservationFormatDescriptors(entity, context));
     }
 
-    private Set<ObservationFormatDescriptor> getObservationFormatDescriptors(OfferingEntity entity, GDARequestContext context) {
+    private ProcedureDescriptionFormatDescriptor getProcedureDescriptionFormatDescriptor(ProcedureEntity procedure) {
+        String format = SensorML20Constants.NS_SML_20;
+        if (procedure.getFormat() != null && procedure.getFormat().isSetFormat()) {
+            format = procedure.getFormat().getFormat();
+        }
+        return new ProcedureDescriptionFormatDescriptor(format);
+    }
+
+    private Set<ObservationFormatDescriptor> getObservationFormatDescriptors(DatasetEntity entity, GDARequestContext context) {
         Map<String, Set<String>> responsFormatObservationTypesMap = Maps.newHashMap();
-        for (FormatEntity observationType : entity.getObservationTypes()) {
-            Set<String> responseFormats = getResponseFormatsForObservationType(observationType.getFormat(), context.getRequest().getService(), context.getRequest().getVersion());
+        Set<String> observationTypes = new HashSet<>();
+        if (entity.isSetOffering() && entity.getOffering().hasObservationTypes()) {
+            observationTypes.addAll(toStringSet(entity.getOffering().getObservationTypes()));
+        } else {
+            observationTypes.add(getObservationType(entity));
+        }
+        for (String observationType : observationTypes) {
+            Set<String> responseFormats = getResponseFormatsForObservationType(observationType, context.getRequest().getService(), context.getRequest().getVersion());
             for (String responseFormat : responseFormats) {
                 if (responsFormatObservationTypesMap.containsKey(responseFormat)) {
-                    responsFormatObservationTypesMap.get(responseFormat).add(observationType.getFormat());
+                    responsFormatObservationTypesMap.get(responseFormat).add(observationType);
                 } else {
-                    responsFormatObservationTypesMap.put(responseFormat, Sets.newHashSet(observationType.getFormat()));
+                    responsFormatObservationTypesMap.put(responseFormat, Sets.newHashSet(observationType));
                 }
             }
         }

@@ -5,7 +5,7 @@
 
     <!-- Datasource implementations from hibernate/datasource/sqlserver -->
     <bean class="org.n52.sos.ds.datasource.SqlServerDatasource"/>
-    <bean class="org.n52.sos.ds.datasource.SqlServerCoreDatasource"/>
+    <!-- <bean class="org.n52.sos.ds.datasource.SqlServerCoreDatasource"/> -->
     <bean class="org.n52.sos.ds.datasource.SqlServerCustomDatasource"/>
 
 </beans>

@@ -92,12 +92,9 @@ public class ProfileGeneratorSplitter {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
-                QuantityValue levelStart = getLevelStart(observation.getParameters());
-                QuantityValue levelEnd = getLevelEnd(observation.getParameters());
-                if (observation.hasVerticalFrom() || observation.hasVerticalTo()) {
-                    levelStart = getLevelStart(observation.getVerticalFrom(), entity.getVerticalFromName(), entity.getVerticalUnit());
-                    levelEnd = getLevelEnd(observation.getVerticalTo(), entity.getVerticalToName(), entity.getVerticalUnit());
-                } else if (observation.hasParameters() && observation.hasValue()) {
+                QuantityValue levelStart = observation.hasVerticalFrom() ? getLevelStart(observation.getVerticalFrom(), entity.getVerticalFromName(), entity.getVerticalUnit()) : null;
+                QuantityValue levelEnd =  observation.hasVerticalTo() ? getLevelEnd(observation.getVerticalTo(), entity.getVerticalToName(), entity.getVerticalUnit()) : null;
+                if (levelStart == null && levelEnd == null && observation.hasParameters()) {
                     levelStart = getLevelStart(observation.getParameters());
                     levelEnd = getLevelEnd(observation.getParameters());
                 }

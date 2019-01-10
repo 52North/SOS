@@ -52,6 +52,7 @@ public class GeneratedDescriptionCreationStrategy
             throws OwsExceptionReport {
         SosProcedureDescription<?> desc =
                 getFactory(descriptionFormat, ctx).generateProcedureDescription(p, i18n, s);
+        desc.setDescriptionFormat(descriptionFormat);
         return desc;
     }
 

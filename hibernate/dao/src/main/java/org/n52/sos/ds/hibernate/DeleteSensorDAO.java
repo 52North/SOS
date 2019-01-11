@@ -33,6 +33,8 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -119,6 +121,15 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             procedure.setDeleted(deleteFlag);
             session.saveOrUpdate(procedure);
             session.flush();
+            // set valid procdure description end time to current time
+            ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO();
+            DateTime currentTime = new DateTime(DateTimeZone.UTC);
+            for (ValidProcedureTime vpt : validProcedureTimeDAO.getValidProcedureTimes(procedure, null, null, session)) {
+                if (vpt.getEndTime() == null) {
+                    vpt.setEndTime(currentTime.toDate());
+                    validProcedureTimeDAO.updateValidProcedureTime(vpt, session);
+                }
+            }
             // set deleted flag in ObservationConstellation table to true
             if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 new ObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,

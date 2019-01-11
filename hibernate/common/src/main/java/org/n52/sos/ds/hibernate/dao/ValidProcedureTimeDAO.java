@@ -170,8 +170,10 @@ public class ValidProcedureTimeDAO {
             UnsupportedOperatorException {
         Criteria criteria = session.createCriteria(ValidProcedureTime.class);
         criteria.add(Restrictions.eq(ValidProcedureTime.PROCEDURE, procedure));
-        criteria.createCriteria(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT).add(
-                Restrictions.eq(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormat));
+        if (procedureDescriptionFormat != null && !procedureDescriptionFormat.isEmpty()) {
+            criteria.createCriteria(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT).add(
+                    Restrictions.eq(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormat));
+        }
 
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         // if validTime == null or validTimeCriterion == null, query latest

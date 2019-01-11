@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -626,6 +627,18 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         session.flush();
         session.refresh(offering);
         return offering;
+    }
+
+    public void updateParentOfferings(Set<String> parentOfferings, Offering hOffering, Session session) {
+        for (String identifier : parentOfferings) {
+            Offering offering = getOfferingForIdentifier(identifier, session);
+            if (!offering.getChilds().contains(hOffering)) {
+                offering.addChild(hOffering);
+                session.saveOrUpdate(offering);
+                session.flush();
+                session.refresh(offering);
+            }
+        }
     }
 
     /**

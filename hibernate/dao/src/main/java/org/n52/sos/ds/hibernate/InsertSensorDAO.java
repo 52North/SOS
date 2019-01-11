@@ -30,9 +30,11 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -178,6 +180,8 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                         final ObservationConstellationDAO observationConstellationDAO =
                                 new ObservationConstellationDAO();
                         final OfferingDAO offeringDAO = new OfferingDAO();
+                        Set<String> allParentOfferings = getAllParentOfferings(hProcedure);
+                        Set<String> parentOfferings = getParentOfferings(hProcedure);
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
                             final List<RelatedFeature> hRelatedFeatures = new LinkedList<>();
                             if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
@@ -190,9 +194,18 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                             relatedFeature.getFeature(), relatedFeatureRoles, session));
                                 }
                             }
+                            
                             final Offering hOffering =
                                     offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering, hRelatedFeatures,
                                             observationTypes, featureOfInterestTypes, session);
+                            
+                            // add offering to parent offering if this procedure is a child/component
+                            if (!parentOfferings.isEmpty() && !allParentOfferings.isEmpty() && hProcedure.hasParents()
+                                    && !allParentOfferings.contains(assignedOffering.getIdentifier())
+                                    && !parentOfferings.contains(assignedOffering.getIdentifier())) {
+                                offeringDAO.updateParentOfferings(parentOfferings, hOffering, session);
+                            }
+                            
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
                                 observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
                                         hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
@@ -393,6 +406,27 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
         if (!HibernateHelper.isEntitySupported(TProcedure.class)) {
             throw new NoApplicableCodeException().withMessage("The transactional database profile is not activated!");
         }
+    }
+
+    private Set<String> getAllParentOfferings(Procedure hProcedure) {
+        Set<String> parentOfferings = new HashSet<>();
+        if (hProcedure.hasParents()) {
+            for (Procedure proc : hProcedure.getParents()) {
+                parentOfferings.addAll(getCache().getOfferingsForProcedure(proc.getIdentifier()));
+                parentOfferings.addAll(getParentOfferings(hProcedure));
+            }
+        }
+        return parentOfferings;
+    }
+    
+    private Set<String> getParentOfferings(Procedure hProcedure) {
+        Set<String> parentOfferings = new HashSet<>();
+        if (hProcedure.hasParents()) {
+            for (Procedure proc : hProcedure.getParents()) {
+                parentOfferings.addAll(getCache().getOfferingsForProcedure(proc.getIdentifier()));
+            }
+        }
+        return parentOfferings;
     }
 
     @Override

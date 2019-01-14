@@ -32,10 +32,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import javax.inject.Inject;
@@ -70,7 +72,6 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -104,7 +105,6 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.util.GeometryHandler;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -174,6 +174,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                         Map<String, UnitEntity> hUnits = getOrInsertNewUnits(hObservableProperties, request.getProcedureDescription(), session);
                         final AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
                         final OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
+                        Set<String> allParentOfferings = getAllParentOfferings(hProcedure);
+                        Set<String> parentOfferings = getParentOfferings(hProcedure);
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
                             final List<RelatedFeatureEntity> hRelatedFeatures = new LinkedList<RelatedFeatureEntity>();
                             if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
@@ -187,6 +189,14 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                     offeringDAO.getAndUpdateOrInsert(new SosOffering(assignedOffering.getIdentifier(),
                                             assignedOffering.getOfferingName()), hRelatedFeatures, observationTypes,
                                             featureOfInterestTypes, session);
+
+                            // add offering to parent offering if this procedure is a child/component
+                            if (!parentOfferings.isEmpty() && !allParentOfferings.isEmpty() && hProcedure.hasParents()
+                                    && !allParentOfferings.contains(assignedOffering.getIdentifier())
+                                    && !parentOfferings.contains(assignedOffering.getIdentifier())) {
+                                offeringDAO.updateParentOfferings(parentOfferings, hOffering, session);
+                            }
+
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
                                 CategoryEntity hCategory = daoFactory.getObservablePropertyDAO().getOrInsertCategory(hObservableProperty, session);
                                 ObservationContext ctx =
@@ -438,6 +448,28 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             }
         }
     }
+
+    private Set<String> getAllParentOfferings(ProcedureEntity hProcedure) {
+        Set<String> parentOfferings = new HashSet<>();
+        if (hProcedure.hasParents()) {
+            for (ProcedureEntity proc : hProcedure.getParents()) {
+                parentOfferings.addAll(getCache().getOfferingsForProcedure(proc.getIdentifier()));
+                parentOfferings.addAll(getParentOfferings(hProcedure));
+            }
+        }
+        return parentOfferings;
+    }
+
+    private Set<String> getParentOfferings(ProcedureEntity hProcedure) {
+        Set<String> parentOfferings = new HashSet<>();
+        if (hProcedure.hasParents()) {
+            for (ProcedureEntity proc : hProcedure.getParents()) {
+                parentOfferings.addAll(getCache().getOfferingsForProcedure(proc.getIdentifier()));
+            }
+        }
+        return parentOfferings;
+    }
+
 
     private GeometryHandler getGeometryHandler() {
         return daoFactory.getGeometryHandler();

@@ -44,9 +44,6 @@ import java.util.function.Function;
 
 import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Envelope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.function.Suppliers;
 import org.n52.janmayen.i18n.LocalizedString;
@@ -57,6 +54,8 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
@@ -1106,8 +1105,10 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
     public void removeFeaturesOfInterestForOffering(String offering) {
         CacheValidation.notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing featuresOfInterest for offering {}", offering);
-        for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
-            removeFeatureOfInterestForOffering(offering, featureOfInterest);
+        if (featuresOfInterestForOfferings.containsKey(offering)) {
+            for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
+                this.offeringsForFeaturesOfInterest.remove(featureOfInterest, offering);
+            }
         }
         this.featuresOfInterestForOfferings.remove(offering);
     }

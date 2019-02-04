@@ -48,10 +48,13 @@ import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  *
@@ -152,6 +155,18 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 getCache().setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
                 getCache().setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
                 getCache().setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
+                if (ote.isSetEnvelope()) {
+                    try {
+                        Geometry geom = GeometryHandler.getInstance()
+                                .switchCoordinateAxisFromToDatasourceIfNeeded(ote.getEnvelope());
+                        SosEnvelope sosEnvelope = new SosEnvelope(geom.getEnvelopeInternal(),
+                                GeometryHandler.getInstance().getStorageEPSG());
+                        getCache().setSpatialFilteringProfileEnvelopeForOffering(offeringId, sosEnvelope);
+                    } catch (OwsExceptionReport e) {
+                        LOGGER.error("Error while processing offering spatial filtering envelope!", e);
+                        getErrors().add(e);
+                    }
+                }
             }
         }
         
@@ -173,7 +188,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
-                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
+                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), false));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
@@ -185,13 +200,13 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
      * @return <code>true</code>, if the observation table contains samplingGeometries with values
      */
     private boolean checkForSamplingGeometry() {
-        try {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            return observationDAO.containsSamplingGeometries(getSession());
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while getting observation DAO class from factory!", e);
-            getErrors().add(e);
-        }
+//        try {
+//            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+//            return observationDAO.containsSamplingGeometries(getSession());
+//        } catch (OwsExceptionReport e) {
+//            LOGGER.error("Error while getting observation DAO class from factory!", e);
+//            getErrors().add(e);
+//        }
         return false;
     }
 

@@ -40,6 +40,7 @@ import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
@@ -114,14 +115,14 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
             throws OwsExceptionReport {
         String identifier = procedure.getIdentifier();
 
-        addNameAndDescription(procedure, feature);
+        addNameAndDescription(procedure, feature, session);
 
         feature.setIdentifier(identifier);
 
     }
 
-    protected void addNameAndDescription(Procedure procedure, AbstractFeature feature) throws OwsExceptionReport {
-        I18NDAO<I18NProcedureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+    protected void addNameAndDescription(Procedure procedure, AbstractFeature feature, Session session) throws OwsExceptionReport {
+        HibernateI18NDAO<I18NProcedureMetadata> i18nDAO = (HibernateI18NDAO) I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
         Locale requestedLocale = getLocale();
         if (i18nDAO == null) {
             // no locale support
@@ -131,7 +132,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
         } else {
             if (requestedLocale != null) {
                 // specific locale was requested
-                I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
+                I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale, session);
                 Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                 if (name.isPresent()) {
                     feature.addName(name.get().asCodeType());
@@ -145,10 +146,10 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
                 final I18NProcedureMetadata i18n;
                 if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
                     // load all names
-                    i18n = i18nDAO.getMetadata(procedure.getIdentifier());
+                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), session);
                 } else {
                     // load only name in default locale
-                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale);
+                    i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale, session);
                 }
                 for (LocalizedString name : i18n.getName()) {
                     // either all or default only

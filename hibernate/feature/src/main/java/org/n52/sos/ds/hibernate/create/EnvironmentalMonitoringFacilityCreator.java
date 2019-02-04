@@ -83,7 +83,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
             final org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature =
                     new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
                             getMediaMonitored(emf.getMediaMonitored()));
-            addNameAndDescription(i18n, emf, emFeature, featureDAO);
+            addNameAndDescription(i18n, emf, emFeature, featureDAO, s);
             emFeature.setGeometry(createGeometry(emf, s));
             // add measurementRegime, mobile, operationalActivityPeriod(Set)
             emFeature.setMeasurementRegime(new ReferenceType(emf.getMeasurementRegime()));

@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -162,10 +163,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         final MultilingualString name;
         final MultilingualString description;
 
-        I18NDAO<I18NOfferingMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
+        HibernateI18NDAO<I18NOfferingMetadata> dao = (HibernateI18NDAO) I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
 
         if (dao != null) {
-            I18NOfferingMetadata metadata = dao.getMetadata(offeringId);
+            I18NOfferingMetadata metadata = dao.getMetadata(offeringId, session);
             name = metadata.getName();
             description = metadata.getDescription();
         } else {

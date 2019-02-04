@@ -11,15 +11,19 @@ RELEASE NOTES
  
   --- New features ---
 
-      * 
+      * Support for Category insertion (used by the Sensor Web REST-API): 
+        Supports the creation of category table and relation in the series table which is selectable during the installation.
+      * Create offering hierarchy when the inserted procedure is attached to a parent procedure.
   
   --- Changes ---
   
-      * 
+      * Performance improvement for cache update when samplingGeometries are defined.
+      * Do no use a new session for getting i18n data when a session is still in use.
   
   --- Fixed issues ---
 
-      * 
+      * NPE when removing featureOfInterest for offerings in the cache.
+      * Set end time in validproceduredescription table when deleting the procedure.
 
 
     Release 52n-sensorweb-sos-4.4.4

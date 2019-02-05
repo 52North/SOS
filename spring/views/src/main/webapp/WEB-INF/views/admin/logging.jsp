@@ -30,7 +30,7 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ page import="org.n52.sos.web.admin.AbstractLoggingConfigurator.Level"%>
+<%@ page import="org.n52.sos.service.AbstractLoggingConfigurator.Level"%>
 <jsp:include page="../common/header.jsp">
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>

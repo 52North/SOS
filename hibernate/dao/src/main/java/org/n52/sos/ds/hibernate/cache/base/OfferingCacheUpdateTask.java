@@ -102,16 +102,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @param observationConstellationInfos
      *            Observation Constellation info collection, passed in from
      *            parent update if supported
-     * @param hasSamplingGeometry
-     *            Indicator to execute or not the extent query for the Spatial
-     *            Filtering Profile
      */
     public OfferingCacheUpdateTask(Offering offering,
-            Collection<ObservationConstellationInfo> observationConstellationInfos, boolean hasSamplingGeometry) {
+            Collection<ObservationConstellationInfo> observationConstellationInfos) {
         this.offering = offering;
         this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
-        this.hasSamplingGeometry = hasSamplingGeometry;
     }
 
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
@@ -154,8 +150,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Spatial Envelope
         getCache().setEnvelopeForOffering(offeringId,
                 getEnvelopeForOffering(featureOfInterestIdentifiers, session));
-        // Spatial Filtering Profile Spatial Envelope
-        addSpatialFilteringProfileEnvelopeForOffering(offeringId, offeringId, session);
     }
 
     protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session)
@@ -354,6 +348,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @throws OwsExceptionReport
      *             If an error occurs
      */
+    @Deprecated
     protected void addSpatialFilteringProfileEnvelopeForOffering(String offeringId, String offeringID,
             Session session) throws OwsExceptionReport {
         if (hasSamplingGeometry) {

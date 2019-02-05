@@ -36,10 +36,8 @@ import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -183,9 +181,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
-        boolean hasSamplingGeometry = checkForSamplingGeometry();
         for (Offering offering : getOfferingsToUpdate()){
-            
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
                 offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
                         getOfferingObservationConstellationInfo().get(offering.getIdentifier()), false));
@@ -194,22 +190,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }    
     
-    /**
-     * Check if the observation table contains samplingGeometries with values.
-     * 
-     * @return <code>true</code>, if the observation table contains samplingGeometries with values
-     */
-    private boolean checkForSamplingGeometry() {
-//        try {
-//            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-//            return observationDAO.containsSamplingGeometries(getSession());
-//        } catch (OwsExceptionReport e) {
-//            LOGGER.error("Error while getting observation DAO class from factory!", e);
-//            getErrors().add(e);
-//        }
-        return false;
-    }
-
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
      // TODO support for Offering Hierarchy!!!
         return true;

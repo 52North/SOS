@@ -68,7 +68,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hibernate.spatial.version>4.3.2-52N</hibernate.spatial.version>
-        <c3p0.version>0.9.5.2</c3p0.version>
+        <c3p0.version>0.9.5.3</c3p0.version>
         <sqlite.version>3.23.1</sqlite.version>
         <geotools.version>14.0</geotools.version>
         <jackson.version>2.9.7</jackson.version>

@@ -628,7 +628,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (checkIfExtensionDirectoryExists()) {
             StringBuilder builder =
                     new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            if (DatabaseConcept.SERIES_CONCEPT.equals(getDatabaseConcept(settings))) {
+            if (DatabaseConcept.SERIES_CONCEPT.equals(getDatabaseConcept(settings))
+                    || DatabaseConcept.EREPORTING_CONCEPT.equals(getDatabaseConcept(settings))) {
                 Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
                 if (t != null && t) {
                     builder.append(SessionFactoryProvider.PATH_SEPERATOR)

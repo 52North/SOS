@@ -78,36 +78,33 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
 
     @Override
     protected void getNextScrollableResults() throws OwsExceptionReport {
-        if (session == null) {
-            session = sessionHolder.getSession();
-        }
         try {
             if (observationNotQueried) {
                 // query with temporal filter
                 if (temporalFilterCriterion != null) {
                     setResult(observationDAO.getStreamingObservationsFor(request, features, temporalFilterCriterion,
-                            session));
+                            getSession()));
                 }
                 // query without temporal or indeterminate filters
                 else {
-                    setResult(observationDAO.getStreamingObservationsFor(request, features, session));
+                    setResult(observationDAO.getStreamingObservationsFor(request, features, getSession()));
                 }
                 observationNotQueried = false;
             }
             if (!observationNotQueried && showMetadataOfEmptyObservation) {
                 if (temporalFilterCriterion != null) {
                     setResult(observationDAO.getNotMatchingSeries(procedureIds, observablePropertyIds, featureIds,
-                            request, features, temporalFilterCriterion, session));
+                            request, features, temporalFilterCriterion, getSession()));
                 }
                 // query without temporal or indeterminate filters
                 else {
                     setResult(observationDAO.getNotMatchingSeries(procedureIds, observablePropertyIds, featureIds,
-                            request, features, session));
+                            request, features, getSession()));
                 }
 
             }
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

@@ -79,7 +79,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             next = scrollableResult.next();
         }
         if (!next) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
         }
         return next;
     }
@@ -91,7 +91,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
         if (checkValue(resultObject)) {
             return resultObject;
         }
-        session.evict(resultObject);
+        getSession().evict(resultObject);
         return null;
     }
 
@@ -103,10 +103,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             if (checkValue(resultObject)) {
                 value = resultObject.createTimeValuePairFrom();
             }
-            session.evict(resultObject);
+            getSession().evict(resultObject);
             return value;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -122,10 +122,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                 resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);
             }
-            session.evict(resultObject);
+            getSession().evict(resultObject);
             return observation;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -138,21 +138,18 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *             If an error occurs when querying the next results
      */
     private void getNextResults() throws OwsExceptionReport {
-        if (session == null) {
-            session = sessionHolder.getSession();
-        }
         try {
             // query with temporal filter
             if (temporalFilterCriterion != null) {
                 setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
-                        temporalFilterCriterion, session));
+                        temporalFilterCriterion, getSession()));
             }
             // query without temporal or indeterminate filters
             else {
-                setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, session));
+                setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, getSession()));
             }
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

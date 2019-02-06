@@ -63,7 +63,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
 
     protected final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
-    protected Session session;
+    private Session session;
 
     protected ScrollableResults result;
 
@@ -88,6 +88,13 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
         showMetadataOfEmptyObservation =
                 Configurator.getInstance().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations();
     }
+    
+    protected Session getSession() throws OwsExceptionReport {
+        if (session == null) {
+            session = sessionHolder.getSession();
+        }
+        return session;
+    } 
 
     @Override
     public boolean hasNextValue() throws OwsExceptionReport {

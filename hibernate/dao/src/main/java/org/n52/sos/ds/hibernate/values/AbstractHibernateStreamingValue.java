@@ -88,11 +88,18 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     protected final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
-    protected Session session;
+    private Session session;
 
     protected final AbstractObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
+    
+    protected Session getSession() throws OwsExceptionReport {
+        if (session  == null) {
+            session = sessionHolder.getSession();
+        }
+        return session;
+    }
 
     @Override
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
@@ -115,7 +122,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                     }
                 }
                 nextEntity.mergeValueToObservation(observation, getResponseFormat());
-                sessionHolder.getSession().evict(nextEntity);
+                getSession().evict(nextEntity);
             }
         }
         return observations.values();

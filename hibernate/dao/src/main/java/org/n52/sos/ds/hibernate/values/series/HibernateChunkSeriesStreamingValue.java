@@ -97,7 +97,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             next = seriesValuesResult.hasNext();
         }
         if (!next) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
         }
         
 
@@ -110,7 +110,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (checkValue(resultObject)) {
             return resultObject;
         }
-        session.evict(resultObject);
+        getSession().evict(resultObject);
         return null;
     }
 
@@ -123,12 +123,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 if (checkValue(resultObject)) {
                     value = resultObject.createTimeValuePairFrom();
                 }
-                session.evict(resultObject);
+                getSession().evict(resultObject);
                 return value;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -145,12 +145,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                     resultObject.addValuesToObservation(observation, getResponseFormat());
                     checkForModifications(observation);
                 }
-                session.evict(resultObject);
+                getSession().evict(resultObject);
                 return observation;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -168,27 +168,24 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *             If an error occurs when querying the next results
      */
     private void getNextResults() throws OwsExceptionReport {
-        if (session == null) {
-            session = sessionHolder.getSession();
-        }
         try {
             // query with temporal filter
             Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
-                                chunkSize, currentRow, session);
+                                chunkSize, currentRow, getSession());
             }
             // query without temporal or indeterminate filters
             else {
                 seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
+                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, getSession());
             }
             currentRow += chunkSize;
             checkMaxNumberOfReturnedValues(seriesValuesResult.size());
             setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

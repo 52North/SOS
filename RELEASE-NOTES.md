@@ -1,4 +1,4 @@
-# RELEASE NOTES
+# 52°North SOS RELEASE NOTES
 
  The Sensor Observation Service (SOS) aggregates readings from live sensors as well as 
  sensor archives. The service provides an interface to get the pure data (encoded 

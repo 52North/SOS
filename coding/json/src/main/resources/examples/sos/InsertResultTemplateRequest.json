@@ -37,7 +37,8 @@
       }
     },
     "phenomenonTime": "template",
-    "resultTime": "template"
+    "resultTime": "template",
+    "result": null
   },
   "resultStructure": {
     "fields": [

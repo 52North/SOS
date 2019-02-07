@@ -31,7 +31,9 @@
             {
               "$ref": "#/definitions/category"
             },
-             
+            {
+              "$ref": "#/definitions/text"
+            },
             {
               "$ref": "http://www.52north.org/schema/json/Geometry#"
             }
@@ -64,6 +66,24 @@
       ],
       "properties": {
         "codespace": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "text": {
+      "type": "object",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
           "type": "string"
         },
         "value": {

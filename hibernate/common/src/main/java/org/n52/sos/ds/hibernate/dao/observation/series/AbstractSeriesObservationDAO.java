@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,6 +53,7 @@ import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -95,6 +96,11 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesObservationDAO.class);
     private final SeriesTimeTransformer transformer = new SeriesTimeTransformer();
+    
+    @Override
+    protected ObservationContext createObservationContext() {
+        return new SeriesObservationContext();
+    }
     
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx,

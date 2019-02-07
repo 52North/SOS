@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -133,6 +133,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String SERIES_METADATA_KEY = "sos.series.metadata";
 
     protected static final boolean SERIES_METADATA_DEFAULT_VALUE = false;
+    
+    protected static final String CATEGORY_SUPPORT_TITLE = "Category support";
+
+    protected static final String CATEGORY_SUPPORT_DESCRIPTION = "Should the database support category? This is an additional grouping feature to group series.";
+
+    protected static final String CATEGORY_SUPPORT_KEY = "sos.category";
+
+    protected static final boolean CATEGORY_SUPPORT_DEFAULT_VALUE = false;
 
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
@@ -170,6 +178,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
 
     private boolean seriesMetadataDatasource = true;
+    
+    private final BooleanSettingDefinition categorySupportDefiniton = createCategorySupportDefinition();
+
     /**
      * Create settings definition for username
      *
@@ -237,14 +248,25 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
     
     /**
-     * Create settings definition for transactional support
+     * Create settings definition for sereis metadata support
      *
-     * @return Transactional support settings definition
+     * @return Series metadata support settings definition
      */
     protected BooleanSettingDefinition createSeriesMetadataDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(SERIES_METADATA_DEFAULT_VALUE)
                 .setTitle(SERIES_METADATA_TITLE).setDescription(SERIES_METADATA_DESCRIPTION).setGroup(ADVANCED_GROUP)
                 .setOrder(SettingDefinitionProvider.ORDER_6).setKey(SERIES_METADATA_KEY);
+    }
+    
+    /**
+     * Create settings definition for category support
+     *
+     * @return Category support settings definition
+     */
+    protected BooleanSettingDefinition createCategorySupportDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(CATEGORY_SUPPORT_DEFAULT_VALUE)
+                .setTitle(CATEGORY_SUPPORT_TITLE).setDescription(CATEGORY_SUPPORT_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_7).setKey(CATEGORY_SUPPORT_KEY);
     }
 
     /**
@@ -307,6 +329,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
             if (t != null && t) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
+            }
+        }
+        if (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)) {
+            Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
+            if (t != null && t) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CATEGORY_PATH));
+            } else {
+                config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_DEFAULT_PATH));
             }
         }
         if (isSetSchema(settings)) {
@@ -391,15 +421,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
                 concept = DatabaseConcept.OLD_CONCEPT.name();
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH)) {
-            concept = DatabaseConcept.GEOLOGY_LOG_CONCEPT.name();
-        }
+                concept = DatabaseConcept.GEOLOGY_LOG_CONCEPT.name();
+            }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-                    databaseConceptDefinition.getKey(),
-                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-                    concept,
-                    databaseConceptDefinition.getKey(),
-                    concept);
+                    databaseConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
+                    databaseConceptDefinition.getKey(), concept);
         }
         return DatabaseConcept.valueOf(concept);
     }
@@ -597,12 +624,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
-    public void checkPostCreation(Properties properties) {
+    public void checkPostCreation(Properties properties, Map<String, Object> settings) {
         if (checkIfExtensionDirectoryExists()) {
             StringBuilder builder =
                     new StringBuilder(properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY));
-            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_EXTENSION_READONLY);
-            properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+            if (DatabaseConcept.SERIES_CONCEPT.equals(getDatabaseConcept(settings))
+                    || DatabaseConcept.EREPORTING_CONCEPT.equals(getDatabaseConcept(settings))) {
+                Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
+                if (t != null && t) {
+                    builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                            .append(HIBERNATE_MAPPING_EXTENSION_READONLY_CATEGORY_PATH);
+                } else {
+                    builder.append(SessionFactoryProvider.PATH_SEPERATOR)
+                            .append(HIBERNATE_MAPPING_EXTENSION_READONLY_DEFAULT_PATH);
+                }
+                properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+            }
         }
     }
 
@@ -746,6 +783,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_METADATA_PATH);
             }
         }
+        if (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)) {
+            Boolean t = (Boolean) settings.get(categorySupportDefiniton.getKey());
+            if (t != null && t) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_CATEGORY_PATH);
+            } else {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_DEFAULT_PATH);
+            }
+        }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
     }
     
@@ -808,6 +853,28 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected BooleanSettingDefinition getSeriesMetadataDefiniton() {
         return seriesMetadataDefiniton;
+    }
+    
+    /**
+     * Check if properties contains category mapping path
+     *
+     * @param properties
+     *            Datasource properties
+     * @return <code>true</code>, if properties contains category mapping
+     *         path
+     */
+    protected boolean isCategory(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_SERIES_CATEGORY_PATH);
+    }
+
+    /**
+     * Get category setting definition
+     *
+     * @return Category setting definition
+     */
+    protected BooleanSettingDefinition getCategoryDefiniton() {
+        return categorySupportDefiniton;
     }
 
     private String[] concat(String[] first, String[]... rest) {
@@ -908,7 +975,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void setSeriesMetadataDatasource(boolean seriesMetadataDatasource) {
         this.seriesMetadataDatasource = seriesMetadataDatasource;
     }
-
+    
     /**
      * Remove duplicated foreign key definition for table observationHasOffering
      * otherwise database model creation fails in Oracle

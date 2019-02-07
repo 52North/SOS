@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -128,7 +128,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         }
         saveServiceSettings(c);
         createAdministratorUser(c);
-        datasource.checkPostCreation(properties);
+        datasource.checkPostCreation(properties, c.getDatabaseSettings());
         saveDatabaseProperties(properties, c);
         saveInstallationDate();
         instantiateConfigurator(properties, c);

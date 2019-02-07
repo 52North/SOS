@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.Category" table="category">
+        <comment>Table to store the category information. Mapping file: mapping/series/category/category.hbm.xml</comment>
+        <id name="categoryId" type="long">
+            <column name="categoryId">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">categoryId_seq</param>
+            </generator>
+        </id>
+        <property name="identifier" type="string">
+            <column name="identifier" not-null="true" unique-key="categoryIdentifierUK">
+                <comment>The identifier of the category, gml:identifier. Used as parameter for queries. Unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="categoryCodespaceIdentifierFk">
+            <column name="codespace">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+                <comment>The name of the category, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="categoryCodespaceNameFk">
+            <column name="codespaceName">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+                <comment>Description of the category, gml:description. Optional</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.db.beans">
+  <class name="SamplingGeometryEntity" table="observation">
+    <id name="pkid" type="long">
+        <column name="observationid" />
+        <generator class="assigned" />
+    </id>
+    <property name="timestamp" column="phenomenontimestart" type="timestamp"/>
+
+    <component class="GeometryEntity" name="geometryEntity">
+        <!-- <property column="lat" name="lat" type="big_decimal" /> <property column="lon" name="lon" type="big_decimal" /> -->
+        <property column="samplingGeometry" name="geometry" type="org.hibernate.spatial.GeometryType" />
+    </component>
+
+    <property name="seriesPkid" column="seriesid" type="long" />
+
+
+<!--   <sql-query name="getSampleLatLonGeometries"> -->
+<!--     <return-scalar column="phenomenontime" type="timestamp" /> -->
+<!--     <return-scalar column="geom" type="org.hibernate.spatial.GeometryType" /> -->
+<!--     <return-scalar column="lat" type="big_decimal" /> -->
+<!--     <return-scalar column="lon" type="big_decimal" /> -->
+<!--     SELECT DISTINCT o.phenomenontime, o.lat, o.lon -->
+<!--     FROM observation o, series s -->
+<!--     WHERE s.seriesid = o.seriesid AND s.featureofinterestid=:featureid -->
+<!--     ORDER BY o.phenomenontime ASC -->
+<!--   </sql-query> -->
+
+ </class>
+</hibernate-mapping>

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util;
 
 import com.google.common.base.Strings;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Hold min and max obs time for offering
@@ -40,7 +39,6 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class OfferingTimeExtrema extends TimeExtrema {
     private String offering;
-    private Geometry envelope;
 
     /**
      * @return the offering
@@ -60,17 +58,4 @@ public class OfferingTimeExtrema extends TimeExtrema {
     public boolean isSetOffering() {
         return !Strings.isNullOrEmpty(getOffering());
     }
-
-    public void setEnvelope(Geometry envelope) {
-        this.envelope = envelope;
-    }
-
-    public Geometry getEnvelope() {
-        return envelope;
-    }
-    
-    public boolean isSetEnvelope() {
-        return getEnvelope() != null && !getEnvelope().isEmpty();
-    }
-    
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,14 +37,11 @@ import java.util.TreeSet;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.dao.CategoryDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ParameterDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationContext;
-import org.n52.sos.ds.hibernate.entities.Category;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -65,8 +61,6 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.UoM;
@@ -422,7 +416,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
         } else {
             observation.setChild(true);
         }
-        
+
         daos.observation().addName(sosObservation, observation, session);
         daos.observation().addDescription(sosObservation, observation);
         daos.observation().addTime(sosObservation, observation);
@@ -448,20 +442,6 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
             } else {
                 observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));
             }
-        }
-        
-        // category
-        if (HibernateHelper.isColumnSupported(Series.class, Series.CATEGORY) && observationContext instanceof SeriesObservationContext) {
-            if (caches.category() == null) {
-                if (sosObservation.isSetCategoryParameter()) {
-                    NamedValue<String> categoryParameter = (NamedValue<String>) sosObservation.getCategoryParameter();
-                    caches.setCategory(daos.category().getOrInsertCategory(categoryParameter, session));
-                    sosObservation.removeCategoryParameter();
-                } else {
-                    caches.setCategory(daos.category().getOrInsertCategory(observationConstellation.getObservableProperty(), session));
-                }
-            }
-            ((SeriesObservationContext) observationContext).setCategory(caches.category());
         }
 
         if (observationConstellation != null) {
@@ -523,16 +503,10 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
     private static class Caches {
         private final Map<String, Codespace> codespaces;
         private final Map<UoM, Unit> units;
-        private Category category;
-        
-        Caches(Map<String, Codespace> codespaces, Map<UoM, Unit> units) {
-            this(codespaces, units, null);
-        }
 
-        Caches(Map<String, Codespace> codespaces, Map<UoM, Unit> units, Category category) {
+        Caches(Map<String, Codespace> codespaces, Map<UoM, Unit> units) {
             this.codespaces = codespaces;
             this.units = units;
-            this.category = category;
         }
 
         public Map<String, Codespace> codespaces() {
@@ -542,24 +516,13 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
         public Map<UoM, Unit> units() {
             return units;
         }
-        
-        public Category category() {
-            return category;
-        }
-        
-        public void setCategory(Category category) {
-          this.category = category;
-        }
     }
-
-    
 
     private static class DAOs {
         private final ObservablePropertyDAO observableProperty;
         private final ObservationConstellationDAO observationConstellation;
         private final AbstractObservationDAO observation;
         private final ObservationTypeDAO observationType;
-        private final CategoryDAO category;
         private final ParameterDAO parameter;
 
         DAOs(AbstractObservationDAO observationDAO) {
@@ -567,7 +530,6 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
             observableProperty = new ObservablePropertyDAO();
             observationConstellation = new ObservationConstellationDAO();
             observationType = new ObservationTypeDAO();
-            category = new CategoryDAO();
             parameter = new ParameterDAO();
         }
 
@@ -585,10 +547,6 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
 
         public ObservationTypeDAO observationType() {
             return observationType;
-        }
-        
-        public CategoryDAO category() {
-            return category;
         }
 
         public ParameterDAO parameter() {

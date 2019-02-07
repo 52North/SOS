@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -88,32 +88,35 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
 
     @Override
     protected void getNextScrollableResults() throws OwsExceptionReport {
+        if (session == null) {
+            session = sessionHolder.getSession();
+        }
         try {
             if (observationNotQueried) {
                 // query with temporal filter
                 if (temporalFilterCriterion != null) {
                     setResult(seriesObservationDAO.getStreamingSeriesObservationsFor(request, features,
-                            temporalFilterCriterion, getSession()));
+                            temporalFilterCriterion, session));
                 }
                 // query without temporal or indeterminate filters
                 else {
-                    setResult(seriesObservationDAO.getStreamingSeriesObservationsFor(request, features, getSession()));
+                    setResult(seriesObservationDAO.getStreamingSeriesObservationsFor(request, features, session));
                 }
                 observationNotQueried = false;
             }
             if (!observationNotQueried && showMetadataOfEmptyObservation) {
                 if (temporalFilterCriterion != null) {
                     setResult(seriesObservationDAO.getSeriesNotMatchingSeries(seriesIDs, request, features,
-                            temporalFilterCriterion, getSession()));
+                            temporalFilterCriterion, session));
                 }
                 // query without temporal or indeterminate filters
                 else {
-                    setResult(seriesObservationDAO.getSeriesNotMatchingSeries(seriesIDs, request, features, getSession()));
+                    setResult(seriesObservationDAO.getSeriesNotMatchingSeries(seriesIDs, request, features, session));
                 }
 
             }
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

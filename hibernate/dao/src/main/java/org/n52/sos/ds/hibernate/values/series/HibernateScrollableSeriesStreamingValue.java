@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -79,7 +79,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             next = scrollableResult.next();
         }
         if (!next) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
         }
         return next;
     }
@@ -91,7 +91,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
         if (checkValue(resultObject)) {
             return resultObject;
         }
-        getSession().evict(resultObject);
+        session.evict(resultObject);
         return null;
     }
 
@@ -103,10 +103,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
             if (checkValue(resultObject)) {
                 value = resultObject.createTimeValuePairFrom();
             }
-            getSession().evict(resultObject);
+            session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -122,10 +122,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
                 resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);
             }
-            getSession().evict(resultObject);
+            session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -138,18 +138,21 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *             If an error occurs when querying the next results
      */
     private void getNextResults() throws OwsExceptionReport {
+        if (session == null) {
+            session = sessionHolder.getSession();
+        }
         try {
             // query with temporal filter
             if (temporalFilterCriterion != null) {
                 setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
-                        temporalFilterCriterion, getSession()));
+                        temporalFilterCriterion, session));
             }
             // query without temporal or indeterminate filters
             else {
-                setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, getSession()));
+                setScrollableResult(seriesValueDAO.getStreamingSeriesValuesFor(request, series, session));
             }
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

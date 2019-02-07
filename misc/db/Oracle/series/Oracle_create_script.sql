@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2019 52Â°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2018 52Â°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -126,7 +126,7 @@ comment on column oracle.featureofinterest.codespace is 'Relation/foreign key to
 comment on column oracle.featureofinterest.name is 'The name of the featureOfInterest, gml:name. Optional';
 comment on column oracle.featureofinterest.codespaceName is 'The name of the featureOfInterest, gml:name. Optional';
 comment on column oracle.featureofinterest.description is 'Description of the featureOfInterest, gml:description. Optional';
-comment on column oracle.featureofinterest.geom is 'The geometry of the featureOfInterest (composed of the ï¿½latitudeï¿½ and ï¿½longitudeï¿½) . Optional';
+comment on column oracle.featureofinterest.geom is 'The geometry of the featureOfInterest (composed of the “latitude” and “longitude”) . Optional';
 comment on column oracle.featureofinterest.descriptionXml is 'XML description of the feature, used when transactional profile is supported . Optional';
 comment on column oracle.featureofinterest.url is 'Reference URL to the feature if it is stored in another service, e.g. WFS. Optional but unique';
 create table oracle.featureofinteresttype (featureOfInterestTypeId number(19,0) not null, featureOfInterestType varchar2(255 char) not null, primary key (featureOfInterestTypeId));

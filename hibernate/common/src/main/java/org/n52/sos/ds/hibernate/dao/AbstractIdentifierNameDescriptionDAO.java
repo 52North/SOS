@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,13 +63,6 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         entity.setCodespace(new CodespaceDAO()
                 .getOrInsertCodespace(codespace, session));
     }
-    
-    public void addIdentifier(IdentifierNameDescriptionEntity entity, String identifier, Session session) {
-        String value = identifier != null && !identifier.isEmpty() ? identifier : null;
-        String codespace = OGCConstants.UNKNOWN;
-        entity.setIdentifier(value);
-        entity.setCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
-    }
 
     public void addName(AbstractGML abstractFeature,
                         IdentifierNameDescriptionEntity entity,
@@ -100,12 +93,11 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         }
     }
 
-    public AbstractGML getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
+    public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
                                                    IdentifierNameDescriptionEntity entity) {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
-        return abstractFeature;
     }
 
     public CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {

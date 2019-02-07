@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,18 +47,6 @@ public class ParameterHolder {
         return parameter;
     }
     
-    public NamedValue<?> getParameter(String name) {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (namedValue.isSetName() && namedValue.getName().isSetHref()
-                        && namedValue.getName().getHref().equals(name)) {
-                    return namedValue;
-                }
-            }
-        }
-        return null;
-    }
-    
     public ParameterHolder setParameter(Collection<NamedValue<?>> parameter) {
         parameter.clear();
         if (parameter != null) {
@@ -88,18 +76,6 @@ public class ParameterHolder {
         return false;
     }
     
-    public boolean hasParameter(String name) {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (namedValue.isSetName() && namedValue.getName().isSetHref()
-                        && namedValue.getName().getHref().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-     
     public boolean isSetParameter() {
         return CollectionHelper.isNotEmpty(getParameter());
     }
@@ -329,7 +305,8 @@ public class ParameterHolder {
      *         profile is set
      */
     private boolean isSamplingGeometryParameter(NamedValue<?> namedValue) {
-        return hasParameter(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
+        return namedValue.isSetName() && namedValue.getName().isSetHref()
+                && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
                 && namedValue.getValue() instanceof GeometryValue;
     }
 }

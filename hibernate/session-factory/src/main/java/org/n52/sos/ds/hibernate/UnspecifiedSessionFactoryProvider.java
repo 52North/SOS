@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,9 +31,6 @@ package org.n52.sos.ds.hibernate;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
-
-import org.hibernate.CacheMode;
-import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -75,10 +72,7 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
             if (sessionFactory == null) {
                 return null;
             }
-            Session session = sessionFactory.openSession();
-            session.setCacheMode(CacheMode.IGNORE);
-            session.setFlushMode(FlushMode.COMMIT);
-            return session;
+            return sessionFactory.openSession();
         } catch (HibernateException he) {
             String exceptionText = "Error while getting connection!";
             LOGGER.error(exceptionText, he);

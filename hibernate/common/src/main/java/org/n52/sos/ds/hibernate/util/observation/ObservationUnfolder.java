@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -149,7 +149,7 @@ public class ObservationUnfolder {
                     final Map<Value<?>, String> definitionsForObservedValues = Maps.newHashMap();
                     Value<?> observedValue = null;
                     GeometryHolder samplingGeometry = new GeometryHolder();
-                    ParameterHolder parameterHolder = getParameterHolder(multiObservation.getParameterHolder());
+                    ParameterHolder parameterHolder = new ParameterHolder();
                     String featureOfInterest = null;
                     String procedure = null;
                     for (SweField field : elementType.getFields()) {
@@ -393,7 +393,11 @@ public class ObservationUnfolder {
         for (SweField field : record.getFields()) {
             String token = block.get(tokenIndex.get());
             if (field.getElement() instanceof SweQuantity) {
-                ((SweQuantity) field.getElement()).setValue(Double.parseDouble(token));
+                if (checkDefinitionForDephtHeight(field)) {
+                    parseFieldAsParameter(field, token, parameterHolder);
+                } else {
+                    ((SweQuantity) field.getElement()).setValue(Double.parseDouble(token));
+                }
             } else if (field.getElement() instanceof SweBoolean) {
                 ((SweBoolean) field.getElement()).setValue(Boolean.parseBoolean(token));
             } else if (field.getElement() instanceof SweText) {
@@ -619,14 +623,6 @@ public class ObservationUnfolder {
             return (ReferenceType) new ReferenceType().setHref("to");
         }
         return name;
-    }
-
-    private ParameterHolder getParameterHolder(ParameterHolder parameterHolder) {
-        ParameterHolder parameter = new ParameterHolder();
-        if (parameterHolder.isSetParameter()) {
-            parameter.addParameter(parameterHolder.getParameter());
-        }
-        return parameter;
     }
 
     public class GeometryHolder {

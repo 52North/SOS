@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -52,9 +52,6 @@ public class TimePrimitiveFieldDescriptor {
         if (begin == null) {
             throw new NullPointerException("start may not be null");
         }
-        if (end == null) {
-            throw new NullPointerException("end may not be null");
-        }
         this.begin = begin;
         this.end = end;
     }
@@ -66,7 +63,7 @@ public class TimePrimitiveFieldDescriptor {
      *            the field name
      */
     public TimePrimitiveFieldDescriptor(String position) {
-        this(position, position);
+        this(position, null);
     }
 
     /**
@@ -87,7 +84,7 @@ public class TimePrimitiveFieldDescriptor {
      * @return if this descriptor describes a period
      */
     public boolean isPeriod() {
-        return !getEndPosition().equals(getBeginPosition());
+        return getEndPosition() != null;
     }
 
     /**

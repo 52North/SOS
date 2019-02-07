@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,6 @@ import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.n52.sos.ds.hibernate.entities.Category;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -208,7 +207,6 @@ public class ResultTemplateDAO {
      * @param procedure 
      * @param featureOfInterest
      *            FeatureOfInterest object
-     * @param category 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
@@ -216,12 +214,12 @@ public class ResultTemplateDAO {
      */
     public void checkOrInsertResultTemplate(final InsertResultTemplateRequest request,
             final ObservationConstellation observationConstellation, Procedure procedure, final AbstractFeatureOfInterest featureOfInterest,
-            Category category, final Session session) throws OwsExceptionReport {
+            final Session session) throws OwsExceptionReport {
         final List<ResultTemplate> resultTemplates =
                 getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
                         observationConstellation.getObservableProperty().getIdentifier(), null, session);
         if (CollectionHelper.isEmpty(resultTemplates)) {
-            createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, category, session);
+            createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
         } else {
             final List<String> storedIdentifiers = new ArrayList<String>(0);
             for (final ResultTemplate storedResultTemplate : resultTemplates) {
@@ -254,7 +252,7 @@ public class ResultTemplateDAO {
             }
             if (request.getIdentifier() != null && !storedIdentifiers.contains(request.getIdentifier())) {
                 /* save it only if the identifier is different */
-                createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, category, session);
+                createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
             }
         }
     }
@@ -269,14 +267,13 @@ public class ResultTemplateDAO {
      * @param procedure 
      * @param featureOfInterest
      *            FeatureOfInterest object
-     * @param category 
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
             final ObservationConstellation observationConstellation, Procedure procedure, final AbstractFeatureOfInterest featureOfInterest,
-            Category category, final Session session) throws OwsExceptionReport {
+            final Session session) throws OwsExceptionReport {
         final ResultTemplate resultTemplate = new ResultTemplate();
         resultTemplate.setIdentifier(request.getIdentifier());
         resultTemplate.setObservableProperty(observationConstellation.getObservableProperty());
@@ -286,9 +283,6 @@ public class ResultTemplateDAO {
         }
         if (featureOfInterest != null) {
             resultTemplate.setFeatureOfInterest(featureOfInterest);
-        }
-        if (category != null) {
-            resultTemplate.setCategory(category);
         }
         resultTemplate.setResultStructure(request.getResultStructure().getXml());
         resultTemplate.setResultEncoding(request.getResultEncoding().getXml());

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -76,7 +76,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (isSeriesMetadataDatasource()) {
             set.add(getSeriesMetadataDefiniton());
         }
-        set.add(getCategoryDefiniton());
         return set;
     }
 

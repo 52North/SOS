@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -171,7 +171,7 @@ public abstract class TemporalRestriction {
     }
 
     /**
-     * Applies this restriction to the specified time instances.
+     * Applies this restriction to the specified time instantes.
      *
      * @param selfPosition
      *            the property name of the time instance
@@ -209,15 +209,12 @@ public abstract class TemporalRestriction {
         }
         if (r.isPeriod()) {
             return isSetCount()
-                    ?   filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end)
-//                            getPropertyCheckingCriterion(
-//                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-//                            filterInstantWithPeriod(r.getPosition(), r.getEndPosition(), begin, end, periodFromReducedPrecisionInstant), r)
-                    : 
-                        filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end);
-//                        getPropertyCheckingCriterion(
-//                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-//                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
+                    ? getPropertyCheckingCriterion(
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                            filterInstantWithPeriod(r.getPosition(), r.getEndPosition(), begin, end, periodFromReducedPrecisionInstant), r)
+                    : getPropertyCheckingCriterion(
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
         } else {
             return isSetCount()
                     ? filterInstantWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end, periodFromReducedPrecisionInstant)
@@ -252,7 +249,10 @@ public abstract class TemporalRestriction {
             return filterWithPeriod(new TimePeriod(new DateTime(begin), new DateTime(end)), r, true);
         }
         if (r.isPeriod()) {
-            return filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), begin);
+            return getPropertyCheckingCriterion(
+                    filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), begin),
+                    filterInstantWithInstant(r.getPosition(), begin), r);
+
         } else {
             return filterInstantWithInstant(r.getPosition(), begin);
         }
@@ -297,10 +297,10 @@ public abstract class TemporalRestriction {
     protected Criterion getPropertyCheckingCriterion(Criterion periods, Criterion instants,
             TimePrimitiveFieldDescriptor r) {
         if (periods == null) {
-            return instants;
-//            return instants == null ? null : Restrictions.and(isInstant(r), instants);
+            return instants == null ? null : Restrictions.and(isInstant(r), instants);
         } else {
-            return instants == null || periods.equals(instants) ? periods : Restrictions.or(periods, instants);
+            return instants == null ? Restrictions.and(isPeriod(r), periods) : Restrictions.or(
+                    Restrictions.and(isPeriod(r), periods), Restrictions.and(isInstant(r), instants));
         }
     }
 
@@ -416,7 +416,7 @@ public abstract class TemporalRestriction {
 
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return isSetCount() ? lower(selfBegin, START) : lower(selfBegin, otherBegin);
+            return isSetCount() ? lower(selfEnd, START) : lower(selfEnd, otherBegin);
         }
 
         @Override
@@ -433,7 +433,7 @@ public abstract class TemporalRestriction {
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-            return isSetCount() ? lower(selfBegin, INSTANT) : lower(selfBegin, otherPosition);
+            return isSetCount() ? lower(selfEnd, INSTANT) : lower(selfEnd, otherPosition);
         }
 
         @Override
@@ -474,7 +474,7 @@ public abstract class TemporalRestriction {
         
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-            return isSetCount() ? greater(selfEnd, END) : greater(selfEnd, otherEnd);
+            return isSetCount() ? greater(selfBegin, END) : greater(selfBegin, otherEnd);
         }
 
         @Override
@@ -486,12 +486,12 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd,
                 boolean isOtherPeriodFromReducedPrecisionInstant) {
-            return isSetCount() ? greater(selfEnd, END) : greater(selfEnd, otherEnd);
+            return isSetCount() ? greater(selfBegin, END) : greater(selfBegin, otherEnd);
         }
 
         @Override
         protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-            return isSetCount() ? greater(selfEnd, INSTANT) : greater(selfEnd, otherPosition);
+            return isSetCount() ? greater(selfBegin, INSTANT) : greater(selfBegin, otherPosition);
         }
 
         @Override
@@ -533,8 +533,8 @@ public abstract class TemporalRestriction {
         @Override
         protected Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
             return isSetCount() ? 
-                    Restrictions.and(equal(selfBegin, START),  lower(selfEnd, END)) :
-                    Restrictions.and(equal(selfBegin, otherBegin), lower(selfEnd, otherEnd));    
+                Restrictions.and(equal(selfBegin, START), lower(selfEnd, END)) : 
+                Restrictions.and(equal(selfBegin, otherBegin), lower(selfEnd, otherEnd));
         }
 
         @Override
@@ -804,13 +804,6 @@ public abstract class TemporalRestriction {
             return isSetCount() 
                     ? equal(selfPosition, INSTANT)
                     : equal(selfPosition, otherPosition);
-        }
-        
-        @Override
-        protected Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-            return isSetCount() 
-                    ? Restrictions.and(equal(selfBegin, INSTANT), equal(selfEnd, INSTANT))
-                    : Restrictions.and(equal(selfBegin, otherPosition), equal(selfEnd, otherPosition));
         }
     };
 

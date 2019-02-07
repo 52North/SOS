@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,7 +63,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
 
     protected final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
-    private Session session;
+    protected Session session;
 
     protected ScrollableResults result;
 
@@ -88,13 +88,6 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
         showMetadataOfEmptyObservation =
                 Configurator.getInstance().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations();
     }
-    
-    protected Session getSession() throws OwsExceptionReport {
-        if (session == null) {
-            session = sessionHolder.getSession();
-        }
-        return session;
-    } 
 
     @Override
     public boolean hasNextValue() throws OwsExceptionReport {

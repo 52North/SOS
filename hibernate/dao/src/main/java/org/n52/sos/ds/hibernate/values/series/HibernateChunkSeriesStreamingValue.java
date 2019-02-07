@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -97,7 +97,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             next = seriesValuesResult.hasNext();
         }
         if (!next) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
         }
         
 
@@ -110,7 +110,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (checkValue(resultObject)) {
             return resultObject;
         }
-        getSession().evict(resultObject);
+        session.evict(resultObject);
         return null;
     }
 
@@ -123,12 +123,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 if (checkValue(resultObject)) {
                     value = resultObject.createTimeValuePairFrom();
                 }
-                getSession().evict(resultObject);
+                session.evict(resultObject);
                 return value;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -145,12 +145,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                     resultObject.addValuesToObservation(observation, getResponseFormat());
                     checkForModifications(observation);
                 }
-                getSession().evict(resultObject);
+                session.evict(resultObject);
                 return observation;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -168,24 +168,27 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *             If an error occurs when querying the next results
      */
     private void getNextResults() throws OwsExceptionReport {
+        if (session == null) {
+            session = sessionHolder.getSession();
+        }
         try {
             // query with temporal filter
             Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
-                                chunkSize, currentRow, getSession());
+                                chunkSize, currentRow, session);
             }
             // query without temporal or indeterminate filters
             else {
                 seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, getSession());
+                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
             }
             currentRow += chunkSize;
             checkMaxNumberOfReturnedValues(seriesValuesResult.size());
             setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

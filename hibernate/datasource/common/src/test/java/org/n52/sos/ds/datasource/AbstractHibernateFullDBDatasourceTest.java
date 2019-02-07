@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -55,7 +55,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     
     private static final int CHANGEABLE_COUNT = 10;
     
-    private static final int MAX_COUNT = 20;
+    private static final int MAX_COUNT = 19;
 
     @Override
     protected void setUp() throws Exception {
@@ -113,7 +113,6 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
         boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
         boolean seriesMetadata = keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY);
-        boolean categorySupport = keys.contains(AbstractHibernateDatasource.CATEGORY_SUPPORT_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -131,7 +130,6 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
         assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
-        assertTrue(!categorySupport || keys.contains(AbstractHibernateDatasource.CATEGORY_SUPPORT_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_Z_KEY));
@@ -145,7 +143,6 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             if (!featureConcept) { counter--; }
             if (!multiLanguage){ counter--; }
             if (!seriesMetadata){ counter--; }
-            if (!categorySupport){ counter--; }
             if (settingsDefinitions){ counter--; }
             if (!timeFormat){ counter-= 3; }
             assertEquals(counter, keys.size());

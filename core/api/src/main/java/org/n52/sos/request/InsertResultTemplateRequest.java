@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,7 +29,6 @@
 package org.n52.sos.request;
 
 import org.joda.time.DateTime;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -48,7 +47,7 @@ public class InsertResultTemplateRequest extends AbstractServiceRequest<InsertRe
 
     private String identifier;
 
-    private OmObservation observationTemplate;
+    private OmObservationConstellation observationTemplate;
 
     private SosResultStructure resultStructure;
 
@@ -78,30 +77,15 @@ public class InsertResultTemplateRequest extends AbstractServiceRequest<InsertRe
     }
 
     public OmObservationConstellation getObservationTemplate() {
-        return getObservation().getObservationConstellation();
+        return observationTemplate;
     }
 
-    @Deprecated
     public void setObservationTemplate(OmObservationConstellation observationConstellation) {
-        if (!isSetObservation()) {
-            setObservation(new OmObservation().setObservationConstellation(observationConstellation));
-        }
+        this.observationTemplate = observationConstellation;
     }
 
     public boolean isSetObservatioTenmplate() {
         return getObservationTemplate() != null && !getObservationTemplate().isEmpty();
-    }
-    
-    public OmObservation getObservation() {
-        return observationTemplate;
-    }
-
-    public void setObservation(OmObservation observationTemplate) {
-        this.observationTemplate = observationTemplate;
-    }
-    
-    public boolean isSetObservation() {
-        return getObservation() != null ;
     }
 
     public SosResultStructure getResultStructure() {

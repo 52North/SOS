@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,7 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@ page import="org.n52.sos.service.AbstractLoggingConfigurator.Level"%>
+<%@ page import="org.n52.sos.web.admin.AbstractLoggingConfigurator.Level"%>
 <jsp:include page="../common/header.jsp">
     <jsp:param name="activeMenu" value="admin" />
 </jsp:include>

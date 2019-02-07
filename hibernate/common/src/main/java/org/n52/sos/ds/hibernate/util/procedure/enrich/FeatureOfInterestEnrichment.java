@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,10 +61,8 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     @Override
     public void enrich() throws OwsExceptionReport {
         Collection<String> featureOfInterestIDs = getFeatureOfInterestIDs();
-        if (featureOfInterestIDs != null && !featureOfInterestIDs.isEmpty()) {
-            getDescription().addFeaturesOfInterest(featureOfInterestIDs);
-            getDescription().addFeaturesOfInterest(getAbstractFeaturesMap(featureOfInterestIDs));
-        }
+        getDescription().addFeaturesOfInterest(featureOfInterestIDs);
+        getDescription().addFeaturesOfInterest(getAbstractFeaturesMap(featureOfInterestIDs));
     }
 
     @Override
@@ -88,9 +86,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
             // hidden child of
             if (!getCache().getHiddenChildProceduresForOffering(offering).contains(getIdentifier())) {
                 for (String feature : getCache().getFeaturesOfInterestForOffering(offering)) {
-                    if (getCache().getPublishedFeatureOfInterest().contains(feature)
-                            && getCache().getProceduresForFeatureOfInterest(feature) != null
-                            && getCache().getProceduresForFeatureOfInterest(feature).contains(getIdentifier())) {
+                    if (getCache().getPublishedFeatureOfInterest().contains(feature)) {
                         features.add(feature);
                     }
                 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -170,10 +170,8 @@ public class ValidProcedureTimeDAO {
             UnsupportedOperatorException {
         Criteria criteria = session.createCriteria(ValidProcedureTime.class);
         criteria.add(Restrictions.eq(ValidProcedureTime.PROCEDURE, procedure));
-        if (procedureDescriptionFormat != null && !procedureDescriptionFormat.isEmpty()) {
-            criteria.createCriteria(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT).add(
-                    Restrictions.eq(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormat));
-        }
+        criteria.createCriteria(ValidProcedureTime.PROCEDURE_DESCRIPTION_FORMAT).add(
+                Restrictions.eq(ProcedureDescriptionFormat.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormat));
 
         Criterion validTimeCriterion = QueryHelper.getValidTimeCriterion(validTime);
         // if validTime == null or validTimeCriterion == null, query latest

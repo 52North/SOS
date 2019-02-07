@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,7 +48,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_After, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeEnd>:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart>:end1 or phenomenonTimeStart=phenomenonTimeEnd and phenomenonTimeStart>:end1"));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Before, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart<:start1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeEnd<:start1 or phenomenonTimeStart=phenomenonTimeEnd and phenomenonTimeStart<:start1"));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Equals, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart=:start1 and phenomenonTimeEnd=:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart=:start1 and phenomenonTimeEnd=:end1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -112,7 +112,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_During, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart>:start1 and phenomenonTimeEnd<:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart>:start1 and phenomenonTimeEnd<:end1 or phenomenonTimeStart=phenomenonTimeEnd and phenomenonTimeStart>:start1 and phenomenonTimeStart<:end1"));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Begins, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart=:start1 and phenomenonTimeEnd<:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart=:start1 and phenomenonTimeEnd<:end1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -142,7 +142,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_BegunBy, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart=:start1 and phenomenonTimeEnd>:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart=:start1 and phenomenonTimeEnd>:end1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -156,7 +156,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Ends, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart>:start1 and phenomenonTimeEnd=:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart>:start1 and phenomenonTimeEnd=:end1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -170,7 +170,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_EndedBy, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "phenomenonTimeStart<:start1 and phenomenonTimeEnd=:end1"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart<:start1 and phenomenonTimeEnd=:end1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -184,7 +184,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Overlaps, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "(phenomenonTimeStart<:start1 and phenomenonTimeEnd>:start1 and phenomenonTimeEnd<:end1)"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and (phenomenonTimeStart<:start1 and phenomenonTimeEnd>:start1 and phenomenonTimeEnd<:end1)"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -198,7 +198,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_OverlappedBy, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo(
-                "(phenomenonTimeStart>:start1 and phenomenonTimeStart<:end1 and phenomenonTimeEnd>:end1)"));
+                "phenomenonTimeStart<>phenomenonTimeEnd and (phenomenonTimeStart>:start1 and phenomenonTimeStart<:end1 and phenomenonTimeEnd>:end1)"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -212,7 +212,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Meets, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(),
-                equalTo("phenomenonTimeEnd=:start1"));
+                equalTo("phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeEnd=:start1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -226,7 +226,7 @@ public class TemporalRestrictionHqlInstantPeriodTest extends ExtendedHibernateTe
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_MetBy, "phenomenonTime");
         Criterion filterHql = TemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(),
-                equalTo("phenomenonTimeStart=:start1"));
+                equalTo("phenomenonTimeStart<>phenomenonTimeEnd and phenomenonTimeStart=:start1"));
     }
 
     @Test(expected = UnsupportedTimeException.class)

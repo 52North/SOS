@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -385,10 +385,10 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20
         sosInsertResultTemplate.setVersion(insertResultTemplate.getVersion());
         final ResultTemplateType resultTemplate = insertResultTemplate.getProposedTemplate().getResultTemplate();
         sosInsertResultTemplate.setIdentifier(resultTemplate.getIdentifier());
-        final OmObservation sosObservation =
+        final OmObservationConstellation sosObservationConstellation =
                 parseObservationTemplate(resultTemplate.getObservationTemplate());
-        sosObservation.getObservationConstellation().addOffering(resultTemplate.getOffering());
-        sosInsertResultTemplate.setObservation(sosObservation);
+        sosObservationConstellation.addOffering(resultTemplate.getOffering());
+        sosInsertResultTemplate.setObservationTemplate(sosObservationConstellation);
         sosInsertResultTemplate.setResultStructure(
                 parseResultStructure(resultTemplate.getResultStructure().getAbstractDataComponent()));
         sosInsertResultTemplate
@@ -559,12 +559,12 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20
         return sosTemporalFilters;
     }
 
-    private OmObservation parseObservationTemplate(final ObservationTemplate observationTemplate)
+    private OmObservationConstellation parseObservationTemplate(final ObservationTemplate observationTemplate)
             throws OwsExceptionReport {
         final Object decodedObject = CodingHelper.decodeXmlElement(observationTemplate.getOMObservation());
         if (decodedObject instanceof OmObservation) {
             final OmObservation observation = (OmObservation) decodedObject;
-            return observation;
+            return observation.getObservationConstellation();
         }
         return null;
     }

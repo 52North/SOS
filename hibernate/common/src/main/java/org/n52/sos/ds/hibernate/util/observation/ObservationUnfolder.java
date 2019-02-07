@@ -393,11 +393,7 @@ public class ObservationUnfolder {
         for (SweField field : record.getFields()) {
             String token = block.get(tokenIndex.get());
             if (field.getElement() instanceof SweQuantity) {
-                if (checkDefinitionForDephtHeight(field)) {
-                    parseFieldAsParameter(field, token, parameterHolder);
-                } else {
-                    ((SweQuantity) field.getElement()).setValue(Double.parseDouble(token));
-                }
+                ((SweQuantity) field.getElement()).setValue(Double.parseDouble(token));
             } else if (field.getElement() instanceof SweBoolean) {
                 ((SweBoolean) field.getElement()).setValue(Boolean.parseBoolean(token));
             } else if (field.getElement() instanceof SweText) {

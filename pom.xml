@@ -286,11 +286,6 @@
                 <version>${dataset.hibernate.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.series-api.db</groupId>
-                <artifactId>mappings</artifactId>
-                <version>${dataset.dao.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.n52.series-api</groupId>
                 <artifactId>io</artifactId>
                 <version>${dataset.api.version}</version>

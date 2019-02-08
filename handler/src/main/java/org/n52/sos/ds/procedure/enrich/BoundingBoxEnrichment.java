@@ -118,7 +118,7 @@ public class BoundingBoxEnrichment
         return getCache().getEnvelopeForOffering(offering.getIdentifier());
     }
 
-    private Optional<SmlCapabilities> createCapabilities(final ReferencedEnvelope bbox) {
+    private Optional<SmlCapabilities> createCapabilities(final ReferencedEnvelope bbox) throws CodedException {
         if (bbox.isSetEnvelope()) {
             // add merged bbox to capabilities as swe:envelope
             final SweEnvelope envelope = new SweEnvelope(bbox, procedureSettings().getLatLongUom(),

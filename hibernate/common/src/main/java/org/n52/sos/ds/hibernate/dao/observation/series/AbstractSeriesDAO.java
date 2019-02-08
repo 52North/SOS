@@ -278,6 +278,7 @@ public abstract class AbstractSeriesDAO
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         ctx.addIdentifierRestrictionsToCritera(criteria);
         criteria.setMaxResults(1);
+        // TODO: check for Unit if available!!!
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure, offering): {}",
                 HibernateHelper.getSqlString(criteria));
         DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
@@ -350,6 +351,7 @@ public abstract class AbstractSeriesDAO
      */
     public DatasetEntity checkSeries(OmObservationConstellation sosOC, String offering,
             Session session, String parameterName) throws OwsExceptionReport {
+        // TODO: check for Unit if available!!!
         AbstractPhenomenon observableProperty = sosOC.getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 

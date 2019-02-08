@@ -40,6 +40,7 @@ import java.util.Set;
 import org.geotools.factory.Hints;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.CRS.AxisOrder;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
 import org.locationtech.jts.geom.Envelope;
@@ -119,8 +120,13 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Override
     public void init() {
         GeometryHandler.instance = this;
-        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-                                isEastingFirstEpsgCode(getStorageEPSG()));
+        boolean eastingFirstEpsgCode = true;
+        try {
+            eastingFirstEpsgCode = isEastingFirstEpsgCode(getStorageEPSG());
+        } catch (Exception e) {
+            LOGGER.error("The storage EPSG code '{}' is invalid. Easting first = true would be used!", getStorageEPSG());
+        }
+        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, eastingFirstEpsgCode);
         this.crsAuthority = getCRSAuthorityFactory(this.authority, hints);
     }
 
@@ -385,11 +391,17 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @param epsgCode EPSG code to check
      *
      * @return <code>true</code>, if the EPSG code is northing first
+     * @throws CodedException
      */
-    public boolean isNorthingFirstEpsgCode(int epsgCode) {
-        return this.epsgsWithNorthingFirstAxisOrder.stream()
-                .filter(r -> r.contains(epsgCode))
-                .findAny().isPresent();
+    public boolean isNorthingFirstEpsgCode(int epsgCode) throws CodedException {
+        try {
+            return AxisOrder.NORTH_EAST.equals(CRS.getAxisOrder(CRS.decode(EPSG_PREFIX + epsgCode))) ? true : false;
+        } catch (FactoryException e) {
+            throw new NoApplicableCodeException().causedBy(e).withMessage("The EPSG '%i' is invalid", epsgCode);
+        }
+//        return this.epsgsWithNorthingFirstAxisOrder.stream()
+//                .filter(r -> r.contains(epsgCode))
+//                .findAny().isPresent();
     }
 
     /**
@@ -398,8 +410,9 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @param epsgCode EPSG code to check
      *
      * @return <code>true</code>, if the EPSG code is easting first
+     * @throws CodedException
      */
-    public boolean isEastingFirstEpsgCode(int epsgCode) {
+    public boolean isEastingFirstEpsgCode(int epsgCode) throws CodedException {
         return !isNorthingFirstEpsgCode(epsgCode);
     }
 
@@ -439,14 +452,14 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         return JTSHelper.switchCoordinateAxisOrder(geometry);
     }
 
-    private boolean shouldSwitchCoordinateAxis(Geometry geom) {
+    private boolean shouldSwitchCoordinateAxis(Geometry geom) throws CodedException {
         if (geom == null || geom.isEmpty()) {
             return false;
         }
         return isDatasourceNorthingFirst() != isNorthingFirstEpsgCode(geom.getSRID());
     }
 
-    private boolean shouldSwitchCoordinateAxis(Geometry geom, int targetSRID) {
+    private boolean shouldSwitchCoordinateAxis(Geometry geom, int targetSRID) throws CodedException {
         if (geom == null || geom.isEmpty()) {
             return false;
         }
@@ -507,8 +520,9 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @param epsg      EPSG code to check for axis order
      *
      * @return WKT string
+     * @throws CodedException
      */
-    public String getWktString(Object longitude, Object latitude, int epsg) {
+    public String getWktString(Object longitude, Object latitude, int epsg) throws CodedException {
         return getWktString(latitude, longitude, isNorthingFirstEpsgCode(epsg));
     }
 

@@ -147,7 +147,6 @@ This project includes:
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
-  geolatte-geom under LGPL 3.0
   Guava InternalFutureFailureAccess and InternalFutures under The Apache Software License, Version 2.0
   Guava ListenableFuture only under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
@@ -283,13 +282,11 @@ This project includes:
   Protocol Buffers [Core] under 3-Clause BSD License
   Quartz Enterprise Job Scheduler under Apache 2.0
   Referencing services under Lesser General Public License (LGPL)
-  Reflections under WTFPL or The New BSD License
   Saxon-HE under Mozilla Public License Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0
   Series Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
   Series REST API - REST module under GNU General Public License, Version 2.0
-  Series REST API - SOS DAO module under GNU General Public License, Version 2.0
   Series REST API - SPI module under GNU General Public License, Version 2.0
   Series REST API DAO - DAO under GNU General Public License, Version 2.0
   Series REST API DAO - Webapp under GNU General Public License, Version 2.0

@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.create;
 
 import java.util.Set;
 
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
@@ -48,7 +49,6 @@ import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
-import org.locationtech.jts.geom.Geometry;
 
 public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacilityEntity> {
 

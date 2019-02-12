@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import org.locationtech.jts.geom.Geometry;
+
 import com.google.common.base.Strings;
 
 /**
@@ -39,6 +41,7 @@ import com.google.common.base.Strings;
  */
 public class OfferingTimeExtrema extends TimeExtrema {
     private String offering;
+    private Geometry envelope;
 
     /**
      * @return the offering
@@ -58,4 +61,17 @@ public class OfferingTimeExtrema extends TimeExtrema {
     public boolean isSetOffering() {
         return !Strings.isNullOrEmpty(getOffering());
     }
+
+    public void setEnvelope(Geometry envelope) {
+        this.envelope = envelope;
+    }
+
+    public Geometry getEnvelope() {
+        return envelope;
+    }
+
+    public boolean isSetEnvelope() {
+        return getEnvelope() != null && !getEnvelope().isEmpty();
+    }
+
 }

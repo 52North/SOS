@@ -37,7 +37,6 @@ import java.util.Optional;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.beans.DescribableEntity;
@@ -48,6 +47,7 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 
 import com.google.common.collect.Lists;
 
@@ -72,7 +72,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
 
     protected void addNameAndDescription(Locale requestedLocale, FeatureEntity feature,
             AbstractFeature abstractFeature) throws OwsExceptionReport {
-        I18NDAO<I18NFeatureMetadata> i18nDAO = getContext().getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
+        HibernateI18NDAO<I18NFeatureMetadata> i18nDAO = (HibernateI18NDAO<I18NFeatureMetadata>) getContext()
+                .getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
         // set name as human readable identifier if set
         if (feature.isSetName()) {
             abstractFeature.setHumanReadableIdentifier(feature.getName());
@@ -82,9 +83,10 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
             abstractFeature.addName(getName(feature));
             abstractFeature.setDescription(getDescription(feature));
         } else {
+            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getSession());
             if (requestedLocale != null) {
                 // specific locale was requested
-                I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(), requestedLocale);
+                i18n = i18nDAO.getMetadata(feature.getIdentifier(), requestedLocale, getContext().getSession());
                 Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                 if (name.isPresent()) {
                     abstractFeature.addName(new CodeType(name.get()));
@@ -98,13 +100,12 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
                     abstractFeature.setDescription(getDescription(feature));
                 }
             } else {
-                final I18NFeatureMetadata i18n;
                 if (getContext().isShowAllLanguages()) {
                     // load all names
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier());
+                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getSession());
                 } else {
                     // load only name in default locale
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getDefaultLanguage());
+                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getDefaultLanguage(), getContext().getSession());
                 }
                 for (LocalizedString name : i18n.getName()) {
                     // either all or default only

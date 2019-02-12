@@ -43,11 +43,15 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.query.Query;
+import org.hibernate.spatial.criterion.SpatialProjections;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
@@ -63,9 +67,11 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -251,19 +257,25 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             namedQuery.setResultTransformer(transformer);
             results = namedQuery.list();
         } else {
+            Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getJdbcServices().getDialect();
             Criteria criteria =
                     daoFactory.getObservationDAO()
                             .getDefaultObservationInfoCriteria(
                                     session)
                             .createAlias(DataEntity.PROPERTY_DATASET, "ds")
-                            .createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off")
-                            .setProjection(Projections.projectionList()
+                            .createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off");
+                            ProjectionList projectionList = Projections.projectionList()
                                     .add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER))
                                     .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                                     .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
                                     .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
                                     .add(Projections.min(DataEntity.PROPERTY_RESULT_TIME))
-                                    .add(Projections.max(DataEntity.PROPERTY_RESULT_TIME)));
+                                    .add(Projections.max(DataEntity.PROPERTY_RESULT_TIME));
+                if (daoFactory.getGeometryHandler().isSpatialDatasource()
+                        && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
+                    projectionList.add(SpatialProjections.extent(DataEntity.PROPERTY_GEOMETRY_ENTITY));
+                }
+                criteria.setProjection(projectionList);
             if (CollectionHelper.isNotEmpty(identifiers)) {
                 criteria.add(Restrictions.in(OfferingEntity.IDENTIFIER, identifiers));
             }
@@ -455,8 +467,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             LOGGER.debug("QUERY getTemporalBoundingBoxesForOfferings(): {}", HibernateHelper.getSqlString(criteria));
             final List<?> temporalBoundingBoxes = criteria.list();
             if (!temporalBoundingBoxes.isEmpty()) {
-                final HashMap<String, TimePeriod> temporalBBoxMap =
-                        new HashMap<>(temporalBoundingBoxes.size());
+                final HashMap<String, TimePeriod> temporalBBoxMap = new HashMap<>(temporalBoundingBoxes.size());
                 for (final Object recordObj : temporalBoundingBoxes) {
                     if (recordObj instanceof Object[]) {
                         final Object[] record = (Object[]) recordObj;
@@ -635,12 +646,13 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             if (tuple != null) {
                 offeringTimeExtrema.setOffering(tuple[0].toString());
                 offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
-                if (tuple.length == 6) {
+                if (tuple.length == 7) {
                     DateTime maxPhenStart = DateTimeHelper.makeDateTime(tuple[2]);
                     DateTime maxPhenEnd = DateTimeHelper.makeDateTime(tuple[3]);
                     offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
                     offeringTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[4]));
                     offeringTimeExtrema.setMaxResultTime(DateTimeHelper.makeDateTime(tuple[5]));
+                    offeringTimeExtrema.setEnvelope((Geometry) tuple[6]);
                 } else {
                     offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
                     offeringTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[3]));
@@ -651,7 +663,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         }
 
         @Override
-        @SuppressWarnings({ "rawtypes"})
+        @SuppressWarnings({ "rawtypes" })
         public List transformList(List collection) {
             return collection;
         }
@@ -709,7 +721,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             return c.list();
         }
         return getOfferingObjectsForCacheUpdate(identifiers, session);
-     }
+    }
 
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());

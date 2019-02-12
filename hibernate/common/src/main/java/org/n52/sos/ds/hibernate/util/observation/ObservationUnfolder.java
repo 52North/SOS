@@ -396,11 +396,7 @@ public class ObservationUnfolder {
                 throw new NoApplicableCodeException().withMessage("sweField is null");
             }
             if (field.getElement() instanceof SweQuantity) {
-                if (checkDefinitionForDephtHeight(field)) {
-                    parseFieldAsParameter(field, token, parameterHolder);
-                } else {
-                    ((SweQuantity) field.getElement()).setValue(new BigDecimal(token));
-                }
+                ((SweQuantity) field.getElement()).setValue(Double.parseDouble(token));
             } else if (field.getElement() instanceof SweBoolean) {
                 ((SweBoolean) field.getElement()).setValue(Boolean.parseBoolean(token));
             } else if (field.getElement() instanceof SweText) {

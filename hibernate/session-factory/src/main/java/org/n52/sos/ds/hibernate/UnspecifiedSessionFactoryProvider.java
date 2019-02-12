@@ -31,6 +31,9 @@ package org.n52.sos.ds.hibernate;
 import java.util.Properties;
 import javax.inject.Inject;
 
+
+import org.hibernate.CacheMode;
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -92,7 +95,10 @@ public abstract class UnspecifiedSessionFactoryProvider
             if (sessionFactory == null) {
                 return null;
             }
-            return sessionFactory.openSession();
+            Session session = sessionFactory.openSession();
+            session.setCacheMode(CacheMode.IGNORE);
+            session.setFlushMode(FlushMode.COMMIT);
+            return session;
         } catch (HibernateException he) {
             String exceptionText = "Error while getting connection!";
             LOGGER.error(exceptionText, he);

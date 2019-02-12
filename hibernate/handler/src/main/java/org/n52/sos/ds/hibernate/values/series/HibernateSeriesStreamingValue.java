@@ -80,11 +80,12 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
 
     @Override
     protected void queryTimes() {
-        Session s = null;
         try {
-            s = sessionHolder.getSession();
+            if (session == null) {
+                session = sessionHolder.getSession();
+            }
             ObservationTimeExtrema timeExtrema =
-                    seriesValueTimeDAO.getTimeExtremaForSeries((GetObservationRequest)request, series, temporalFilterCriterion, s);
+                    seriesValueTimeDAO.getTimeExtremaForSeries((GetObservationRequest)request, series, temporalFilterCriterion, session);
             if (timeExtrema.isSetPhenomenonTimes()) {
                 setPhenomenonTime(GmlHelper.createTime(timeExtrema.getMinPhenomenonTime(), timeExtrema.getMaxPhenomenonTime()));
             }
@@ -96,21 +97,18 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
             }
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
-        } finally {
-            sessionHolder.returnSession(s);
         }
     }
 
     @Override
     protected void queryUnit() {
-        Session s = null;
         try {
-            s = sessionHolder.getSession();
-            setUnit(seriesDAO.getUnit(series, s));
+            if (session == null) {
+                session = sessionHolder.getSession();
+            }
+            setUnit(seriesDAO.getUnit(series, session));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
-        } finally {
-            sessionHolder.returnSession(s);
         }
     }
 

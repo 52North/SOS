@@ -100,7 +100,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PP_AFTER_ID));
-            assertThat(filtered, hasSize(1));
+            assertThat(filtered, hasSize(5));
         } finally {
             returnSession(session);
         }
@@ -126,7 +126,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(PP_BEFORE_ID));
-            assertThat(filtered, hasSize(1));
+            assertThat(filtered, hasSize(5));
         } finally {
             returnSession(session);
         }

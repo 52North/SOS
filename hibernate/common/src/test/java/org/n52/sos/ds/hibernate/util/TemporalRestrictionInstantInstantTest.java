@@ -216,7 +216,9 @@ public class TemporalRestrictionInstantInstantTest extends TemporalRestrictionTe
         Session session = getSession();
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begunBy());
-            assertThat(filtered, is(empty()));
+            assertThat(filtered, is(notNullValue()));
+            assertThat(filtered, hasItem(II_EQUALS_ID));
+            assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
         }
@@ -258,7 +260,8 @@ public class TemporalRestrictionInstantInstantTest extends TemporalRestrictionTe
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.endedBy());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, is(empty()));
+            assertThat(filtered, hasItem(II_EQUALS_ID));
+            assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
         }

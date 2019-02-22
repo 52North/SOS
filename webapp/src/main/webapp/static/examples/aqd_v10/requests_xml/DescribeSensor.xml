@@ -8,22 +8,22 @@
 	<!--
 	<swes:validTime>
 		<gml:TimeInstant gml:id="validTime">
-			<gml:timePosition>2013-08-14T15:02:43.219</gml:timePosition>
+			<gml:timePosition>2019-08-14T15:02:43.219</gml:timePosition>
 		</gml:TimeInstant>
 	</swes:validTime>
 	 -->
 	<!--
 	<swes:validTime>
 		<gml:TimeInstant gml:id="validTime">
-			<gml:timePosition indeterminatePosition="after">2013-08-14T15:00:00</gml:timePosition>
+			<gml:timePosition indeterminatePosition="after">2019-08-14T15:00:00</gml:timePosition>
 		</gml:TimeInstant>
 	</swes:validTime>
 	 -->
 	<!--
 	<swes:validTime>
 		<gml:TimePeriod gml:id="validTime">
-			<gml:beginPosition>2013-08-14T15:02:43.219</gml:beginPosition>
-            <gml:endPosition>2013-08-14t15:02:47</gml:endPosition>
+			<gml:beginPosition>2019-08-14T15:02:43.219</gml:beginPosition>
+            <gml:endPosition>2019-08-14t15:02:47</gml:endPosition>
 		</gml:TimePeriod>
 	</swes:validTime>
 	 -->

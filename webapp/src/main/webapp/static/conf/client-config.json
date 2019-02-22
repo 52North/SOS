@@ -61,7 +61,7 @@
 				"service":"AQD",
 				"version":"1.0.0",
 				"request":"GetObservation",
-				"temporalFilter":"om:resultTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00"
+				"temporalFilter":"om:resultTime,${currentYearDynamic}-11-19T14:00:00+01:00/${currentYearDynamic}-11-19T14:15:00+01:00"
 			},
 			"service":"AQD",
 			"version":"1.0.0",

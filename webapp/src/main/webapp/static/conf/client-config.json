@@ -61,7 +61,7 @@
 				"service":"AQD",
 				"version":"1.0.0",
 				"request":"GetObservation",
-				"temporalFilter":"om:resultTime,${currentYearDynamic}-11-19T14:00:00+01:00/${currentYearDynamic}-11-19T14:15:00+01:00"
+				"temporalFilter":"om:resultTime,2019-11-19T14:00:00+01:00/2019-11-19T14:15:00+01:00"
 			},
 			"service":"AQD",
 			"version":"1.0.0",
@@ -78,7 +78,7 @@
 				"service":"AQD",
 				"version":"1.0.0",
 				"request":"GetObservation",
-				"temporalFilter":"om:resultTime,After,2012-11-19T14:15:00+01:00"
+				"temporalFilter":"om:resultTime,After,2019-11-19T14:15:00+01:00"
 			},
 			"service":"AQD",
 			"version":"1.0.0",
@@ -174,7 +174,7 @@
 				"observedProperty":"http://www.52north.org/test/observableProperty/1",
 				"procedure":"http://www.52north.org/test/procedure/1",
 				"featureOfInterest":"om:featureOfInterest/*/sams:shape,0.0,0.0,60.0,60.0,urn:ogc:def:crs:EPSG::4326",
-				"eventTime":"om:phenomenonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00",
+				"eventTime":"om:phenomenonTime,2019-11-19T14:00:00+01:00/2019-11-19T14:15:00+01:00",
 				"responseFormat":"text/xml; subtype=\"om/1.0.0\""
 			},
 			"service":"SOS",
@@ -215,7 +215,7 @@
 					"xmlns(sams,http://www.opengis.net/samplingSpatial/2.0)",
 					"xmlns(om,http://www.opengis.net/om/2.0)"
 				],
-				"temporalFilter":"om:phenomenonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00"
+				"temporalFilter":"om:phenomenonTime,2019-11-19T14:00:00+01:00/2019-11-19T14:15:00+01:00"
 			},
 			"service":"SOS",
 			"version":"2.0.0",
@@ -833,7 +833,7 @@
 					"xmlns(om,http://www.opengis.net/om/2.0)"
 				],
 				"spatialFilter":"om:featureOfInterest/*/sams:shape,0.0,0.0,60.0,60.0,urn:ogc:def:crs:EPSG::4326",
-				"temporalFilter":"om:phenomenonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00"
+				"temporalFilter":"om:phenomenonTime,2019-11-19T14:00:00+01:00/2019-11-19T14:15:00+01:00"
 			},
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1043,7 +1043,7 @@
 				"version":"2.0.0",
 				"request":"GetObservation",
 				"namespaces":"xmlns(om,http://www.opengis.net/om/2.0)",
-				"temporalFilter":"om:phenomenonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00"
+				"temporalFilter":"om:phenomenonTime,2019-11-19T14:00:00+01:00/2019-11-19T14:15:00+01:00"
 			},
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1061,7 +1061,7 @@
 				"version":"2.0.0",
 				"request":"GetObservation",
 				"namespaces":"xmlns(om,http://www.opengis.net/om/2.0)",
-				"temporalFilter":"om:phenomenonTime,2012-11-19T14:00:00.000+01:00"
+				"temporalFilter":"om:phenomenonTime,2019-11-19T14:00:00.000+01:00"
 			},
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1079,7 +1079,7 @@
 				"version":"2.0.0",
 				"request":"GetObservation",
 				"namespaces":"xmlns(om,http://www.opengis.net/om/2.0)",
-				"temporalFilter":"om:phenomenonTime,2012-11-19T12:00:00.000-01:00"
+				"temporalFilter":"om:phenomenonTime,2019-11-19T12:00:00.000-01:00"
 			},
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1097,7 +1097,7 @@
 				"version":"2.0.0",
 				"request":"GetObservation",
 				"namespaces":"xmlns(om,http://www.opengis.net/om/2.0)",
-				"temporalFilter":"om:phenomenonTime,2012-11-19"
+				"temporalFilter":"om:phenomenonTime,2019-11-19"
 			},
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2955,7 +2955,7 @@
 				"version":"2.0.0",
 				"procedure":"http://www.52north.org/test/procedure/1",
 				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
-				"validTime":"2013-11-20T16:08:23Z"
+				"validTime":"2019-11-20T16:08:23Z"
 			}
 
 		},
@@ -2977,8 +2977,8 @@
 				"procedure":"http://www.52north.org/test/procedure/1",
 				"procedureDescriptionFormat":"http://www.opengis.net/sensorML/1.0.1",
 				"validTime":[
-					"2013-11-20T16:08:23Z",
-					"2013-11-20T16:08:25Z"
+					"2019-11-20T16:08:23Z",
+					"2019-11-20T16:08:25Z"
 				]
 
 			}
@@ -3087,8 +3087,8 @@
 					"during":{
 						"ref":"om:phenomenonTime",
 						"value":[
-							"2012-11-19T14:00:00+01:00",
-							"2012-11-19T15:00:00+01:00"
+							"2019-11-19T14:00:00+01:00",
+							"2019-11-19T15:00:00+01:00"
 						]
 
 					}
@@ -3227,8 +3227,8 @@
 						"during":{
 							"ref":"om:phenomenonTime",
 							"value":[
-								"2012-11-19T14:00:00+01:00",
-								"2012-11-19T14:05:00+01:00"
+								"2019-11-19T14:00:00+01:00",
+								"2019-11-19T14:05:00+01:00"
 							]
 
 						}
@@ -3237,7 +3237,7 @@
 					{
 						"equals":{
 							"ref":"om:phenomenonTime",
-							"value":"2012-11-19T14:08:00+01:00"
+							"value":"2019-11-19T14:08:00+01:00"
 						}
 
 					}
@@ -3448,8 +3448,8 @@
 					"during":{
 						"ref":"om:phenomenonTime",
 						"value":[
-							"2012-11-19T14:00:00+01:00",
-							"2012-11-19T15:00:00+01:00"
+							"2019-11-19T14:00:00+01:00",
+							"2019-11-19T15:00:00+01:00"
 						]
 					}
 				}
@@ -3667,8 +3667,8 @@
 							}
 
 						},
-						"phenomenonTime":"2012-11-19T17:45:15+00:00",
-						"resultTime":"2012-11-19T17:45:15+00:00",
+						"phenomenonTime":"2019-11-19T17:45:15+00:00",
+						"resultTime":"2019-11-19T17:45:15+00:00",
 						"result":{
 							"uom":"test_unit_9_3",
 							"value":0.28
@@ -3748,8 +3748,8 @@
 							}
 
 						},
-						"phenomenonTime":"2012-11-19T17:45:15+00:00",
-						"resultTime":"2012-11-19T17:45:15+00:00",
+						"phenomenonTime":"2019-11-19T17:45:15+00:00",
+						"resultTime":"2019-11-19T17:45:15+00:00",
 						"result":{
 							"uom":"test_unit_9_3",
 							"value":0.28
@@ -3809,8 +3809,8 @@
 								}
 							}
 						},
-						"phenomenonTime":"2012-11-19T17:45:15+00:00",
-						"resultTime":"2012-11-19T17:45:15+00:00",
+						"phenomenonTime":"2019-11-19T17:45:15+00:00",
+						"resultTime":"2019-11-19T17:45:15+00:00",
 						"result":{
 							"href":"test_reference",
 							"title":"test_title",
@@ -3953,7 +3953,7 @@
 					"service":"SOS",
 					"version":"2.0.0",
 					"templateIdentifier":"http://www.52north.org/test/procedure/9/template/1",
-					"resultValues":"15#2012-11-19T13:30:00+01:00,159.15#2012-11-19T13:31:00+01:00,159.15#2012-11-19T13:32:00+01:00,159.85#2012-11-19T13:33:00+01:00,160.5#2012-11-19T13:34:00+01:00,160.9#2012-11-19T13:35:00+01:00,160.7#2012-11-19T13:36:00+01:00,160.5#2012-11-19T13:37:00+01:00,160.6#2012-11-19T13:38:00+01:00,160.5#2012-11-19T13:39:00+01:00,160.4#2012-11-19T13:40:00+01:00,160.34#2012-11-19T13:41:00+01:00,160.25#2012-11-19T13:42:00+01:00,159.79#2012-11-19T13:43:00+01:00,159.56#2012-11-19T13:44:00+01:00,159.25#"
+					"resultValues":"15#2019-11-19T13:30:00+01:00,159.15#2019-11-19T13:31:00+01:00,159.15#2019-11-19T13:32:00+01:00,159.85#2019-11-19T13:33:00+01:00,160.5#2019-11-19T13:34:00+01:00,160.9#2019-11-19T13:35:00+01:00,160.7#2019-11-19T13:36:00+01:00,160.5#2019-11-19T13:37:00+01:00,160.6#2019-11-19T13:38:00+01:00,160.5#2019-11-19T13:39:00+01:00,160.4#2019-11-19T13:40:00+01:00,160.34#2019-11-19T13:41:00+01:00,160.25#2019-11-19T13:42:00+01:00,159.79#2019-11-19T13:43:00+01:00,159.56#2019-11-19T13:44:00+01:00,159.25#"
 				}
 
 			},
@@ -4017,8 +4017,8 @@
 							"during":{
 								"ref":"om:phenomenonTime",
 								"value":[
-									"2012-11-19T14:00:00+01:00",
-									"2012-11-19T14:05:00+01:00"
+									"2019-11-19T14:00:00+01:00",
+									"2019-11-19T14:05:00+01:00"
 								]
 
 							}
@@ -4027,7 +4027,7 @@
 						{
 							"equals":{
 								"ref":"om:phenomenonTime",
-								"value":"2012-11-19T14:08:00+01:00"
+								"value":"2019-11-19T14:08:00+01:00"
 							}
 
 						}
@@ -4181,8 +4181,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.0
@@ -4198,8 +4198,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.1
@@ -4211,8 +4211,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.2
@@ -4224,8 +4224,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.3
@@ -4237,8 +4237,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.4
@@ -4250,8 +4250,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.5
@@ -4263,8 +4263,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.6
@@ -4276,8 +4276,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.7
@@ -4289,8 +4289,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.8
@@ -4302,8 +4302,8 @@
 									"procedure":"http://www.52north.org/test/procedure/1",
 									"observedProperty":"http://www.52north.org/test/observableProperty/1",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":{
 										"uom":"test_unit_1",
 										"value":1.9
@@ -4372,8 +4372,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":0
 								},
 								{
@@ -4381,8 +4381,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":1
 								},
 								{
@@ -4390,8 +4390,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":2
 								},
 								{
@@ -4399,8 +4399,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":3
 								},
 								{
@@ -4408,8 +4408,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":4
 								},
 								{
@@ -4417,8 +4417,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":5
 								},
 								{
@@ -4426,8 +4426,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":6
 								},
 								{
@@ -4435,8 +4435,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":7
 								},
 								{
@@ -4444,8 +4444,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":8
 								},
 								{
@@ -4453,8 +4453,8 @@
 									"procedure":"http://www.52north.org/test/procedure/2",
 									"observedProperty":"http://www.52north.org/test/observableProperty/2",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/2",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":9
 								}
 
@@ -4519,8 +4519,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":true
 								},
 								{
@@ -4528,8 +4528,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":true
 								},
 								{
@@ -4537,8 +4537,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":false
 								},
 								{
@@ -4546,8 +4546,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":true
 								},
 								{
@@ -4555,8 +4555,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":false
 								},
 								{
@@ -4564,8 +4564,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":false
 								},
 								{
@@ -4573,8 +4573,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":true
 								},
 								{
@@ -4582,8 +4582,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":true
 								},
 								{
@@ -4591,8 +4591,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":false
 								},
 								{
@@ -4600,8 +4600,8 @@
 									"procedure":"http://www.52north.org/test/procedure/3",
 									"observedProperty":"http://www.52north.org/test/observableProperty/3",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/3",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":true
 								}
 
@@ -4666,8 +4666,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_0"
@@ -4679,8 +4679,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_1"
@@ -4692,8 +4692,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_2"
@@ -4705,8 +4705,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_3"
@@ -4718,8 +4718,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_4"
@@ -4731,8 +4731,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_5"
@@ -4744,8 +4744,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_6"
@@ -4757,8 +4757,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_7"
@@ -4770,8 +4770,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_8"
@@ -4783,8 +4783,8 @@
 									"procedure":"http://www.52north.org/test/procedure/4",
 									"observedProperty":"http://www.52north.org/test/observableProperty/4",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/4",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":{
 										"codespace":"test_unit_4",
 										"value":"test_category_9"
@@ -4853,8 +4853,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":"test_text_0"
 								},
 								{
@@ -4862,8 +4862,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":"test_text_1"
 								},
 								{
@@ -4871,8 +4871,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":"test_text_2"
 								},
 								{
@@ -4880,8 +4880,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":"test_text_3"
 								},
 								{
@@ -4889,8 +4889,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":"test_text_4"
 								},
 								{
@@ -4898,8 +4898,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":"test_text_5"
 								},
 								{
@@ -4907,8 +4907,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":"test_text_6"
 								},
 								{
@@ -4916,8 +4916,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":"test_text_7"
 								},
 								{
@@ -4925,8 +4925,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":"test_text_8"
 								},
 								{
@@ -4934,8 +4934,8 @@
 									"procedure":"http://www.52north.org/test/procedure/5",
 									"observedProperty":"http://www.52north.org/test/observableProperty/5",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/5",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":"test_text_9"
 								}
 
@@ -5076,8 +5076,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.0
@@ -5089,8 +5089,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.1
@@ -5102,8 +5102,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.2
@@ -5115,8 +5115,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.3
@@ -5128,8 +5128,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.4
@@ -5141,8 +5141,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.5
@@ -5154,8 +5154,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.6
@@ -5167,8 +5167,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.7
@@ -5180,8 +5180,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.8
@@ -5193,8 +5193,8 @@
 									"procedure":"http://www.52north.org/test/procedure/6",
 									"observedProperty":"http://www.52north.org/test/observableProperty/6",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/6",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":{
 										"uom":"test_unit_6",
 										"value":2.9
@@ -5263,8 +5263,8 @@
 										}
 
 									},
-									"phenomenonTime":"2012-11-19T13:00:00+00:00",
-									"resultTime":"2012-11-19T13:00:00+00:00",
+									"phenomenonTime":"2019-11-19T13:00:00+00:00",
+									"resultTime":"2019-11-19T13:00:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.0
@@ -5276,8 +5276,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:01:00+00:00",
-									"resultTime":"2012-11-19T13:01:00+00:00",
+									"phenomenonTime":"2019-11-19T13:01:00+00:00",
+									"resultTime":"2019-11-19T13:01:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.1
@@ -5289,8 +5289,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:02:00+00:00",
-									"resultTime":"2012-11-19T13:02:00+00:00",
+									"phenomenonTime":"2019-11-19T13:02:00+00:00",
+									"resultTime":"2019-11-19T13:02:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.2
@@ -5302,8 +5302,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:03:00+00:00",
-									"resultTime":"2012-11-19T13:03:00+00:00",
+									"phenomenonTime":"2019-11-19T13:03:00+00:00",
+									"resultTime":"2019-11-19T13:03:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.3
@@ -5315,8 +5315,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:04:00+00:00",
-									"resultTime":"2012-11-19T13:04:00+00:00",
+									"phenomenonTime":"2019-11-19T13:04:00+00:00",
+									"resultTime":"2019-11-19T13:04:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.4
@@ -5328,8 +5328,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:05:00+00:00",
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"phenomenonTime":"2019-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.5
@@ -5341,8 +5341,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:06:00+00:00",
-									"resultTime":"2012-11-19T13:06:00+00:00",
+									"phenomenonTime":"2019-11-19T13:06:00+00:00",
+									"resultTime":"2019-11-19T13:06:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.6
@@ -5354,8 +5354,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:07:00+00:00",
-									"resultTime":"2012-11-19T13:07:00+00:00",
+									"phenomenonTime":"2019-11-19T13:07:00+00:00",
+									"resultTime":"2019-11-19T13:07:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.7
@@ -5367,8 +5367,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:08:00+00:00",
-									"resultTime":"2012-11-19T13:08:00+00:00",
+									"phenomenonTime":"2019-11-19T13:08:00+00:00",
+									"resultTime":"2019-11-19T13:08:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.8
@@ -5380,8 +5380,8 @@
 									"procedure":"http://www.52north.org/test/procedure/7",
 									"observedProperty":"http://www.52north.org/test/observableProperty/7",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/7",
-									"phenomenonTime":"2012-11-19T13:09:00+00:00",
-									"resultTime":"2012-11-19T13:09:00+00:00",
+									"phenomenonTime":"2019-11-19T13:09:00+00:00",
+									"resultTime":"2019-11-19T13:09:00+00:00",
 									"result":{
 										"uom":"test_unit_7",
 										"value":3.9
@@ -5451,10 +5451,10 @@
 
 									},
 									"phenomenonTime":[
-										"2012-11-19T13:00:00+00:00",
-										"2012-11-19T13:04:59+00:00"
+										"2019-11-19T13:00:00+00:00",
+										"2019-11-19T13:04:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:05:00+00:00",
+									"resultTime":"2019-11-19T13:05:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.0
@@ -5467,10 +5467,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:05:00+00:00",
-										"2012-11-19T13:09:59+00:00"
+										"2019-11-19T13:05:00+00:00",
+										"2019-11-19T13:09:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:10:00+00:00",
+									"resultTime":"2019-11-19T13:10:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.1
@@ -5483,10 +5483,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:10:00+00:00",
-										"2012-11-19T13:14:59+00:00"
+										"2019-11-19T13:10:00+00:00",
+										"2019-11-19T13:14:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:15:00+00:00",
+									"resultTime":"2019-11-19T13:15:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.2
@@ -5499,10 +5499,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:15:00+00:00",
-										"2012-11-19T13:19:59+00:00"
+										"2019-11-19T13:15:00+00:00",
+										"2019-11-19T13:19:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:20:00+00:00",
+									"resultTime":"2019-11-19T13:20:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.3
@@ -5515,10 +5515,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:20:00+00:00",
-										"2012-11-19T13:24:59+00:00"
+										"2019-11-19T13:20:00+00:00",
+										"2019-11-19T13:24:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:25:00+00:00",
+									"resultTime":"2019-11-19T13:25:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.4
@@ -5531,10 +5531,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:25:00+00:00",
-										"2012-11-19T13:29:59+00:00"
+										"2019-11-19T13:25:00+00:00",
+										"2019-11-19T13:29:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:30:00+00:00",
+									"resultTime":"2019-11-19T13:30:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.5
@@ -5547,10 +5547,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:30:00+00:00",
-										"2012-11-19T13:34:59+00:00"
+										"2019-11-19T13:30:00+00:00",
+										"2019-11-19T13:34:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:35:00+00:00",
+									"resultTime":"2019-11-19T13:35:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.6
@@ -5563,10 +5563,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:35:00+00:00",
-										"2012-11-19T13:39:59+00:00"
+										"2019-11-19T13:35:00+00:00",
+										"2019-11-19T13:39:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:40:00+00:00",
+									"resultTime":"2019-11-19T13:40:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.7
@@ -5579,10 +5579,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:40:00+00:00",
-										"2012-11-19T13:44:59+00:00"
+										"2019-11-19T13:40:00+00:00",
+										"2019-11-19T13:44:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:45:00+00:00",
+									"resultTime":"2019-11-19T13:45:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.8
@@ -5595,10 +5595,10 @@
 									"observedProperty":"http://www.52north.org/test/observableProperty/8",
 									"featureOfInterest":"http://www.52north.org/test/featureOfInterest/8",
 									"phenomenonTime":[
-										"2012-11-19T13:45:00+00:00",
-										"2012-11-19T13:49:59+00:00"
+										"2019-11-19T13:45:00+00:00",
+										"2019-11-19T13:49:59+00:00"
 									],
-									"resultTime":"2012-11-19T13:50:00+00:00",
+									"resultTime":"2019-11-19T13:50:00+00:00",
 									"result":{
 										"uom":"test_unit_8",
 										"value":4.9
@@ -5787,8 +5787,8 @@
 										}
 
 									},
-									"phenomenonTime":"2013-01-01T01:00:00+02:00",
-									"resultTime":"2013-01-01T00:01:00+02:00",
+									"phenomenonTime":"2019-01-01T01:00:00+02:00",
+									"resultTime":"2019-01-01T00:01:00+02:00",
 									"result":"John/Jane Doe"
 								}
 

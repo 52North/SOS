@@ -1062,7 +1062,7 @@ public abstract class AbstractSeriesDAO
     }
 
     public boolean checkObservationType(DatasetEntity dataset, String observationType, Session session) {
-        String hObservationType = dataset.getObservationType() == null ? null : dataset.getOmObservationType().getFormat();
+        String hObservationType = dataset.isSetOmObservationType() ? dataset.getOmObservationType().getFormat() : null;
         if (hObservationType == null || hObservationType.isEmpty() || hObservationType.equals("NOT_DEFINED")) {
             updateSeries(dataset, observationType, session);
         } else  if (!hObservationType.equals(observationType)) {

@@ -42,6 +42,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 
 import org.n52.faroe.SettingType;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 
@@ -75,7 +76,7 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
         } else {
             MultilingualString value = new MultilingualString();
             for (Entry<String, String> e : this.value.entrySet()) {
-                value.addLocalization(new LocalizedString(new Locale(e.getKey()), e.getValue()));
+                value.addLocalization(new LocalizedString(LocaleHelper.decode(e.getKey()), e.getValue()));
             }
             return value;
         }

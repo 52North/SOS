@@ -46,6 +46,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.i18n.I18nEntity;
@@ -303,12 +304,12 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     protected void fillHibernateObject(S i18n, H h18n) {
         Optional<LocalizedString> name = i18n.getName()
-                .getLocalization(new Locale(h18n.getLocale()));
+                .getLocalization(LocaleHelper.decode(h18n.getLocale()));
         if (name.isPresent()) {
             h18n.setName(name.get().getText());
         }
         Optional<LocalizedString> description = i18n.getDescription()
-                .getLocalization(new Locale(h18n.getLocale()));
+                .getLocalization(LocaleHelper.decode(h18n.getLocale()));
         if (description.isPresent()) {
             h18n.setDescription(description.get().getText());
         }

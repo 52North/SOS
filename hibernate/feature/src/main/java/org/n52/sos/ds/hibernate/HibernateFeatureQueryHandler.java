@@ -55,6 +55,7 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -132,7 +133,7 @@ public class HibernateFeatureQueryHandler
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLocale(String defaultLocale) {
-        this.defaultLocale = new Locale(defaultLocale);
+        this.defaultLocale = LocaleHelper.decode(defaultLocale);
     }
 
     @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)

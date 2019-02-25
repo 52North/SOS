@@ -41,6 +41,7 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -77,7 +78,7 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = new Locale(defaultLanguage);
+        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override

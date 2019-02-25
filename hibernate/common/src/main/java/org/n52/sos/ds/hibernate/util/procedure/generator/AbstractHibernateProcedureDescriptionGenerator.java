@@ -49,6 +49,7 @@ import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -106,7 +107,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLanguage(String defaultLanguage) {
         Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
-        this.defaultLanguage = new Locale(defaultLanguage);
+        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)

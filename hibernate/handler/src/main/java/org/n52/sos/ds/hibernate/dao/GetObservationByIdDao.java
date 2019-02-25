@@ -46,6 +46,7 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.ObservationStream;
@@ -116,7 +117,7 @@ public class GetObservationByIdDao
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = new Locale(defaultLanguage);
+        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override

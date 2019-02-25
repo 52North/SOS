@@ -45,6 +45,7 @@ import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
@@ -126,7 +127,7 @@ public class OmObservationCreatorContext {
 
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = new Locale(defaultLanguage);
+        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Setting(ServiceSettings.SERVICE_URL)

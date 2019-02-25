@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.i18n.I18nProcedureEntity;
@@ -81,12 +82,12 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<ProcedureEntity, 
             I18nProcedureEntity h18n) {
         super.fillHibernateObject(i18n, h18n);
         Optional<LocalizedString> longName
-                = i18n.getLongName().getLocalization(new Locale(h18n.getLocale()));
+                = i18n.getLongName().getLocalization(LocaleHelper.decode(h18n.getLocale()));
         if (longName.isPresent()) {
             h18n.setLongName(longName.get().getText());
         }
         Optional<LocalizedString> shortName
-                = i18n.getShortName().getLocalization(new Locale(h18n.getLocale()));
+                = i18n.getShortName().getLocalization(LocaleHelper.decode(h18n.getLocale()));
         if (shortName.isPresent()) {
             h18n.setShortName(shortName.get().getText());
         }

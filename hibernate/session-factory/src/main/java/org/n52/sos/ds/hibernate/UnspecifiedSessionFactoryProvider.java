@@ -97,7 +97,7 @@ public abstract class UnspecifiedSessionFactoryProvider
             }
             Session session = sessionFactory.openSession();
             session.setCacheMode(CacheMode.IGNORE);
-            session.setFlushMode(FlushMode.COMMIT);
+            session.setHibernateFlushMode(FlushMode.COMMIT);
             return session;
         } catch (HibernateException he) {
             String exceptionText = "Error while getting connection!";

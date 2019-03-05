@@ -53,7 +53,6 @@ import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.shetland.ogc.ows.extension.StringBasedExtension;
 import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
-import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.exception.NoSuchExtensionException;

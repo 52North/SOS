@@ -196,7 +196,7 @@ public class ObservationContext {
         if (includeFeature) {
             if (isSetFeatureOfInterest()) {
                 c.add(Restrictions
-                        .eq(DatasetEntity.PROPERTY_FEATURE,
+                        .eqOrIsNull(DatasetEntity.PROPERTY_FEATURE,
                             getFeatureOfInterest()));
 
             }

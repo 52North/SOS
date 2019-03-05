@@ -164,11 +164,7 @@ public class GeometryHandlerTest {
     @Test
     public void changeEpsgCodesWithNorthingFirstAxisOrder() throws OwsExceptionReport {
         assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), is(true));
-
-        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(String.valueOf(EPSG_4326));
-
         assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_4326), is(true));
-        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), is(false));
     }
 
     @Test

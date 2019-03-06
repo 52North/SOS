@@ -575,7 +575,7 @@ public abstract class AbstractSeriesDAO
      * @param feature
      *            AbstractFeatureEntity to add
      */
-    public void addFeatureOfInterestToCriteria(Criteria c, AbstractFeatureEntity feature) {
+    public void addFeatureOfInterestToCriteria(Criteria c, AbstractFeatureEntity<?> feature) {
         c.add(Restrictions.eq(DatasetEntity.PROPERTY_FEATURE, feature));
 
     }

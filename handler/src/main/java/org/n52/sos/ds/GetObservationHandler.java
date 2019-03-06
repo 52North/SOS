@@ -86,9 +86,9 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
                 request.getObservedProperties().isEmpty()) {
            throw new MissingObservedPropertyParameterException();
        }
-       if (request.isSetResultFilter()) {
-           throw new NotYetSupportedException("result filtering");
-       }
+//       if (request.isSetResultFilter()) {
+//           throw new NotYetSupportedException("result filtering");
+//       }
         Session session = sessionStore.getSession();
         try {
             GetObservationResponse response = new GetObservationResponse();

@@ -58,14 +58,14 @@ public class IncDecInteger {
         set(get() + 1);
     }
     /**
-     * @return
+     * @return incremented int
      */
     public int incrementAndGet() {
         set(get() + 1);
         return get();
     }
     /**
-     * @return
+     * @return int and increment
      */
     public int getAndIncrement() {
         int temp = get();
@@ -81,7 +81,7 @@ public class IncDecInteger {
     }
 
     /**
-     * @return
+     * @return decremented int
      */
     public int decrementAndGet() {
         set(get() - 1);
@@ -89,7 +89,7 @@ public class IncDecInteger {
     }
 
     /**
-     * @return
+     * @return int and decrement
      */
     public int getAndDecrement() {
         int temp = get();
@@ -98,7 +98,7 @@ public class IncDecInteger {
     }
 
     /**
-     * @return
+     * @return int
      */
     public int get() {
         return value;

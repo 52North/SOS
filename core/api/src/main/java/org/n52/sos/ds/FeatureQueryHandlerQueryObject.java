@@ -119,33 +119,6 @@ public class FeatureQueryHandlerQueryObject {
         return null;
     }
 
-    // public Set<String> getFeatureIdentifiers() {
-    // return featureIdentifiers;
-    // }
-    //
-    // public FeatureQueryHandlerQueryObject
-    // setFeatureIdentifiers(Collection<String> featureIdentifiers) {
-    // if (featureIdentifiers != null && !featureIdentifiers.isEmpty()) {
-    // this.featureIdentifiers.addAll(featureIdentifiers);
-    // }
-    // return this;
-    // }
-    //
-    // public FeatureQueryHandlerQueryObject addFeatureIdentifier(String
-    // identifier) {
-    // if (!Strings.isNullOrEmpty(identifier)) {
-    // featureIdentifiers.add(identifier);
-    // }
-    // return this;
-    // }
-    //
-    // public String getFeatureIdentifier() {
-    // if (isSetFeatureIdentifiers() && getFeatureIdentifiers().size() == 1) {
-    // return getFeatureIdentifiers().iterator().next();
-    // }
-    // return Constants.EMPTY_STRING;
-    // }
-
     public boolean isSetSpatialFilters() {
         return getSpatialFilters() != null && !getSpatialFilters().isEmpty();
     }
@@ -182,10 +155,6 @@ public class FeatureQueryHandlerQueryObject {
         return version;
     }
 
-    // public boolean isSetFeatureIdentifiers() {
-    // return CollectionHelper.isNotEmpty(getFeatureIdentifiers());
-    // }
-
     public boolean isSetVersion() {
         return !Strings.isNullOrEmpty(getVersion());
     }
@@ -199,7 +168,7 @@ public class FeatureQueryHandlerQueryObject {
 
     /**
      * @param feature the feature to set
-     * @return
+     * @return this
      */
     public FeatureQueryHandlerQueryObject setFeatureObject(Object feature) {
         this.feature = feature;

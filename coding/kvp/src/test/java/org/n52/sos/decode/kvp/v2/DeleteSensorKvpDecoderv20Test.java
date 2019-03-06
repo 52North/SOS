@@ -58,8 +58,6 @@ public class DeleteSensorKvpDecoderv20Test extends DeleteSensorKvpDecoderv20 {
 
     private static final String ADDITIONAL_PARAMETER = "additionalParameter";
 
-    private static final String EMPTY_STRING = "";
-
     private DeleteSensorKvpDecoderv20 decoder;
 
     @Before

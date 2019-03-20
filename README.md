@@ -50,6 +50,33 @@ In the [Sensor Web Suite database project](https://github.com/52North/series-hib
 ## Quick Start
 
  Get started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
+ 
+### Docker
+
+Docker images are automatically deployed to [Docker Hub](https://hub.docker.com/r/52north/sos).
+
+The configuration is located in `/etc/sos`. The directory is per default a volume and when no other directory is mounted (see also the [Docker documentation](https://docs.docker.com/storage/) for pre-populated volumes) a default configuration using H2 is used. This default installation uses the admin credentials `admin:admin`. If you want to install the SOS, you have to mount a empty directory instead of the default volume.
+
+The cache file is located in `/var/lib/jetty/webapps/ROOT/tmp`. The directory is per default a volume.
+
+A custom [Helgoland](https://github.com/52North/helgoland) `settings.json` can be mounted to `/var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json`. This is needed, e.g when the external URL of the SOS differs from `http://localhost:8080/`.
+
+#### Examples
+
+Default:
+```sh
+docker run -p 8080:8080 52north/sos:latest
+```
+
+With a local configuration folder:
+```sh
+docker run -p 8080:8080 -v ./config:/etc/sos 52north/sos:latest
+```
+
+Remote debugging enabled:
+```sh
+docker run -p 8080:8080 -p 8000:8000 -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' 52north/sos:latest
+```
 
 ## User Guide
 

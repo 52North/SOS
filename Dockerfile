@@ -24,7 +24,7 @@ COPY --chown=jetty:jetty \
 
 RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/config
 
-VOLUME /tmp/jetty
+VOLUME /var/lib/jetty/webapps/ROOT/tmp
 VOLUME /etc/sos
 
 HEALTHCHECK --interval=5s --timeout=20s --retries=3 \

@@ -10,7 +10,7 @@ RUN mvn --batch-mode --errors --fail-fast \
   --define maven.javadoc.skip=true \
   --define skipTests=true install
 
-FROM jetty:jre8-alpine
+FROM jetty:jre8
 
 COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp \
                   /var/lib/jetty/webapps/ROOT

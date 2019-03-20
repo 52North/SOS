@@ -14,19 +14,16 @@ FROM jetty:jre8
 
 COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp \
                   /var/lib/jetty/webapps/ROOT
-COPY --chown=jetty:jetty logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
+COPY --chown=jetty:jetty ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
 
 USER root
-
 RUN mkdir -p /etc/sos \
  && chown jetty:jetty /etc/sos \
  && ln -s /etc/sos /var/lib/jetty/webapps/ROOT/config
-
 USER jetty
 
 VOLUME /tmp/jetty
 VOLUME /etc/sos
-
 
 HEALTHCHECK --interval=5s --timeout=20s --retries=3 \
   CMD wget http://localhost:8080/ -q -O - > /dev/null 2>&1

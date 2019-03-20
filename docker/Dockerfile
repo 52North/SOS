@@ -14,6 +14,7 @@ FROM jetty:jre8
 
 COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp \
                   /var/lib/jetty/webapps/ROOT
+COPY --chown=jetty:jetty logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
 
 USER root
 
@@ -27,10 +28,8 @@ VOLUME /tmp/jetty
 VOLUME /etc/sos
 
 
-HEALTHCHECK --interval=5s \
-            --timeout=5s \
-            --retries=3 \
-            CMD wget localhost:8080/ -q -O - > /dev/null 2>&1
+HEALTHCHECK --interval=5s --timeout=20s --retries=3 \
+  CMD wget http://localhost:8080/ -q -O - > /dev/null 2>&1
 
 LABEL maintainer="Carsten Hollmann <c.hollmann@52north.org>" \
       org.label-schema.schema-version="1.0" \

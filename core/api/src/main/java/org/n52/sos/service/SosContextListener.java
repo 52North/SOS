@@ -214,7 +214,7 @@ public class SosContextListener implements ServletContextListener {
     }
     
     public static boolean hasConfigPath() {
-        return hasPath() && Files.exists(getConfigPath());
+        return hasPath();
     }
 
     public static void registerShutdownHook(Runnable runnable) {

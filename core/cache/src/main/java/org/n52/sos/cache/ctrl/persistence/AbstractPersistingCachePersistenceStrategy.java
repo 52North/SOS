@@ -136,7 +136,8 @@ public abstract class AbstractPersistingCachePersistenceStrategy
         if (cacheFileFolder != null && cacheFileFolder.exists()) {
             return cacheFileFolder.getAbsolutePath();
         }
-        return Configurator.getInstance().getBasePath();
+        // return Configurator.getInstance().getBasePath();
+        return System.getProperty("java.io.tmpdir");
     }
 
     @Override

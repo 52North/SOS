@@ -1,0 +1,4 @@
+**/target/
+docker/Dockerfile
+docker/Makefile
+docker/.build/

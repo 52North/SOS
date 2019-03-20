@@ -81,7 +81,7 @@ public class ReportingHeaderSQLiteSessionFactory extends AbstractSessionFactoryP
     private String getFilename() {
         String path = null;
         try {
-            path = SosContextListener.getPath();
+            path = SosContextListener.getConfigPath();
         } catch (Throwable t) {
         }
         if (path == null) {

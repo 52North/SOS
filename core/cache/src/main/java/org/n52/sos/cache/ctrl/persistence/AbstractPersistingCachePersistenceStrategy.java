@@ -45,8 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.service.SosContextListener;
 
 import com.google.common.base.Optional;
 
@@ -136,8 +136,9 @@ public abstract class AbstractPersistingCachePersistenceStrategy
         if (cacheFileFolder != null && cacheFileFolder.exists()) {
             return cacheFileFolder.getAbsolutePath();
         }
+        return SosContextListener.getConfigPath();
         // return Configurator.getInstance().getBasePath();
-        return System.getProperty("java.io.tmpdir");
+//        return System.getProperty("java.io.tmpdir");
     }
 
     @Override

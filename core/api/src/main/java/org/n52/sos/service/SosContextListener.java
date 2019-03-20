@@ -28,6 +28,10 @@
  */
 package org.n52.sos.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -61,6 +65,7 @@ public class SosContextListener implements ServletContextListener {
 
     private static String path = null;
     private static final List<Runnable> hooks = new LinkedList<>();
+    private static final String CONFIG = "config";
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -192,6 +197,24 @@ public class SosContextListener implements ServletContextListener {
 
     public static boolean hasPath() {
         return SosContextListener.path != null;
+    }
+    
+    public static String getConfigPath() {
+        Path configPath = Paths.get(SosContextListener.path, CONFIG);
+        if (Files.notExists(configPath)) {
+            try {
+                Files.createDirectories(configPath);
+            } catch (IOException ioe) {
+                String message = "Error creating 'config' folder!";
+                LOG.error(message, ioe);
+                throw new RuntimeException(message, ioe);
+            }
+        }
+        return configPath.toString();
+    }
+    
+    public static boolean hasConfigPath() {
+        return hasPath() && Files.exists(getConfigPath());
     }
 
     public static void registerShutdownHook(Runnable runnable) {

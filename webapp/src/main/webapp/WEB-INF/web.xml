@@ -22,7 +22,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<!-- location of the database configuration file -->
 	<context-param>
 		<param-name>datasourceConfigLocation</param-name>
-		<param-value>/WEB-INF/datasource.properties</param-value>
+		<param-value>/config/datasource.properties</param-value>
 	</context-param>
 	<!-- Memory leak preventer listener -->
 	<listener>

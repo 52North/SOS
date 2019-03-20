@@ -14,7 +14,7 @@
         <sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
-        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
         <series.api.version>2.0.0-alpha.6</series.api.version>
         <series.db.version>2.0.0-alpha.3</series.db.version>
         <helgoland.version>1.0.0</helgoland.version>
@@ -1034,7 +1034,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
+                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/config/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

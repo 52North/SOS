@@ -38,6 +38,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -64,7 +67,13 @@ public abstract class AbstractPersistingCachePersistenceStrategy
     public AbstractPersistingCachePersistenceStrategy(File cacheFile) {
         if (cacheFile == null) {
             String basePath = getBasePath();
-            this.cacheFile = new File(basePath, CACHE_FILE).getAbsolutePath();
+            Path path = Paths.get(basePath, CACHE_FILE);
+            try {
+                Files.createDirectories(path.getParent());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            this.cacheFile = path.toAbsolutePath().toString();
         } else {
             this.cacheFile = cacheFile.getAbsolutePath();
         }
@@ -136,9 +145,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
         if (cacheFileFolder != null && cacheFileFolder.exists()) {
             return cacheFileFolder.getAbsolutePath();
         }
-        return SosContextListener.getConfigPath();
-        // return Configurator.getInstance().getBasePath();
-//        return System.getProperty("java.io.tmpdir");
+        return Paths.get(SosContextListener.getPath(), "tmp").toString();
     }
 
     @Override

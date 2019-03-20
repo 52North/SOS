@@ -17,6 +17,9 @@ COPY --chown=jetty:jetty --from=BUILD \
 COPY --chown=jetty:jetty \
      ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
 COPY --chown=jetty:jetty \
+     ./docker/helgoland.json \
+     /var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json
+COPY --chown=jetty:jetty \
      ./docker/default-config /etc/sos
 
 RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/config

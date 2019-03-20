@@ -91,13 +91,13 @@ import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.netcdf.Nc4ForceTimeChunkingStategy;
 import org.n52.sos.netcdf.NetCDFUtil;
 import org.n52.sos.netcdf.NetcdfConstants;
-import org.n52.sos.netcdf.NetcdfHelper;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.data.dataset.StaticLocationDataset;
 import org.n52.sos.netcdf.data.subsensor.BinProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.ProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.om.NetCDFObservation;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.encode.EncodingContext;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -140,7 +140,7 @@ import ucar.nc2.jni.netcdf.Nc4Iosp;
  * @since 4.4.0
  *
  */
-public abstract class AbstractNetcdfEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object> {
+public abstract class AbstractNetcdfEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object>, NetCDFUtil {
 
     private final Set<SupportedType> SUPPORTED_TYPES =
             ImmutableSet.<SupportedType>builder().add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE).build();
@@ -151,11 +151,12 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     private OwsServiceMetadataRepository serviceMetadataRepository;
     private OperationHandlerRepository operationHandlerRepository;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+    private GeometryHandler geometryHandler;
 
     public AbstractNetcdfEncoder() {
 
     }
-
+    
     @Inject
     public void setProcedureDescriptionFormatRepository(
             ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
@@ -172,6 +173,10 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         this.serviceMetadataRepository = serviceMetadataRepository;
     }
 
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
@@ -276,7 +281,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
             throws EncodingException {
         List<NetCDFObservation> netCDFSosObsList;
         try {
-            netCDFSosObsList = NetCDFUtil.createNetCDFSosObservations(sosObservationCollection);
+            netCDFSosObsList = createNetCDFSosObservations(sosObservationCollection);
         } catch (OwsExceptionReport ex) {
             throw new  EncodingException(ex);
         }
@@ -1349,8 +1354,10 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         pathBuffer.append("_").append(Long.toString(java.lang.System.nanoTime())).append(".nc");
         return pathBuffer.toString();
     }
-
-    private static NetcdfHelper getNetcdfHelper() {
-        return NetcdfHelper.getInstance();
+    
+    @Override
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
     }
+
 }

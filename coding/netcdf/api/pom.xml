@@ -47,10 +47,10 @@
 	        <groupId>com.axiomalaska</groupId>
 	        <artifactId>cf4j</artifactId>
       	</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>cdm</artifactId>
-		</dependency>   
+    		<dependency>
+    			<groupId>edu.ucar</groupId>
+    			<artifactId>cdm</artifactId>
+    		</dependency>   
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -65,6 +65,17 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>test</artifactId>
             <scope>test</scope>
+        </dependency>
+         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

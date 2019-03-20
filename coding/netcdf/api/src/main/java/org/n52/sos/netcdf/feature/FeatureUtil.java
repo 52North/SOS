@@ -88,8 +88,8 @@ public class FeatureUtil {
     public static Set<Double> getHeights(Set<Point> points){
         Set<Double> heights = new HashSet<Double>();
         for (Point point : points) {
-            if( !Double.isNaN( point.getCoordinate().z ) ){
-                heights.add(point.getCoordinate().z);
+            if(!Double.isNaN( point.getCoordinate().getZ()) ){
+                heights.add(point.getCoordinate().getZ());
             } else {
                 heights.add(0.0);
             }
@@ -101,11 +101,11 @@ public class FeatureUtil {
         if( point == null ){
             return null;
         }
-        if( Double.isNaN( point.getCoordinate().z ) ){
+        if(Double.isNaN( point.getCoordinate().getZ()) ){
             return point;
         }
-        Point clonedPoint = (Point) point.clone();
-        clonedPoint.getCoordinate().z = Double.NaN;
+        Point clonedPoint = (Point) point.copy();
+        clonedPoint.getCoordinate().setZ(Double.NaN);
         return clonedPoint;
     }
 

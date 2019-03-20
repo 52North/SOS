@@ -28,35 +28,26 @@
  */
 package org.n52.sos.netcdf;
 
-/**
- * Interface for netCDF encoding settings
- *
- * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.4.0
- *
- */
-public interface NetcdfSettingsProvider {
+import static org.junit.Assert.assertTrue;
 
-    public static final String NETCDF_VERSION = "netcdf.version";
+import org.junit.Test;
+import org.n52.janmayen.http.MediaType;
 
-    public static final String NETCDF_CHUNK_SIZE_TIME = "netcdf.chunk.size";
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
-    public static final String NETCDF_FILL_VALUE = "netcdf.fillValue";
+public class NetcdfConstantsTest implements NetcdfConstants {
 
-    public static final String NETCDF_HEIGHT_DEPTH = "netcdf.heightDepth";
-
-    public static final String NETCDF_VARIABLE_TYPE = "netcdf.varibale.type";
-
-    public static final String NETCDF_VARIABLE_UPPER_CASE = "netcdf.varibale.upperCase";
-
-    public static final String NETCDF_PUBLISHER = "netcdf.publisher";
-
-    public static final String NETCDF_CONTRIBUTOR = "netcdf.contributor";
-
-    public static final String NETCDF_PHEN_LATITUDE = "netcdf.phenomenon.latitude";
-
-    public static final String NETCDF_PHEN_LONGITUDE = "netcdf.phenomenon.longitude";
-
-    public static final String NETCDF_PHEN_Z = "netcdf.phenomenon.z";
+    @Test
+    public void test_netcdf_zip_version_3() {
+        assertTrue(CONTENT_TYPE_NETCDF_3_ZIP.toString()
+                .equals(new MediaType("application", "zip",
+                        ImmutableMap.of("subtype", ImmutableList.of("netcdf"), PARAM_VERSION, ImmutableList.of("3")))
+                                .toString()));
+        assertTrue(CONTENT_TYPE_NETCDF_4_ZIP.toString()
+                .equals(new MediaType("application", "zip",
+                        ImmutableMap.of("subtype", ImmutableList.of("netcdf"), PARAM_VERSION, ImmutableList.of("4")))
+                                .toString()));
+    }
 
 }

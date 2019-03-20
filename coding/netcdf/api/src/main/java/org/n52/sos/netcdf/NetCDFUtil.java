@@ -37,6 +37,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -55,7 +59,6 @@ import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.EnvelopeOrGeometry;
 import org.n52.sos.netcdf.data.dataset.IdentifierDatasetSensor;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesProfileSensorDataset;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesSensorDataset;
@@ -72,10 +75,6 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.Point;
 
 import ucar.nc2.constants.CF;
 
@@ -87,7 +86,10 @@ import ucar.nc2.constants.CF;
  * @since 4.4.0
  *
  */
-public class NetCDFUtil {
+public interface NetCDFUtil {
+
+    GeometryHandler getGeometryHandler();
+
     /**
      * Organizes OmObservation collection into a list of NetCDFObservation
      * blocks, each of which contain a single feature type
@@ -97,7 +99,7 @@ public class NetCDFUtil {
      * @return List&lt;NetCDFObservation&gt; ready for encoding
      * @throws EncodingException
      */
-    public static List<NetCDFObservation> createNetCDFSosObservations(ObservationStream omObservations)
+    default List<NetCDFObservation> createNetCDFSosObservations(ObservationStream omObservations)
             throws EncodingException, OwsExceptionReport {
         // the main map of observation value strings by asset, time, phenomenon,
         // and subsensor (height, profile bin, etc)
@@ -158,7 +160,7 @@ public class NetCDFUtil {
             for (Point point : FeatureUtil.getFeaturePoints(foi)) {
                 try {
                     // TODO is this correct?
-                    point = (Point) GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(point);
+                    point = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
                 } catch (OwsExceptionReport e) {
                     throw new EncodingException("Exception while normalizing feature coordinate axis order.", e);
                 }
@@ -221,7 +223,7 @@ public class NetCDFUtil {
                         try {
                             // TODO is this correct?
                             point =
-                                    (Point) GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                    (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
                                             point);
                         } catch (OwsExceptionReport e) {
                             throw new EncodingException("Exception while normalizing sampling geometry coordinate axis order.");
@@ -426,7 +428,7 @@ public class NetCDFUtil {
         return iSosObsList;
     }
 
-    // public static void checkSrid( int srid, Logger logger ) throws
+    // default void checkSrid( int srid, Logger logger ) throws
     // InvalidParameterValueException{
     // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
     // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
@@ -434,12 +436,12 @@ public class NetCDFUtil {
     // }
     // }
 
-    public static void expandEnvelopeToInclude(Envelope env, Set<Double> lngs, Set<Double> lats) {
+    default void expandEnvelopeToInclude(Envelope env, Set<Double> lngs, Set<Double> lats) {
         lngs.stream().forEach(lng -> env.expandToInclude(lng, env.getMinY()));
         lats.stream().forEach(lat -> env.expandToInclude(env.getMinX(), lat));
     }
 
-    public static Envelope createEnvelope(Collection<OmObservation> observationCollection) {
+    default Envelope createEnvelope(Collection<OmObservation> observationCollection) {
         Envelope envelope = null;
 
         for (OmObservation sosObservation : observationCollection) {
@@ -457,14 +459,14 @@ public class NetCDFUtil {
         return envelope;
     }
 
-    public static Envelope swapEnvelopeAxisOrder(Envelope envelope) {
+    default Envelope swapEnvelopeAxisOrder(Envelope envelope) {
         if (envelope == null) {
             return null;
         }
         return new Envelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(), envelope.getMaxX());
     }
 
-    // public static void checkSrid( int srid, Logger logger ) throws
+    // default void checkSrid( int srid, Logger logger ) throws
     // InvalidParameterValueException{
     // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
     // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
@@ -472,7 +474,7 @@ public class NetCDFUtil {
     // }
     // }
 
-    public static SubSensor createSubSensor(String sensor, AbstractSamplingFeature foi) {
+    default SubSensor createSubSensor(String sensor, AbstractSamplingFeature foi) {
         // return null if sensor or station id is same as foi
         if (sensor.equals(foi.getIdentifierCodeWithAuthority().getValue())) {
             return null;
@@ -480,7 +482,7 @@ public class NetCDFUtil {
         return createSubSensor(sensor, foi.getGeometry());
     }
 
-    // public static void checkSrid( int srid, Logger logger ) throws
+    // default void checkSrid( int srid, Logger logger ) throws
     // InvalidParameterValueException{
     // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
     // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
@@ -488,7 +490,7 @@ public class NetCDFUtil {
     // }
     // }
 
-    // public static void checkSrid( int srid, Logger logger ) throws
+    // default void checkSrid( int srid, Logger logger ) throws
     // InvalidParameterValueException{
     // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
     // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
@@ -496,13 +498,13 @@ public class NetCDFUtil {
     // }
     // }
 
-    public static SubSensor createSubSensor(String sensor, Geometry geom) {
+    default SubSensor createSubSensor(String sensor, Geometry geom) {
         SubSensor subSensor = null;
         if (geom instanceof Point) {
             Point point = (Point) geom;
             // profile height
-            if (!Double.isNaN(point.getCoordinate().z)) {
-                subSensor = new PointProfileSubSensor(point.getCoordinate().z);
+            if (!Double.isNaN(point.getCoordinate().getZ())) {
+                subSensor = new PointProfileSubSensor(point.getCoordinate().getZ());
             } else {
                 subSensor = new PointProfileSubSensor(0.0);
             }
@@ -513,10 +515,10 @@ public class NetCDFUtil {
                 Point topPoint = lineString.getPointN(0);
                 Point bottomPoint = lineString.getPointN(1);
 
-                if (FeatureUtil.equal2d(topPoint, bottomPoint) && !Double.isNaN(topPoint.getCoordinate().z)
-                        && !Double.isNaN(bottomPoint.getCoordinate().z)) {
-                    double topHeight = Math.max(topPoint.getCoordinate().z, bottomPoint.getCoordinate().z);
-                    double bottomHeight = Math.min(topPoint.getCoordinate().z, bottomPoint.getCoordinate().z);
+                if (FeatureUtil.equal2d(topPoint, bottomPoint) && !Double.isNaN(topPoint.getCoordinate().getZ())
+                        && !Double.isNaN(bottomPoint.getCoordinate().getZ())) {
+                    double topHeight = Math.max(topPoint.getCoordinate().getZ(), bottomPoint.getCoordinate().getZ());
+                    double bottomHeight = Math.min(topPoint.getCoordinate().getZ(), bottomPoint.getCoordinate().getZ());
                     subSensor = new BinProfileSubSensor(topHeight, bottomHeight);
                 }
             }
@@ -525,27 +527,27 @@ public class NetCDFUtil {
     }
 
 
-    public static boolean isLng(String phenomenon) {
+    default boolean isLng(String phenomenon) {
         return getNetcdfHelper().getLatitude().contains(phenomenon.toLowerCase(Locale.ROOT));
     }
 
-    public static boolean isLat(String phenomenon) {
+    default boolean isLat(String phenomenon) {
         return getNetcdfHelper().getLongitude().contains(phenomenon.toLowerCase(Locale.ROOT));
     }
 
-    public static boolean isZ(String phenomenon) {
+    default boolean isZ(String phenomenon) {
         return getNetcdfHelper().getZ().contains(phenomenon.toLowerCase(Locale.ROOT));
     }
 
-    private static NetcdfHelper getNetcdfHelper() {
+    default NetcdfHelper getNetcdfHelper() {
         return NetcdfHelper.getInstance();
     }
 
-    private static boolean hasSamplingGeometry(OmObservation sosObs) {
+    default boolean hasSamplingGeometry(OmObservation sosObs) {
         return getSamplingGeometryGeometry(sosObs) != null;
     }
 
-    private static Geometry getSamplingGeometryGeometry(OmObservation sosObs) {
+    default Geometry getSamplingGeometryGeometry(OmObservation sosObs) {
         for (NamedValue<?> parameter : sosObs.getParameter()) {
             if (parameter.isSetName() && parameter.getName().isSetHref()
                     && OmConstants.PARAM_NAME_SAMPLING_GEOMETRY.equals(parameter.getName().getHref())
@@ -556,4 +558,5 @@ public class NetCDFUtil {
         }
         return null;
     }
+
 }

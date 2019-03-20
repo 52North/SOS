@@ -54,8 +54,6 @@ import ucar.nc2.constants.CF;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
- * @param <T>
- *            sensor type
  */
 public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset>{
     private CF.FeatureType featureType;

@@ -12,15 +12,14 @@ RUN mvn --batch-mode --errors --fail-fast \
 
 FROM jetty:jre8-alpine
 
-ENV JAVA_OPTIONS="-Djava.awt.headless=true -Djava.io.tmpdir=/tmp"
-
 RUN mkdir -p /etc/sos \
  && ln -s /etc/sos /var/lib/jetty/webapps/ROOT/config
 
-VOLUME /tmp
+VOLUME /tmp/jetty
 VOLUME /etc/sos
 
-COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
+COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp \
+                  /var/lib/jetty/webapps/ROOT
 
 HEALTHCHECK --interval=5s \
             --timeout=5s \

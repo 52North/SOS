@@ -4,8 +4,6 @@
 # - a nginx proxy
 # - a postgresql database server
 # 
-# http://localhost:80/ redirects to the /52n-sos-webapp and uses the latest version of the tomcat M.x branch with Java 8 JRE.
-#
 # When configuring the SOS, please use the following information:
 # - Datasource configuration
 #   - datasource: PostgreSQL/PostGIS
@@ -15,7 +13,7 @@
 #
 # Just run docker-compose up in the directory of this file.
 #
-# The current proxy configuration secures the context /52n-sos-webapp with user "test:test"
+# The current proxy configuration secures the context / with user "test:test"
 version: '3'
 services:
   db:
@@ -26,27 +24,21 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sos
-    container_name: testing-db
   sos:
-    # change to 7- or 9- to change the tomcat version
-    image: tomcat:8-jre8-alpine
+    image: 52north/sos:latest
     ports:
       - 8080:8080
       - 8000:8000
     links:
       - db:postgres
     volumes:
-      - "../webapp/target/52n-sos-webapp:/usr/local/tomcat/webapps/52n-sos-webapp"
-      - "./tomcat-index.html:/usr/local/tomcat/webapps/ROOT/index.html"
+      - "./sos-config:/etc/sos"
     depends_on:
       - db
     environment:
-      - JPDA_ADDRESS=8000
-      - JPDA_TRANSPORT=dt_socket
-    container_name: testing-sos
-    command: ["catalina.sh", "jpda", "run"]
+      JAVA_OPTIONS: -Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
   proxy:
-    image: nginx:mainline-alpine
+    image: nginx:alpine
     ports:
       - 80:80
     links:
@@ -54,4 +46,3 @@ services:
     volumes:
       - "./nginx-proxy.conf:/etc/nginx/conf.d/default.conf"
       - "./htpasswd:/etc/nginx/htpasswd"
-    container_name: testing-proxy

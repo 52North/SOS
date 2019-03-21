@@ -100,7 +100,7 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     public static final String DEFAULT_DATABASE_NAME = "configuration";
     public static final String CONFIG_PATH = "config";
     public static final String WEB_INF_PATH = "WEB-INF";
-    
+
     private final ReentrantLock lock = new ReentrantLock();
 
     @Inject

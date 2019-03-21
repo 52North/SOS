@@ -5,6 +5,21 @@
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+ 
+## Release 52n-sensorweb-sos-4.4.6
+ 
+### New features
+
+  - Dockerfile to build docker images
+  
+### Changes
+  
+  - Store cache.tmp in /tmp folder
+  - Store datasource.properties, configuration.db and eReportingHeader.db in /conf folder.
+  
+### Fixed issues
+
+  - NPE in SosOffering constructor with name as CodeType
 
 ## Release 52n-sensorweb-sos-4.4.5
  

@@ -156,7 +156,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     public AbstractNetcdfEncoder() {
 
     }
-    
+
     @Inject
     public void setProcedureDescriptionFormatRepository(
             ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
@@ -1354,7 +1354,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         pathBuffer.append("_").append(Long.toString(java.lang.System.nanoTime())).append(".nc");
         return pathBuffer.toString();
     }
-    
+
     @Override
     public GeometryHandler getGeometryHandler() {
         return geometryHandler;

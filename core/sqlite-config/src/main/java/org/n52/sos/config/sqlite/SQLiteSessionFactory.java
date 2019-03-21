@@ -29,7 +29,11 @@
 package org.n52.sos.config.sqlite;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -42,7 +46,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.spi.Stoppable;
 import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.ConfigLocationProvider;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -95,6 +98,7 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     public static final String SQLITE_JDBC_DRIVER = "org.sqlite.JDBC";
     public static final String EMPTY = "";
     public static final String DEFAULT_DATABASE_NAME = "configuration";
+    public static final String CONFIG_PATH = "config";
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -143,7 +147,21 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     protected File getFile() {
-        return new File(getPath(), getDatabaseName() + ".db");
+        try {
+            Path path = Paths.get(getPath(), CONFIG_PATH, getDatabaseName() + ".db");
+            Path parent = path.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            } else {
+                throw new RuntimeException("Error while creating config file path.");
+            }
+            if (!Files.exists(path)) {
+                Files.createFile(path);
+            }
+            return path.toFile();
+        } catch (IOException ioe) {
+            throw new RuntimeException(ioe);
+        }
     }
 
     protected SessionFactory getSessionFactory() {

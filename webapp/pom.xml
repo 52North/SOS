@@ -14,7 +14,7 @@
         <sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
-        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
         <helgoland.version>1.0.0</helgoland.version>
         <jetty.port.http>9090</jetty.port.http>
         <jetty.port.stop>9091</jetty.port.stop>
@@ -1115,7 +1115,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
+                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/config/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

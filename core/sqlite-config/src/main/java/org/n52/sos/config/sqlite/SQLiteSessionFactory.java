@@ -99,7 +99,8 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     public static final String EMPTY = "";
     public static final String DEFAULT_DATABASE_NAME = "configuration";
     public static final String CONFIG_PATH = "config";
-
+    public static final String WEB_INF_PATH = "WEB-INF";
+    
     private final ReentrantLock lock = new ReentrantLock();
 
     @Inject
@@ -148,7 +149,7 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
 
     protected File getFile() {
         try {
-            Path path = Paths.get(getPath(), CONFIG_PATH, getDatabaseName() + ".db");
+            Path path = Paths.get(getPath(), WEB_INF_PATH, CONFIG_PATH, getDatabaseName() + ".db");
             Path parent = path.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);

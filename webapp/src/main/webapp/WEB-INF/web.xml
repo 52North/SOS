@@ -11,7 +11,7 @@
     <!-- location of the database configuration file -->
     <context-param>
         <param-name>datasourceConfigLocation</param-name>
-        <param-value>/config/datasource.properties</param-value>
+        <param-value>/WEB-INF/config/datasource.properties</param-value>
     </context-param>
     <!-- root context -->
     <context-param>

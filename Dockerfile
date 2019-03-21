@@ -22,9 +22,9 @@ COPY --chown=jetty:jetty \
 COPY --chown=jetty:jetty \
      ./docker/default-config /etc/sos
 
-RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/config
+RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/WEB-INF/config
 
-VOLUME /var/lib/jetty/webapps/ROOT/tmp
+VOLUME /var/lib/jetty/webapps/ROOT/WEB-INF/tmp
 VOLUME /etc/sos
 
 HEALTHCHECK --interval=5s --timeout=20s --retries=3 \

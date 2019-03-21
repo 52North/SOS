@@ -94,7 +94,7 @@ public class SosOffering extends AbstractFeature implements Comparable<SosOfferi
 
     public SosOffering(final String identifier, final CodeType name) {
         this.setIdentifier(identifier);
-        if (!name.isSetValue()) {
+        if (name != null && !name.isSetValue()) {
             name.setValue(OFFERING_NAME_PREFIX + identifier);
         }
         this.setName(name);

@@ -65,7 +65,8 @@ public class SosContextListener implements ServletContextListener {
 
     private static String path = null;
     private static final List<Runnable> hooks = new LinkedList<>();
-    private static final String CONFIG = "config";
+    private static final String CONFIG_PATH = "config";
+    private static final String WEB_INF_PATH = "WEB-INF";
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -200,7 +201,7 @@ public class SosContextListener implements ServletContextListener {
     }
     
     public static String getConfigPath() {
-        Path configPath = Paths.get(SosContextListener.path, CONFIG);
+        Path configPath = Paths.get(SosContextListener.path, WEB_INF_PATH, CONFIG_PATH);
         if (Files.notExists(configPath)) {
             try {
                 Files.createDirectories(configPath);

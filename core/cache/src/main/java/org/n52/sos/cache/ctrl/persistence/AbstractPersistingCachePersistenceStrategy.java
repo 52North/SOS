@@ -145,7 +145,7 @@ public abstract class AbstractPersistingCachePersistenceStrategy
         if (cacheFileFolder != null && cacheFileFolder.exists()) {
             return cacheFileFolder.getAbsolutePath();
         }
-        return Paths.get(SosContextListener.getPath(), "tmp").toString();
+        return Paths.get(SosContextListener.getPath(), "WEB-INF" , "tmp").toString();
     }
 
     @Override

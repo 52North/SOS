@@ -18,7 +18,8 @@ COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland
 COPY ./docker/default-config /etc/sos
 
 USER root
-RUN chown -R jetty:jetty /var/lib/jetty/webapps/ROOT /etc/sos
+RUN mkdir -p /var/lib/jetty/webapps/ROOT/WEB-INF/tmp \
+ && chown -R jetty:jetty /var/lib/jetty/webapps/ROOT /etc/sos
 USER jetty
 RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/WEB-INF/config
 

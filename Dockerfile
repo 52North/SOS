@@ -12,16 +12,15 @@ RUN mvn --batch-mode --errors --fail-fast \
 
 FROM jetty:jre8
 
-COPY --chown=jetty:jetty --from=BUILD \
-     /usr/src/app/webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
-COPY --chown=jetty:jetty \
-     ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
-COPY --chown=jetty:jetty \
-     ./docker/helgoland.json \
-     /var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json
-COPY --chown=jetty:jetty \
-     ./docker/default-config /etc/sos
+COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
+COPY ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
+COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json
+COPY ./docker/default-config /etc/sos
 
+USER root
+RUN mkdir -p /var/lib/jetty/webapps/ROOT/WEB-INF/tmp \
+ && chown -R jetty:jetty /var/lib/jetty/webapps/ROOT /etc/sos
+USER jetty
 RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/WEB-INF/config
 
 VOLUME /var/lib/jetty/webapps/ROOT/WEB-INF/tmp

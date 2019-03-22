@@ -17,8 +17,10 @@ COPY ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
 COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json
 COPY ./docker/default-config /etc/sos
 
-RUN chown -R jetty:jetty /var/lib/jetty/webapps/ROOT /etc/sos \
- && ln -s /etc/sos /var/lib/jetty/webapps/ROOT/WEB-INF/config
+USER root
+RUN chown -R jetty:jetty /var/lib/jetty/webapps/ROOT /etc/sos
+USER jetty
+RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/WEB-INF/config
 
 VOLUME /var/lib/jetty/webapps/ROOT/WEB-INF/tmp
 VOLUME /etc/sos

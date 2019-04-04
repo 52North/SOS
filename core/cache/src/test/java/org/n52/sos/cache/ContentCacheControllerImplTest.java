@@ -179,7 +179,8 @@ public class ContentCacheControllerImplTest {
 
      @Test
     public void testSerialization() throws IOException {
-        File tempFile = new File(tempFolder.getRoot(), "cache.tmp");
+        File tempFile =
+                new File(tempFolder.getRoot().toPath().resolve("WEB-INF").resolve("tmp").toFile(), "cache.tmp");
 
         Files.deleteIfExists(tempFile.toPath());
         assertThat(tempFile, is(not(existing())));

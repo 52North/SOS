@@ -48,7 +48,10 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.mockito.Mockito;
-import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.cache.ContentCachePersistenceStrategy;
+import org.n52.iceland.cache.WritableContentCache;
+import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;
+import org.n52.iceland.cache.ctrl.ContentCacheFactory;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -116,6 +119,8 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.cache.ctrl.DefaultContentModificationListener;
+import org.n52.sos.cache.ctrl.SosContentCacheControllerImpl;
 import org.n52.sos.ds.SosCacheFeederHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.GetObservationDao;
@@ -275,13 +280,14 @@ public class InsertDAOTest
     private final EncoderRepository encoderRepository = new EncoderRepository();
     private final DecoderRepository decoderRepository = new DecoderRepository();
     private final ConverterRepository converterRepository = new ConverterRepository();
-    private final HibernateProcedureDescriptionGeneratorFactoryRepository factotyRepository =
+    private final HibernateProcedureDescriptionGeneratorFactoryRepository factoryRepository =
             new HibernateProcedureDescriptionGeneratorFactoryRepository();
     private final OwsServiceMetadataRepositoryImpl serviceMetadataRepository = Mockito.mock(OwsServiceMetadataRepositoryImpl.class);
     private HibernateProcedureCreationContext ctx;
     private final SosCacheFeederHandler cacheFeeder = new SosCacheFeederHandler();
     private final SosWritableContentCache cache = new InMemoryCacheImpl();
-    final ContentCacheController contentCacheControllerMock = Mockito.mock(ContentCacheController.class);
+
+    final TestingSosContentCacheControllerImpl contentCacheController = new TestingSosContentCacheControllerImpl();
 
     // optionally run these tests multiple times to expose intermittent faults
     // (use -DrepeatDaoTest=x)
@@ -302,27 +308,36 @@ public class InsertDAOTest
         SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
         holder.setConnectionProvider(this);
         daoFactory.setSweHelper(new SweHelper());
-        daoFactory.setGeometryHandler(GeometryHandler.getInstance());
+        GeometryHandler geometryHandler = new GeometryHandler();
+        initGeometryHandler(geometryHandler);
+        daoFactory.setGeometryHandler(geometryHandler);
         daoFactory.setFeatureQueryHandler(new FeatureQueryHandlerMock());
+        daoFactory.setDecoderRepository(decoderRepository);
+        daoFactory.setEncoderRepository(encoderRepository);
+        daoFactory.setI18NDAORepository(i18NDAORepository);
 
         cacheFeeder.setConnectionProvider(holder);
-        insertSensorDAO.setConnectionProvider(this);
-        insertSensorDAO.setDaoFactory(daoFactory);
-        insertResultTemplateDAO.setConnectionProvider(this);
-        insertResultTemplateDAO.setDaoFactory(daoFactory);
-        insertResultTemplateDAO.init();
+        cacheFeeder.setI18NDAORepository(i18NDAORepository);
+        initDaos();
         initEncoder();
         initDecoder();
 
-        Mockito.when(contentCacheControllerMock.getCache()).thenReturn(cache);
+        contentCacheController.setPersistenceStrategy(Mockito.mock(ContentCachePersistenceStrategy.class));
+        contentCacheController.setCacheFactory(Mockito.mock(ContentCacheFactory.class));
+        contentCacheController.setCompleteCacheUpdateFactory(Mockito.mock(CompleteCacheUpdateFactory.class));
+        contentCacheController.setCache(cache);
 
         i18NDAORepository.init();
         decoderRepository.init();
         converterRepository.init();
-        factotyRepository.init();
-        ctx = new HibernateProcedureCreationContext(serviceMetadataRepository, decoderRepository, factotyRepository,
+        factoryRepository.init();
+        DefaultContentModificationListener defaultContentModificationListener =
+                new DefaultContentModificationListener(cacheFeeder, contentCacheController);
+        defaultContentModificationListener.setConverterRepository(converterRepository);
+        serviceEventBus.register(defaultContentModificationListener);
+        ctx = new HibernateProcedureCreationContext(serviceMetadataRepository, decoderRepository, factoryRepository,
                 i18NDAORepository, daoFactory, converterRepository, null, null, null,
-                contentCacheControllerMock, Mockito.mock(ProcedureDescriptionSettings.class));
+                contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class));
 
         Session session = getSession();
         HibernateMetadataCache.init(session);
@@ -331,6 +346,34 @@ public class InsertDAOTest
         insertSensor(PROCEDURE3, OFFERING3, OBSPROP3, PROCEDURE2);
         insertResultTemplate(RESULT_TEMPLATE, PROCEDURE3, OFFERING3, OBSPROP3, FEATURE3, getSession());
         returnSession(session);
+    }
+
+    private void initGeometryHandler(GeometryHandler geometryHandler) {
+        geometryHandler.setAuthority("EPSG");
+        geometryHandler.setStorageEpsg(4326);
+        geometryHandler.init();
+    }
+
+    private void initDaos() {
+        insertSensorDAO.setConnectionProvider(this);
+        insertSensorDAO.setDaoFactory(daoFactory);
+        insertSensorDAO.setCacheController(contentCacheController);
+        deleteSensorDAO.setConnectionProvider(this);
+        deleteSensorDAO.setDaoFactory(daoFactory);
+        deleteSensorDAO.setCacheController(contentCacheController);
+        insertObservationDAO.setConnectionProvider(this);
+        insertObservationDAO.setDaoFactory(daoFactory);
+        insertObservationDAO.setCacheController(contentCacheController);
+        insertResultTemplateDAO.setConnectionProvider(this);
+        insertResultTemplateDAO.setDaoFactory(daoFactory);
+        insertResultTemplateDAO.setCacheController(contentCacheController);
+        insertResultTemplateDAO.init();
+        insertResultDAO.setConnectionProvider(this);
+        insertResultDAO.setDaoFactory(daoFactory);
+        insertResultDAO.setCacheController(contentCacheController);
+        getObsDAO.setConnectionProvider(this);
+        getObsDAO.setDaoFactory(daoFactory);
+
     }
 
     private void initEncoder() {
@@ -432,14 +475,7 @@ public class InsertDAOTest
         system.setIdentifier(procedure);
         procedureDescription.setIdentifier(procedure);
         if (parentProcedure != null) {
-            procedureDescription.setParentProcedure(new ReferenceType(procedure, procedure));
-            for (String hierarchyParentProc : getCache().getParentProcedures(parentProcedure, true, true)) {
-                for (String parentProcOffering : getCache().getOfferingsForProcedure(hierarchyParentProc)) {
-                    SosOffering sosOffering = new SosOffering(parentProcOffering, parentProcOffering);
-                    sosOffering.setParentOfferingFlag(true);
-                    assignedOfferings.add(sosOffering);
-                }
-            }
+            procedureDescription.setParentProcedure(new ReferenceType(parentProcedure, parentProcedure));
         }
         SystemDocument xbSystemDoc = SystemDocument.Factory.newInstance();
         xbSystemDoc.addNewSystem().set(encodeObjectToXml(SensorMLConstants.NS_SML, system));
@@ -478,6 +514,7 @@ public class InsertDAOTest
         textEncoding.setTokenSeparator(TOKEN_SEPARATOR);
         textEncoding.setBlockSeparator(BLOCK_SEPARATOR);
         SosResultEncoding resultEncoding = createResultEncoding(textEncoding);
+        req.setResultEncoding(resultEncoding);
 
         SweDataRecord dataRecord = new SweDataRecord();
         SweTime sweTime = new SweTime();
@@ -580,17 +617,17 @@ public class InsertDAOTest
 
         // check offerings for procedure
         assertThat(getCache().getOfferingsForProcedure(PROCEDURE1), contains(OFFERING1));
-        assertThat(getCache().getOfferingsForProcedure(PROCEDURE2), containsInAnyOrder(OFFERING1, OFFERING2));
+        assertThat(getCache().getOfferingsForProcedure(PROCEDURE2), containsInAnyOrder(OFFERING2));
         assertThat(getCache().getOfferingsForProcedure(PROCEDURE3),
-                containsInAnyOrder(OFFERING1, OFFERING2, OFFERING3));
+                containsInAnyOrder(OFFERING3));
 
         // check procedures and hidden child procedures for offering
-        assertThat(getCache().getProceduresForOffering(OFFERING1), contains(PROCEDURE1));
-        assertThat(getCache().getHiddenChildProceduresForOffering(OFFERING1),
-                containsInAnyOrder(PROCEDURE2, PROCEDURE3));
+        assertThat(getCache().getProceduresForOffering(OFFERING1), containsInAnyOrder(PROCEDURE1));
+//        assertThat(getCache().getHiddenChildProceduresForOffering(OFFERING1),
+//                containsInAnyOrder(PROCEDURE2, PROCEDURE3));
 
         assertThat(getCache().getProceduresForOffering(OFFERING2), contains(PROCEDURE2));
-        assertThat(getCache().getHiddenChildProceduresForOffering(OFFERING2), contains(PROCEDURE3));
+//        assertThat(getCache().getHiddenChildProceduresForOffering(OFFERING2), contains(PROCEDURE3));
 
         assertThat(getCache().getProceduresForOffering(OFFERING3), contains(PROCEDURE3));
         assertThat(getCache().getHiddenChildProceduresForOffering(OFFERING3), empty());
@@ -627,15 +664,22 @@ public class InsertDAOTest
 
         // check obsprops for offering
         assertThat(getCache().getObservablePropertiesForOffering(OFFERING1),
-                containsInAnyOrder(OBSPROP1, OBSPROP2, OBSPROP3));
-        assertThat(getCache().getObservablePropertiesForOffering(OFFERING2), containsInAnyOrder(OBSPROP2, OBSPROP3));
+                containsInAnyOrder(OBSPROP1));
+        assertThat(getCache().getObservablePropertiesForOffering(OFFERING2), containsInAnyOrder(OBSPROP2));
         assertThat(getCache().getObservablePropertiesForOffering(OFFERING3), contains(OBSPROP3));
 
         // check offering for obsprops
         assertThat(getCache().getOfferingsForObservableProperty(OBSPROP1), contains(OFFERING1));
-        assertThat(getCache().getOfferingsForObservableProperty(OBSPROP2), containsInAnyOrder(OFFERING1, OFFERING2));
+        assertThat(getCache().getOfferingsForObservableProperty(OBSPROP2), containsInAnyOrder(OFFERING2));
         assertThat(getCache().getOfferingsForObservableProperty(OBSPROP3),
-                containsInAnyOrder(OFFERING1, OFFERING2, OFFERING3));
+                containsInAnyOrder(OFFERING3));
+
+//        assertThat(getCache().getParentOfferings(OBSPROP1, true, false), empty());
+//        assertThat(getCache().getParentOfferings(OBSPROP2, true, false), containsInAnyOrder(OFFERING1));
+//        assertThat(getCache().getParentOfferings(OBSPROP3, true, false), containsInAnyOrder(OFFERING1, OFFERING2));
+//        assertThat(getCache().getChildOfferings(OBSPROP1, true, false), containsInAnyOrder(OFFERING2, OFFERING3));
+//        assertThat(getCache().getChildOfferings(OBSPROP2, true, false), containsInAnyOrder(OFFERING3));
+//        assertThat(getCache().getChildOfferings(OBSPROP3, true, false), empty());
 
         // check obsprops for procedure
         // TODO child procedure obsprops are not currently set for parents.
@@ -1231,5 +1275,13 @@ public class InsertDAOTest
         namedValue.setName(referenceType);
         namedValue.setValue(new TextValue(value));
         return namedValue;
+    }
+
+    private class TestingSosContentCacheControllerImpl extends SosContentCacheControllerImpl {
+
+        @Override
+        protected void setCache(WritableContentCache wcc) {
+            super.setCache(wcc);
+        }
     }
 }

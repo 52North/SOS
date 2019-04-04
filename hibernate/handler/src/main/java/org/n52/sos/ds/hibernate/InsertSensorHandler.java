@@ -204,7 +204,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                 ObservationContext ctx =
                                         new ObservationContext().setCategory(hCategory).setOffering(hOffering)
                                                 .setPhenomenon(hObservableProperty).setProcedure(hProcedure)
-                                                .setPublish(false).setHiddenChild(assignedOffering.isParentOffering());
+                                                .setPublish(false).setHiddenChild(!assignedOffering.isParentOffering());
                                 checkForMobileInsituFlags(ctx, request.getProcedureDescription().getProcedureDescription());
                                 if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
                                     ctx.setUnit(hUnits.get(hObservableProperty.getIdentifier()));

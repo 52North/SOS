@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.series.db.beans.BooleanDataEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -44,6 +45,7 @@ import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
@@ -64,6 +66,8 @@ public class HibernateObservationBuilder {
     public static final String OFFERING_2 = "Offering2";
     public static final String FEATURE_OF_INTEREST = "FeatureOfInterest";
     public static final String OBSERVABLE_PROPERTY = "ObservableProperty";
+    public static final String CATEGORY = "Category";
+    public static final String PLATFORM = "Platform";
     public static final String PROCEDURE_DESCRIPTION_FORMAT = "ProcedureDescriptionFormat";
     public static final String FEATURE_OF_INTEREST_TYPE = "FeatureOfInterestType";
     public static final String OBSERVATION_TYPE = "ObservationType";
@@ -165,6 +169,20 @@ public class HibernateObservationBuilder {
         return featureOfInterest;
     }
 
+    protected PlatformEntity getPlatform() {
+        PlatformEntity platform =
+                (PlatformEntity) session.createCriteria(PlatformEntity.class)
+                        .add(Restrictions.eq(PlatformEntity.IDENTIFIER, PLATFORM)).uniqueResult();
+        if (platform == null) {
+            platform = new PlatformEntity();
+            platform.setIdentifier(PLATFORM);
+            platform.setName(PLATFORM);
+            session.save(platform);
+            session.flush();
+        }
+        return platform;
+    }
+
     protected PhenomenonEntity getObservableProperty() {
         PhenomenonEntity observableProperty =
                 (PhenomenonEntity) session.createCriteria(PhenomenonEntity.class)
@@ -177,6 +195,20 @@ public class HibernateObservationBuilder {
             session.flush();
         }
         return observableProperty;
+    }
+
+    protected CategoryEntity getCategory() {
+        CategoryEntity category =
+                (CategoryEntity) session.createCriteria(CategoryEntity.class)
+                        .add(Restrictions.eq(CategoryEntity.IDENTIFIER, CATEGORY)).uniqueResult();
+        if (category == null) {
+            category = new CategoryEntity();
+            category.setDescription(CATEGORY);
+            category.setIdentifier(CATEGORY);
+            session.save(category);
+            session.flush();
+        }
+        return category;
     }
 
     protected OfferingEntity getOffering1() {
@@ -255,6 +287,8 @@ public class HibernateObservationBuilder {
             series = (DatasetEntity) daoFactory.getSeriesDAO().getDatasetFactory().visit(o);
             series.setObservableProperty(getObservableProperty());
             series.setProcedure(getProcedure());
+            series.setCategory(getCategory());
+            series.setPlatform(getPlatform());
             series.setFeature(getFeatureOfInterest());
             series.setOffering(offering);
             series.setDeleted(false);

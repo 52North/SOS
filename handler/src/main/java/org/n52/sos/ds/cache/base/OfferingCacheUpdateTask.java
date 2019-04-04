@@ -29,6 +29,7 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -46,9 +47,9 @@ import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
-import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -58,7 +59,6 @@ import org.n52.sos.ds.DatabaseQueryHelper;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
-import org.springframework.context.annotation.Conditional;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -118,9 +118,18 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             getCache().addPublishedOffering(identifier);
         }
         addOfferingNamesAndDescriptionsToCache(identifier, session);
+
+        Set<String> parents = new HashSet<>();
+        if (offering.hasParents()) {
+            getParents(parents, offering);
+            getCache().addParentOfferings(identifier, parents);
+            getCache().addPublishedOfferings(parents);
+        }
+
         // only check once, check flag in other methods
         // Procedures
         final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
+
         getCache().setProceduresForOffering(identifier, procedureIdentifiers.get(ProcedureFlag.PARENT));
         Set<String> hiddenChilds = procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD);
         if (!hiddenChilds.isEmpty()) {
@@ -218,7 +227,13 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 }
             }
         }
+    }
 
+    private void getParents(Set<String> parents, OfferingEntity offering) {
+        for (OfferingEntity parent : offering.getParents()) {
+            parents.add(parent.getIdentifier());
+            getParents(parents, parent);
+        }
     }
 
     protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {

@@ -574,6 +574,7 @@ public class ObservationUnfolder {
             if (parameterHolder.isSetDepthParameter()) {
                 profileLevel.setLevelEnd(toQuantityValue(parameterHolder.getDepthParameter()));
             }
+            profileLevel.setLevelStart(profileLevel.getLevelEnd());
         } else if (parameterHolder.isSetFromToParameter()) {
             profileLevel.setLevelStart(toQuantityValue(parameterHolder.getFromParameter()));
             profileLevel.setLevelEnd(toQuantityValue(parameterHolder.getToParameter()));

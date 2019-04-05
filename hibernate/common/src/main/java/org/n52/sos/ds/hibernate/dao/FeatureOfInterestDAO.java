@@ -506,27 +506,29 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
 
     public void updateFeatureOfInterestGeometry(AbstractFeatureEntity featureOfInterest, Geometry geom, Session session) {
-        if (featureOfInterest.isSetGeometry()) {
-            if (geom instanceof Point) {
-                List<Coordinate> coords = Lists.newArrayList();
-                Geometry convert = featureOfInterest.getGeometry();
-                if (convert instanceof Point) {
-                    coords.add(convert.getCoordinate());
-                } else if (convert instanceof LineString) {
-                    coords.addAll(Lists.newArrayList(convert.getCoordinates()));
+        if (featureOfInterest != null) {
+            if (featureOfInterest.isSetGeometry()) {
+                if (geom instanceof Point) {
+                    List<Coordinate> coords = Lists.newArrayList();
+                    Geometry convert = featureOfInterest.getGeometry();
+                    if (convert instanceof Point) {
+                        coords.add(convert.getCoordinate());
+                    } else if (convert instanceof LineString) {
+                        coords.addAll(Lists.newArrayList(convert.getCoordinates()));
+                    }
+                    if (!coords.isEmpty()) {
+                        coords.add(geom.getCoordinate());
+                        Geometry newGeometry =
+                                new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
+                        newGeometry.setSRID(featureOfInterest.getGeometry().getSRID());
+                        featureOfInterest.setGeometry(newGeometry);
+                    }
                 }
-                if (!coords.isEmpty()) {
-                    coords.add(geom.getCoordinate());
-                    Geometry newGeometry =
-                            new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
-                    newGeometry.setSRID(featureOfInterest.getGeometry().getSRID());
-                    featureOfInterest.setGeometry(newGeometry);
-                }
+            } else {
+                featureOfInterest.setGeometry(geom);
             }
-        } else {
-            featureOfInterest.setGeometry(geom);
+            session.saveOrUpdate(featureOfInterest);
         }
-        session.saveOrUpdate(featureOfInterest);
     }
 
     @SuppressWarnings("unchecked")

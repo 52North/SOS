@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util;
+package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
@@ -43,6 +45,8 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -62,11 +66,12 @@ import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
@@ -74,20 +79,38 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-/**
- * Helper class for GetObservation DAOs
- *
- * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.1.0
- *
- */
-public class HibernateGetObservationHelper {
+@Configurable
+public abstract class AbstractObservationDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateGetObservationHelper.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDao.class);
+    private EncoderRepository encoderRepository;
+    private Integer maxNumberOfReturnedTimeSeries;
+    private Integer maxNumberOfReturnedValues;
 
-    private HibernateGetObservationHelper() {
+    
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+    
+    @Setting("profile.hydrology.maxReturnedTimeSeries")
+    public void setMaxNumberOfReturnedTimeSeries(Integer value) {
+        this.maxNumberOfReturnedTimeSeries = value;
     }
 
+    public int getMaxNumberOfReturnedTimeSeries() {
+        return maxNumberOfReturnedTimeSeries;
+    }
+
+    @Setting("profile.hydrology.maxReturnedValue")
+    public void setMaxNumberOfReturnedValues(Integer value) {
+        this.maxNumberOfReturnedValues = value;
+    }
+
+    public int getMaxNumberOfReturnedValues() {
+        return maxNumberOfReturnedValues;
+    }
+    
     /**
      * Get ObservationConstellations and check if size limit is exceeded
      *
@@ -99,7 +122,7 @@ public class HibernateGetObservationHelper {
      * @return List of {@link ObservationConstellation}
      * @throws OwsExceptionReport
      */
-    public static List<DatasetEntity> getAndCheckObservationConstellationSize(
+    public List<DatasetEntity> getAndCheckObservationConstellationSize(
             GetObservationRequest request, DaoFactory daoFactory, Session session) throws OwsExceptionReport {
         List<DatasetEntity> observationConstellations = getObservationConstellations(session, request, daoFactory);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
@@ -117,9 +140,9 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *                        If the size limit is exceeded
      */
-    public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends DataEntity<?>> seriesObservations,
+    public void checkMaxNumberOfReturnedTimeSeries(Collection<? extends DataEntity<?>> seriesObservations,
                                                           int metadataObservationsCount) throws CodedException {
-        if (getMaxNumberOfReturnedTimeSeriess() > 0) {
+        if (getMaxNumberOfReturnedTimeSeries() > 0) {
             Set<Long> seriesIds = seriesObservations.stream()
                     .map(DataEntity::getDataset).map(DatasetEntity::getId).collect(Collectors.toSet());
             checkMaxNumberOfReturnedSeriesSize(seriesIds.size() + metadataObservationsCount);
@@ -135,9 +158,9 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *                        If the size limit is exceeded
      */
-    public static void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
+    public void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (getMaxNumberOfReturnedTimeSeriess() > 0 && size > getMaxNumberOfReturnedTimeSeriess()) {
+        if (getMaxNumberOfReturnedTimeSeries() > 0 && size > getMaxNumberOfReturnedTimeSeries()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedTimeSeries");
         }
     }
@@ -151,21 +174,21 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *                        If the size limit is exceeded
      */
-    public static void checkMaxNumberOfReturnedValues(int size) throws CodedException {
+    public void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
         if (getMaxNumberOfReturnedValues() > 0 && size > getMaxNumberOfReturnedValues()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
         }
     }
 
-    public static int getMaxNumberOfValuesPerSeries(int size) {
+    public int getMaxNumberOfValuesPerSeries(int size) {
         if (getMaxNumberOfReturnedValues() > 0) {
             return getMaxNumberOfReturnedValues() / size;
         }
         return getMaxNumberOfReturnedValues();
     }
 
-    public static List<String> getAndCheckFeatureOfInterest(DatasetEntity observationConstellation,
+    public List<String> getAndCheckFeatureOfInterest(DatasetEntity observationConstellation,
                                                             Set<String> featureIdentifier,
                                                             DaoFactory  daoFactory,
                                                             Session session)
@@ -180,7 +203,7 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static ObservationStream toSosObservation(Collection<DataEntity<?>> observations,
+    public ObservationStream toSosObservation(Collection<DataEntity<?>> observations,
                                                        AbstractObservationRequest request,
                                                        Locale language,
                                                        String pdf,
@@ -198,7 +221,7 @@ public class HibernateGetObservationHelper {
         return sosObservations;
     }
 
-    public static OmObservation toSosObservation(DataEntity<?> observation,
+    public OmObservation toSosObservation(DataEntity<?> observation,
                                                  AbstractObservationRequest request,
                                                  Locale language,
                                                  String pdf,
@@ -227,7 +250,7 @@ public class HibernateGetObservationHelper {
      *                        If the requested filter is not supported!
      */
     @SuppressWarnings("rawtypes")
-    public static void addResultFilterToCriteria(Criteria c, Filter resultFilter) throws CodedException {
+    public void addResultFilterToCriteria(Criteria c, Filter resultFilter) throws CodedException {
         if (resultFilter instanceof ComparisonFilter) {
             c.add(getCriterionForComparisonFilter((ComparisonFilter) resultFilter));
         } else if (resultFilter instanceof BinaryLogicFilter) {
@@ -271,7 +294,7 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *                        If the requested result filter is not supported
      */
-    public static Criterion getCriterionForComparisonFilter(ComparisonFilter resultFilter) throws CodedException {
+    public Criterion getCriterionForComparisonFilter(ComparisonFilter resultFilter) throws CodedException {
         if (FilterConstants.ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
@@ -298,7 +321,7 @@ public class HibernateGetObservationHelper {
      *
      * @return Modified request string with default character.
      */
-    public static String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
+    public String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
         String value = resultFilter.getValue();
         if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals("%")) {
             value = value.replace(resultFilter.getSingleChar(), "_");
@@ -321,7 +344,7 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *                        If the requested value reference is not supported.
      */
-    public static void checkValueReferenceForResultFilter(String valueReference) throws CodedException {
+    public void checkValueReferenceForResultFilter(String valueReference) throws CodedException {
         if (Strings.isNullOrEmpty(valueReference)) {
             throw new NoApplicableCodeException().withMessage(
                     "The requested valueReference is missing! The valueReference should be %s/%s!",
@@ -345,7 +368,7 @@ public class HibernateGetObservationHelper {
      * @return Resulting ObservationConstellation entities
      * @throws OwsExceptionReport
      */
-    public static List<DatasetEntity> getObservationConstellations(final Session session,
+    public List<DatasetEntity> getObservationConstellations(final Session session,
                                                                               final GetObservationRequest request,
                                                                               DaoFactory daoFactory) throws OwsExceptionReport {
         return daoFactory.getSeriesDAO().getSeries(request, request.getFeatureIdentifiers(), session);
@@ -362,7 +385,7 @@ public class HibernateGetObservationHelper {
      * @throws OwsExceptionReport
      *                            If a temporal filter is not supported
      */
-    public static Criterion getTemporalFilterCriterion(final GetObservationRequest request) throws OwsExceptionReport {
+    public Criterion getTemporalFilterCriterion(final GetObservationRequest request) throws OwsExceptionReport {
 
         final List<TemporalFilter> filters = request.getNotFirstLatestTemporalFilter();
         if (request.hasTemporalFilters() && CollectionHelper.isNotEmpty(filters)) {
@@ -382,7 +405,7 @@ public class HibernateGetObservationHelper {
      * @return <code>true</code>, if the {@link ObservationEncoder} demands for
      *         merging of observations with the same timeseries.
      */
-    public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
+    public boolean checkEncoderForMergeObservationValues(String responseFormat) {
         XmlEncoderKey key = new XmlEncoderKey(responseFormat, OmObservation.class);
         Encoder<XmlObject, OmObservation> encoder = getEncoder(key);
         if (encoder != null && encoder instanceof ObservationEncoder) {
@@ -390,16 +413,8 @@ public class HibernateGetObservationHelper {
         }
         return false;
     }
-
-    private static int getMaxNumberOfReturnedTimeSeriess() {
-        return org.n52.iceland.service.ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries();
-    }
-
-    private static int getMaxNumberOfReturnedValues() {
-        return org.n52.iceland.service.ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues();
-    }
-
-    private static <T, S> Encoder<T, S> getEncoder(XmlEncoderKey key) {
-        return org.n52.iceland.coding.CodingRepository.getInstance().getEncoder(key);
+    
+    protected Encoder<XmlObject, OmObservation> getEncoder(XmlEncoderKey key) {
+        return encoderRepository.getEncoder(key);
     }
 }

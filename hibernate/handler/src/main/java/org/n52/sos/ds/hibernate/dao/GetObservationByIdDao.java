@@ -56,7 +56,6 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
@@ -73,7 +72,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class GetObservationByIdDao
+public class GetObservationByIdDao extends AbstractObservationDao
         implements org.n52.sos.ds.dao.GetObservationByIdDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDao.class);
@@ -199,7 +198,7 @@ public class GetObservationByIdDao
         final List<OmObservation> result = new LinkedList<OmObservation>();
         // get valid featureOfInterest identifier
         List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, session);
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
+        checkMaxNumberOfReturnedSeriesSize(serieses.size());
         for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,

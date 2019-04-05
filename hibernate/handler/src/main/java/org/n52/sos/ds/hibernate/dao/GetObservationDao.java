@@ -38,6 +38,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -64,7 +65,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
@@ -72,7 +72,6 @@ import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
@@ -83,22 +82,16 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class GetObservationDao
+public class GetObservationDao extends AbstractObservationDao
         implements org.n52.sos.ds.dao.GetObservationDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDao.class);
 
     private HibernateSessionHolder sessionHolder;
     private ProfileHandler profileHandler;
-    private EncoderRepository encoderRepository;
     private DaoFactory daoFactory;
     private OmObservationCreatorContext observationCreatorContext;
     private boolean overallExtrema;
     private Locale defaultLanguage;
-
-    @Inject
-    public void setEncoderRepository(EncoderRepository encoderRepository) {
-        this.encoderRepository = encoderRepository;
-    }
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -181,7 +174,7 @@ public class GetObservationDao
         List<String> features = request.getFeatureIdentifiers();
         // temporal filters
         final List<IndeterminateValue> extendedIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
-        final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
+        final Criterion filterCriterion = getTemporalFilterCriterion(request);
 
         final List<OmObservation> result = new LinkedList<>();
         Collection<DataEntity<?>> seriesObservations = Lists.newArrayList();
@@ -246,14 +239,14 @@ public class GetObservationDao
                         observationCreatorContext, session).forEachRemaining(result::add);
             }
         }
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedTimeSeries(seriesObservations,
+        checkMaxNumberOfReturnedTimeSeries(seriesObservations,
                 metadataObservationsCount);
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedValues(seriesObservations.size());
+        checkMaxNumberOfReturnedValues(seriesObservations.size());
 
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<DataEntity<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        HibernateGetObservationHelper.toSosObservation(new ArrayList<>(seriesObservations), request, requestedLocale,
+        toSosObservation(new ArrayList<>(seriesObservations), request, requestedLocale,
                 pdf, observationCreatorContext, session).forEachRemaining(result::add);
         return result;
     }
@@ -276,10 +269,10 @@ public class GetObservationDao
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
         List<String> features = request.getFeatureIdentifiers();
-        Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
+        Criterion temporalFilterCriterion = getTemporalFilterCriterion(request);
         List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
-        int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
+        checkMaxNumberOfReturnedSeriesSize(serieses.size());
+        int maxNumberOfValuesPerSeries = getMaxNumberOfValuesPerSeries(serieses.size());
         checkSeriesOfferings(serieses, request);
         for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
@@ -345,8 +338,8 @@ public class GetObservationDao
     }
 
     private String getProcedureDescriptionFormat(String responseFormat) {
-        Encoder<Object, Object> encoder =
-                encoderRepository.getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
+        Encoder<XmlObject, OmObservation> encoder =
+                getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
         if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder) encoder).getProcedureEncodingNamspace();
         }

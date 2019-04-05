@@ -100,7 +100,6 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
 
     private DbQuery createDatasetDbQuery(PhenomenonEntity observableProperty) {
         IoParameters parameters = IoParameters.createDefaults();
-        parameters.extendWith(IoParameters.PHENOMENA, Long.toString(observableProperty.getId()));
-        return new DbQuery(parameters);
+        return new DbQuery(parameters.extendWith(IoParameters.PHENOMENA, Long.toString(observableProperty.getId())));
     }
 }

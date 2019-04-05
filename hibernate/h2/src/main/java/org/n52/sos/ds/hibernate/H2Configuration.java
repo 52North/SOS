@@ -211,7 +211,7 @@ public class H2Configuration implements ConnectionProvider {
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.DROP, metadata);
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
                 transaction.commit();
-            } catch (final HibernateException e) {
+            } catch (final Exception e) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
@@ -332,7 +332,7 @@ public class H2Configuration implements ConnectionProvider {
                     for (String resource : resources) {
                         metadataSources.addInputStream(getClass().getResourceAsStream(resource));
                     }
-                    Metadata metadata = metadataSources.getMetadataBuilder().build();
+                    metadata = metadataSources.getMetadataBuilder().build();
 
 //                    Metadata metadata = new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build()).buildMetadata();
                     schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);

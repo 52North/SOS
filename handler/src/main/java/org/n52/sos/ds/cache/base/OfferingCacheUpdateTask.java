@@ -128,7 +128,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         // only check once, check flag in other methods
         // Procedures
-        final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
+        final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier();
 
         getCache().setProceduresForOffering(identifier, procedureIdentifiers.get(ProcedureFlag.PARENT));
         Set<String> hiddenChilds = procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD);
@@ -137,7 +137,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
 
         // Observable properties
-        getCache().setObservablePropertiesForOffering(identifier, getObservablePropertyIdentifier(session));
+        getCache().setObservablePropertiesForOffering(identifier, getObservablePropertyIdentifier());
 
         // Observation types
         getCache().setObservationTypesForOffering(identifier, getObservationTypes(datasets));
@@ -236,7 +236,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier(Session session) throws OwsExceptionReport {
+    protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier() throws OwsExceptionReport {
         Set<String> procedures = new HashSet<>(0);
         Set<String> hiddenChilds = new HashSet<>(0);
         if (CollectionHelper.isNotEmpty(datasets)) {
@@ -261,7 +261,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return features;
     }
 
-    protected Set<String> getObservablePropertyIdentifier(Session session) throws OwsExceptionReport {
+    protected Set<String> getObservablePropertyIdentifier() throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(datasets)) {
             return DatasourceCacheUpdateHelper
                     .getAllObservablePropertyIdentifiersFromDatasets(datasets);

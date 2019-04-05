@@ -65,7 +65,7 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
     }
 
     @Inject
-    public void setConnectionProvider(DecoderRepository decodingRepository) {
+    public void setDecoderRepository(DecoderRepository decodingRepository) {
         this.decodingRepository = decodingRepository;
     }
 

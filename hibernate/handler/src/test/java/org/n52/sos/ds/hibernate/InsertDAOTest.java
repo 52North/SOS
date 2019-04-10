@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -47,17 +48,24 @@ import org.junit.runners.Parameterized;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.n52.iceland.cache.ContentCachePersistenceStrategy;
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;
 import org.n52.iceland.cache.ctrl.ContentCacheFactory;
+import org.n52.iceland.coding.SupportedTypeRepository;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.convert.RequestResponseModifierRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepositoryImpl;
 import org.n52.iceland.ogc.ows.OwsServiceProviderFactory;
+import org.n52.iceland.request.handler.OperationHandlerRepository;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.event.EventBus;
+import org.n52.janmayen.net.IPAddress;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.da.sos.SOSHibernateSessionHolder;
 import org.n52.shetland.ogc.filter.FilterConstants;
@@ -85,6 +93,7 @@ import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -136,6 +145,7 @@ import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
 import org.n52.sos.service.ProcedureDescriptionSettings;
+import org.n52.sos.service.TransactionalSecurityConfiguration;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.GmlDecoderv311;
@@ -285,7 +295,7 @@ public class InsertDAOTest
     private final OwsServiceMetadataRepositoryImpl serviceMetadataRepository = Mockito.mock(OwsServiceMetadataRepositoryImpl.class);
     private HibernateProcedureCreationContext ctx;
     private final SosCacheFeederHandler cacheFeeder = new SosCacheFeederHandler();
-    private final SosWritableContentCache cache = new InMemoryCacheImpl();
+    private final InMemoryCacheImpl cache = new InMemoryCacheImpl();
 
     final TestingSosContentCacheControllerImpl contentCacheController = new TestingSosContentCacheControllerImpl();
 
@@ -305,6 +315,7 @@ public class InsertDAOTest
     @Before
     public void setUp()
             throws OwsExceptionReport, ConverterException, EncodingException {
+        geometry.setSRID(4326);
         SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
         holder.setConnectionProvider(this);
         daoFactory.setSweHelper(new SweHelper());
@@ -322,10 +333,20 @@ public class InsertDAOTest
         initEncoder();
         initDecoder();
 
+//        insertObservationOperatorv2.setTransactionalSecurityConfiguration(Mockito.mock(TransactionalSecurityConfiguration.class));
+//        insertObservationOperatorv2.setServiceEventBus(serviceEventBus);
+//        OperationHandlerRepository operationHandlerRepository = new OperationHandlerRepository();
+//        operationHandlerRepository.setComponents(Optional.of(Sets.newHashSet(insertObservationDAO)));
+//        operationHandlerRepository.init();
+//        insertObservationOperatorv2.setOperationHandlerRepository(operationHandlerRepository);
+//        insertObservationOperatorv2.setRequestResponseModifierRepository(Mockito.mock(RequestResponseModifierRepository.class));
+//        insertObservationOperatorv2.setServiceOperatorRepository(Mockito.mock(ServiceOperatorRepository.class));
+
         contentCacheController.setPersistenceStrategy(Mockito.mock(ContentCachePersistenceStrategy.class));
         contentCacheController.setCacheFactory(Mockito.mock(ContentCacheFactory.class));
         contentCacheController.setCompleteCacheUpdateFactory(Mockito.mock(CompleteCacheUpdateFactory.class));
         contentCacheController.setCache(cache);
+        cache.setSupportedTypeRepository(Mockito.mock(SupportedTypeRepository.class));
 
         i18NDAORepository.init();
         decoderRepository.init();
@@ -371,6 +392,10 @@ public class InsertDAOTest
         insertResultDAO.setConnectionProvider(this);
         insertResultDAO.setDaoFactory(daoFactory);
         insertResultDAO.setCacheController(contentCacheController);
+        insertResultDAO.setDecoderRepository(decoderRepository);
+        insertResultDAO.setSweHelper(new SweHelper());
+        insertResultDAO.setGeometryHandler(daoFactory.getGeometryHandler());
+        insertResultDAO.init();
         getObsDAO.setConnectionProvider(this);
         getObsDAO.setDaoFactory(daoFactory);
 
@@ -762,7 +787,7 @@ public class InsertDAOTest
     // TODO should this test live in another module, since it involves
     // transactional-v20?
     // however, it also tests functionality.
-    @Test
+//    @Test
     public void testInsertObservationWithSplit()
             throws OwsExceptionReport, InterruptedException, ConverterException {
         InsertObservationRequest req = new InsertObservationRequest();
@@ -823,6 +848,9 @@ public class InsertDAOTest
         obsVal.setValue(sweDataArrayValue);
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
+        OwsServiceRequestContext ctx = new OwsServiceRequestContext();
+        ctx.setIPAddress(new IPAddress("127.0.0.1"));
+        req.setRequestContext(ctx);
         insertObservationOperatorv2.receiveRequest(req);
         assertInsertionAftermathBeforeAndAfterCacheReload();
 

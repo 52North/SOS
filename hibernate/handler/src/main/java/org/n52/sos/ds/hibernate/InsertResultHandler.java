@@ -89,7 +89,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
@@ -212,17 +211,18 @@ public class InsertResultHandler
                 if (resultTemplate.isSetFeature()) {
                     feature = resultTemplate.getFeature();
                 } else {
-                    if (featureEntityMap.containsKey(omObsConst.getFeatureOfInterestIdentifier())) {
-                        feature = featureEntityMap.get(omObsConst.getFeatureOfInterestIdentifier());
-                    } else {
-                        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
-                        feature =
-                                featureOfInterestDAO.checkOrInsert(omObsConst.getFeatureOfInterest(),
-                                        session);
-                        featureOfInterestDAO.checkOrInsertRelatedFeatureRelation(feature,
-                                obsConst.getOffering(), session);
-                        featureEntityMap.put(feature.getIdentifier(), feature);
-                    }
+                    feature = getFeature(omObsConst.getFeatureOfInterest(), featureEntityMap, session);
+//                    if (featureEntityMap.containsKey(omObsConst.getFeatureOfInterestIdentifier())) {
+//                        feature = featureEntityMap.get(omObsConst.getFeatureOfInterestIdentifier());
+//                    } else {
+//                        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
+//                        feature =
+//                                featureOfInterestDAO.checkOrInsert(omObsConst.getFeatureOfInterest(),
+//                                        session);
+//                        featureOfInterestDAO.checkOrInsertRelatedFeatureRelation(feature,
+//                                obsConst.getOffering(), session);
+//                        featureEntityMap.put(feature.getIdentifier(), feature);
+//                    }
                 }
                 if (observation.getValue() instanceof SingleObservationValue) {
                     observationDAO.insertObservationSingleValue(obsConst, feature,
@@ -254,6 +254,26 @@ public class InsertResultHandler
     @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
+    }
+
+    /**
+     * Get the hibernate AbstractFeatureOfInterest object for an AbstractFeature,
+     * returning it from the local cache if already requested
+     *
+     * @param abstractFeature
+     * @param cache
+     * @param session
+     * @return hibernet AbstractFeatureOfInterest
+     * @throws OwsExceptionReport
+     */
+    private AbstractFeatureEntity getFeature(AbstractFeature abstractFeature,
+            Map<String, AbstractFeatureEntity> cache, Session session) throws OwsExceptionReport {
+        AbstractFeatureEntity hFeature = cache.get(abstractFeature.getIdentifier());
+        if (hFeature == null) {
+            hFeature = daoFactory.getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
+            cache.put(abstractFeature.getIdentifier(), hFeature);
+        }
+        return hFeature;
     }
 
     /**

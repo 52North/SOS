@@ -5,7 +5,7 @@ Licensed under GNU General Public License, Version 2.0
 This project includes: 
 
   "Java Concurrency in Practice" book annotations under Creative Commons Attribution License, http://creativecommons.org/licenses/by/2.5
-  52North Sensor Web Client PDF report structure under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North REST-API PDF report structure under GNU General Public License, Version 2.0
   52°North Faroe under The Apache Software License, Version 2.0
   52°North Faroe Annotations under The Apache Software License, Version 2.0
   52°North Faroe JSON Backend under The Apache Software License, Version 2.0
@@ -121,7 +121,6 @@ This project includes:
   Batik XML utility library under The Apache Software License, Version 2.0
   Byte Buddy (without dependencies) under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
   Checker Qual under The MIT License
@@ -158,6 +157,7 @@ This project includes:
   Hibernate Commons Annotations under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-c3p0 under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-core under GNU Library General Public License v2.1 or later
+  HikariCP under The Apache Software License, Version 2.0
   HPPC Collections under The Apache Software License, Version 2.0
   httpservices under (MIT-style) netCDF C library license
   HyperSQL Database under HSQLDB License, a BSD open source license
@@ -281,7 +281,7 @@ This project includes:
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.2 under BSD-2-Clause
   Protocol Buffers [Core] under 3-Clause BSD License
-  Quartz Enterprise Job Scheduler under Apache 2.0
+  quartz under The Apache Software License, Version 2.0
   Referencing services under Lesser General Public License (LGPL)
   Saxon-HE under Mozilla Public License Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0

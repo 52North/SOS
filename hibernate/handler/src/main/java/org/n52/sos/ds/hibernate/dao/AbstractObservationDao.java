@@ -66,7 +66,6 @@ import org.n52.shetland.ogc.sos.exception.ResponseExceedsSizeLimitException;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
@@ -84,15 +83,15 @@ public abstract class AbstractObservationDao {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDao.class);
     private EncoderRepository encoderRepository;
-    private Integer maxNumberOfReturnedTimeSeries;
-    private Integer maxNumberOfReturnedValues;
+    private Integer maxNumberOfReturnedTimeSeries = -1;
+    private Integer maxNumberOfReturnedValues = -1;
 
-    
+
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
         this.encoderRepository = encoderRepository;
     }
-    
+
     @Setting("profile.hydrology.maxReturnedTimeSeries")
     public void setMaxNumberOfReturnedTimeSeries(Integer value) {
         this.maxNumberOfReturnedTimeSeries = value;
@@ -110,7 +109,7 @@ public abstract class AbstractObservationDao {
     public int getMaxNumberOfReturnedValues() {
         return maxNumberOfReturnedValues;
     }
-    
+
     /**
      * Get ObservationConstellations and check if size limit is exceeded
      *
@@ -413,7 +412,7 @@ public abstract class AbstractObservationDao {
         }
         return false;
     }
-    
+
     protected Encoder<XmlObject, OmObservation> getEncoder(XmlEncoderKey key) {
         return encoderRepository.getEncoder(key);
     }

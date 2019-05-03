@@ -68,8 +68,10 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
                 getCache().addResultTemplateForOffering(resultTemplate.getOffering().getIdentifier(), id);
                 getCache().addObservablePropertyForResultTemplate(id,
                         resultTemplate.getObservableProperty().getIdentifier());
-                getCache().addFeatureOfInterestForResultTemplate(id,
-                        resultTemplate.getFeatureOfInterest().getIdentifier());
+                if (resultTemplate.getFeatureOfInterest() != null) {
+                    getCache().addFeatureOfInterestForResultTemplate(id,
+                            resultTemplate.getFeatureOfInterest().getIdentifier());
+                }
             }
         }
         LOGGER.debug("Finished executing ResultTemplateCacheUpdate ({})", getStopwatchResult());

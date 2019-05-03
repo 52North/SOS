@@ -6,6 +6,20 @@
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+## Release 52n-sensorweb-sos-4.4.7
+ 
+### New features
+
+  - 
+  
+### Changes
+  
+  - 
+  
+### Fixed issues
+
+  - Cache update of result templates with dynamic feattureOfInterest definition
+ 
 ## Release 52n-sensorweb-sos-4.4.6
  
 ### New features

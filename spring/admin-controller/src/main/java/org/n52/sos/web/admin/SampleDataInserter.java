@@ -367,7 +367,7 @@ public class SampleDataInserter implements Sos2Constants {
                 if ((InsertFeatureOfInterestResponse) insertFeatureOperator
                         .receiveRequest((InsertFeatureOfInterestRequest) new InsertFeatureOfInterestRequest()
                                 .addFeatureMember(
-                                        (AbstractFeature)decodeXmlObject(
+                                        decodeXmlObject(
                                                 new String(Files.readAllBytes(
                                                         Paths.get(getUri(featureFile))),"UTF-8")))
                                 .setRequestContext(requestContext)
@@ -421,7 +421,7 @@ public class SampleDataInserter implements Sos2Constants {
                         new GroupedAndNamedThreadFactory(Thread.currentThread().getName() + "-sub"));
                 for (ObservationData observationData : observations) {
                     threadPool.submit(new InsertObservationSubTask(procedureId,
-                            (OmObservation)decodeXmlElement(observationData.getOMObservation())));
+                            decodeXmlElement(observationData.getOMObservation())));
                 }
                 try {
                     threadPool.shutdown();

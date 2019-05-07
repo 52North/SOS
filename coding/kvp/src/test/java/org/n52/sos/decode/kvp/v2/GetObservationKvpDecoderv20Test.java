@@ -140,7 +140,7 @@ public class GetObservationKvpDecoderv20Test {
     @Test
     public void should_decode_extension_resultFilter() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
-        map.put("$filter", "om:result eq 10.5");
+        map.put("$filter", "om:result eq '10.5'");
         final GetObservationRequest request = decoder.decode(map);
 
         assertThat(request.hasResultFilter(), is(true));
@@ -154,7 +154,7 @@ public class GetObservationKvpDecoderv20Test {
     @Test
     public void should_decode_extension_resultFilter_between() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
-        map.put("$filter", "om:result ge 10.0 and om:result le 20.0");
+        map.put("$filter", "om:result ge '10.0' and om:result le '20.0'");
         final GetObservationRequest request = decoder.decode(map);
 
         assertThat(request.hasResultFilter(), is(true));
@@ -184,7 +184,7 @@ public class GetObservationKvpDecoderv20Test {
     public void should_decode_extension_resultFilter_spatialFilter() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
         map.put("$filter", String
-                .format("result eq 10.5 and geo.intersects(featureOfInterest,'SRID=%s;%s')",
+                .format("result eq '10.5' and geo.intersects(featureOfInterest,'SRID=%s;%s')",
                         polygon.getSRID(), wktGeometry));
         final GetObservationRequest request = decoder.decode(map);
 

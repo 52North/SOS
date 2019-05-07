@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 
 /**
  * Configuration class for Hibernate streaming settings
@@ -40,22 +39,15 @@ import org.n52.janmayen.lifecycle.Constructable;
  *
  */
 @Configurable
-public class HibernateStreamingConfiguration implements Constructable {
+public class HibernateStreamingConfiguration {
 
     public static int DEFAULT_CHUNK_SIZE = 10000;
     public static boolean DEFAULT_STREAMING_DATASOURCE = true;
     public static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
 
-    @Deprecated
-    private static HibernateStreamingConfiguration instance;
     private boolean streamingDatasource = DEFAULT_STREAMING_DATASOURCE;
     private boolean chunkDatasourceStreaming = DEFAULT_CHUNK_STREAMING_DATASOURCE;
     private int chunkSize = DEFAULT_CHUNK_SIZE;
-
-    @Override
-    public void init() {
-        HibernateStreamingConfiguration.instance = this;
-    }
 
     /**
      * Set the indicator to force streaming datasource
@@ -116,14 +108,6 @@ public class HibernateStreamingConfiguration implements Constructable {
      */
     public int getChunkSize() {
         return chunkSize;
-    }
-
-    /**
-     * @return Returns a singleton instance of the ServiceConfiguration.
-     */
-    @Deprecated
-    public static HibernateStreamingConfiguration getInstance() {
-        return instance;
     }
 
 }

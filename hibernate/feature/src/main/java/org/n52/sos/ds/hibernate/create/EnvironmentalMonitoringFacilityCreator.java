@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.create;
 import java.util.Set;
 
 import org.locationtech.jts.geom.Geometry;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
@@ -116,7 +115,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
             FeatureEntity feature) {
         emFeature.addObservingCapability(createObservingCapability(feature.getIdentifier()));
         if (feature.hasChildren()) {
-            for (AbstractFeatureEntity child : feature.getChildren()) {
+            for (AbstractFeatureEntity<?> child : feature.getChildren()) {
                 emFeature.addObservingCapability(createObservingCapability(child.getIdentifier()));
             }
         }
@@ -183,7 +182,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     private String getBaseGetUrl() {
         final StringBuilder url = new StringBuilder();
         // service URL
-        url.append(getServiceConfiguration().getServiceURL());
+        url.append(getContext().getServiceURL());
         // ?
         url.append('?');
         // service
@@ -206,9 +205,5 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     private String addParameter(String url, String parameter, Set<String> offerings) {
         return new StringBuilder(url).append('&').append(parameter).append('=').append(Joiner.on(',').join(offerings))
                 .toString();
-    }
-
-    private ServiceConfiguration getServiceConfiguration() {
-        return ServiceConfiguration.getInstance();
     }
 }

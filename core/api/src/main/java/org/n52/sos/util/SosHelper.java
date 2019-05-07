@@ -47,7 +47,11 @@ import java.util.stream.Stream;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.NcName;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -75,8 +79,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 
 /**
  * Utility class for SOS
@@ -84,12 +86,14 @@ import org.locationtech.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
+@Configurable
 public class SosHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosHelper.class);
 
     private static final int KILO_BYTE = 1024;
     private static final int KILO_BYTES_256 = 256 * KILO_BYTE;
+    private String serviceURL;
 
     /**
      * Hide utility constructor
@@ -97,23 +101,18 @@ public class SosHelper {
     protected SosHelper() {
     }
 
-    /**
-     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS version.
-     *
-     * @param foiId      FeatureOfInterst identifier
-     * @param version    SOS version
-     * @param serviceURL Service URL
-     * @param urlPattern ignored
-     *
-     * @return HTTP-Get request for featureOfInterst identifier
-     *
-     * @throws java.net.MalformedURLException if the service url is invalid
-     * @deprecated use {@link #createFoiGetUrl(java.lang.String, java.lang.String, java.lang.String)}
-     */
-    @Deprecated
-    public static URL createFoiGetUrl(String foiId, String version, String serviceURL, String urlPattern)
-            throws MalformedURLException {
-        return createFoiGetUrl(foiId, version, serviceURL);
+    public String getServiceURL() {
+        return serviceURL;
+    }
+
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
+        Validation.notNull("Service URL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
     }
 
     /**
@@ -169,10 +168,6 @@ public class SosHelper {
         return b.build();
     }
 
-    @Deprecated
-    public static URL getGetObservationKVPRequest(String version) throws MalformedURLException {
-        return getGetObservationKVPRequest(ServiceConfiguration.getInstance().getServiceURL(), version);
-    }
 
     public static URL getGetObservationKVPRequest(String serviceURL, String version) throws MalformedURLException {
         return getGetObservationKVPRequest(new URL(serviceURL), version);
@@ -184,11 +179,6 @@ public class SosHelper {
         b.addVersion(version);
         b.addGetObservationRequest();
         return b.build();
-    }
-
-    @Deprecated
-    public static URL getGetCapabilitiesKVPRequest() throws MalformedURLException {
-        return getGetCapabilitiesKVPRequest(ServiceConfiguration.getInstance().getServiceURL());
     }
 
     public static URL getGetCapabilitiesKVPRequest(URL serviceURL) {

@@ -40,7 +40,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
@@ -78,8 +80,6 @@ import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ds.hibernate.util.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
-import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +103,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     protected Criterion temporalFilterCriterion;
     private final DaoFactory daoFactory;
     private final EReportingHelper helper;
-    protected final DecoderRepository decoderRepository;
+    private BindingRepository bindingRepository;
 
     /**
      * constructor
@@ -115,12 +115,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      */
     public AbstractHibernateStreamingValue(
             ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request,
-            DecoderRepository decoderRepository) {
+            BindingRepository bindingRepository) {
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
         this.daoFactory = daoFactory;
         this.helper = new EReportingHelper(daoFactory.getSweHelper());
-        this.decoderRepository = decoderRepository;
+        this.bindingRepository = bindingRepository;
     }
 
     @Override
@@ -189,7 +189,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      *             If an error occurs when getting the value
      */
     protected TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
-        return new TimeValuePair(createPhenomenonTime(abstractValue), new ObservationValueCreator(decoderRepository).visit(abstractValue));
+        return new TimeValuePair(createPhenomenonTime(abstractValue), new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(abstractValue));
     }
 
     /**
@@ -217,7 +217,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (abstractValue.isSetDescription()) {
             observation.setDescription(abstractValue.getDescription());
         }
-        Value<?> value = new ObservationValueCreator(decoderRepository).visit(abstractValue);
+        Value<?> value = new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(abstractValue);
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }
@@ -235,7 +235,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      */
     protected Set<Long> getObservationIds(Collection<? extends DataEntity> abstractValuesResult) {
         Set<Long> ids = new HashSet<>(abstractValuesResult.size());
-        for (DataEntity abstractValue : abstractValuesResult) {
+        for (DataEntity<?> abstractValue : abstractValuesResult) {
             ids.add(abstractValue.getId());
         }
         return ids;
@@ -376,7 +376,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      */
     @Deprecated
     protected Value<?> getValueFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
-        Value<?> value = new ObservationValueCreator(decoderRepository).visit(abstractValue);
+        Value<?> value = new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(abstractValue);
 //        if (value != null && abstractValue.isSetUnit()) {
 //            value.setUnit(abstractValue.getUnit().getUnit());
 //        }
@@ -432,7 +432,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (!observation.isSetDescription() && o.isSetDescription()) {
             observation.setDescription(o.getDescription());
         }
-        Value<?> value = new ObservationValueCreator(decoderRepository).visit(o);
+        Value<?> value = new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(o);
         if (!value.isSetUnit()
                 && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
                 && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
@@ -456,7 +456,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     protected void addRelatedObservation(DataEntity<?> o, OmObservation observation) throws OwsExceptionReport {
-        new RelatedObservationAdder(observation, o).add();
+        new RelatedObservationAdder(observation, o, daoFactory.getServiceURL(),
+                bindingRepository.isActive(MediaTypes.APPLICATION_KVP)).add();
     }
 
     protected void addParameter(DataEntity<?> o, OmObservation observation) throws OwsExceptionReport {
@@ -500,7 +501,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                     observation.getObservationConstellation()
                             .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
                 }
-                observation.mergeWithObservation(getSingleObservationValue(o, new ObservationValueCreator(decoderRepository).visit(o)));
+                observation.mergeWithObservation(getSingleObservationValue(o, new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(o)));
             }
         }
         return observation;

@@ -69,6 +69,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.values.HibernateStreamingSettings;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
@@ -85,6 +86,7 @@ public abstract class AbstractObservationDao {
     private EncoderRepository encoderRepository;
     private Integer maxNumberOfReturnedTimeSeries = -1;
     private Integer maxNumberOfReturnedValues = -1;
+    private int chunkSize;
 
 
     @Inject
@@ -108,6 +110,26 @@ public abstract class AbstractObservationDao {
 
     public int getMaxNumberOfReturnedValues() {
         return maxNumberOfReturnedValues;
+    }
+
+    /**
+     * Set the chunk size for chunk streaming
+     *
+     * @param chunkSize
+     *            Size to set
+     */
+    @Setting(HibernateStreamingSettings.CHUNK_SIZE)
+    public void setChunkSize(int chunkSize) {
+        this.chunkSize = chunkSize;
+    }
+
+    /**
+     * Get the chunk size
+     *
+     * @return the chunk wize
+     */
+    public int getChunkSize() {
+        return chunkSize;
     }
 
     /**

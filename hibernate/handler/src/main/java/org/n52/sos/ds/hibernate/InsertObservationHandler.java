@@ -200,9 +200,9 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
 
         AbstractFeatureEntity hFeature = null;
 
-        if (sosObsConst.getOfferings().size() > 1) {
-
-        }
+//        if (sosObsConst.getOfferings().size() > 1) {
+//
+//        }
 
         String offeringID = sosObsConst.getOfferings().iterator().next();
         DatasetEntity hDataset = cache.get(sosObsConst, offeringID);

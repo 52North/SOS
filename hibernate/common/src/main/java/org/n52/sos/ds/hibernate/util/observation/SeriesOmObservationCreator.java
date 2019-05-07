@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.util.List;
 import java.util.Locale;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
@@ -52,7 +51,6 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -81,7 +79,6 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public ObservationStream create() throws OwsExceptionReport, ConverterException {
-        final List<OmObservation> observations = Lists.newLinkedList();
         if(series == null) {
             return ObservationStream.empty();
         }
@@ -150,17 +147,16 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         return series;
     }
 
-    @SuppressWarnings("unchecked")
     protected void checkForAdditionalObservationCreator(DatasetEntity series, OmObservation sosObservation) throws CodedException {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
-        AdditionalObservationCreatorRepository repo = AdditionalObservationCreatorRepository.getInstance();
+        AdditionalObservationCreatorRepository repo = getCreatorContext().getAdditionalObservationCreatorRepository();
         if (repo.hasAdditionalObservationCreatorFor(key)) {
             repo.get(key).create(sosObservation, series);
         } else if (checkAcceptType()) {
             for (MediaType acceptType : getAcceptType()) {
                 AdditionalObservationCreatorKey acceptKey = new AdditionalObservationCreatorKey(acceptType.withoutParameters().toString(), series.getClass());
-                if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(acceptKey)) {
-                    AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(acceptKey);
+                if (repo.hasAdditionalObservationCreatorFor(acceptKey)) {
+                    AdditionalObservationCreator creator = repo.get(acceptKey);
                     creator.create(sosObservation, series, getSession());
                 }
             }

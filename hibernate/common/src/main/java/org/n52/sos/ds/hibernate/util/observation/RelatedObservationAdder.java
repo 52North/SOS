@@ -31,9 +31,6 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.RelatedDataEntity;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -50,15 +47,22 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 
-
 public class RelatedObservationAdder {
 
     private OmObservation observation;
+
     private DataEntity<?> hObservation;
 
-    public RelatedObservationAdder(OmObservation observation, DataEntity hObservation) {
+    private String serviceURL;
+
+    private boolean isKvpSupported;
+
+    public RelatedObservationAdder(OmObservation observation, DataEntity<?> hObservation, String serviceURL,
+            boolean isKvpSupported) {
         this.observation = observation;
         this.hObservation = hObservation;
+        this.serviceURL = serviceURL;
+        this.isKvpSupported = isKvpSupported;
     }
 
     public void add() throws CodedException {
@@ -70,13 +74,18 @@ public class RelatedObservationAdder {
                         role.setHref(hRelatedObservation.getRole());
                     }
                     if (hRelatedObservation.isSetRelatedUrl()) {
-                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(hRelatedObservation.getRelatedUrl())));
+                        observation.addRelatedObservation(new OmObservationContext(role,
+                                new ReferenceType(hRelatedObservation.getRelatedUrl())));
                     } else {
                         if (hRelatedObservation.getRelatedItem().isSetIdentifier()) {
-                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getRelatedItem().getIdentifier()))));
+                            observation.addRelatedObservation(
+                                    new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(
+                                            hRelatedObservation.getRelatedItem().getIdentifier()))));
                         } else if (hRelatedObservation.getRelatedItem() instanceof DataEntity) {
-                            // TODO check if this should be set because result may not be a unique observation.
-                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl((DataEntity)hRelatedObservation.getRelatedItem()))));
+                            // TODO check if this should be set because result
+                            // may not be a unique observation.
+                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(
+                                    createGetObservationUrl((DataEntity<?>) hRelatedObservation.getRelatedItem()))));
                         }
                     }
                 }
@@ -87,33 +96,38 @@ public class RelatedObservationAdder {
     }
 
     private String createGetObservationByIdUrl(String observationIdentifier) throws UnsupportedEncodingException {
-        if (isKvpSupported()) {
+        if (isKvpSupported) {
             final StringBuilder url = new StringBuilder();
             // service URL
             url.append(encodeBaseGetUrl(Sos2Constants.SERVICEVERSION));
             // request
             url.append(encodeRequest(SosConstants.Operations.GetObservationById.name()));
             // observation identifier
-            url.append(encodeParam(Sos2Constants.GetObservationByIdParams.observation.name(), true, observationIdentifier));
+            url.append(encodeParam(Sos2Constants.GetObservationByIdParams.observation.name(), true,
+                    observationIdentifier));
             return url.toString();
         } else {
             return observationIdentifier;
         }
     }
 
-    private String createGetObservationUrl(DataEntity hObservation) throws DateTimeFormatException, UnsupportedEncodingException {
-        if (isKvpSupported()) {
+    private String createGetObservationUrl(DataEntity<?> hObservation)
+            throws DateTimeFormatException, UnsupportedEncodingException {
+        if (isKvpSupported) {
             final StringBuilder url = new StringBuilder();
             // service URL
             url.append(encodeBaseGetUrl(Sos2Constants.SERVICEVERSION));
             // request
             url.append(encodeRequest(SosConstants.Operations.GetObservation.name()));
             // procedure
-            url.append(encodeParam(SosConstants.GetObservationParams.procedure.name(), hObservation.getDataset().getProcedure().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.procedure.name(),
+                    hObservation.getDataset().getProcedure().getIdentifier()));
             // observedProperty
-            url.append(encodeParam(SosConstants.GetObservationParams.observedProperty.name(), hObservation.getDataset().getPhenomenon().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.observedProperty.name(),
+                    hObservation.getDataset().getPhenomenon().getIdentifier()));
             // featureOfInterest
-            url.append(encodeParam(SosConstants.GetObservationParams.featureOfInterest.name(), hObservation.getDataset().getFeature().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.featureOfInterest.name(),
+                    hObservation.getDataset().getFeature().getIdentifier()));
             // phenomenonTime
             url.append(encodeTemporalFilterParam(hObservation));
             return url.toString();
@@ -121,18 +135,10 @@ public class RelatedObservationAdder {
         return "";
     }
 
-    private boolean isKvpSupported() {
-        return BindingRepository.getInstance().isBindingSupported(MediaTypes.APPLICATION_KVP);
-    }
-
-    private String getServiceUrl() {
-        return ServiceConfiguration.getInstance().getServiceURL();
-    }
-
     private String encodeBaseGetUrl(String version) throws UnsupportedEncodingException {
         final StringBuilder url = new StringBuilder();
         // service URL
-        url.append(getServiceUrl());
+        url.append(serviceURL);
         // ?
         url.append('?');
         // service
@@ -154,7 +160,8 @@ public class RelatedObservationAdder {
         return encodeParam(OWSConstants.RequestParams.request.name(), requestName);
     }
 
-    private String encodeTemporalFilterParam(DataEntity hObservation) throws DateTimeFormatException, UnsupportedEncodingException {
+    private String encodeTemporalFilterParam(DataEntity<?> hObservation)
+            throws DateTimeFormatException, UnsupportedEncodingException {
         Time phenomenonTime = new PhenomenonTimeCreator(hObservation).create();
         final StringBuilder time = new StringBuilder("om:phenomenonTime").append(",");
         if (phenomenonTime instanceof TimeInstant) {
@@ -169,20 +176,17 @@ public class RelatedObservationAdder {
         return encodeParam(Sos2Constants.GetObservationParams.temporalFilter.name(), time.toString());
     }
 
-    private String encodeParam(String parameterName,String value) throws UnsupportedEncodingException {
+    private String encodeParam(String parameterName, String value) throws UnsupportedEncodingException {
         return encodeParam(parameterName, true, value);
     }
 
-    private String encodeParam(String parameterName, boolean withAmpersand, String value) throws UnsupportedEncodingException {
+    private String encodeParam(String parameterName, boolean withAmpersand, String value)
+            throws UnsupportedEncodingException {
         final StringBuilder builder = new StringBuilder();
         if (withAmpersand) {
             builder.append("&");
         }
         return builder.append(parameterName).append("=").append(URLEncoder.encode(value, "UTF-8")).toString();
     }
-
-
-//    url.append(getParameter(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name(),
-//            URLEncoder.encode(procedureDescriptionFormat, "UTF-8")));
 
 }

@@ -187,7 +187,7 @@ public abstract class AbstractOmObservationCreator {
         }
     }
 
-    protected URI getServiceURL() {
+    protected String getServiceURL() {
         return getCreatorContext().getServiceURL();
     }
 

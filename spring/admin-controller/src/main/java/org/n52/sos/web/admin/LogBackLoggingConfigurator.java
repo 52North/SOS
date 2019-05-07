@@ -29,6 +29,8 @@
 package org.n52.sos.web.admin;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,8 +70,6 @@ import org.xml.sax.SAXException;
 import org.n52.faroe.ConfigurationError;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.util.FileIOHelper;
-import org.n52.sos.web.admin.AbstractLoggingConfigurator.Appender;
-import org.n52.sos.web.admin.AbstractLoggingConfigurator.Level;
 
 /**
  * @since 4.0.0
@@ -612,8 +612,8 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
         File f = getLogFile1();
         if (f != null) {
             try {
-                return FileIOHelper.loadInputStreamFromFile(f);
-            } catch (OwsExceptionReport ex) {
+                return new FileInputStream(f);
+            } catch (FileNotFoundException ex) {
                 LOG.error("Could not read log file", ex);
             }
         }

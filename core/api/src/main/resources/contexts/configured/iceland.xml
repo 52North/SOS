@@ -74,9 +74,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
     <bean id="converterRepository"
           class="org.n52.iceland.convert.ConverterRepository" />
 
-    <bean id="serviceConfiguration"
-          class="org.n52.iceland.service.ServiceConfiguration" />
-
     <bean id="httpUtils"
           class="org.n52.iceland.util.http.HttpUtils" />
 

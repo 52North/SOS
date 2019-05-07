@@ -84,12 +84,12 @@ public class EReportingHelper {
     }
 
     /**
-     * Creates an {@link ObservationValue} from the {@link EReportingValue}
+     * Creates an {@link ObservationValue} from the {@link DataEntity}
      *
      * @param omObservation
      *            Corresponding {@link OmObservation}
      * @param observation
-     *            {@link EReportingValue} to create {@link ObservationValue}
+     *            {@link DataEntity} to create {@link ObservationValue}
      *            from
      * @return Created {@link ObservationValue}.
      * @throws CodedException
@@ -107,12 +107,12 @@ public class EReportingHelper {
     }
 
     /**
-     * Creates an {@link SweDataArray} object from the {@link EReportingValue}
+     * Creates an {@link SweDataArray} object from the {@link DataEntity}
      *
      * @param omObservation
      *            Corresponding {@link OmObservation}
      * @param observation
-     *            {@link EReportingValue} to create {@link SweDataArray} from
+     *            {@link DataEntity} to create {@link SweDataArray} from
      * @return Created {@link SweDataArray}
      */
     public SweDataArray createSweDataArray(OmObservation omObservation, DataEntity observation) {

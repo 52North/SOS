@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.DataAccessException;
@@ -62,8 +61,10 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
             new ProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
     public ProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
-            I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl) {
-        super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl);
+            I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl,
+            boolean isAddOutputsToSensorML) {
+        super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl,
+                isAddOutputsToSensorML);
     }
 
     @Override

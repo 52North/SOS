@@ -36,13 +36,16 @@ import java.util.Optional;
 import java.util.TreeSet;
 
 import org.hibernate.Session;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.PhenomenonEntity;
@@ -56,7 +59,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +76,7 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
+@Configurable
 public abstract class AbstractProcedureDescriptionGenerator implements ProcedureDescriptionGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGenerator.class);
@@ -83,6 +86,9 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
     private Locale locale;
     private I18NDAORepository i18NDAORepository;
     private ContentCacheController cacheController;
+    private Locale defaultLanguage;
+    private boolean showAllLanguageValues;
+    private ProcedureDescriptionSettings procedureSettings;
 
     public AbstractProcedureDescriptionGenerator(I18NDAORepository i18NDAORepository,
             ContentCacheController cacheController) {
@@ -93,6 +99,17 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
 
     public abstract SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
             Session session) throws OwsExceptionReport;
+
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(final String defaultLanguage) {
+        Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
+        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
+    }
+
+    @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
+    public void setShowAllLanguageValues(final boolean showAllLanguageValues) {
+        this.showAllLanguageValues = showAllLanguageValues;
+    }
 
     protected void setLocale(Locale i18n) {
         this.locale = i18n;
@@ -164,9 +181,9 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
                         feature.setDescription(description.get().getText());
                     }
                 } else {
-                    Locale defaultLocale = ServiceConfiguration.getInstance().getDefaultLanguage();
+                    Locale defaultLocale = defaultLanguage;
                     final I18NProcedureMetadata i18n;
-                    if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
+                    if (showAllLanguageValues) {
                         // load all names
                         i18n = i18nDAO.getMetadata(procedure.getIdentifier());
                     } else {
@@ -212,11 +229,6 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
         return Lists.newArrayList(String.format(template, type, identifier, obsProps));
     }
 
-    @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
-    }
-
     protected List<PhenomenonEntity> getObservablePropertiesForProcedure(ProcedureEntity procedure, Session session)
             throws OwsExceptionReport {
         try {
@@ -244,7 +256,7 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
 
     @VisibleForTesting
     ProcedureDescriptionSettings procedureSettings() {
-        return ProcedureDescriptionSettings.getInstance();
+        return procedureSettings;
     }
 
     @VisibleForTesting

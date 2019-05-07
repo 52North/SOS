@@ -28,24 +28,47 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.service.ServiceSettings;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.RelatedDatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 
+@Configurable
 public class InspireObservationCreator extends AbstractAdditionalObservationCreator {
 
     private final static String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
 
-    private static final Set<AdditionalObservationCreatorKey> KEYS =
-            AdditionalObservationCreatorRepository.encoderKeysForElements(NS_OMSO_30,
-                    DataEntity.class,
-                    DatasetEntity.class);
+    private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
+            .encoderKeysForElements(NS_OMSO_30, DataEntity.class, DatasetEntity.class);
+
+    @Inject
+    private BindingRepository bindingRepository;
+    private String serviceURL;
+
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(URI serviceURL) throws ConfigurationError {
+        Validation.notNull("Service URL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
+    }
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
@@ -53,7 +76,8 @@ public class InspireObservationCreator extends AbstractAdditionalObservationCrea
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session)
+            throws CodedException {
         create(omObservation, series);
         // TODO remove from PointObservation, profile, multipoint
         addRelatedSeries(omObservation, series.getRelatedDatasets());
@@ -61,20 +85,24 @@ public class InspireObservationCreator extends AbstractAdditionalObservationCrea
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
+            throws CodedException {
         create(omObservation, observation);
         addRelatedSeries(omObservation, observation.getDataset().getRelatedDatasets());
         return omObservation;
     }
 
     @Override
-    public OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException {
+    public OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session)
+            throws CodedException {
         add(omObservation, observation);
-            addRelatedSeries(omObservation, observation.getDataset().getRelatedDatasets());
+        addRelatedSeries(omObservation, observation.getDataset().getRelatedDatasets());
         return omObservation;
     }
 
-    private void addRelatedSeries(OmObservation omObservation, Set<RelatedDatasetEntity> relatedSeries) throws CodedException {
-        new RelatedSeriesAdder(omObservation, relatedSeries).add();
+    private void addRelatedSeries(OmObservation omObservation, Set<RelatedDatasetEntity> relatedSeries)
+            throws CodedException {
+        new RelatedSeriesAdder(omObservation, relatedSeries, serviceURL.toString(),
+                bindingRepository.isActive(MediaTypes.APPLICATION_KVP)).add();
     }
 }

@@ -31,7 +31,6 @@ package org.n52.sos.service;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 
 
 /**
@@ -44,7 +43,7 @@ import org.n52.janmayen.lifecycle.Constructable;
  * @since 4.0.0
  */
 @Configurable
-public class ProcedureDescriptionSettings implements Constructable {
+public class ProcedureDescriptionSettings {
 
     public static final String IDENTIFIER_LONG_NAME_DEFINITION = "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION";
 
@@ -80,8 +79,6 @@ public class ProcedureDescriptionSettings implements Constructable {
     public static final String ENRICH_WITH_FEATURES = "procedureDesc.ENRICH_WITH_FEATURES";
 
     public static final String ENRICH_WITH_DISCOVERY_INFORMATION = "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION";
-    @Deprecated
-    private static ProcedureDescriptionSettings instance = null;
 
     private String descriptionTemplate;
     private boolean generateClassification;
@@ -98,14 +95,6 @@ public class ProcedureDescriptionSettings implements Constructable {
     private boolean enrichWithOfferings;
     private boolean enrichWithFeatures;
     private boolean enrichWithDiscoveryInformation;
-
-
-    @Override
-    @Deprecated
-    public void init() {
-        ProcedureDescriptionSettings.instance = this;
-    }
-
 
     @Setting(ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE)
     public void setDescriptionTemplate(final String descriptionTemplate) {
@@ -262,11 +251,6 @@ public class ProcedureDescriptionSettings implements Constructable {
 
     public boolean isEnrichWithDiscoveryInformation() {
         return enrichWithDiscoveryInformation;
-    }
-
-    @Deprecated
-    public static ProcedureDescriptionSettings getInstance() {
-        return instance;
     }
 
 }

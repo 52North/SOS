@@ -34,20 +34,15 @@ import java.net.URI;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.util.StringHelper;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
-
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -383,7 +378,7 @@ public class WSDLBuilder {
     }
 
     private InputStream getDocumentAsStream(String filename) {
-        return Configurator.getInstance().getClass().getResourceAsStream(filename);
+        return this.getClass().getResourceAsStream(filename);
     }
 
     private XmlObject read(String path) throws DecodingException, IOException {
@@ -391,11 +386,6 @@ public class WSDLBuilder {
             String string = StringHelper.convertStreamToString(stream);
             return XmlHelper.parseXmlString(string);
         }
-    }
-
-    @VisibleForTesting
-    ServiceConfiguration getServiceConfig() {
-        return ServiceConfiguration.getInstance();
     }
 
     public WSDLBuilder setSoapEndpoint(URI endpoint) {

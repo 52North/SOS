@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.DataEntity;
@@ -44,8 +45,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
-import org.n52.svalbard.decode.DecoderRepository;
 
 /**
  * Hibernate series streaming value implementation for chunk results
@@ -77,9 +76,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, DecoderRepository decoderRepository) throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, series, decoderRepository);
-        this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
+            AbstractObservationRequest request, long series, BindingRepository bindingRepository, int chunkSize)
+            throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, series, bindingRepository);
+        this.chunkSize = chunkSize;
     }
 
     @Override

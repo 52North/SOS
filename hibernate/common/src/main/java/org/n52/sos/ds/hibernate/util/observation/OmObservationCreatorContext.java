@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -38,6 +37,7 @@ import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -74,9 +74,10 @@ public class OmObservationCreatorContext {
     private HibernateProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository;
     private GeometryHandler geometryHandler;
     private Locale defaultLanguage;
-    private URI serviceURL;
+    private String serviceURL;
     private DecoderRepository decoderRepository;
     private HibernateProcedureConverter procedureConverter;
+    private BindingRepository bindingRepository;
 
     @Inject
     public OmObservationCreatorContext(
@@ -91,7 +92,8 @@ public class OmObservationCreatorContext {
             HibernateProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository,
             GeometryHandler geometryHandler,
             DecoderRepository decoderRepository,
-            HibernateProcedureConverter procedureConverter) {
+            HibernateProcedureConverter procedureConverter,
+            BindingRepository bindingRepository) {
         super();
         this.serviceMetadataRepository = serviceMetadataRepository;
         this.i18nr = i18nr;
@@ -105,6 +107,7 @@ public class OmObservationCreatorContext {
         this.geometryHandler = geometryHandler;
         this.decoderRepository = decoderRepository;
         this.procedureConverter = procedureConverter;
+        this.bindingRepository = bindingRepository;
     }
 
     @Setting(CodingSettings.TOKEN_SEPARATOR)
@@ -137,11 +140,7 @@ public class OmObservationCreatorContext {
         if (url.contains("?")) {
             url = url.split("[?]")[0];
         }
-        try {
-            this.serviceURL = new URI(url);
-        } catch (URISyntaxException e) {
-            new ConfigurationError(e);
-        }
+        this.serviceURL = url;
     }
 
     /**
@@ -252,7 +251,7 @@ public class OmObservationCreatorContext {
     /**
      * @return the serviceURL
      */
-    public URI getServiceURL() {
+    public String getServiceURL() {
         return serviceURL;
     }
 
@@ -268,6 +267,10 @@ public class OmObservationCreatorContext {
      */
     public HibernateProcedureConverter getProcedureConverter() {
         return procedureConverter;
+    }
+
+    public BindingRepository getBindingRepository() {
+        return bindingRepository;
     }
 
 }

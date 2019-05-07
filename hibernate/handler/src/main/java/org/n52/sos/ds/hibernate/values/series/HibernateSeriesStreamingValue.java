@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -63,15 +64,18 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     /**
      * constructor
      *
-     * @param connectionProvider the connection provider
+     * @param connectionProvider
+     *            the connection provider
      * @param request
      *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
      * @throws OwsExceptionReport
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory, AbstractObservationRequest request, long series, DecoderRepository decoderRepository) throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, decoderRepository);
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
+            AbstractObservationRequest request, long series, BindingRepository bindingRepository)
+            throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, bindingRepository);
         this.series = series;
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();

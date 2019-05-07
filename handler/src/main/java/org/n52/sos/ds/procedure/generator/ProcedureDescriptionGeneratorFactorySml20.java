@@ -35,8 +35,10 @@ import javax.inject.Inject;
 
 import org.n52.faroe.SettingsService;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
@@ -60,6 +62,7 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
     private final ContentCacheController cacheController;
     private final ProfileHandler profileHandler;
     private String srsNamePrefixUrl = "";
+    private BindingRepository bindingRepository;
 
     @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
     public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
@@ -73,12 +76,14 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
                                                                GeometryHandler geometryHandler,
                                                                I18NDAORepository i18NDAORepository,
                                                                ContentCacheController cacheController,
-                                                               ProfileHandler profileHandler) {
+                                                               ProfileHandler profileHandler,
+                                                               BindingRepository bindingRepository) {
         this.settingsService = settingsService;
         this.geometryHandler = geometryHandler;
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
         this.profileHandler = profileHandler;
+        this.bindingRepository = bindingRepository;
     }
 
     @Override
@@ -93,7 +98,8 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
                                                                    getGeometryHandler(),
                                                                    getI18NDAORepository(),
                                                                    getCacheController(),
-                                                                   getSrsNamePrefixUrl());
+                                                                   getSrsNamePrefixUrl(),
+                                                                   bindingRepository.isActive(MediaTypes.APPLICATION_KVP));
         getSettingsService().configureOnce(key);
         return generator;
     }

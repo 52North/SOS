@@ -37,11 +37,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.n52.faroe.annotation.Setting;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
-import org.n52.io.request.RequestSimpleParameterSet;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
@@ -71,10 +70,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.CodingSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +86,7 @@ import com.google.common.collect.Maps;
  * @since 4.2.0
  *
  */
+@Configurable
 public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractProcedureDescriptionGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGeneratorSml.class);
@@ -101,12 +99,16 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
 
     private ProfileHandler profileHandler;
 
+    private boolean isAddOutputsToSensorML;
+
     public AbstractProcedureDescriptionGeneratorSml(ProfileHandler profileHandler, GeometryHandler geometryHandler,
-            I18NDAORepository i18NDAORepository, ContentCacheController cacheController, String srsNamePrefix) {
+            I18NDAORepository i18NDAORepository, ContentCacheController cacheController, String srsNamePrefix,
+            boolean isAddOutputsToSensorML) {
         super(i18NDAORepository, cacheController);
         this.geometryHandler = geometryHandler;
         this.srsNamePrefix = srsNamePrefix;
         this.profileHandler = profileHandler;
+        this.isAddOutputsToSensorML = isAddOutputsToSensorML;
     }
 
     /**
@@ -132,7 +134,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
-        if (ProcedureRequestSettingProvider.getInstance().isAddOutputsToSensorML()
+        if (isAddOutputsToSensorML
                 && !"hydrology".equalsIgnoreCase(profileHandler.getActiveProfile().getIdentifier())) {
             abstractProcess.setInputs(createInputs(getIdentifierList(observableProperties)));
             abstractProcess.setOutputs(createOutputs(procedure, observableProperties, session));
@@ -299,7 +301,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
                     Geometry geometry = feature.getGeometryEntity().getGeometry();
                     // 8.2 set position from geometry
                     Coordinate c = geometry.getCoordinate();
-                    position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
+                    position.setPosition(createCoordinatesForPosition(c.getY(), c.getX(), c.getZ()));
                 }
             }
             position.setReferenceFrame(srsNamePrefix + srid);
@@ -322,7 +324,6 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
      *
      * @return List with SWE Coordinate
      */
-    @SuppressWarnings("unchecked")
     private List<SweCoordinate<BigDecimal>> createCoordinatesForPosition(Object longitude, Object latitude,
             Object altitude) {
         SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, procedureSettings().getLatLongUom());

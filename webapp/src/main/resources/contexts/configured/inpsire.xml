@@ -8,8 +8,8 @@
 
     <bean name="inspireExtendedCapabilitiesProvider"
         class="org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider" />
-        
+
     <bean name="inspireOfferingExtensionProvider"
         class="org.n52.sos.inspire.offering.InspireOfferingExtensionProvider" />
-        
+
 </beans>

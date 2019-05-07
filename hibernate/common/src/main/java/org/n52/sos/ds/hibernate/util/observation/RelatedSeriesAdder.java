@@ -32,9 +32,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
 
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.RelatedDatasetEntity;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -56,10 +53,15 @@ public class RelatedSeriesAdder {
 
     private OmObservation observation;
     private Collection<RelatedDatasetEntity> hRelatedSeries;
+    private String serviceURL;
+    private boolean isKvpSupported;
 
-    public RelatedSeriesAdder(OmObservation observation, Collection<RelatedDatasetEntity> hRelatedSeries) {
+    public RelatedSeriesAdder(OmObservation observation, Collection<RelatedDatasetEntity> hRelatedSeries,
+            String serviceURL, boolean isKvpSupported) {
         this.observation = observation;
         this.hRelatedSeries = hRelatedSeries;
+        this.serviceURL = serviceURL;
+        this.isKvpSupported = isKvpSupported;
     }
 
     public void add() throws CodedException {
@@ -71,13 +73,17 @@ public class RelatedSeriesAdder {
                         role.setHref(relatedSeries.getRole());
                     }
                     if (relatedSeries.isSetRelatedUrl()) {
-                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(relatedSeries.getRelatedUrl())));
+                        observation.addRelatedObservation(
+                                new OmObservationContext(role, new ReferenceType(relatedSeries.getRelatedUrl())));
                     } else if (relatedSeries.getRelatedItem() != null) {
                         if (relatedSeries.getRelatedItem().isSetIdentifier()) {
-                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(relatedSeries.getRelatedItem().getIdentifier()))));
+                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(
+                                    createGetObservationByIdUrl(relatedSeries.getRelatedItem().getIdentifier()))));
                         } else {
-                            // TODO check if this should be set because result may not be a unique observation.
-                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl(relatedSeries.getRelatedItem()))));
+                            // TODO check if this should be set because result
+                            // may not be a unique observation.
+                            observation.addRelatedObservation(new OmObservationContext(role,
+                                    new ReferenceType(createGetObservationUrl(relatedSeries.getRelatedItem()))));
                         }
                     }
                 }
@@ -88,33 +94,38 @@ public class RelatedSeriesAdder {
     }
 
     private String createGetObservationByIdUrl(String observationIdentifier) throws UnsupportedEncodingException {
-        if (isKvpSupported()) {
+        if (isKvpSupported) {
             final StringBuilder url = new StringBuilder();
             // service URL
             url.append(encodeBaseGetUrl(Sos2Constants.SERVICEVERSION));
             // request
             url.append(encodeRequest(SosConstants.Operations.GetObservationById.name()));
             // observation identifier
-            url.append(encodeParam(Sos2Constants.GetObservationByIdParams.observation.name(), true, observationIdentifier));
+            url.append(encodeParam(Sos2Constants.GetObservationByIdParams.observation.name(), true,
+                    observationIdentifier));
             return url.toString();
         } else {
             return observationIdentifier;
         }
     }
 
-    private String createGetObservationUrl(DatasetEntity hSeries) throws DateTimeFormatException, UnsupportedEncodingException {
-        if (isKvpSupported()) {
+    private String createGetObservationUrl(DatasetEntity hSeries)
+            throws DateTimeFormatException, UnsupportedEncodingException {
+        if (isKvpSupported) {
             final StringBuilder url = new StringBuilder();
             // service URL
             url.append(encodeBaseGetUrl(Sos2Constants.SERVICEVERSION));
             // request
             url.append(encodeRequest(SosConstants.Operations.GetObservation.name()));
             // procedure
-            url.append(encodeParam(SosConstants.GetObservationParams.procedure.name(), hSeries.getProcedure().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.procedure.name(),
+                    hSeries.getProcedure().getIdentifier()));
             // observedProperty
-            url.append(encodeParam(SosConstants.GetObservationParams.observedProperty.name(), hSeries.getObservableProperty().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.observedProperty.name(),
+                    hSeries.getObservableProperty().getIdentifier()));
             // featureOfInterest
-            url.append(encodeParam(SosConstants.GetObservationParams.featureOfInterest.name(), hSeries.getFeature().getIdentifier()));
+            url.append(encodeParam(SosConstants.GetObservationParams.featureOfInterest.name(),
+                    hSeries.getFeature().getIdentifier()));
             // phenomenonTime
             if (hSeries.isSetFirstValueAt()) {
                 url.append(encodeTemporalFilterParam(hSeries));
@@ -124,18 +135,10 @@ public class RelatedSeriesAdder {
         return "";
     }
 
-    private boolean isKvpSupported() {
-        return BindingRepository.getInstance().isBindingSupported(MediaTypes.APPLICATION_KVP);
-    }
-
-    private String getServiceUrl() {
-        return ServiceConfiguration.getInstance().getServiceURL();
-    }
-
     private String encodeBaseGetUrl(String version) throws UnsupportedEncodingException {
         final StringBuilder url = new StringBuilder();
         // service URL
-        url.append(getServiceUrl());
+        url.append(serviceURL);
         // ?
         url.append('?');
         // service
@@ -157,7 +160,8 @@ public class RelatedSeriesAdder {
         return encodeParam(OWSConstants.RequestParams.request.name(), requestName);
     }
 
-    private String encodeTemporalFilterParam(DatasetEntity hSeries) throws DateTimeFormatException, UnsupportedEncodingException {
+    private String encodeTemporalFilterParam(DatasetEntity hSeries)
+            throws DateTimeFormatException, UnsupportedEncodingException {
         Time phenomenonTime = new PhenomenonTimeCreator(hSeries).create();
         final StringBuilder time = new StringBuilder("om:phenomenonTime").append(",");
         if (phenomenonTime instanceof TimeInstant) {
@@ -172,20 +176,17 @@ public class RelatedSeriesAdder {
         return encodeParam(Sos2Constants.GetObservationParams.temporalFilter.name(), time.toString());
     }
 
-    private String encodeParam(String parameterName,String value) throws UnsupportedEncodingException {
+    private String encodeParam(String parameterName, String value) throws UnsupportedEncodingException {
         return encodeParam(parameterName, true, value);
     }
 
-    private String encodeParam(String parameterName, boolean withAmpersand, String value) throws UnsupportedEncodingException {
+    private String encodeParam(String parameterName, boolean withAmpersand, String value)
+            throws UnsupportedEncodingException {
         final StringBuilder builder = new StringBuilder();
         if (withAmpersand) {
             builder.append("&");
         }
         return builder.append(parameterName).append("=").append(URLEncoder.encode(value, "UTF-8")).toString();
     }
-
-
-//    url.append(getParameter(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name(),
-//            URLEncoder.encode(procedureDescriptionFormat, "UTF-8")));
 
 }

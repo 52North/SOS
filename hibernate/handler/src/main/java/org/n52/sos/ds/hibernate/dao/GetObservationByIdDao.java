@@ -202,11 +202,12 @@ public class GetObservationByIdDao extends AbstractObservationDao
         for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,
-                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session);
+                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext,
+                            session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), observationCreatorContext.getDecoderRepository());
+                            series.getId(), observationCreatorContext.getBindingRepository(), getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);

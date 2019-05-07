@@ -30,7 +30,6 @@ package org.n52.sos.ds.procedure.generator;
 
 import java.util.Objects;
 
-
 public class ProcedureDescriptionGeneratorKey implements Comparable<ProcedureDescriptionGeneratorKey> {
 
     private final String procedureDescriptionFormat;

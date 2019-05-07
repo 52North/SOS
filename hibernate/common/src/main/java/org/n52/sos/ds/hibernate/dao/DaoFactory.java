@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -37,9 +38,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
@@ -88,6 +92,7 @@ public class DaoFactory {
     private GeometryHandler geometryHandler;
     private SweHelper sweHelper;
     private FeatureQueryHandler featureQueryHandler;
+    private String serviceURL;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -129,6 +134,16 @@ public class DaoFactory {
     @Inject
     public void setSweHelper(SweHelper sweHelper) {
         this.sweHelper = sweHelper;
+    }
+
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
+        Validation.notNull("Service URL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
     }
 
     @Inject
@@ -264,6 +279,14 @@ public class DaoFactory {
 
     public FeatureQueryHandler getFeatureQueryHandler() {
         return featureQueryHandler;
+    }
+
+    public String getServiceURL() {
+        return serviceURL;
+    }
+
+    public DecoderRepository getDecoderRepository() {
+        return decoderRepository;
     }
 
 }

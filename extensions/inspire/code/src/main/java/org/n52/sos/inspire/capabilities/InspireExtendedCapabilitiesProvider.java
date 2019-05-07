@@ -29,6 +29,7 @@
 package org.n52.sos.inspire.capabilities;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ import javax.inject.Inject;
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.inspire.InspireConformity;
@@ -76,6 +77,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
@@ -85,6 +90,7 @@ import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
  * @since 4.1.0
  *
  */
+@Configurable
 public class InspireExtendedCapabilitiesProvider
         extends AbstractInspireProvider
         implements OwsOperationMetadataExtensionProvider {
@@ -93,12 +99,22 @@ public class InspireExtendedCapabilitiesProvider
             = new OwsOperationMetadataExtensionProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
     private OwsServiceMetadataRepository serviceMetadataRepository;
+    private String serviceURL;
 
     @Inject
     public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
+        Validation.notNull("Service URL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
+    }
 
     public OwsServiceProvider getOwsServiceProvider() {
         return serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS).get();
@@ -223,7 +239,7 @@ public class InspireExtendedCapabilitiesProvider
      */
     private InspireResourceLocator getResourceLocator() throws OwsExceptionReport {
         try {
-            InspireResourceLocator resourceLocator = new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest().toString());
+            InspireResourceLocator resourceLocator = new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest(serviceURL).toString());
             resourceLocator.addMediaType(MediaTypes.APPLICATION_XML);
             return resourceLocator;
         } catch (MalformedURLException ex) {
@@ -288,7 +304,7 @@ public class InspireExtendedCapabilitiesProvider
             if (getInspireHelper().isSetNamespace()) {
                 iuri.setNamespace(getInspireHelper().getNamespace());
             } else {
-                iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
+                iuri.setNamespace(serviceURL);
             }
             spatialDataSetIdentifier.add(iuri);
         }

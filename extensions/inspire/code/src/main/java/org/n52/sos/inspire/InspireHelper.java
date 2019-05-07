@@ -42,7 +42,6 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.inspire.InspireLanguageISO6392B;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.inspire.settings.InspireSettings;
@@ -58,12 +57,9 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class InspireHelper implements Constructable {
+public class InspireHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireHelper.class);
-
-    @Deprecated
-    private static InspireHelper instance;
 
     private String inspireId;
 
@@ -96,17 +92,13 @@ public class InspireHelper implements Constructable {
         this.contentCacheController = contentCacheController;
     }
 
-    @Override
-    public void init() {
-        InspireHelper.instance = this;
-    }
     /**
      * Set the INSPIRE id
      *
      * @param inspireId
      *            the INSPIRE id to set
      */
-//    @Setting(InspireSettings.INSPIRE_ID_KEY)
+    @Setting(InspireSettings.INSPIRE_ID_KEY)
     public void setInspireId(String inspireId) {
         Validation.notNullOrEmpty("The INSPIRE id", inspireId);
         this.inspireId = inspireId;
@@ -318,14 +310,6 @@ public class InspireHelper implements Constructable {
             }
         }
         return getDefaultLanguage();
-    }
-
-    /**
-     * @return Returns a singleton instance of the ServiceConfiguration.
-     */
-    @Deprecated
-    public static synchronized InspireHelper getInstance() {
-        return instance;
     }
 
 }

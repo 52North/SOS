@@ -81,5 +81,13 @@
         <property name="group" ref="inspireDefinitionGroup" />
         <property name="defaultValue" value="http://www.52north.org/" />
     </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="inspire.id" />
+        <property name="title" value="INSPIRE id" />
+        <property name="description" value="Set the INSPIRE id for this service." />
+        <property name="order" value="13.0" />
+        <property name="group" ref="inspireDefinitionGroup" />
+        <property name="defaultValue" value="1" />
+    </bean>
 
 </beans>

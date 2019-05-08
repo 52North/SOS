@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -147,16 +147,15 @@ public class GetResultDAO extends AbstractGetResultDAO {
 
     @Override
     public Set<String> getConformanceClasses() {
-        try {
-            Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
-                return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
-            }
-            sessionHolder.returnSession(session);
-        } catch (OwsExceptionReport owse) {
-            LOGGER.error("Error while getting Spatial Filtering Profile conformance class!", owse);
+        if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
+            return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
         }
         return super.getConformanceClasses();
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
     }
 
     /**
@@ -181,6 +180,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
             final Set<String> featureIdentifiers, String procedure, final Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(AbstractLegacyObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
+        addParentChildRestriction(c);
 
         if (isEmpty(featureIdentifiers)) {
             return null; // because no features where found regarding the
@@ -231,6 +231,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
             Collection<String> featureIdentifiers, String procedure, Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(AbstractSeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
+        addParentChildRestriction(c);
 
         List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(procedure, request.getObservedProperty(), request.getOffering(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
@@ -238,10 +239,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
         } else {
             c.add(Restrictions.in(AbstractSeriesObservation.SERIES, series));
         }
-
-        if (request.isSetOffering()) {
-            addOfferingRestriction(c, request.getOffering());
-        }
+        
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {
             addTemporalFilter(c, request.getTemporalFilter());
         }
@@ -249,6 +247,10 @@ public class GetResultDAO extends AbstractGetResultDAO {
         LOGGER.debug("QUERY queryObservation(request, featureIdentifiers): {}", HibernateHelper.getSqlString(c));
         return c.list();
 
+    }
+
+    private void addParentChildRestriction(Criteria c) {
+        c.add(Restrictions.eq(Observation.CHILD, false));
     }
 
     /**

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,13 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.dao.metadata;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +55,28 @@ public class SeriesMetadataDAO {
         addSeriesRestriction(series, c);
         LOGGER.debug("QUERY getMetadata(series): {}", HibernateHelper.getSqlString(c));
         return c.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<Long, List<SeriesMetadata>> getMetadata(List<Series> resultSeries, Session session) {
+        Map<Long, List<SeriesMetadata>> map = new LinkedHashMap<>();
+        Criteria c = getDefaultSeriesCriteria(session);
+        addSeriesRestriction(resultSeries, c);
+        LOGGER.debug("QUERY getMetadata(series list): {}", HibernateHelper.getSqlString(c));
+         List<SeriesMetadata> list = c.list();
+         if (list != null) {
+            for (SeriesMetadata seriesMetadata : list) {
+                List<SeriesMetadata> smList = null;
+                if (map.containsKey(seriesMetadata.getSeriesId())) {
+                    smList = map.get(seriesMetadata.getSeriesId());
+                } else {
+                    smList = new LinkedList<>();
+                }
+                smList.add(seriesMetadata);
+                map.put(seriesMetadata.getSeriesId(), smList);
+            }
+         }
+        return map;
     }
 
     private Criteria getDefaultSeriesCriteria(Session session) {
@@ -79,6 +105,13 @@ public class SeriesMetadataDAO {
 
     private void addSeriesRestriction(long series, Criteria c) {
         c.add(Restrictions.eq(SeriesMetadata.SERIES_ID, series));
+    }
+    
+    private void addSeriesRestriction(List<Series> series, Criteria c) {
+        if (series != null && !series.isEmpty()) {
+            c.add(Restrictions.in(SeriesMetadata.SERIES_ID,
+                    series.stream().map(s -> s.getSeriesId()).collect(Collectors.toSet())));
+        }
     }
 
     private void addDomainRestriction(String domainIdentifier, Criteria c) {

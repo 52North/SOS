@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.valued.BooleanValued
 import org.n52.sos.ds.hibernate.entities.observation.series.valued.CategoryValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.valued.GeometryValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.valued.ReferenceValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.valued.TextValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
@@ -49,6 +50,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.IdentifierNamDescription;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ReferenceValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 import org.n52.sos.ogc.UoM;
@@ -59,6 +61,7 @@ import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -164,6 +167,14 @@ public class ObservationValueCreator
         return ProfileGeneratorSplitter.create(o);
     }
 
+    @Override
+    public ReferenceValue visit(ReferenceValuedObservation o) {
+        ReferenceValue v = new ReferenceValue(o.getValue());
+        if (!addUnit(o, v) && o instanceof ReferenceValuedSeriesObservation && ((ReferenceValuedSeriesObservation) o).getSeries().isSetUnit()) {
+            v.setUnit(getUnit(((ReferenceValuedSeriesObservation) o).getSeries().getUnit()));
+        }
+        return v;
+    }
 
     @SuppressWarnings("rawtypes")
     protected void addAdditonalData(IdentifierNamDescription o, SweAbstractSimpleType v) {

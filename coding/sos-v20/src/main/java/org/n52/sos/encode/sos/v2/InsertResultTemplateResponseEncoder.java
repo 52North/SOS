@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -59,6 +59,9 @@ public class InsertResultTemplateResponseEncoder extends AbstractSosResponseEnco
                 InsertResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
         InsertResultTemplateResponseType irtr = doc.addNewInsertResultTemplateResponse();
         irtr.setAcceptedTemplate(response.getAcceptedTemplate());
+        if (response.isSetExtensions()) {
+            createExtension(irtr, response.getExtensions());
+        }
         return doc;
     }
 

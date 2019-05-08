@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -66,6 +66,9 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.series.wml.DefaultPointMetadata;
+import org.n52.sos.ogc.series.wml.DefaultTVPMeasurementMetadata;
+import org.n52.sos.ogc.series.wml.WaterMLConstants.InterpolationType;
 import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.GetObservationResponse;
@@ -90,6 +93,7 @@ public class UVFEncoderTest {
     private GetObservationResponse responseToEncode;
     private String obsPropIdentifier = "test-obs-prop-identifier";
     private String foiIdentifier = "test-foi-identifier";
+    final String foiName = "test-foi-name";
     private String unit = "test-unit";
 
     @Before
@@ -112,6 +116,7 @@ public class UVFEncoderTest {
         // Feature Of Interest
         CodeWithAuthority featureIdentifier = new CodeWithAuthority(foiIdentifier);
         AbstractFeature featureOfInterest = new SamplingFeature(featureIdentifier);
+        featureOfInterest.addName(new CodeType(foiName));
         int srid = 4326;
         String geomWKT = "POINT(51.9350382 7.6521225)";
         final Geometry point = JTSHelper.createGeometryFromWKT(geomWKT, srid);
@@ -128,6 +133,8 @@ public class UVFEncoderTest {
 
         // observation value
         ObservationValue<?> value = new SingleObservationValue<>(phenomenonTime, measuredValue);
+        value.setDefaultPointMetadata(new DefaultPointMetadata().setDefaultTVPMeasurementMetadata(
+                new DefaultTVPMeasurementMetadata().setInterpolationtype(InterpolationType.Continuous)));
         omObservation.setValue(value);
 
         // observation type
@@ -162,19 +169,19 @@ public class UVFEncoderTest {
 
     @Test
     public void shouldEncodeFunctionInterpretationLine() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[0],
+        Assert.assertThat(getResponseString()[0],
                 Is.is("$ib Funktion-Interpretation: Linie"));
     }
 
     @Test
     public void shouldEncodeIndexUnitTime() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[1],
+        Assert.assertThat(getResponseString()[1],
                 Is.is("$sb Index-Einheit: *** Zeit ***"));
     }
 
     @Test
     public void shouldEncodeMeasurementIdentifier() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[2];
+        final String actual = getResponseString()[2];
         final String expected = "$sb Mess-Groesse: " + obsPropIdentifier
                 .substring(obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH, obsPropIdentifier.length());
 
@@ -184,7 +191,7 @@ public class UVFEncoderTest {
     
     @Test
     public void shouldEncodeUnitOfMeasurement() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[3];
+        final String actual = getResponseString()[3];
         final String expected = "$sb Mess-Einheit: " + unit;
 
         Assert.assertThat(actual, Is.is(expected));
@@ -193,7 +200,7 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeMeasurementLocationIdentifier()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[4];
+        final String actual = getResponseString()[4];
         final String expected = "$sb Mess-Stellennummer: " + foiIdentifier
                 .substring(foiIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH, foiIdentifier.length());
 
@@ -204,13 +211,13 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeTimeseriesTypeIdentifierTimebased()
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        Assert.assertThat(new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5], Is.is("*Z"));
+        Assert.assertThat(getResponseString()[6], Is.is("*Z"));
     }
 
     @Test
     public void shouldEncodeTimeseriesIdentifierAndCenturies() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
+        final String actual = getResponseString()[7];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
@@ -229,7 +236,7 @@ public class UVFEncoderTest {
         Time phenomenonTime = new TimePeriod(start, end);
         globalValues.addPhenomenonTime(phenomenonTime);
         responseToEncode.setGlobalValues(globalValues);
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[6];
+        final String actual = getResponseString()[7];
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
@@ -241,11 +248,7 @@ public class UVFEncoderTest {
     
     @Test
     public void shouldEncodeMeasurementLocationName() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String foiName = "test-foi-name";
-        CodeType name = new CodeType(foiName);
-        responseToEncode.getObservationCollection().get(0).getObservationConstellation().getFeatureOfInterest().
-            setName(CollectionHelper.list(name));
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[5];
+        final String actual = getResponseString()[5];
         final String expected = "$sb Mess-Stellenname: " + foiName;
 
         Assert.assertThat(actual, Is.is(expected));
@@ -254,7 +257,7 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeMeasurementLocationIdAndCoordinates() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[7];
+        final String actual = getResponseString()[8];
         final String expected = "1              7.6521225 51.9350382          ";
         
         Assert.assertThat(actual, Is.is(expected));
@@ -262,7 +265,7 @@ public class UVFEncoderTest {
     
     @Test
     public void shouldEncodeTemporalBoundingBox() throws UnsupportedEncoderInputException, OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[8];
+        final String actual = getResponseString()[9];
         final String expected = "70010112007001011200Zeit    ";
 
         Assert.assertThat(actual, Is.is(expected));
@@ -271,7 +274,7 @@ public class UVFEncoderTest {
     @Test
     public void shouldEncodeSingleObservationValueAndTimestamp() throws UnsupportedEncoderInputException,
             OwsExceptionReport {
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[10];
         final String expected = "700101120052.0      ";
         
         Assert.assertThat(actual, Is.is(expected));
@@ -282,7 +285,7 @@ public class UVFEncoderTest {
             OwsExceptionReport {
         ((QuantityValue)responseToEncode.getObservationCollection().get(0).getValue().getValue()).
             setValue(52.1234567890);
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[10];
         final String expected = "700101120052.1234567";
 
         Assert.assertThat(actual, Is.is(expected));
@@ -293,7 +296,7 @@ public class UVFEncoderTest {
             UnsupportedEncoderInputException, OwsExceptionReport {
         Time phenomenonTime = new TimePeriod(new Date(UTC_TIMESTAMP_0), new Date(UTC_TIMESTAMP_1));
         responseToEncode.getObservationCollection().get(0).getValue().setPhenomenonTime(phenomenonTime );
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[10];
         final String expected = "700101120052.0      ";
         
         Assert.assertThat(actual, Is.is(expected));
@@ -314,7 +317,7 @@ public class UVFEncoderTest {
         mv.setValue(value);
         responseToEncode.getObservationCollection().get(0).setValue(mv);
 
-        final String[] encodedLines = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String[] encodedLines = getResponseString();
 
         Assert.assertThat(encodedLines[8], Is.is("69123112007001011200Zeit    "));
         Assert.assertThat(encodedLines[9], Is.is("691231120052.1234567"));
@@ -325,7 +328,7 @@ public class UVFEncoderTest {
     public void shouldEncodeSingleObservationWithNoDataValue() throws
             UnsupportedEncoderInputException, OwsExceptionReport {
         responseToEncode.getObservationCollection().get(0).getValue().setValue(null);;
-        final String actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n")[9];
+        final String actual = getResponseString()[9];
         final String expected = "7001011200-777      ";
 
         Assert.assertThat(actual, Is.is(expected));
@@ -342,7 +345,7 @@ public class UVFEncoderTest {
         ((OmObservableProperty)responseToEncode.getObservationCollection().get(0).getObservationConstellation()
                 .getObservableProperty()).setUnit(null);
         
-        final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String[] actual = getResponseString();
         final String expected = "$sb Mess-Einheit: " + unit;
 
         Assert.assertThat(Arrays.asList(actual), IsNot.not(CoreMatchers.hasItems(expected)));
@@ -359,7 +362,7 @@ public class UVFEncoderTest {
                 new CountValue(52)));
         ((OmObservableProperty)responseToEncode.getObservationCollection().get(0).getObservationConstellation()
                 .getObservableProperty()).setUnit(null);
-        final String[] actual = new String(encoder.encode(responseToEncode).getBytes()).split("\n");
+        final String[] actual = getResponseString();
         final String expected = obsPropIdentifier.substring(
             obsPropIdentifier.length() - UVFConstants.MAX_IDENTIFIER_LENGTH,
             obsPropIdentifier.length()) +
@@ -377,5 +380,9 @@ public class UVFEncoderTest {
         
         BinaryAttachmentResponse encodedResponse = encoder.encode(responseToEncode);
         Assert.assertThat(encodedResponse.getSize(), Is.is(-1));
+    }
+    
+    private String[] getResponseString() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        return new String(encoder.encode(responseToEncode).getBytes()).split("\n");
     }
 }

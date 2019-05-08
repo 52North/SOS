@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @param <T>
  */
-public class RangeValue<T> {
+public class RangeValue<T> implements Comparable<RangeValue<T>>{
 
     private T rangeStart;
 
@@ -146,4 +146,24 @@ public class RangeValue<T> {
     public RangeValue<?> clone() {
         return new RangeValue<T>(getRangeStart(), getRangeStart());
     }
+
+    @Override
+    public int compareTo(RangeValue<T> o) {
+        if (o instanceof RangeValue) {
+            if (checkCompareToParameter(getRangeStart(), o.getRangeEnd())
+                    && checkCompareToParameter(getRangeEnd(), o.getRangeEnd())) {
+                return 0;
+            }
+            return 1;
+        }
+        return -1;
+    }
+    
+    private boolean checkCompareToParameter(T t, T t2) {
+        if (t == null || (t == null && t2 == null)) {
+            return true;
+        }
+        return t != null && t2 != null && t.equals(t2);
+    }
+
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -165,7 +165,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }
@@ -469,7 +469,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     private XmlObject createFeature(AbstractFeature sosAbstractFeature) throws OwsExceptionReport {
         if (sosAbstractFeature instanceof AbstractSamplingFeature) {
             AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) sosAbstractFeature;
-            if (sosAbstractFeature.isSetGmlID()) {
+            if (sosAbstractFeature.isSetGmlID() && sosAbstractFeature.isEncoded()) {
                 FeaturePropertyType featureProperty =
                         FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 featureProperty.setHref("#" + sosAbstractFeature.getGmlId());
@@ -551,9 +551,19 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
     private XmlObject createEnvelope(SosEnvelope sosEnvelope) {
         EnvelopeType envelopeType = EnvelopeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         MinMax<String> minmax = SosHelper.getMinMaxFromEnvelope(sosEnvelope);
-        envelopeType.addNewLowerCorner().setStringValue(minmax.getMinimum());
-        envelopeType.addNewUpperCorner().setStringValue(minmax.getMaximum());
-        envelopeType.setSrsName(ServiceConfiguration.getInstance().getSrsNamePrefix() + sosEnvelope.getSrid());
+        if (minmax.getMinimum() != null && !minmax.getMinimum().isEmpty()) {
+            envelopeType.addNewLowerCorner().setStringValue(minmax.getMinimum());
+        } else {
+            envelopeType.addNewLowerCorner().setNil();
+        }
+        if (minmax.getMaximum() != null && !minmax.getMaximum().isEmpty()) {
+            envelopeType.addNewUpperCorner().setStringValue(minmax.getMaximum());
+        } else {
+            envelopeType.addNewUpperCorner().setNil();
+        }
+        if (sosEnvelope.isSetSrid()) {
+            envelopeType.setSrsName(ServiceConfiguration.getInstance().getSrsNamePrefix() + sosEnvelope.getSrid());
+        }
         return envelopeType;
     }
 

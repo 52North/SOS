@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -59,7 +59,9 @@ import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -211,6 +213,10 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
                 NamedValue<Geometry> nv = new NamedValue<>();
                 nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
                 return nv;
+            } else if (value.has(JSONConstants.NAME)) {
+                NamedValue<String> nv = new NamedValue<>();
+                nv.setValue(parseTextValue(value));
+                return nv;
             }
         }
         throw new NotYetSupportedException(value.toString());
@@ -232,6 +238,8 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
             return parseTruthObservationValue(node);
         } else if (type.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
             return parseCategoryObservationValue(node);
+        } else if (type.equals(OmConstants.OBS_TYPE_REFERENCE_OBSERVATION)) {
+            return parseReferenceObservationValue(node);
         } else if (type.equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION)) {
             return parseGeometryObservation(node);
         } else {
@@ -248,6 +256,15 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 
     private QuantityValue parseQuantityValue(JsonNode node) throws OwsExceptionReport {
        return new QuantityValue(node.path(JSONConstants.VALUE).doubleValue(), node.path(JSONConstants.UOM).textValue());
+    }
+
+    private Value<String> parseTextValue(JsonNode node) {
+        TextValue textValue = new TextValue(node.path(JSONConstants.VALUE).textValue());
+        textValue.setName(node.path(JSONConstants.NAME).textValue());
+        if (node.has(JSONConstants.DESCRIPTION)) {
+            textValue.setDescription(node.path(JSONConstants.DESCRIPTION).textValue());
+        }
+        return textValue;
     }
 
     private ObservationValue<?> parseTextObservationValue(JsonNode node) throws OwsExceptionReport {
@@ -279,6 +296,25 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     private ObservationValue<?> parseGeometryObservation(JsonNode node) throws OwsExceptionReport {
         GeometryValue v = new GeometryValue(geometryDecoder.decodeJSON(node.path(JSONConstants.RESULT), false));
         return new SingleObservationValue<Geometry>(parsePhenomenonTime(node), v);
+    }
+
+    private ObservationValue<?> parseReferenceObservationValue(JsonNode node) throws OwsExceptionReport {
+        ReferenceValue v = new ReferenceValue(parseReferenceValue(node.path(JSONConstants.RESULT)));
+        return new SingleObservationValue<ReferenceType>(parsePhenomenonTime(node), v);
+    }
+
+    private ReferenceType parseReferenceValue(JsonNode node) {
+        ReferenceType ref = new ReferenceType();
+        if (!node.path(JSONConstants.HREF).isMissingNode()) {
+            ref.setHref(node.path(JSONConstants.HREF).asText());
+        }
+        if (!node.path(JSONConstants.TITLE).isMissingNode()) {
+            ref.setTitle(node.path(JSONConstants.TITLE).asText());
+        }
+        if (!node.path(JSONConstants.ROLE).isMissingNode()) {
+            ref.setRole(node.path(JSONConstants.ROLE).asText());
+        }
+        return ref;
     }
 
 }

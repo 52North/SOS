@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -48,6 +48,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OfferingExtension;
@@ -60,7 +61,9 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.w3c.SchemaLocation;
@@ -89,7 +92,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     protected XmlObject create(GetCapabilitiesResponse response) throws OwsExceptionReport {
         CapabilitiesDocument doc = CapabilitiesDocument.Factory.newInstance(getXmlOptions());
         CapabilitiesType xbCaps = doc.addNewCapabilities();
-		
+        if (response.isSetExtensions()) {
+            createExtension(xbCaps, response.getExtensions());
+        }	
         if (response.isStatic()) {
             String xml = response.getXmlString();
             LOGGER.trace("Response is static. XML-String:\n{}\n",xml);
@@ -115,6 +120,15 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         encodeContents(caps, xbCaps, response.getVersion());
         encodeExtensions(caps, xbCaps);
         return doc;
+    }
+
+    private void createExtension(CapabilitiesType xbCaps, SwesExtensions extensions) throws OwsExceptionReport {
+        for (SwesExtension<?> extension : extensions.getExtensions()) {
+            if (extension.getValue() instanceof SweAbstractDataComponent) {
+                xbCaps.addNewExtension()
+                        .set(encodeGML32(new GenericMetaData(extension.getValue())));
+            }
+        }
     }
 
     private void setExtensions(XmlObject addNewExtension, CapabilitiesExtension extension) throws CodedException {

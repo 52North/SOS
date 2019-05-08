@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -85,7 +85,11 @@ public class SOS40ComplianceTestSuite
             org.n52.sos.service.it.functional.ComplexObservationTest.class,
             org.n52.sos.service.it.functional.ContentNegotiationEndpointTest.class,
             org.n52.sos.service.it.functional.DescribeSensorProcedureDescriptionFormatTest.class,
-            org.n52.sos.service.it.functional.ObservationEncodingsTest.class,
+            org.n52.sos.service.it.functional.ObservationOmEncodingsTest.class,
+            org.n52.sos.service.it.functional.ObservationJsonEncodingsTest.class,
+            org.n52.sos.service.it.functional.ObservationWmlEncodingsTest.class,
+//            disabled due to travis build error
+//            org.n52.sos.service.it.functional.ObservationNetCDFEncodingsTest.class,
 
             org.n52.sos.service.it.v2.kvp.DeleteObservationTest.class,
             org.n52.sos.service.it.v2.kvp.DeleteSensorTest.class,

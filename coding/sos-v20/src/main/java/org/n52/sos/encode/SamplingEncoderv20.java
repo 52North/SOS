@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,16 +46,13 @@ import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
@@ -141,8 +138,8 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
     }
 
     protected XmlObject createFeature(final AbstractFeature absFeature) throws OwsExceptionReport {
-        if (absFeature instanceof SamplingFeature) {
-            final SamplingFeature sampFeat = (SamplingFeature) absFeature;
+        if (absFeature instanceof AbstractSamplingFeature) {
+            final AbstractSamplingFeature sampFeat = (AbstractSamplingFeature) absFeature;
             final SFSpatialSamplingFeatureDocument xbSampFeatDoc = SFSpatialSamplingFeatureDocument.Factory
                     .newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (sampFeat.getXmlDescription() != null) {
@@ -269,8 +266,8 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
     @Override
     protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        if (abstractFeature instanceof SamplingFeature) {
-            final SamplingFeature samplingFeature = (SamplingFeature) abstractFeature;
+        if (abstractFeature instanceof AbstractSamplingFeature) {
+            final AbstractSamplingFeature samplingFeature = (AbstractSamplingFeature) abstractFeature;
             String namespace;
             if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
                 namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);

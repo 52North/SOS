@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -72,6 +72,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         final String procedure = request.getProcedureIdentifier();
 
         cache.removeProcedure(procedure);
+        cache.removePublishedProcedure(procedure);
 
         cache.removeMinPhenomenonTimeForProcedure(procedure);
         cache.removeMaxPhenomenonTimeForProcedure(procedure);
@@ -115,6 +116,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
                     cache.removeObservablePropertiesForResultTemplate(resultTemplate);
                 }
                 cache.removeOffering(offering);
+                cache.removePublishedOffering(offering);
             }
         }
 

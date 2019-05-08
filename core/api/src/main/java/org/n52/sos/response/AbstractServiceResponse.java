@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -27,6 +27,8 @@
  * Public License for more details.
  */
 package org.n52.sos.response;
+
+import java.util.Collection;
 
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.swes.SwesConstants.HasSwesExtension;
@@ -87,6 +89,15 @@ public abstract class AbstractServiceResponse extends AbstractServiceCommunicati
             setExtensions(new SwesExtensions());
         }
         getExtensions().addSwesExtension(extension);
+        return this;
+    }
+    
+    @Override
+    public AbstractServiceResponse addExtensions(final Collection<SwesExtension<?>> extensions) {
+        if (getExtensions() == null) {
+            setExtensions(new SwesExtensions());
+        }
+        getExtensions().addSwesExtension(extensions);
         return this;
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,6 +38,8 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -116,6 +118,20 @@ public abstract class ObservationFactory {
             throws OwsExceptionReport {
         return instantiate(complexClass());
     }
+    
+    public abstract Class<? extends ProfileObservation> profileClass();
+
+    public ProfileObservation profile()
+            throws OwsExceptionReport {
+        return instantiate(profileClass());
+    }
+    
+    public abstract Class<? extends ReferenceObservation> referenceClass();
+
+    public ReferenceObservation reference()
+            throws OwsExceptionReport {
+        return instantiate(referenceClass());
+    }
 
     private <T extends Observation<?>> T instantiate(Class<T> c)
             throws OwsExceptionReport {
@@ -148,6 +164,8 @@ public abstract class ObservationFactory {
                     return complexClass();
                 case OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION:
                     return sweDataArrayClass();
+                case OmConstants.OBS_TYPE_REFERENCE_OBSERVATION:
+                    return referenceClass();
                 case OmConstants.OBS_TYPE_UNKNOWN:
                     return blobClass();
             }

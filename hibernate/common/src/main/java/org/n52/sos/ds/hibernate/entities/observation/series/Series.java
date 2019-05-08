@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,10 +29,9 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.List;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.Category;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
@@ -40,7 +39,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -60,19 +58,20 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, 
-                   HasPublishedFlag, 
+                   HasUnit,
+                   HasPublishedFlag,
                    HasSeriesType,
-                   HasOffering{
+                   HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
-    
+
     public static String ID = "seriesId";
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
     public static String LAST_TIME_STAMP = "lastTimeStamp";
-    
+    public static String CATEGORY = "category";
+
     public static final String ALIAS = "s";
-    
+
     public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long seriesId;
@@ -80,6 +79,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Offering offering;
+    private Category category;
 
     private Boolean deleted = false;
     private Boolean published = true;
@@ -91,6 +91,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Unit unit;
     private boolean hiddenChild;
     private String seriesType;
+    private List<Series> referenceValues;
     /**
      * Get series id
      *
@@ -140,6 +141,14 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public void setProcedure(final Procedure procedure) {
         this.procedure = procedure;
     }
+    
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
 
     @Override
     public void setDeleted(final boolean deleted) {
@@ -150,7 +159,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public boolean isDeleted() {
         return deleted;
     }
-    
+
     @Override
     public Series setPublished(final boolean published) {
         this.published = published;
@@ -277,7 +286,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
 
     @Override
     public boolean isHiddenChild() {
-        return this.hiddenChild;
+        return hiddenChild;
     }
 
     public boolean isSetFirstLastTime() {
@@ -293,7 +302,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     public void setOffering(final Offering offering) {
         this.offering = offering;
     }
-    
+
     @Override
     public boolean isSetOffering() {
         return getOffering() != null;
@@ -304,15 +313,26 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
                 && getObservableProperty().equals(s.getObservableProperty());
     }
 
+    @Override
     public String getSeriesType() {
-        return this.seriesType;
+        return seriesType;
     }
 
+    @Override
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-    
+
+    @Override
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
+    }
+
+    public List<Series> getReferenceValues() {
+        return referenceValues;
+    }
+
+    public void setReferenceValues(List<Series> referenceValues) {
+        this.referenceValues = referenceValues;
     }
 }

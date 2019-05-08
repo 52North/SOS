@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -84,22 +84,19 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     @Override
     protected void queryTimes() {
         try {
-            if (session == null) {
-                session = sessionHolder.getSession();
-            }
             if (request instanceof GetObservationRequest) {
                 GetObservationRequest getObsReq = (GetObservationRequest)request;
                 TemporalReferencedLegacyObservation minTime;
                 TemporalReferencedLegacyObservation maxTime;
                 // query with temporal filter
                 if (temporalFilterCriterion != null) {
-                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
-                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, getSession());
+                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, getSession());
                 }
                 // query without temporal or indeterminate filters
                 else {
-                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, session);
-                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, session);
+                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, getSession());
+                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, getSession());
                 }
                 setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
                 setResultTime(createResutlTime(maxTime));
@@ -114,7 +111,7 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     protected void queryUnit() {
         try {
             if (request instanceof GetObservationRequest) {
-                setUnit(valueDAO.getUnit((GetObservationRequest)request, procedure, observableProperty, featureOfInterest, session));
+                setUnit(valueDAO.getUnit((GetObservationRequest)request, procedure, observableProperty, featureOfInterest, getSession()));
             }
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);

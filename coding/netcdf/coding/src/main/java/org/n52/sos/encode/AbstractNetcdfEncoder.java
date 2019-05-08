@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,15 +45,11 @@ import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractDescribeSensorDAO;
 import org.n52.sos.ds.OperationDAO;
 import org.n52.sos.ds.OperationDAORepository;
-import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.CodeList.CiRoleCodes;
 import org.n52.sos.netcdf.Nc4ForceTimeChunkingStategy;
-//import org.n52.sos.ioos.Ioos52nSosVersionHandler;
-//import org.n52.sos.ioos.asset.SensorAsset;
-//import org.n52.sos.ioos.asset.StationAsset;
 import org.n52.sos.netcdf.NetCDFUtil;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.netcdf.NetcdfHelper;
@@ -78,7 +74,6 @@ import org.n52.sos.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.SmlContact;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifierPredicates;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
@@ -102,6 +97,18 @@ import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.axiomalaska.cf4j.CFStandardNames;
+import com.axiomalaska.cf4j.constants.ACDDConstants;
+import com.axiomalaska.cf4j.constants.CFConstants;
+import com.axiomalaska.cf4j.constants.NODCConstants;
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
@@ -118,18 +125,6 @@ import ucar.nc2.constants.CDM;
 import ucar.nc2.constants.CF;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 
-import com.axiomalaska.cf4j.CFStandardNames;
-import com.axiomalaska.cf4j.constants.ACDDConstants;
-import com.axiomalaska.cf4j.constants.CFConstants;
-import com.axiomalaska.cf4j.constants.NODCConstants;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 /**
  * Abstract class of {@link ObservationEncoder} for netCDF encoding.
  * 
@@ -141,8 +136,6 @@ import com.google.common.collect.Sets;
 public abstract class AbstractNetcdfEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractNetcdfEncoder.class);
-
-    // private final String DEFINITION = "definition";
 
     private final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
             SupportedTypeKey.ObservationType, Collections.singleton(OmConstants.OBS_TYPE_MEASUREMENT));
@@ -273,7 +266,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         if (NetcdfHelper.getInstance().getNetcdfVersion().isNetdf4format() && !Nc4Iosp.isClibraryPresent()) {
             throw new NoApplicableCodeException()
                     .withMessage("Can't encode to netCDF because the native netCDF4 C library isn't installed. "
-                            + "See https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html");
+                            + "See http://www.unidata.ucar.edu/software/netcdf/docs/winbin.html");
         }
 
         return encodeNetCDFObsToNetcdf(netCDFSosObsList, version);
@@ -318,7 +311,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         addGlobaleAttributes(writer, sensorDataset);
 
         // add appropriate dims for feature type
-        List<Dimension> noDims = Lists.newArrayList();
         List<Dimension> timeDims = Lists.newArrayList();
         List<Dimension> latLngDims = Lists.newArrayList();
         List<Dimension> latDims = Lists.newArrayList();
@@ -367,7 +359,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // time var
         Variable vTime = addVariableTime(writer, timeDims);
         if (numTimes > 1 && writer.getVersion().isNetdf4format()) {
-            vTime.addAttribute(new Attribute(CDM.CHUNK_SIZE, NetcdfHelper.getInstance().getChunkSizeTime()));
+            vTime.addAttribute(new Attribute(CDM.CHUNK_SIZES, NetcdfHelper.getInstance().getChunkSizeTime()));
         }
         ArrayDouble timeArray = new ArrayDouble(getDimShapes(timeDims));
         initArrayWithFillValue(timeArray, NetcdfHelper.getInstance().getFillValue());
@@ -1323,14 +1315,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
     
     protected Attribute getAttribute(NetcdfFileWriter writer, String name) {
-        if (CollectionHelper.isNotEmpty(writer.getNetcdfFile().getRootGroup().getAttributes())) {
-            for (Attribute attr : writer.getNetcdfFile().getRootGroup().getAttributes()) {
-                if (name.equals(attr.getShortName())) {
-                    return attr;
-                }
-            }
-        }
-        return null;
+        return writer.findGlobalAttribute(name);
     }
 
     protected String getPrefixlessIdentifier(String identifier) {

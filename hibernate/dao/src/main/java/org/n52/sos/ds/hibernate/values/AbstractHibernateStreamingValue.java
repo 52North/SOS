@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -88,11 +88,18 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     protected final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
-    protected Session session;
+    private Session session;
 
     protected final AbstractObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
+    
+    protected Session getSession() throws OwsExceptionReport {
+        if (session  == null) {
+            session = sessionHolder.getSession();
+        }
+        return session;
+    }
 
     @Override
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
@@ -115,7 +122,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                     }
                 }
                 nextEntity.mergeValueToObservation(observation, getResponseFormat());
-                sessionHolder.getSession().evict(nextEntity);
+                getSession().evict(nextEntity);
             }
         }
         return observations.values();

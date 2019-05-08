@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.entities.observation;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
@@ -87,11 +86,11 @@ public class ProfileGeneratorSplitter {
         Map<Double, ProfileLevel> map = Maps.newTreeMap();
         if (entity.isSetValue()) {
             for (Observation<?> observation : entity.getValue()) {
-                if (observation.hasParameters() && observation.isSetValue()) {
-                    QuantityValue levelStart = getLevelStart(observation.getParameters());
-                    QuantityValue levelEnd = getLevelEnd(observation.getParameters());
-                    Double key = getKey(levelStart, levelEnd);
+                if (observation.isSetValue()) {
+                    QuantityValue levelStart = getLevelStart(observation);
+                    QuantityValue levelEnd = getLevelEnd(observation);
                     Value<?> value = observation.accept(new ObservationValueCreator());
+                    Double key = getKey(levelStart, levelEnd);
                     if (map.containsKey(key)) {
                         map.get(key).addValue(value);
                     } else {
@@ -104,6 +103,10 @@ public class ProfileGeneratorSplitter {
                         profileLevel.addValue(value);
                         map.put(key, profileLevel);
                     }
+                }
+                if (observation.hasParameters()) {
+                    
+                    
                 }
             }
         }
@@ -120,15 +123,29 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static QuantityValue getLevelStart(Set<Parameter> parameters) throws OwsExceptionReport {
-        for (Parameter parameter : parameters) {
-            if (checkParameterForStartLevel(parameter.getName())) {
-                NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
-                if (namedValue.getValue() instanceof QuantityValue) {
-                    QuantityValue value = (QuantityValue)namedValue.getValue();
-                    value.setDefinition(parameter.getName());
-                    value.setName(parameter.getName());
-                    return value;
+    private static QuantityValue getLevelStart(Observation<?> observation) throws OwsExceptionReport {
+        if (observation.hasVerticalFrom()) {
+            QuantityValue value = new QuantityValue(observation.getVerticalFrom());
+            String name = "from";
+            if (observation.hasVerticalFromName()) {
+                name = observation.getVerticalFromName();
+            }
+            value.setDefinition(name);
+            value.setName(name);
+            if (observation.hasVerticalUnit()) {
+                value.setUnit(observation.getVerticalUnit().getUnit());
+            }
+            return value;
+        } else if (observation.hasParameters()) {
+            for (Parameter parameter : observation.getParameters()) {
+                if (checkParameterForStartLevel(parameter.getName())) {
+                    NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
+                    if (namedValue.getValue() instanceof QuantityValue) {
+                        QuantityValue value = (QuantityValue)namedValue.getValue();
+                        value.setDefinition(parameter.getName());
+                        value.setName(parameter.getName());
+                        return value;
+                    }
                 }
             }
         }
@@ -136,15 +153,29 @@ public class ProfileGeneratorSplitter {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static QuantityValue getLevelEnd(Set<Parameter> parameters) throws OwsExceptionReport {
-        for (Parameter parameter : parameters) {
-            if (checkParameterForEndLevel(parameter.getName())) {
-                NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
-                if (namedValue.getValue() instanceof QuantityValue) {
-                    QuantityValue value = (QuantityValue)namedValue.getValue();
-                    value.setDefinition(parameter.getName());
-                    value.setName(parameter.getName());
-                    return value;
+    private static QuantityValue getLevelEnd(Observation<?> observation) throws OwsExceptionReport {
+        if (observation.hasVerticalTo()) {
+            QuantityValue value = new QuantityValue(observation.getVerticalTo());
+            String name = "to";
+            if (observation.hasVerticalToName()) {
+                name = observation.getVerticalToName();
+            }
+            value.setDefinition(name);
+            value.setName(name);
+            if (observation.hasVerticalUnit()) {
+                value.setUnit(observation.getVerticalUnit().getUnit());
+            }
+            return value;
+        } else if (observation.hasParameters()) {
+            for (Parameter parameter : observation.getParameters()) {
+                if (checkParameterForEndLevel(parameter.getName())) {
+                    NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
+                    if (namedValue.getValue() instanceof QuantityValue) {
+                        QuantityValue value = (QuantityValue)namedValue.getValue();
+                        value.setDefinition(parameter.getName());
+                        value.setName(parameter.getName());
+                        return value;
+                    }
                 }
             }
         }

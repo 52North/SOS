@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,7 +31,6 @@ package org.n52.sos.ogc.gml;
 import java.io.Serializable;
 
 import org.n52.sos.ogc.DefaultEncoding;
-import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
@@ -57,6 +56,8 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     private static final long serialVersionUID = -6117378246552782214L;
     
     private String defaultEncoding;
+    
+    private boolean wasEncoded = false;
     
     /**
      * constructor
@@ -109,6 +110,14 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     
     public boolean isSetDefaultElementEncoding() {
     	return StringHelper.isNotEmpty(getDefaultElementEncoding());
+    }
+    
+    public boolean isEncoded() {
+        return wasEncoded;
+    }
+    
+    public void wasEncoded() {
+        this.wasEncoded  = true;
     }
 
     public <X> X accept(FeatureOfInterestVisitor<X> visitor) throws OwsExceptionReport {

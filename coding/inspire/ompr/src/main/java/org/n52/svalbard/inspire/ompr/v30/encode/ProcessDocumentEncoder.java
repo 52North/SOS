@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -57,7 +57,9 @@ public class ProcessDocumentEncoder extends ProcessTypeEncoder {
     protected static final Set<EncoderKey> ENCODER_KEYS =
             Sets.newHashSet(new ClassToClassEncoderKey(Process.class, ProcessDocument.class),
                     new XmlDocumentEncoderKey(InspireOMPRConstants.NS_OMPR_30, Process.class),
-                    new XmlDocumentEncoderKey(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class));
+                    new XmlDocumentEncoderKey(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class),
+                    new XmlDocumentEncoderKey("http://inspire.ec.europa.eu/featureconcept/Process", Process.class),
+                    new XmlDocumentEncoderKey("http://inspire.ec.europa.eu/featureconcept/Process", SosProcedureDescription.class));
 
     public ProcessDocumentEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,7 +36,6 @@ import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -71,7 +70,7 @@ public class UVFSettings implements SettingDefinitionProvider {
             .setTitle("Returned Time zone for the UVF encoding")
             .setDescription("Define the time zone in which the time should be encoded in the UVF responce"
                     + "Valid values are see <a href=\"http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html\" target=\"_blank\">Java TimeZone</a>."
-                    + " Default is UTC.");
+                    + " Default is CET.");
     
     public static final ChoiceSettingDefinition UVF_LINE_ENDING_DEFINITION =
             new ChoiceSettingDefinition()

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -78,7 +78,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 4.0.0
  */
-public abstract class SimpleBinding extends Binding {
+public abstract class SimpleBinding implements Binding {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleBinding.class);
     public static final String QUALITY = "q";
 
@@ -194,24 +194,22 @@ public abstract class SimpleBinding extends Binding {
     }
 
     protected MediaType chooseResponseContentTypeForExceptionReport(
-            List<MediaType> acceptHeader, MediaType defaultContentType)
-            throws HTTPException {
+            List<MediaType> acceptHeader, MediaType defaultContentType) {
         /*
          * TODO get a list of response content types and check against
          * wildcards/qualities
          */
         if (acceptHeader.isEmpty()) {
             return defaultContentType;
-        }
-        for (MediaType mt : acceptHeader) {
-            MediaType mediaType = mt.withoutParameter(QUALITY);
-            if (defaultContentType.isCompatible(mediaType)) {
-                return defaultContentType;
-            } else if (hasEncoder(new ExceptionEncoderKey(mediaType))) {
-                return mediaType;
+        } else {
+            for (MediaType mt : acceptHeader) {
+                MediaType mediaType = mt.withoutParameter(QUALITY);
+                if (hasEncoder(new ExceptionEncoderKey(mediaType))) {
+                    return mediaType;
+                }
             }
+            return defaultContentType;
         }
-        throw new HTTPException(HTTPStatus.NOT_ACCEPTABLE);
     }
 
     protected ServiceOperator getServiceOperator(ServiceOperatorKey sokt) throws OwsExceptionReport {

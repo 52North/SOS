@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -218,7 +218,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }
@@ -294,30 +294,32 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbField.setName(sweField.getName().getValue());
         }
         final AbstractDataComponentType xbDCD;
-        if (sosElement instanceof SweBoolean) {
-            xbDCD = xbField.addNewBoolean();
-            xbDCD.set(createSimpleType((SweBoolean) sosElement));
-        } else if (sosElement instanceof SweCategory) {
-            xbDCD = xbField.addNewCategory();
-            xbDCD.set(createSimpleType((SweCategory) sosElement));
-        } else if (sosElement instanceof SweCount) {
-            xbDCD = xbField.addNewCount();
-            xbDCD.set(createSimpleType((SweCount) sosElement));
-        } else if (sosElement instanceof SweQuantity) {
-            xbDCD = xbField.addNewQuantity();
-            xbDCD.set(createSimpleType((SweQuantity) sosElement));
-        } else if (sosElement instanceof SweText) {
-            xbDCD = xbField.addNewText();
-            xbDCD.set(createSimpleType((SweText) sosElement));
-        } else if (sosElement instanceof SweTime) {
-            xbDCD = xbField.addNewTime();
-            xbDCD.set(createSimpleType((SweTime) sosElement));
-        } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("The element type '%s' of the received %s is not supported by this encoder '%s'.",
-                            sosElement != null ? sosElement.getClass().getName() : null, sweField.getClass().getName(),
-                            getClass().getName())
-                    .setStatus(BAD_REQUEST);
+            if (sosElement != null) {
+            if (sosElement instanceof SweBoolean) {
+                xbDCD = xbField.addNewBoolean();
+                xbDCD.set(createSimpleType((SweBoolean) sosElement));
+            } else if (sosElement instanceof SweCategory) {
+                xbDCD = xbField.addNewCategory();
+                xbDCD.set(createSimpleType((SweCategory) sosElement));
+            } else if (sosElement instanceof SweCount) {
+                xbDCD = xbField.addNewCount();
+                xbDCD.set(createSimpleType((SweCount) sosElement));
+            } else if (sosElement instanceof SweQuantity) {
+                xbDCD = xbField.addNewQuantity();
+                xbDCD.set(createSimpleType((SweQuantity) sosElement));
+            } else if (sosElement instanceof SweText) {
+                xbDCD = xbField.addNewText();
+                xbDCD.set(createSimpleType((SweText) sosElement));
+            } else if (sosElement instanceof SweTime) {
+                xbDCD = xbField.addNewTime();
+                xbDCD.set(createSimpleType((SweTime) sosElement));
+            } else {
+                throw new NoApplicableCodeException()
+                        .withMessage("The element type '%s' of the received %s is not supported by this encoder '%s'.",
+                                sosElement != null ? sosElement.getClass().getName() : null, sweField.getClass().getName(),
+                                getClass().getName())
+                        .setStatus(BAD_REQUEST);
+            }
         }
         return xbField;
     }
@@ -864,10 +866,15 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
                                 .set(createDataRecord((SweDataRecord) sosDataArray.getElementType()));
                         xbElementType.getAbstractDataRecord().substitute(SweConstants.QN_DATA_RECORD_SWE_101,
                                 DataRecordType.type);
+                    } else if (sosDataArray.getElementType() instanceof SweSimpleDataRecord) {
+                        xbElementType.addNewAbstractDataRecord()
+                                .set(createSimpleDataRecord((SweSimpleDataRecord) sosDataArray.getElementType()));
+                        xbElementType.getAbstractDataRecord().substitute(SweConstants.QN_SIMPLEDATARECORD_SWE_101,
+                                SimpleDataRecordType.type);
                     } else if (sosDataArray.getElementType() instanceof SweDataArray) {
                         xbElementType.addNewAbstractDataArray1()
                                 .set(createDataArray((SweDataArray) sosDataArray.getElementType()).getDataArray1());
-                        xbElementType.getAbstractDataArray1().substitute(SweConstants.QN_DATA_RECORD_SWE_101,
+                        xbElementType.getAbstractDataArray1().substitute(SweConstants.QN_DATA_ARRAY_SWE_101,
                                 DataArrayType.type);
                     } else {
                         throw new NoApplicableCodeException()

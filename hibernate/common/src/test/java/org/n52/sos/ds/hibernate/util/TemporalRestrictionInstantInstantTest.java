@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -229,7 +229,9 @@ public class TemporalRestrictionInstantInstantTest extends TemporalRestrictionTe
         Session session = getSession();
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, new BegunByRestriction());
-            assertThat(filtered, is(empty()));
+            assertThat(filtered, is(notNullValue()));
+            assertThat(filtered, hasItem(II_EQUALS_ID));
+            assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
         }
@@ -271,7 +273,8 @@ public class TemporalRestrictionInstantInstantTest extends TemporalRestrictionTe
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, new EndedByRestriction());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, is(empty()));
+            assertThat(filtered, hasItem(II_EQUALS_ID));
+            assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
         }

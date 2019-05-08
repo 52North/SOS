@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -121,7 +121,6 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
         return getSeriesObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
             Collection<String> features, Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime,
@@ -129,19 +128,18 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
         if (CollectionHelper.isNotEmpty(features)) {
             List<SeriesObservation<?>> observations = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session).list());
+                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session));
             }
             return observations;
         } else {
-            return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
+            return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
             SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
-        return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
+        return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session);
     }
 
     @Override
@@ -165,10 +163,11 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     private void addAssessmentType(Criteria c, String assessmentType) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EReportingSeries.class);
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
+        detachedCriteria.add(Restrictions.eq(Series.PUBLISHED, true));
         detachedCriteria.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
         add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.ID)));
-        c.add(Subqueries.propertyIn(SeriesObservation.SERIES, detachedCriteria));
+        c.add(Subqueries.propertyIn(Series.ID, detachedCriteria));
     }
 
     @Override
@@ -189,22 +188,32 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     protected ObservationContext fillObservationContext(
             ObservationContext ctx, OmObservation sosObservation, Session session) {
         if (ctx instanceof EReportingObservationContext) {
+            boolean samplingPointAdded = false;
+            boolean assessmentTypeAdded = false;
+            AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
             if (sosObservation.isSetParameter()) {
-                AqdSamplingPoint samplingPoint = new AqdSamplingPoint();
                 List<NamedValue<?>> remove = Lists.newArrayList();
                 for (NamedValue<?> namedValue : sosObservation.getParameter()) {
                     if (checkForSamplingPoint(namedValue.getName())) {
                         addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
+                        samplingPointAdded = true;
                     } else if (checkForAssessmentType(namedValue.getName())) {
                         addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, namedValue.getValue());
                         remove.add(namedValue);
+                        assessmentTypeAdded = true;
                     }
                 }
                 sosObservation.getParameter().removeAll(remove);
-                ((EReportingObservationContext) ctx)
-                        .setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
+                
             }
+            if (!samplingPointAdded) {
+                addSamplingPointParameterValuesToAqdSamplingPoint(samplingPoint, new ReferenceValue(new ReferenceType(ctx.getFeatureOfInterest().getIdentifier(), ctx.getFeatureOfInterest().getName())));
+            }
+            if (!assessmentTypeAdded) {
+                addAssessmentTypeParameterValuesToAqdSamplingPoint(samplingPoint, new ReferenceValue(new ReferenceType(AssessmentType.Fixed.getConceptURI())));
+            }
+            ((EReportingObservationContext) ctx).setSamplingPoint(new EReportingSamplingPointDAO().getOrInsert(samplingPoint, session));
         }
         return ctx;
     }

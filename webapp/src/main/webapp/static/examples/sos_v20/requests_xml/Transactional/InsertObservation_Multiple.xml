@@ -20,7 +20,7 @@
 			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation"/>
 			<om:phenomenonTime>
 				<gml:TimeInstant gml:id="phenomenonTime">
-					<gml:timePosition>2012-11-19T17:47:15.000+00:00</gml:timePosition>
+					<gml:timePosition>2012-11-19T17:42:15.000+00:00</gml:timePosition>
 				</gml:TimeInstant>
 			</om:phenomenonTime>
 			<om:resultTime xlink:href="#phenomenonTime"/>

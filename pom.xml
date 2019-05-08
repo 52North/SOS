@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
         <groupId>org.n52</groupId>
         <artifactId>52-North</artifactId>
-        <version>5.6.7</version>
+        <version>5.6.13</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>4.4.7-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
-    <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
+    <url>https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation</url>
     <inceptionYear>2012</inceptionYear>
     <packaging>pom</packaging>
     <issueManagement>
@@ -35,7 +34,6 @@
         <module>spring</module>
         <module>third-party</module>
         <module>webapp</module>
-        <module>webapp-bundle</module>
     </modules>
     <licenses>
         <license>
@@ -64,30 +62,49 @@
         <config.logger.history.max>30</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <postgresql.version>9.4.1211.jre7</postgresql.version>
-        <postgis.version>2.2.0</postgis.version>
-        <logback.version>1.0.13</logback.version>
-        <slf4j.version>1.7.2</slf4j.version>
+        <postgresql.version>42.2.2.jre7</postgresql.version>
+        <postgis.version>2.2.1</postgis.version>
+        <logback.version>1.2.3</logback.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
-        <c3p0.version>0.9.5.2</c3p0.version>
-        <sqlite.version>3.7.2</sqlite.version>
+        <hibernate.spatial.version>4.3.2-52N</hibernate.spatial.version>
+        <c3p0.version>0.9.5.3</c3p0.version>
+        <sqlite.version>3.23.1</sqlite.version>
         <geotools.version>14.0</geotools.version>
-        <jackson.version>2.7.3</jackson.version>
+        <jackson.version>2.9.7</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
-        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <sqljdbc.version>6.4.0.jre7</sqljdbc.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.2.1-SNAPSHOT</n52.common.xml.version>
-        <!-- Remove third party ncname resolver from SOS and use OXF instead -->
-        <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
-        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
-        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+        <arctic-sea.version>5.0.0</arctic-sea.version>
+        <n52.common.xml.version>2.6.1</n52.common.xml.version>
+        <org.springframework.security.version>4.1.5.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.9.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>shetland</artifactId>
+                <version>${arctic-sea.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>svalbard-odata</artifactId>
+                <version>${arctic-sea.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.dataformat</groupId>
+                        <artifactId>jackson-dataformat-xml</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml</groupId>
+                        <artifactId>aalto-xml</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>api</artifactId>
@@ -199,6 +216,16 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>core-v20</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-sos-rf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-sos-sf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -458,15 +485,20 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.0.1</version>
-                <scope>provided</scope>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>eprtr</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.0</version>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>4.0.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>javax.servlet.jsp-api </artifactId>
+                <version>2.3.1</version>
                 <scope>provided</scope>
                 <exclusions>
                     <exclusion>
@@ -478,7 +510,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -488,7 +520,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.12</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -500,13 +532,13 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>6.8.8</version>
+                <version>6.14.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.9.5</version>
+                <version>1.10.19</version>
                 <exclusions>
                 	<exclusion>
 	                    <artifactId>hamcrest-core</artifactId>
@@ -569,7 +601,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.3</version>
+                <version>2.10</version>
             </dependency>
 
             <!-- Hibernate Core Dependencies -->
@@ -614,6 +646,10 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>postgresql</groupId>
                         <artifactId>postgresql</artifactId>
                     </exclusion>
                 </exclusions>
@@ -762,7 +798,12 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-ifoi-v10</artifactId>
-                <version>2.2.1-SNAPSHOT</version>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-drt-v100</artifactId>
+                <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
@@ -777,6 +818,21 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosro-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosrf-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sossf-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosrf-v20</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
@@ -1105,16 +1161,36 @@
                 <artifactId>ifoi-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-operation</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>drt-hibernate</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!-- required for common test classes -->
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.2.5</version>
+                <version>4.5.5</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1160,27 +1236,27 @@
             <dependency>
                 <groupId>org.opengeo</groupId>
                 <artifactId>geodb</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.3.172</version>
+                <version>1.4.196</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.38</version>
+                <version>8.0.11</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>
                 <artifactId>json-schema-validator</artifactId>
-                <version>2.2.3</version>
+                <version>2.2.6</version>
             </dependency>
             <dependency>
                 <groupId>com.github.fge</groupId>
                 <artifactId>json-schema-core</artifactId>
-                <version>1.2.1</version>
+                <version>1.2.5</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1193,6 +1269,11 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>15.0</version>
@@ -1200,7 +1281,7 @@
             <dependency>
                 <groupId>se.jiderhamn</groupId>
                 <artifactId>classloader-leak-prevention</artifactId>
-                <version>1.13.0</version>
+                <version>1.15.4</version>
                 <exclusions>
                 	<exclusion>
                 		<groupId>javax.servlet</groupId>
@@ -1219,7 +1300,7 @@
             <dependency>
                 <groupId>xmlunit</groupId>
                 <artifactId>xmlunit</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
             </dependency>
             <dependency>
                 <groupId>com.oracle</groupId>
@@ -1227,33 +1308,33 @@
                 <version>${ojdbc6.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.microsoft</groupId>
-                <artifactId>sqljdbc4</artifactId>
-                <version>${sqljdbc4.version}</version>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${sqljdbc.version}</version>
             </dependency>
             <!-- geotools -->
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-epsg-hsql</artifactId>
                 <version>${geotools.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>javax.media</groupId>
-				<artifactId>jai_core</artifactId>
-			</exclusion>
-		</exclusions>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
                 <version>${geotools.version}</version>
-		<exclusions>
-		        <exclusion>
-				<groupId>javax.media</groupId>
-				<artifactId>jai_core</artifactId>
-			</exclusion>
-		</exclusions>
-	    </dependency>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-referencing</artifactId>
@@ -1263,10 +1344,10 @@
                         <groupId>java3d</groupId>
                         <artifactId>vecmath</artifactId>
                     </exclusion>
-	            <exclusion>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-		    </exclusion>
+                    <exclusion>
+                        <groupId>javax.media</groupId>
+                        <artifactId>jai_core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1274,27 +1355,27 @@
                 <artifactId>vecmath</artifactId>
                 <version>1.5.2</version>
             </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-api</artifactId>
-                <version>${geotools.version}</version>
-		<exclusions>
-	            <exclusion>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-		    </exclusion>
-		</exclusions>
-            </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-api</artifactId>
+            <version>${geotools.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.media</groupId>
+                    <artifactId>jai_core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.9-RC1</version>
+                <version>0.9.10</version>
             </dependency>
             <!-- EXI - Efficient XML Interchange -->
             <dependency>
                 <groupId>com.siemens.ct.exi</groupId>
                 <artifactId>exificient</artifactId>
-                <version>0.9.4</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>xerces</groupId>
@@ -1315,8 +1396,8 @@
             <!-- netCDF -->
             <dependency>
                 <groupId>edu.ucar</groupId>
-                <artifactId>netcdf</artifactId>
-                <version>4.3.22</version>
+                <artifactId>netcdf4</artifactId>
+                <version>4.6.10</version>
                 <exclusions>
                   <exclusion>
                     <groupId>c3p0</groupId>
@@ -1331,7 +1412,7 @@
             <dependency>
                 <groupId>com.axiomalaska</groupId>
                 <artifactId>cf4j</artifactId>
-                <version>27.2</version>
+                <version>35.0</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -1351,14 +1432,19 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <!-- execute "install" goal during release:prepare (instead 
                     of "integration-test") -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
                 <configuration>
-                    <preparationGoals>clean install</preparationGoals>
+                    <preparationGoals>clean</preparationGoals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <releaseProfiles>oracle</releaseProfiles>
                 </configuration>
             </plugin>
             <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId> 
@@ -1432,22 +1518,18 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.groovy.maven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>1.0</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <phase>initialize</phase>
+                        <id>timestamp-property</id>
                         <goals>
-                            <goal>execute</goal>
+                            <goal>timestamp-property</goal>
                         </goals>
                         <configuration>
-                            <source>
-                                import java.util.Date
-                                import java.text.MessageFormat
-                                def vartimestamp = MessageFormat.format("{0,date,yyyy}", new Date())
-                                project.properties['currentYearDynamic'] = vartimestamp
-                            </source>
+                            <name>currentYearDynamic</name>
+                            <pattern>yyyy</pattern>
                         </configuration>
                     </execution>
                 </executions>
@@ -1519,6 +1601,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
+
                 <!-- m2e fix – Plugin execution not covered by lifecycle 
                     configuration -->
                 <!-- See http://sourcevirtues.wordpress.com/2012/02/01/m2e-fix-plugin-execution-lifecycle-configuration/ -->
@@ -1529,6 +1612,7 @@
                     <configuration>
                         <lifecycleMappingMetadata>
                             <pluginExecutions>
+                            <!-- 
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.codehaus.groovy.maven</groupId>
@@ -1544,6 +1628,7 @@
                                         </execute>
                                     </action>
                                 </pluginExecution>
+                                 -->
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.jasig.maven</groupId>
@@ -1587,11 +1672,11 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.6.1</version>
                     <configuration>
-                        <compilerVersion>1.7</compilerVersion>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <compilerVersion>1.8</compilerVersion>
+                        <source>1.8</source>
+                        <target>1.8</target>
                         <compilerArgument>-Xlint:all</compilerArgument>
                         <showWarnings>true</showWarnings>
                         <showDeprecation>true</showDeprecation>
@@ -1600,10 +1685,8 @@
                 <plugin>
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
-                    <version>2.1.9</version>
+                    <version>2.2.4</version>
                 </plugin>
-                <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
-                    <version>1.3</version> </plugin> -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
@@ -1652,18 +1735,16 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.16</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.20</version>
                     <configuration>
-                        <connectionUrl>scm:svn:https://svn.52north.org/svn/swe/main/SOS/Service/branches/52n-sos-400-refactored</connectionUrl>
+                        <!-- see: https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class -->
+                        <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>2.6</version>
                     <configuration>
                         <descriptors>
                             <descriptor>misc/assembly.xml</descriptor>
@@ -1674,9 +1755,10 @@
         </pluginManagement>
     </build>
     <scm>
-        <connection>scm:git:git://github.com/52North/SOS.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/52North/SOS.git</developerConnection>
         <url>https://github.com/52North/SOS</url>
+        <connection>scm:git:https://github.com/52North/SOS.git</connection>
+        <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
     <repositories>
         <repository>
@@ -1710,14 +1792,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>Refractions</id>
-            <name>Refractions repository</name>
-            <url>http://lists.refractions.net/m2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
             <url>http://download.osgeo.org/webdav/geotools/</url>
@@ -1729,10 +1803,6 @@
             <id>boundlessgeo</id>
             <name>Boundless Cloud Repository</name>
             <url>https://boundless.artifactoryonline.com/boundless/main</url>
-        </repository>
-        <repository>
-            <id>unidata-releases</id>
-            <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
         </repository>
         <repository>
             <id>boundlessgeo-releases</id>
@@ -1747,33 +1817,6 @@
                 <config.logger.level.test.n52>ERROR</config.logger.level.test.n52>
                 <config.logger.level>TRACE</config.logger.level>
             </properties>
-        </profile>
-        <profile>
-            <id>release</id>
-            <!-- a profile which shall be activated if a release is performed, 
-                it is also automatic activated in the ci environment. -->
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>ci</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <configuration>
-                            <!-- no build in release:prepare (takes to long 
-                                time), so in bad cases release fails on perform -->
-                            <preparationGoals>clean</preparationGoals>
-                            <autoVersionSubmodules>true</autoVersionSubmodules>
-                            <tagBase>https://svn.52north.org/svn/swe/main/SOS/Service/tags/</tagBase>
-                            <goals>deploy</goals>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>create-license-list</id>
@@ -1815,6 +1858,10 @@
                                 <param>misc/license-mappings.xml</param>
                             </licenseMapping>
                             <generateChildNotices>false</generateChildNotices>
+                            <excludeScopes>
+                                <excludeScopes>test</excludeScopes>
+                                <excludeScopes>provided</excludeScopes>
+                            </excludeScopes>
                         </configuration>
                         <executions>
                             <execution>

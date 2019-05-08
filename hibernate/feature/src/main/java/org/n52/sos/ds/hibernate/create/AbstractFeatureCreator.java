@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,9 +33,9 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.i18n.I18NDAORepository;
@@ -64,10 +64,10 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
         this.storage3DEPSG = storage3DEPSG;
         
     }
-
+    
     protected void addNameAndDescription(Locale requestedLocale, FeatureOfInterest feature,
-            AbstractFeature abstractFeature, FeatureOfInterestDAO featureDAO) throws OwsExceptionReport {
-        I18NDAO<I18NFeatureMetadata> i18nDAO = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
+            AbstractFeature abstractFeature, FeatureOfInterestDAO featureDAO, Session session) throws OwsExceptionReport {
+        HibernateI18NDAO<I18NFeatureMetadata> i18nDAO = (HibernateI18NDAO) I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
         // set name as human readable identifier if set
         if (feature.isSetName()) {
             abstractFeature.setHumanReadableIdentifier(feature.getName());
@@ -77,17 +77,21 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
             abstractFeature.addName(featureDAO.getName(feature));
             abstractFeature.setDescription(featureDAO.getDescription(feature));
         } else {
-            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier());
+            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(), session);
             if (requestedLocale != null) {
                 // specific locale was requested
                 Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale);
                 if (name.isPresent()) {
                     abstractFeature.addName(name.get().asCodeType());
+                } else {
+                    abstractFeature.addName(featureDAO.getName(feature));
                 }
                 Optional<LocalizedString> description =
                         i18n.getDescription().getLocalizationOrDefault(requestedLocale);
                 if (description.isPresent()) {
                     abstractFeature.setDescription(description.get().getText());
+                } else {
+                    abstractFeature.setDescription(featureDAO.getDescription(feature));
                 }
             } else {
                 if (ServiceConfiguration.getInstance().isShowAllLanguageValues()) {
@@ -98,6 +102,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
                     Optional<LocalizedString> name = i18n.getName().getDefaultLocalization();
                     if (name.isPresent()) {
                         abstractFeature.addName(name.get().asCodeType());
+                    } else {
+                        abstractFeature.addName(featureDAO.getName(feature));
                     }
                 }
                 // choose always the description in the default locale

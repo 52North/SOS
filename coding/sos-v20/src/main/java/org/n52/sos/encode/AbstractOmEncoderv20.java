@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,7 +56,6 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -77,6 +76,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -254,7 +254,6 @@ public abstract class AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    @SuppressWarnings("rawtypes")
     protected XmlObject encodeOmObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         OMObservationType xbObservation = createOmObservationType();
@@ -267,15 +266,7 @@ public abstract class AbstractOmEncoderv20
         if (!sosObservation.isSetGmlID()) {
             sosObservation.setGmlId("o_" + observationID);
         }
-        // set a unique gml:id
-        xbObservation.setId(generateObservationGMLId());
-        if (!sosObservation.isSetObservationID()) {
-            sosObservation.setObservationID(xbObservation.getId().replace("o_", ""));
-            if (sosObservation.getValue() instanceof AbstractObservationValue){
-                ((AbstractObservationValue)sosObservation.getValue()).setObservationID(sosObservation.getObservationID());
-            }
-        }
-        
+        xbObservation.setId(sosObservation.getGmlId());
         setObservationIdentifier(sosObservation, xbObservation);
         setObservationName(sosObservation, xbObservation);
         setDescription(sosObservation, xbObservation);
@@ -713,10 +704,6 @@ public abstract class AbstractOmEncoderv20
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
 
-    private static String generateObservationGMLId() {
-        return "o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
-    }
-
     private static class NamedValueValueEncoder implements ValueVisitor<XmlObject> {
         private static final Logger LOG =  LoggerFactory.getLogger(NamedValueValueEncoder.class);
 
@@ -764,6 +751,11 @@ public abstract class AbstractOmEncoderv20
         @Override
         public XmlObject visit(QuantityValue value) throws OwsExceptionReport {
             return encodeGML(value, createHelperValues(value));
+        }
+
+        @Override
+        public XmlObject visit(QuantityRangeValue value) throws OwsExceptionReport {
+            return defaultValue(value);
         }
 
         @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -84,7 +84,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public boolean hasNextValue() throws OwsExceptionReport {
         boolean next = false;
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
-            if (!noChunk) {
+            if (!noChunk && (valueCounter == 0 || valueCounter == chunkSize)) {
                 getNextResults();
                 if (chunkSize <= 0 || (valueCounter != 0 && valueCounter < chunkSize)) {
                     noChunk = true;
@@ -95,10 +95,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         if (seriesValuesResult != null) {
             next = seriesValuesResult.hasNext();
-            valueCounter++;
         }
         if (!next) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
         }
         
 
@@ -107,11 +106,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     @Override
     public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
-        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) seriesValuesResult.next();
+        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) getNextValue();;
         if (checkValue(resultObject)) {
             return resultObject;
         }
-        session.evict(resultObject);
+        getSession().evict(resultObject);
         return null;
     }
 
@@ -119,17 +118,17 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
+                AbstractValuedLegacyObservation<?> resultObject = getNextValue();
                 TimeValuePair value = null;
                 if (checkValue(resultObject)) {
                     value = resultObject.createTimeValuePairFrom();
                 }
-                session.evict(resultObject);
+                getSession().evict(resultObject);
                 return value;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -140,21 +139,26 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             if (hasNextValue()) {
                 OmObservation observation = null;
-                AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
+                AbstractValuedLegacyObservation<?> resultObject = getNextValue();
                 if (checkValue(resultObject)) {
                     observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
                     resultObject.addValuesToObservation(observation, getResponseFormat());
                     checkForModifications(observation);
                 }
-                session.evict(resultObject);
+                getSession().evict(resultObject);
                 return observation;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    
+    private AbstractValuedLegacyObservation<?> getNextValue() {
+        valueCounter++;
+        return seriesValuesResult.next();
     }
 
     /**
@@ -164,27 +168,24 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *             If an error occurs when querying the next results
      */
     private void getNextResults() throws OwsExceptionReport {
-        if (session == null) {
-            session = sessionHolder.getSession();
-        }
         try {
             // query with temporal filter
             Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
-                                chunkSize, currentRow, session);
+                                chunkSize, currentRow, getSession());
             }
             // query without temporal or indeterminate filters
             else {
                 seriesValuesResult =
-                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session);
+                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, getSession());
             }
             currentRow += chunkSize;
             checkMaxNumberOfReturnedValues(seriesValuesResult.size());
             setSeriesValuesResult(seriesValuesResult);
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

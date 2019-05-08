@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingC
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingGeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingReferenceObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
 import org.n52.sos.ogc.om.NamedValue;
@@ -62,7 +63,9 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
                                     EReportingGeometryObservation.class,
                                     EReportingNumericObservation.class,
                                     EReportingSweDataArrayObservation.class,
-                                    EReportingTextObservation.class);
+                                    EReportingTextObservation.class,
+                                    EReportingReferenceObservation.class,
+                                    EReportingSeries.class);
 
     private final EReportingObservationHelper helper
             = new EReportingObservationHelper();

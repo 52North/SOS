@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -55,6 +55,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweAbstractDataRecord;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweDataArray;
@@ -204,8 +205,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         } else {
             throw new UnsupportedEncoderInputException(this, sosSweType);
         }
-        if (LOGGER.isDebugEnabled()) {
-        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+        if (LOGGER.isTraceEnabled()) {
+        	LOGGER.trace("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }
         return encodedObject;
@@ -222,8 +223,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             abstractDataComponentType = createSimpleType((SweAbstractSimpleType) sosSweAbstractDataComponent);
         } else if (sosSweAbstractDataComponent instanceof SweVector) {
             abstractDataComponentType = createVector((SweVector) sosSweAbstractDataComponent);
-        } else if (sosSweAbstractDataComponent instanceof SweDataRecord) {
-            abstractDataComponentType = createDataRecord((SweDataRecord) sosSweAbstractDataComponent);
+        } else if (sosSweAbstractDataComponent instanceof SweAbstractDataRecord) {
+            abstractDataComponentType = createDataRecord((SweAbstractDataRecord) sosSweAbstractDataComponent);
         } else if (sosSweAbstractDataComponent instanceof SweDataArray) {
             abstractDataComponentType = createDataArray((SweDataArray) sosSweAbstractDataComponent);
         } else if ((sosSweAbstractDataComponent.getXml() != null) && !sosSweAbstractDataComponent.getXml().isEmpty()) {
@@ -250,16 +251,26 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             if (sosSweAbstractDataComponent.isSetLabel()) {
                 abstractDataComponentType.setLabel(sosSweAbstractDataComponent.getLabel());
             }
-        }
-        if ((abstractDataComponentType instanceof DataArrayType)
-                && additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
-            final DataArrayPropertyType dataArrayProperty = DataArrayPropertyType.Factory.newInstance(getXmlOptions());
-            dataArrayProperty.setDataArray1((DataArrayType) abstractDataComponentType);
-            return dataArrayProperty;
+        }        
+        if (abstractDataComponentType instanceof DataArrayType) {
+            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)
+                    || additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+                final DataArrayPropertyType dataArrayProperty =
+                        DataArrayPropertyType.Factory.newInstance(getXmlOptions());
+                dataArrayProperty.setDataArray1((DataArrayType) abstractDataComponentType);
+                return dataArrayProperty;
+            }
+            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                final DataArrayDocument dataArrayDoc = DataArrayDocument.Factory.newInstance(getXmlOptions());
+                dataArrayDoc.setDataArray1((DataArrayType) abstractDataComponentType);
+                return dataArrayDoc;
+            }
         }
         if ((abstractDataComponentType instanceof DataRecordType)) {
-            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION) || additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
-                final DataRecordPropertyType dataRecordProperty = DataRecordPropertyType.Factory.newInstance(getXmlOptions());
+            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)
+                    || additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+                final DataRecordPropertyType dataRecordProperty =
+                        DataRecordPropertyType.Factory.newInstance(getXmlOptions());
                 dataRecordProperty.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordProperty;
             }
@@ -273,7 +284,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return abstractDataComponentType;
     }
 
-    private DataRecordType createDataRecord(final SweDataRecord sosDataRecord) throws OwsExceptionReport {
+    private DataRecordType createDataRecord(final SweAbstractDataRecord sosDataRecord) throws OwsExceptionReport {
         final List<SweField> sosFields = sosDataRecord.getFields();
         final DataRecordType xbDataRecord = DataRecordType.Factory.newInstance(getXmlOptions());
         if (sosFields != null) {
@@ -323,7 +334,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                     elementType.setName("Components");
                 }
 
-                elementType.addNewAbstractDataComponent().set(createDataRecord((SweDataRecord) sosDataArray.getElementType()));
+                elementType.addNewAbstractDataComponent().set(createDataRecord((SweAbstractDataRecord) sosDataArray.getElementType()));
                 elementType.getAbstractDataComponent().substitute(SweConstants.QN_DATA_RECORD_SWE_200, DataRecordType.type);
             }
             if (sosDataArray.isSetEncoding()) {
@@ -374,12 +385,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sweField.isSetName()) {
             xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
-        
-        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
-                HelperValues.class));
-        XmlObject substituteElement =
-                XmlHelper.substituteElement(xbField.addNewAbstractDataComponent(), encodeObjectToXml);
-        substituteElement.set(encodeObjectToXml);
+        if (sosElement != null) {
+            final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
+                    HelperValues.class));
+            XmlObject substituteElement =
+                    XmlHelper.substituteElement(xbField.addNewAbstractDataComponent(), encodeObjectToXml);
+            substituteElement.set(encodeObjectToXml);
+        }
         return xbField;
     }
 

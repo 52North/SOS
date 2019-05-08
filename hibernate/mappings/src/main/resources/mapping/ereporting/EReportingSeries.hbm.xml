@@ -64,14 +64,6 @@
                 <comment>Foreign Key (FK) to the related samplingPoint. Contains "samplingPoint".samplingPointId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="offering" 
-				        class="org.n52.sos.ds.hibernate.entities.Offering" 
-				        foreign-key="oseriesOfferingFk">
-            <column index="seriesOfferingIdx" 
-			            name="offeringId">
-            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-            </column>
-        </many-to-one>
         <property name="deleted"
                   type="org.hibernate.type.TrueFalseType">
             <column name="deleted"
@@ -170,5 +162,18 @@
                 <comment>Definition of the series type, e.g. measurement for OM_Measurement. Optional</comment>
             </column>
         </property>
+        <list name="referenceValues" table="seriesreference" inverse="false">
+            <key foreign-key="seriesrefseriesfk">
+              <column name="seriesid" not-null="true" index="seriesididx">
+                  <comment>Foreign Key (FK) to link a series with a reference value series. Contains "series".seriesid</comment>
+              </column>
+            </key>
+            <list-index column="sortorder" />
+            <many-to-many class="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries" unique="true" foreign-key="seriesrefreffk">
+                <column name="referenceseriesid" not-null="true" index="referenceseriesididx">
+                    <comment>Foreign Key (FK) to the linked reference value series. Contains "series".seriesid</comment>
+                </column>
+            </many-to-many>
+        </list>
     </class>
 </hibernate-mapping>

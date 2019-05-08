@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.filter;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.n52.sos.ogc.filter.FilterConstants.BinaryLogicOperator;
@@ -44,7 +45,7 @@ public class BinaryLogicFilter extends Filter<BinaryLogicOperator> {
 
     private BinaryLogicOperator operator;
 
-    private Set<Filter<?>> filterPredicates = Sets.newHashSet();
+    private Set<Filter<?>> filterPredicates = Sets.newLinkedHashSet();
     
     /**
      * constructor
@@ -105,7 +106,7 @@ public class BinaryLogicFilter extends Filter<BinaryLogicOperator> {
      * @param filterPredicates
      *            the filterPredicates to add
      */
-    public BinaryLogicFilter addFilterPredicates(Set<Filter<?>> filterPredicates) {
+    public BinaryLogicFilter addFilterPredicates(Collection<Filter<?>> filterPredicates) {
         this.filterPredicates.addAll(filterPredicates);
         return this;
         

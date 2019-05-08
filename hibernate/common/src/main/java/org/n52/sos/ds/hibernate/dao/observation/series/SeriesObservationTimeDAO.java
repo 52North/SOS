@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -83,10 +83,10 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
     public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series, Collection<String> offerings,
             Session session) {
         Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class, series, session);
-        if (CollectionHelper.isNotEmpty(offerings)) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
-                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
-        }
+//        if (CollectionHelper.isNotEmpty(offerings)) {
+//            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
+//                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
+//        }
         criteria.setProjection(Projections.projectionList()
                 .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
                 .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
@@ -98,13 +98,15 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
         Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class,
                         series, session);
         if (CollectionHelper.isNotEmpty(offerings)) {
-            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS, "off")
+            criteria.createCriteria(TemporalReferencedSeriesObservation.SERIES, "s")
+            .createCriteria(Series.OFFERING, "s.off")
                     .add(Restrictions.in(Offering.IDENTIFIER, offerings));
         } else {
-            criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+            criteria.createAlias(TemporalReferencedSeriesObservation.SERIES, "s");
+            criteria.createAlias(AbstractObservation.OFFERING, "s.off");
         }
         criteria.setProjection(Projections.projectionList()
-                    .add(Projections.groupProperty("off." + Offering.IDENTIFIER))
+                    .add(Projections.groupProperty("s.off." + Offering.IDENTIFIER))
                     .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
                     .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
         return criteria;

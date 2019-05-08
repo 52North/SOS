@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -133,7 +133,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get map keyed by undeleted procedure identifiers with collections of
      * parent procedures (if supported) as values
-     * 
+     *
      * @param session
      * @return Map keyed by procedure identifier with values of parent procedure
      *         identifier collections
@@ -374,7 +374,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
             }
             LOGGER.debug("QUERY getProceduresForFeatureOfInterest(feature): {}", HibernateHelper.getSqlString(c));
-            return (List<String>) c.list();
+            return c.list();
         }
     }
 
@@ -649,22 +649,28 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             return getProcedureTimeExtremaFromNamedQuery(session, procedureIdentifier);
         }
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
-        if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            criteria.createAlias(ContextualReferencedSeriesObservation.SERIES, "s");
-            criteria.createAlias("s." + Series.PROCEDURE, "p");
+        Criteria criteria = null;
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
+            criteria = DaoFactory.getInstance().getSeriesDAO().getDefaultSeriesCriteria(session);
+            criteria.createAlias(Series.PROCEDURE, "p");
+            criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
+            ProjectionList projectionList = Projections.projectionList();
+            projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
+            projectionList.add(Projections.min(Series.FIRST_TIME_STAMP));
+            projectionList.add(Projections.max(Series.FIRST_TIME_STAMP));
+            projectionList.add(Projections.max(Series.LAST_TIME_STAMP));
+            criteria.setProjection(projectionList);
         } else {
+            criteria = DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
             criteria.createAlias(ContextualReferencedLegacyObservation.PROCEDURE, "p");
+            criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
+            ProjectionList projectionList = Projections.projectionList();
+            projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
+            projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
+            projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
+            projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
+            criteria.setProjection(projectionList);
         }
-        criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
-        ProjectionList projectionList = Projections.projectionList();
-        projectionList.add(Projections.groupProperty("p." + Procedure.IDENTIFIER));
-        projectionList.add(Projections.min(AbstractObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_START));
-        projectionList.add(Projections.max(AbstractObservation.PHENOMENON_TIME_END));
-        criteria.setProjection(projectionList);
-
         LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(criteria));
         result = (Object[]) criteria.uniqueResult();
 
@@ -687,7 +693,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 c.createAlias(Series.PROCEDURE, "p");
                 c.setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("p." + Procedure.IDENTIFIER))
-                        .add(Projections.min(Series.FIRST_TIME_STAMP)).add(Projections.max(Series.LAST_TIME_STAMP)));
+                        .add(Projections.min(Series.FIRST_TIME_STAMP))
+                        .add(Projections.max(Series.LAST_TIME_STAMP)));
                 LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}",
                         HibernateHelper.getSqlString(c));
                 c.setResultTransformer(transformer);
@@ -843,6 +850,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @param session
      *            Hibernate session
      * @return Procedure object
+     *
+     * @deprecated use
+     *      {@link #getOrInsertProcedure(String, ProcedureDescriptionFormat, SosProcedureDescription, boolean, Session)}
      */
     @Deprecated
     public Procedure getOrInsertProcedure(final String identifier,
@@ -862,7 +872,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Procedure description format object
      * @param procedureDescription
      *            {@link SosProcedureDescription} to insert
-     * @param isType 
+     * @param isType
      * @param session
      *            Hibernate session
      * @return Procedure object
@@ -894,6 +904,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             if (procedureDescription.isSetInsitu()) {
                 tProcedure.setInsitu(procedureDescription.getInsitu());
             }
+            tProcedure.setReference(procedureDescription.isReference());
             procedure = tProcedure;
         }
         procedure.setDeleted(false);
@@ -1067,23 +1078,23 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     @SuppressWarnings("unchecked")
     public List<Procedure> getPublishedProcedure(Session session) throws CodedException {
         if (HibernateHelper.isEntitySupported(Series.class)) {
-            Criteria c = session.createCriteria(Procedure.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            c.add(Subqueries.propertyIn(Procedure.ID, getDetachedCriteriaSeries(session)));
+            Criteria c = getDefaultCriteria(session);
+            c.add(Subqueries.propertyNotIn(Procedure.ID, getDetachedCriteriaSeries(session)));
             return c.list();
-        } 
+        }
         return getProcedureObjects(session);
      }
-     
+
      private DetachedCriteria getDetachedCriteriaSeries(Session session) throws CodedException {
          final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(Series.DELETED, true), Restrictions.eq(Series.PUBLISHED, false)));
          detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.PROCEDURE)));
          return detachedCriteria;
      }
 
     /**
      * Procedure time extrema {@link ResultTransformer}
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *
@@ -1113,5 +1124,21 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         public List transformList(List collection) {
             return collection;
         }
+    }
+
+    public Procedure updateProcedure(Procedure procedure, SosProcedureDescription procedureDescription, Session session) {
+        if (procedureDescription.isSetProcedureName()) {
+            if (!procedure.isSetName() || procedure.isSetName() && !procedureDescription.getProcedureName().equals(procedure.getName())) {
+                procedure.setName(procedureDescription.getProcedureName());
+            }
+            if (procedureDescription.isSetDescription() && !procedureDescription.getDescription().equals(procedure.getDescription())) {
+                procedure.setDescription(procedureDescription.getDescription());
+            }
+        }
+        session.saveOrUpdate(procedure);
+        session.flush();
+        session.refresh(procedure);
+        return procedure;
+
     }
 }

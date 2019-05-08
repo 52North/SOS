@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -218,8 +218,8 @@ public abstract class AbstractGetDataAvailabilityStreamWriter extends XmlEventWr
 
     protected void writeTime(TimeInstant ti) throws XMLStreamException, DateTimeFormatException {
         start(SweConstants.QN_TIME_SWE_200);
-        writeValue(ti);
         writeUom();
+        writeValue(ti);
         end(SweConstants.QN_TIME_SWE_200);
     }
 

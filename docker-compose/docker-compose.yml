@@ -1,0 +1,48 @@
+#
+# With this docker-compose file, you get three containers:
+# - a tomcat
+# - a nginx proxy
+# - a postgresql database server
+# 
+# When configuring the SOS, please use the following information:
+# - Datasource configuration
+#   - datasource: PostgreSQL/PostGIS
+#   - host: db
+# Everything else could be used with the default values.
+# Feel free to comment out the tomcat version you do not need.
+#
+# Just run docker-compose up in the directory of this file.
+#
+# The current proxy configuration secures the context / with user "test:test"
+version: '3'
+services:
+  db:
+    image: mdillon/postgis:9.5
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sos
+  sos:
+    image: 52north/sos:latest
+    ports:
+      - 8080:8080
+      - 8000:8000
+    links:
+      - db:postgres
+    volumes:
+      - "./sos-config:/etc/sos"
+    depends_on:
+      - db
+    environment:
+      JAVA_OPTIONS: -Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n
+  proxy:
+    image: nginx:alpine
+    ports:
+      - 80:80
+    links:
+      - sos:sos
+    volumes:
+      - "./nginx-proxy.conf:/etc/nginx/conf.d/default.conf"
+      - "./htpasswd:/etc/nginx/htpasswd"

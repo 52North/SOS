@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>4.4.7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -14,26 +14,29 @@
         <sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
-        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
+        <series.api.version>2.0.0-alpha.7</series.api.version>
+        <series.db.version>2.0.0-alpha.3</series.db.version>
+        <helgoland.version>1.0.0</helgoland.version>
     </properties>
     <build>
         <finalName>${conf.sos.name}</finalName>
         <plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Suite*.java</include>
-					</includes>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Suite*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                    	<id>hibernate-mapping</id>
+                        <id>hibernate-mapping</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -51,8 +54,48 @@
                             <overWriteReleases>false</overWriteReleases>
                         </configuration>
                     </execution>
+                    <execution>
+						<id>rest-api</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.n52.series-api.db</groupId>
+                                    <artifactId>mappings</artifactId>
+                                    <includes>hbm/sos/v44/*.hbm.xml</includes>
+                                    <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory>
+                                    <overWrite>true</overWrite>
+                                </artifactItem>
+                            </artifactItems>
+                            <overWriteReleases>false</overWriteReleases>
+						</configuration>
+					</execution>
                 </executions>
             </plugin>
+            <!-- 
+            <plugin>
+              <groupId>com.googlecode.maven-download-plugin</groupId>
+              <artifactId>download-maven-plugin</artifactId>
+              <version>1.3.0</version>
+              <executions>
+                  <execution>
+                      <id>download-helgoland</id>
+                      <phase>generate-sources</phase>
+                      <goals>
+                          <goal>wget</goal>
+                      </goals>
+                      <configuration>
+                          <url>https://github.com/52North/helgoland/releases/download/v${helgoland.version}/client.${helgoland.version}.war</url>
+                          <unpack>true</unpack>
+                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
+                      </configuration>
+                  </execution>
+              </executions>
+            </plugin>
+             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -62,6 +105,12 @@
                         <resource>
                             <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
+                            <exclude>**/static/**</exclude>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>false</filtering>
+                            <include>**/static/**</include>
                         </resource>
                         <resource>
                             <directory>src/main/resources</directory>
@@ -82,6 +131,25 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>views</artifactId>
                         </overlay>
+                         <overlay>
+                        <groupId>org.n52.series-api.db</groupId>
+                        <artifactId>webapp</artifactId>
+                        <includes>
+                            <include>WEB-INF/spring/*</include>
+                            <include>WEB-INF/classes/**</include>
+                            <!-- 
+                            <include>WEB-INF/classes/*.json</include>
+                            <include>WEB-INF/classes/*.properties</include>
+                            <include>WEB-INF/classes/*.txt</include>
+                            <include>WEB-INF/classes/org/*</include>
+                            <include>WEB-INF/classes/**/*.class)</include>
+                             -->
+                        </includes>
+                        <excludes>
+                            <exclude>WEB-INF/spring/series-database-config.xml</exclude>
+                            <exclude>WEB-INF/classes/*.xml</exclude>
+                        </excludes>
+                    </overlay>
                     </overlays>
                 </configuration>
             </plugin>
@@ -239,6 +307,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-wml-v20</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-rf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-sf</artifactId>
+        </dependency>
 
         <!-- OPERATIONS -->
 
@@ -299,10 +375,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
         </dependency>
-            <dependency>
+        <dependency>
     		    <groupId>${project.groupId}</groupId>
     		    <artifactId>hibernate-datasource-h2</artifactId>
     		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-sqlserver</artifactId>
+        </dependency>
 
         <!-- BINDINGS -->
 
@@ -373,6 +453,25 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-ifoi-v10</artifactId>
+        </dependency>
+
+        <!-- DELETE RESULT TEMPLATE -->
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-operation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-coding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>drt-hibernate</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-drt-v100</artifactId>
         </dependency>
 
         <!-- DELETE OBSERVATION -->
@@ -542,6 +641,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>aqd-split-and-merge</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>eprtr</artifactId>
+        </dependency>
         <!-- flexible identifiers -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -575,7 +678,7 @@
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
-            <artifactId>netcdf</artifactId>
+            <artifactId>netcdf4</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -589,6 +692,226 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-oceansites</artifactId>
         </dependency>
+        
+        <!-- REST API Dependencies -->
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>io</artifactId>
+          <version>${series.api.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.fasterxml.jackson.core</groupId>
+              <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>rest</artifactId>
+          <version>${series.api.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api</groupId>
+          <artifactId>spi</artifactId>
+          <version>${series.api.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>c3p0</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.mchange</groupId>
+              <artifactId>c3p0</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.series-api.db</groupId>
+            <artifactId>webapp</artifactId>
+            <version>${series.db.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>dao</artifactId>
+          <version>${series.db.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+          </exclusions>
+         </dependency>
+         <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>mappings</artifactId>
+          <version>${series.db.version}</version>
+          <scope>provided</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>org.n52.series-api.db</groupId>
+          <artifactId>sos-integration</artifactId>
+          <version>${series.db.version}</version>
+          <scope>runtime</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-main</artifactId>
+            </dependency>
+         
+        <!-- copied from REST-API series-dao-webapp -->  
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-oxm</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjtools</artifactId>
+            <version>1.8.9</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -597,15 +920,6 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>sqlserver</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -635,10 +949,6 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -724,7 +1034,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
+                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/config/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

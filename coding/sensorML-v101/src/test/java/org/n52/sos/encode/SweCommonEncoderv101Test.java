@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,8 @@ import static org.junit.Assert.assertThat;
 
 import java.math.BigInteger;
 
+import javax.measure.quantity.Quantity;
+
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.CountDocument.Count;
 import net.opengis.swe.x101.DataComponentPropertyType;
@@ -46,6 +48,7 @@ import net.opengis.swe.x101.VectorType.Coordinate;
 
 import org.apache.xmlbeans.XmlCalendar;
 import org.apache.xmlbeans.XmlObject;
+import org.hamcrest.core.IsNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Rule;
@@ -461,10 +464,16 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
         assertThat(field2.getQuantity().getUom().getHref(), is(unit2));
     }
 
-    @Test(expected = NoApplicableCodeException.class)
-    public void should_throw_exception_if_received_simpleDataRecord_with_field_with_null_element()
+    @Test
+    public void should_encode_simpleDataRecord_with_field_with_null_element()
             throws OwsExceptionReport {
-        new SweCommonEncoderv101().encode(new SweSimpleDataRecord().addField(new SweField("field-name", null)));
+        final XmlObject encode = new SweCommonEncoderv101().encode(new SweSimpleDataRecord().addField(new SweField("field-name", null)));
+        assertThat(encode, instanceOf(SimpleDataRecordType.class));
+        final SimpleDataRecordType xbSimpleDataRecord = (SimpleDataRecordType) encode;
+        assertThat(xbSimpleDataRecord.getFieldArray().length, is(1));
+        final AnyScalarPropertyType field = xbSimpleDataRecord.getFieldArray(0);
+        assertThat(field.getName(), is("field-name"));
+        assertThat(field.getQuantity() == null, is(true));
     }
 
     @Test public void

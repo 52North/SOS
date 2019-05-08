@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,16 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -50,6 +58,7 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
     private QuantityValue levelEnd;
     private List<Value<?>> value = Lists.newArrayList();
     private Geometry location;
+    private Time phenomenonTime;
 
     /**
      * constructor
@@ -172,6 +181,24 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
         return getLocation() != null;
     }
 
+    /**
+     * @return the phenomenonTime
+     */
+    public Time getPhenomenonTime() {
+        return phenomenonTime;
+    }
+
+    /**
+     * @param phenomenonTime the phenomenonTime to set
+     */
+    public void setPhenomenonTime(Time phenomenonTime) {
+        this.phenomenonTime = phenomenonTime;
+    }
+    
+    public boolean isSetPhenomenonTime() {
+        return getPhenomenonTime() != null;
+    }
+
     @Override
     public int compareTo(ProfileLevel o) {
         if (o == null) {
@@ -202,7 +229,7 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
     }
     
     public SweDataRecord valueAsDataRecord(SweDataRecord dataRecord) {
-        int counter = 0;
+        int counter = 1;
         for (Value<?> value : getValue()) {
             if (value instanceof SweAbstractDataComponent) {
                 SweAbstractDataComponent adc = (SweAbstractDataComponent) value;
@@ -217,6 +244,28 @@ public class ProfileLevel implements Comparable<ProfileLevel> {
                 dataRecord.addField(new SweField(name, adc));
             }
         }
+        if (counter == 1 && dataRecord.getFields().size() > 1
+                && dataRecord.getFields().stream().map(f -> f.getName().getValue()).collect(Collectors.toSet())
+                        .size() != dataRecord.getFields().size()) {
+            for (SweField field : dataRecord.getFields()) {
+                    field.getName().setValue(field.getName().getValue() + "_" + counter++);
+            }
+        }
         return dataRecord;
+    }
+    
+    public <X> Collection<X> accept(ProfileLevelVisitor<X> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    public Collection<NamedValue<?>> getLevelStartEndAsParameter() {
+        SortedSet<NamedValue<?>> parameter = new TreeSet<NamedValue<?>>();
+        if (isSetLevelStart() && getLevelStart().isSetDefinition()) {
+            parameter.add(new NamedValue(new ReferenceType(getLevelStart().getDefinition()), getLevelStart()));
+        }
+        if (isSetLevelEnd() && getLevelEnd().isSetDefinition()) {
+            parameter.add(new NamedValue(new ReferenceType(getLevelEnd().getDefinition()), getLevelEnd()));
+        }
+        return parameter;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,9 @@
  */
 package org.n52.sos.web.admin;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -35,12 +38,13 @@ import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.ServiceLoader;
-
+import javax.servlet.http.HttpServletRequest;
 import org.apache.xmlbeans.XmlException;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.GeneralQueryDAO;
 import org.n52.sos.exception.MissingServiceOperatorException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.RequestContext;
 import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
@@ -54,10 +58,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Maps;
 
 /**
  * @since 4.0.0
@@ -145,9 +145,16 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     }
     
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA, method = RequestMethod.POST)
-    public String addSampledata() throws OwsExceptionReport, ConnectionProviderException, IOException, URISyntaxException, XmlException, MissingServiceOperatorException {
-        boolean sampledataAdded = new SampleDataInserter().insertSampleData();
+    @RequestMapping(
+            value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA,
+            method = RequestMethod.POST)
+    public String addSampledata(HttpServletRequest request) throws OwsExceptionReport,
+            ConnectionProviderException, IOException, URISyntaxException,
+            XmlException, MissingServiceOperatorException {
+
+        boolean sampledataAdded = new SampleDataInserter(
+                RequestContext.fromRequest(request))
+                .insertSampleData();
         if (sampledataAdded) {
             updateCache();
         }

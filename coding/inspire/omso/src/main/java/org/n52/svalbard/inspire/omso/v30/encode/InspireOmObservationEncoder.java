@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,7 @@ package org.n52.svalbard.inspire.omso.v30.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -86,7 +87,7 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         if (element instanceof OmObservation) {
-            return encodeInspireOmsoType((OmObservation) element);
+            return encodeInspireOmsoType((OmObservation) element, additionalValues);
         }
         throw new UnsupportedEncoderInputException(this, element);
     }
@@ -128,8 +129,12 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
         return false;
     }
 
-    protected static XmlObject encodeInspireOmsoType(OmObservation o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(InspireOMSOConstants.NS_OMSO_30, o);
+    protected static XmlObject encodeInspireOmsoType(OmObservation o, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (additionalValues == null) {
+            additionalValues = Maps.<HelperValues, String> newEnumMap(HelperValues.class);
+            additionalValues.put(HelperValues.DOCUMENT, Boolean.toString(true));
+        }
+        return CodingHelper.encodeObjectToXml(InspireOMSOConstants.NS_OMSO_30, o, additionalValues);
     }
 
     @Override

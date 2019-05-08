@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,6 @@
  */
 package org.n52.sos.encode.streaming.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
-
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
@@ -37,20 +35,19 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
@@ -69,7 +66,7 @@ import com.google.common.collect.Sets;
  * @since 4.4.0
  *
  */
-public class GetFeatureOfInterestXmlStreamWriter extends XmlStreamWriter<GetFeatureOfInterestResponse> implements StreamingDataEncoder {
+public class GetFeatureOfInterestXmlStreamWriter extends AbstractSwesXmlStreamWriter<GetFeatureOfInterestResponse> implements StreamingDataEncoder {
 
     private GetFeatureOfInterestResponse response;
     
@@ -142,18 +139,23 @@ public class GetFeatureOfInterestXmlStreamWriter extends XmlStreamWriter<GetFeat
         start(Sos2StreamingConstants.QN_GET_FEATURE_OF_INTEREST_RESPONSE);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
+        namespace(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
         // get observation encoder
         encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
         // write schemaLocation
         schemaLocation(getSchemaLocation(encodingValues));
         writeNewLine();
+        if (response.isSetExtensions()) {
+            writeExtensions(response.getExtensions());
+            writeNewLine();
+        }
         AbstractFeature feature = response.getAbstractFeature();
         if (feature instanceof FeatureCollection) {
             for (AbstractFeature f : (FeatureCollection) feature) {
                 writeFeatureMember(f, encodingValues);
                 writeNewLine();
             }
-        } else if (feature instanceof SamplingFeature) {
+        } else if (feature instanceof AbstractSamplingFeature) {
             writeFeatureMember(feature, encodingValues);
             writeNewLine();
         }
@@ -189,10 +191,6 @@ public class GetFeatureOfInterestXmlStreamWriter extends XmlStreamWriter<GetFeat
         writeNewLine();
         end(Sos2StreamingConstants.QN_FEATURE_MEMBER);
         indent++;
-    }
-    
-    protected XmlObject encodeGml(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
-        return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
     
     protected Profile getActiveProfile() {

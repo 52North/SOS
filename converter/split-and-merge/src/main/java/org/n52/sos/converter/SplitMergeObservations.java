@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -101,12 +101,19 @@ public class SplitMergeObservations
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
-    private boolean includeResultTimeForMerging = false; 
+    private boolean includeResultTimeForMerging = false;
+    private boolean checkForDuplicity = false;
+    
     
     @Setting(ServiceSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
     public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
         this.includeResultTimeForMerging = includeResultTimeForMerging;
-    }   
+    }
+    
+    @Setting(ServiceSettings.CHECK_FOR_DUPLICITY)
+    public void setCheckForDuplicity(boolean checkForDuplicity) {
+        this.checkForDuplicity = checkForDuplicity;
+    } 
 
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
@@ -143,14 +150,12 @@ public class SplitMergeObservations
         }
         if (request instanceof AbstractObservationRequest) {
             AbstractObservationRequest req = (AbstractObservationRequest) request;
-            if (req.isSetResponseFormat()) {
-                if (OmConstants.NS_OM_2.equals(req.getResponseFormat())
+            if (req.isSetResponseFormat() ) {
+                if (checkForDuplicity && (OmConstants.NS_OM_2.equals(req.getResponseFormat())
                         || OmConstants.NS_OM.equals(req.getResponseFormat())
                         || OmConstants.CONTENT_TYPE_OM.toString().equals(req.getResponseFormat())
-                        || OmConstants.CONTENT_TYPE_OM_2.toString().equals(req.getResponseFormat())) {
-                    req.setCheckForDuplicity(true);
-                } else {
-                    req.setCheckForDuplicity(false);
+                        || OmConstants.CONTENT_TYPE_OM_2.toString().equals(req.getResponseFormat()))) {
+                    req.setCheckForDuplicity(checkForDuplicity);
                 }
             }
         }
@@ -194,15 +199,19 @@ public class SplitMergeObservations
                         (SweDataRecord) sweDataArrayValue.getValue().getElementType(),
                         observationConstellation.getObservableProperty()));
                 // split into single observation
+                CodeWithAuthority metaIdentifier = null;
+                if (observation.isSetIdentifier()) {
+                    metaIdentifier = observation.getIdentifierCodeWithAuthority();
+                }
+
                 for (final List<String> block : sweDataArrayValue.getValue().getValues()) {
                     LOGGER.debug("Processing block {}/{}", ++counter, sweDataArrayValue.getValue().getValues().size());
                     final OmObservation newObservation = new OmObservation();
                     newObservation.setObservationConstellation(observationConstellation);
                     // identifier
                     if (observation.isSetIdentifier()) {
-                        final CodeWithAuthority identifier = observation.getIdentifierCodeWithAuthority();
-                        identifier.setValue(identifier.getValue() + counter);
-                        newObservation.setIdentifier(identifier);
+                        newObservation.setIdentifier(new CodeWithAuthority(metaIdentifier.getValue() + counter,
+                                metaIdentifier.getCodeSpace()));
                     }
                     // phen time
                     Time phenomenonTime;

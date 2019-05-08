@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -115,7 +115,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     private CRSAuthorityFactory crsAuthority;
 
-    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
+    private Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
 
     /**
      * Private constructor
@@ -283,7 +283,7 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public void setSupportedCRS(final String supportedCRS) throws ConfigurationException {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
-        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+        this.supportedCRS = StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING);
     }
 
     @Setting(FeatureQuerySettingsProvider.AUTHORITY)
@@ -339,19 +339,24 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationException {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
+        List<Range> newEpsgCodes = Lists.newArrayListWithCapacity(splitted.length);
         for (final String entry : splitted) {
             final String[] splittedEntry = entry.split("-");
             Range r = null;
-            if (splittedEntry.length == 1) {
-                r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[0]));
-            } else if (splittedEntry.length == 2) {
-                r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
-            } else {
-                throw new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
-                        FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry));
+            try {
+                if (splittedEntry.length == 1) {
+                    r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[0]));
+                } else if (splittedEntry.length == 2) {
+                    r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
+                } else {
+                    throw createException(entry, null);
+                }
+            } catch (NumberFormatException ex) {
+                throw createException(entry, ex);
             }
-            epsgsWithNorthingFirstAxisOrder.add(r);
+            newEpsgCodes.add(r);
         }
+        epsgsWithNorthingFirstAxisOrder = newEpsgCodes;
     }
 
     /**
@@ -599,7 +604,8 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
     private Geometry transform(final Geometry geometry, final int targetSRID,
             final CoordinateReferenceSystem sourceCRS, final CoordinateReferenceSystem targetCRS)
             throws OwsExceptionReport {
-        if (sourceCRS.equals(targetCRS)) {
+        if (sourceCRS.equals(targetCRS)
+                || sourceCRS.getCoordinateSystem().getDimension() != targetCRS.getCoordinateSystem().getDimension()) {
             return geometry;
         }
         Geometry switchedCoordiantes = switchCoordinateAxisIfNeeded(geometry, targetSRID);
@@ -609,13 +615,16 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
             transformed.setSRID(targetSRID);
             return transformed;
         } catch (FactoryException fe) {
-            throw new NoApplicableCodeException().causedBy(fe).withMessage("The EPSG code '%s' is not supported!",
-                    switchedCoordiantes.getSRID());
+            throw new NoApplicableCodeException().causedBy(fe).withMessage(
+                    "Error when transforming geometry from EPSG code '%s' to EPSG code '%s'!",
+                    switchedCoordiantes.getSRID(), targetSRID);
         } catch (MismatchedDimensionException mde) {
-            throw new NoApplicableCodeException().causedBy(mde).withMessage("The EPSG code '%s' is not supported!",
+            throw new NoApplicableCodeException().causedBy(mde).withMessage(
+                    "Error when transforming geometry from EPSG code '%s' to EPSG code '%s'!",
                     switchedCoordiantes.getSRID());
         } catch (TransformException te) {
-            throw new NoApplicableCodeException().causedBy(te).withMessage("The EPSG code '%s' is not supported!",
+            throw new NoApplicableCodeException().causedBy(te).withMessage(
+                    "Error when transforming geometry from EPSG code '%s' to EPSG code '%s'!",
                     switchedCoordiantes.getSRID());
         }
     }
@@ -753,6 +762,11 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
 
     public String addOgcCrsPrefix(int crs) {
         return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
+    }
+
+    private ConfigurationException createException(String entry, Throwable ex) {
+        return new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
+                FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry), ex);
     }
 
 }

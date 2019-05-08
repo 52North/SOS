@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -44,58 +44,51 @@ import com.google.common.base.Strings;
  * observableProperty, procedure).
  *
  * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  * @since 4.0.0
  *
  */
 public class ObservationContext {
+
     private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Offering offering;
     private String seriesType;
-    private boolean hiddenChild = false; 
+    private boolean hiddenChild;
+    private boolean publish = true;
 
     /**
-     * @return the featureOfInterest
+     * Indicates that the series of the observation should be published
      */
+    public boolean isPublish() {
+        return publish;
+    }
+
+    public void setPublish(boolean publish) {
+        this.publish = publish;
+    }
+
     public AbstractFeatureOfInterest getFeatureOfInterest() {
         return featureOfInterest;
     }
 
-    /**
-     * @param featureOfInterest
-     *                          the featureOfInterest to set
-     */
     public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
-    /**
-     * @return the observableProperty
-     */
     public ObservableProperty getObservableProperty() {
         return observableProperty;
     }
 
-    /**
-     * @param observableProperty
-     *                           the observableProperty to set
-     */
     public void setObservableProperty(ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
     }
 
-    /**
-     * @return the procedure
-     */
     public Procedure getProcedure() {
         return procedure;
     }
 
-    /**
-     * @param procedure
-     *                  the procedure to set
-     */
     public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
@@ -111,21 +104,15 @@ public class ObservationContext {
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
-    
-    /**
-     * @return the offering
-     */
+
     public Offering getOffering() {
         return offering;
     }
 
-    /**
-     * @param offering the offering to set
-     */
     public void setOffering(Offering offering) {
         this.offering = offering;
     }
-    
+
     public boolean isSetOffering() {
         return getOffering() != null;
     }
@@ -172,21 +159,21 @@ public class ObservationContext {
     public void setSeriesType(String seriesType) {
         this.seriesType = seriesType;
     }
-    
+
     public String getSeriesType() {
-        return this.seriesType;
+        return seriesType;
     }
-    
+
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
     }
-    
+
     public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
     }
 
     public boolean isHiddenChild() {
-        return this.hiddenChild;
+        return hiddenChild;
     }
 
 }

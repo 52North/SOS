@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.sos.gda.v20.GetDataAvailabilityV20Response;
+import org.n52.sos.ogc.filter.ComparisonFilter;
+import org.n52.sos.ogc.filter.Filter;
+import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.ResultFilter;
+import org.n52.sos.ogc.sos.ResultFilterConstants;
+import org.n52.sos.ogc.sos.SosSpatialFilter;
+import org.n52.sos.ogc.sos.SosSpatialFilterConstants;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
@@ -229,4 +236,37 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
         return this.namspace;
     }
 
+    public boolean hasResultFilter() {
+        return isSetExtensions() && hasExtension(ResultFilterConstants.RESULT_FILTER)
+                && getExtension(ResultFilterConstants.RESULT_FILTER) instanceof ResultFilter;
+    }
+    
+    public Filter<?> getResultFilter() {
+        if (hasResultFilter()) {
+            return ((ResultFilter)getExtension(ResultFilterConstants.RESULT_FILTER)).getValue();
+        }
+        return null;
+    }
+
+    public GetDataAvailabilityRequest setResultFilter(ComparisonFilter filter) {
+        addExtension(new ResultFilter(filter));
+        return this;
+    }
+    
+    public boolean hasSpatialFilter() {
+        return isSetExtensions() && hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)
+                && getExtension(SosSpatialFilterConstants.SPATIAL_FILTER) instanceof SosSpatialFilter;
+    }
+    
+    public SpatialFilter getSpatialFilter() {
+        if (hasSpatialFilter()) {
+            return ((SosSpatialFilter)getExtension(SosSpatialFilterConstants.SPATIAL_FILTER)).getValue();
+        }
+        return null;
+    }
+
+    public GetDataAvailabilityRequest setSpatialFilter(SpatialFilter filter) {
+        addExtension(new SosSpatialFilter(filter));
+        return this;
+    }
 }

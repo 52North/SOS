@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,17 +36,23 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.CategoryDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
+import org.n52.sos.ds.hibernate.entities.Category;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
@@ -105,7 +111,8 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
-            OmObservationConstellation sosObsConst = request.getObservationTemplate();
+            OmObservation sosObservation = request.getObservation();
+            OmObservationConstellation sosObsConst = sosObservation.getObservationConstellation();
             ObservationConstellation obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
                 obsConst =
@@ -127,7 +134,18 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                     if (sosObsConst.isSetProcedure()) {
                         procedure = obsConst.getProcedure();
                     }
-                    checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+                    // category
+                    Category category = null;
+                    if (HibernateHelper.isColumnSupported(ResultTemplate.class, ResultTemplate.CATEGORY)) {
+                        CategoryDAO categoryDAO = new CategoryDAO();
+                        if (sosObservation.isSetCategoryParameter()) {
+                            NamedValue<String> categoryParameter = (NamedValue<String>) sosObservation.getCategoryParameter();
+                            category = categoryDAO.getOrInsertCategory(categoryParameter, session);
+                        } else {
+                            category = categoryDAO.getOrInsertCategory(obsConst.getObservableProperty(), session);
+                        }
+                    }
+                    checkOrInsertResultTemplate(request, obsConst, procedure, feature, category, session);
                 } else {
                     // TODO make better exception.
                     throw new InvalidObservationTypeException(request.getObservationTemplate().getObservationType());
@@ -153,8 +171,8 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
 
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, ObservationConstellation obsConst,
-            Procedure procedure, AbstractFeatureOfInterest feature, Session session) throws OwsExceptionReport {
-        new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+            Procedure procedure, AbstractFeatureOfInterest feature, Category category, Session session) throws OwsExceptionReport {
+        new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, category, session);
     }
 
     @Override
@@ -184,6 +202,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         return getOperationName();
     }
 
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ResultTemplate.class);
+    }
+    
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty, OmObservationConstellation sosObsConst)
             throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
@@ -224,9 +247,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
                             + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
                             + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
-                            + "'%s' and '%s'!",
+                            + "'%s' and '%s' and swe:DataRecord with element definition '%s'!",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
-                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE);
+                            helper.OM_FEATURE_OF_INTEREST, helper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
         }
     }
 
@@ -247,6 +270,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                 if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_PROCEDURE)) {
                     additionalValues++;
                 }
+            }
+            if (helper.checkDataRecordForParameter(swefield)) {
+                additionalValues++;
             }
         }
         return allowedSize + additionalValues;

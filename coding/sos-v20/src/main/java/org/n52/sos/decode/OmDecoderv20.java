@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,6 +65,7 @@ import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -345,6 +346,9 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
                 QuantityValue quantitiyValue = new QuantityValue(measureType.getValue(), measureType.getUnit());
                 return new SingleObservationValue<>(quantitiyValue);
             } else if (decodedObject instanceof ReferenceType) {
+                if (omObservation.isSetType() && omObservation.getType().isSetHref() && omObservation.getType().getHref().equals(OmConstants.OBS_TYPE_REFERENCE_OBSERVATION)) {
+                    return new SingleObservationValue<>(new ReferenceValue(((ReferenceType) decodedObject)));
+                }
                 return new SingleObservationValue<>(new CategoryValue(((ReferenceType) decodedObject).getHref()));
             } else if (decodedObject instanceof Geometry) {
                 return new SingleObservationValue<>(new GeometryValue((Geometry) decodedObject));

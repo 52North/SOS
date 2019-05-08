@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -341,7 +341,7 @@ public class SosHelper implements Constants {
         // check remaining free memory on heap if too small, throw exception to
         // avoid an OutOfMemoryError
         long freeMem = runtime.freeMemory();
-        LOGGER.debug("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
+        LOGGER.trace("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
         if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
             // accords to 256 kB create service exception
             throw new ResponseExceedsSizeLimitException().withMessage(
@@ -611,11 +611,15 @@ public class SosHelper implements Constants {
     }
     
     public static MinMax<String> getMinMaxFromEnvelope(final SosEnvelope envelope) {
-        if (envelope.isSetMinMaxZ()) {
-            return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
-                    .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+        if (envelope.isSetEnvelope()) {
+            if (envelope.isSetMinMaxZ()) {
+                return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
+                        .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ())); 
+            } else {
+                return getMinMaxFromEnvelope(envelope.getEnvelope());
+            }
         }
-        return getMinMaxFromEnvelope(envelope.getEnvelope());
+        return new MinMax<String>();
         
     }
 

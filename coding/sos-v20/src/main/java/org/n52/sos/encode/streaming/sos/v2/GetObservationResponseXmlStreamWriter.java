@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.DefaultEncoding;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
@@ -50,6 +51,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -65,7 +67,7 @@ import com.google.common.collect.Sets;
  * @since 4.1.0
  *
  */
-public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetObservationResponse> implements StreamingDataEncoder {
+public class GetObservationResponseXmlStreamWriter extends AbstractSwesXmlStreamWriter<GetObservationResponse> implements StreamingDataEncoder {
 
     private GetObservationResponse response;
 
@@ -138,13 +140,18 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         start(Sos2StreamingConstants.GET_OBSERVATION_RESPONSE);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
+        namespace(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
         // get observation encoder
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(response.getResponseFormat());
         encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
         encodingValues.setEncodingNamespace(response.getResponseFormat());
         // write schemaLocation
-        schemaLocation(getSchemaLocation(encodingValues, encoder));
+        schemaLocation(getSchemaLocation(encodingValues, encoder, response));
         writeNewLine();
+        if (response.isSetExtensions()) {
+            writeExtensions(response.getExtensions());
+            writeNewLine();
+        }
         // Map<HelperValues, String> additionalValues = Maps.newHashMap();
         // additionalValues.put(HelperValues.DOCUMENT, null);
         // EncodingValues encodingValues = new
@@ -208,7 +215,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
     }
 
     private Set<SchemaLocation> getSchemaLocation(EncodingValues encodingValue,
-            ObservationEncoder<XmlObject, OmObservation> encoder) {
+            ObservationEncoder<XmlObject, OmObservation> encoder, GetObservationResponse response) {
         Set<SchemaLocation> schemaLocations = Sets.newHashSet();
         if (encodingValue.isSetEncoder()
                 && CollectionHelper.isNotEmpty(encodingValue.getEncoder().getSchemaLocations())) {
@@ -218,6 +225,16 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         }
         if (encoder != null && CollectionHelper.isNotEmpty(encoder.getSchemaLocations())) {
             schemaLocations.addAll(encoder.getSchemaLocations());
+        }
+        if (response.getObservationCollection() != null) {
+            for (OmObservation o : response.getObservationCollection()) {
+                if (!(o.getValue() instanceof StreamingObservation) && !(o.getValue() instanceof StreamingValue)
+                        && o.getValue().getValue() instanceof DefaultEncoding
+                        && ((DefaultEncoding) o.getValue().getValue()).isSetDefaultElementEncoding()) {
+                    schemaLocations.addAll(CodingRepository.getInstance().getSchemaLocation(
+                            ((DefaultEncoding) o.getValue().getValue()).getDefaultElementEncoding()));
+                }
+            }
         }
         return schemaLocations;
     }
@@ -239,7 +256,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         end(Sos2StreamingConstants.OBSERVATION_DATA);
         indent++;
     }
-
+    
     /**
      * Finds a O&Mv2 compatible {@link ObservationEncoder}
      *

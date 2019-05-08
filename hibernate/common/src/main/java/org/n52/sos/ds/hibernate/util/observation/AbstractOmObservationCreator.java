@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 import java.util.Locale;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.convert.ConverterException;
@@ -40,7 +41,10 @@ import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.iso.gmd.CiOnlineResource;
@@ -61,6 +65,9 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
@@ -72,6 +79,9 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  */
 public abstract class AbstractOmObservationCreator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmObservationCreator.class);
+    protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES = "getUnitForObservablePropertyProcedureSeries";
+    protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES = "getUnitForObservablePropertySeries";
     private final AbstractObservationRequest request;
     private final Session session;
     private final Locale i18n;
@@ -144,6 +154,15 @@ public abstract class AbstractOmObservationCreator {
         }
         return Configurator.getInstance().getProfileHandler().getActiveProfile().getObservationResponseFormat();
     }
+    
+    
+    public List<MediaType> getAcceptType() {
+        return request.getRequestContext().getAcceptType().get();
+    }
+
+    public boolean checkAcceptType() {
+        return request.getRequestContext() != null && request.getRequestContext().getAcceptType().isPresent();
+    }
 
     public Session getSession() {
         return session;
@@ -188,14 +207,18 @@ public abstract class AbstractOmObservationCreator {
      *             If an error occurs
      */
     protected SosProcedureDescription createProcedure(String identifier) throws ConverterException, OwsExceptionReport {
-        Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
+        return createProcedure(new ProcedureDAO().getProcedureForIdentifier(identifier, getSession()));
+    }
+    
+
+    protected SosProcedureDescription createProcedure(Procedure hProcedure) throws OwsExceptionReport {
         String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
             return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
                     getSession());
         } else {
             SosProcedureDescriptionUnknowType sosProcedure =
-                    new SosProcedureDescriptionUnknowType(identifier, pdf, null);
+                    new SosProcedureDescriptionUnknowType(hProcedure.getIdentifier(), pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
                 addName(sosProcedure, hProcedure);
@@ -242,6 +265,14 @@ public abstract class AbstractOmObservationCreator {
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
+    
+    protected AbstractFeature createFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+        queryObject.setFeature(featureOfInterest).setConnection(getSession()).setVersion(getVersion());
+        final AbstractFeature feature =
+                getFeatureQueryHandler().getFeatureByID(queryObject);
+        return feature;
+    }
 
     protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {
         for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(hObservation)) {
@@ -250,6 +281,15 @@ public abstract class AbstractOmObservationCreator {
                 creator.create(sosObservation, hObservation, getSession());
                 break;
             } 
+        }
+        if (checkAcceptType()) {
+            for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(getAcceptType(), hObservation)) {
+                if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+                    AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+                    creator.create(sosObservation, hObservation, getSession());
+                    break;
+                } 
+            }
         }
     }
     
@@ -262,10 +302,45 @@ public abstract class AbstractOmObservationCreator {
         return keys;
     }
 
+    private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(List<MediaType> acceptType, Observation<?> hObservation) {
+        List<AdditionalObservationCreatorKey> keys = Lists.newArrayList();
+        for (MediaType mediaType : acceptType) {
+            keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
+                    hObservation.getClass()));
+            keys.add(new AdditionalObservationCreatorKey(mediaType.withoutParameters().toString(),
+                    hObservation.getClass().getSuperclass()));
+        }
+        return keys;
+    }
+
     public static String checkVersion(AbstractObservationRequest request) {
         if (request != null) {
             return request.getVersion();
         }
+        return null;
+    }
+    
+    protected String queryUnit(Series series) {
+        if (series.isSetUnit()) {
+            return series.getUnit().getUnit();
+        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES, getSession())) {
+            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES);
+            namedQuery.setParameter(Series.OBSERVABLE_PROPERTY,
+                    series.getObservableProperty().getIdentifier());
+            namedQuery.setParameter(Series.PROCEDURE,
+                    series.getProcedure().getIdentifier());
+            LOGGER.debug("QUERY queryUnit({}, {}) with NamedQuery '{}': {}",  series.getObservableProperty().getIdentifier(),
+                    series.getProcedure().getIdentifier(), SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
+                    namedQuery.getQueryString());
+            return (String) namedQuery.uniqueResult();
+        } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, getSession())) {
+            Query namedQuery = getSession().getNamedQuery(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES);
+            namedQuery.setParameter(Series.OBSERVABLE_PROPERTY,
+                    series.getObservableProperty().getIdentifier());
+            LOGGER.debug("QUERY queryUnit({}) with NamedQuery '{}': {}", series.getObservableProperty().getIdentifier(),
+                    SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES, namedQuery.getQueryString());
+            return (String) namedQuery.uniqueResult();
+        } 
         return null;
     }
 }

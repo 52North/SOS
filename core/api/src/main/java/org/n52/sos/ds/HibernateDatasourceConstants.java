@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -51,31 +51,39 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_MAPPING_TRANSACTIONAL_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
     
-    String HIBERNATE_MAPPING_SERIES_PATH = HIBERNATE_MAPPING_PATH + "/metadata";
+    String HIBERNATE_MAPPING_SERIES_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/series";
+    
+    String HIBERNATE_MAPPING_SERIES_DEFAULT_PATH = HIBERNATE_MAPPING_SERIES_CONCEPT_PATH + "/default";
+    
+    String HIBERNATE_MAPPING_SERIES_CATEGORY_PATH = HIBERNATE_MAPPING_SERIES_CONCEPT_PATH + "/category";
             
-    String HIBERNATE_MAPPING_SERIES_METADATA_PATH = HIBERNATE_MAPPING_SERIES_PATH + "/series";
+    String HIBERNATE_MAPPING_SERIES_METADATA_PATH = HIBERNATE_MAPPING_SERIES_CONCEPT_PATH + "/metadata";
     
     String HIBERNATE_MAPPING_PARAMETER_PATH = HIBERNATE_MAPPING_PATH + "/parameter";
     
     String HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH = HIBERNATE_MAPPING_PARAMETER_PATH + "/feature";
     
-    String HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH = HIBERNATE_MAPPING_PARAMETER_PATH + "/observation";
-    
     String HIBERNATPE_MAPPING_OLD_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/old";
     
     String HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH = HIBERNATPE_MAPPING_OLD_CONCEPT_PATH + "/observation";
     
-    String HIBERNATE_MAPPING_SERIES_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/series";
-
     String HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_SERIES_CONCEPT_PATH + "/observation";
     
     String HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_PATH + "/ereporting";
+    
+    String HIBERNATE_MAPPING_BRGM_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/brgm_log";
+
+    String HIBERNATE_MAPPING_BRGM_CONCEPT_OBSERVATION_PATH = HIBERNATE_MAPPING_BRGM_CONCEPT_PATH + "/observation";
     
     String HIBERNATE_MAPPING_I18N_PATH = HIBERNATE_MAPPING_PATH + "/i18n";
 
     String HIBERNATE_MAPPING_EXTENSION = HIBERNATE_MAPPING_PATH + "/extension";
 
     String HIBERNATE_MAPPING_EXTENSION_READONLY =  HIBERNATE_MAPPING_EXTENSION + "/readonly";
+    
+    String HIBERNATE_MAPPING_EXTENSION_READONLY_DEFAULT_PATH =  HIBERNATE_MAPPING_EXTENSION_READONLY + "/default";
+    
+    String HIBERNATE_MAPPING_EXTENSION_READONLY_CATEGORY_PATH =  HIBERNATE_MAPPING_EXTENSION_READONLY + "/category";
     
     String HIBERNATE_RESOURCES = "HIBERNATE_RESOURCES";
 
@@ -100,7 +108,8 @@ public interface HibernateDatasourceConstants {
     public enum DatabaseConcept {
         OLD_CONCEPT("Old concept"),
         SERIES_CONCEPT("Series concept"),
-        EREPORTING_CONCEPT("eReporting concept (extended Series concept)");
+        EREPORTING_CONCEPT("eReporting concept (extended Series concept)"),
+        GEOLOGY_LOG_CONCEPT("GWML2:GeologyLogCoverage");
         
         private final String displayName;
         

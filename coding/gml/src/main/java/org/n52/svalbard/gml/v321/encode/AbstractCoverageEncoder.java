@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,15 +37,17 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.DiscreteCoverage;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 import net.opengis.gml.x32.BooleanListDocument;
-import net.opengis.gml.x32.CategoryListDocument;
-import net.opengis.gml.x32.CodeOrNilReasonListType;
+import net.opengis.gml.x32.CoordinatesType;
 import net.opengis.gml.x32.CountListDocument;
+import net.opengis.gml.x32.DataBlockType;
 import net.opengis.gml.x32.DiscreteCoverageType;
 import net.opengis.gml.x32.MeasureOrNilReasonListType;
 import net.opengis.gml.x32.QuantityListDocument;
@@ -94,25 +96,21 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
         List<?> list = getList(discreteCoverage);
         Value<?> value = discreteCoverage.getRangeSet().iterator().next();
         if (value instanceof BooleanValue) {
-            BooleanListDocument bld = BooleanListDocument.Factory.newInstance();
+            BooleanListDocument bld = BooleanListDocument.Factory.newInstance(getXmlOptions());
             bld.setBooleanList(list);
             rst.set(bld);
-        } else if (value instanceof CategoryValue) {
-            CategoryListDocument cld = CategoryListDocument.Factory.newInstance();
-            CodeOrNilReasonListType conrlt = cld.addNewCategoryList();
-            if (discreteCoverage.isSetUnit()) {
-                conrlt.setCodeSpace(discreteCoverage.getUnit());
-            } else if (value.isSetUnit()) {
-                conrlt.setCodeSpace(value.getUnit());
-            }
-            conrlt.setListValue(list);
-            rst.set(cld);
+        } else if (value instanceof CategoryValue || value instanceof TextValue) {
+            DataBlockType dbt = rst.addNewDataBlock();
+            dbt.addNewRangeParameters().setHref(discreteCoverage.getRangeParameters());
+            CoordinatesType ct = dbt.addNewTupleList();
+            ct.setCs(",");
+            ct.setStringValue(Joiner.on(",").join(list));
         } else if (value instanceof CountValue) {
-            CountListDocument cld = CountListDocument.Factory.newInstance();
+            CountListDocument cld = CountListDocument.Factory.newInstance(getXmlOptions());
             cld.setCountList(list);
             rst.set(cld);
         } else if (value instanceof QuantityValue) {
-            QuantityListDocument qld = QuantityListDocument.Factory.newInstance();
+            QuantityListDocument qld = QuantityListDocument.Factory.newInstance(getXmlOptions());
             MeasureOrNilReasonListType monrlt = qld.addNewQuantityList();
             if (discreteCoverage.isSetUnit()) {
                 monrlt.setUom(discreteCoverage.getUnit());
@@ -121,8 +119,6 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
             }
             monrlt.setListValue(list);
             rst.set(qld);
-        } else {
-            rst.setNil();
         }
     }
 

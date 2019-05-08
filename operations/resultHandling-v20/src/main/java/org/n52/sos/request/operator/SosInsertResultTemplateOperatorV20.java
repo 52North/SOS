@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -108,7 +108,7 @@ public class SosInsertResultTemplateOperatorV20
         // check offering
         try {
             checkOfferings(request.getObservationTemplate().getOfferings(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate);
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate, true);
             try {
                 checkObservationType(request);
             } catch (OwsExceptionReport owse) {
@@ -137,7 +137,7 @@ public class SosInsertResultTemplateOperatorV20
                     exceptions.add(new MissingParameterValueException(
                             Sos2Constants.InsertResultTemplateParams.proposedTemplate + ".procedure"));
                 }
-                checkTransactionalProcedureID(request.getObservationTemplate().getProcedureIdentifier(),
+                checkTransactionalProcedure(request.getObservationTemplate().getProcedureIdentifier(),
                         Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
             }
         } catch (OwsExceptionReport owse) {

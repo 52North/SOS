@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,17 +32,16 @@ import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.SortedMap;
-
+import org.apache.xmlbeans.XmlOptions;
 import org.junit.Test;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.XmlHelper;
-
-import com.google.common.collect.Maps;
 
 import net.opengis.gml.x32.RectifiedGridCoverageDocument;
 
@@ -51,20 +50,52 @@ public class RectifiedGridCoverageDocumentEncoderTest {
     private RectifiedGridCoverageDocumentEncoder encoder = new RectifiedGridCoverageDocumentEncoder();
 
     @Test
-    public void test_encoding() throws UnsupportedEncoderInputException, OwsExceptionReport {
+    public void test_quantity_encoding() throws UnsupportedEncoderInputException, OwsExceptionReport {
         RectifiedGridCoverageDocument encoded = encoder.encode(getRectifiedGridCoverage());
-        
         assertThat(XmlHelper.validateDocument(encoded), is(TRUE));
+        System.out.println(encoded.xmlText(new XmlOptions().setSavePrettyPrint()));
+    }
+    
+    @Test
+    public void test_category_encoding() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        RectifiedGridCoverageDocument encoded = encoder.encode(getCategoryRectifiedGridCoverage());
+        assertThat(XmlHelper.validateDocument(encoded), is(TRUE));
+        System.out.println(encoded.xmlText(new XmlOptions().setSavePrettyPrint()));
+    }
+    
+    @Test
+    public void test_text_encoding() throws UnsupportedEncoderInputException, OwsExceptionReport {
+        RectifiedGridCoverageDocument encoded = encoder.encode(getTextRectifiedGridCoverage());
+        assertThat(XmlHelper.validateDocument(encoded), is(TRUE));
+        System.out.println(encoded.xmlText(new XmlOptions().setSavePrettyPrint()));
     }
     
     private RectifiedGridCoverage getRectifiedGridCoverage() {
-        RectifiedGridCoverage gridCoverage = new RectifiedGridCoverage("test");
-        SortedMap<Double, Value<?>> values = Maps.newTreeMap();
-        values.put(2.5, new QuantityValue(10.0));
-        values.put(5.0, new QuantityValue(8.0));
-        values.put(10.0, new QuantityValue(3.0));
-        gridCoverage.setValue(values);
-        gridCoverage.setUnit("C");
-        return gridCoverage;
+        RectifiedGridCoverage rgc = new RectifiedGridCoverage("quantity");
+        rgc.addValue(new QuantityValue(2.5, "m"), new QuantityValue(10.0));
+        rgc.addValue(new QuantityValue(5.0, "m"), new QuantityValue(8.0));
+        rgc.addValue(new QuantityValue(10.0, "m"), new QuantityValue(3.0));
+        rgc.setUnit("C");
+        return rgc;
+    }
+      
+    private RectifiedGridCoverage getCategoryRectifiedGridCoverage() {
+        RectifiedGridCoverage rgc = new RectifiedGridCoverage("category");
+        rgc.setUnit("d");
+        rgc.setRangeParameters("category_param");
+        rgc.addValue(new QuantityRangeValue(0.0, 5.0, "m"), new CategoryValue("test category"));
+        rgc.addValue(new QuantityRangeValue(5.0, 10.0, "m"), new CategoryValue("test category 2"));
+        rgc.addValue(new QuantityRangeValue(10.0, 15.0, "m"), new CategoryValue("test category 2 test"));
+        return rgc;
+    }
+    
+    private RectifiedGridCoverage getTextRectifiedGridCoverage() {
+        RectifiedGridCoverage rgc = new RectifiedGridCoverage("text");
+        rgc.setUnit("d");
+        rgc.setRangeParameters("text_param");
+        rgc.addValue(new QuantityRangeValue(0.0, 5.0, "m"), new TextValue("test text"));
+        rgc.addValue(new QuantityRangeValue(5.0, 10.0, "m"), new TextValue("test text 2"));
+        rgc.addValue(new QuantityRangeValue(10.0, 15.0, "m"), new TextValue("test text 2 test"));
+        return rgc;
     }
 }

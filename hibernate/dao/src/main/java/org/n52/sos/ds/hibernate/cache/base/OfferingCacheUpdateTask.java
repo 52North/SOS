@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -101,16 +102,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @param observationConstellationInfos
      *            Observation Constellation info collection, passed in from
      *            parent update if supported
-     * @param hasSamplingGeometry
-     *            Indicator to execute or not the extent query for the Spatial
-     *            Filtering Profile
      */
     public OfferingCacheUpdateTask(Offering offering,
-            Collection<ObservationConstellationInfo> observationConstellationInfos, boolean hasSamplingGeometry) {
+            Collection<ObservationConstellationInfo> observationConstellationInfos) {
         this.offering = offering;
         this.offeringId = offering.getIdentifier();
         this.observationConstellationInfos = observationConstellationInfos;
-        this.hasSamplingGeometry = hasSamplingGeometry;
     }
 
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
@@ -125,6 +122,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
 
         getCache().addOffering(offeringId);
+        getCache().addPublishedOffering(offeringId);
         addOfferingNamesAndDescriptionsToCache(offeringId, session);
         // only check once, check flag in other methods
         obsConstSupported = HibernateHelper.isEntitySupported(ObservationConstellation.class);
@@ -152,8 +150,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Spatial Envelope
         getCache().setEnvelopeForOffering(offeringId,
                 getEnvelopeForOffering(featureOfInterestIdentifiers, session));
-        // Spatial Filtering Profile Spatial Envelope
-        addSpatialFilteringProfileEnvelopeForOffering(offeringId, offeringId, session);
     }
 
     protected void addOfferingNamesAndDescriptionsToCache(String offeringId, Session session)
@@ -161,10 +157,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         final MultilingualString name;
         final MultilingualString description;
 
-        I18NDAO<I18NOfferingMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
+        HibernateI18NDAO<I18NOfferingMetadata> dao = (HibernateI18NDAO) I18NDAORepository.getInstance().getDAO(I18NOfferingMetadata.class);
 
         if (dao != null) {
-            I18NOfferingMetadata metadata = dao.getMetadata(offeringId);
+            I18NOfferingMetadata metadata = dao.getMetadata(offeringId, session);
             name = metadata.getName();
             description = metadata.getDescription();
         } else {
@@ -301,6 +297,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             observationTypes.add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
         } else if (observationDAO.checkSweDataArrayObservationsFor(offeringId, session)) {
             observationTypes.add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        } else if (observationDAO.checkComplexObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+        } else if (observationDAO.checkProfileObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_PROFILE_OBSERVATION);
+        } else if (observationDAO.checkReferenceObservationsFor(offeringId, session)) {
+            observationTypes.add(OmConstants.OBS_TYPE_REFERENCE_OBSERVATION);
         }
         return observationTypes;
     }
@@ -346,6 +348,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @throws OwsExceptionReport
      *             If an error occurs
      */
+    @Deprecated
     protected void addSpatialFilteringProfileEnvelopeForOffering(String offeringId, String offeringID,
             Session session) throws OwsExceptionReport {
         if (hasSamplingGeometry) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -94,7 +94,7 @@ public class SosOffering extends AbstractFeature implements Comparable<SosOfferi
 
     public SosOffering(final String identifier, final CodeType name) {
         this.setIdentifier(identifier);
-        if (!name.isSetValue()) {
+        if (name != null && !name.isSetValue()) {
             name.setValue(OFFERING_NAME_PREFIX + identifier);
         }
         this.setName(name);

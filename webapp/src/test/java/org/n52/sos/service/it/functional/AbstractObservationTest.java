@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -62,6 +62,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -100,6 +101,7 @@ import net.opengis.swes.x20.InsertSensorType;
 
 public abstract class AbstractObservationTest extends AbstractComplianceSuiteTest {
     private static final GeometryFactory GEOM_FACTORY_4326 = JTSHelper.getGeometryFactoryForSRID(4326);
+    private static final GeometryFactory GEOM_FACTORY_4979 = JTSHelper.getGeometryFactoryForSRID(4979);
     private static final String APPLICATION_XML = MediaTypes.APPLICATION_XML.toString();
     protected static final String CODESPACE = "codespace";
 
@@ -201,7 +203,7 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
     }
 
     protected OmObservation createObservation(String type, String procedure, String offering, AbstractPhenomenon observableProperty,
-            SamplingFeature samplingFeature, DateTime time, Value<?> value) {
+            AbstractSamplingFeature samplingFeature, DateTime time, Value<?> value) {
         TimeInstant resultTime = new TimeInstant(time);
         TimeInstant phenomenonTime = new TimeInstant(time);
         TimePeriod validTime = new TimePeriod(time.minusMinutes(5), time.plusMinutes(5));
@@ -217,7 +219,7 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
     }
 
     private OmObservationConstellation createObservationConstellation(String procedure, String offering, String observationType,
-            AbstractPhenomenon observableProperty, SamplingFeature samplingFeature) {
+            AbstractPhenomenon observableProperty, AbstractSamplingFeature samplingFeature) {
         OmObservationConstellation observationConstellation = new OmObservationConstellation();
         observationConstellation.setFeatureOfInterest(samplingFeature);
         observationConstellation.setObservableProperty(observableProperty);
@@ -226,8 +228,8 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
         return observationConstellation;
     }
 
-    protected static SamplingFeature createFeature(String featureOfInterest, Geometry geom) {
-        SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(featureOfInterest));
+    protected static AbstractSamplingFeature createFeature(String featureOfInterest, Geometry geom) {
+        AbstractSamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(featureOfInterest));
         try {
             samplingFeature.setGeometry(geom);
         } catch (InvalidSridException e) {
@@ -290,12 +292,16 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
         return GEOM_FACTORY_4326.createPoint(new Coordinate(lng, lat));
     }
 
-    protected static Point createPoint4326(double lat, double lng, double height) {
-        return GEOM_FACTORY_4326.createPoint(new Coordinate(lng, lat, height));
+    protected static Point createPoint4979(double lat, double lng, double height) {
+        return GEOM_FACTORY_4979.createPoint(new Coordinate(lng, lat, height));
     }
 
     protected static Point createRandomPoint4326() {
-        return GEOM_FACTORY_4326.createPoint(new Coordinate(randomLng(), randomLat(),
+        return GEOM_FACTORY_4326.createPoint(new Coordinate(randomLng(), randomLat()));
+    }
+
+    protected static Point createRandomPoint4979() {
+        return GEOM_FACTORY_4979.createPoint(new Coordinate(randomLng(), randomLat(),
                 randomInRange(-10.0, 50.0, 2)));
     }
 

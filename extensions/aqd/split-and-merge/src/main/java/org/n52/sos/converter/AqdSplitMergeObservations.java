@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -97,32 +97,7 @@ public class AqdSplitMergeObservations extends
     private List<OmObservation> mergeObservations(List<OmObservation> observationCollection) {
         return new ObservationMerger()
         .mergeObservations(observationCollection, ObservationMergeIndicator
-                .defaultObservationMergerIndicator());
-//        if (observationCollection != null) {
-//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-//            int obsIdCounter = 1;
-//            for (final OmObservation sosObservation : observationCollection) {
-//                if (mergedObservations.isEmpty()) {
-//                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-//                    mergedObservations.add(sosObservation);
-//                } else {
-//                    boolean combined = false;
-//                    for (final OmObservation combinedSosObs : mergedObservations) {
-//                        if (combinedSosObs.checkForMerge(sosObservation)) {
-//                            combinedSosObs.setResultTime(null);
-//                            mergeObservationValues(combinedSosObs, sosObservation);
-//                            combined = true;
-//                            break;
-//                        }
-//                    }
-//                    if (!combined) {
-//                        mergedObservations.add(sosObservation);
-//                    }
-//                }
-//            }
-//            return mergedObservations;
-//        }
-//        return observationCollection;
+                .defaultObservationMergerIndicator().setObservationType(false));
     }
 
     private void mergeObservationValues(OmObservation combinedSosObs, OmObservation sosObservation) {

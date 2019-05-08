@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.metadata.I18NProcedureMetadata;
@@ -55,10 +55,10 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
         enrichUniqueId(description);
 
         if (isSetLocale()) {
-            I18NDAO<I18NProcedureMetadata> dao
-                    = I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
+            HibernateI18NDAO<I18NProcedureMetadata> dao
+                    = (HibernateI18NDAO) I18NDAORepository.getInstance().getDAO(I18NProcedureMetadata.class);
             if (dao != null) {
-                i18n = dao.getMetadata(getIdentifier());
+                i18n = dao.getMetadata(getIdentifier(), getSession());
             }
         }
         enrichShortName(description);

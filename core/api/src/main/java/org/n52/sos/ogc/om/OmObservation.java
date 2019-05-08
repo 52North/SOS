@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,10 +39,12 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
-import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
@@ -84,8 +86,8 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     /**
      * O&M parameter
      */
-    private Collection<NamedValue<?>> parameter;
-
+    private ParameterHolder parameterHolder = new ParameterHolder();
+    
     /**
      * Map with observation values for each obsservableProeprty
      */
@@ -402,10 +404,22 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @param observationValue
      *            Observation to merge
      */
-    protected void mergeValues(final ObservationValue<?> observationValue) {
+    protected boolean mergeValues(final ObservationValue<?> observationValue) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
-            tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);
+            if (getValue().getValue() instanceof ProfileValue && observationValue.getValue() instanceof ProfileValue) {
+                ((ProfileValue)getValue().getValue()).addValues(((ProfileValue)observationValue.getValue()).getValue());
+                return true;
+            } else if (getValue().getValue() instanceof SweDataArrayValue
+                    && observationValue.getValue() instanceof SweDataArrayValue
+                    && ((SweDataArray) getValue().getValue().getValue()).getElementType()
+                            .equals(((SweDataArray) observationValue.getValue().getValue()).getElementType())) {
+                ((SweDataArray) getValue().getValue().getValue())
+                        .addAll(((SweDataArray) observationValue.getValue().getValue()).getValues());
+                return true;
+            } else {
+                tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);
+            }
         } else {
             tvpValue = (TVPValue) ((MultiObservationValues<?>) value).getValue();
         }
@@ -420,6 +434,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
             final MultiObservationValues<?> multiValue = (MultiObservationValues<?>) observationValue;
             tvpValue.addValues(((TVPValue) multiValue.getValue()).getValue());
         }
+        return true;
     }
 
     /**
@@ -437,6 +452,12 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
             tvpValue.setUnit(singleValue.getUnit());
         } else if (singleValue.getValue().isSetUnit()) {
             tvpValue.setUnit(singleValue.getValue().getUnit());
+        }
+        if (singleValue.isSetMetadata()) {
+            multiValue.setMetadata(singleValue.getMetadata());
+        }
+        if (singleValue.isSetDefaultPointMetadata()) {
+            multiValue.setDefaultPointMetadata(singleValue.getDefaultPointMetadata());
         }
         final TimeValuePair timeValuePair = new TimeValuePair(singleValue.getPhenomenonTime(), singleValue.getValue());
         tvpValue.addValue(timeValuePair);
@@ -525,7 +546,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return the parameter
      */
     public Collection<NamedValue<?>> getParameter() {
-        return parameter;
+        return parameterHolder.getParameter();
     }
 
     /**
@@ -535,7 +556,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      *            the parameter to set
      */
     public void setParameter(Collection<NamedValue<?>> parameter) {
-        this.parameter = parameter;
+        this.parameterHolder.addParameter(parameter);
     }
 
     /**
@@ -545,10 +566,11 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      *            the namedValue to add to parameter
      */
     public void addParameter(NamedValue<?> namedValue) {
-        if (parameter == null) {
-            parameter = Sets.newTreeSet();
-        }
-        parameter.add(namedValue);
+        parameterHolder.addParameter(namedValue);
+    }
+    
+    public ParameterHolder getParameterHolder() {
+        return parameterHolder;
     }
 
     /**
@@ -557,7 +579,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return <code>true</code>, if parameter is set
      */
     public boolean isSetParameter() {
-        return CollectionHelper.isNotEmpty(getParameter());
+        return parameterHolder != null && CollectionHelper.isNotEmpty(getParameter());
     }
 
     /**
@@ -566,21 +588,16 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return <code>true</code>, if spatial filtering profile parameter is set
      */
     public boolean isSetSpatialFilteringProfileParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isSamplingGeometryParameter(namedValue)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return parameterHolder.isSetSpatialFilteringProfileParameter();
     }
     
     /**
      * Remove spatial filtering profile parameter
      */
     public void removeSpatialFilteringProfileParameter() {
-        removeParameter(getSpatialFilteringProfileParameter());
+        if (isSetSpatialFilteringProfileParameter()) {
+            removeParameter(getSpatialFilteringProfileParameter());
+        }
     }
 
     /**
@@ -590,7 +607,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      *            Parameter to remove
      */
     public void removeParameter(NamedValue<?> parameter) {
-        getParameter().remove(parameter);
+        getParameterHolder().removeParameter(parameter);
     }
     
     /**
@@ -601,10 +618,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return this
      */
     public OmObservation addSpatialFilteringProfileParameter(Geometry samplingGeometry) {
-        final NamedValue<Geometry> namedValue = new NamedValue<>();
-        namedValue.setName(new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));
-        namedValue.setValue(new GeometryValue(samplingGeometry));
-        addParameter(namedValue);
+        parameterHolder.addSpatialFilteringProfileParameter(samplingGeometry);
         return this;
     }
 
@@ -613,44 +627,17 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * 
      * @return Spatial filtering profile parameter
      */
-    @SuppressWarnings("unchecked")
     public NamedValue<Geometry> getSpatialFilteringProfileParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isSamplingGeometryParameter(namedValue)) {
-                    return (NamedValue<Geometry>) namedValue;
-                }
-            }
-        }
-        return null;
+        return parameterHolder.getSpatialFilteringProfileParameter();
     }
 
-    /**
-     * Check whether sampling geometry for spatial filtering profile is set
-     * 
-     * @return <code>true</code>, if sampling geometry for spatial filtering
-     *         profile is set
-     */
-    private boolean isSamplingGeometryParameter(NamedValue<?> namedValue) {
-        return namedValue.isSetName() && namedValue.getName().isSetHref()
-                && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
-                && namedValue.getValue() instanceof GeometryValue;
-    }
-    
     /**
      * Check whether height parameter is set
      * 
      * @return <code>true</code>, if height parameter is set
      */
     public boolean isSetHeightParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isHeightParameter(namedValue)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return parameterHolder.isSetHeightParameter();
     }
 
     /**
@@ -658,25 +645,10 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * 
      * @return Height parameter
      */
-    @SuppressWarnings("unchecked")
     public NamedValue<Double> getHeightParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isHeightParameter(namedValue)) {
-                    return (NamedValue<Double>) namedValue;
-                }
-            }
-        }
-        return null;
+        return parameterHolder.getHeightParameter();
     }
     
-    private boolean isHeightParameter(NamedValue<?> namedValue) {
-        return namedValue.isSetName() && namedValue.getName().isSetHref()
-                && (namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT_URL)
-                 || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT)
-                 || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_ELEVATION))
-                && namedValue.getValue() instanceof QuantityValue;
-    }
 
     /**
      * Check whether depth parameter is set
@@ -684,14 +656,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * @return <code>true</code>, if depth parameter is set
      */
     public boolean isSetDepthParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isDepthParameter(namedValue)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return parameterHolder.isSetDepthParameter();
     }
 
     /**
@@ -699,47 +664,19 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      * 
      * @return Depth parameter
      */
-    @SuppressWarnings("unchecked")
     public NamedValue<Double> getDepthParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isHeightDepthParameter(namedValue)) {
-                    return (NamedValue<Double>) namedValue;
-                }
-            }
-        }
-        return null;
+        return parameterHolder.getDepthParameter();
     }
     
-    private boolean isDepthParameter(NamedValue<?> namedValue) {
-        return namedValue.isSetName() && namedValue.getName().isSetHref()
-                && (namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH_URL)
-                || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH))
-                && namedValue.getValue() instanceof QuantityValue;
-    }
     
     public boolean isSetHeightDepthParameter() {
-        if (isSetParameter()) {
-            for (NamedValue<?> namedValue : getParameter()) {
-                if (isHeightDepthParameter(namedValue)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return parameterHolder.isSetHeightDepthParameter();
     }
     
     public NamedValue<Double> getHeightDepthParameter() {
-        if (isSetDepthParameter()) {
-            return getDepthParameter();
-        }
-        return getHeightParameter();
+        return parameterHolder.getHeightDepthParameter();
     }
 
-    private boolean isHeightDepthParameter(NamedValue<?> namedValue) {
-        return isHeightParameter(namedValue) || isDepthParameter(namedValue);
-    }
-    
     public OmObservation cloneTemplate() {
        return cloneTemplate(new OmObservation());
     }
@@ -925,5 +862,51 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
+    }
+    
+    /**
+     * Check whether category parameter is set
+     * 
+     * @return <code>true</code>, if category parameter is set
+     */
+    public boolean isSetCategoryParameter() {
+        return parameterHolder.hasParameter(OmConstants.PARAMETER_NAME_CATEGORY);
+    }
+    
+    /**
+     * Remove category parameter
+     */
+    public void removeCategoryParameter() {
+        if (isSetCategoryParameter()) {
+            removeParameter(getCategoryParameter());
+        }
+    }
+    
+    /**
+     * Add category to observation
+     * 
+     * @param category
+     *            The category to set
+     * @return this
+     */
+    public OmObservation addCategoryParameter(String category) {
+        parameterHolder.addParameter(new NamedValue<String>(new ReferenceType(OmConstants.PARAMETER_NAME_CATEGORY),
+                new TextValue(category)));
+        return this;
+    }
+    
+    public OmObservation addCategoryParameter(TextValue category) {
+        parameterHolder.addParameter(new NamedValue<String>(new ReferenceType(OmConstants.PARAMETER_NAME_CATEGORY),
+                category));
+        return this;
+    }
+
+    /**
+     * Get category parameter
+     * 
+     * @return category parameter
+     */
+    public NamedValue<?> getCategoryParameter() {
+        return parameterHolder.getParameter(OmConstants.PARAMETER_NAME_CATEGORY);
     }
 }

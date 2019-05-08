@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,25 +30,20 @@ package org.n52.schetland.uvf;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-import org.joda.time.DateTimeZone;
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 
-import com.google.common.collect.ImmutableSet;
 
 public interface UVFConstants {
 
     MediaType CONTENT_TYPE_UVF = new MediaType("application", "uvf");
     
-    MediaType CONTENT_TYPE_UVF_WINDOWS = new MediaType("application", "uvf", "lineEnding", "Windows");
+    MediaType CONTENT_TYPE_UVF_WINDOWS = new MediaType("application", "uvf", "lineending", "Windows");
     
-    MediaType CONTENT_TYPE_UVF_UNIX = new MediaType("application", "uvf", "lineEnding", "Unix");
+    MediaType CONTENT_TYPE_UVF_UNIX = new MediaType("application", "uvf", "lineending", "Unix");
     
-    MediaType CONTENT_TYPE_UVF_MAC = new MediaType("application", "uvf", "lineEnding", "Mac");
+    MediaType CONTENT_TYPE_UVF_MAC = new MediaType("application", "uvf", "lineending", "Mac");
 
     /**
      * Time format to be used in UVF encoded data: <code>yyMMddHHmm</code>,
@@ -96,6 +91,10 @@ public interface UVFConstants {
     
     enum LineEnding{
         Windows, Unix, Mac;
+    }
+    
+    enum FunktionInterpretation {
+        Linie, Blockanfang, Blockende, Summenlinie;
     }
 }
  

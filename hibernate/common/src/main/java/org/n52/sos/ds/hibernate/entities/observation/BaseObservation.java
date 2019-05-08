@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,6 +38,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedObservations;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSrid;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasVertical;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 
 /**
@@ -59,6 +60,7 @@ public interface BaseObservation
                 HasChildFlag,
                 HasParentFlag,
                 HasParameters,
-                HasRelatedObservations {
+                HasRelatedObservations,
+                HasVertical {
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,8 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -45,6 +47,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservation
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -118,6 +121,15 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             procedure.setDeleted(deleteFlag);
             session.saveOrUpdate(procedure);
             session.flush();
+            // set valid procdure description end time to current time
+            ValidProcedureTimeDAO validProcedureTimeDAO = new ValidProcedureTimeDAO();
+            DateTime currentTime = new DateTime(DateTimeZone.UTC);
+            for (ValidProcedureTime vpt : validProcedureTimeDAO.getValidProcedureTimes(procedure, null, null, session)) {
+                if (vpt.getEndTime() == null) {
+                    vpt.setEndTime(currentTime.toDate());
+                    validProcedureTimeDAO.updateValidProcedureTime(vpt, session);
+                }
+            }
             // set deleted flag in ObservationConstellation table to true
             if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 new ObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
@@ -147,6 +159,11 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
                     AbstractObservationDAO.class.getName());
         }
+    }
+    
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ValidProcedureTime.class);
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,14 +33,12 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
@@ -52,6 +50,12 @@ import org.n52.sos.util.http.HTTPMethods;
 import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.SimpleTimeLimiter;
+import com.google.common.util.concurrent.TimeLimiter;
+import com.google.common.util.concurrent.UncheckedTimeoutException;
 
 /**
  * The servlet of the SOS which receives the incoming HttpPost and HttpGet
@@ -64,6 +68,8 @@ public class SosService extends ConfiguratedHttpServlet {
     private static final long serialVersionUID = -2103692310137045855L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosService.class);
+    
+    private static final TimeLimiter timeLimiter = new SimpleTimeLimiter();
 
     public static final String BINDING_DELETE_METHOD = "doDeleteOperation";
 
@@ -81,7 +87,7 @@ public class SosService extends ConfiguratedHttpServlet {
     }
 
     protected HttpServletRequest logRequest(HttpServletRequest request, long count) {
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             Enumeration<?> headerNames = request.getHeaderNames();
             StringBuilder headers = new StringBuilder();
             while (headerNames.hasMoreElements()) {
@@ -210,6 +216,16 @@ public class SosService extends ConfiguratedHttpServlet {
             if (binding == null) {
                 throw new HTTPException(HTTPStatus.UNSUPPORTED_MEDIA_TYPE);
             } else {
+                if (ServiceConfiguration.getInstance().getRequestTimeout() > 0) {
+                    try {
+                        return timeLimiter.newProxy(binding, Binding.class,
+                                ServiceConfiguration.getInstance().getRequestTimeout(), TimeUnit.SECONDS);
+                    } catch (UncheckedTimeoutException ute) {
+                        HTTPException httpException = new HTTPException(HTTPStatus.GATEWAY_TIME_OUT);
+                        httpException.addSuppressed(ute);
+                        throw httpException;
+                    }
+                }
                 return binding;
             }
         }

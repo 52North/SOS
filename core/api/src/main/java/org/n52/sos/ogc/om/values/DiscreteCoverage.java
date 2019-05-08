@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,5 +43,17 @@ public interface DiscreteCoverage<T> extends Value<T> {
     String getGmlId();
 
     Collection<Value<?>> getRangeSet();
+    
+    /**
+     * @return the rangeParameters
+     */
+    String getRangeParameters();
+    
+    /**
+     * @param rangeParameters the rangeParameters to set
+     */
+    void setRangeParameters(String rangeParameters);
+    
+    boolean isSetRangeParameters();
 
 }

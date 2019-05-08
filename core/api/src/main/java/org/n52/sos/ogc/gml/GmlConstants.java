@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,12 +46,16 @@ public interface GmlConstants extends Constants {
     String NS_GML = "http://www.opengis.net/gml";
 
     String NS_GML_32 = "http://www.opengis.net/gml/3.2";
+    
+    String NS_GML_33_CE = "http://www.opengis.net/gml/3.3/ce";
 
     String NS_GML_PREFIX = "gml";
 
     String SCHEMA_LOCATION_URL_GML_311 = "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd";
 
     String SCHEMA_LOCATION_URL_GML_32 = "http://schemas.opengis.net/gml/3.2.1/gml.xsd";
+    
+    String SCHEMA_LOCATION_URL_GML_33_CE = "http://schemas.opengis.net/gml/3.3/geometryCompact.xsd";
 
     SchemaLocation GML_311_SCHEMAL_LOCATION = new SchemaLocation(NS_GML, SCHEMA_LOCATION_URL_GML_311);
 

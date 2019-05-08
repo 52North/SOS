@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.cache.ctrl;
 
+import org.n52.sos.cache.ctrl.action.ResultTemplateDeletionUpdate;
 import java.util.Collections;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 
 import com.google.common.collect.Sets;
+import org.n52.sos.event.events.ResultTemplatesDeletion;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -63,8 +65,13 @@ public class DefaultContentModificationListener implements SosEventListener {
 
     @SuppressWarnings("unchecked")
     private static final Set<Class<? extends SosEvent>> TYPES = Sets.<Class<? extends SosEvent>> newHashSet(
-            SensorInsertion.class, ObservationInsertion.class, ResultTemplateInsertion.class, SensorDeletion.class,
-            ResultInsertion.class, FeatureInsertion.class);
+            SensorInsertion.class,
+            ObservationInsertion.class,
+            ResultTemplateInsertion.class,
+            SensorDeletion.class,
+            ResultInsertion.class,
+            FeatureInsertion.class,
+            ResultTemplatesDeletion.class);
 
     @Override
     public Set<Class<? extends SosEvent>> getTypes() {
@@ -91,6 +98,9 @@ public class DefaultContentModificationListener implements SosEventListener {
         } else if (event instanceof FeatureInsertion) {
             FeatureInsertion e = (FeatureInsertion) event;
             handle(new FeatureInsertionUpdate(e.getRequest()));
+        } else if (event instanceof ResultTemplatesDeletion) {
+            ResultTemplatesDeletion e = (ResultTemplatesDeletion) event;
+            handle(new ResultTemplateDeletionUpdate(e.getResponse()));
         } else {
             LOGGER.debug("Can not handle modification event: {}", event);
         }

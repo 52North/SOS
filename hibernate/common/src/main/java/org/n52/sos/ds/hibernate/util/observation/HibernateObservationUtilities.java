@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -168,6 +168,22 @@ public class HibernateObservationUtilities {
      */
     public static List<OmObservation> unfoldObservation(OmObservation o) throws OwsExceptionReport {
         return new ObservationUnfolder(o).unfold();
+    }
+    
+    /**
+     * Unfold observation with MultiObservationValue to multiple observations
+     * with SingleObservationValue
+     *
+     * @param o
+     *            OmObservation to unfold
+     * @param complexToSingleProfiles
+     *            If a complex value should be converted to single profile observations.
+     * @return OmObservation list
+     * @throws OwsExceptionReport
+     *             If unfolding fails
+     */
+    public static List<OmObservation> unfoldObservation(OmObservation o, boolean complexToSingleProfiles) throws OwsExceptionReport {
+        return new ObservationUnfolder(o).unfold(complexToSingleProfiles);
     }
 
     /**

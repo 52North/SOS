@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -62,6 +62,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.QuantityRangeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -118,7 +119,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                     OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
                     OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
                     OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION,
-                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION));
+                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION, OmConstants.OBS_TYPE_REFERENCE_OBSERVATION));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -424,6 +425,9 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         @Override
         public XmlObject visit(ReferenceValue value)
                 throws OwsExceptionReport {
+            if (value.isSetValue()) {
+                return encodeGML(value.getValue());
+            }
             return null;
         }
 
@@ -481,18 +485,23 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         }
 
         @Override
-        public XmlObject visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+        public XmlObject visit(MultiPointCoverage value) throws OwsExceptionReport {
             return null;
         }
 
         @Override
-        public XmlObject visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
+        public XmlObject visit(RectifiedGridCoverage value) throws OwsExceptionReport {
             return null;
         }
 
         @Override
         public XmlObject visit(ProfileValue value) throws OwsExceptionReport {
             return  CodingHelper.encodeObjectToXmlPropertyType(value.getDefaultElementEncoding(), value);
+        }
+
+        @Override
+        public XmlObject visit(QuantityRangeValue value) throws OwsExceptionReport {
+            return null;
         }
 
     }

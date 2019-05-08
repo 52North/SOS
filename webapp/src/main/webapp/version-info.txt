@@ -6,7 +6,7 @@ builddate = ${git.build.time}
 
 Subversion Infos:
 =================
-repository = ${git.repository}
+repository = ${git.remote.origin.url}
 path = ${git.branch}
 revision = ${git.commit.id}
 lastCommitMessage = ${git.commit.message.short}

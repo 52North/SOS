@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,6 +34,7 @@ import java.util.Locale;
 
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.metadata.AbstractI18NMetadata;
 import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
@@ -58,7 +59,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     @Override
     public void execute() {
-        LOGGER.info("Executing I18NCacheUpdate");
+        LOGGER.debug("Executing I18NCacheUpdate");
         startStopwatch();
         try {
             getCache().addSupportedLanguage(Configurator.getInstance().getServiceIdentificationFactory().getAvailableLocales());
@@ -69,15 +70,15 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         } catch (OwsExceptionReport ce) {
             getErrors().add(ce);
         }
-        LOGGER.info("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
+        LOGGER.debug("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
     }
 
     private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type)
             throws OwsExceptionReport {
-        I18NDAO<? extends AbstractI18NMetadata> dao
-                = I18NDAORepository.getInstance().getDAO(type);
+        HibernateI18NDAO<? extends AbstractI18NMetadata> dao
+                = (HibernateI18NDAO) I18NDAORepository.getInstance().getDAO(type);
         if (dao != null) {
-            return dao.getAvailableLocales();
+            return dao.getAvailableLocales(getSession());
         } else {
             return Collections.emptySet();
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,13 +35,13 @@ import org.n52.sos.w3c.SchemaLocation;
 
 /**
  * Constants class for SensorML
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author ShaneStClair
- * 
+ *
  * @since 4.0.0
  */
 public interface SensorMLConstants {
@@ -119,16 +119,18 @@ public interface SensorMLConstants {
 
     String ELEMENT_NAME_OBSERVED_BBOX = "observedBBOX";
 
-	String OBSERVED_BBOX_DEFINITION_URN = "urn:ogc:def:property:OGC:1.0:observedBBOX";
+    String ELEMENT_NAME_REFERENCE_VALUES = "referenceValues";
+
+    String OBSERVED_BBOX_DEFINITION_URN = "urn:ogc:def:property:OGC:1.0:observedBBOX";
 
     String DEFAULT_FIELD_NAME = "field_";
-    
+
     String STATIONARY = "stationary";
-    
+
     String MOBILE = "mobile";
-    
+
     String INSITU = "insitu";
-    
+
     String REMOTE = "remote";
 
     String FIXED = "fixed";

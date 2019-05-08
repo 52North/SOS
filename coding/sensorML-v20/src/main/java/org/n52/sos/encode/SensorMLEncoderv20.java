@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -259,7 +259,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // check if all gml:id are unique
         XmlHelper.makeGmlIdsUnique(encodedObject.getDomNode());
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
         	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                     XmlHelper.validateDocument(encodedObject));
         }
@@ -685,7 +685,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                         }
                     }
                 }
-                dot.addNewContacts().setContactList(cl);
+                if (cl.getExtensionArray().length > 0) {
+                    dot.addNewContacts().setContactList(cl);
+                }
             }
         }
         // set documentation
@@ -804,9 +806,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     if (capability.isSetName()) {
                         c.setName(NcNameResolver.fixNcName(capability.getName()));
                     } else if (capability.getAbstractDataComponent().isSetName()) {
-                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName().getValue()));
+                        c.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName().getValue()));
+                    } else if (capability.getAbstractDataComponent().isSetDefinition()) {
+                        c.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getDefinition()));
                     } else {
-                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getDefinition()));
+                        c.setName(NcNameResolver.fixNcName("unknown"));
                     }
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
@@ -819,8 +823,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     Capability capability = capabilityList.addNewCapability();
                     if (component.isSetName()) {
                         capability.setName(NcNameResolver.fixNcName(component.getName().getValue()));
-                    } else {
+                    } else if (component.isSetDefinition()) {
                         capability.setName(NcNameResolver.fixNcName(component.getDefinition()));
+                    } else {
+                        capability.setName(NcNameResolver.fixNcName("unknown"));
                     }
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(capability.addNewAbstractDataComponent(), encodeObjectToXml);
@@ -924,20 +930,21 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                         }
                     }
                 }
-            }
-            if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
+            } else {
                 if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
-                    for (SweAbstractDataComponent component : sosSMLCharacteristics.getAbstractDataComponents()) {
-                        XmlObject encodeObjectToXml =
-                                CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, component);
-                        Characteristic c = characteristicList.addNewCharacteristic();
-                        c.setName(NcNameResolver.fixNcName(component.getName().getValue()));
-                        XmlObject substituteElement =
-                                XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
-                        substituteElement.set(encodeObjectToXml);
+                    if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
+                        for (SweAbstractDataComponent component : sosSMLCharacteristics.getAbstractDataComponents()) {
+                            XmlObject encodeObjectToXml =
+                                    CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, component);
+                            Characteristic c = characteristicList.addNewCharacteristic();
+                            c.setName(NcNameResolver.fixNcName(component.getName().getValue()));
+                            XmlObject substituteElement =
+                                    XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
+                            substituteElement.set(encodeObjectToXml);
+                        }
                     }
+    
                 }
-
             }
             characteristicsList.add(xbCharacteristics);
         }

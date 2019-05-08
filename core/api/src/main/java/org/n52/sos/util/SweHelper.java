@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2017 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -237,9 +237,12 @@ public final class SweHelper {
             return new SweText();
         } else if (iValue instanceof NilTemplateValue) {
             return new SweText();
+        } else if (iValue instanceof SweDataArrayValue) {
+            return ((SweDataArrayValue) iValue).getValue();
         } else if (iValue instanceof ComplexValue) {
-            throw new NotYetSupportedException().withMessage("The merging of '%s' is not yet supported!",
-                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+            throw new NotYetSupportedException().withMessage("The merging of value type '%s' is not yet supported!",
+                    iValue.getClass().getName());
+            // return ((ComplexValue) iValue).getValue();
         }
         throw new NotYetSupportedException().withMessage("The merging of value type '%s' is not yet supported!",
                 iValue.getClass().getName());
@@ -306,7 +309,7 @@ public final class SweHelper {
      *            Decimal separator
      * @return TextEncoding
      */
-    private SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
+    public SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
         SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(tupleSeparator);
         sosTextEncoding.setTokenSeparator(tokenSeparator);

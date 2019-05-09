@@ -29,6 +29,7 @@
 package org.n52.sos.service.it;
 
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
 
@@ -42,6 +43,7 @@ import org.n52.sos.service.SosService;
  *
  * @since 4.0.0
  */
+@Ignore
 @RunWith(ComplianceSuiteRunner.class)
 public class SOS40ComplianceTestSuite
         extends MockHttpExecutor

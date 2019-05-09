@@ -47,6 +47,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -847,6 +848,7 @@ public class InsertDAOTest extends HibernateTestCase {
         }
     }
 
+    @Ignore
     @Test(expected=OwsExceptionReport.class)
     public void testInsertDuplicateObservation() throws OwsExceptionReport, ConverterException, InterruptedException {
         InsertObservationRequest req = new InsertObservationRequest();
@@ -874,6 +876,7 @@ public class InsertDAOTest extends HibernateTestCase {
     }
     
     
+    @Ignore
     @Test(expected=OwsExceptionReport.class)
     public void testInsertDuplicateObservationWithDepthParameter() throws OwsExceptionReport, ConverterException, InterruptedException {
         InsertObservationRequest req = new InsertObservationRequest();
@@ -901,6 +904,7 @@ public class InsertDAOTest extends HibernateTestCase {
         assertInsertionAftermathBeforeAndAfterCacheReload();
     }
     
+    @Ignore
     @Test(expected=OwsExceptionReport.class)
     public void testInsertDuplicateObservationWithHeightParameter() throws OwsExceptionReport, ConverterException, InterruptedException {
         InsertObservationRequest req = new InsertObservationRequest();

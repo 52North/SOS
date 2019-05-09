@@ -197,7 +197,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setGroup(GROUP)
                      .setOrder(22)
                      .setKey(ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
-                     .setDefaultValue(false)
+                     .setDefaultValue(true)
                      .setTitle("Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?")
                      .setDescription(
                             "Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!");
@@ -228,7 +228,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setGroup(GROUP)
                      .setOrder(24)
                      .setKey(CHECK_FOR_REQUEST_DUPLICITY)
-                     .setDefaultValue(true)
+                     .setDefaultValue(false)
                      .setTitle("Should this SOS check for duplicated observations in the request?")
                      .setDescription(
                             "Whether the SOS should check if the request contains duplicated observations. Consider that this may lead to duplicated observation in the database!!!");

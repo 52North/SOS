@@ -45,7 +45,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>${project.groupId}</groupId>
-                                    <artifactId>hibernate-mappings</artifactId>
+                                    <artifactId>hibernate-mappings-ecmwf</artifactId>
                                     <overWrite>false</overWrite>
                                 </artifactItem>
                             </artifactItems>

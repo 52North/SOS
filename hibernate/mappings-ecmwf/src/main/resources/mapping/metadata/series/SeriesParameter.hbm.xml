@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter" table="seriesparameter">
+        <comment>Table to store additional obervation information (om:parameter). Mapping file: mapping/series/metadata/SeriesParameter.hbm.xml</comment>
+        <id name="parameterId" type="long">
+            <column name="parameterId">
+                <comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">parameterId_seq</param>
+            </generator>
+        </id>
+       <property name="seriesId" type="long">
+            <column name="seriesId" not-null="true">
+                <comment>Foreign Key (FK) to the related series. Contains "series".seriesId</comment>
+            </column>
+        </property>
+        <property name="name" type="string">
+            <column name="name" not-null="true" index="seriesParamNameIdx">
+                <comment>Parameter name</comment>
+            </column>
+        </property>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesBooleanValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
+                         table="booleanseriesparamvalue"
+                         check="value in ('T','F')">
+            <comment>Value table for boolean parameter</comment>
+            <key foreign-key="seriesParamBooleanValueFk">
+                <column name="parameterId" index="booleanseriesparamididx">
+                    <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="org.hibernate.type.TrueFalseType">
+                <column name="value"  index="seriesBooleanParamIdx">
+                    <comment>Boolean parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesCategoryValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
+                         table="categoryseriesparamvalue">
+            <comment>Value table for category parameter</comment>
+            <key foreign-key="seriesParamCategoryValueFk">
+                <column name="parameterId" index="categoryseriesparamididx">
+                    <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
+                </column>
+            </key>
+            <property name="value" type="string">
+                <column name="value" index="seriesCategoryParamIdx">
+                    <comment>Category parameter value</comment>
+                </column>
+            </property>
+            <many-to-one name="unit"
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="seriesCatParamValueUnitFk">
+                <column name="unitId"
+                        not-null="false">
+                    <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+                </column>
+            </many-to-one>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesCountValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
+                         table="countseriesparamvalue">
+            <comment>Value table for count parameter</comment>
+            <key foreign-key="seriesParamCountValueFk">
+                <column name="parameterId" index="countseriesparamididx">
+                    <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="integer">
+                <column name="value" index="seriesCountParamIdx">
+                    <comment>Count parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesQuantityValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
+                         table="numericseriesparamvalue">
+            <comment>Value table for numeric/Measurment parameter</comment>
+            <key foreign-key="seriesParamNumericValueFk">
+                <column name="parameterId" index="numericseriesparamididx">
+                    <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="double">
+                <column name="value" index="seriesQuantityParamIdx">
+                    <comment>Numeric/Quantity parameter value</comment>
+                </column>
+            </property>
+            <many-to-one name="unit"
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="seriesQuanParamValueUnitFk">
+                <column name="unitId"
+                        not-null="false">
+                    <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+                </column>
+            </many-to-one>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesTextValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
+                         table="textseriesparamvalue">
+            <comment>Value table for text parameter</comment>
+            <key foreign-key="seriesParamTextValueFk">
+                <column name="parameterId" index="textseriesparamididx">
+                    <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="string">
+                <column name="value" index="seriesTextParamIdx">
+                    <comment>Text parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesXmlValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
+                         table="xmlseriesparamvalue">
+            <comment>Value table for XML parameter</comment>
+            <key foreign-key="seriesParamXmlValueFk">
+                <column name="parameterId" index="xmlseriesparamididx">
+                    <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
+                </column>
+            </key>
+            <property name="value" type="text">
+                <column name="value" index="seriesXmlParamIdx">
+                    <comment>XML parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+    </class>
+</hibernate-mapping>

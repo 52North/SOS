@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gmd.AddressEntity"
+           table="address">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">addressId_seq</param>
+            </generator>
+        </id>
+        <property name="nilReason" column="nilReason" type="string" />
+        <property name="href" column="href" type="string" />
+        <property name="type" column="type" type="string" />
+        <property name="role" column="role" type="string" />
+        <property name="arcrole" column="arcrole" type="string" />
+        <property name="title" column="title" type="string" />
+        <property name="show" column="show" type="string" />
+        <property name="actuate" column="actuate" type="string" />
+        <property name="remoteSchema" column="remoteSchema" type="string" />
+        <property name="id" column="id" type="string" />
+        <property name="uuid" column="uuid" type="string" />
+        <set name="deliveryPoint" table="addressdeliveryPoint">
+          <key column="addressId" not-null="true" foreign-key="adddelpoiFk"/>
+          <element column="deliveryPoint" type="string" not-null="true" />
+        </set>
+        <property name="city" column="city" type="string" />
+        <property name="administrativeArea" column="administrativeArea" type="string" />
+        <property name="postalCode" column="postalCode" type="string" />
+        <property name="country" column="country" type="string" />
+        <set name="electronicMailAddress" table="addressemail">
+          <key column="addressId" not-null="true" foreign-key="addemailFk"/>
+          <element column="electronicMailAddress" type="string" not-null="true" />
+        </set>
+    </class>
+</hibernate-mapping>

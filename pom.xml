@@ -250,6 +250,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-mappings-ecmwf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>hibernate-h2</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>

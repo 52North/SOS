@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.feature.gmd.RoleEntity"
+           table="role">
+        <id name="pkid"
+            type="long">
+            <column name="pkid">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">roleId_seq</param>
+            </generator>
+        </id>
+        <property name="codeList" column="codeList" not-null="true" type="string" />
+        <property name="codeListValue" column="codeListValue" not-null="true" type="string" />
+    </class>
+</hibernate-mapping>

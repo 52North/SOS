@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" table="parameter">
+        <comment>Table to store additional obervation information (om:parameter). Mapping file: mapping/core/Parameter.hbm.xml</comment>
+        <id name="parameterId" type="long">
+            <column name="parameterId">
+                <comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">parameterId_seq</param>
+            </generator>
+        </id>
+        <property name="observationId" type="long">
+            <column name="observationId" not-null="true">
+                <comment>Foreign Key (FK) to the related observation. Contains "observation".observationId</comment>
+            </column>
+        </property>
+        <property name="name" type="string">
+            <column name="name" not-null="true" index="paramNameIdx">
+                <comment>Parameter name</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

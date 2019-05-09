@@ -51,6 +51,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
@@ -603,6 +604,11 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             if (maxChanged) {
                 series.setLastNumericValue(((NumericObservation) hObservation).getValue());
             }
+            if (!series.isSetUnit() && hObservation.isSetUnit()) {
+                // TODO check if both unit are equal. If not throw exception?
+                series.setUnit(hObservation.getUnit());
+            }
+        } else if (hObservation instanceof SweDataArrayObservation) {
             if (!series.isSetUnit() && hObservation.isSetUnit()) {
                 // TODO check if both unit are equal. If not throw exception?
                 series.setUnit(hObservation.getUnit());

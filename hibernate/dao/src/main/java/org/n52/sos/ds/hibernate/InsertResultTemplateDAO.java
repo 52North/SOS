@@ -215,6 +215,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         for (final SweField swefield : record.getFields()) {
             if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>)
                     || helper.isDataRecord(swefield) 
+                    || helper.isDataArray(swefield) 
                     || helper.isVector(swefield))) {
                 throw new NoApplicableCodeException().withMessage(
                         "The swe:Field element of type %s is not yet supported!",

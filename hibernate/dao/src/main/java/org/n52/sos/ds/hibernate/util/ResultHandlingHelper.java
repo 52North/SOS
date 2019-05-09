@@ -555,6 +555,17 @@ public class ResultHandlingHelper {
         return true;
     }
     
+    public boolean checkDataArrayForObservedProperty(SweField swefield, String observedProperty) throws CodedException {
+        if (isDataArray(swefield) && !checkDefinition(swefield, observedProperty)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "The swe:DataArray element is currently only supported for the definition of the phenomenonTime and observedProperty. "
+                            + "The definition should be '%s' or '%s'!",
+                            PHENOMENON_TIME, observedProperty);
+        }
+        return true;
+    }
+    
     public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
         if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
@@ -598,6 +609,10 @@ public class ResultHandlingHelper {
     
     public boolean isDataRecord(SweField sweField) {
         return sweField.getElement() instanceof SweDataRecord;
+    }
+
+    public boolean isDataArray(SweField sweField) {
+        return sweField.getElement() instanceof SweDataArray;
     }
 
     public boolean isVector(SweField sweField) {

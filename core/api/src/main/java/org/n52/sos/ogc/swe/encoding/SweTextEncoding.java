@@ -38,9 +38,9 @@ public class SweTextEncoding extends SweAbstractEncoding {
 
     private String tokenSeparator;
 
-    private String decimalSeparator;
+    private String decimalSeparator = ".";
 
-    private Boolean collapseWhiteSpaces;
+    private Boolean collapseWhiteSpaces = Boolean.TRUE;
 
     public String getBlockSeparator() {
         return blockSeparator;

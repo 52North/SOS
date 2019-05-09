@@ -75,6 +75,7 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
      * Measurement values
      */
     private SweDataArray value;
+    private UoM uom;
 
     public SweDataArrayValue() {
         this(null);
@@ -96,23 +97,32 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     }
 
     @Override
-    public void setUnit(final String unit) {
-        // do nothing
-    }
-
-    @Override
-    public String getUnit() {
-        return null;
+    public void setUnit(String unit) {
+        this.uom = new UoM(unit);
+        
     }
 
     @Override
     public UoM getUnitObject() {
-        return null;
+        return uom;
     }
 
     @Override
     public void setUnit(UoM unit) {
-        // do nothing
+        this.uom = unit;
+    }
+
+    @Override
+    public String getUnit() {
+        if (uom != null) {
+            return uom.getUom();
+        }
+        return "";
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return uom != null && !uom.isEmpty();
     }
 
     /**
@@ -202,11 +212,6 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
 	@Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isEmpty();
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return false;
     }
 
     @Override

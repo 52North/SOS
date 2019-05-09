@@ -31,11 +31,13 @@ package org.n52.sos.ogc.swe;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 
 import com.google.common.collect.Lists;
@@ -78,6 +80,20 @@ public class SweDataArray extends SweAbstractDataComponent {
     public SweDataArray setValues(final List<List<String>> values) {
         this.values = values;
         return this;
+    }
+
+    public String getValueAsString() {
+        String blockSeparator = "@";
+        String tokenSeparator = "#";
+        if (isSetEncoding() && getEncoding() instanceof SweTextEncoding) {
+            blockSeparator = ((SweTextEncoding) getEncoding()).getBlockSeparator();
+            tokenSeparator = ((SweTextEncoding) getEncoding()).getTokenSeparator();
+        }
+        StringBuilder data = new StringBuilder();
+        for (List<String> list : getValues()) {
+            data.append(list.stream().collect(Collectors.joining(tokenSeparator))).append(blockSeparator);
+        }
+        return data.toString();
     }
 
     /**

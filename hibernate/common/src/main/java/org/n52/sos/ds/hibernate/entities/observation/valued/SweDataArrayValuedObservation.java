@@ -37,4 +37,12 @@ import org.n52.sos.ogc.swe.SweDataArray;
  *
  * @author Christian Autermann
  */
-public interface SweDataArrayValuedObservation extends ValuedObservation<String> {}
+public interface SweDataArrayValuedObservation extends ValuedObservation<String> {
+    
+    public String getStructure();
+
+    public void setStructure(String structure);
+
+    public boolean isSetStructure();
+
+}

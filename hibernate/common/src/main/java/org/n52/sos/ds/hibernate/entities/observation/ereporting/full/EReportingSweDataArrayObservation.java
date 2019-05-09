@@ -37,12 +37,13 @@ import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservatio
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
-public class EReportingSweDataArrayObservation
-        extends AbstractEReportingObservation<String>
+public class EReportingSweDataArrayObservation extends AbstractEReportingObservation<String>
         implements SweDataArrayObservation {
 
     private static final long serialVersionUID = 2795656873464831213L;
+
     private String value;
+    private String structure;
 
     @Override
     public String getValue() {
@@ -59,34 +60,43 @@ public class EReportingSweDataArrayObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
-    
-    
+    @Override
+    public String getStructure() {
+        return structure;
+    }
 
     @Override
-    public void accept(VoidObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void setStructure(String structure) {
+        this.structure = structure;
+    }
+
+    @Override
+    public boolean isSetStructure() {
+        return getStructure() != null && !getStructure().isEmpty();
+    }
+
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
+
+    @Override
+    public void accept(VoidObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

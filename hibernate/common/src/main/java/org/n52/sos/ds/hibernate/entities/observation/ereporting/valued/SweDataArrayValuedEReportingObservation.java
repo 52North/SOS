@@ -35,12 +35,13 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedOb
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
-public class SweDataArrayValuedEReportingObservation
-        extends AbstractValuedEReportingObservation<String>
+public class SweDataArrayValuedEReportingObservation extends AbstractValuedEReportingObservation<String>
         implements SweDataArrayValuedObservation {
 
     private static final long serialVersionUID = -3481615384030677769L;
+
     private String value;
+    private String structure;
 
     @Override
     public String getValue() {
@@ -57,20 +58,33 @@ public class SweDataArrayValuedEReportingObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getStructure() {
+        return structure;
+    }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void setStructure(String structure) {
+        this.structure = structure;
+    }
+
+    @Override
+    public boolean isSetStructure() {
+        return getStructure() != null && !getStructure().isEmpty();
+    }
+
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

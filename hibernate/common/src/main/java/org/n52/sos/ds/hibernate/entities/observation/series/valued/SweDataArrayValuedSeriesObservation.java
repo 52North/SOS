@@ -49,6 +49,7 @@ public class SweDataArrayValuedSeriesObservation extends AbstractValuedSeriesObs
     private static final long serialVersionUID = 8620387145785871292L;
 
     private String value;
+    private String structure;
 
     @Override
     public String getValue() {
@@ -68,6 +69,21 @@ public class SweDataArrayValuedSeriesObservation extends AbstractValuedSeriesObs
     @Override
     public String getValueAsString() {
         return getValue();
+    }
+
+    @Override
+    public String getStructure() {
+        return structure;
+    }
+
+    @Override
+    public void setStructure(String structure) {
+       this.structure = structure;
+    }
+
+    @Override
+    public boolean isSetStructure() {
+        return getStructure() != null && !getStructure().isEmpty();
     }
 
     @Override

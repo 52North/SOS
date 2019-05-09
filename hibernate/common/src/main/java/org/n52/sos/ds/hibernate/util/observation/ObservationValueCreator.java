@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservablePropertyGetter;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -69,6 +72,7 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
@@ -157,8 +161,18 @@ public class ObservationValueCreator
     @Override
     public SweDataArrayValue visit(SweDataArrayValuedObservation o)
             throws OwsExceptionReport {
-        XmlObject xml = XmlHelper.parseXmlString(o.getValue());
+        XmlObject xml = XmlHelper.parseXmlString(o.getStructure());
         SweDataArray array = (SweDataArray) CodingHelper.decodeXmlElement(xml);
+        array.setXml(null);
+        List<List<String>> values = new LinkedList<>();
+        for (String block : o.getValue().split(((SweTextEncoding)array.getEncoding()).getBlockSeparator())) {
+            List<String> v = new LinkedList<>();
+            for (String value : block.split(((SweTextEncoding)array.getEncoding()).getTokenSeparator())) {
+                v.add(value);
+            }
+            values.add(v);
+        }
+        array.setValues(values);
         return new SweDataArrayValue(array);
     }
 

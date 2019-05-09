@@ -39,7 +39,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.config.SettingsManager;
 import org.n52.sos.ds.AbstractInsertResultDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -58,7 +57,6 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
@@ -378,7 +376,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         final Map<Integer, String> procedure = new HashMap<Integer, String>(record.getFields().size() - 1);
 
         int j = 0;
-        getIndexFor(record, j, observedProperties, units, featureOfInterest, procedure, Sets.newHashSet(resultTimeIndex, phenomenonTimeIndex));
+        getIndexFor(record, j, observedProperties, units, featureOfInterest, procedure, Sets.newHashSet(resultTimeIndex, phenomenonTimeIndex), encoding);
         
         final MultiObservationValues<SweDataArray> sosValues =
                 createObservationValueFrom(blockValues, record, encoding, resultTimeIndex, phenomenonTimeIndex);
@@ -406,7 +404,8 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             Map<Integer, String> units,
             Map<Integer, String> featureOfInterest,
             Map<Integer, String> procedure,
-            HashSet<Integer> reserved)
+            HashSet<Integer> reserved,
+            SweAbstractEncoding encoding)
                     throws CodedException {
         for (final SweField swefield : record.getFields()) {
             if (!reserved.contains(j)) {
@@ -428,7 +427,17 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                     getIndexFor((SweDataRecord) swefield.getElement(), j,
                             observedProperties,
                             units, 
-                            featureOfInterest, procedure, reserved);
+                            featureOfInterest, procedure, reserved, encoding);
+                } else if (swefield.getElement() instanceof SweDataArray
+                        && ((SweDataArray) swefield.getElement()).getElementType() instanceof SweDataRecord) {
+                    SweDataArray array = (SweDataArray) swefield.getElement();
+                    if (!array.isSetEncoding()) {
+                        array.setEncoding(encoding);
+                    }
+                    getIndexFor((SweDataRecord) array.getElementType(), j,
+                            observedProperties,
+                            units, 
+                            featureOfInterest, procedure, reserved, encoding);
                 } else if (swefield.getElement() instanceof SweVector) {
                     helper.checkVectorForSamplingGeometry(swefield);
                 } else {

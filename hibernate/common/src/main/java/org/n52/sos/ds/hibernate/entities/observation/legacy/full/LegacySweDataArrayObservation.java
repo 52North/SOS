@@ -52,6 +52,7 @@ public class LegacySweDataArrayObservation
 
     private static final long serialVersionUID = 627306968328720439L;
     private String value;
+    private String structure;
 
     @Override
     public String getValue() {
@@ -66,6 +67,21 @@ public class LegacySweDataArrayObservation
     @Override
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
+    }
+    
+    @Override
+    public String getStructure() {
+        return structure;
+    }
+
+    @Override
+    public void setStructure(String structure) {
+       this.structure = structure;
+    }
+
+    @Override
+    public boolean isSetStructure() {
+        return getStructure() != null && !getStructure().isEmpty();
     }
 
     @Override

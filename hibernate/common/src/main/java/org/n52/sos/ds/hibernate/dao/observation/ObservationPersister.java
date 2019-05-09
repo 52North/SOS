@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,12 +99,16 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
+import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class ObservationPersister implements ValueVisitor<Observation<?>>, ProfileLevelVisitor<Observation<?>> {
@@ -233,7 +236,18 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
     @Override
     public Observation<?> visit(SweDataArrayValue value)
             throws OwsExceptionReport {
-        return persist(observationFactory.sweDataArray(), value.getValue().getXml());
+        SweDataArrayObservation sweDataArray = observationFactory.sweDataArray();
+        String data = value.getValue().getValueAsString();
+        value.getValue().getValues().clear();
+        if (!value.getValue().isSetXml()) {
+            Map<HelperValues, String> map = Maps.newEnumMap(HelperValues.class);
+            map.put(HelperValues.DOCUMENT, null);
+            sweDataArray
+                    .setStructure(CodingHelper.encodeObjectToXmlText(SweConstants.NS_SWE_20, value.getValue(), map));
+        } else {
+            sweDataArray.setStructure(value.getValue().getXml());
+        }
+        return persist(sweDataArray, data);
     }
 
     @Override
@@ -640,7 +654,7 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
 
         @Override
         public String visit(SweDataArrayObservation o) throws OwsExceptionReport {
-            return "swedataarray";
+            return "quantity";
         }
 
         @Override

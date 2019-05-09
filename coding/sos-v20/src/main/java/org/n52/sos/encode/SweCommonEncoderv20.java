@@ -807,7 +807,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     private UnitReference createUnitReference(final UoM uom) {
         final UnitReference unitReference =
                 UnitReference.Factory.newInstance(getXmlOptions());
-        if (!uom.isSetLink() && (uom.getUom().startsWith("urn:") || uom.getUom().startsWith("http://"))) {
+        if (uom.getUom().startsWith("urn:") || uom.getUom().startsWith("http://")) {
             unitReference.setHref(uom.getUom());
         } else {
             unitReference.setCode(uom.getUom());

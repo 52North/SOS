@@ -44,13 +44,13 @@ import org.n52.sos.util.StringHelper;
  *
  * @author Christian Autermann
  */
-public class SweDataArrayValuedLegacyObservation
-        extends AbstractValuedLegacyObservation<String>
+public class SweDataArrayValuedLegacyObservation extends AbstractValuedLegacyObservation<String>
         implements SweDataArrayValuedObservation {
 
     private static final long serialVersionUID = -2194271934528225475L;
 
     private String value;
+    private String structure;
 
     @Override
     public String getValue() {
@@ -66,21 +66,34 @@ public class SweDataArrayValuedLegacyObservation
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getStructure() {
+        return structure;
+    }
+
+    @Override
+    public void setStructure(String structure) {
+        this.structure = structure;
+    }
+
+    @Override
+    public boolean isSetStructure() {
+        return getStructure() != null && !getStructure().isEmpty();
+    }
+
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

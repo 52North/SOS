@@ -1,0 +1,10 @@
+<div ng-controller='SwcTooltipCtrl'>
+    <div>
+        <swc-label-mapper label="timeseries.station.properties.label || timeseries.seriesParameters.platform.label"></swc-label-mapper>
+    </div>
+    <div>
+        <swc-label-mapper label="timeseries.parameters.phenomenon.label || timeseries.seriesParameters.phenomenon.label"></swc-label-mapper>
+    </div>
+    <div>{{value}} <swc-label-mapper ng-if="timeseries.uom" label="timeseries.uom"></swc-label-mapper></div>
+    <div>{{time| date: 'HH:mm'}} Uhr</div>
+</div>

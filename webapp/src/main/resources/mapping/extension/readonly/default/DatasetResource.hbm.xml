@@ -57,59 +57,5 @@
                 <many-to-many class="DatasetEntity" column="referenceseriesid" unique="true" />
             </list>
         </subclass>
-
-        <subclass discriminator-value="text" name="TextDatasetEntity">
-            <bag fetch="select" inverse="true" name="observations" table="observation">
-                <key column="observationid" />
-                <one-to-many class="TextDataEntity" />
-            </bag>
-        </subclass>
-
-        <subclass discriminator-value="category" name="CategoryDatasetEntity">
-            <bag fetch="select" inverse="true" name="observations" table="observation">
-                <key column="observationid" />
-                <one-to-many class="CategoryDataEntity" />
-            </bag>
-        </subclass>
-
-        <subclass discriminator-value="count" name="CountDatasetEntity">
-            <bag fetch="select" inverse="true" name="observations" table="observation">
-                <key column="observationid" />
-                <one-to-many class="CountDataEntity" />
-            </bag>
-        </subclass>
-
-        <subclass discriminator-value="quantity-profile" name="QuantityProfileDatasetEntity">
-            <property name="verticalParameterName" formula="'depth'" type="string" />
-            <property name="verticalFromParameterName" formula="'fromDepth'" type="string" />
-            <property name="verticalToParameterName" formula="'toDepth'" type="string" />
-            <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false" />
-            <bag fetch="select" inverse="true" name="observations" table="observation">
-                <key column="observationid" />
-                <one-to-many class="ProfileDataEntity" />
-            </bag>
-        </subclass>
-
-        <subclass discriminator-value="category-profile" name="CategoryProfileDatasetEntity">
-            <property name="verticalParameterName" formula="'depth'" type="string" />
-            <property name="verticalFromParameterName" formula="'fromDepth'" type="string" />
-            <property name="verticalToParameterName" formula="'toDepth'" type="string" />
-            <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false" />
-            <bag fetch="select" inverse="true" name="observations" table="observation">
-                <key column="observationid" />
-                <one-to-many class="ProfileDataEntity" />
-            </bag>
-        </subclass>
-
-        <subclass discriminator-value="text-profile" name="TextProfileDatasetEntity">
-            <property name="verticalParameterName" formula="'depth'" type="string" />
-            <property name="verticalFromParameterName" formula="'fromDepth'" type="string" />
-            <property name="verticalToParameterName" formula="'toDepth'" type="string" />
-            <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false" />
-            <bag fetch="select" inverse="true" name="observations" table="observation">
-                <key column="observationid" />
-                <one-to-many class="ProfileDataEntity" />
-            </bag>
-        </subclass>
     </class>
 </hibernate-mapping>

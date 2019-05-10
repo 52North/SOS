@@ -6,6 +6,7 @@
             <column name="observationid"/>
             <generator class="assigned"/>
         </id>
+        <discriminator formula="(SELECT 'swearray')" type="string"/>
         <property column="seriesid" name="seriesPkid" type="long"/>
         <property column="phenomenontimestart" name="timestart" type="timestamp"/>
         <property column="phenomenontimeend" name="timeend" type="timestamp"/>
@@ -27,36 +28,9 @@
             <one-to-many class="org.n52.series.db.beans.parameter.ObservationParameter"/>
         </set>
 
-        <joined-subclass extends="DataEntity" name="QuantityDataEntity" table="numericvalue">
-            <key column="observationid"/>
-            <property column="value" name="value" type="big_decimal"/>
+        <subclass extends="DataEntity" name="QuantityDataEntity" discriminator-value="swearray">
+            <property column="swe_array_value" name="value" type="text"/>
             <property name="valueType" formula="'quantity'" />
-        </joined-subclass>
-
-        <joined-subclass extends="DataEntity" name="TextDataEntity" table="textvalue">
-            <key column="observationid"/>
-            <property column="value" name="value" type="string"/>
-            <property name="valueType" formula="'text'" />
-        </joined-subclass>
-
-        <joined-subclass extends="DataEntity" name="CategoryDataEntity" table="categoryvalue">
-            <key column="observationid"/>
-            <property column="value" name="value" type="string"/>
-            <property name="valueType" formula="'category'" />
-        </joined-subclass>
-
-        <joined-subclass extends="DataEntity" name="CountDataEntity" table="countvalue">
-            <key column="observationid"/>
-            <property column="value" name="value" type="integer"/>
-            <property name="valueType" formula="'count'" />
-        </joined-subclass>
-
-        <joined-subclass extends="DataEntity" name="ProfileDataEntity" table="profilevalue">
-            <key column="observationid"/>
-            <set name="value" table="profileobservation">
-                <key column="observationid" />
-                <many-to-many class="DataEntity" column="childObservationId" />
-            </set>
-        </joined-subclass>
+        </subclass>
     </class>
 </hibernate-mapping>

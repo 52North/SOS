@@ -1,0 +1,6 @@
+<div class="legend-entry">
+    <div ng-repeat="entry in $ctrl.entries">
+        <swc-legend-entry ng-if="!entry.ecmwfGroup" timeseries="entry"></swc-legend-entry>
+        <swc-ecmwf-legend-entry ng-if="entry.ecmwfGroup" item="entry"></swc-ecmwf-legend-entry>
+    </div>
+</div>

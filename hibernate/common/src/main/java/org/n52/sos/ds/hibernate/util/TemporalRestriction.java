@@ -316,13 +316,21 @@ public abstract class TemporalRestriction {
      * @return the <tt>Criterion</tt>
      */
     protected Criterion lower(String property, Date value) {
-        return ALLOW_EQUALITY
+        return lower(property, value, ALLOW_EQUALITY);
+    }
+    
+    protected Criterion lower(String property, Date value, boolean allowEquality) {
+        return allowEquality
                 ? Restrictions.le(property, value)
                 : Restrictions.lt(property, value);
     }
     
     protected Criterion lower(String property, String value) {
-        return ALLOW_EQUALITY
+        return lower(property, value, ALLOW_EQUALITY);
+    }
+    
+    protected Criterion lower(String property, String value, boolean allowEquality) {
+        return allowEquality
                 ? Restrictions.le(property, getPlaceHolder(value))
                 : Restrictions.lt(property, getPlaceHolder(value));
     }
@@ -339,13 +347,21 @@ public abstract class TemporalRestriction {
      * @return the <tt>Criterion</tt>
      */
     protected Criterion greater(String property, Date value) {
-        return ALLOW_EQUALITY
+        return greater(property, value, ALLOW_EQUALITY);
+    }
+
+    protected Criterion greater(String property, Date value, boolean allowEquality) {
+        return allowEquality
                 ? Restrictions.ge(property, value)
                 : Restrictions.gt(property, value);
     }
     
     protected Criterion greater(String property, String value) {
-        return ALLOW_EQUALITY
+        return greater(property, value, ALLOW_EQUALITY);
+    }
+    
+    protected Criterion greater(String property, String value, boolean allowEquality) {
+        return allowEquality
                 ? Restrictions.ge(property, getPlaceHolder(value))
                 : Restrictions.gt(property, getPlaceHolder(value));
     }
@@ -779,8 +795,8 @@ public abstract class TemporalRestriction {
             if (isOtherPeriodFromReducedPrecisionInstant) {
                 //time period was created from a reduced precision instant
                 return isSetCount() 
-                        ? Restrictions.and(greater(selfPosition, START), lower(selfPosition, END))
-                        : Restrictions.and(greater(selfPosition, otherBegin), lower(selfPosition, otherEnd));
+                        ? Restrictions.and(greater(selfPosition, START, true), lower(selfPosition, END, true))
+                        : Restrictions.and(greater(selfPosition, otherBegin, true), lower(selfPosition, otherEnd, true));
             } else {
                 return null;
             }
@@ -792,8 +808,8 @@ public abstract class TemporalRestriction {
             if (isOtherPeriodFromReducedPrecisionInstant) {
                 //time period was created from a reduced precision instant
                 return isSetCount() 
-                        ? Restrictions.and(greater(selfBegin, START), lower(selfBegin, END))
-                        : Restrictions.and(greater(selfBegin, otherBegin), lower(selfBegin, otherEnd));
+                        ? Restrictions.and(greater(selfBegin, START, true), lower(selfBegin, END, true))
+                        : Restrictions.and(greater(selfBegin, otherBegin, true), lower(selfBegin, otherEnd, true));
             } else {
                 return null;
             }

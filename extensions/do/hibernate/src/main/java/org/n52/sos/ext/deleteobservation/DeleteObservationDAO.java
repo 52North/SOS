@@ -53,7 +53,6 @@ import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
@@ -204,17 +203,25 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
         boolean temporalFilters = filters != null && !filters.isEmpty();
         Set<Series> modifiedSeries = new HashSet<>();
         StringBuilder builder = new StringBuilder();
-        builder.append("update ");
-        builder.append(DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-            builder.append(" set deleted = :deleted");
+        boolean physically = true;
+        if (physically) {
+            builder.append("delete ");
+            builder.append(DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
+        } else {
+            builder.append("update ");
+            builder.append(DaoFactory.getInstance().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
+                builder.append(" set deleted = :deleted");
+        }
+       
         builder.append(" where seriesid = :id");
         if (temporalFilters) {
             builder.append(" AND (" + TemporalRestrictions.filterHql(filters).toString()).append(")");
         }
         for (Series s : serieses) {
-            Query q = session.createQuery(builder.toString())
-                    .setBoolean("deleted", true)
-                    .setLong("id", s.getSeriesId());
+            Query q = session.createQuery(builder.toString()).setLong("id", s.getSeriesId());
+            if (!physically) {
+                q.setBoolean("deleted", true);
+            }
             if (temporalFilters) {
                 checkForPlaceholder(q, filters);
             }
@@ -241,9 +248,20 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                 if (q.getComment().contains(":" + TemporalRestriction.END)) {
                     q.setParameter(TemporalRestriction.END + count, tp.getEnd().toDate(), UtcTimestampType.INSTANCE);
                 }
-            } if (filter.getTime() instanceof TimeInstant) {
+            }
+            if (filter.getTime() instanceof TimeInstant) {
                 TimeInstant ti = (TimeInstant) filter.getTime();
-                q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue().toDate(), UtcTimestampType.INSTANCE);
+                if (q.getComment().contains(":" + TemporalRestriction.START)
+                        && q.getComment().contains(":" + TemporalRestriction.END)) {
+                    q.setParameter(TemporalRestriction.START + count, ti.getValue().toDate(),
+                            UtcTimestampType.INSTANCE);
+                    q.setParameter(TemporalRestriction.END + count,
+                            DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(ti.getValue(),
+                                    ti.getRequestedTimeLength()).toDate(),
+                            UtcTimestampType.INSTANCE);
+                } else {
+                    q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue().toDate(), UtcTimestampType.INSTANCE);
+                }
             }
             count++;
         }

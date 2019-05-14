@@ -63,7 +63,7 @@ public class DeleteObservationRequestOperator
     @Override
     public DeleteObservationResponse receive(DeleteObservationRequest request) throws OwsExceptionReport {
         DeleteObservationResponse response = getDao().deleteObservation(request);
-        SosEventBus.fire(new DeleteObservationEvent(request, response));
+//        SosEventBus.fire(new DeleteObservationEvent(request, response));
         return response;
     }
 

@@ -1,9 +1,0 @@
-<div ng-if="$ctrl.loading">
-    loading...
-</div>
-<div ng-if="!$ctrl.loading && $ctrl.items.length === 0">
-    no results found
-</div>
-<div class="selector-entry" ng-repeat="item in $ctrl.items | orderBy:'+label'" ng-click="$ctrl.selectItem(item)" ng-class="{'selected': $ctrl.selectionId === item.id}">
-    <swc-label-mapper label="item.label"></swc-label-mapper>
-</div>

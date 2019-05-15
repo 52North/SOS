@@ -47,6 +47,7 @@ import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
@@ -100,9 +101,19 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             SingleObservationValue<?> observationValue = (SingleObservationValue<?>) observation.getValue();
             writeDefaultPointMetadata(observationValue, observationValue.getValue().getUnit());
             writeNewLine();
-            String time = getTimeString(observationValue.getPhenomenonTime());
-            writePoint(time, getValue(observation.getValue().getValue()));
-            writeNewLine();
+            if (observationValue.getValue() instanceof SweDataArrayValue) {
+                SweDataArrayValue sweDataArrayValue = (SweDataArrayValue) observationValue.getValue();
+                for (List<String> list : sweDataArrayValue.getValue().getValues()) {
+                    for (int i = 0; i < list.size(); i = i + 2) {
+                        writePoint(list.get(i), list.get(i + 1));
+                        writeNewLine();
+                    }
+                }
+            } else {
+                String time = getTimeString(observationValue.getPhenomenonTime());
+                writePoint(time, getValue(observation.getValue().getValue()));
+                writeNewLine();
+            }
             close();
         } else if (observation.getValue() instanceof MultiObservationValues) {
             // XML streaming to client

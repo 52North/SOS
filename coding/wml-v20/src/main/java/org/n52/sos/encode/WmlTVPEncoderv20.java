@@ -52,6 +52,7 @@ import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.series.wml.MeasurementTimeseriesMetadata;
@@ -112,6 +113,8 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
             Collections.singletonMap(Sos2Constants.SERVICEVERSION, Collections.singleton(WaterMLConstants.NS_WML_20)));
+
+    private ObservationValue<?> SweDataArrayValue;
 
     public WmlTVPEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -292,29 +295,38 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             String time = getTimeString(singleObservationValue.getPhenomenonTime());
             unit = singleObservationValue.getValue().getUnit();
             String value = null;
-            if (observationValue.getValue() instanceof QuantityValue) {
-                QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
-                if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
-                    value = Double.toString(quantityValue.getValue().doubleValue());
+            if (observationValue.getValue() instanceof SweDataArrayValue) {
+                SweDataArrayValue sweDataArrayValue = (SweDataArrayValue) observationValue.getValue();
+                for (List<String> list : sweDataArrayValue.getValue().getValues()) {
+                    for (int i = 0; i < list.size(); i = i + 2) {
+                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), list.get(i), list.get(i + 1));
+                    }
                 }
-            } else if (observationValue.getValue() instanceof CountValue) {
-                CountValue countValue = (CountValue) singleObservationValue.getValue();
-                if (countValue.getValue() != null) {
-                    value = Integer.toString(countValue.getValue().intValue());
-                }
-            } else if (observationValue instanceof ProfileValue) {
-                ProfileValue profileValue = (ProfileValue)observationValue;
-                if (profileValue.isSetValue()) {
-                    if (profileValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
-                        QuantityValue quantityValue = (QuantityValue)profileValue.getValue().iterator().next().getSimpleValue();
-                        if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
-                            value = Double.toString(quantityValue.getValue().doubleValue());
+            } else {
+                if (observationValue.getValue() instanceof QuantityValue) {
+                    QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
+                    if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
+                        value = Double.toString(quantityValue.getValue().doubleValue());
+                    }
+                } else if (observationValue.getValue() instanceof CountValue) {
+                    CountValue countValue = (CountValue) singleObservationValue.getValue();
+                    if (countValue.getValue() != null) {
+                        value = Integer.toString(countValue.getValue().intValue());
+                    }
+                } else if (observationValue instanceof ProfileValue) {
+                    ProfileValue profileValue = (ProfileValue) observationValue;
+                    if (profileValue.isSetValue()) {
+                        if (profileValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
+                            QuantityValue quantityValue =
+                                    (QuantityValue) profileValue.getValue().iterator().next().getSimpleValue();
+                            if (quantityValue.isSetValue() && !quantityValue.getValue().equals(Double.NaN)) {
+                                value = Double.toString(quantityValue.getValue().doubleValue());
+                            }
                         }
                     }
-                } 
+                }
+                addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
             }
-            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                    value);
         } else if (observationValue instanceof MultiObservationValues) {
             MultiObservationValues<?> mov = (MultiObservationValues<?>) observationValue;
             TVPValue tvpValue = (TVPValue) mov.getValue();

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,6 +61,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -212,6 +213,10 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
                 NamedValue<Geometry> nv = new NamedValue<>();
                 nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
                 return nv;
+            } else if (value.has(JSONConstants.NAME)) {
+                NamedValue<String> nv = new NamedValue<>();
+                nv.setValue(parseTextValue(value));
+                return nv;
             }
         }
         throw new NotYetSupportedException(value.toString());
@@ -251,6 +256,15 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 
     private QuantityValue parseQuantityValue(JsonNode node) throws OwsExceptionReport {
        return new QuantityValue(node.path(JSONConstants.VALUE).doubleValue(), node.path(JSONConstants.UOM).textValue());
+    }
+
+    private Value<String> parseTextValue(JsonNode node) {
+        TextValue textValue = new TextValue(node.path(JSONConstants.VALUE).textValue());
+        textValue.setName(node.path(JSONConstants.NAME).textValue());
+        if (node.has(JSONConstants.DESCRIPTION)) {
+            textValue.setDescription(node.path(JSONConstants.DESCRIPTION).textValue());
+        }
+        return textValue;
     }
 
     private ObservationValue<?> parseTextObservationValue(JsonNode node) throws OwsExceptionReport {

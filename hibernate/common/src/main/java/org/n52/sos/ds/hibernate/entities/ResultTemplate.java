@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -51,6 +51,8 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
 
     public static final String ID = "resultTemplateId";
 
+    public static final String CATEGORY = "category";
+
     private long resultTemplateId;
 
     private Offering offering;
@@ -60,6 +62,8 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     private Procedure procedure;
 
     private AbstractFeatureOfInterest featureOfInterest;
+    
+    private Category category;
 
     private String identifier;
 
@@ -129,6 +133,18 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
     
     public boolean isSetFeatureOfInterest() {
         return getFeatureOfInterest() != null;
+    }
+    
+    public Category getCategory() {
+        return this.category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public boolean isSetCategory() {
+        return getCategory() != null;
     }
 
     @Override

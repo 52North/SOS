@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.sos.ds.I18NDAO;
+import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.metadata.I18NObservablePropertyMetadata;
@@ -47,11 +47,11 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
     public void enrich()
             throws OwsExceptionReport {
         if (isSetLocale()) {
-            I18NDAO<I18NObservablePropertyMetadata> dao = I18NDAORepository.
+            HibernateI18NDAO<I18NObservablePropertyMetadata> dao = (HibernateI18NDAO) I18NDAORepository.
                     getInstance().getDAO(I18NObservablePropertyMetadata.class);
             if (dao != null) {
                 Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
-                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(checkForPublished(ids));
+                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(checkForPublished(ids), getSession());
                 for (I18NObservablePropertyMetadata i18n : metadata) {
                     OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
                     Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale());

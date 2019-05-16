@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2018 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2019 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -83,7 +83,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
             final org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature =
                     new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
                             getMediaMonitored(emf.getMediaMonitored()));
-            addNameAndDescription(i18n, emf, emFeature, featureDAO);
+            addNameAndDescription(i18n, emf, emFeature, featureDAO, s);
             emFeature.setGeometry(createGeometry(emf, s));
             // add measurementRegime, mobile, operationalActivityPeriod(Set)
             emFeature.setMeasurementRegime(new ReferenceType(emf.getMeasurementRegime()));

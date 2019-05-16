@@ -15,8 +15,8 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
-        <series.api.version>2.0.0-alpha.7</series.api.version>
-        <series.db.version>2.0.0-SNAPSHOT</series.db.version>
+        <series.api.version>2.0.0-alpha.7-ecmwf</series.api.version>
+        <series.db.version>2.0.0-ecmwf-alpha.3</series.db.version>
         <helgoland.version>1.0.0</helgoland.version>
     </properties>
     <build>
@@ -863,7 +863,7 @@
         <dependency>
           <groupId>org.n52.series-api.db</groupId>
           <artifactId>sos-integration</artifactId>
-          <version>${series.db.version}</version>
+          <version>2.0.0-alpha.3</version>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>

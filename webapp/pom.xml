@@ -867,6 +867,10 @@
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
+              <groupId>org.n52.series-api.db</groupId>
+              <artifactId>dao</artifactId>
+            </exclusion>
+            <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
             </exclusion>

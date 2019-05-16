@@ -93,7 +93,7 @@ public class SweDataArray extends SweAbstractDataComponent {
         for (List<String> list : getValues()) {
             data.append(list.stream().collect(Collectors.joining(tokenSeparator))).append(blockSeparator);
         }
-        return data.toString();
+        return data.toString().substring(0, data.toString().length() - 1);
     }
 
     /**

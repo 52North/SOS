@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.4.5</version>
+        <version>4.4.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -14,8 +14,8 @@
         <sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
-        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
-        <series.api.version>2.0.0-alpha.6</series.api.version>
+        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
+        <series.api.version>2.0.0-alpha.7</series.api.version>
         <series.db.version>2.0.0-alpha.3</series.db.version>
         <helgoland.version>1.0.0</helgoland.version>
     </properties>
@@ -1034,7 +1034,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
+                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/config/datasource.properties" />
                                     </tasks>
                                 </configuration>
                             </execution>

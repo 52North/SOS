@@ -133,7 +133,7 @@ public class SQLiteSessionFactory extends AbstractSessionFactoryProvider {
     protected String getFilename() {
         String path = null;
         try {
-            path = SosContextListener.getPath();
+            path = SosContextListener.getConfigPath();
         } catch (Throwable t) {
         }
         if (path == null) {

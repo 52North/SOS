@@ -169,6 +169,7 @@ This project includes:
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
   ClassLoader Leak Prevention library under Apache 2
+  com.vividsolutions:jts-core under GNU Lesser General Public License, Version 2.1
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0

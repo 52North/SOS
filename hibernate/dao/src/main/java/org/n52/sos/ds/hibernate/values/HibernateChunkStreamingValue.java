@@ -84,7 +84,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     @Override
     public boolean hasNextValue() throws OwsExceptionReport {
         boolean next = false;
-        if (valuesResult == null || !valuesResult.hasNext()) {
+        if ((valuesResult == null || !valuesResult.hasNext()) && getSession().isOpen()) {
             if (!noChunk) {
                 getNextResults();
                 if (chunkSize <= 0 || (valueCounter != 0 && valueCounter < chunkSize)) {

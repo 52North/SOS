@@ -5,11 +5,11 @@
   "aggregateServices": true,
   "saveStatus": true,
   "restApiUrls": {
-        "http://localhost:8080/52n-sos-webapp/api/": "localhost"
+        "http://efas-sos-dev.ecmwf.int:8080/52n-sos-webapp/api/": "localhost"
     },
     "defaultProvider": {
         "serviceID": "1",
-        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/"
+        "apiUrl": "http://efas-sos-dev.ecmwf.int:8080/52n-sos-webapp/api/"
     },
   "chartOptions": {
     "yaxis": {

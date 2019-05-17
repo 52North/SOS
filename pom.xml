@@ -98,7 +98,7 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>6.0.0</arctic-sea.version>
+        <arctic-sea.version>7.0.0-SNAPSHOT</arctic-sea.version>
 
         <dataset.api.version>2.0.1-alpha.4</dataset.api.version>
         <dataset.dao.version>3.0.0-alpha.5</dataset.dao.version>
@@ -109,8 +109,8 @@
         <org.springframework.version>5.1.6.RELEASE</org.springframework.version>
         <aspectj.version>1.8.9</aspectj.version>
         <saxon.version>9.8.0-3</saxon.version>
-        <elasticsearch.version>2.1.0</elasticsearch.version>
-        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
+        <elasticsearch.version>2.4.6</elasticsearch.version>
+        <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
     </properties>
 
     <dependencyManagement>
@@ -1498,6 +1498,7 @@
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>3.0.2</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
@@ -1913,19 +1914,23 @@
                         <failOnError>false</failOnError>
                     </configuration>
                 </plugin>
-                <!-- FIXME remove this once all problems are resolved -->
+                <!-- FIXME remove this once all problems are resolved
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <configuration>
                         <failOnViolation>false</failOnViolation>
                     </configuration>
-                </plugin>
-                <!-- FIXME remove this once all problems are resolved -->
+                </plugin> -->
+               
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.20</version>
                     <configuration>
+                      <!-- see: https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class -->
+                        <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+                         <!-- FIXME remove this once all problems are resolved -->
                         <testFailureIgnore>true</testFailureIgnore>
                     </configuration>
                 </plugin>
@@ -1967,15 +1972,6 @@
                     <version>1.6.5</version>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20</version>
-                    <configuration>
-                        <!-- see: https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class -->
-                        <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>

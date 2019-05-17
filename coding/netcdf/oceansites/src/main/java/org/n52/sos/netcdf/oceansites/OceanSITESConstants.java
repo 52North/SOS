@@ -32,7 +32,6 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.OGCConstants;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableListMultimap;
 
 /**
  * Constants interface for OceanSITES specific constants.
@@ -54,20 +53,20 @@ public interface OceanSITESConstants {
     public static MediaType CONTENT_TYPE_NETCDF_OCEANSITES = new MediaType("application", "netcdf", "profile",
             OCEANSITES);
 
-    public static MediaType CONTENT_TYPE_NETCDF_3_OCEANSITES = new MediaType("application", "netcdf",
-            ImmutableListMultimap.of("version", "3", "profile", OCEANSITES));
+    public static MediaType CONTENT_TYPE_NETCDF_3_OCEANSITES = new MediaType("application", "netcdf").withParameter(
+            "version", "3").withParameter("profile", OCEANSITES);
 
-    public static MediaType CONTENT_TYPE_NETCDF_4_OCEANSITES = new MediaType("application", "netcdf",
-            ImmutableListMultimap.of("version", "4", "profile", OCEANSITES));
+    public static MediaType CONTENT_TYPE_NETCDF_4_OCEANSITES = new MediaType("application", "netcdf").withParameter(
+            "version", "4").withParameter("profile", OCEANSITES);
 
-    public static MediaType CONTENT_TYPE_NETCDF_ZIP_OCEANSITES = new MediaType("application", "zip",
-            ImmutableListMultimap.of("subtype", "netcdf", "profile", OCEANSITES));
+    public static MediaType CONTENT_TYPE_NETCDF_ZIP_OCEANSITES = new MediaType("application", "zip").withParameter(
+            "subtype", "netcdf").withParameter("profile", OCEANSITES);
 
-    public static MediaType CONTENT_TYPE_NETCDF_3_ZIP_OCEANSITES = new MediaType("application", "zip",
-            ImmutableListMultimap.of("subtype", "netcdf", "version", "3", "profile", OCEANSITES));
+    public static MediaType CONTENT_TYPE_NETCDF_3_ZIP_OCEANSITES = new MediaType("application", "zip").withParameter(
+            "subtype", "netcdf").withParameter("version", "3").withParameter("profile", OCEANSITES);
 
-    public static MediaType CONTENT_TYPE_NETCDF_4_ZIP_OCEANSITES = new MediaType("application", "zip",
-            ImmutableListMultimap.of("subtype", "netcdf", "version", "4", "profile", OCEANSITES));
+    public static MediaType CONTENT_TYPE_NETCDF_4_ZIP_OCEANSITES = new MediaType("application", "zip").withParameter(
+            "subtype", "netcdf").withParameter("version", "4").withParameter("profile", OCEANSITES);
 
     String EPSG_4326 = OGCConstants.URN_DEF_CRS_EPSG + "4326";
 

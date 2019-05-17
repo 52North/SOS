@@ -35,19 +35,8 @@ import java.util.Set;
 import org.n52.faroe.SettingDefinition;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 
 public class MockDatasource implements Datasource {
-
-    @Override
-    public String getConnectionProviderIdentifier() {
-        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
-    }
-
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
 
     @Override
     public String getDialectName() {

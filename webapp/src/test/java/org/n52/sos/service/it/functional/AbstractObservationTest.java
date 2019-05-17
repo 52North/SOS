@@ -78,7 +78,6 @@ import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.shetland.w3c.W3CConstants;
-import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
 import org.n52.svalbard.util.XmlOptionsHelper;
 
@@ -92,7 +91,7 @@ import net.opengis.sos.x20.SosInsertionMetadataType;
 import net.opengis.swes.x20.InsertSensorDocument;
 import net.opengis.swes.x20.InsertSensorType;
 
-public abstract class AbstractObservationTest extends AbstractComplianceSuiteTest {
+public abstract class AbstractObservationTest extends AbstractCacheInitializationTest {
     private static final GeometryFactory GEOM_FACTORY_4326 = JTSHelper.getGeometryFactoryForSRID(4326);
     private static final GeometryFactory GEOM_FACTORY_4979 = JTSHelper.getGeometryFactoryForSRID(4979);
     private static final String APPLICATION_XML = MediaTypes.APPLICATION_XML.toString();
@@ -249,7 +248,7 @@ public abstract class AbstractObservationTest extends AbstractComplianceSuiteTes
     }
 
     protected static XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
+        return new XmlOptionsHelper().get();
     }
 
     protected static class NamespaceContextImpl implements NamespaceContext {

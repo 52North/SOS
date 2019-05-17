@@ -30,10 +30,11 @@ package org.n52.sos.web.admin;
 
 import java.sql.SQLException;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -55,12 +56,15 @@ public class AdminDatasourceUpdateScriptController extends AbstractController {
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceUpdateScriptController.class);
 
+    @Inject
+    private ConnectionProvider connectionProvider;
+
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getChangeScript() throws ConnectionProviderException, SQLException {
-        ConnectionProvider connectionProvider = Configurator.getInstance().getDataConnectionProvider();
-        if (connectionProvider instanceof UpdateableConnectionProvider && ((UpdateableConnectionProvider)connectionProvider).supportsUpdateScript()) {
-            String updateScript = ((UpdateableConnectionProvider)connectionProvider).getUpdateScript();
+        if (connectionProvider instanceof UpdateableConnectionProvider
+                && ((UpdateableConnectionProvider) connectionProvider).supportsUpdateScript()) {
+            String updateScript = ((UpdateableConnectionProvider) connectionProvider).getUpdateScript();
             if (updateScript.isEmpty()) {
                 return "The database is current with the data model. No updates necessary.";
             } else {

@@ -90,9 +90,5 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 //        return super.getStorage3DEPSG();
         return 0;
     }
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
 
 }

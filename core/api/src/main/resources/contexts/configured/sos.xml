@@ -33,9 +33,6 @@
     <bean id="encoderRepository"
           class="org.n52.sos.coding.encode.SosEncoderRepository" />
 
-    <bean id="configurator"
-          class="org.n52.sos.service.Configurator" />
-
     <bean id="procedureDescriptionSettings"
           class="org.n52.sos.service.ProcedureDescriptionSettings" />
 

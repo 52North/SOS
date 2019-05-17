@@ -1030,16 +1030,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void executePostCreateSchema(Map<String, Object> databaseSettings) {
     }
 
-    @Override
-    public String getConnectionProviderIdentifier() {
-        return HibernateDatasourceConstants.ORM_CONNECTION_PROVIDER_IDENTIFIER;
-    }
-
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
-
     /**
      * Workaround for Java {@link DriverManager} issue with more than one
      * registered drivers. Only the first {@link SQLException} is catched and

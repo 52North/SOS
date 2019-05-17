@@ -41,7 +41,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -77,11 +76,6 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
     @Override
     public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         return new ReferencedEnvelope(null, getStorageEPSG());
-    }
-
-    @Override
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override

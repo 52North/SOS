@@ -28,7 +28,6 @@
  */
 package org.n52.sos.web.admin;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.web.common.ControllerConstants;

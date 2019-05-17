@@ -41,7 +41,6 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,11 +135,11 @@ public class RelatedFeatureDAO {
             String url = null;
             if (feature instanceof AbstractSamplingFeature) {
                 identifier =
-                        Configurator.getInstance().getFeatureQueryHandler()
+                        daoFactory.getFeatureQueryHandler()
                                 .insertFeature((AbstractSamplingFeature) feature, session);
                 url = ((AbstractSamplingFeature) feature).getUrl();
             }
-            relFeat.setFeature(new FeatureOfInterestDAO(daoFactory).getOrInsert(identifier, url,
+            relFeat.setFeature(daoFactory.getFeatureOfInterestDAO().getOrInsert(identifier, url,
                     session));
             relFeat.setRole(role);
             session.save(relFeat);

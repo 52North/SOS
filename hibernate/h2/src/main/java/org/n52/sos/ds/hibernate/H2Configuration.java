@@ -30,8 +30,6 @@ package org.n52.sos.ds.hibernate;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -66,7 +64,6 @@ import org.n52.iceland.ds.Datasource;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -296,10 +293,6 @@ public class H2Configuration implements ConnectionProvider {
         FileUtils.forceMkdir(getTempDir());
     }
 
-    private void createConfigurator() throws ConfigurationError {
-        Configurator.createInstance(properties, getTempDir().getAbsolutePath());
-    }
-
     private void prepareDatabase() {
         try {
             Class.forName(H2_DRIVER);
@@ -408,7 +401,6 @@ public class H2Configuration implements ConnectionProvider {
     private void init() throws ConfigurationError, IOException {
         createTempDir();
         prepareDatabase();
-        createConfigurator();
     }
 
     public Configuration getConfiguration() {

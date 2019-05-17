@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.is;
 import static org.n52.sos.service.it.util.XPath.hasXPath;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import net.opengis.sos.x20.GetCapabilitiesDocument;
 import net.opengis.sos.x20.GetCapabilitiesType;
@@ -44,6 +45,7 @@ import org.junit.rules.ErrorCollector;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.binding.json.JSONBinding;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -57,6 +59,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
@@ -177,7 +180,9 @@ public class ContentNegotiationEndpointTest extends AbstractComplianceSuiteTest 
     }
 
     private boolean isJsonBindingSupported() {
-        return BindingRepository.getInstance().isBindingSupported(MediaTypes.APPLICATION_JSON);
+        BindingRepository bindingRepository = new BindingRepository();
+        bindingRepository.setComponents(Optional.of(Sets.newHashSet(new JSONBinding())));
+        return bindingRepository.isBindingSupported(MediaTypes.APPLICATION_JSON);
     }
 
     @Test

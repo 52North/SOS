@@ -497,9 +497,4 @@ public class HibernateFeatureQueryHandler
         this.updateFeatureGeometry = updateFeatureGeometry;
     }
 
-    @Override
-    @Deprecated
-    public String getDatasourceDaoIdentifier() {
-        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
-    }
 }

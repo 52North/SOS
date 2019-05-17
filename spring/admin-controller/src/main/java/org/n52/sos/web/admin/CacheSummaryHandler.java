@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.service.Configurator;
 
 /**
  * Class to get a summary of the cache objects.
@@ -66,8 +66,8 @@ public class CacheSummaryHandler {
 
     }
 
-    public static Map<String, String> getCacheValues() {
-        SosContentCache cache = Configurator.getInstance().getCache();
+    public static Map<String, String> getCacheValues(ContentCacheController cacheController) {
+        SosContentCache cache = (SosContentCache) cacheController.getCache();
         Map<String, String> values = new TreeMap<>();
         values.put(LAST_UPDATE_TIME, nullSafeToString(cache.getLastUpdateTime()));
         values.put(MIN_PHENOMENON_TIME, nullSafeToString(cache.getMinPhenomenonTime()));

@@ -62,7 +62,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.SosSettings;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -120,6 +119,7 @@ public class ComplexObservationTest extends AbstractObservationTest {
         encoderRepository.init();
         operatorRepository.init();
         activate();
+        initCache();
 
         assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
@@ -128,7 +128,7 @@ public class ComplexObservationTest extends AbstractObservationTest {
     @After
     public void after() throws OwsExceptionReport {
         H2Configuration.truncate();
-        Configurator.getInstance().getCacheController().update();
+        updateCache();
     }
 
     private InsertSensorDocument createComplexInsertSensorRequest() throws OwsExceptionReport {

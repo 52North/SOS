@@ -109,11 +109,6 @@ public class RegisterBinding
     private SupportedTypeRepository supportedTypeRepository;
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Set<BindingKey> getKeys() {
         return Collections.unmodifiableSet(KEYS);
     }

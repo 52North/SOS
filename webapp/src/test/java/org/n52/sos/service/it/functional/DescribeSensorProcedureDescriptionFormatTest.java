@@ -46,10 +46,10 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.OmConstants;
-import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
@@ -63,11 +63,7 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
-import org.n52.sos.service.it.exception.OwsExceptionCode;
-import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlOptionsHelper;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
@@ -86,8 +82,8 @@ import net.opengis.swes.x20.InsertSensorType;
  * @author Shane St Clair <shane@axiomdatascience.com>
  */
 
-public class DescribeSensorProcedureDescriptionFormatTest extends AbstractComplianceSuiteTest {
-    private static final XmlOptions XML_OPTIONS = XmlOptionsHelper.getInstance().getXmlOptions();
+public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCacheInitializationTest {
+    private static final XmlOptions XML_OPTIONS = new XmlOptionsHelper().get();
 
     private static final String PROCEDURE1 = "procedure1";
     private static final String PROCEDURE2 = "procedure2";
@@ -98,6 +94,7 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
     @Before
     public void before() throws OwsExceptionReport {
         activate();
+        initCache();
 
         InsertSensorDocument insertSensorSml1Doc = createInsertSensorRequest(PROCEDURE1, PROCEDURE1, "offering1", "obs_prop",
                 SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
@@ -111,14 +108,15 @@ public class DescribeSensorProcedureDescriptionFormatTest extends AbstractCompli
     }
 
     private void activate() {
+        RequestOperatorRepository requestOperatorRepository = new RequestOperatorRepository();
         OwsServiceKey sok = new OwsServiceKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
+        requestOperatorRepository.setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
     }
 
     @After
     public void after() throws OwsExceptionReport {
         H2Configuration.truncate();
-        Configurator.getInstance().getCacheController().update();
+        updateCache();
     }
 
     // Non-mimetype formats cannot be used with SOS 1.0.0 because the OGC spec/schema

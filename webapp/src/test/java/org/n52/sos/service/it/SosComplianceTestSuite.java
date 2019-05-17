@@ -101,11 +101,6 @@ public class SosComplianceTestSuite extends MockHttpExecutor
             org.n52.sos.service.it.v2.kvp.GetResultTemplateTest.class,
             org.n52.sos.service.it.v2.kvp.GetResultTest.class,
 
-            org.n52.sos.service.it.v2.rest.CapabilitiesTest.class,
-            org.n52.sos.service.it.v2.rest.OfferingsTest.class,
-            org.n52.sos.service.it.v2.rest.SensorsTest.class,
-            org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class,
-
             org.n52.sos.service.it.v2.soap.DeleteObservationTest.class,
             org.n52.sos.service.it.v2.soap.DeleteSensorTest.class,
             org.n52.sos.service.it.v2.soap.DescribeSensorTest.class,

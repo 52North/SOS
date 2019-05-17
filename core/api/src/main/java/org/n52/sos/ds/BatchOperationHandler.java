@@ -31,6 +31,8 @@ package org.n52.sos.ds;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceOrVersionException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
@@ -61,8 +63,15 @@ import org.n52.shetland.ogc.sos.response.BatchResponse;
  */
 public class BatchOperationHandler extends AbstractOperationHandler {
 
+    private ServiceOperatorRepository serviceOperatorRepository;
+
     public BatchOperationHandler() {
         super(SosConstants.SOS, BatchConstants.OPERATION_NAME);
+    }
+
+    @Inject
+    public void setServiceOperatorRepository(ServiceOperatorRepository serviceOperatorRepository) {
+        this.serviceOperatorRepository = serviceOperatorRepository;
     }
 
     public BatchResponse executeRequests(BatchRequest request) throws OwsExceptionReport {
@@ -103,7 +112,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
     }
 
     protected ServiceOperatorRepository getServiceOperatorRepository() {
-        return ServiceOperatorRepository.getInstance();
+        return this.serviceOperatorRepository;
     }
 
     protected void checkServiceOperatorKeys(OwsServiceRequest request) throws OwsExceptionReport {

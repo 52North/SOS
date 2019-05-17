@@ -2,10 +2,8 @@
 xsi:schemaLocation="http://www.springframework.org/schema/beans
                                                 http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-
     <bean id="exceptionLogger"
           class="org.n52.iceland.service.ExceptionLogger" />
-
 
     <!-- bindings -->
     <bean id="kvpBinding"
@@ -34,9 +32,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
 
     <bean id="bindingRepository"
           class="org.n52.iceland.binding.BindingRepository" />
-
-    <bean id="codingRepository"
-          class="org.n52.iceland.coding.CodingRepository" />
 
     <bean id="supportedTypeRepository"
           class="org.n52.iceland.coding.SupportedTypeRepository" />

@@ -113,7 +113,7 @@ public class GetObservationDao extends AbstractObservationDao
         this.observationCreatorContext = observationCreatorContext;
     }
 
-    @Setting(MiscSettings.RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST)
+    @Setting("profile.hydrology.overallExtrema")
     public void setOverallExtrema(boolean overallExtrema) {
         this.overallExtrema = overallExtrema;
     }

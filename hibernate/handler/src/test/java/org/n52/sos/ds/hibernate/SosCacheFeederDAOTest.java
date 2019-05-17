@@ -33,7 +33,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.iceland.coding.SupportedTypeRepository;
-import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.da.sos.SOSHibernateSessionHolder;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.InMemoryCacheImpl;

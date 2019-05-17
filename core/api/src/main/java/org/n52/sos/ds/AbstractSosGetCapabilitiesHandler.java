@@ -54,7 +54,9 @@ import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingKey;
+import org.n52.iceland.binding.MediaTypeBindingKey;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.iceland.ogc.ows.extension.OwsCapabilitiesExtensionProvider;
@@ -69,6 +71,7 @@ import org.n52.janmayen.Comparables;
 import org.n52.janmayen.function.Functions;
 import org.n52.janmayen.function.Suppliers;
 import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.filter.FilterCapabilities;
@@ -110,6 +113,7 @@ import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.ConformanceClass;
+import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 
@@ -322,6 +326,9 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                 .flatMap(Set::stream)
                 .map(URI::create)
                 .collect(Collectors.toSet());
+        if (Sos2Constants.SERVICEVERSION.equals(version)) {
+            checkBindingConformanceClasses(getBindingRepository().getBindings().values(), profiles);
+        }
 
         // FIXME additional profiles
         if ("hydrology".equalsIgnoreCase(getProfileHandler().getActiveProfile().getIdentifier())) {
@@ -329,6 +336,34 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
         }
         return profiles;
     }
+
+    private void checkBindingConformanceClasses(Collection<Binding> values, Set<URI> profiles) {
+        Set<URI> collect = Stream.of(getBindingRepository().getBindings().values())
+        .flatMap(Collection::stream)
+        .map(b -> b.getKeys())
+        .flatMap(Set::stream)
+        .filter(k -> k instanceof MediaTypeBindingKey)
+        .map(k -> (MediaTypeBindingKey) k)
+        .map(k -> {
+              if (k.getMediaType().equals(MediaTypes.APPLICATION_KVP)) {
+                  return ConformanceClasses.SOS_V2_KVP_CORE_BINDING;
+              } else if (k.getMediaType().equals(MediaTypes.APPLICATION_JSON)) {
+                  return "http://www.opengis.net/spec/SOS/2.0/conf/json";
+              } else if (k.getMediaType().equals(MediaTypes.APPLICATION_SOAP_XML)) {
+                  return ConformanceClasses.SOS_V2_SOAP_BINDING;
+              } else if (k.getMediaType().equals(MediaTypes.APPLICATION_XML)) {
+                  return ConformanceClasses.SOS_V2_POX_BINDING;
+              } else if (k.getMediaType().equals(MediaTypes.APPLICATION_EXI)) {
+                  return "http://www.opengis.net/spec/SOS/2.0/conf/exi";
+              }
+              return null;
+        })
+        .filter(Objects::nonNull)
+        .map(URI::create)
+        .collect(Collectors.toSet());
+        profiles.addAll(collect);
+
+     }
 
     /**
      * Get the OperationsMetadat for all supported operations

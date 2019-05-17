@@ -44,17 +44,16 @@ import org.junit.Rule;
 import org.junit.rules.ErrorCollector;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.it.Response;
-import org.n52.sos.service.it.ogc.OWSConstants;
-import org.n52.sos.service.it.ogc.OmConstants;
-import org.n52.sos.service.it.ogc.SosConstants;
 
 import com.google.common.collect.Lists;
 
@@ -73,9 +72,11 @@ public abstract class AbstractObservationEncodingsTest extends AbstractObservati
 
     @Before
     public void before() throws OwsExceptionReport {
+        RequestOperatorRepository requestOperatorRepository = new RequestOperatorRepository();
+
         OwsServiceKey sok = new OwsServiceKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
-        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
+        requestOperatorRepository.setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
+        requestOperatorRepository.setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
 
         assertThat(pox().entity(createInsertSensorRequest(PROCEDURE, OFFERING, OBSERVABLE_PROPERTY).xmlText(getXmlOptions())).response().asXmlObject(),
                 is(instanceOf(InsertSensorResponseDocument.class)));
@@ -90,12 +91,13 @@ public abstract class AbstractObservationEncodingsTest extends AbstractObservati
 
         assertThat(pox().entity(createInsertObservationRequest(observations, OFFERING).xmlText(getXmlOptions())).response().asXmlObject(),
                 is(instanceOf(InsertObservationResponseDocument.class)));
+        initCache();
     }
 
     @After
     public void after() throws OwsExceptionReport {
         H2Configuration.truncate();
-        Configurator.getInstance().getCacheController().update();
+        updateCache();
     }
 
     protected void testGetObsXmlResponse(String serviceVersion, String responseFormat, Class<?> expectedResponseClass)

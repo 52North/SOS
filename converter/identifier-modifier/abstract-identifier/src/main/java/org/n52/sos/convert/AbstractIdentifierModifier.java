@@ -101,7 +101,6 @@ import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.svalbard.encode.EncoderRepository;

@@ -28,7 +28,6 @@
  */
 package org.n52.sos.web.admin;
 
-
 import javax.servlet.UnavailableException;
 
 import org.slf4j.Logger;
@@ -44,7 +43,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.n52.iceland.exception.JSONException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
 import org.n52.janmayen.Json;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -59,7 +57,6 @@ public class AdminReloadCacheController extends AbstractAdminController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_RELOAD_CAPABILITIES_CACHE, method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void reload() throws OwsExceptionReport, UnavailableException {
-        checkConfiguratorAvailability();
         if (!cacheIsLoading()) {
             LOG.debug("Reloading Capabilitities Cache");
             updateCache();
@@ -70,14 +67,7 @@ public class AdminReloadCacheController extends AbstractAdminController {
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_LOADING, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String getCacheLoadingStatus() throws JSONException, UnavailableException {
-        checkConfiguratorAvailability();
         return Json.print(Json.nodeFactory().objectNode().put("loading", cacheIsLoading()));
-    }
-
-    private void checkConfiguratorAvailability() throws UnavailableException {
-        if (Configurator.getInstance() == null) {
-            throw new UnavailableException("configurator is not available");
-        }
     }
 
     @ResponseBody

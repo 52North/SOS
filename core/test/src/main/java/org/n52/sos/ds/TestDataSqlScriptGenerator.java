@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @since 4.0.0
  */
+@SuppressWarnings("UncommentedMain")
 public final class TestDataSqlScriptGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDataSqlScriptGenerator.class);
     private static final int FEATURE_COUNT_INDEX = 0;
@@ -87,8 +88,10 @@ public final class TestDataSqlScriptGenerator {
     /**
      * Creates a SQL script containing test data
      *
-     * @param args the input arguments, the number of features, the number of sensors, the number of observations per
-     *             feature and sensor and an optional file name
+     * @param args
+     *            the input arguments, the number of features, the number of
+     *            sensors, the number of observations per feature and sensor and
+     *            an optional file name
      */
     public static void main(String[] args) {
         LOGGER.debug(String.format("Received args: %s", Arrays.toString(args)));
@@ -121,8 +124,7 @@ public final class TestDataSqlScriptGenerator {
             bw.newLine();
             Map<Double, Double> uniqueCoordinates = new HashMap<>(featuresCount);
             for (int featureId = 0; featureId < featuresCount; featureId++) {
-                bw.write(createFeatureStatement(
-                        featureId,
+                bw.write(createFeatureStatement(featureId,
                         generateRandomUniqueCoordinateTuple(-90.0, 90.0, -180.0, 180.0, uniqueCoordinates)));
                 bw.newLine();
             }
@@ -133,7 +135,7 @@ public final class TestDataSqlScriptGenerator {
             for (int sensorId = 0; sensorId < sensorCount; sensorId++) {
                 // add sensor
                 bw.write(createSensorStatement(sensorId, generateRandomCoordinateTuple(-90.0, 90.0, -180.0, 180.0),
-                                               start, OBSERVATION_TYPE, OBSERVED_PROPERTY_ID, FEATURE_TYPE));
+                        start, OBSERVATION_TYPE, OBSERVED_PROPERTY_ID, FEATURE_TYPE));
                 bw.newLine();
 
                 // add offering
@@ -141,8 +143,7 @@ public final class TestDataSqlScriptGenerator {
                 bw.newLine();
 
                 // add observation constellation
-                bw.write(
-                        createObservationConstellationStatement(OBSERVATION_TYPE, sensorId, OBSERVED_PROPERTY_ID));
+                bw.write(createObservationConstellationStatement(OBSERVATION_TYPE, sensorId, OBSERVED_PROPERTY_ID));
                 bw.newLine();
             }
             bw.flush();
@@ -162,8 +163,7 @@ public final class TestDataSqlScriptGenerator {
                     for (int sensorId = 0; sensorId < sensorCount; sensorId++) {
                         // generate random result from range
                         // RESULT_MIN_VALUE and RESULT_MAX_VALUE
-                        bw.write(createInsertNumericObservationStatement(
-                                OBSERVATION_TYPE, sensorId, sensorId,
+                        bw.write(createInsertNumericObservationStatement(OBSERVATION_TYPE, sensorId, sensorId,
                                 OBSERVED_PROPERTY_ID, featureId, UNIT_ID, timeStamp,
                                 generateRandomResult(RESULT_MIN_VALUE, RESULT_MAX_VALUE)));
                         bw.newLine();

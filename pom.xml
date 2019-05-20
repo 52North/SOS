@@ -1914,14 +1914,14 @@
                         <failOnError>false</failOnError>
                     </configuration>
                 </plugin>
-                <!-- FIXME remove this once all problems are resolved
+                <!-- FIXME remove this once all problems are resolved -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <configuration>
                         <failOnViolation>false</failOnViolation>
                     </configuration>
-                </plugin> -->
+                </plugin>
                
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

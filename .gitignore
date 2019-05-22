@@ -15,3 +15,4 @@ extensions/do/core/configuration.db
 console.log
 coding/sos-v100/configuration.db
 docker/.build/
+.checkstyle

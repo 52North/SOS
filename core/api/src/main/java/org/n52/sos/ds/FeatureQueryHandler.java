@@ -53,7 +53,7 @@ public interface FeatureQueryHandler {
      * @return SOS representation of the FOI
      *
      *
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport if an error occurs
      */
     AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
@@ -64,7 +64,7 @@ public interface FeatureQueryHandler {
      *            {@link FeatureQueryHandlerQueryObject} that holds the
      *            identifiers
      * @return SOS representation of the FOIs
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport if an error occurs
      */
     Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
@@ -77,7 +77,7 @@ public interface FeatureQueryHandler {
      * @return Map of identifier and SOS FOI representation
      *
      *
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport if an error occurs
      */
     Map<String, AbstractFeature> getFeatures(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
@@ -89,7 +89,7 @@ public interface FeatureQueryHandler {
      *            identifiers
      * @return Envelope of requested FOI identifiers
      *
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport if an error occurs
      */
     ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
@@ -101,7 +101,7 @@ public interface FeatureQueryHandler {
      * @param connection
      *            Datasource connection
      * @return Identifier of the inserted feature
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport if an error occurs
      */
     String insertFeature(AbstractSamplingFeature samplingFeature, Object connection) throws OwsExceptionReport;
 

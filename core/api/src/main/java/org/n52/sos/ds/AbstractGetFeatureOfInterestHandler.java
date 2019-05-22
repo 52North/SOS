@@ -66,7 +66,7 @@ public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperat
     }
 
     protected Set<String> getFeatureIdentifiers(List<String> featureIdentifiers) {
-        return featureIdentifiers.stream().flatMap((id) -> {
+        return featureIdentifiers.stream().flatMap(id -> {
             if (isRelatedFeature(id)) {
                 return getCache().getChildFeatures(id, true, true).stream();
             } else {

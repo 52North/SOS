@@ -85,11 +85,9 @@ public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOpe
 
     private OwsDomain getProcedureDescriptionFormatParameter(String service, String version) {
         UpdateSensorDescriptionParams name = Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat;
-        Set<String> procedureDescriptionFormats
-                = this.procedureDescriptionFormatRepository.getSupportedTransactionalProcedureDescriptionFormats(service, version);
+        Set<String> procedureDescriptionFormats = this.procedureDescriptionFormatRepository
+                .getSupportedTransactionalProcedureDescriptionFormats(service, version);
         return new OwsDomain(name, new OwsAllowedValues(procedureDescriptionFormats.stream().map(OwsValue::new)));
     }
-
-
 
 }

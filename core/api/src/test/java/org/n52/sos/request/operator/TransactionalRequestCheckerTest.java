@@ -59,8 +59,7 @@ public class TransactionalRequestCheckerTest {
 
     @BeforeClass
     public static void init() throws ParseException {
-       tsc = new TransactionalSecurityConfiguration();
-       tsc.init();
+        tsc = new TransactionalSecurityConfiguration();
     }
 
     @Test

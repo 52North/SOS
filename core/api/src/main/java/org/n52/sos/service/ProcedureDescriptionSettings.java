@@ -217,7 +217,8 @@ public class ProcedureDescriptionSettings {
 
     /**
      * @return Depends on configuration. Something like:<br>
-     *         "<i>The procedure '%s' generates the following outputs: '%s'. The inputs are unknown (this description is generated).</i>"
+     *         "<i>The procedure '%s' generates the following outputs: '%s'. The
+     *         inputs are unknown (this description is generated).</i>"
      */
     public String getProcessMethodRulesDefinitionDescriptionTemplate() {
         return processMethodRulesDefinitionDescriptionTemplate;

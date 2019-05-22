@@ -65,36 +65,34 @@ public abstract class AbstractGetResultHandler extends AbstractResultHandlingHan
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
         switch (version) {
             case Sos1Constants.SERVICEVERSION:
-                throw new OperationNotSupportedException()
-                        .at(SosConstants.Operations.GetResult)
+                throw new OperationNotSupportedException().at(SosConstants.Operations.GetResult)
                         .withMessage("This operation is not supported for SOS {}!", version);
             case Sos2Constants.SERVICEVERSION:
                 Set<String> resultTemplateIdentifier = getCache().getResultTemplates();
-
+    
                 Set<String> offerings = null;
                 Collection<String> observableProperties = null;
                 Collection<String> featureOfInterest = null;
-
+    
                 if (resultTemplateIdentifier != null && !resultTemplateIdentifier.isEmpty()) {
                     offerings = getCache().getOfferingsWithResultTemplate();
                     observableProperties = getCache().getObservablePropertiesWithResultTemplate();
                     featureOfInterest = getCache().getFeaturesOfInterestWithResultTemplate();
                 }
-
-                return new HashSet<>(Arrays.asList(
-                        getOfferingParameter(service, version, offerings),
+    
+                return new HashSet<>(Arrays.asList(getOfferingParameter(service, version, offerings),
                         getObservablePropertyParameter(service, version, observableProperties),
                         getFeatureOfInterestParameter(service, version, featureOfInterest)));
-                // TODO get the values for temporal and spatial filtering
-                // set param temporalFilter
-                // opsMeta.addParameterValue(Sos2Constants.GetResultParams.temporalFilter.name(),
-                // new OWSParameterValuePossibleValues(null));
-                // // set param spatialFilter
-                // opsMeta.addParameterValue(Sos2Constants.GetResultParams.spatialFilter.name(),
-                // new OWSParameterValuePossibleValues(null));
-             default:
-                 LOG.trace("Not supported version '{}'", version);
-                 return Collections.emptySet();
+            // TODO get the values for temporal and spatial filtering
+            // set param temporalFilter
+            // opsMeta.addParameterValue(Sos2Constants.GetResultParams.temporalFilter.name(),
+            // new OWSParameterValuePossibleValues(null));
+            // // set param spatialFilter
+            // opsMeta.addParameterValue(Sos2Constants.GetResultParams.spatialFilter.name(),
+            // new OWSParameterValuePossibleValues(null));
+            default:
+                LOG.trace("Not supported version '{}'", version);
+                return Collections.emptySet();
         }
     }
 

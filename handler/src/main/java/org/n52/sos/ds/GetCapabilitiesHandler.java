@@ -98,7 +98,7 @@ import org.n52.sos.util.I18NHelper;
  *
  * @since 4.0.0
  */
-public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler implements ApiQueryHelper {
+public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler implements ApiQueryHelper, I18NHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCapabilitiesHandler.class);
     @Inject
@@ -397,9 +397,9 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         SosOffering sosOffering = new SosOffering(offering.getIdentifier(), false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name
-        I18NHelper.addOfferingNames(getCache(), sosOffering, getRequestedLocale(request), Locale.ROOT, false);
+        addOfferingNames(getCache(), sosOffering, getRequestedLocale(request), Locale.ROOT, false);
         // add offering description
-        I18NHelper.addOfferingDescription(sosOffering, getRequestedLocale(request), Locale.ROOT, getCache());
+        addOfferingDescription(sosOffering, getRequestedLocale(request), Locale.ROOT, getCache());
     }
 
     private Collection<String> getObservationTypes(OfferingEntity offering) {

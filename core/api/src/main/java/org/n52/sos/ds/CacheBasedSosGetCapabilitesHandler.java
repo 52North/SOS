@@ -66,25 +66,28 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.util.I18NHelper;
 
 /**
- * Implementation of {@link AbstractSosGetCapabilitiesHandler} that only relies on the {@link SosContentCache}.
+ * Implementation of {@link AbstractSosGetCapabilitiesHandler} that only relies
+ * on the {@link SosContentCache}.
  *
  * @author Christian Autermann
  */
-public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabilitiesHandler {
+public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabilitiesHandler implements I18NHelper {
 
     /**
      * Get the contents for SOS 1.0.0 capabilities
      *
-     * @param sectionSpecificContentObject Requested service version
+     * @param sectionSpecificContentObject
+     *            Requested service version
      *
      * @return Offerings for contents
      *
      *
-     * @throws OwsExceptionReport * If an error occurs
+     * @throws OwsExceptionReport
+     *             * If an error occurs
      */
     @Override
-    protected List<SosObservationOffering> getContentsForSosV1(SectionSpecificContentObject sectionSpecificContentObject)
-            throws OwsExceptionReport {
+    protected List<SosObservationOffering> getContentsForSosV1(
+            SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         SosContentCache cache = getCache();
         Collection<String> offerings = cache.getOfferings();
@@ -109,7 +112,7 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
                 // xb_oo.addIntendedApplication("");
                 // add offering name
                 addSosOfferingToObservationOffering(offering, sosObservationOffering,
-                                                    sectionSpecificContentObject.getGetCapabilitiesRequest());
+                        sectionSpecificContentObject.getGetCapabilitiesRequest());
 
                 // set up phenomena
                 sosObservationOffering.setObservableProperties(cache.getObservablePropertiesForOffering(offering));
@@ -130,8 +133,8 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
                 sosObservationOffering.setProcedures(procedures);
 
                 // insert result models
-                Collection<QName> resultModels = OMHelper.getQNamesForResultModel(
-                        cache.getObservationTypesForOffering(offering));
+                Collection<QName> resultModels =
+                        OMHelper.getQNamesForResultModel(cache.getObservationTypesForOffering(offering));
                 sosObservationOffering.setResultModels(resultModels);
 
                 // set response format
@@ -150,21 +153,23 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
     /**
      * Get the contents for SOS 2.0 capabilities
      *
-     * @param sectionSpecificContentObject Requested service version
+     * @param sectionSpecificContentObject
+     *            Requested service version
      *
      * @return Offerings for contents
      *
      *
-     * @throws OwsExceptionReport * If an error occurs
+     * @throws OwsExceptionReport
+     *             * If an error occurs
      */
     @Override
-    protected List<SosObservationOffering> getContentsForSosV2(SectionSpecificContentObject sectionSpecificContentObject)
-            throws OwsExceptionReport {
+    protected List<SosObservationOffering> getContentsForSosV2(
+            SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         String version = Sos2Constants.SERVICEVERSION;
         Collection<String> offerings = getCache().getOfferings();
         List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
-        Map<String, List<SosObservationOfferingExtension>> extensions = getCapabilitiesExtensionService()
-                .getActiveOfferingExtensions();
+        Map<String, List<SosObservationOfferingExtension>> extensions =
+                getCapabilitiesExtensionService().getActiveOfferingExtensions();
 
         if (CollectionHelper.isEmpty(offerings)) {
             // Set empty offering to add empty Contents section to Capabilities
@@ -173,13 +178,14 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
 
             // TODO Parent Offering!!!
             if (checkListOnlyParentOfferings()) {
-                sosOfferings
-                        .addAll(createAndGetParentOfferings(offerings, version, sectionSpecificContentObject, extensions));
+                sosOfferings.addAll(
+                        createAndGetParentOfferings(offerings, version, sectionSpecificContentObject, extensions));
             } else {
                 for (String offering : offerings) {
                     Collection<String> observationTypes = getObservationTypes(offering);
                     if (observationTypes != null && !observationTypes.isEmpty()) {
-                        // FIXME why a loop? We are in SOS 2.0 context -> offering 1
+                        // FIXME why a loop? We are in SOS 2.0 context ->
+                        // offering 1
                         // <-> 1 procedure!
                         for (String procedure : getProceduresForOffering(offering, version)) {
 
@@ -198,8 +204,7 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
                             addSosOfferingToObservationOffering(offering, sosObservationOffering, request);
                             // add offering extension
                             if (getOfferingExtensionRepository().hasOfferingExtensionProviderFor(request)) {
-                                getOfferingExtensionRepository()
-                                        .getOfferingExtensionProvider(request).stream()
+                                getOfferingExtensionRepository().getOfferingExtensionProvider(request).stream()
                                         .filter(Objects::nonNull)
                                         .filter(provider -> provider.hasExtendedOfferingFor(offering))
                                         .map(provider -> provider.getOfferingExtensions(offering))
@@ -228,12 +233,12 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
         return sosOfferings;
     }
 
-    private Collection<? extends SosObservationOffering> createAndGetParentOfferings(
-            Collection<String> offerings, String version, SectionSpecificContentObject sectionSpecificContentObject,
+    private Collection<? extends SosObservationOffering> createAndGetParentOfferings(Collection<String> offerings,
+            String version, SectionSpecificContentObject sectionSpecificContentObject,
             Map<String, List<SosObservationOfferingExtension>> extensions) throws OwsExceptionReport {
-        Map<String, Set<String>> parentChilds = offerings.stream()
-                .filter(offering -> !getCache().hasParentOfferings(offering))
-                .collect(toMap(Function.identity(), offering -> getCache().getChildOfferings(offering, true, false)));
+        Map<String, Set<String>> parentChilds =
+                offerings.stream().filter(offering -> !getCache().hasParentOfferings(offering)).collect(
+                        toMap(Function.identity(), offering -> getCache().getChildOfferings(offering, true, false)));
         List<SosObservationOffering> sosOfferings = new ArrayList<>(parentChilds.size());
         for (Entry<String, Set<String>> entry : parentChilds.entrySet()) {
             Collection<String> observationTypes = getObservationTypes(entry.getValue());
@@ -248,12 +253,10 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
                     sosObservationOffering.setObservedArea(getObservedArea(entry.getValue()));
 
                     sosObservationOffering.setProcedures(procedures);
-//
-//                    // TODO: add intended application
-//
-//                    // add offering to observation offering
+                    // TODO: add intended application
+                    // add offering to observation offering
                     addSosOfferingToObservationOffering(entry.getKey(), sosObservationOffering,
-                                                        sectionSpecificContentObject.getGetCapabilitiesRequest());
+                            sectionSpecificContentObject.getGetCapabilitiesRequest());
                     // add offering extension
                     if (getOfferingExtensionRepository().hasOfferingExtensionProviderFor(
                             sectionSpecificContentObject.getGetCapabilitiesRequest())) {
@@ -277,9 +280,9 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
                         gdaURL = addParameter(gdaURL, "responseFormat", "http://www.opengis.net/sosgda/2.0");
                         for (String offering : entry.getValue()) {
                             relatedOfferings.addValue(new ReferenceType(RelatedOfferingConstants.ROLE),
-                                                      new ReferenceType(
-                                                              addParameter(new StringBuilder(gdaURL).toString(), "offering", offering),
-                                                              offering));
+                                    new ReferenceType(
+                                            addParameter(new StringBuilder(gdaURL).toString(), "offering", offering),
+                                            offering));
                         }
                         sosObservationOffering.addExtension(relatedOfferings);
                     }
@@ -299,20 +302,20 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
     }
 
     private void addSosOfferingToObservationOffering(String offering, SosObservationOffering sosObservationOffering,
-                                                     GetCapabilitiesRequest request) throws OwsExceptionReport {
+            GetCapabilitiesRequest request) throws OwsExceptionReport {
         SosOffering sosOffering = new SosOffering(offering, false);
         sosObservationOffering.setOffering(sosOffering);
         SosContentCache cache = getCache();
         Locale requestedLocale = getRequestedLocale(request);
         Locale defaultLocale = getDefaultLanguage();
         // add offering name
-        I18NHelper.addOfferingNames(cache, sosOffering, requestedLocale, defaultLocale, isShowAllLanguages());
+        addOfferingNames(cache, sosOffering, requestedLocale, defaultLocale, isShowAllLanguages());
         // add offering description
-        I18NHelper.addOfferingDescription(sosOffering, requestedLocale, defaultLocale, cache);
+        addOfferingDescription(sosOffering, requestedLocale, defaultLocale, cache);
     }
 
-    private Collection<String> getProceduresForOffering(Entry<String, Set<String>> entry, String version) throws
-            OwsExceptionReport {
+    private Collection<String> getProceduresForOffering(Entry<String, Set<String>> entry, String version)
+            throws OwsExceptionReport {
         Collection<String> procedures = new HashSet<>();
         for (String offering : entry.getValue()) {
             procedures.addAll(getProceduresForOffering(offering, version));
@@ -322,20 +325,15 @@ public class CacheBasedSosGetCapabilitesHandler extends AbstractSosGetCapabiliti
     }
 
     protected Collection<String> getObservationTypes(Set<String> offerings) {
-        Set<String> observationTypes = offerings.stream()
-                .map(getCache()::getObservationTypesForOffering)
-                .flatMap(Set::stream)
-                .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate())
+        Set<String> observationTypes = offerings.stream().map(getCache()::getObservationTypesForOffering)
+                .flatMap(Set::stream).filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate())
                 .collect(toCollection(TreeSet::new));
 
         if (!observationTypes.isEmpty()) {
             return observationTypes;
         }
-        return offerings.stream()
-                .map(getCache()::getAllObservationTypesForOffering)
-                .flatMap(Set::stream)
-                .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate())
-                .collect(toCollection(TreeSet::new));
+        return offerings.stream().map(getCache()::getAllObservationTypesForOffering).flatMap(Set::stream)
+                .filter(Predicate.isEqual(SosConstants.NOT_DEFINED).negate()).collect(toCollection(TreeSet::new));
     }
 
     private ReferencedEnvelope getObservedArea(Set<String> offerings) throws OwsExceptionReport {

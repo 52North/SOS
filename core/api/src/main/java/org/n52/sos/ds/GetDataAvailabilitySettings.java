@@ -30,5 +30,6 @@ package org.n52.sos.ds;
 
 public interface GetDataAvailabilitySettings {
     String FORCE_GDA_VALUE_COUNT = "operation.gda.forceValueCount";
-    public static final String FORCE_GDA_20_RESPONSE = "operation.gda.forceVersion20";
+
+    String FORCE_GDA_20_RESPONSE = "operation.gda.forceVersion20";
 }

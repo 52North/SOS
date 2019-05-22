@@ -28,7 +28,7 @@
  */
 package org.n52.sos.exception.swes;
 
-import static org.n52.janmayen.http.HTTPStatus.BAD_REQUEST;
+import org.n52.janmayen.http.HTTPStatus;
 
 import org.n52.shetland.ogc.swes.exception.SwesExceptionCode;
 
@@ -44,6 +44,6 @@ public class InvalidRequestException extends CodedSwesException {
 
     public InvalidRequestException() {
         super(SwesExceptionCode.InvalidRequest);
-        setStatus(BAD_REQUEST);
+        setStatus(HTTPStatus.BAD_REQUEST);
     }
 }

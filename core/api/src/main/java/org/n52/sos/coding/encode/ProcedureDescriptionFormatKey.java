@@ -61,7 +61,7 @@ public class ProcedureDescriptionFormatKey {
     }
 
 
-     public OwsServiceKey getServiceOperatorKey() {
+    public OwsServiceKey getServiceOperatorKey() {
         return serviceOperatorKey;
     }
 

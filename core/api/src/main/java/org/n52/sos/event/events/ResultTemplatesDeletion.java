@@ -37,7 +37,8 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
  * @since 4.4.0
  *
  */
-public class ResultTemplatesDeletion extends SosDeletionEvent<DeleteResultTemplateRequest, DeleteResultTemplateResponse> {
+public class ResultTemplatesDeletion
+        extends SosDeletionEvent<DeleteResultTemplateRequest, DeleteResultTemplateResponse> {
 
     public ResultTemplatesDeletion(DeleteResultTemplateRequest request, DeleteResultTemplateResponse response) {
         super(request, response);

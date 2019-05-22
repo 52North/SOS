@@ -41,15 +41,15 @@ import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
  */
 public class InsertObservationRequestBuilder {
 
-    public static InsertObservationRequestBuilder aInsertObservationRequest() {
-        return new InsertObservationRequestBuilder();
-    }
-
     private String procedure;
 
     private ArrayList<String> offerings;
 
     private ArrayList<OmObservation> observations;
+
+    public static InsertObservationRequestBuilder aInsertObservationRequest() {
+        return new InsertObservationRequestBuilder();
+    }
 
     public InsertObservationRequestBuilder setProcedureId(String procedureId) {
         this.procedure = procedureId;

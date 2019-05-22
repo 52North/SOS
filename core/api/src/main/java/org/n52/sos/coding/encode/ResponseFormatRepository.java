@@ -85,13 +85,13 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
                 .filter(x -> x instanceof ObservationEncoder)
                 .map(x -> (ObservationEncoder<?, ?>) x)
                 .forEach((ObservationEncoder<?, ?> encoder) -> {
-                    serviceOperatorKeyTypes.forEach((key) -> {
+                    serviceOperatorKeyTypes.forEach(key -> {
                         Optional.ofNullable(encoder.getSupportedResponseFormats(key))
                                 .orElseGet(Collections::emptySet).stream()
                                 .map((String rf) -> new ResponseFormatKey(key, rf))
                                 .forEach(ResponseFormatRepository.this::addResponseFormat);
                     });
-        });
+                });
 
     }
 
@@ -116,25 +116,27 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
                 .collect(toSet());
     }
 
+    public Map<OwsServiceKey, Set<String>> getSupportedResponseFormats() {
+        return getServiceOperatorKeys().stream()
+                .collect(toMap(Function.identity(), this::getSupportedResponseFormats));
+    }
+
     public Set<String> getAllSupportedResponseFormats(String service, String version) {
         return Collections.unmodifiableSet(this.responseFormats.getOrDefault(service, Collections.emptyMap())
                 .getOrDefault(version, Collections.emptySet()));
     }
 
     public Map<OwsServiceKey, Set<String>> getAllSupportedResponseFormats() {
-        return getServiceOperatorKeys().stream().collect(toMap(Function.identity(), this::getAllSupportedResponseFormats));
-    }
-
-    private Set<OwsServiceKey> getServiceOperatorKeys() {
-        return this.serviceOperatorRepository.getServiceOperatorKeys();
+        return getServiceOperatorKeys().stream()
+                .collect(toMap(Function.identity(), this::getAllSupportedResponseFormats));
     }
 
     public Set<String> getAllSupportedResponseFormats(OwsServiceKey sokt) {
         return getAllSupportedResponseFormats(sokt.getService(), sokt.getVersion());
     }
 
-    public Map<OwsServiceKey, Set<String>> getSupportedResponseFormats() {
-        return getServiceOperatorKeys().stream().collect(toMap(Function.identity(), this::getSupportedResponseFormats));
+    private Set<OwsServiceKey> getServiceOperatorKeys() {
+        return this.serviceOperatorRepository.getServiceOperatorKeys();
     }
 
     @Override

@@ -62,7 +62,8 @@ public class BinaryAttachmentResponseWriter extends AbstractResponseWriter<Binar
     }
 
     @Override
-    public void write(BinaryAttachmentResponse response, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public void write(BinaryAttachmentResponse response, OutputStream out, ResponseProxy responseProxy)
+            throws IOException {
 
         if (response == null) {
             return;

@@ -44,13 +44,13 @@ import org.n52.shetland.ogc.om.values.Value;
  */
 public class QuantityObservationValueBuilder {
 
-    public static QuantityObservationValueBuilder aQuantityValue() {
-        return new QuantityObservationValueBuilder();
-    }
-
     private Value<BigDecimal> quantity;
 
     private long phenomenonTime;
+
+    public static QuantityObservationValueBuilder aQuantityValue() {
+        return new QuantityObservationValueBuilder();
+    }
 
     public QuantityObservationValueBuilder setValue(QuantityValue quantity) {
         this.quantity = quantity;

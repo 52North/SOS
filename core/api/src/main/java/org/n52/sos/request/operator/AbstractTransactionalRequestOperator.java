@@ -42,11 +42,13 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
 /**
  * @since 4.0.0
  *
- * @param <D>
- * @param <Q>
- * @param <A>
+ * @param <D> an implementation of {@link OperationHandler}
+ * @param <Q> an implementation of {@link OwsServiceRequest}
+ * @param <A> an implementation of {@link OwsServiceResponse}
  */
-public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler,
+                                                            Q extends OwsServiceRequest,
+                                                            A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
     private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;

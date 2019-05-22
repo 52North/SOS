@@ -70,7 +70,8 @@ public abstract class AbstractInsertObservationHandler extends AbstractOperation
 
     private OwsDomain getObservationParameter(String service, String version) {
         InsertObservationParams name = Sos2Constants.InsertObservationParams.observation;
-        OwsDomainMetadata dataType = new OwsDomainMetadata(URI.create(OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION));
+        OwsDomainMetadata dataType =
+                new OwsDomainMetadata(URI.create(OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION));
         OwsPossibleValues possibleValues = OwsAnyValue.instance();
         return new OwsDomain(name, possibleValues, null, null, dataType, null, null);
     }

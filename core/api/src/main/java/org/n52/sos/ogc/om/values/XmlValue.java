@@ -66,6 +66,12 @@ public class XmlValue implements org.n52.shetland.ogc.om.values.XmlValue<XmlObje
     }
 
     @Override
+    public Value<XmlObject> setUnit(UoM unit) {
+        this.unit = unit;
+        return this;
+    }
+
+    @Override
     public String getUnit() {
         if (isSetUnit()) {
             return unit.getUom();
@@ -76,12 +82,6 @@ public class XmlValue implements org.n52.shetland.ogc.om.values.XmlValue<XmlObje
     @Override
     public UoM getUnitObject() {
         return this.unit;
-    }
-
-    @Override
-    public Value<XmlObject> setUnit(UoM unit) {
-        this.unit = unit;
-        return this;
     }
 
     @Override

@@ -40,12 +40,14 @@ public class UnsupportedOperatorException extends NoApplicableCodeException {
 
     private static final long serialVersionUID = -2227898353603492442L;
 
+    private static final String MESSAGE_TEMPLATE = "The requested operator '%s' is not supported by this server!";
+
     public UnsupportedOperatorException(SpatialOperator op) {
-        withMessage("The requested operator '%s' is not supported by this server!", op);
+        withMessage(MESSAGE_TEMPLATE, op);
     }
 
     public UnsupportedOperatorException(TimeOperator op) {
-        withMessage("The requested operator '%s' is not supported by this server!", op);
+        withMessage(MESSAGE_TEMPLATE, op);
     }
 
 }

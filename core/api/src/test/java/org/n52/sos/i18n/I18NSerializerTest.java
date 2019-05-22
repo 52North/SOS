@@ -28,9 +28,7 @@
  */
 package org.n52.sos.i18n;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import org.hamcrest.Matchers;
 
 import java.util.Locale;
 
@@ -50,35 +48,38 @@ import org.n52.janmayen.i18n.MultilingualString;
  */
 public class I18NSerializerTest {
 
+    private static final String TEXT = "text!;\")=?§";
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-
-    @Test@Ignore
+    
+    @Test
+    @Ignore
     public void testSingle() {
         test(new MultilingualString().addLocalization(Locale.ENGLISH, "text"));
         test(new MultilingualString()
-                .addLocalization(Locale.ENGLISH, "text!;\")=?§"));
+                .addLocalization(Locale.ENGLISH, TEXT));
     }
 
-    @Test@Ignore
+    @Test
+    @Ignore
     public void testMultiple() {
         test(new MultilingualString()
-                .addLocalization(Locale.ENGLISH, "text!;\")=?§")
-                .addLocalization(Locale.CANADA_FRENCH, "text!;\")=?§")
-                .addLocalization(Locale.TRADITIONAL_CHINESE, "text!;\")=?§")
-                .addLocalization(Locale.GERMANY, "text!;\")=?§")
-                .addLocalization(Locale.KOREAN, "text!;\")=?§"));
+                .addLocalization(Locale.ENGLISH, TEXT)
+                .addLocalization(Locale.CANADA_FRENCH, TEXT)
+                .addLocalization(Locale.TRADITIONAL_CHINESE, TEXT)
+                .addLocalization(Locale.GERMANY, TEXT)
+                .addLocalization(Locale.KOREAN, TEXT));
     }
 
     private void test(MultilingualString string) {
-        errors.checkThat(string, is(notNullValue()));
+        errors.checkThat(string, Matchers.is(Matchers.notNullValue()));
         String encoded = new I18NSerializer().encode(string);
         System.out.println(encoded);
-        errors.checkThat(encoded.isEmpty(), is(string.isEmpty()));
+        errors.checkThat(encoded.isEmpty(), Matchers.is(string.isEmpty()));
         MultilingualString decoded = new I18NSerializer().decode(encoded);
-        errors.checkThat(decoded, is(equalTo(string)));
+        errors.checkThat(decoded, Matchers.is(Matchers.equalTo(string)));
     }
 
 }

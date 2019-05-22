@@ -54,6 +54,7 @@ public abstract class AbstractInsertResultTemplateHandler extends AbstractResult
 
     @Override
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
-        return Collections.singleton(new OwsDomain(Sos2Constants.InsertResultTemplateParams.proposedTemplate, OwsAnyValue.instance()));
+        return Collections.singleton(
+                new OwsDomain(Sos2Constants.InsertResultTemplateParams.proposedTemplate, OwsAnyValue.instance()));
     }
 }

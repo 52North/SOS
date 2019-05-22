@@ -28,8 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import static org.n52.sos.cache.CacheConstants.EPSG_CODES;
-
 import java.util.Collection;
 
 import org.locationtech.jts.geom.Envelope;
@@ -41,7 +39,7 @@ import org.n52.shetland.util.ReferencedEnvelope;
  *
  * @author Christian Autermann
  */
-public interface WritableSpatialCache {
+public interface WritableSpatialCache extends CacheConstants {
     /**
      * Sets the default EPSG code.
      *

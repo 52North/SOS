@@ -28,15 +28,9 @@
  */
 package org.n52.sos.service;
 
-import static org.n52.sos.service.TransactionalSecuritySettings.ALLOWED_PROXIES;
-import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ACTIVE;
-import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_ALLOWED_IPS;
-import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TOKEN;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.net.IPAddress;
 import org.n52.janmayen.net.IPAddressRange;
 import org.n52.shetland.util.CollectionHelper;
@@ -51,9 +45,7 @@ import com.google.common.collect.ImmutableSet.Builder;
  * @since 4.0.0
  */
 @Configurable
-public class TransactionalSecurityConfiguration implements Constructable {
-    @Deprecated
-    private static TransactionalSecurityConfiguration instance;
+public class TransactionalSecurityConfiguration implements TransactionalSecuritySettings {
 
     private boolean transactionalActive;
 
@@ -69,20 +61,6 @@ public class TransactionalSecurityConfiguration implements Constructable {
     private String transactionalToken;
 
     private ImmutableSet<IPAddress> allowedProxies =  ImmutableSet.of();
-
-    @Override
-    public void init() {
-        TransactionalSecurityConfiguration.instance = this;
-    }
-
-    /**
-     * @return Returns a singleton instance of the
-     *         TransactionalSecurityConfiguration.
-     */
-    @Deprecated
-    public static TransactionalSecurityConfiguration getInstance() {
-        return instance;
-    }
 
     /**
      * @return the transactionalActive
@@ -130,7 +108,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
     @Setting(ALLOWED_PROXIES)
     public void setAllowedProxies(final String proxies) {
         if (!Strings.isNullOrEmpty(proxies)) {
-            final Builder<IPAddress> builder = ImmutableSet.builder();;
+            final Builder<IPAddress> builder = ImmutableSet.builder();
             for (final String splitted : proxies.split(",")) {
                 try {
                     builder.add(new IPAddress(splitted.trim()));

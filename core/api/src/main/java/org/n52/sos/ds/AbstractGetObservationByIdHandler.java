@@ -55,8 +55,8 @@ public abstract class AbstractGetObservationByIdHandler extends AbstractOperatio
 
     @Override
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
-        return Collections.singleton(new OwsDomain(Sos2Constants.GetObservationByIdParams.observation, OwsAnyValue.instance()));
+        return Collections
+                .singleton(new OwsDomain(Sos2Constants.GetObservationByIdParams.observation, OwsAnyValue.instance()));
     }
-
 
 }

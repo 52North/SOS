@@ -41,6 +41,23 @@ import java.util.List;
  *
  */
 public interface GeneralQueryDAO {
+    /**
+     * Method which query the SOS DB
+     *
+     * @param query
+     *            normal sql query concerning any table
+     *
+     * @return query result
+     *
+     * @throws SQLException
+     *             if an SQL error occurs
+     * @throws FileNotFoundException
+     *             If file could not be found
+     * @throws IOException
+     *             if an IO error occurs
+     */
+    QueryResult query(String query) throws SQLException, FileNotFoundException, IOException;
+
     class QueryResult {
         private boolean error;
 
@@ -106,18 +123,4 @@ public interface GeneralQueryDAO {
             return this;
         }
     }
-
-    /**
-     * Method which query the SOS DB
-     *
-     * @param query
-     *            normal sql query concerning any table
-     *
-     * @return query result
-     *
-     * @throws SQLException
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    QueryResult query(String query) throws SQLException, FileNotFoundException, IOException;
 }

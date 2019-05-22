@@ -176,15 +176,15 @@ public abstract class AbstractOperationHandler
                 SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
 
-    protected OwsDomain getPublishedFeatureOfInterestParameter(String service, String version) {
-        return getFeatureOfInterestParameter(service, version,
-                SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
-    }
-
     protected OwsDomain getFeatureOfInterestParameter(String service, String version,
             Collection<String> featuresOfInterest) {
         return createDomain(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest,
                 getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
+    }
+
+    protected OwsDomain getPublishedFeatureOfInterestParameter(String service, String version) {
+        return getFeatureOfInterestParameter(service, version,
+                SosHelper.getFeatureIDs(getCache().getPublishedFeatureOfInterest(), version));
     }
 
     protected OwsDomain getPublishedObservablePropertyParameter(String service, String version) {
@@ -193,6 +193,12 @@ public abstract class AbstractOperationHandler
 
     protected OwsDomain getObservablePropertyParameter(String service, String version) {
         return getObservablePropertyParameter(service, version, getObservableProperties());
+    }
+
+    protected OwsDomain getObservablePropertyParameter(String service, String version,
+            Collection<String> observedProperties) {
+        return createDomain(SosConstants.GetObservationParams.observedProperty, observedProperties,
+                getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
     protected Collection<String> getObservableProperties() {
@@ -204,12 +210,6 @@ public abstract class AbstractOperationHandler
                     .flatMap(Set::stream).forEach(observableProperties::add);
         }
         return observableProperties;
-    }
-
-    protected OwsDomain getObservablePropertyParameter(String service, String version,
-            Collection<String> observedProperties) {
-        return createDomain(SosConstants.GetObservationParams.observedProperty, observedProperties,
-                getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations());
     }
 
     protected OwsDomain getOfferingParameter(String service, String version) {
@@ -259,7 +259,8 @@ public abstract class AbstractOperationHandler
                         && !supportedResponseFormatObservationTypes.isEmpty()) {
                     for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
                         for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
-                            if (st instanceof ObservationType && observationType.equals(((ObservationType) st).getValue())) {
+                            if (st instanceof ObservationType
+                                    && observationType.equals(((ObservationType) st).getValue())) {
                                 responseFormats.add(responseFormat);
                             }
                         }

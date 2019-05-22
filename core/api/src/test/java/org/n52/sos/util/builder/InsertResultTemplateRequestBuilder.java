@@ -28,8 +28,6 @@
  */
 package org.n52.sos.util.builder;
 
-import static org.n52.sos.util.builder.ObservationConstellationBuilder.anObservationConstellation;
-
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 
 /**
@@ -53,7 +51,8 @@ public class InsertResultTemplateRequestBuilder {
     public InsertResultTemplateRequest build() {
         InsertResultTemplateRequest request = new InsertResultTemplateRequest();
         if (offering != null && !offering.isEmpty()) {
-            request.setObservationTemplate(anObservationConstellation().addOffering(offering).build());
+            request.setObservationTemplate(
+                    ObservationConstellationBuilder.anObservationConstellation().addOffering(offering).build());
         }
         return request;
     }

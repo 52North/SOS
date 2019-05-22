@@ -39,36 +39,27 @@ import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.cache.SosContentCache;
 
 /**
- * Helper class for I18N support
+ * Helper interface for I18N support
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
-public class I18NHelper {
-    /**
-     * private constructor
-     */
-    private I18NHelper() {
+public interface I18NHelper {
 
-    }
-
-    public static void addOfferingNames(SosContentCache cache, SosOffering offering, Locale requestedLocale,
-                                        Locale defaultLocale, boolean showAllLanguages) {
+    default void addOfferingNames(SosContentCache cache, SosOffering offering, Locale requestedLocale,
+            Locale defaultLocale, boolean showAllLanguages) {
         String identifier = offering.getIdentifier();
 
         if (requestedLocale != null && cache.hasI18NNamesForOffering(identifier, requestedLocale)) {
             offering.addName(new CodeType(cache.getI18nNameForOffering(identifier, requestedLocale)));
         } else {
             if (showAllLanguages) {
-                Optional.ofNullable(cache.getI18nNamesForOffering(identifier))
-                        .map(MultilingualString::stream)
-                        .orElseGet(Stream::empty)
-                        .map(CodeType::new)
-                        .forEach(offering::addName);
+                Optional.ofNullable(cache.getI18nNamesForOffering(identifier)).map(MultilingualString::stream)
+                        .orElseGet(Stream::empty).map(CodeType::new).forEach(offering::addName);
             } else {
-                Optional.ofNullable(cache.getI18nNameForOffering(identifier, defaultLocale))
-                        .map(CodeType::new).ifPresent(offering::addName);
+                Optional.ofNullable(cache.getI18nNameForOffering(identifier, defaultLocale)).map(CodeType::new)
+                        .ifPresent(offering::addName);
             }
         }
         if (!offering.isSetName()) {
@@ -76,7 +67,7 @@ public class I18NHelper {
         }
     }
 
-    public static void addOfferingDescription(SosOffering offering, Locale locale, Locale defaultLocale,
+    default void addOfferingDescription(SosOffering offering, Locale locale, Locale defaultLocale,
                                               SosContentCache cache) {
         Optional.ofNullable(cache.getI18nDescriptionsForOffering(offering.getIdentifier()))
                 .flatMap(d -> d.getLocalizationOrDefault(locale, defaultLocale))

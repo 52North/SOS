@@ -28,7 +28,7 @@
  */
 package org.n52.sos.i18n;
 
-import static org.hamcrest.Matchers.is;
+import org.hamcrest.Matchers;
 
 import java.util.Locale;
 
@@ -50,27 +50,27 @@ public class LocaleHelperTest {
     public final ErrorCollector errors = new ErrorCollector();
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-
-    @Test@Ignore
+    
+    @Test
+    @Ignore
     public void testSerialization() {
         String string = LocaleHelper.encode(Locale.GERMAN);
-        errors.checkThat(LocaleHelper.decode(string, null), is(Locale.GERMAN));
+        errors.checkThat(LocaleHelper.decode(string, null), Matchers.is(Locale.GERMAN));
     }
 
-    @Test@Ignore
+    @Test
+    @Ignore
     public void test() {
 
         //IETF BCP 47
         // ISO 639 alpha-2 or alpha-3
         String string = LocaleHelper.encode(Locale.GERMAN);
         //System.out.println(Locale.GERMAN.toLanguageTag());
-        errors.checkThat(LocaleHelper.decode(string, null), is(Locale.GERMAN));
-        errors.checkThat(LocaleHelper.decode("de_DE", null), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("de_DE", null), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("de DE", null), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("de-DE", null), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("de-de", null), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("de-DE", null), is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("deu", null), is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode(string, null), Matchers.is(Locale.GERMAN));
+        errors.checkThat(LocaleHelper.decode("de_DE", null), Matchers.is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de DE", null), Matchers.is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de-de", null), Matchers.is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("de-DE", null), Matchers.is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("deu", null), Matchers.is(Locale.GERMANY));
     }
 }

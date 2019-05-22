@@ -28,8 +28,7 @@
  */
 package org.n52.sos.decode;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.Assert;
 
 import org.junit.Test;
 
@@ -42,50 +41,56 @@ import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
  */
 public class XmlNamespaceDecoderKeyTest {
 
+    private static final String TEST = "test";
+
+    private static final String TEST_1 = "test1";
+
     @Test
     public void testHashCode() {
-        assertEquals(new XmlNamespaceDecoderKey("test", C1.class).hashCode(), new XmlNamespaceDecoderKey("test",
-                C1.class).hashCode());
-        assertEquals(new XmlNamespaceDecoderKey(null, C1.class).hashCode(),
+        Assert.assertEquals(new XmlNamespaceDecoderKey(TEST, C1.class).hashCode(),
+                new XmlNamespaceDecoderKey(TEST, C1.class).hashCode());
+        Assert.assertEquals(new XmlNamespaceDecoderKey(null, C1.class).hashCode(),
                 new XmlNamespaceDecoderKey(null, C1.class).hashCode());
-        assertEquals(new XmlNamespaceDecoderKey("test", null).hashCode(),
-                new XmlNamespaceDecoderKey("test", null).hashCode());
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class).hashCode(), new XmlNamespaceDecoderKey(null,
-                C1.class).hashCode());
-        assertNotEquals(new XmlNamespaceDecoderKey("test", null).hashCode(), new XmlNamespaceDecoderKey("test",
-                C1.class).hashCode());
-        assertNotEquals(new XmlNamespaceDecoderKey("test1", C1.class).hashCode(), new XmlNamespaceDecoderKey("test",
-                C1.class).hashCode());
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class).hashCode(), new XmlNamespaceDecoderKey("test1",
-                C1.class).hashCode());
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class).hashCode(), new XmlNamespaceDecoderKey("test",
-                C2.class).hashCode());
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class).hashCode(), new XmlNamespaceDecoderKey("test",
-                C2.class).hashCode());
+        Assert.assertEquals(new XmlNamespaceDecoderKey(TEST, null).hashCode(),
+                new XmlNamespaceDecoderKey(TEST, null).hashCode());
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class).hashCode(),
+                new XmlNamespaceDecoderKey(null, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, null).hashCode(),
+                new XmlNamespaceDecoderKey(TEST, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST_1, C1.class).hashCode(),
+                new XmlNamespaceDecoderKey(TEST, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class).hashCode(),
+                new XmlNamespaceDecoderKey(TEST_1, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class).hashCode(),
+                new XmlNamespaceDecoderKey(TEST, C2.class).hashCode());
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class).hashCode(),
+                new XmlNamespaceDecoderKey(TEST, C2.class).hashCode());
     }
 
     @Test
     public void testEquals() {
-        assertEquals(new XmlNamespaceDecoderKey("test", C1.class), new XmlNamespaceDecoderKey("test", C1.class));
-        assertEquals(new XmlNamespaceDecoderKey(null, C1.class), new XmlNamespaceDecoderKey(null, C1.class));
-        assertEquals(new XmlNamespaceDecoderKey("test", null), new XmlNamespaceDecoderKey("test", null));
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class), new XmlNamespaceDecoderKey(null, C1.class));
-        assertNotEquals(new XmlNamespaceDecoderKey("test", null), new XmlNamespaceDecoderKey("test", C1.class));
-        assertNotEquals(new XmlNamespaceDecoderKey("test1", C1.class), new XmlNamespaceDecoderKey("test", C1.class));
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class), new XmlNamespaceDecoderKey("test1", C1.class));
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class), new XmlNamespaceDecoderKey("test", C2.class));
-        assertNotEquals(new XmlNamespaceDecoderKey("test", C1.class), new XmlNamespaceDecoderKey("test", C2.class));
+        Assert.assertEquals(new XmlNamespaceDecoderKey(TEST, C1.class), new XmlNamespaceDecoderKey(TEST, C1.class));
+        Assert.assertEquals(new XmlNamespaceDecoderKey(null, C1.class), new XmlNamespaceDecoderKey(null, C1.class));
+        Assert.assertEquals(new XmlNamespaceDecoderKey(TEST, null), new XmlNamespaceDecoderKey(TEST, null));
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class), new XmlNamespaceDecoderKey(null, C1.class));
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, null), new XmlNamespaceDecoderKey(TEST, C1.class));
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST_1, C1.class),
+                new XmlNamespaceDecoderKey(TEST, C1.class));
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class),
+                new XmlNamespaceDecoderKey(TEST_1, C1.class));
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class), new XmlNamespaceDecoderKey(TEST, C2.class));
+        Assert.assertNotEquals(new XmlNamespaceDecoderKey(TEST, C1.class), new XmlNamespaceDecoderKey(TEST, C2.class));
     }
 
     private void test(Class<?> a, Class<?> b, int expected) {
-        assertEquals(expected,
-                new XmlNamespaceDecoderKey("test", a).getSimilarity(new XmlNamespaceDecoderKey("test", b)));
+        Assert.assertEquals(expected,
+                new XmlNamespaceDecoderKey(TEST, a).getSimilarity(new XmlNamespaceDecoderKey(TEST, b)));
     }
 
     @Test
     public void testSimilartiy() {
-        assertEquals(-1, new XmlNamespaceDecoderKey("test", C1.class).getSimilarity(new XmlNamespaceDecoderKey(
-                "test1", C1.class)));
+        Assert.assertEquals(-1, new XmlNamespaceDecoderKey(TEST, C1.class)
+                .getSimilarity(new XmlNamespaceDecoderKey(TEST_1, C1.class)));
         test(C1.class, C2.class, 1);
         test(C1.class, C3.class, 2);
         test(C1.class, C4.class, 3);

@@ -39,6 +39,8 @@ import java.util.Objects;
  */
 public final class CacheValidation {
 
+    private static final String NOT_NULL =  " may not contain null elements!";
+
     private CacheValidation() {
     }
 
@@ -85,7 +87,21 @@ public final class CacheValidation {
     public static void noNullValues(String name, Collection<?> value)
             throws NullPointerException {
         if (Objects.requireNonNull(value, name).stream().anyMatch(Objects::isNull)) {
-            throw new NullPointerException(name + " may not contain null elements!");
+            throw new NullPointerException(name + NOT_NULL);
+        }
+    }
+
+    /**
+     * Throws a {@code NullPointerExceptions} if value is null or any key or value within is null.
+     *
+     * @param name  the name of the value
+     * @param value the value to check
+     *
+     * @throws NullPointerException if value == null or value contains null values
+     */
+    public static void noNullValues(String name, Map<?, ?> value) throws NullPointerException {
+        if (Objects.requireNonNull(value, name).entrySet().stream().anyMatch(Objects::isNull)) {
+            throw new NullPointerException(name + NOT_NULL);
         }
     }
 
@@ -102,25 +118,11 @@ public final class CacheValidation {
             throws NullPointerException, IllegalArgumentException {
         Objects.requireNonNull(value, name).forEach(o -> {
             if (o == null) {
-                throw new NullPointerException(name + " may not contain null elements!");
+                throw new NullPointerException(name + NOT_NULL);
             }
             if (o.isEmpty()) {
                 throw new IllegalArgumentException(name + " may not contain empty elements!");
             }
         });
-    }
-
-    /**
-     * Throws a {@code NullPointerExceptions} if value is null or any key or value within is null.
-     *
-     * @param name  the name of the value
-     * @param value the value to check
-     *
-     * @throws NullPointerException if value == null or value contains null values
-     */
-    public static void noNullValues(String name, Map<?, ?> value) throws NullPointerException {
-        if (Objects.requireNonNull(value, name).entrySet().stream().anyMatch(Objects::isNull)) {
-            throw new NullPointerException(name + " may not contain null elements!");
-        }
     }
 }

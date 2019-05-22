@@ -47,10 +47,7 @@ public class FlexibleIdentifierHelper implements Constructable {
 
     public static final String RETURN_HUMAN_READABLE_IDENTIFIER = "returnHumanReadableIdentifier";
 
-    @Deprecated
-    private static FlexibleIdentifierHelper instance;
-
-    private boolean returnHumanReadableIdentifier = false;
+    private boolean returnHumanReadableIdentifier;
 
     private boolean includeOffering = true;
 
@@ -62,15 +59,6 @@ public class FlexibleIdentifierHelper implements Constructable {
 
     @Override
     public void init() {
-        FlexibleIdentifierHelper.instance = this;
-    }
-
-    /**
-     * @return Returns a singleton instance of the GeometryHandler.
-     */
-    @Deprecated
-    public static FlexibleIdentifierHelper getInstance() {
-        return instance;
     }
 
     @Setting(FlexibleIdentifierSettings.RETURN_HUMAN_READABLE_IDENTIFIER_KEY)

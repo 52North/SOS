@@ -51,15 +51,16 @@ import com.google.common.collect.Sets;
 public class DriverCleanupListener implements Destroyable {
 
     public static final String DEREGISTER_JDBC_DRIVER = "service.jdbc.deregister";
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(DriverCleanupListener.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverCleanupListener.class);
 
     private boolean deregisterJDBCDriver;
+
     private final Set<String> providedDrivers = Sets.newHashSet();
 
-    public void addDriverClass(String name)  {
+    public void addDriverClass(String name) {
         if (name != null && !name.isEmpty()) {
-            synchronized(this.providedDrivers) {
+            synchronized (this.providedDrivers) {
                 this.providedDrivers.add(name);
             }
         }
@@ -88,7 +89,7 @@ public class DriverCleanupListener implements Destroyable {
     }
 
     private void deregisterDriver(Driver driver, Set<String> provided) {
-        synchronized(this.providedDrivers) {
+        synchronized (this.providedDrivers) {
             if (provided.contains(driver.getClass().getName())) {
                 LOGGER.debug("JDBC driver {} is marked to do not deregister", driver);
             } else {

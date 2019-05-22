@@ -48,7 +48,8 @@ import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlHelper;
 
 /**
- * Abstract class for Result Handling operation Handlers to provide common methods
+ * Abstract class for Result Handling operation Handlers to provide common
+ * methods
  *
  * Renamed, in version 4.x called AbstractResultHandlingDAO
  *
@@ -93,7 +94,7 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
     }
 
     protected SosResultStructure createSosResultStructure(String resultStructure) throws CodedException {
-        SweAbstractDataComponent abstractDataComponent =(SweAbstractDataComponent)decode(resultStructure);
+        SweAbstractDataComponent abstractDataComponent = (SweAbstractDataComponent) decode(resultStructure);
         if (abstractDataComponent != null) {
             return new SosResultStructure(abstractDataComponent, resultStructure);
         }
@@ -101,7 +102,7 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
     }
 
     protected SosResultEncoding createSosResultEncoding(String resultEncoding) throws CodedException {
-        SweAbstractEncoding abstractEncoding = (SweAbstractEncoding)decode(resultEncoding);
+        SweAbstractEncoding abstractEncoding = (SweAbstractEncoding) decode(resultEncoding);
         if (abstractEncoding != null) {
             return new SosResultEncoding(abstractEncoding, resultEncoding);
         }
@@ -116,10 +117,11 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
             if (decoder != null) {
                 return decoder.decode(xmlObject);
             } else {
-                throw new NoApplicableCodeException().withMessage("No decoder found for %s", xmlObject.getClass().getName());
+                throw new NoApplicableCodeException().withMessage("No decoder found for %s",
+                        xmlObject.getClass().getName());
             }
         } catch (DecodingException de) {
-           throw new NoApplicableCodeException().causedBy(de);
+            throw new NoApplicableCodeException().causedBy(de);
         }
     }
 

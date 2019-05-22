@@ -28,8 +28,7 @@
  */
 package org.n52.sos.encode;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.Assert;
 
 import org.junit.Test;
 
@@ -41,6 +40,71 @@ import org.n52.svalbard.encode.XmlEncoderKey;
  * @since 4.0.0
  */
 public class XmlEncoderKeyTest {
+    
+    private static final String TEST = "test";
+    private static final String TEST_1 = "test1";
+    
+    @Test
+    public void testHashCode() {
+        Assert.assertEquals(new XmlEncoderKey(TEST, C1.class).hashCode(),
+                new XmlEncoderKey(TEST, C1.class).hashCode());
+        Assert.assertEquals(new XmlEncoderKey(null, C1.class).hashCode(),
+                new XmlEncoderKey(null, C1.class).hashCode());
+        Assert.assertEquals(new XmlEncoderKey(TEST, null).hashCode(), new XmlEncoderKey(TEST, null).hashCode());
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class).hashCode(),
+                new XmlEncoderKey(null, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, null).hashCode(), new XmlEncoderKey(TEST, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlEncoderKey(TEST_1, C1.class).hashCode(),
+                new XmlEncoderKey(TEST, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class).hashCode(),
+                new XmlEncoderKey(TEST_1, C1.class).hashCode());
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class).hashCode(),
+                new XmlEncoderKey(TEST, C2.class).hashCode());
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class).hashCode(),
+                new XmlEncoderKey(TEST, C2.class).hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        Assert.assertEquals(new XmlEncoderKey(TEST, C1.class), new XmlEncoderKey(TEST, C1.class));
+        Assert.assertEquals(new XmlEncoderKey(null, C1.class), new XmlEncoderKey(null, C1.class));
+        Assert.assertEquals(new XmlEncoderKey(TEST, null), new XmlEncoderKey(TEST, null));
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class), new XmlEncoderKey(null, C1.class));
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, null), new XmlEncoderKey(TEST, C1.class));
+        Assert.assertNotEquals(new XmlEncoderKey(TEST_1, C1.class), new XmlEncoderKey(TEST, C1.class));
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class), new XmlEncoderKey(TEST_1, C1.class));
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class), new XmlEncoderKey(TEST, C2.class));
+        Assert.assertNotEquals(new XmlEncoderKey(TEST, C1.class), new XmlEncoderKey(TEST, C2.class));
+    }
+
+    private void test(Class<?> a, Class<?> b, int expected) {
+        Assert.assertEquals(expected, new XmlEncoderKey(TEST, a).getSimilarity(new XmlEncoderKey(TEST, b)));
+    }
+
+    @Test
+    public void testSimilartiy() {
+        Assert.assertEquals(-1, new XmlEncoderKey(TEST, C1.class).getSimilarity(new XmlEncoderKey(TEST_1, C1.class)));
+        test(C1.class, C2.class, 1);
+        test(C1.class, C3.class, 2);
+        test(C1.class, C4.class, 3);
+        test(C3.class, C4.class, 1);
+        test(I1.class, C4.class, 5);
+        test(I1.class, I4.class, -1);
+        test(C1.class, C5.class, -1);
+        test(C1.class, I1.class, -1);
+    
+        test(C1[].class, C2[].class, 1);
+        test(C1[].class, C3[].class, 2);
+        test(C1[].class, C4[].class, 3);
+        test(C3[].class, C4[].class, 1);
+        test(I1[].class, C4[].class, 5);
+        test(I1[].class, I4[].class, -1);
+        test(C1[].class, C5[].class, -1);
+        test(C1[].class, I1[].class, -1);
+    
+        test(C1[].class, C1.class, -1);
+    }
+
     private class C1 {
     }
 
@@ -66,61 +130,5 @@ public class XmlEncoderKeyTest {
     }
 
     private interface I4 {
-    }
-
-    @Test
-    public void testHashCode() {
-        assertEquals(new XmlEncoderKey("test", C1.class).hashCode(), new XmlEncoderKey("test", C1.class).hashCode());
-        assertEquals(new XmlEncoderKey(null, C1.class).hashCode(), new XmlEncoderKey(null, C1.class).hashCode());
-        assertEquals(new XmlEncoderKey("test", null).hashCode(), new XmlEncoderKey("test", null).hashCode());
-        assertNotEquals(new XmlEncoderKey("test", C1.class).hashCode(), new XmlEncoderKey(null, C1.class).hashCode());
-        assertNotEquals(new XmlEncoderKey("test", null).hashCode(), new XmlEncoderKey("test", C1.class).hashCode());
-        assertNotEquals(new XmlEncoderKey("test1", C1.class).hashCode(),
-                new XmlEncoderKey("test", C1.class).hashCode());
-        assertNotEquals(new XmlEncoderKey("test", C1.class).hashCode(),
-                new XmlEncoderKey("test1", C1.class).hashCode());
-        assertNotEquals(new XmlEncoderKey("test", C1.class).hashCode(), new XmlEncoderKey("test", C2.class).hashCode());
-        assertNotEquals(new XmlEncoderKey("test", C1.class).hashCode(), new XmlEncoderKey("test", C2.class).hashCode());
-    }
-
-    @Test
-    public void testEquals() {
-        assertEquals(new XmlEncoderKey("test", C1.class), new XmlEncoderKey("test", C1.class));
-        assertEquals(new XmlEncoderKey(null, C1.class), new XmlEncoderKey(null, C1.class));
-        assertEquals(new XmlEncoderKey("test", null), new XmlEncoderKey("test", null));
-        assertNotEquals(new XmlEncoderKey("test", C1.class), new XmlEncoderKey(null, C1.class));
-        assertNotEquals(new XmlEncoderKey("test", null), new XmlEncoderKey("test", C1.class));
-        assertNotEquals(new XmlEncoderKey("test1", C1.class), new XmlEncoderKey("test", C1.class));
-        assertNotEquals(new XmlEncoderKey("test", C1.class), new XmlEncoderKey("test1", C1.class));
-        assertNotEquals(new XmlEncoderKey("test", C1.class), new XmlEncoderKey("test", C2.class));
-        assertNotEquals(new XmlEncoderKey("test", C1.class), new XmlEncoderKey("test", C2.class));
-    }
-
-    private void test(Class<?> a, Class<?> b, int expected) {
-        assertEquals(expected, new XmlEncoderKey("test", a).getSimilarity(new XmlEncoderKey("test", b)));
-    }
-
-    @Test
-    public void testSimilartiy() {
-        assertEquals(-1, new XmlEncoderKey("test", C1.class).getSimilarity(new XmlEncoderKey("test1", C1.class)));
-        test(C1.class, C2.class, 1);
-        test(C1.class, C3.class, 2);
-        test(C1.class, C4.class, 3);
-        test(C3.class, C4.class, 1);
-        test(I1.class, C4.class, 5);
-        test(I1.class, I4.class, -1);
-        test(C1.class, C5.class, -1);
-        test(C1.class, I1.class, -1);
-
-        test(C1[].class, C2[].class, 1);
-        test(C1[].class, C3[].class, 2);
-        test(C1[].class, C4[].class, 3);
-        test(C3[].class, C4[].class, 1);
-        test(I1[].class, C4[].class, 5);
-        test(I1[].class, I4[].class, -1);
-        test(C1[].class, C5[].class, -1);
-        test(C1[].class, I1[].class, -1);
-
-        test(C1[].class, C1.class, -1);
     }
 }

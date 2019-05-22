@@ -122,14 +122,39 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 @Configurable
-public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+public abstract class AbstractRequestOperator<D extends OperationHandler,
+                                              Q extends OwsServiceRequest,
+                                              A extends OwsServiceResponse>
         implements RequestOperator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
-
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
+
+    private static final String VALUE = ".value";
+
+    private static final String OPERATOR = ".operator";
+
+    private static final String VALUE_REFERENCE = ".valueReference";
+
+    private static final String SPATIAL_FILTER_VALUE = SosSpatialFilterConstants.SPATIAL_FILTER + VALUE;
+
+    private static final String SPATIAL_FILTER_OPERATOR = SosSpatialFilterConstants.SPATIAL_FILTER + OPERATOR;
+
+    private static final String SPATIAL_FILTER_VALUE_REFERENCE =
+            SosSpatialFilterConstants.SPATIAL_FILTER + VALUE_REFERENCE;
+
+    private static final String RESULT_FILTER_VALUE = ResultFilterConstants.RESULT_FILTER + VALUE;
+
+    private static final String RESULT_FILTER_OPERATOR = ResultFilterConstants.RESULT_FILTER + OPERATOR;
+
+    private static final String RESULT_FILTER_VALUE_REFERENCE = ResultFilterConstants.RESULT_FILTER + VALUE_REFERENCE;
+
+    private static final String NOT_SUPPORTED_FILTER = "The %s does not yet support filters of type '%s'";
+
+    private static final String DUPLICATED = "duplicated";
+
     // TODO make supported ValueReferences dynamic
-    private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet(
+    private static final Set<String> VALID_TEMPORAL_FILTER_VALUE_REFERENCES = Sets.newHashSet(
             "phenomenonTime",
             "om:phenomenonTime",
             "resultTime",
@@ -225,7 +250,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     @Inject
-    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+    public void setProcedureDescriptionFormatRepository(
+            ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
         this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
     }
 
@@ -280,9 +306,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     protected Optional<D> getOptionalOperationHandler() {
-        String service = this.requestOperatorKey.getService();
-        String operationName = this.requestOperatorKey.getOperationName();
-        return getOptionalOperationHandler(service, operationName);
+        return getOptionalOperationHandler(this.requestOperatorKey.getService(),
+                this.requestOperatorKey.getOperationName());
     }
 
     @SuppressWarnings("unchecked")
@@ -311,8 +336,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     @Override
-    public OwsServiceResponse receiveRequest(OwsServiceRequest abstractRequest)
-            throws OwsExceptionReport {
+    public OwsServiceResponse receiveRequest(OwsServiceRequest abstractRequest) throws OwsExceptionReport {
         this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass()) && isSupported()) {
             Q request = requestType.cast(abstractRequest);
@@ -341,11 +365,12 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             List<RequestResponseModifier> splitter = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
             List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
-            for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request)) {
+            for (RequestResponseModifier modifier : this.requestResponseModifierRepository
+                    .getRequestResponseModifier(request)) {
                 if (modifier.getFacilitator().isSplitter()) {
                     splitter.add(modifier);
                 } else if (modifier.getFacilitator().isAdderRemover()) {
-                    remover.add( modifier);
+                    remover.add(modifier);
                 } else {
                     defaultMofifier.add(modifier);
                 }
@@ -365,13 +390,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    private OwsServiceResponse checkForModifierAndProcess(OwsServiceRequest request,
-            OwsServiceResponse response) throws OwsExceptionReport {
+    private OwsServiceResponse checkForModifierAndProcess(OwsServiceRequest request, OwsServiceResponse response)
+            throws OwsExceptionReport {
         if (this.requestResponseModifierRepository.hasRequestResponseModifier(request, response)) {
             List<RequestResponseModifier> defaultModifier = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
             List<RequestResponseModifier> merger = new ArrayList<>();
-            for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request, response)) {
+            for (RequestResponseModifier modifier : this.requestResponseModifierRepository
+                    .getRequestResponseModifier(request, response)) {
                 if (modifier.getFacilitator().isMerger()) {
                     merger.add(modifier);
                 } else if (modifier.getFacilitator().isAdderRemover()) {
@@ -426,20 +452,45 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected List<String> checkAcceptedVersionsParameter(String service, Collection<String> versions)
             throws OwsExceptionReport {
         if (versions != null) {
-            Set<String> supportedVersions = this.serviceOperatorRepository
-                    .getSupportedVersions(service);
-            List<String> validVersions = versions.stream()
-                    .filter(supportedVersions::contains)
-                    .collect(Collectors.toList());
+            Set<String> supportedVersions = this.serviceOperatorRepository.getSupportedVersions(service);
+            List<String> validVersions =
+                    versions.stream().filter(supportedVersions::contains).collect(Collectors.toList());
 
             if (validVersions.isEmpty()) {
-                throw new VersionNegotiationFailedException().at(org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions)
+                throw new VersionNegotiationFailedException()
+                        .at(org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions)
                         .withMessage("The parameter '%s' does not contain a supported Service version!",
                                 org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name());
             }
             return validVersions;
         } else {
-            throw new MissingParameterValueException(org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
+            throw new MissingParameterValueException(
+                    org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
+        }
+    }
+
+    /**
+     * method checks, whether the passed string containing the requested
+     * versions of the SOS contains the versions, the 52n SOS supports
+     *
+     * @param service
+     *            requested service
+     * @param versionsString
+     *            comma seperated list of requested service versions
+     *
+     *
+     * @throws OwsExceptionReport
+     *             * if the versions list is empty or no matching version is *
+     *             contained
+     */
+    protected void checkAcceptedVersionsParameter(String service, String versionsString) throws OwsExceptionReport {
+        // check acceptVersions
+        if (versionsString != null && !versionsString.isEmpty()) {
+            String[] versionsArray = versionsString.split(",");
+            checkAcceptedVersionsParameter(service, Arrays.asList(versionsArray));
+        } else {
+            throw new MissingParameterValueException(
+                    org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
         }
     }
 
@@ -459,36 +510,11 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         if (request.getVersion() == null) {
             throw new MissingVersionParameterException();
         }
-        if ( !this.serviceOperatorRepository.isVersionSupported(request.getService(), request.getVersion())) {
+        if (!this.serviceOperatorRepository.isVersionSupported(request.getService(), request.getVersion())) {
             throw new InvalidParameterValueException().at(OWSConstants.RequestParams.version).withMessage(
                     "The parameter '%s' does not contain version(s) supported by this Service: '%s'!",
                     OWSConstants.RequestParams.version.name(),
                     Joiner.on(", ").join(this.serviceOperatorRepository.getSupportedVersions(request.getService())));
-        }
-    }
-
-    /**
-     * method checks, whether the passed string containing the requested
-     * versions of the SOS contains the versions, the 52n SOS supports
-     *
-     * @param service
-     *            requested service
-     * @param versionsString
-     *            comma seperated list of requested service versions
-     *
-     *
-     * @throws OwsExceptionReport
-     *             * if the versions list is empty or no matching version is *
-     *             contained
-     */
-    protected void checkAcceptedVersionsParameter(String service, String versionsString)
-            throws OwsExceptionReport {
-        // check acceptVersions
-        if (versionsString != null && !versionsString.isEmpty()) {
-            String[] versionsArray = versionsString.split(",");
-            checkAcceptedVersionsParameter(service, Arrays.asList(versionsArray));
-        } else {
-            throw new MissingParameterValueException(org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions);
         }
     }
 
@@ -525,22 +551,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         checkProcedure(procedure, parameterName.name());
     }
 
-    protected void checkTransactionalProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedure)) {
-            throw new MissingProcedureParameterException();
-        } else if (!getCache().hasTransactionalObservationProcedure(procedure)) {
-            throw new InvalidParameterValueException(parameterName, procedure);
-        }
-    }
-
-    protected void checkQueryableProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
-        if (Strings.isNullOrEmpty(procedure)) {
-            throw new MissingProcedureParameterException();
-        } else if (!getCache().hasQueryableProcedure(procedure)) {
-            throw new InvalidParameterValueException(parameterName, procedure);
-        }
-    }
-
     /**
      * checks whether the requested sensor ID is valid
      *
@@ -561,8 +571,23 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkProcedures(Collection<String> procedures, String parameterName)
-            throws OwsExceptionReport {
+    protected void checkTransactionalProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
+            throw new MissingProcedureParameterException();
+        } else if (!getCache().hasTransactionalObservationProcedure(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
+        }
+    }
+
+    protected void checkQueryableProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedure)) {
+            throw new MissingProcedureParameterException();
+        } else if (!getCache().hasQueryableProcedure(procedure)) {
+            throw new InvalidParameterValueException(parameterName, procedure);
+        }
+    }
+
+    protected void checkProcedures(Collection<String> procedures, String parameterName) throws OwsExceptionReport {
         if (procedures != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             procedures.forEach(id -> {
@@ -622,8 +647,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkObservationID(String observationID, String parameterName)
-            throws OwsExceptionReport {
+    protected void checkObservationID(String observationID, String parameterName) throws OwsExceptionReport {
         if (observationID == null || observationID.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
             // } else if (!getCache().hasObservationIdentifier(observationID)) {
@@ -679,13 +703,13 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
-    protected void checkObservedProperties(Collection<String> observedProperties, Enum<?> parameterName, boolean insertion)
-            throws OwsExceptionReport {
+    protected void checkObservedProperties(Collection<String> observedProperties, Enum<?> parameterName,
+            boolean insertion) throws OwsExceptionReport {
         checkObservedProperties(observedProperties, parameterName.name(), insertion);
     }
 
-    protected void checkObservedProperties(Collection<String> observedProperties, String parameterName, boolean insertion)
-            throws OwsExceptionReport {
+    protected void checkObservedProperties(Collection<String> observedProperties, String parameterName,
+            boolean insertion) throws OwsExceptionReport {
         if (observedProperties != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             observedProperties.forEach(id -> {
@@ -724,9 +748,9 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 throw new InvalidParameterValueException(parameterName, observedProperty);
             }
         } else if (isIncludeChildObservableProperties()) {
-            if (getCache().isCompositePhenomenon(observedProperty) ||
-                !(getCache().isCompositePhenomenonComponent(observedProperty) ||
-                  getCache().hasObservableProperty(observedProperty))) {
+            if (getCache().isCompositePhenomenon(observedProperty)
+                    || !(getCache().isCompositePhenomenonComponent(observedProperty)
+                            || getCache().hasObservableProperty(observedProperty))) {
                 throw new InvalidParameterValueException(parameterName, observedProperty);
             }
         } else if (!getCache().getPublishedObservableProperties().contains(observedProperty)) {
@@ -763,7 +787,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         checkOfferings(offerings, parameterName.name());
     }
 
-    protected void checkOfferings(Collection<String> offerings, Enum<?> parameterName, boolean all) throws OwsExceptionReport {
+    protected void checkOfferings(Collection<String> offerings, Enum<?> parameterName, boolean all)
+            throws OwsExceptionReport {
         checkOfferings(offerings, parameterName.name(), all);
     }
 
@@ -818,12 +843,14 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         checkSpatialFilter(spatialFilter, name.name());
     }
 
-    protected void checkTemporalFilter(Collection<TemporalFilter> temporalFilters, String name) throws OwsExceptionReport {
+    protected void checkTemporalFilter(Collection<TemporalFilter> temporalFilters, String name)
+            throws OwsExceptionReport {
         if (temporalFilters != null) {
             for (TemporalFilter temporalFilter : temporalFilters) {
-                if (temporalFilter.getValueReference() == null || (temporalFilter.getValueReference() != null && temporalFilter.getValueReference().isEmpty())) {
+                if (temporalFilter.getValueReference() == null || (temporalFilter.getValueReference() != null
+                        && temporalFilter.getValueReference().isEmpty())) {
                     throw new MissingValueReferenceException();
-                } else if (!validTemporalFilterValueReferences.contains(temporalFilter.getValueReference())) {
+                } else if (!VALID_TEMPORAL_FILTER_VALUE_REFERENCES.contains(temporalFilter.getValueReference())) {
                     throw new InvalidValueReferenceException(temporalFilter.getValueReference());
                 }
                 checkTemporalFilter(temporalFilter);
@@ -857,8 +884,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         checkTemporalFilter(temporalFilters, name.name());
     }
 
-    protected void checkResultTemplate(String resultTemplate, String parameterName)
-            throws OwsExceptionReport {
+    protected void checkResultTemplate(String resultTemplate, String parameterName) throws OwsExceptionReport {
         if (resultTemplate == null || resultTemplate.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         } else if (!getCache().hasResultTemplate(resultTemplate)) {
@@ -872,7 +898,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     protected void checkReservedCharacter(Collection<String> values, String parameterName) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
-        values.forEach((value) -> {
+        values.forEach(value -> {
             try {
                 checkReservedCharacter(value, parameterName);
             } catch (OwsExceptionReport owse) {
@@ -922,7 +948,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         if (isIncludeChildObservableProperties()) {
             for (String observedProperty : observedProperties) {
                 if (getCache().isCompositePhenomenon(observedProperty)) {
-                    allObservedProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(observedProperty));
+                    allObservedProperties
+                            .addAll(getCache().getObservablePropertiesForCompositePhenomenon(observedProperty));
                 }
             }
         }
@@ -940,8 +967,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return Lists.newArrayList(allOfferings);
     }
 
-    protected void checkObservationType(String observationType, String parameterName)
-            throws OwsExceptionReport {
+    protected void checkObservationType(String observationType, String parameterName) throws OwsExceptionReport {
         if (observationType == null || observationType.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         } else if (!getCache().hasObservationType(observationType)) {
@@ -958,10 +984,12 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @param responseFormat
      *            String containing the value of the result format parameter
      * @param service
+     *            the service
      * @param version
+     *            the version
      *
      * @throws OwsExceptionReport
-     *             * if the parameter value is incorrect
+     *             if the parameter value is incorrect
      */
     protected void checkResponseFormat(final String responseFormat, final String service, final String version)
             throws OwsExceptionReport {
@@ -1030,8 +1058,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            final Collection<String> supportedFormats =
-                    getProcedureDescriptionFormatRepository().getSupportedProcedureDescriptionFormats(serviceOperatorKey);
+            final Collection<String> supportedFormats = getProcedureDescriptionFormatRepository()
+                    .getSupportedProcedureDescriptionFormats(serviceOperatorKey);
             if (!supportedFormats.contains(format)) {
                 throw new InvalidParameterValueException(parameter, format);
             }
@@ -1075,7 +1103,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     protected void checkResultFilterExtension(OwsServiceRequest request) throws CodedException {
         if (request.hasExtension(ResultFilterConstants.RESULT_FILTER)) {
             if (request.getExtensionCount(ResultFilterConstants.RESULT_FILTER) > 1) {
-                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, "duplicated");
+                throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER, DUPLICATED);
             }
             Optional<Extension<?>> extension = request.getExtension(ResultFilterConstants.RESULT_FILTER);
             if (extension.isPresent() && extension.get().getValue() == null) {
@@ -1083,11 +1111,12 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             }
             Filter<?> filter = ((ResultFilter) extension.get()).getValue();
             if (filter instanceof BinaryLogicFilter) {
-               checkBinaryLogicFilter((BinaryLogicFilter) filter);
+                checkBinaryLogicFilter((BinaryLogicFilter) filter);
             } else if (filter instanceof ComparisonFilter) {
                 checkFilter((ComparisonFilter) filter);
             } else {
-                throw new OptionNotSupportedException().withMessage("The %s does not yet support filters of type '%s'", ResultFilterConstants.RESULT_FILTER, filter);
+                throw new OptionNotSupportedException().withMessage(NOT_SUPPORTED_FILTER,
+                        ResultFilterConstants.RESULT_FILTER, filter);
             }
         }
     }
@@ -1096,33 +1125,35 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         for (Filter<?> f : filter.getFilterPredicates()) {
             if (f instanceof BinaryLogicFilter) {
                 checkBinaryLogicFilter((BinaryLogicFilter) f);
-             } else if (f instanceof ComparisonFilter) {
-                 checkFilter((ComparisonFilter) f);
-             } else {
-                 throw new OptionNotSupportedException().withMessage("The %s does not yet support filters of type '%s'", ResultFilterConstants.RESULT_FILTER, f);
-             }
+            } else if (f instanceof ComparisonFilter) {
+                checkFilter((ComparisonFilter) f);
+            } else {
+                throw new OptionNotSupportedException().withMessage(NOT_SUPPORTED_FILTER,
+                        ResultFilterConstants.RESULT_FILTER, f);
+            }
         }
     }
 
     private void checkFilter(ComparisonFilter filter) throws CodedException {
         if (!filter.hasValueReference()) {
-            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference");
-        } else if (!(filter.getValueReference().startsWith(".") || filter.getValueReference().startsWith("om:result"))) {
-            throw new InvalidParameterValueException(ResultFilterConstants.RESULT_FILTER + ".valueReference", filter.getValueReference());
+            throw new MissingParameterValueException(RESULT_FILTER_VALUE_REFERENCE);
+        } else if (!(filter.getValueReference().startsWith(".")
+                || filter.getValueReference().startsWith("om:result"))) {
+            throw new InvalidParameterValueException(RESULT_FILTER_VALUE_REFERENCE, filter.getValueReference());
         }
         if (filter.getOperator() == null) {
-            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".operator");
+            throw new MissingParameterValueException(RESULT_FILTER_OPERATOR);
         }
 
         if (filter.getValue() == null) {
-            throw new MissingParameterValueException(ResultFilterConstants.RESULT_FILTER + ".value");
+            throw new MissingParameterValueException(RESULT_FILTER_VALUE);
         }
     }
 
     protected void checkSpatialFilterExtension(OwsServiceRequest request) throws CodedOwsException {
         if (request.hasExtension(SosSpatialFilterConstants.SPATIAL_FILTER)) {
             if (request.getExtensionCount(SosSpatialFilterConstants.SPATIAL_FILTER) > 1) {
-                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER, "duplicated");
+                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER, DUPLICATED);
             }
             Optional<Extension<?>> extension = request.getExtension(SosSpatialFilterConstants.SPATIAL_FILTER);
             if (extension.isPresent() && extension.get().getValue() == null) {
@@ -1130,32 +1161,34 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             }
             SpatialFilter filter = ((SosSpatialFilter) extension.get()).getValue();
             if (!filter.hasValueReference()) {
-                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".valueReference");
+                throw new MissingParameterValueException(SPATIAL_FILTER_VALUE_REFERENCE);
             } else if (!checkFeatureValueReference(filter.getValueReference())
-                        && !checkSpatialFilteringProfileValueReference(filter.getValueReference())) {
-                    throw new InvalidValueReferenceException(filter.getValueReference());
+                    && !checkSpatialFilteringProfileValueReference(filter.getValueReference())) {
+                throw new InvalidValueReferenceException(filter.getValueReference());
             }
             if (filter.getOperator() == null) {
-                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".operator");
+                throw new MissingParameterValueException(SPATIAL_FILTER_OPERATOR);
             } else if (!filter.getOperator().equals(SpatialOperator.BBOX)) {
-                throw new InvalidParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".operator", filter.getOperator().toString());
+                throw new InvalidParameterValueException(SPATIAL_FILTER_OPERATOR,
+                        filter.getOperator().toString());
             }
 
             if (filter.getGeometry() == null) {
-                throw new MissingParameterValueException(SosSpatialFilterConstants.SPATIAL_FILTER + ".value");
+                throw new MissingParameterValueException(SPATIAL_FILTER_VALUE);
             }
         }
     }
 
-    protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format, Enum<?> parameter, boolean mimeTypeAllowed)
-            throws CodedOwsException {
+    protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format, Enum<?> parameter,
+            boolean mimeTypeAllowed) throws CodedOwsException {
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
             if (!mimeTypeAllowed && !format.startsWith("http://")) {
                 throw new InvalidParameterValueException(parameter, format);
             }
-            return getCache().hasRequestableProcedureDescriptionFormat(format) ? true : hasPossibleProcedureDescriptionFormats(format, mimeTypeAllowed);
+            return getCache().hasRequestableProcedureDescriptionFormat(format) ? true
+                    : hasPossibleProcedureDescriptionFormats(format, mimeTypeAllowed);
         }
     }
 
@@ -1167,7 +1200,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      *            Procedure description format to check
      * @return All possible procedure description formats
      */
-    private boolean hasPossibleProcedureDescriptionFormats(String procedureDescriptionFormat, boolean mimeTypeAllowed) {
+    private boolean hasPossibleProcedureDescriptionFormats(String procedureDescriptionFormat,
+            boolean mimeTypeAllowed) {
         Set<String> possibleFormats = Sets.newHashSet();
         if (mimeTypeAllowed) {
             possibleFormats.addAll(checkForUrlVsMimeType(procedureDescriptionFormat));
@@ -1197,7 +1231,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
         }
         return possibleFormats;
-   }
+    }
 
     public boolean isIncludeChildObservableProperties() {
         return includeChildObservableProperties;
@@ -1207,6 +1241,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
     }
+
     /**
      * Get procedure description format matching String, to lower case replace
      * \s

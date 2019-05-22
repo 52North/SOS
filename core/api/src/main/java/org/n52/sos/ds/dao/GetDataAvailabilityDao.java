@@ -44,7 +44,8 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.DataAvailability
  */
 public interface GetDataAvailabilityDao extends DefaultDao {
 
-    List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) throws OwsExceptionReport;
+    List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request)
+            throws OwsExceptionReport;
 
     Map<String, NamedValue<?>> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport;
 

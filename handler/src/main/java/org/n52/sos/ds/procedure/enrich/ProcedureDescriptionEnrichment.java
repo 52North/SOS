@@ -52,7 +52,7 @@ import com.google.common.collect.Lists;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public abstract class ProcedureDescriptionEnrichment {
+public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
 
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
     private SosProcedureDescription<?> description;
@@ -84,10 +84,10 @@ public abstract class ProcedureDescriptionEnrichment {
         for (String offering : identifiers) {
             SosOffering sosOffering = new SosOffering(offering, false);
             // add offering name
-            I18NHelper.addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(),
+            addOfferingNames(getCache(), sosOffering, getLocale(), getLocale(),
                     getProcedureCreationContext().isShowAllLanguageValues());
             // add offering description
-            I18NHelper.addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
+            addOfferingDescription(sosOffering, getLocale(), getLocale(), getCache());
             // add to list
             offerings.add(sosOffering);
         }

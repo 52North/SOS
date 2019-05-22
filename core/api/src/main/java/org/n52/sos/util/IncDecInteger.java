@@ -38,25 +38,29 @@ public class IncDecInteger {
     private int value;
 
     /**
-     *
+     * constructor
      */
     public IncDecInteger() {
         set(0);
     }
 
     /**
+     * constructor
+     *
      * @param value
+     *            the value
      */
     public IncDecInteger(int value) {
         set(value);
     }
 
     /**
-     *
+     * increment value
      */
     public void increment() {
         set(get() + 1);
     }
+
     /**
      * @return incremented int
      */
@@ -64,6 +68,7 @@ public class IncDecInteger {
         set(get() + 1);
         return get();
     }
+
     /**
      * @return int and increment
      */
@@ -74,7 +79,7 @@ public class IncDecInteger {
     }
 
     /**
-     *
+     * decrement value
      */
     public void decrement() {
         set(get() - 1);
@@ -106,6 +111,7 @@ public class IncDecInteger {
 
     /**
      * @param value
+     *            the value
      */
     private void set(int value) {
         this.value = value;

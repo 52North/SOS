@@ -55,6 +55,11 @@ public class WSDLOperationBuilder {
         return this;
     }
 
+    public WSDLOperationBuilder setVersion(String version) {
+        this.version = version;
+        return this;
+    }
+
     public WSDLOperationBuilder setRequestAction(URI requestAction) {
         this.requestAction = requestAction;
         return this;
@@ -67,11 +72,6 @@ public class WSDLOperationBuilder {
 
     public WSDLOperationBuilder setRequest(QName request) {
         this.request = request;
-        return this;
-    }
-
-    public WSDLOperationBuilder setVersion(String version) {
-        this.version = version;
         return this;
     }
 
@@ -88,13 +88,13 @@ public class WSDLOperationBuilder {
         return setResponse(new QName(namespace, localpart));
     }
 
-    public WSDLOperationBuilder addFault(WSDLFault fault) {
-        this.faults.add(fault);
+    public WSDLOperationBuilder setFaults(Collection<WSDLFault> faults) {
+        this.faults = new LinkedList<>(faults);
         return this;
     }
 
-    public WSDLOperationBuilder setFaults(Collection<WSDLFault> faults) {
-        this.faults = new LinkedList<>(faults);
+    public WSDLOperationBuilder addFault(WSDLFault fault) {
+        this.faults.add(fault);
         return this;
     }
 

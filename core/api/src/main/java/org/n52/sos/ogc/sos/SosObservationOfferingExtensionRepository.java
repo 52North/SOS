@@ -40,8 +40,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.n52.iceland.util.activation.Activatables;
 import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
@@ -58,24 +56,33 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Repository for {@link SosObservationOfferingExtensionProvider} implementations
+ * Repository for {@link SosObservationOfferingExtensionProvider}
+ * implementations
  *
  * @since 1.0.0
  *
  */
-public class SosObservationOfferingExtensionRepository extends AbstractComponentRepository<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider, SosObservationOfferingExtensionProviderFactory>
+public class SosObservationOfferingExtensionRepository extends
+        AbstractComponentRepository<SosObservationOfferingExtensionKey,
+        SosObservationOfferingExtensionProvider,
+        SosObservationOfferingExtensionProviderFactory>
         implements ActivationManager<SosObservationOfferingExtensionKey>,
-                   ActivationSource<SosObservationOfferingExtensionKey>,
-                   Constructable {
+        ActivationSource<SosObservationOfferingExtensionKey>, Constructable {
     @Deprecated
     private static SosObservationOfferingExtensionRepository instance;
-    private final Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>> offeringExtensionProviders = new HashMap<>(0);
+
+    private final Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>> offeringExtensionProviders =
+            new HashMap<>(0);
+
     private final ActivationListeners<SosObservationOfferingExtensionKey> activation = new ActivationListeners<>(true);
 
     @Inject
-    private Optional<Collection<SosObservationOfferingExtensionProvider>> components = Optional.of(Collections.emptyList());
+    private Optional<Collection<SosObservationOfferingExtensionProvider>> components =
+            Optional.of(Collections.emptyList());
+
     @Inject
-    private Optional<Collection<SosObservationOfferingExtensionProviderFactory>> componentFactories = Optional.of(Collections.emptyList());
+    private Optional<Collection<SosObservationOfferingExtensionProviderFactory>> componentFactories =
+            Optional.of(Collections.emptyList());
 
     @Override
     public void init() {
@@ -115,7 +122,8 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Get map of all, active and inactive, {@link SosObservationOfferingExtensionProvider}s
+     * Get map of all, active and inactive,
+     * {@link SosObservationOfferingExtensionProvider}s
      *
      * @return the map with all {@link SosObservationOfferingExtensionProvider}s
      */
@@ -126,26 +134,30 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     /**
      * Get map of all active {@link SosObservationOfferingExtensionProvider}s
      *
-     * @return the map with all active {@link SosObservationOfferingExtensionProvider}s
+     * @return the map with all active
+     *         {@link SosObservationOfferingExtensionProvider}s
      */
     public Map<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider> getOfferingExtensionProviders() {
         return Producers.produce(Activatables.activatedMap(offeringExtensionProviders, this.activation));
     }
 
     /**
-     * Get the loaded {@link SosObservationOfferingExtensionProvider} implementation for the specific service and
-     * version
+     * Get the loaded {@link SosObservationOfferingExtensionProvider}
+     * implementation for the specific service and version
      *
-     * @param message The {@link OwsServiceCommunicationObject} with service and version
+     * @param message
+     *            The {@link OwsServiceCommunicationObject} with service and
+     *            version
      *
-     * @return loaded {@link SosObservationOfferingExtensionProvider} implementation
+     * @return loaded {@link SosObservationOfferingExtensionProvider}
+     *         implementation
      */
     public Set<SosObservationOfferingExtensionProvider> getOfferingExtensionProvider(
             OwsServiceCommunicationObject message) {
         Set<SosObservationOfferingExtensionProvider> providers = Sets.newHashSet();
         for (String name : getDomains()) {
-            SosObservationOfferingExtensionKey key
-                    = new SosObservationOfferingExtensionKey(message.getService(), message.getVersion(), name);
+            SosObservationOfferingExtensionKey key =
+                    new SosObservationOfferingExtensionKey(message.getService(), message.getVersion(), name);
             SosObservationOfferingExtensionProvider provider = getOfferingExtensionProvider(key);
             if (provider != null) {
                 providers.add(provider);
@@ -155,12 +167,15 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Get the loaded {@link SosObservationOfferingExtensionProvider} implementation for the specific
+     * Get the loaded {@link SosObservationOfferingExtensionProvider}
+     * implementation for the specific
      * {@link SosObservationOfferingExtensionKey}
      *
-     * @param key The related {@link SosObservationOfferingExtensionKey}
+     * @param key
+     *            The related {@link SosObservationOfferingExtensionKey}
      *
-     * @return loaded {@link SosObservationOfferingExtensionProvider} implementation
+     * @return loaded {@link SosObservationOfferingExtensionProvider}
+     *         implementation
      */
     public SosObservationOfferingExtensionProvider getOfferingExtensionProvider(
             SosObservationOfferingExtensionKey key) {
@@ -168,13 +183,16 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Check if a {@link SosObservationOfferingExtensionProvider} implementation is loaded for the specific
-     * {@link SosObservationOfferingExtensionKey}
+     * Check if a {@link SosObservationOfferingExtensionProvider} implementation
+     * is loaded for the specific {@link SosObservationOfferingExtensionKey}
      *
-     * @param key The related {@link SosObservationOfferingExtensionKey} to check for
+     * @param key
+     *            The related {@link SosObservationOfferingExtensionKey} to
+     *            check for
      *
-     * @return <code>true</code>, if a {@link SosObservationOfferingExtensionProvider} implementation is loaded for the
-     *         specific service
+     * @return <code>true</code>, if a
+     *         {@link SosObservationOfferingExtensionProvider} implementation is
+     *         loaded for the specific service
      */
     public boolean hasOfferingExtensionProviderFor(SosObservationOfferingExtensionKey key) {
         return getOfferingExtensionProviders().containsKey(key);
@@ -183,15 +201,17 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     /**
      * Check if a provider is available for the requested service and version
      *
-     * @param message request object with service and version
+     * @param message
+     *            request object with service and version
      *
-     * @return <code>true</code>, if a {@link SosObservationOfferingExtensionProvider} is available
+     * @return <code>true</code>, if a
+     *         {@link SosObservationOfferingExtensionProvider} is available
      */
     public boolean hasOfferingExtensionProviderFor(OwsServiceCommunicationObject message) {
         boolean hasProvider;
         for (String name : getDomains()) {
-            SosObservationOfferingExtensionKey key
-                    = new SosObservationOfferingExtensionKey(message.getService(), message.getVersion(), name);
+            SosObservationOfferingExtensionKey key =
+                    new SosObservationOfferingExtensionKey(message.getService(), message.getVersion(), name);
             hasProvider = hasOfferingExtensionProviderFor(key);
             if (hasProvider) {
                 return activation.isActive(key);
@@ -201,11 +221,14 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
     }
 
     /**
-     * Change the status of the {@link SosObservationOfferingExtensionProvider} which relates to the requested
-     * {@link SosObservationOfferingExtensionKey}
+     * Change the status of the {@link SosObservationOfferingExtensionProvider}
+     * which relates to the requested {@link SosObservationOfferingExtensionKey}
      *
-     * @param oekt the {@link SosObservationOfferingExtensionKey} to change the status for
-     * @param active the new status
+     * @param oekt
+     *            the {@link SosObservationOfferingExtensionKey} to change the
+     *            status for
+     * @param active
+     *            the new status
      */
     @Override
     public void setActive(final SosObservationOfferingExtensionKey oekt, final boolean active) {
@@ -231,8 +254,8 @@ public class SosObservationOfferingExtensionRepository extends AbstractComponent
      * @return the domain values
      */
     private Set<String> getDomains() {
-        return Activatables.activatedKeys(this.offeringExtensionProviders, this.activation)
-                .stream().map(SosObservationOfferingExtensionKey::getDomain).collect(toSet());
+        return Activatables.activatedKeys(this.offeringExtensionProviders, this.activation).stream()
+                .map(SosObservationOfferingExtensionKey::getDomain).collect(toSet());
     }
 
     /**

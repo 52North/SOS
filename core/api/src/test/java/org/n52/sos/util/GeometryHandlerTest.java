@@ -28,9 +28,8 @@
  */
 package org.n52.sos.util;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,26 +51,35 @@ public class GeometryHandlerTest {
     private static final double DISTANCE = 0.0001;
 
     private static final double DISTANCE_TRANSFORMED = 10.0;
+
     // northing first
     private static final int EPSG_4326 = 4326;
+
     // easting first
     private static final int EPSG_31467 = 31467;
-    private static final String EPSG_4326_WITH_PREFIX = "EPSG:4326";
-    private static final String SUPPORTED_CRS = Joiner.on(",").join(EPSG_4326, EPSG_31467);
-    private static final String NORTHING_FIRST_CRS = Joiner.on(";").join(EPSG_4326, EPSG_31467);
 
-    private GeometryHandler geometryHandler;
-    private Geometry geometry4326;
-    private Geometry geometry4326Switched;
-    private Geometry geometry31467;
-    private Geometry geometry31467Switched;
+    private static final String EPSG_4326_WITH_PREFIX = "EPSG:4326";
+
+    private static final String SUPPORTED_CRS = Joiner.on(",").join(EPSG_4326, EPSG_31467);
+
+    private static final String NORTHING_FIRST_CRS = Joiner.on(";").join(EPSG_4326, EPSG_31467);
 
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 
+    private GeometryHandler geometryHandler;
+
+    private Geometry geometry4326;
+
+    private Geometry geometry4326Switched;
+
+    private Geometry geometry31467;
+
+    private Geometry geometry31467Switched;
+
     @Before
     public void init() throws ParseException {
-        geometryHandler =  new GeometryHandler();
+        geometryHandler = new GeometryHandler();
         geometryHandler.setAuthority("EPSG");
         geometryHandler.setStorageEpsg(EPSG_4326);
         geometryHandler.setSupportedCRS(SUPPORTED_CRS);
@@ -94,7 +102,6 @@ public class GeometryHandlerTest {
         geometry31467Switched = f31467.createPoint(new Coordinate(lon_31467, lat_31467));
     }
 
-
     private Geometry get4326Geometry() {
         return geometry4326.copy();
     }
@@ -116,8 +123,8 @@ public class GeometryHandlerTest {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setStorageEpsg(EPSG_4326);
         Geometry transformToStorageEpsg = geometryHandler.transformToStorageEpsg(get31467Geometry());
-        assertEquals(EPSG_4326, transformToStorageEpsg.getSRID());
-        assertThat((transformToStorageEpsg.distance(get4326Geometry()) < DISTANCE_TRANSFORMED), is(true));
+        Assert.assertEquals(EPSG_4326, transformToStorageEpsg.getSRID());
+        Assert.assertThat(transformToStorageEpsg.distance(get4326Geometry()) < DISTANCE_TRANSFORMED, Is.is(true));
     }
 
     @Test
@@ -125,8 +132,8 @@ public class GeometryHandlerTest {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setStorageEpsg(EPSG_31467);
         Geometry transformToStorageEpsg = geometryHandler.transformToStorageEpsg(get4326Geometry());
-        assertEquals(EPSG_31467, transformToStorageEpsg.getSRID());
-        assertThat((transformToStorageEpsg.distance(get31467Geometry()) < DISTANCE_TRANSFORMED), is(true));
+        Assert.assertEquals(EPSG_31467, transformToStorageEpsg.getSRID());
+        Assert.assertThat(transformToStorageEpsg.distance(get31467Geometry()) < DISTANCE_TRANSFORMED, Is.is(true));
     }
 
     @Test
@@ -134,7 +141,8 @@ public class GeometryHandlerTest {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setDatasourceNorthingFirst(false);
         geometryHandler.setStorageEpsg(EPSG_4326);
-        assertThat((geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get4326Geometry()).distance(get4326SwitchedGeometry()) < DISTANCE), is(true));
+        Assert.assertThat(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get4326Geometry())
+                .distance(get4326SwitchedGeometry()) < DISTANCE, Is.is(true));
     }
 
     @Test
@@ -142,7 +150,8 @@ public class GeometryHandlerTest {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setDatasourceNorthingFirst(true);
         geometryHandler.setStorageEpsg(EPSG_4326);
-        assertThat((geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get4326Geometry()).distance(get4326Geometry()) < DISTANCE), is(true));
+        Assert.assertThat(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get4326Geometry())
+                .distance(get4326Geometry()) < DISTANCE, Is.is(true));
     }
 
     @Test
@@ -150,7 +159,8 @@ public class GeometryHandlerTest {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setDatasourceNorthingFirst(false);
         geometryHandler.setStorageEpsg(EPSG_31467);
-        assertThat((geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get31467Geometry()).distance(get31467SwitchedGeometry()) < DISTANCE), is(true));
+        Assert.assertThat(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get31467Geometry())
+                .distance(get31467SwitchedGeometry()) < DISTANCE, Is.is(true));
     }
 
     @Test
@@ -158,30 +168,32 @@ public class GeometryHandlerTest {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setDatasourceNorthingFirst(true);
         geometryHandler.setStorageEpsg(EPSG_31467);
-        assertThat((geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get31467Geometry()).distance(get31467Geometry()) < DISTANCE), is(true));
+        Assert.assertThat(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(get31467Geometry())
+                .distance(get31467Geometry()) < DISTANCE, Is.is(true));
     }
 
     @Test
     public void changeEpsgCodesWithNorthingFirstAxisOrder() throws OwsExceptionReport {
-        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), is(true));
-        assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_4326), is(true));
+        Assert.assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_31467), Is.is(true));
+        Assert.assertThat(geometryHandler.isNorthingFirstEpsgCode(EPSG_4326), Is.is(true));
     }
 
     @Test
     public void shouldShowExceptionWhenReceivingNonNumericalString() throws OwsExceptionReport {
         thrown.expect(ConfigurationError.class);
-        thrown.expectMessage(is("Invalid format of entry in 'misc.switchCoordinatesForEpsgCodes': " + EPSG_4326_WITH_PREFIX));
+        thrown.expectMessage(
+                Is.is("Invalid format of entry in 'misc.switchCoordinatesForEpsgCodes': " + EPSG_4326_WITH_PREFIX));
 
         geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(EPSG_4326_WITH_PREFIX);
     }
 
     @Test
     public void changeSupportedCRS() throws OwsExceptionReport {
-        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), is(true));
+        Assert.assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), Is.is(true));
 
         geometryHandler.setSupportedCRS(String.valueOf(EPSG_4326));
 
-        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_4326)), is(true));
-        assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), is(false));
+        Assert.assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_4326)), Is.is(true));
+        Assert.assertThat(geometryHandler.getSupportedCRS().contains(String.valueOf(EPSG_31467)), Is.is(false));
     }
 }

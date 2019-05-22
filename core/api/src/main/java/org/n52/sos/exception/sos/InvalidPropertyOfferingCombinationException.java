@@ -28,7 +28,7 @@
  */
 package org.n52.sos.exception.sos;
 
-import static org.n52.janmayen.http.HTTPStatus.BAD_REQUEST;
+import org.n52.janmayen.http.HTTPStatus;
 
 import org.n52.shetland.ogc.sos.exception.CodedSosException;
 import org.n52.shetland.ogc.sos.exception.SosExceptionCode;
@@ -45,6 +45,6 @@ public class InvalidPropertyOfferingCombinationException extends CodedSosExcepti
 
     public InvalidPropertyOfferingCombinationException() {
         super(SosExceptionCode.InvalidPropertyOfferingCombination);
-        setStatus(BAD_REQUEST);
+        setStatus(HTTPStatus.BAD_REQUEST);
     }
 }

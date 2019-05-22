@@ -99,15 +99,15 @@ public interface WSDLConstants {
 
     String EN_MIME_MIME_XML = "mimeXml";
 
-    String EN_SOAP_ADDRESS = "address";
+    String EN_SOAP_ADDRESS = EN_HTTP_ADDRESS;
 
-    String EN_SOAP_BINDING = "binding";
+    String EN_SOAP_BINDING = EN_HTTP_BINDING;
 
     String EN_SOAP_BODY = "body";
 
     String EN_SOAP_FAULT = "fault";
 
-    String EN_SOAP_OPERATION = "operation";
+    String EN_SOAP_OPERATION = EN_HTTP_OPERATION;
 
     String EN_SOSW_SOS_KVP_BINDING = "SosKvpBinding";
 
@@ -169,7 +169,7 @@ public interface WSDLConstants {
 
     QName QN_XSD_SCHEMA = new QName(NS_XSD, EN_XSD_SCHEMA, NS_XSD_PREFIX);
 
-    String MESSAGE_PART = "body";
+    String MESSAGE_PART = EN_SOAP_BODY;
 
     String POX_CONTENT_TYPE = MediaTypes.TEXT_XML.toString();
 
@@ -181,7 +181,7 @@ public interface WSDLConstants {
 
     String SOAP_BINDING_HTTP_TRANSPORT = "http://schemas.xmlsoap.org/soap/http";
 
-//    String SOAP_12_BINDING_HTTP_TRANSPORT = "http://www.w3.org/2003/05/soap/bindings/HTTP";
+    // String SOAP_12_BINDING_HTTP_TRANSPORT = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String SOAP_12_BINDING_HTTP_TRANSPORT = SOAP_BINDING_HTTP_TRANSPORT;
 
     String SOAP_DOCUMENT_STYLE = "document";
@@ -264,8 +264,8 @@ public interface WSDLConstants {
                 .setRequest(Sos2Constants.QN_GET_CAPABILITIES)
                 .setRequestAction(SoapRequestActionUris.GET_CAPABILITIES).setResponse(Sos2Constants.QN_CAPABILITIES)
                 .setResponseAction(SoapResponseActionUris.GET_CAPABILITIES).setFaults(WSDLFault.DEFAULT_FAULTS)
-//                .addFault(WSDLFault.VERSION_NEGOTIATION_FAILED_EXCEPTION)
-//                .addFault(WSDLFault.INVALID_UPDATE_SEQUENCE_EXCEPTION)
+                // .addFault(WSDLFault.VERSION_NEGOTIATION_FAILED_EXCEPTION)
+                // .addFault(WSDLFault.INVALID_UPDATE_SEQUENCE_EXCEPTION)
                 .build();
 
         WSDLOperation GET_FEATURE_OF_INTEREST = WSDLOperation.newWSDLOperation()

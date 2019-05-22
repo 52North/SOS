@@ -49,10 +49,8 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
 public class TransactionalRequestChecker {
     private Predicate<OwsServiceRequestContext> predicate;
 
-    @SuppressWarnings("unchecked")
     public TransactionalRequestChecker(TransactionalSecurityConfiguration config) {
-        this.predicate = Predicates.and(createIpAdressPredicate(config),
-                                        createTokenPredicate(config));
+        this.predicate = Predicates.and(createIpAdressPredicate(config), createTokenPredicate(config));
     }
 
     public void add(Predicate<OwsServiceRequestContext> p) {
@@ -62,36 +60,28 @@ public class TransactionalRequestChecker {
     public void check(OwsServiceRequestContext rc) throws OwsExceptionReport {
         if (rc == null) {
             throw new NoApplicableCodeException()
-                    .causedBy(new NullPointerException(
-                            "RequestContext MUST not be null!"))
+                    .causedBy(new NullPointerException("RequestContext MUST not be null!"))
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
-        }
-        else if (!predicate.apply(rc)) {
-            throw new NoApplicableCodeException()
-                    .withMessage("Not authorized for transactional operations!")
+        } else if (!predicate.apply(rc)) {
+            throw new NoApplicableCodeException().withMessage("Not authorized for transactional operations!")
                     .setStatus(HTTPStatus.UNAUTHORIZED);
 
         }
     }
 
-    private Predicate<OwsServiceRequestContext> createTokenPredicate(
-            TransactionalSecurityConfiguration config) {
-        if (!config.isTransactionalActive() ||
-            !config.isSetTransactionalToken()) {
+    private Predicate<OwsServiceRequestContext> createTokenPredicate(TransactionalSecurityConfiguration config) {
+        if (!config.isTransactionalActive() || !config.isSetTransactionalToken()) {
             return Predicates.alwaysTrue();
         } else {
             return new TokenPredicate(config.getTransactionalToken());
         }
     }
 
-    private Predicate<OwsServiceRequestContext> createIpAdressPredicate(
-            TransactionalSecurityConfiguration config) {
-        if (!config.isTransactionalActive() ||
-            !config.isSetTransactionalAllowedIps()) {
+    private Predicate<OwsServiceRequestContext> createIpAdressPredicate(TransactionalSecurityConfiguration config) {
+        if (!config.isTransactionalActive() || !config.isSetTransactionalAllowedIps()) {
             return Predicates.alwaysTrue();
         } else {
-            return new IpPredicate(config.getAllowedAddresses(),
-                                   config.getAllowedProxies());
+            return new IpPredicate(config.getAllowedAddresses(), config.getAllowedProxies());
         }
     }
 
@@ -104,17 +94,16 @@ public class TransactionalRequestChecker {
 
         @Override
         public boolean apply(OwsServiceRequestContext ctx) {
-            return ctx.getToken().isPresent() &&
-                   ctx.getToken().get().equals(this.token);
+            return ctx.getToken().isPresent() && ctx.getToken().get().equals(this.token);
         }
     }
 
     private static class IpPredicate implements Predicate<OwsServiceRequestContext> {
         private final ImmutableSet<IPAddressRange> allowedAddresses;
+
         private final ImmutableSet<IPAddress> allowedProxies;
 
-        IpPredicate(Set<IPAddressRange> allowedAddresses,
-                    Set<IPAddress> allowedProxies) {
+        IpPredicate(Set<IPAddressRange> allowedAddresses, Set<IPAddress> allowedProxies) {
             this.allowedAddresses = ImmutableSet.copyOf(allowedAddresses);
             this.allowedProxies = ImmutableSet.copyOf(allowedProxies);
         }

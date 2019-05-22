@@ -28,9 +28,9 @@
  */
 package org.n52.sos.util;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNull;
+import org.junit.Assert;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -38,17 +38,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.junit.Test;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.MinMax;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Envelope;
 
 /**
  * @since 4.0.0
@@ -72,41 +67,28 @@ public class SosHelperTest
     public static final String VERSION_2 = "2.0.0";
 
     public static final String SERVICE_URL = "http://localhos:8080/SOS/service";
-
-    @Test
-    @Deprecated
-    public void envelopeForEpsg4326() {
-        double maxY = 52.15034, maxX = 8.05847;
-        double minY = 51.95104, minX = 7.61353;
-        Envelope e = new Envelope(new Coordinate(minY, minX), new Coordinate(maxY, maxX));
-        checkMinMax(getMinMaxFromEnvelope(e), minY, minX, maxY, maxX);
-    }
-
-    @Test
-    @Deprecated
-    public void envelopeForEpsg31466() {
-        double maxX = 3435628, maxY = 5780049;
-        double minX = 3404751, minY = 5758364;
-        Envelope e = new Envelope(new Coordinate(minX, minY), new Coordinate(maxX, maxY));
-        checkMinMax(getMinMaxFromEnvelope(e), minX, minY, maxX, maxY);
-    }
+    
+    private static final String UTF8 = "UTF-8";
 
     @Test
     public void shouldValidHttpGetGetFeatureOfInterestRequest() throws MalformedURLException {
-        assertThat(createFoiGetUrl(FOI_ID, VERSION_1, SERVICE_URL), is(getFoi100Url()));
-        assertThat(createFoiGetUrl(FOI_ID, VERSION_2, SERVICE_URL), is(getFoi200Url()));
+        Assert.assertThat(createFoiGetUrl(FOI_ID, VERSION_1, SERVICE_URL), Is.is(getFoi100Url()));
+        Assert.assertThat(createFoiGetUrl(FOI_ID, VERSION_2, SERVICE_URL), Is.is(getFoi200Url()));
     }
 
     @Test
     public void shouldValidHttpGetDescribeSensorRequest() throws MalformedURLException, UnsupportedEncodingException {
-        assertThat(getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), is(getProcDesc100Url()));
-        assertThat(getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL), is(getProcDesc200Url()));
+        Assert.assertThat(getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID,
+                SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), Is.is(getProcDesc100Url()));
+        Assert.assertThat(
+                getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
+                Is.is(getProcDesc200Url()));
     }
 
     protected void checkMinMax(MinMax<String> minmax, double minY, double minX, double maxY, double maxX) {
-        assertThat(minmax, is(notNullValue()));
-        assertThat(minmax.getMinimum(), is(minY + " " + minX));
-        assertThat(minmax.getMaximum(), is(maxY + " " + maxX));
+        Assert.assertThat(minmax, Is.is(IsNull.notNullValue()));
+        Assert.assertThat(minmax.getMinimum(), Is.is(minY + " " + minX));
+        Assert.assertThat(minmax.getMaximum(), Is.is(maxY + " " + maxX));
     }
 
     protected URL getFoi100Url() throws MalformedURLException {
@@ -142,7 +124,7 @@ public class SosHelperTest
                 .append(SosConstants.Operations.DescribeSensor.name());
         builder.append("&").append(SosConstants.DescribeSensorParams.procedure.name()).append("=").append(PROC_ID);
         builder.append("&").append(Sos1Constants.DescribeSensorParams.outputFormat.name()).append("=")
-                .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, "UTF-8"));
+                .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, UTF8));
         return new URL(builder.toString());
     }
 
@@ -155,7 +137,7 @@ public class SosHelperTest
                 .append(SosConstants.Operations.DescribeSensor.name());
         builder.append("&").append(SosConstants.DescribeSensorParams.procedure.name()).append("=").append(PROC_ID);
         builder.append("&").append(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name()).append("=")
-                .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, "UTF-8"));
+                .append(URLEncoder.encode(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, UTF8));
         return new URL(builder.toString());
     }
 

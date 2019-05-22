@@ -28,15 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import static org.n52.sos.cache.CacheConstants.FEATURES_OF_INTEREST;
-import static org.n52.sos.cache.CacheConstants.OFFERINGS;
-import static org.n52.sos.cache.CacheConstants.PROCEDURES;
-import static org.n52.sos.cache.CacheConstants.PUBLISHED_FEATURES_OF_INTEREST;
-import static org.n52.sos.cache.CacheConstants.PUBLISHED_OBSERVABLE_PROPERTIES;
-import static org.n52.sos.cache.CacheConstants.PUBLISHED_OFFERINGS;
-import static org.n52.sos.cache.CacheConstants.PUBLISHED_PROCEDURES;
-import static org.n52.sos.cache.CacheConstants.SUPPORTED_LANGUAGES;
-
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
@@ -58,7 +49,8 @@ public interface SosWritableContentCache
                 WritableContentCache,
                 WritableSpatialCache,
                 WriteableTimeCache,
-                WritableCompositePhenomenonCache {
+                WritableCompositePhenomenonCache,
+                CacheConstants {
 
     /**
      * Set the last cache update time

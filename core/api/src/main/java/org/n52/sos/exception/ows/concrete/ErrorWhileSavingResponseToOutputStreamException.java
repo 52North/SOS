@@ -27,7 +27,8 @@
  * Public License for more details.
  */
 package org.n52.sos.exception.ows.concrete;
-import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+
+import org.n52.janmayen.http.HTTPStatus;
 
 import java.io.IOException;
 
@@ -45,6 +46,6 @@ public class ErrorWhileSavingResponseToOutputStreamException extends NoApplicabl
 
     public ErrorWhileSavingResponseToOutputStreamException(final IOException ioe) {
         withMessage("Error occurs while saving response to output stream!").causedBy(ioe);
-        setStatus(INTERNAL_SERVER_ERROR);
+        setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
     }
 }

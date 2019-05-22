@@ -191,13 +191,14 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
     private OwsDomain getResponseFormatParameter(String service, String version) {
         GetObservationParams name = SosConstants.GetObservationParams.responseFormat;
-        Set<String> responseFormats = getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, version);
+        Set<String> responseFormats =
+                getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, version);
         return new OwsDomain(name, new OwsAllowedValues(responseFormats.stream().map(OwsValue::new)));
     }
 
     private OwsDomain getTemporalFilterParameter(String service, String version) throws OwsExceptionReport {
         Sos2Constants.GetObservationParams name = Sos2Constants.GetObservationParams.temporalFilter;
-        Optional<OwsPossibleValues> allowedValues = getPhenomenonTime().<OwsPossibleValues>map(OwsAllowedValues::new);
+        Optional<OwsPossibleValues> allowedValues = getPhenomenonTime().<OwsPossibleValues> map(OwsAllowedValues::new);
         return new OwsDomain(name, allowedValues.orElseGet(OwsNoValues::instance));
     }
 
@@ -213,7 +214,7 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
     private OwsDomain getEventTimeParameter(String service, String version) throws OwsExceptionReport {
         Sos1Constants.GetObservationParams name = Sos1Constants.GetObservationParams.eventTime;
-        Optional<OwsPossibleValues> allowedValues = getPhenomenonTime().<OwsPossibleValues>map(OwsAllowedValues::new);
+        Optional<OwsPossibleValues> allowedValues = getPhenomenonTime().<OwsPossibleValues> map(OwsAllowedValues::new);
         return new OwsDomain(name, allowedValues.orElseGet(OwsNoValues::instance));
     }
 
@@ -233,7 +234,5 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
             return Optional.empty();
         }
     }
-
-
 
 }

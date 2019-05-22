@@ -48,7 +48,7 @@ public interface CacheFeederHandler {
      * @param cache     The cache to update
      * @param offerings A list of offerings to update
      *
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport if an occurs during the cache update
      */
     void updateCacheOfferings(SosWritableContentCache cache,
                               Collection<String> offerings)

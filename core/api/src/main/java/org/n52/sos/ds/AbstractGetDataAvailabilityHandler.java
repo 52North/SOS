@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
 public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperationHandler {
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
     public static final String SHOW_COUNT = "ShowCount";
-    private boolean forceValueCount = false;
+    private boolean forceValueCount;
     private boolean forceGDAv20Response = true;
 
     public AbstractGetDataAvailabilityHandler(String service) {
@@ -119,6 +119,7 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        return Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF, SosSpatialFilterConstants.CONFORMANCE_CLASS_SF);
+        return Sets.newHashSet(ResultFilterConstants.CONFORMANCE_CLASS_RF,
+                SosSpatialFilterConstants.CONFORMANCE_CLASS_SF);
     }
 }

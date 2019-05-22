@@ -59,21 +59,28 @@ public class ProcedureDescriptionFormatRepository
         ActivationSource<ProcedureDescriptionFormatKey> {
 
     private final ActivationListeners<ProcedureDescriptionFormatKey> activation = new ActivationListeners<>(true);
+
     private final Map<String, Map<String, Set<String>>> procedureDescriptionFormats = Maps.newHashMap();
+
     private final Set<ProcedureDescriptionFormatKey> keys = new HashSet<>();
+
     private EncoderRepository encoderRepository;
+
     private ServiceOperatorRepository serviceOperatorRepository;
+
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
     /**
-     * This class does not implement {@link Constructable} due to some circular dependencies that can lead to an
-     * incorrect initialization order; instead {@link ProcedureDescriptionFormatRepositoryInitializer} does this for us.
+     * This class does not implement {@link Constructable} due to some circular
+     * dependencies that can lead to an incorrect initialization order; instead
+     * {@link ProcedureDescriptionFormatRepositoryInitializer} does this for us.
      *
-     * @param serviceOperatorRepository the service operator respository
-     * @param encoderRepository         the encoder repository
+     * @param serviceOperatorRepository
+     *            the service operator respository
+     * @param encoderRepository
+     *            the encoder repository
      */
-    public void init(ServiceOperatorRepository serviceOperatorRepository,
-              EncoderRepository encoderRepository) {
+    public void init(ServiceOperatorRepository serviceOperatorRepository, EncoderRepository encoderRepository) {
         this.serviceOperatorRepository = Objects.requireNonNull(serviceOperatorRepository);
         this.encoderRepository = Objects.requireNonNull(encoderRepository);
 
@@ -83,13 +90,13 @@ public class ProcedureDescriptionFormatRepository
     private void generateProcedureDescriptionFormatMaps() {
         this.procedureDescriptionFormats.clear();
         this.keys.clear();
-        Set<OwsServiceKey> serviceOperatorKeyTypes
-                = this.serviceOperatorRepository.getServiceOperatorKeys();
+        Set<OwsServiceKey> serviceOperatorKeyTypes = this.serviceOperatorRepository.getServiceOperatorKeys();
         for (Encoder<?, ?> encoder : this.encoderRepository.getEncoders()) {
             if (encoder instanceof ProcedureEncoder) {
                 ProcedureEncoder<?, ?> procedureEncoder = (ProcedureEncoder<?, ?>) encoder;
                 for (OwsServiceKey sokt : serviceOperatorKeyTypes) {
-                    Set<String> formats = procedureEncoder.getSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
+                    Set<String> formats = procedureEncoder.getSupportedProcedureDescriptionFormats(sokt.getService(),
+                            sokt.getVersion());
                     if (formats != null) {
                         for (String format : formats) {
                             addProcedureDescriptionFormat(new ProcedureDescriptionFormatKey(sokt, format));
@@ -154,6 +161,28 @@ public class ProcedureDescriptionFormatRepository
         return getSupportedProcedureDescriptionFormats(service, version, procedureDescriptionFormats);
     }
 
+    public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version,
+            Map<String, Map<String, Set<String>>> pdf) {
+        final Map<String, Set<String>> byService = pdf.get(service);
+        if (byService == null) {
+            return Collections.emptySet();
+        }
+        final Set<String> rfs = byService.get(version);
+        if (rfs == null) {
+            return Collections.emptySet();
+        }
+
+        final OwsServiceKey sokt = new OwsServiceKey(service, version);
+        final Set<String> result = Sets.newHashSet();
+        for (final String a : rfs) {
+            final ProcedureDescriptionFormatKey pdfkt = new ProcedureDescriptionFormatKey(sokt, a);
+            if (isActive(pdfkt)) {
+                result.add(a);
+            }
+        }
+        return result;
+    }
+
     public Map<OwsServiceKey, Set<String>> getAllProcedureDescriptionFormats() {
         final Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
         for (final OwsServiceKey sokt : this.serviceOperatorRepository.getServiceOperatorKeys()) {
@@ -168,6 +197,19 @@ public class ProcedureDescriptionFormatRepository
 
     public Set<String> getAllSupportedProcedureDescriptionFormats(final OwsServiceKey sokt) {
         return getAllSupportedProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
+    }
+
+    public Set<String> getAllSupportedProcedureDescriptionFormats(final String service, final String version,
+            Map<String, Map<String, Set<String>>> pdf) {
+        final Map<String, Set<String>> byService = pdf.get(service);
+        if (byService == null) {
+            return Collections.emptySet();
+        }
+        final Set<String> rfs = byService.get(version);
+        if (rfs == null) {
+            return Collections.emptySet();
+        }
+        return Collections.unmodifiableSet(rfs);
     }
 
     public Set<String> getSupportedTransactionalProcedureDescriptionFormats(final String service,
@@ -190,41 +232,6 @@ public class ProcedureDescriptionFormatRepository
 
     public Set<String> getAllSupportedTransactionalProcedureDescriptionFormats(final OwsServiceKey sokt) {
         return getAllSupportedTransactionalProcedureDescriptionFormats(sokt.getService(), sokt.getVersion());
-    }
-
-    public Set<String> getAllSupportedProcedureDescriptionFormats(final String service, final String version,
-            Map<String, Map<String, Set<String>>> pdf) {
-        final Map<String, Set<String>> byService = pdf.get(service);
-        if (byService == null) {
-            return Collections.emptySet();
-        }
-        final Set<String> rfs = byService.get(version);
-        if (rfs == null) {
-            return Collections.emptySet();
-        }
-        return Collections.unmodifiableSet(rfs);
-    }
-
-    public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version,
-            Map<String, Map<String, Set<String>>> pdf) {
-        final Map<String, Set<String>> byService = pdf.get(service);
-        if (byService == null) {
-            return Collections.emptySet();
-        }
-        final Set<String> rfs = byService.get(version);
-        if (rfs == null) {
-            return Collections.emptySet();
-        }
-
-        final OwsServiceKey sokt = new OwsServiceKey(service, version);
-        final Set<String> result = Sets.newHashSet();
-        for (final String a : rfs) {
-            final ProcedureDescriptionFormatKey pdfkt = new ProcedureDescriptionFormatKey(sokt, a);
-            if (isActive(pdfkt)) {
-                result.add(a);
-            }
-        }
-        return result;
     }
 
     @Override

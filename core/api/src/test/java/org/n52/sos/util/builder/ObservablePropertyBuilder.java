@@ -37,11 +37,11 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
  */
 public class ObservablePropertyBuilder {
 
+    private String identifier;
+
     public static ObservablePropertyBuilder aObservableProperty() {
         return new ObservablePropertyBuilder();
     }
-
-    private String identifier;
 
     public ObservablePropertyBuilder setIdentifier(String identifier) {
         this.identifier = identifier;

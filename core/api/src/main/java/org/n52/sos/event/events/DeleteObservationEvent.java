@@ -31,7 +31,6 @@ package org.n52.sos.event.events;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
-import org.n52.sos.event.events.SosDeletionEvent;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

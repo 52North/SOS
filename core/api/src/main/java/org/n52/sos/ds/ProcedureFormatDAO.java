@@ -36,5 +36,5 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  */
 public interface ProcedureFormatDAO {
-    Map<String,String> getProcedureFormatMap() throws OwsExceptionReport;
+    Map<String, String> getProcedureFormatMap() throws OwsExceptionReport;
 }

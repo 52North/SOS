@@ -32,7 +32,7 @@ package org.n52.sos.context;
  * @author Christian Autermann
  */
 public interface ContextSwitcher {
-    public static final String BEAN_NAME = "contextSwitcher";
+    String BEAN_NAME = "contextSwitcher";
 
     void reloadContext();
 

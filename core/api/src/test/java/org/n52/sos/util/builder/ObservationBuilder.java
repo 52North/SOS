@@ -40,10 +40,6 @@ import org.n52.shetland.ogc.om.OmObservationConstellation;
  */
 public class ObservationBuilder {
 
-    public static ObservationBuilder anObservation() {
-        return new ObservationBuilder();
-    }
-
     private OmObservationConstellation observationConstellation;
 
     private ObservationValue<?> value;
@@ -51,6 +47,10 @@ public class ObservationBuilder {
     private String identifer;
 
     private String identiferCodespace;
+
+    public static ObservationBuilder anObservation() {
+        return new ObservationBuilder();
+    }
 
     public ObservationBuilder setObservationConstellation(OmObservationConstellation observationConstellation) {
         this.observationConstellation = observationConstellation;

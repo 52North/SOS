@@ -54,6 +54,10 @@ public final class SQLHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(SQLHelper.class);
 
+    private SQLHelper() {
+        // private constructor to enforce static access
+    }
+
     /*
      * TODO find a working library function that can parse and execute a SQL
      * file...
@@ -129,9 +133,5 @@ public final class SQLHelper {
                 LOG.error("Error closing Connection!", ex);
             }
         }
-    }
-
-    private SQLHelper() {
-        // private constructor to enforce static access
     }
 }

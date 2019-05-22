@@ -46,7 +46,8 @@ public abstract class AbstractRequestResponseModifier implements RequestResponse
     }
 
     @Override
-    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response) throws OwsExceptionReport {
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
+            throws OwsExceptionReport {
         return response;
     }
 

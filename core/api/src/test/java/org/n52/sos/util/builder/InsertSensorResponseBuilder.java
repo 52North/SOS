@@ -37,13 +37,13 @@ import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
  */
 public class InsertSensorResponseBuilder {
 
-    public static InsertSensorResponseBuilder anInsertSensorResponse() {
-        return new InsertSensorResponseBuilder();
-    }
-
     private String offering;
 
     private String procedure;
+
+    public static InsertSensorResponseBuilder anInsertSensorResponse() {
+        return new InsertSensorResponseBuilder();
+    }
 
     public InsertSensorResponseBuilder setOffering(String assignedOffering) {
         this.offering = assignedOffering;

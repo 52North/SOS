@@ -146,7 +146,8 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
     }
 
     private OperationResponseEncoderKey getEncoderKey(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OwsOperationKey(asr), getEncodedContentType(asr));
+        OperationResponseEncoderKey key =
+                new OperationResponseEncoderKey(new OwsOperationKey(asr), getEncodedContentType(asr));
         return key;
     }
 }

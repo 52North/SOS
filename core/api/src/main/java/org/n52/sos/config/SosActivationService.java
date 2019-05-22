@@ -102,7 +102,8 @@ public class SosActivationService extends ActivationService {
     }
 
     public ActivationSource<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatSource() {
-        return ActivationSource.create(this::isProcedureDescriptionFormatActive, this::getProcedureDescriptionFormatKeys);
+        return ActivationSource.create(this::isProcedureDescriptionFormatActive,
+                this::getProcedureDescriptionFormatKeys);
     }
 
     protected Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys() {
@@ -113,10 +114,11 @@ public class SosActivationService extends ActivationService {
         return new DefaultActivationInitializer<>(getProcedureDescriptionFormatSource());
     }
 
-     /**
+    /**
      * Checks if the offering extension is active.
      *
-     * @param key the offering extension key
+     * @param key
+     *            the offering extension key
      *
      * @return if the offering extension is active
      */
@@ -129,7 +131,8 @@ public class SosActivationService extends ActivationService {
     }
 
     public ActivationSource<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionSource() {
-        return ActivationSource.create(this::isSosObservationOfferingExtensionActive, this::getSosObservationOfferingExtensionKeys);
+        return ActivationSource.create(this::isSosObservationOfferingExtensionActive,
+                this::getSosObservationOfferingExtensionKeys);
     }
 
     protected Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys() {

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ogc.sos;
 
-import java.util.Set;
-
 import org.n52.janmayen.component.Component;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 
@@ -50,7 +48,7 @@ public interface SosObservationOfferingExtensionProvider extends Component<SosOb
      *            the identifier to get extension for
      * @return provided offering extensions
      */
-   Extensions getOfferingExtensions(String identifier);
+    Extensions getOfferingExtensions(String identifier);
 
     /**
      * Check if this provider provide offering extensions for the specific
@@ -62,15 +60,5 @@ public interface SosObservationOfferingExtensionProvider extends Component<SosOb
      *         identifier
      */
     boolean hasExtendedOfferingFor(String identifier);
-
-    /**
-     * Get the offering extension keys
-     *
-     * @return the offering extension keys
-     */
-    @Deprecated
-    default Set<SosObservationOfferingExtensionKey> getOfferingExtensionKeyTypes() {
-        return getKeys();
-    }
 
 }

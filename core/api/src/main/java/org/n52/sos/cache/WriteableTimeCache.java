@@ -28,10 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import static org.n52.sos.cache.CacheConstants.EVENT_TIME;
-import static org.n52.sos.cache.CacheConstants.OFFERING;
-import static org.n52.sos.cache.CacheConstants.PROCEDURE;
-
 import java.util.Objects;
 
 import org.joda.time.DateTime;
@@ -45,7 +41,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
  *
  * @author Christian Autermann
  */
-public interface WriteableTimeCache extends TemporalCache {
+public interface WriteableTimeCache extends TemporalCache, CacheConstants {
     /**
      * Reset the offering to minimal phenomenon time relation.
      */
@@ -327,7 +323,7 @@ public interface WriteableTimeCache extends TemporalCache {
      *
      * @return the period describing the abstract time
      */
-    public static TimePeriod toTimePeriod(Time time) {
+    static TimePeriod toTimePeriod(Time time) {
         if (time instanceof TimeInstant) {
             DateTime instant = ((TimeInstant) time).getValue();
             return new TimePeriod(instant, instant);

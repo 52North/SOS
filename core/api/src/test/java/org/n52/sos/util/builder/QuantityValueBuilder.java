@@ -37,13 +37,13 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
  */
 public class QuantityValueBuilder {
 
-    public static QuantityValueBuilder aQuantitiy() {
-        return new QuantityValueBuilder();
-    }
-
     private Double value;
 
     private String unit;
+
+    public static QuantityValueBuilder aQuantitiy() {
+        return new QuantityValueBuilder();
+    }
 
     public QuantityValueBuilder setValue(Double value) {
         this.value = value;

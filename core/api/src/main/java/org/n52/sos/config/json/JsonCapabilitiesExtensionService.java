@@ -70,6 +70,8 @@ import com.google.common.base.MoreObjects.ToStringHelper;
  */
 public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements CapabilitiesExtensionService {
 
+    private static final String IDENTIFIER = "identifier";
+
     private ContentCacheController contentCacheController;
 
     @Inject
@@ -190,8 +192,8 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
     }
 
     private Stream<SosObservationOfferingExtension> offeringExtensionStream() {
-        return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS)).flatMap(entry
-                -> createEntryStream(entry.getValue())
+        return createEntryStream(getConfiguration().with(JsonConstants.OFFERING_EXTENSIONS))
+                .flatMap(entry -> createEntryStream(entry.getValue())
                         .map(this::decodeOfferingExtension)
                         .map(Functions.mutate(Consumers
                                 .currySecond(SosObservationOfferingExtensionImpl::setOfferingName, entry.getKey()))));
@@ -336,10 +338,10 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
     public Map<String, StaticCapabilities> getStaticCapabilities() {
         readLock().lock();
         try {
-            JsonNode node = getConfiguration().path(JsonConstants.STATIC_CAPABILITIES).path(JsonConstants.CAPABILITIES);
-            return createEntryStream(node).collect(toMap(Entry::getKey,
-                                                         e -> new StaticCapabilitiesImpl(e.getKey(), e.getValue()
-                                                                                         .textValue())));
+            JsonNode node =
+                    getConfiguration().path(JsonConstants.STATIC_CAPABILITIES).path(JsonConstants.CAPABILITIES);
+            return createEntryStream(node).collect(
+                    toMap(Entry::getKey, e -> new StaticCapabilitiesImpl(e.getKey(), e.getValue().textValue())));
         } finally {
             readLock().unlock();
         }
@@ -428,15 +430,15 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
 
         protected ToStringHelper toStringHelper() {
             return MoreObjects.toStringHelper(this)
-                    .add("identifier", getIdentifier())
+                    .add(IDENTIFIER, getIdentifier())
                     .add("document", getDocument());
         }
 
     }
 
-    private static abstract class AbstractDisableableExtension extends AbstractExtension<String>
+    private abstract static class AbstractDisableableExtension extends AbstractExtension<String>
             implements DisableableExtension, StringBasedExtension {
-        private boolean disabled = false;
+        private boolean disabled;
         private String value;
 
         public void setDisabled(boolean disabled) {
@@ -476,7 +478,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
 
         protected ToStringHelper toStringHelper() {
             return MoreObjects.toStringHelper(this)
-                    .add("identifier", getIdentifier())
+                    .add(IDENTIFIER, getIdentifier())
                     .add("namespace", getNamespace())
                     .add("definition", getDefinition())
                     .add("extension", getExtension())

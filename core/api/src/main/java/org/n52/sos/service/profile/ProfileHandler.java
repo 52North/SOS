@@ -38,11 +38,11 @@ import org.n52.janmayen.lifecycle.Constructable;
  */
 public interface ProfileHandler extends Constructable {
 
-    public abstract Profile getActiveProfile();
+    Profile getActiveProfile();
 
-    public abstract Map<String, Profile> getAvailableProfiles();
+    Map<String, Profile> getAvailableProfiles();
 
-    public abstract boolean isSetActiveProfile();
+    boolean isSetActiveProfile();
 
     void activateProfile(String identifier);
 

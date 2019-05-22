@@ -92,7 +92,11 @@ public class SosHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosHelper.class);
 
     private static final int KILO_BYTE = 1024;
+
     private static final int KILO_BYTES_256 = 256 * KILO_BYTE;
+
+    private static final String AT_AT = "@@";
+
     private String serviceURL;
 
     /**
@@ -116,18 +120,22 @@ public class SosHelper {
     }
 
     /**
-     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS. version
+     * Creates a HTTP-Get URL from FOI identifier and service URL for SOS.
+     * version
      *
-     * @param foiId      FeatureOfInterst identifier
-     * @param version    SOS version
-     * @param serviceURL Service URL
+     * @param foiId
+     *            FeatureOfInterst identifier
+     * @param version
+     *            SOS version
+     * @param serviceURL
+     *            Service URL
      *
      * @return HTTP-Get request for featureOfInterst identifier
      *
-     * @throws java.net.MalformedURLException if the service url is invalid
+     * @throws java.net.MalformedURLException
+     *             if the service url is invalid
      */
-    public static URL createFoiGetUrl(String foiId, String version, String serviceURL)
-            throws MalformedURLException {
+    public static URL createFoiGetUrl(String foiId, String version, String serviceURL) throws MalformedURLException {
         SosQueryBuilder b = new SosQueryBuilder(serviceURL);
         b.addService();
         b.addVersion(version);
@@ -143,17 +151,21 @@ public class SosHelper {
     /**
      * creates a HTTP-GET string for DescribeSensor.
      *
-     * @param version                    the version of the request
-     * @param serviceURL                 the service url
-     * @param procedureId                The procedureId for the DescribeSensor request
-     * @param procedureDescriptionFormat The procedureDescriptionFormat for the DescribeSensor request
+     * @param version
+     *            the version of the request
+     * @param serviceURL
+     *            the service url
+     * @param procedureId
+     *            The procedureId for the DescribeSensor request
+     * @param procedureDescriptionFormat
+     *            The procedureDescriptionFormat for the DescribeSensor request
      *
      * @return Get-URL as String
      *
-     * @throws MalformedURLException
+     * @throws MalformedURLException If the URL string is malformed
      */
     public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId,
-                                           String procedureDescriptionFormat) throws MalformedURLException {
+            String procedureDescriptionFormat) throws MalformedURLException {
         SosQueryBuilder b = new SosQueryBuilder(serviceURL);
         b.addService();
         b.addVersion(version);
@@ -167,7 +179,6 @@ public class SosHelper {
 
         return b.build();
     }
-
 
     public static URL getGetObservationKVPRequest(String serviceURL, String version) throws MalformedURLException {
         return getGetObservationKVPRequest(new URL(serviceURL), version);
@@ -195,7 +206,8 @@ public class SosHelper {
     /**
      * Checks the free memory size.
      *
-     * @throws OwsExceptionReport If no free memory size.
+     * @throws OwsExceptionReport
+     *             If no free memory size.
      */
     public static void checkFreeMemory() throws OwsExceptionReport {
         Runtime runtime = Runtime.getRuntime();
@@ -205,19 +217,21 @@ public class SosHelper {
         LOGGER.trace("Remaining Heap Size: " + (freeMem / KILO_BYTE) + "KB");
         if ((runtime.totalMemory() == runtime.maxMemory()) && (freeMem < KILO_BYTES_256)) {
             // accords to 256 kB create service exception
-            throw new ResponseExceedsSizeLimitException().withMessage(
-                    "The observation response is to big for the maximal heap size of %d Byte of the " +
-                    "virtual machine! Please either refine your getObservation request to reduce the " +
-                    "number of observations in the response or ask the administrator of this SOS to " +
-                    "increase the maximum heap size of the virtual machine!", runtime.maxMemory());
+            throw new ResponseExceedsSizeLimitException()
+                    .withMessage("The observation response is to big for the maximal heap size of %d Byte of the "
+                            + "virtual machine! Please either refine your getObservation request to reduce the "
+                            + "number of observations in the response or ask the administrator of this SOS to "
+                            + "increase the maximum heap size of the virtual machine!", runtime.maxMemory());
         }
     }
 
     /**
      * Returns an Envelope that contains the Geometry
      *
-     * @param envelope Current envelope
-     * @param geometry Geometry to include
+     * @param envelope
+     *            Current envelope
+     * @param geometry
+     *            Geometry to include
      *
      * @return Envelope that includes the Geometry
      */
@@ -234,30 +248,36 @@ public class SosHelper {
     /**
      * Checks if the FOI identifier was generated by SOS
      *
-     * @param featureOfInterestIdentifier FOI identifier from database
-     * @param version                     SOS version
+     * @param featureOfInterestIdentifier
+     *            FOI identifier from database
+     * @param version
+     *            SOS version
      *
      * @return True if the FOI identifier was generated
      */
     public static boolean checkFeatureOfInterestIdentifierForSosV2(final String featureOfInterestIdentifier,
-                                                                   final String version) {
-        return !(Sos2Constants.SERVICEVERSION.equals(version) && featureOfInterestIdentifier
-                 .startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX));
+            final String version) {
+        return !(Sos2Constants.SERVICEVERSION.equals(version)
+                && featureOfInterestIdentifier.startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX));
     }
 
     /**
      * get collection of hierarchy values for a key
      *
-     * @param hierarchy       map to example
-     * @param key             start key
-     * @param fullHierarchy   whether to traverse down the full hierarchy
-     * @param includeStartKey whether to include the passed key in the result collection
+     * @param hierarchy
+     *            map to example
+     * @param key
+     *            start key
+     * @param fullHierarchy
+     *            whether to traverse down the full hierarchy
+     * @param includeStartKey
+     *            whether to include the passed key in the result collection
      *
      * @return collection of the full hierarchy
      */
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final String key,
-                                           final boolean fullHierarchy, final boolean includeStartKey) {
+            final boolean fullHierarchy, final boolean includeStartKey) {
 
         Set<String> hierarchyValues = Sets.newHashSet();
         if (includeStartKey) {
@@ -268,10 +288,8 @@ public class SosHelper {
         keysToCheck.push(key);
 
         while (!keysToCheck.isEmpty()) {
-            Optional.ofNullable(hierarchy.get(keysToCheck.pop()))
-                    .map(Collection::stream).orElseGet(Stream::empty)
-                    .filter(value -> hierarchyValues.add(value) && fullHierarchy)
-                    .forEachOrdered(keysToCheck::push);
+            Optional.ofNullable(hierarchy.get(keysToCheck.pop())).map(Collection::stream).orElseGet(Stream::empty)
+                    .filter(value -> hierarchyValues.add(value) && fullHierarchy).forEachOrdered(keysToCheck::push);
         }
 
         return hierarchyValues;
@@ -280,26 +298,31 @@ public class SosHelper {
     /**
      * get collection of hierarchy values for a set of keys
      *
-     * @param hierarchy        map to example
-     * @param keys             start key
-     * @param fullHierarchy    whether to traverse down the full hierarchy
-     * @param includeStartKeys whether to include the passed keys in the result collection
+     * @param hierarchy
+     *            map to example
+     * @param keys
+     *            start key
+     * @param fullHierarchy
+     *            whether to traverse down the full hierarchy
+     * @param includeStartKeys
+     *            whether to include the passed keys in the result collection
      *
      * @return collection of the full hierarchy
      */
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final Set<String> keys,
-                                           final boolean fullHierarchy, final boolean includeStartKeys) {
-        return keys.stream()
-                .flatMap(key -> getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys).stream())
+            final boolean fullHierarchy, final boolean includeStartKeys) {
+        return keys.stream().flatMap(key -> getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys).stream())
                 .collect(toSet());
     }
 
     /**
      * Get valid FOI identifiers for SOS 2.0
      *
-     * @param featureIDs FOI identifiers to test
-     * @param version    SOS version
+     * @param featureIDs
+     *            FOI identifiers to test
+     * @param version
+     *            SOS version
      *
      * @return valid FOI identifiers
      */
@@ -313,41 +336,41 @@ public class SosHelper {
     }
 
     /**
-     * Creates the minimum and maximum values of this envelope in the default EPSG.
+     * Creates the minimum and maximum values of this envelope in the default
+     * EPSG.
      *
-     * @param envelope the envelope
-     *
-     * @return the {@code MinMax} describing the envelope
-     */
-    @Deprecated
-    public static MinMax<String> getMinMaxFromEnvelope(Envelope envelope) {
-        return new MinMax<String>()
-                .setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
-                .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
-    }
-
-    /**
-     * Creates the minimum and maximum values of this envelope in the default EPSG.
-     *
-     * @param envelope the envelope
+     * @param envelope
+     *            the envelope
      *
      * @return the {@code MinMax} describing the envelope
      */
     public static OwsRange getOwsRangeFromEnvelope(Envelope envelope) {
         Joiner joiner = Joiner.on(' ');
         // TODO for full 3D support add minz to parameter in setStringValue
-        return new OwsRange(
-                new OwsValue(joiner.join(envelope.getMaxX(), envelope.getMaxY())),
+        return new OwsRange(new OwsValue(joiner.join(envelope.getMaxX(), envelope.getMaxY())),
                 new OwsValue(joiner.join(envelope.getMinX(), envelope.getMinY())));
     }
 
+    /**
+     * Creates the minimum and maximum values of this envelope in the default
+     * EPSG.
+     *
+     * @param envelope
+     *            the envelope
+     *
+     * @return the {@code MinMax} describing the envelope
+     */
     public static MinMax<String> getMinMaxFromEnvelope(final ReferencedEnvelope envelope) {
         if (envelope.isSetEnvelope()) {
             if (envelope.isSetMinMaxZ()) {
-                return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(), envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
-                        .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(), envelope.getEnvelope().getMinY(), envelope.getMinZ()));
+                return new MinMax<String>()
+                        .setMaximum(Joiner.on(' ').join(envelope.getEnvelope().getMaxX(),
+                                envelope.getEnvelope().getMaxY(), envelope.getMaxZ()))
+                        .setMinimum(Joiner.on(' ').join(envelope.getEnvelope().getMinX(),
+                                envelope.getEnvelope().getMinY(), envelope.getMinZ()));
             } else {
-                return getMinMaxFromEnvelope(envelope.getEnvelope());
+                return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
+                        .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
             }
         }
         return new MinMax<String>();
@@ -355,16 +378,19 @@ public class SosHelper {
     }
 
     /**
-     * Creates the minimum and maximum values of this envelope in the default EPSG as list.
+     * Creates the minimum and maximum values of this envelope in the default
+     * EPSG as list.
      *
-     * @param envelope the envelope
+     * @param envelope
+     *            the envelope
      *
      * @return the {@code MinMax} describing the envelope
      */
     public static MinMax<List<String>> getMinMaxFromEnvelopeAsList(final Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
-        return new MinMax<List<String>>().setMaximum(
-                Lists.newArrayList(Double.toString(envelope.getMaxX()), Double.toString(envelope.getMaxY())))
+        return new MinMax<List<String>>()
+                .setMaximum(
+                        Lists.newArrayList(Double.toString(envelope.getMaxX()), Double.toString(envelope.getMaxY())))
                 .setMinimum(
                         Lists.newArrayList(Double.toString(envelope.getMinX()), Double.toString(envelope.getMinY())));
     }
@@ -425,8 +451,8 @@ public class SosHelper {
 
     public static void checkHref(final String href, final String parameterName) throws OwsExceptionReport {
         if (!href.startsWith("http") && !href.startsWith("urn")) {
-            throw new InvalidParameterValueException().at(parameterName).withMessage(
-                    "The reference (href) has an invalid style!");
+            throw new InvalidParameterValueException().at(parameterName)
+                    .withMessage("The reference (href) has an invalid style!");
         }
     }
 
@@ -436,7 +462,7 @@ public class SosHelper {
             for (final CodeType value : values) {
                 builder.append(value.getValue());
                 if (value.isSetCodeSpace()) {
-                    builder.append("@@");
+                    builder.append(AT_AT);
                     builder.append(value.getCodeSpace());
                 }
                 builder.append(",");
@@ -450,7 +476,7 @@ public class SosHelper {
         final List<CodeType> names = new ArrayList<>(0);
         if (!Strings.isNullOrEmpty(csv)) {
             for (final String nameCodespaces : csv.split(",")) {
-                String[] nameCodespace = nameCodespaces.split("@@");
+                String[] nameCodespace = nameCodespaces.split(AT_AT);
                 CodeType codeType = new CodeType(nameCodespace[0]);
                 if (nameCodespace.length == 2) {
                     codeType.setCodeSpace(new URI(nameCodespace[1]));

@@ -35,10 +35,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.config.json.JsonActivationDao;
-import org.n52.iceland.request.handler.OperationHandlerKey;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
@@ -72,19 +70,24 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
 
     @Override
     public Set<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionKeys() {
-        Function<JsonNode, SosObservationOfferingExtensionKey> fun = createDomainDecoder(SosObservationOfferingExtensionKey::new);
+        Function<JsonNode, SosObservationOfferingExtensionKey> fun =
+                createDomainDecoder(SosObservationOfferingExtensionKey::new);
         return getKeys(OFFERING_EXTENSIONS, fun);
     }
 
     @Override
     public boolean isResponseFormatActive(ResponseFormatKey key) {
-        return isActive(RESPONSE_FORMATS, matches(key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat), true);
+        return isActive(RESPONSE_FORMATS,
+                matches(key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat), true);
     }
 
     @Override
     public void setResponseFormatStatus(ResponseFormatKey key, boolean active) {
-        setStatus(RESPONSE_FORMATS, matches(key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat),
-                  s -> createFormatEncoder(s, key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat), active);
+        setStatus(RESPONSE_FORMATS,
+                matches(key, ResponseFormatKey::getServiceOperatorKey, ResponseFormatKey::getResponseFormat),
+            s -> createFormatEncoder(s, key, ResponseFormatKey::getServiceOperatorKey,
+                    ResponseFormatKey::getResponseFormat),
+            active);
     }
 
     @Override
@@ -94,13 +97,20 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
 
     @Override
     public boolean isProcedureDescriptionFormatActive(ProcedureDescriptionFormatKey key) {
-        return isActive(PROCEDURE_DESCRIPTION_FORMATS, matches(key, ProcedureDescriptionFormatKey::getServiceOperatorKey, ProcedureDescriptionFormatKey::getProcedureDescriptionFormat), true);
+        return isActive(PROCEDURE_DESCRIPTION_FORMATS,
+                matches(key, ProcedureDescriptionFormatKey::getServiceOperatorKey,
+                        ProcedureDescriptionFormatKey::getProcedureDescriptionFormat),
+                true);
     }
 
     @Override
     public void setProcedureDescriptionFormatStatus(ProcedureDescriptionFormatKey key, boolean active) {
-        setStatus(PROCEDURE_DESCRIPTION_FORMATS, matches(key, ProcedureDescriptionFormatKey::getServiceOperatorKey, ProcedureDescriptionFormatKey::getProcedureDescriptionFormat),
-                  s -> createFormatEncoder(s, key, ProcedureDescriptionFormatKey::getServiceOperatorKey, ProcedureDescriptionFormatKey::getProcedureDescriptionFormat), active);
+        setStatus(PROCEDURE_DESCRIPTION_FORMATS,
+            matches(key, ProcedureDescriptionFormatKey::getServiceOperatorKey,
+                    ProcedureDescriptionFormatKey::getProcedureDescriptionFormat),
+            s -> createFormatEncoder(s, key, ProcedureDescriptionFormatKey::getServiceOperatorKey,
+                    ProcedureDescriptionFormatKey::getProcedureDescriptionFormat),
+            active);
     }
 
     @Override
@@ -108,37 +118,43 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
         return getKeys(PROCEDURE_DESCRIPTION_FORMATS, createFormatDecoder(ProcedureDescriptionFormatKey::new));
     }
 
-//    @Override
-//    public boolean isBindingActive(BindingKey key) {
-//        return isActive(BINDINGS, matches(key, BindingKey::ge, BindingKey::getBinding), true);
-//    }
-//
-//    @Override
-//    public void setBindingStatus(BindingKey key, boolean active) {
-//        setStatus(BINDINGS, matches(key, BindingKey::getServiceOperatorKey, BindingKey::getBinding),
-//                  s -> createFormatEncoder(s, key, BindingKey::getServiceOperatorKey, BindingKey::getBinding), active);
-//    }
-//
-//    @Override
-//    public Set<BindingKey> getBindingKeys() {
-//        return getKeys(BINDINGS, createFormatDecoder(BindingKey::new));
-//    }
-//
-//    @Override
-//    public boolean isOperationActive(OperationHandlerKey key) {
-//        return isActive(OPERATIONS, matches(key, OperationKey::getServiceOperatorKey, OperationKey::getOperation), true);
-//    }
-//
-//    @Override
-//    public void setOperationStatus(OperationHandlerKey key, boolean active) {
-//        setStatus(OPERATIONS, matches(key, OperationKey::getServiceOperatorKey, OperationKey::getOperation),
-//                  s -> createFormatEncoder(s, key, OperationKey::getServiceOperatorKey, OperationKey::getOperation), active);
-//    }
-//
-//    @Override
-//    public Set<OperationKey> getOperationKeys() {
-//        return getKeys(OPERATIONS, createFormatDecoder(OperationKey::new));
-//    }
+    // @Override
+    // public boolean isBindingActive(BindingKey key) {
+    // return isActive(BINDINGS, matches(key, BindingKey::ge,
+    // BindingKey::getBinding), true);
+    // }
+    //
+    // @Override
+    // public void setBindingStatus(BindingKey key, boolean active) {
+    // setStatus(BINDINGS, matches(key, BindingKey::getServiceOperatorKey,
+    // BindingKey::getBinding),
+    // s -> createFormatEncoder(s, key, BindingKey::getServiceOperatorKey,
+    // BindingKey::getBinding), active);
+    // }
+    //
+    // @Override
+    // public Set<BindingKey> getBindingKeys() {
+    // return getKeys(BINDINGS, createFormatDecoder(BindingKey::new));
+    // }
+    //
+    // @Override
+    // public boolean isOperationActive(OperationHandlerKey key) {
+    // return isActive(OPERATIONS, matches(key,
+    // OperationKey::getServiceOperatorKey, OperationKey::getOperation), true);
+    // }
+    //
+    // @Override
+    // public void setOperationStatus(OperationHandlerKey key, boolean active) {
+    // setStatus(OPERATIONS, matches(key, OperationKey::getServiceOperatorKey,
+    // OperationKey::getOperation),
+    // s -> createFormatEncoder(s, key, OperationKey::getServiceOperatorKey,
+    // OperationKey::getOperation), active);
+    // }
+    //
+    // @Override
+    // public Set<OperationKey> getOperationKeys() {
+    // return getKeys(OPERATIONS, createFormatDecoder(OperationKey::new));
+    // }
 
     protected <K> Function<JsonNode, K> createFormatDecoder(BiFunction<OwsServiceKey, String, K> fun) {
         Objects.requireNonNull(fun);
@@ -146,8 +162,7 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
     }
 
     protected <K> Supplier<ObjectNode> createFormatEncoder(Supplier<ObjectNode> supplier, K key,
-                                                           Function<K, OwsServiceKey> sokFun,
-                                                           Function<K, String> formatFun) {
+            Function<K, OwsServiceKey> sokFun, Function<K, String> formatFun) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(sokFun);
         Objects.requireNonNull(formatFun);
@@ -158,7 +173,8 @@ public class SosJsonActivationDao extends JsonActivationDao implements SosActiva
         };
     }
 
-    protected <K> Predicate<JsonNode> matches(K key, Function<K, OwsServiceKey> sokFun, Function<K, String> formatFun) {
+    protected <K> Predicate<JsonNode> matches(K key, Function<K, OwsServiceKey> sokFun,
+            Function<K, String> formatFun) {
         OwsServiceKey sok = key == null ? null : sokFun.apply(key);
         String responseFormat = key == null ? null : formatFun.apply(key);
         return matches(sok).and(matchesFormat(responseFormat));

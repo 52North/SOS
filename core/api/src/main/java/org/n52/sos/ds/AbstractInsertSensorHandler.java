@@ -66,7 +66,8 @@ public abstract class AbstractInsertSensorHandler extends AbstractOperationHandl
 
 
     @Inject
-    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+    public void setProcedureDescriptionFormatRepository(
+            ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
         this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
     }
 
@@ -109,7 +110,8 @@ public abstract class AbstractInsertSensorHandler extends AbstractOperationHandl
 
     private OwsDomain getProcedureDescriptionFormatParameter(String service, String version) {
         InsertSensorParams name = Sos2Constants.InsertSensorParams.procedureDescriptionFormat;
-        return new OwsDomain(name, new OwsAllowedValues(getProcedureDescriptionFormatRepository().getSupportedTransactionalProcedureDescriptionFormats(service, version).stream().map(OwsValue::new)));
+        return new OwsDomain(name, new OwsAllowedValues(getProcedureDescriptionFormatRepository()
+                .getSupportedTransactionalProcedureDescriptionFormats(service, version).stream().map(OwsValue::new)));
     }
 
     private OwsDomain getAnyObservablePropertyParameter(String service, String version) {

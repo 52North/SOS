@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Assert;
 
 import org.junit.Test;
 
@@ -46,38 +46,49 @@ public class OperationDecoderKeyTest {
 
     @Test
     public void testHashCode() {
-        assertEquals(new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP).hashCode(),
+        Assert.assertEquals(
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                        SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP).hashCode(),
                 new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP).hashCode());
-        assertEquals(
+        Assert.assertEquals(
                 new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION,
                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP).hashCode(),
-                new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities
-                        .name(), MediaTypes.APPLICATION_KVP).hashCode());
-        assertEquals(new OperationDecoderKey(SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(),
-                MediaTypes.APPLICATION_KVP).hashCode(), new OperationDecoderKey(SosConstants.SOS, null,
-                SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP).hashCode());
-        assertEquals(new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, (String) null,
-                MediaTypes.APPLICATION_KVP).hashCode(), new OperationDecoderKey(SosConstants.SOS,
-                Sos2Constants.SERVICEVERSION, (String) null, MediaTypes.APPLICATION_KVP).hashCode());
+                new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION,
+                        SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP).hashCode());
+        Assert.assertEquals(
+                new OperationDecoderKey(SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(),
+                        MediaTypes.APPLICATION_KVP).hashCode(),
+                new OperationDecoderKey(SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(),
+                        MediaTypes.APPLICATION_KVP).hashCode());
+        Assert.assertEquals(
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, (String) null,
+                        MediaTypes.APPLICATION_KVP).hashCode(),
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, (String) null,
+                        MediaTypes.APPLICATION_KVP).hashCode());
     }
 
     @Test
     public void testEquals() {
-        assertEquals(new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP), new OperationDecoderKey(
-                SosConstants.SOS, Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(),
-                MediaTypes.APPLICATION_KVP));
-        assertEquals(new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION,
-                SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP), new OperationDecoderKey(
-                null, Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(),
-                MediaTypes.APPLICATION_KVP));
-        assertEquals(new OperationDecoderKey(SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(),
-                MediaTypes.APPLICATION_KVP), new OperationDecoderKey(SosConstants.SOS, null,
-                SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
-        assertEquals(new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, (String) null,
-                MediaTypes.APPLICATION_KVP), new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                (String) null, MediaTypes.APPLICATION_KVP));
+        Assert.assertEquals(
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                        SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                        SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
+        Assert.assertEquals(
+                new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION,
+                        SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+                new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION,
+                        SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
+        Assert.assertEquals(
+                new OperationDecoderKey(SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(),
+                        MediaTypes.APPLICATION_KVP),
+                new OperationDecoderKey(SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(),
+                        MediaTypes.APPLICATION_KVP));
+        Assert.assertEquals(
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, (String) null,
+                        MediaTypes.APPLICATION_KVP),
+                new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, (String) null,
+                        MediaTypes.APPLICATION_KVP));
     }
 }

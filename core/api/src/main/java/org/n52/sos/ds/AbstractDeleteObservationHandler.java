@@ -39,7 +39,6 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
-import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
  * Renamed, in version 4.x called DeleteObservationAbstractDAO
@@ -60,8 +59,8 @@ public abstract class AbstractDeleteObservationHandler extends AbstractOperation
 
     @Override
     protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
-        return new HashSet<>(Arrays.asList(new OwsDomain(DeleteObservationConstants.PARAM_OBSERVATION, OwsAnyValue.instance())));
+        return new HashSet<>(
+                Arrays.asList(new OwsDomain(DeleteObservationConstants.PARAM_OBSERVATION, OwsAnyValue.instance())));
     }
-
 
 }

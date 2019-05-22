@@ -49,7 +49,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
     @Deprecated
-    private static ProcedureRequestSettingProvider instance = null;
+    private static ProcedureRequestSettingProvider instance;
 
     private boolean allowQueryingForInstancesOnly;
     private boolean showOnlyAggregatedProcedures;
@@ -87,9 +87,6 @@ public class ProcedureRequestSettingProvider implements Constructable {
     /**
      * @param showOnlyAggregatedProcedures the showOnlyAggregatedProcedures to set
      */
-    /**
-     * @param showOnlyAggregatedProcedures
-     */
     @Setting(ProcedureRequestSettingProvider.SHOW_ONLY_AGGREGATED_PROCEDURES)
     public void setShowOnlyAggregatedProcedures(boolean showOnlyAggregatedProcedures) {
         this.showOnlyAggregatedProcedures = showOnlyAggregatedProcedures;
@@ -112,6 +109,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
         this.addOutputsToSensorML = addOutputsToSensorML;
     }
+
     @Deprecated
     public static ProcedureRequestSettingProvider getInstance() {
         return ProcedureRequestSettingProvider.instance;

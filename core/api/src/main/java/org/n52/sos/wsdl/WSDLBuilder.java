@@ -32,15 +32,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.util.StringHelper;
-import org.n52.sos.wsdl.WSDLConstants.Operations;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.XmlHelper;
 
@@ -86,7 +83,9 @@ public class WSDLBuilder {
     // private Port soapPort, kvpPort, poxPort;
 
     private URI soapEndpoint;
+
     private URI poxEndpoint;
+
     private URI kvpEndpoint;
 
     public WSDLBuilder() {
@@ -778,22 +777,36 @@ public class WSDLBuilder {
     // return this.kvpBinding;
     // }
 
-    public static void main(String[] args) throws ParserConfigurationException {
-        WSDLBuilder b =
-                new WSDLBuilder().setSoapEndpoint(URI.create("http://localhost:8080/52n-sos-webapp/sos/soap"))
-                        .setKvpEndpoint(URI.create("http://localhost:8080/52n-sos-webapp/sos/kvp"))
-                        .setPoxEndpoint(URI.create("http://localhost:8080/52n-sos-webapp/sos/pox"));
-        for (WSDLOperation o : new WSDLOperation[] { Operations.DELETE_SENSOR, Operations.DESCRIBE_SENSOR,
-                Operations.GET_CAPABILITIES, Operations.GET_FEATURE_OF_INTEREST, Operations.GET_OBSERVATION,
-                Operations.GET_OBSERVATION_BY_ID, Operations.GET_RESULT, Operations.GET_RESULT_TEMPLATE,
-                Operations.INSERT_OBSERVATION, Operations.INSERT_RESULT, Operations.INSERT_RESULT_TEMPLATE,
-                Operations.INSERT_SENSOR, Operations.UPDATE_SENSOR_DESCRIPTION }) {
-            // b.addPoxOperation(o);
-            // b.addKvpOperation(o);
-            // b.addSoapOperation(o);
-        }
-        System.out.println(b.build());
-    }
+    // /**
+    // * Generate the WSDL file
+    // *
+    // * @param args
+    // * the arguments
+    // * @throws ParserConfigurationException
+    // * If an error occurs
+    // */
+    // public static void main(String[] args) throws
+    // ParserConfigurationException {
+    // WSDLBuilder b =
+    // new
+    // WSDLBuilder().setSoapEndpoint(URI.create("http://localhost:8080/52n-sos-webapp/sos/soap"))
+    // .setKvpEndpoint(URI.create("http://localhost:8080/52n-sos-webapp/sos/kvp"))
+    // .setPoxEndpoint(URI.create("http://localhost:8080/52n-sos-webapp/sos/pox"));
+    // // for (WSDLOperation o : new WSDLOperation[] {
+    // // Operations.DELETE_SENSOR, Operations.DESCRIBE_SENSOR,
+    // // Operations.GET_CAPABILITIES, Operations.GET_FEATURE_OF_INTEREST,
+    // // Operations.GET_OBSERVATION,
+    // // Operations.GET_OBSERVATION_BY_ID, Operations.GET_RESULT,
+    // // Operations.GET_RESULT_TEMPLATE,
+    // // Operations.INSERT_OBSERVATION, Operations.INSERT_RESULT,
+    // // Operations.INSERT_RESULT_TEMPLATE,
+    // // Operations.INSERT_SENSOR, Operations.UPDATE_SENSOR_DESCRIPTION }) {
+    // // b.addPoxOperation(o);
+    // // b.addKvpOperation(o);
+    // // b.addSoapOperation(o);
+    // // }
+    // System.out.println(b.build());
+    // }
 
     public void addSoapOperation(WSDLOperation sosOperationDefinition) {
         // TODO Auto-generated method stub

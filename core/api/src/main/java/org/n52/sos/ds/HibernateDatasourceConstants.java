@@ -56,32 +56,38 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_SIMPLE_CORE_PATH = HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
 
-    String HIBERNATE_MAPPING_EREPORTING_CORE_PATH = HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
+    String HIBERNATE_MAPPING_EREPORTING_CORE_PATH =
+            HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
 
-    String HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH = HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
+    String HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH =
+            HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_CORE_PATH;
 
     // Database simple paths
     String HIBERNATE_MAPPING_DATASET_PATH = "/dataset";
 
-    String HIBERNATE_MAPPING_SIMPLE_DATASET_PATH = HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
+    String HIBERNATE_MAPPING_SIMPLE_DATASET_PATH =
+            HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
 
-    String HIBERNATE_MAPPING_EREPORTING_DATASET_PATH = HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
+    String HIBERNATE_MAPPING_EREPORTING_DATASET_PATH =
+            HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
 
-    String HIBERNATE_MAPPING_TRANSACTIONAL_DATASET_PATH = HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
-
+    String HIBERNATE_MAPPING_TRANSACTIONAL_DATASET_PATH =
+            HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_DATASET_PATH;
 
     // Database sampling extension paths
     String HIBERNATE_MAPPING_SAMPLING_PATH = "/sampling";
 
-    String HIBERNATE_MAPPING_SIMPLE_SAMPLING_PATH = HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
+    String HIBERNATE_MAPPING_SIMPLE_SAMPLING_PATH =
+            HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
 
-    String HIBERNATE_MAPPING_EREPORTING_SAMPLING_PATH = HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
+    String HIBERNATE_MAPPING_EREPORTING_SAMPLING_PATH =
+            HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
 
-    String HIBERNATE_MAPPING_TRANSACTIONAL_SAMPLING_PATH = HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
+    String HIBERNATE_MAPPING_TRANSACTIONAL_SAMPLING_PATH =
+            HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH + HIBERNATE_MAPPING_SAMPLING_PATH;
 
     // TODO change to /feature
     String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature";
-
 
     String HIBERNATE_RESOURCES = "HIBERNATE_RESOURCES";
 
@@ -101,17 +107,16 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_DATASOURCE_TIME_STRING_FORMAT = "hibernate.datasource.timeStringFormat";
 
-    String HIBERNATE_DATASOURCE_TIME_STRING_Z  = "hibernate.datasource.timeStringZ";
+    String HIBERNATE_DATASOURCE_TIME_STRING_Z = "hibernate.datasource.timeStringZ";
 
-    public enum DatabaseConcept {
-        SIMPLE("Simple database model"),
-        TRANSACTIONAL("Transactional database model"),
-        EREPORTING("eReporting database model");
+    enum DatabaseConcept {
+        SIMPLE("Simple database model"), TRANSACTIONAL("Transactional database model"), EREPORTING(
+                "eReporting database model");
 
         private final String displayName;
 
-        private DatabaseConcept(String displayName) {
-           this.displayName = displayName;
+        DatabaseConcept(String displayName) {
+            this.displayName = displayName;
         }
 
         public String getDisplayName() {
@@ -119,14 +124,13 @@ public interface HibernateDatasourceConstants {
         }
     }
 
-    public enum DatabaseExtension {
-        DEFAULT("Default database model"),
-        SAMPLING("Extended model to support Samplings/MeasuringPrograms");
+    enum DatabaseExtension {
+        DEFAULT("Default database model"), SAMPLING("Extended model to support Samplings/MeasuringPrograms");
 
         private final String displayName;
 
-        private DatabaseExtension(String displayName) {
-           this.displayName = displayName;
+        DatabaseExtension(String displayName) {
+            this.displayName = displayName;
         }
 
         public String getDisplayName() {
@@ -134,15 +138,13 @@ public interface HibernateDatasourceConstants {
         }
     }
 
-
-    public enum FeatureConcept {
-        DEFAULT_FEATURE_CONCEPT("Default feature concept"),
-        EXTENDED_FEATURE_CONCEPT("Extended feature concept");
+    enum FeatureConcept {
+        DEFAULT_FEATURE_CONCEPT("Default feature concept"), EXTENDED_FEATURE_CONCEPT("Extended feature concept");
 
         private final String displayName;
 
-        private FeatureConcept(String displayName) {
-           this.displayName = displayName;
+        FeatureConcept(String displayName) {
+            this.displayName = displayName;
         }
 
         public String getDisplayName() {

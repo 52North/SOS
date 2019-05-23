@@ -71,8 +71,8 @@ public class SosObservationOfferingExtensionRepository extends
     @Deprecated
     private static SosObservationOfferingExtensionRepository instance;
 
-    private final Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>> offeringExtensionProviders =
-            new HashMap<>(0);
+    private final Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>>
+        offeringExtensionProviders = new HashMap<>(0);
 
     private final ActivationListeners<SosObservationOfferingExtensionKey> activation = new ActivationListeners<>(true);
 
@@ -127,7 +127,8 @@ public class SosObservationOfferingExtensionRepository extends
      *
      * @return the map with all {@link SosObservationOfferingExtensionProvider}s
      */
-    public Map<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider> getAllOfferingExtensionProviders() {
+    public Map<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider>
+        getAllOfferingExtensionProviders() {
         return Producers.produce(this.offeringExtensionProviders);
     }
 
@@ -137,7 +138,8 @@ public class SosObservationOfferingExtensionRepository extends
      * @return the map with all active
      *         {@link SosObservationOfferingExtensionProvider}s
      */
-    public Map<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider> getOfferingExtensionProviders() {
+    public Map<SosObservationOfferingExtensionKey, SosObservationOfferingExtensionProvider>
+        getOfferingExtensionProviders() {
         return Producers.produce(Activatables.activatedMap(offeringExtensionProviders, this.activation));
     }
 

@@ -94,43 +94,49 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
     @Override
     public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
-       if (response instanceof AbstractObservationResponse) {
-           return checkGetObservationResponse((AbstractObservationResponse)response);
-       }
-       return super.modifyResponse(request, response);
+        if (response instanceof AbstractObservationResponse) {
+            return checkGetObservationResponse((AbstractObservationResponse) response);
+        }
+        return super.modifyResponse(request, response);
     }
 
-    private OwsServiceResponse checkGetObservationResponse(AbstractObservationResponse response) throws NoSuchElementException, OwsExceptionReport {
+    private OwsServiceResponse checkGetObservationResponse(AbstractObservationResponse response)
+            throws NoSuchElementException, OwsExceptionReport {
         List<OmObservation> observations = new LinkedList<OmObservation>();
         while (response.getObservationCollection().hasNext()) {
             OmObservation o = response.getObservationCollection().next();
             observations.add(o);
             if (o.getObservationConstellation().isSetObservationType()
                     && (GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(o.getObservationConstellation().getObservationType())
-                    || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(o.getObservationConstellation().getObservationType())
-                    || OmConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(o.getObservationConstellation().getObservationType()))) {
+                            || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE
+                                    .equals(o.getObservationConstellation().getObservationType())
+                            || OmConstants.OBS_TYPE_PROFILE_OBSERVATION
+                                    .equals(o.getObservationConstellation().getObservationType()))) {
                 if (OmConstants.NS_OM_2.equals(response.getResponseFormat())
                         || GWMLConstants.NS_GWML_22.equals(response.getResponseFormat())
                         || GWMLConstants.NS_GWML_WELL_22.equals(response.getResponseFormat())) {
                     o.getObservationConstellation().setObservationType(GWMLConstants.OBS_TYPE_GEOLOGY_LOG);
                 }
                 if (o.isSetValue() && o.getValue() instanceof SingleObservationValue) {
-                    if (o.getValue().getValue() instanceof BooleanValue || o.getValue().getValue() instanceof CategoryValue
-                            || o.getValue().getValue() instanceof CountValue || o.getValue().getValue() instanceof QuantityValue
+                    if (o.getValue().getValue() instanceof BooleanValue
+                            || o.getValue().getValue() instanceof CategoryValue
+                            || o.getValue().getValue() instanceof CountValue
+                            || o.getValue().getValue() instanceof QuantityValue
                             || o.getValue().getValue() instanceof TextValue) {
                         ProfileLevel pl = new ProfileLevel().addValue(o.getValue().getValue());
                         if (o.isSetParameter()) {
                             for (NamedValue<?> param : o.getParameter()) {
                                 if (param.getName().isSetHref() && param.getValue() instanceof QuantityValue) {
                                     if (GWMLConstants.PARAM_FROM_DEPTH.equals(param.getName().getHref())) {
-                                        pl.setLevelStart((QuantityValue)param.getValue());
+                                        pl.setLevelStart((QuantityValue) param.getValue());
                                     } else if (GWMLConstants.PARAM_TO_DEPTH.equals(param.getName().getHref())) {
-                                        pl.setLevelEnd((QuantityValue)param.getValue());
+                                        pl.setLevelEnd((QuantityValue) param.getValue());
                                     }
                                 }
                             }
                         }
-                        SingleObservationValue<List<ProfileLevel>> sov = new SingleObservationValue<>(new ProfileValue("").addValue(pl));
+                        SingleObservationValue<List<ProfileLevel>> sov =
+                                new SingleObservationValue<>(new ProfileValue("").addValue(pl));
                         sov.setPhenomenonTime(o.getValue().getPhenomenonTime());
                         o.setValue(sov);
                     }

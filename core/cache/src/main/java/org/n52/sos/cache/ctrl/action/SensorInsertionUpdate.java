@@ -55,9 +55,11 @@ import com.google.common.collect.Sets;
  * <li>Offering &harr; procedure</li>
  * <li>Offering &rarr; name</li>
  * </ul>
- * <li>Offering &rarr; allowed observation type</li> <li>Offering &rarr; related
- * feature</li> <li>Related features &rarr; role</li> <li>Observable Property
- * &harr; Procedure</li> <li>Offering &harr; observable property</li>
+ * <li>Offering &rarr; allowed observation type</li>
+ * <li>Offering &rarr; related feature</li>
+ * <li>Related features &rarr; role</li>
+ * <li>Observable Property &harr; Procedure</li>
+ * <li>Offering &harr; observable property</li>
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -66,15 +68,18 @@ import com.google.common.collect.Sets;
  */
 public class SensorInsertionUpdate extends InMemoryCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorInsertionUpdate.class);
+
     private final InsertSensorResponse response;
+
     private final InsertSensorRequest request;
+
     private final ConverterRepository converter;
 
-    public SensorInsertionUpdate(InsertSensorRequest request, InsertSensorResponse response, ConverterRepository converter) {
+    public SensorInsertionUpdate(InsertSensorRequest request, InsertSensorResponse response,
+            ConverterRepository converter) {
         if (request == null || response == null) {
-            String msg =
-                    String.format("Missing argument: '%s': %s; '%s': %s", InsertSensorRequest.class.getName(),
-                            request, InsertSensorResponse.class.getName(), response);
+            String msg = String.format("Missing argument: '%s': %s; '%s': %s", InsertSensorRequest.class.getName(),
+                    request, InsertSensorResponse.class.getName(), response);
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -92,7 +97,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         cache.addProcedure(procedure);
         cache.addPublishedProcedure(procedure);
         if (request.getProcedureDescription().isSetParentProcedure()) {
-            cache.addParentProcedures(procedure, Sets.newHashSet(request.getProcedureDescription().getParentProcedure().getTitleOrFromHref()));
+            cache.addParentProcedures(procedure,
+                    Sets.newHashSet(request.getProcedureDescription().getParentProcedure().getTitleOrFromHref()));
             cache.addPublishedProcedure(request.getProcedureDescription().getParentProcedure().getHref());
         }
 
@@ -118,7 +124,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
                     if (sosOffering.isSetName()) {
                         cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
-                        cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(), sosOffering.getOfferingName());
+                        cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(),
+                                sosOffering.getOfferingName());
                     }
                 }
 
@@ -127,11 +134,11 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());
 
                 // allowed observation types
-                cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(), request.getMetadata()
-                        .getObservationTypes());
+                cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(),
+                        request.getMetadata().getObservationTypes());
                 // allowed featureOfInterest types
-                cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(), request
-                        .getMetadata().getFeatureOfInterestTypes());
+                cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(),
+                        request.getMetadata().getFeatureOfInterestTypes());
             }
 
             // related features
@@ -167,7 +174,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addFeatureOfInterest(feature.getIdentifier());
                     getCache().setProceduresForFeatureOfInterest(feature.getIdentifier(), Sets.newHashSet(procedure));
                     if (feature.isSetName()) {
-                        getCache().addFeatureOfInterestIdentifierHumanReadableName(feature.getIdentifier(), feature.getFirstName().getValue());
+                        getCache().addFeatureOfInterestIdentifierHumanReadableName(feature.getIdentifier(),
+                                feature.getFirstName().getValue());
                     }
                 }
             }
@@ -180,12 +188,15 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
             cache.addTypeInstanceProcedure(SosContentCache.TypeInstance.INSTANCE, response.getAssignedProcedure());
         }
         if (request.getProcedureDescription().isAggregation()) {
-            cache.addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION, response.getAssignedProcedure());
+            cache.addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION,
+                    response.getAssignedProcedure());
         } else {
-            cache.addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT, response.getAssignedProcedure());
+            cache.addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT,
+                    response.getAssignedProcedure());
         }
         if (request.getProcedureDescription().isSetTypeOf()) {
-            cache.addTypeOfProcedure(request.getProcedureDescription().getTypeOf().getTitle(), response.getAssignedProcedure());
+            cache.addTypeOfProcedure(request.getProcedureDescription().getTypeOf().getTitle(),
+                    response.getAssignedProcedure());
         }
     }
 }

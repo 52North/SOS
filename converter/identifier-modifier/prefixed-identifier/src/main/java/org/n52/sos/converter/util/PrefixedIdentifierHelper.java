@@ -30,7 +30,7 @@ package org.n52.sos.converter.util;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.sos.converter.PrefixedIdentifierModifier;
 
 import com.google.common.base.Strings;
 
@@ -42,10 +42,8 @@ import com.google.common.base.Strings;
  *
  */
 @Configurable
-public class PrefixedIdentifierHelper implements Constructable {
-    @Deprecated
-    private static PrefixedIdentifierHelper instance;
-
+public class PrefixedIdentifierHelper {
+    
     private String globalPrefix;
 
     private String offeringPrefix;
@@ -56,18 +54,6 @@ public class PrefixedIdentifierHelper implements Constructable {
 
     private String featureOfInterestPrefix;
 
-    @Override
-    public void init() {
-        PrefixedIdentifierHelper.instance = this;
-    }
-
-    /**
-     * @return Returns a singleton instance of the PrefixedIdentifierHelper.
-     */
-    @Deprecated
-    public static PrefixedIdentifierHelper getInstance() {
-        return instance;
-    }
 
     /**
      * @return the globalPrefix
@@ -166,7 +152,8 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetAnyPrefix() {
-        return isSetGlobalPrefix() || isSetFeatureOfInterestPrefix() || isSetObservablePropertyPrefix() || isSetOfferingPrefix() || isSetProcedurePrefix();
+        return isSetGlobalPrefix() || isSetFeatureOfInterestPrefix() || isSetObservablePropertyPrefix()
+                || isSetOfferingPrefix() || isSetProcedurePrefix();
     }
 
 }

@@ -59,11 +59,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class SQLiteSessionFactory implements Constructable, Destroyable {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(SQLiteSessionFactory.class);
 
     public static final String HIBERNATE_DIALECT = "hibernate.dialect";
     public static final String HIBERNATE_CONNECTION_URL
@@ -100,6 +98,8 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     public static final String DEFAULT_DATABASE_NAME = "configuration";
     public static final String CONFIG_PATH = "config";
     public static final String WEB_INF_PATH = "WEB-INF";
+
+    private static final Logger LOG = LoggerFactory.getLogger(SQLiteSessionFactory.class);
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -149,17 +149,17 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
 
     protected File getFile() {
         try {
-            Path path = Paths.get(getPath(), WEB_INF_PATH, CONFIG_PATH, getDatabaseName() + ".db");
-            Path parent = path.getParent();
+            Path p = Paths.get(getPath(), WEB_INF_PATH, CONFIG_PATH, getDatabaseName() + ".db");
+            Path parent = p.getParent();
             if (parent != null) {
                 Files.createDirectories(parent);
             } else {
                 throw new RuntimeException("Error while creating config file path.");
             }
-            if (!Files.exists(path)) {
-                Files.createFile(path);
+            if (!Files.exists(p)) {
+                Files.createFile(p);
             }
-            return path.toFile();
+            return p.toFile();
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
@@ -185,10 +185,12 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
                 try {
                     if (this.sessionFactory instanceof SessionFactoryImpl) {
                         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) this.sessionFactory;
-//                        if (sessionFactoryImpl.getConnectionProvider() instanceof Stoppable) {
-//                            Stoppable stoppable = (Stoppable) sessionFactoryImpl.getConnectionProvider();
-//                            stoppable.stop();
-//                        }
+                        // if (sessionFactoryImpl.getConnectionProvider()
+                        // instanceof Stoppable) {
+                        // Stoppable stoppable = (Stoppable)
+                        // sessionFactoryImpl.getConnectionProvider();
+                        // stoppable.stop();
+                        // }
                     }
                     this.sessionFactory.close();
                     LOG.info("Connection provider closed successfully!");
@@ -232,12 +234,6 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
 
     private Properties getDefaultProperties() {
         final String updateSchemaValue = UPDATE_SCHEMA_VALUE;
-//        if (getFile().exists()) {
-//            updateSchemaValue = VALIDATE_SCHEMA_VALUE;
-//        } else {
-//            updateSchemaValue = CREATE_SCHEMA_VALUE;
-//        }
-
         return new Properties() {
             private static final long serialVersionUID = 3109256773218160485L;
             {

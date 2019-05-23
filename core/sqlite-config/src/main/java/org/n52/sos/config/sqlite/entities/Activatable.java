@@ -35,21 +35,19 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 import org.n52.shetland.ogc.ows.extension.AbstractExtension;
-import org.n52.shetland.ogc.ows.extension.Extension;
 
 /**
  * @param <K> the key type
  * @param <T> the type of the extending class
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @MappedSuperclass
 public class Activatable<K extends Serializable, T extends Activatable<K, T>>
         extends AbstractExtension<String> implements Serializable {
-    private static final long serialVersionUID = -1470828735015412115L;
-
     public static final String ACTIVE = "active";
     public static final String COMPOSITE_KEY = "id";
+    private static final long serialVersionUID = -1470828735015412115L;
 
     @Id
     private K key;

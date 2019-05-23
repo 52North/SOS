@@ -59,7 +59,8 @@ public class ProfileParser implements ProfileCoding {
         profile.setMergeValues(parseMergeValues(node));
         profile.setObservationResponseFormat(parseObservationResponseFormat(node));
         parseNoDataPlaceholder(profile, node);
-        profile.setReturnLatestValueIfTemporalFilterIsMissingInGetObservation(parseReturnLatestValueIfTemporalFilterIsMissingInGetObservation(node));
+        profile.setReturnLatestValueIfTemporalFilterIsMissingInGetObservation(
+                parseReturnLatestValueIfTemporalFilterIsMissingInGetObservation(node));
         profile.setShowMetadataOfEmptyObservations(parseShowMetadataOfEmptyObservations(node));
         parseDefaultObservationTypesForEncoding(profile, node);
         parseEncodeProcedure(profile, node);
@@ -132,10 +133,11 @@ public class ProfileParser implements ProfileCoding {
     private void parseNoDataPlaceholder(ProfileImpl profile, JsonNode node) {
         if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER))) {
             if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER).path(RESPONSE_PLACEHOLDER))) {
-                profile.setResponseNoDataPlaceholder(parseText(node.path(NO_DATA_PLACEHOLDER).path(RESPONSE_PLACEHOLDER)));
+                profile.setResponseNoDataPlaceholder(
+                        parseText(node.path(NO_DATA_PLACEHOLDER).path(RESPONSE_PLACEHOLDER)));
             }
             if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER).path(PLACEHOLDER))) {
-                Set<String> placeholder =  Sets.newHashSet();
+                Set<String> placeholder = Sets.newHashSet();
                 JsonNode phNode = node.path(NO_DATA_PLACEHOLDER).path(PLACEHOLDER);
                 if (node.path(NO_DATA_PLACEHOLDER).path(PLACEHOLDER).isArray()) {
                     for (int i = 0; i < phNode.size(); i++) {

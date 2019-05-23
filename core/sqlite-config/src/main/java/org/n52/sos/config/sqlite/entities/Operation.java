@@ -35,11 +35,12 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "operations")
 public class Operation extends Activatable<OperationKey, Operation> {
     private static final long serialVersionUID = 6816894177423976948L;
+
     public Operation() {
         this(null, null, null);
     }

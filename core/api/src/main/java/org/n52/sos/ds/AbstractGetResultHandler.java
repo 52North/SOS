@@ -69,17 +69,17 @@ public abstract class AbstractGetResultHandler extends AbstractResultHandlingHan
                         .withMessage("This operation is not supported for SOS {}!", version);
             case Sos2Constants.SERVICEVERSION:
                 Set<String> resultTemplateIdentifier = getCache().getResultTemplates();
-    
+
                 Set<String> offerings = null;
                 Collection<String> observableProperties = null;
                 Collection<String> featureOfInterest = null;
-    
+
                 if (resultTemplateIdentifier != null && !resultTemplateIdentifier.isEmpty()) {
                     offerings = getCache().getOfferingsWithResultTemplate();
                     observableProperties = getCache().getObservablePropertiesWithResultTemplate();
                     featureOfInterest = getCache().getFeaturesOfInterestWithResultTemplate();
                 }
-    
+
                 return new HashSet<>(Arrays.asList(getOfferingParameter(service, version, offerings),
                         getObservablePropertyParameter(service, version, observableProperties),
                         getFeatureOfInterestParameter(service, version, featureOfInterest)));

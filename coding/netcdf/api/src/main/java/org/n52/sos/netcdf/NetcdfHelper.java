@@ -31,10 +31,11 @@ package org.n52.sos.netcdf;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.naming.ConfigurationException;
+
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
 import com.axiomalaska.cf4j.CFStandardName;
@@ -52,7 +53,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
  *
  */
 @Configurable
-public class NetcdfHelper implements Constructable {
+public class NetcdfHelper {
 
     private Version version;
 
@@ -76,26 +77,10 @@ public class NetcdfHelper implements Constructable {
 
     private Set<String> z = Collections.emptySet();
 
-    @Deprecated
-    private static NetcdfHelper instance;
-
-    /**
-     * @return Returns a singleton instance of the AqdHelper.
-     */
-    @Deprecated
-    public static synchronized NetcdfHelper getInstance() {
-        return instance;
-    }
-
-    @Override
-    public void init() {
-        NetcdfHelper.instance = this;
-    }
-
     /**
      * @param version
      *
-     * @throws ConfigurationException
+     * @throws ConfigurationException if an error occurs
      */
     @Setting(NetcdfSettingsProvider.NETCDF_VERSION)
     public void setNetcdfVersion(String version) throws ConfigurationError {

@@ -37,8 +37,8 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.svalbard.decode.DecoderKey;
 
-public abstract class AbstractObservationKvpDecoder<R extends AbstractObservationRequest> extends AbstractSosKvpDecoder<R> {
-
+public abstract class AbstractObservationKvpDecoder<R extends AbstractObservationRequest>
+        extends AbstractSosKvpDecoder<R> {
 
     public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, DecoderKey... keys) {
         super(supplier, keys);
@@ -52,29 +52,28 @@ public abstract class AbstractObservationKvpDecoder<R extends AbstractObservatio
         super(supplier, keys);
     }
 
-    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String service, String version, String operation) {
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String service, String version,
+            String operation) {
         super(supplier, service, version, operation);
     }
 
-    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String service, String version, Enum<?> operation) {
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String service, String version,
+            Enum<?> operation) {
         super(supplier, service, version, operation);
     }
 
-    public AbstractObservationKvpDecoder(
-            Supplier<? extends R> supplier, String version, String operation) {
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String version, String operation) {
         super(supplier, version, operation);
     }
 
-    public AbstractObservationKvpDecoder(
-            Supplier<? extends R> supplier, String version, Enum<?> operation) {
+    public AbstractObservationKvpDecoder(Supplier<? extends R> supplier, String version, Enum<?> operation) {
         super(supplier, version, operation);
     }
 
     @Override
     protected void getRequestParameterDefinitions(Builder<R> builder) {
         builder.add(SosConstants.GetObservationParams.resultType, AbstractObservationRequest::setResultModel);
-        builder.add(SosConstants.GetObservationParams.responseFormat,
-                AbstractObservationRequest::setResponseFormat);
+        builder.add(SosConstants.GetObservationParams.responseFormat, AbstractObservationRequest::setResponseFormat);
     }
 
 }

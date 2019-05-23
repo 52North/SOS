@@ -35,7 +35,7 @@ import javax.persistence.Entity;
 import org.n52.faroe.SettingType;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "uri_settings")
 public class UriSettingValue extends AbstractSettingValue<URI> {

@@ -33,7 +33,7 @@ import javax.persistence.Entity;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "observation_encodings")
 public class ObservationEncoding extends Activatable<ObservationEncodingKey, ObservationEncoding> {

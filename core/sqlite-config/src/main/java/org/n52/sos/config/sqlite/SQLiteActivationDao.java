@@ -56,9 +56,7 @@ import org.n52.sos.config.sqlite.entities.OperationKey;
  *
  * @author Christian Autermann
  */
-public class SQLiteActivationDao
-        extends AbstractSQLiteDao
-        implements ActivationDao {
+public class SQLiteActivationDao extends AbstractSQLiteDao implements ActivationDao {
 
     @Override
     public void setBindingStatus(BindingKey key, boolean active) {
@@ -85,7 +83,8 @@ public class SQLiteActivationDao
     }
 
     @Override
-    public void setOwsOperationMetadataExtensionProviderStatus(OwsOperationMetadataExtensionProviderKey key, boolean active) {
+    public void setOwsOperationMetadataExtensionProviderStatus(OwsOperationMetadataExtensionProviderKey key,
+            boolean active) {
         setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(key), active);
     }
 
@@ -117,12 +116,12 @@ public class SQLiteActivationDao
     }
 
     private Set<RequestOperatorKey> asRequestOperatorKeys(List<OperationKey> keys) {
-        return keys.stream()
-                .map(k -> new RequestOperatorKey(k.getService(), k.getVersion(), k.getOperationName()))
+        return keys.stream().map(k -> new RequestOperatorKey(k.getService(), k.getVersion(), k.getOperationName()))
                 .collect(toSet());
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> void setActive(Class<T> type, T activatable, boolean active) {
+    protected <K extends Serializable, T extends Activatable<K, T>> void setActive(Class<T> type, T activatable,
+            boolean active) {
         execute(new SetActiveAction<>(type, activatable, active));
     }
 
@@ -130,7 +129,8 @@ public class SQLiteActivationDao
         return execute(new IsActiveAction<>(c, key));
     }
 
-    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive) {
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key,
+            boolean defaultActive) {
         return execute(new IsActiveAction<>(c, key, defaultActive));
     }
 
@@ -150,9 +150,7 @@ public class SQLiteActivationDao
         @Override
         @SuppressWarnings("unchecked")
         public List<K> apply(Session session) {
-            return session.createCriteria(type)
-                    .setProjection(Projections.property("key"))
-                    .list();
+            return session.createCriteria(type).setProjection(Projections.property("key")).list();
         }
     }
 
@@ -160,7 +158,9 @@ public class SQLiteActivationDao
             implements Function<Session, Boolean> {
 
         private final K key;
+
         private final Class<T> type;
+
         private boolean defaultActive;
 
         IsActiveAction(Class<T> type, K key) {
@@ -175,17 +175,17 @@ public class SQLiteActivationDao
 
         @Override
         public Boolean apply(Session session) {
-            @SuppressWarnings("unchecked")
             T o = (T) session.get(type, key);
             return (o == null) ? defaultActive : o.isActive();
         }
     }
 
-    protected class SetActiveAction<K extends Serializable, T extends Activatable<K, T>>
-            implements Consumer<Session> {
+    protected class SetActiveAction<K extends Serializable, T extends Activatable<K, T>> implements Consumer<Session> {
 
         private final Activatable<K, T> activatable;
+
         private final Class<T> type;
+
         private final boolean active;
 
         SetActiveAction(Class<T> type, T activatable, boolean active) {
@@ -196,7 +196,6 @@ public class SQLiteActivationDao
 
         @Override
         public void accept(Session session) {
-            @SuppressWarnings("unchecked")
             T o = (T) session.get(type, activatable.getKey());
             if (o != null) {
                 if (active != o.isActive()) {

@@ -172,7 +172,7 @@ public class ProfileHandlerImpl implements ProfileHandler, Constructable {
         try {
             loadProfiles();
         } catch (OwsExceptionReport e) {
-            throw new ConfigurationError("Error while loading profiles", e);
+            throw new ConfigurationError("Error loading profiles", e);
         }
     }
 

@@ -39,19 +39,20 @@ import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import ucar.nc2.constants.CF;
 
 /**
- * Implementation of {@link AbstractSensorDataset} for trajectory sensor datasets.
+ * Implementation of {@link AbstractSensorDataset} for trajectory sensor
+ * datasets.
  *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
-public class TrajectorySensorDataset extends AbstractSensorDataset implements StaticAltitudeDataset{
+public class TrajectorySensorDataset extends AbstractSensorDataset implements StaticAltitudeDataset {
     private Double alt;
 
-    public TrajectorySensorDataset( DatasetSensor sensor, Double alt,
+    public TrajectorySensorDataset(DatasetSensor sensor, Double alt,
             Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, AbstractFeature procedure) {
-        super( CF.FeatureType.trajectory, sensor, dataValues, procedure);
+        super(CF.FeatureType.trajectory, sensor, dataValues, procedure);
         this.alt = alt;
     }
 

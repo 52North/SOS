@@ -63,9 +63,9 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
 
     private DateTimeZone timeZone = DateTimeZone.UTC;
 
-    private String dateFormat = null;
+    private String dateFormat;
 
-    private boolean useZAsOffset = false;
+    private boolean useZAsOffset;
 
     public IsoTimeStringTypeDescriptor(String timeZone, String dateFormat) {
         setTimeZone(timeZone);
@@ -130,20 +130,20 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {
                 if (rs.getObject(name) != null) {
-                    return javaTypeDescriptor.wrap(decode(rs.getString((name))), options);
+                    return javaTypeDescriptor.wrap(decode(rs.getString(name)), options);
                 }
                 return null;
             }
 
             @Override
             protected X doExtract(CallableStatement statement, int index, WrapperOptions options) throws SQLException {
-                return javaTypeDescriptor.wrap(decode(statement.getString((index))), options);
+                return javaTypeDescriptor.wrap(decode(statement.getString(index)), options);
             }
 
             @Override
             protected X doExtract(CallableStatement statement, String name, WrapperOptions options)
                     throws SQLException {
-                return javaTypeDescriptor.wrap(decode(statement.getString((name))), options);
+                return javaTypeDescriptor.wrap(decode(statement.getString(name)), options);
             }
         };
     }
@@ -167,14 +167,17 @@ public class IsoTimeStringTypeDescriptor implements SqlTypeDescriptor {
             if (dateFormat != null && !dateFormat.isEmpty()) {
                 try {
                     if (useZAsOffset) {
-                        String format =  dateFormat.contains("Z") ? dateFormat.replace("Z", "") : dateFormat;
-                        DateTimeFormatter formatter = new DateTimeFormatterBuilder().append(DateTimeFormat.forPattern(format)).appendTimeZoneOffset("Z", true, 2, 4).toFormatter();
+                        String format = dateFormat.contains("Z") ? dateFormat.replace("Z", "") : dateFormat;
+                        DateTimeFormatter formatter =
+                                new DateTimeFormatterBuilder().append(DateTimeFormat.forPattern(format))
+                                        .appendTimeZoneOffset("Z", true, 2, 4).toFormatter();
                         return DateTimeHelper.formatDateTime2FormattedString(new DateTime(d, timeZone), formatter);
                     }
                     return DateTimeHelper.formatDateTime2FormattedString(new DateTime(d, timeZone), dateFormat);
 
                 } catch (DateTimeFormatException e) {
-                    throw new TypeMismatchException(String.format("Error while creating time string for format %s", d));
+                    throw new TypeMismatchException(
+                            String.format("Error while creating time string for format %s", d));
                 }
             }
             return DateTimeHelper.formatDateTime2IsoString(new DateTime(d, timeZone));

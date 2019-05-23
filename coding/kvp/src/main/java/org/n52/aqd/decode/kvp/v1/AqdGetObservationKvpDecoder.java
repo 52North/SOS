@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.kvp;
+package org.n52.aqd.decode.kvp.v1;
 
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.sos.SosConstants;

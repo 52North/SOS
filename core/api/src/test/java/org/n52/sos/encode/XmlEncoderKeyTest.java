@@ -40,10 +40,10 @@ import org.n52.svalbard.encode.XmlEncoderKey;
  * @since 4.0.0
  */
 public class XmlEncoderKeyTest {
-    
+
     private static final String TEST = "test";
     private static final String TEST_1 = "test1";
-    
+
     @Test
     public void testHashCode() {
         Assert.assertEquals(new XmlEncoderKey(TEST, C1.class).hashCode(),
@@ -92,7 +92,7 @@ public class XmlEncoderKeyTest {
         test(I1.class, I4.class, -1);
         test(C1.class, C5.class, -1);
         test(C1.class, I1.class, -1);
-    
+
         test(C1[].class, C2[].class, 1);
         test(C1[].class, C3[].class, 2);
         test(C1[].class, C4[].class, 3);
@@ -101,7 +101,7 @@ public class XmlEncoderKeyTest {
         test(I1[].class, I4[].class, -1);
         test(C1[].class, C5[].class, -1);
         test(C1[].class, I1[].class, -1);
-    
+
         test(C1[].class, C1.class, -1);
     }
 

@@ -37,26 +37,26 @@ package org.n52.sos.netcdf;
  */
 public interface NetcdfSettingsProvider {
 
-    public static final String NETCDF_VERSION = "netcdf.version";
+    String NETCDF_VERSION = "netcdf.version";
 
-    public static final String NETCDF_CHUNK_SIZE_TIME = "netcdf.chunk.size";
+    String NETCDF_CHUNK_SIZE_TIME = "netcdf.chunk.size";
 
-    public static final String NETCDF_FILL_VALUE = "netcdf.fillValue";
+    String NETCDF_FILL_VALUE = "netcdf.fillValue";
 
-    public static final String NETCDF_HEIGHT_DEPTH = "netcdf.heightDepth";
+    String NETCDF_HEIGHT_DEPTH = "netcdf.heightDepth";
 
-    public static final String NETCDF_VARIABLE_TYPE = "netcdf.varibale.type";
+    String NETCDF_VARIABLE_TYPE = "netcdf.varibale.type";
 
-    public static final String NETCDF_VARIABLE_UPPER_CASE = "netcdf.varibale.upperCase";
+    String NETCDF_VARIABLE_UPPER_CASE = "netcdf.varibale.upperCase";
 
-    public static final String NETCDF_PUBLISHER = "netcdf.publisher";
+    String NETCDF_PUBLISHER = "netcdf.publisher";
 
-    public static final String NETCDF_CONTRIBUTOR = "netcdf.contributor";
+    String NETCDF_CONTRIBUTOR = "netcdf.contributor";
 
-    public static final String NETCDF_PHEN_LATITUDE = "netcdf.phenomenon.latitude";
+    String NETCDF_PHEN_LATITUDE = "netcdf.phenomenon.latitude";
 
-    public static final String NETCDF_PHEN_LONGITUDE = "netcdf.phenomenon.longitude";
+    String NETCDF_PHEN_LONGITUDE = "netcdf.phenomenon.longitude";
 
-    public static final String NETCDF_PHEN_Z = "netcdf.phenomenon.z";
+    String NETCDF_PHEN_Z = "netcdf.phenomenon.z";
 
 }

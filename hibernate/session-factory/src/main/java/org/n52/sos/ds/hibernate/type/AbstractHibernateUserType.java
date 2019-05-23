@@ -36,7 +36,7 @@ import org.hibernate.usertype.UserType;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class AbstractHibernateUserType implements UserType {
 

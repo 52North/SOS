@@ -62,7 +62,7 @@ public abstract class DeleteObservationCacheFeederDAO
     /**
      * Boolean to keep track if we already updated the global bounding box.
      */
-    private boolean globalSpatialBoundingBoxUpdated = false;
+    private boolean globalSpatialBoundingBoxUpdated;
 
     /**
      * The deleted observation.
@@ -147,7 +147,7 @@ public abstract class DeleteObservationCacheFeederDAO
      * Disassociates the feature of interest from the procedure and offerings if
      * there are no observations left.
      *
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     protected void updateFeatureOfInterest() throws OwsExceptionReport {
         final String feature =
@@ -232,7 +232,7 @@ public abstract class DeleteObservationCacheFeederDAO
      * updates are conditional: the database is only queried if the observation
      * bounding boxes touch the cached bounding boxes.
      *
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     protected void updateTemporalBoundingBoxes() throws OwsExceptionReport {
         DateTime minPhenomenonTime = null;
@@ -331,7 +331,7 @@ public abstract class DeleteObservationCacheFeederDAO
      *
      * @return if there is no observation with the specified dbFeature and
      *         dbProcedure.
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     protected abstract boolean isLastForProcedure(String feature, String procedure) throws OwsExceptionReport;
 

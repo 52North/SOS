@@ -30,16 +30,12 @@ package org.n52.sos.converter.util;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.util.EReportingSetting;
 
 import com.google.common.base.Strings;
 
 @Configurable
-public class EReportingPrefixedIdentifierHelper implements Constructable {
-
-    @Deprecated
-    private static EReportingPrefixedIdentifierHelper instance;
+public class EReportingPrefixedIdentifierHelper {
 
     private String namespacePrefix;
 
@@ -56,20 +52,6 @@ public class EReportingPrefixedIdentifierHelper implements Constructable {
     private String stationPrefix;
 
     private String networkPrefix;
-
-    @Override
-    public void init() {
-        EReportingPrefixedIdentifierHelper.instance = this;
-    }
-
-    /**
-     * @return Returns a singleton instance of the
-     *         EReportingPrefixedIdentifierHelper.
-     */
-    @Deprecated
-    public static EReportingPrefixedIdentifierHelper getInstance() {
-        return instance;
-    }
 
     /**
      * @return the namespacePrefix

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.base.Preconditions;
 
 import java.util.List;
 
@@ -81,8 +81,8 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
     private final InsertObservationRequest request;
 
     public ObservationInsertionUpdate(InsertObservationRequest request) {
-        checkArgument(request != null, "Missing argument: '%s': %s",
-                      InsertObservationRequest.class.getName(), request);
+        Preconditions.checkArgument(request != null, "Missing argument: '%s': %s",
+                InsertObservationRequest.class.getName(), request);
         this.request = request;
     }
 
@@ -117,7 +117,8 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addPublishedFeatureOfInterest(featureOfInterest);
                 cache.addPublishedFeatureOfInterest(featureOfInterest);
                 if (sosSamplingFeature.isSetName()) {
-                    cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest, sosSamplingFeature.getFirstName().getValue());
+                    cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest,
+                            sosSamplingFeature.getFirstName().getValue());
                 }
                 cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);
                 if (sosSamplingFeature.isSetSampledFeatures()) {
@@ -140,11 +141,13 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
             Envelope spatialFitleringProfileEnvelope = new Envelope();
             if (observation.isSetParameter()) {
                 for (NamedValue<?> namedValue : observation.getParameter()) {
-                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE
+                            .equals(namedValue.getName().getHref())) {
                         if (namedValue.getValue().isSetValue()) {
-                            spatialFitleringProfileEnvelope.expandToInclude(((Geometry) namedValue.getValue().getValue()).getEnvelopeInternal());
-                            spatialFitleringProfileEnvelope.expandToInclude(((Geometry) namedValue.getValue()
-                                    .getValue()).getEnvelopeInternal());
+                            spatialFitleringProfileEnvelope.expandToInclude(
+                                    ((Geometry) namedValue.getValue().getValue()).getEnvelopeInternal());
+                            spatialFitleringProfileEnvelope.expandToInclude(
+                                    ((Geometry) namedValue.getValue().getValue()).getEnvelopeInternal());
                         }
                     }
                 }
@@ -173,9 +176,8 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
         }
     }
 
-    private void updateObservableProperties(InMemoryCacheImpl cache,
-                                            AbstractPhenomenon observableProperty,
-                                            String procedure) {
+    private void updateObservableProperties(InMemoryCacheImpl cache, AbstractPhenomenon observableProperty,
+            String procedure) {
         // procedure <-> observable property
         cache.addProcedureForObservableProperty(observableProperty.getIdentifier(), procedure);
         cache.addObservablePropertyForProcedure(procedure, observableProperty.getIdentifier());

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,6 @@ import java.util.List;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
-import org.n52.sos.cache.SosWritableContentCache;
 
 import org.locationtech.jts.geom.Envelope;
 
@@ -45,7 +44,7 @@ public class FeatureInsertionUpdate extends InMemoryCacheUpdate {
     private final InsertFeatureOfInterestRequest request;
 
     public FeatureInsertionUpdate(InsertFeatureOfInterestRequest request) {
-        checkArgument(request != null, "Missing argument: '%s': %s",
+        Preconditions.checkArgument(request != null, "Missing argument: '%s': %s",
                 InsertFeatureOfInterestRequest.class.getName(), request);
         this.request = request;
     }
@@ -55,12 +54,13 @@ public class FeatureInsertionUpdate extends InMemoryCacheUpdate {
         List<AbstractSamplingFeature> samplingFeatures = new ArrayList<AbstractSamplingFeature>();
         for (AbstractFeature abstractFeature : request.getFeatureMembers()) {
             if (abstractFeature instanceof AbstractSamplingFeature) {
-                samplingFeatures.add((AbstractSamplingFeature)abstractFeature);
+                samplingFeatures.add((AbstractSamplingFeature) abstractFeature);
             }
             getCache().addFeatureOfInterest(abstractFeature.getIdentifier());
             getCache().addPublishedFeatureOfInterest(abstractFeature.getIdentifier());
             if (abstractFeature.isSetName()) {
-                getCache().addFeatureOfInterestIdentifierHumanReadableName(abstractFeature.getIdentifier(), abstractFeature.getFirstName().getValue());
+                getCache().addFeatureOfInterestIdentifierHumanReadableName(abstractFeature.getIdentifier(),
+                        abstractFeature.getFirstName().getValue());
             }
         }
         if (!samplingFeatures.isEmpty()) {

@@ -53,16 +53,19 @@ import ucar.nc2.constants.CF;
  *
  */
 public class NetCDFObservation {
-    //for metadata block
+    // for metadata block
     private CF.FeatureType featureType;
+
     private TimePeriod samplingTime = new TimePeriod();
+
     private Set<OmObservableProperty> phenomena = new HashSet<OmObservableProperty>();
+
     private Envelope envelope = new Envelope();
 
-    //for data block
+    // for data block
     private Map<String, ? extends AbstractSensorDataset> sensorDatasetMap;
 
-    //constructor
+    // constructor
     public NetCDFObservation(CF.FeatureType featureType, TimePeriod samplingTime,
             Map<String, ? extends AbstractSensorDataset> sensorDatasetMap, Set<OmObservableProperty> phenomena,
             Envelope envelope) {
@@ -94,7 +97,7 @@ public class NetCDFObservation {
         return envelope;
     }
 
-    public List<? extends AbstractSensorDataset> getSensorDatasets(){
+    public List<? extends AbstractSensorDataset> getSensorDatasets() {
         return Collections.unmodifiableList(Lists.newArrayList(sensorDatasetMap.values()));
     }
 

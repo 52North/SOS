@@ -35,20 +35,18 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierKey;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
-import org.n52.sos.convert.AbstractIdentifierModifier;
-import org.n52.sos.converter.util.PrefixedIdentifierHelper;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
@@ -64,6 +62,8 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
+import org.n52.sos.convert.AbstractIdentifierModifier;
+import org.n52.sos.converter.util.PrefixedIdentifierHelper;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -107,10 +107,11 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         requestResponseMap.put(new GetResultRequest(), new GetResultResponse());
         Set<RequestResponseModifierKey> keys = Sets.newHashSet();
 
-        services.stream().forEach(service -> versions.stream().forEach(version
-                -> requestResponseMap.keySet().stream().forEach(request -> {
+        services.stream().forEach(service -> versions.stream()
+                .forEach(version -> requestResponseMap.keySet().stream().forEach(request -> {
                     keys.add(new RequestResponseModifierKey(service, version, request));
-                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap.get(request)));
+                    keys.add(new RequestResponseModifierKey(service, version, request,
+                            requestResponseMap.get(request)));
                 })));
         return keys;
     }
@@ -131,17 +132,24 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     private String checkGlobalPrefixForParameterValue(String parameterValue) {
         if (this.helper.isSetGlobalPrefix()) {
+            return parameterValue.replace(getGlobalPrefix(), "");
+        }
+        return parameterValue;
+    }
+    
+    private String getGlobalPrefix() {
+        if (this.helper.isSetGlobalPrefix()) {
             StringBuilder builder = new StringBuilder();
             String globalPrefix = this.helper.getGlobalPrefix();
             builder.append(globalPrefix);
             if (globalPrefix.toLowerCase(Locale.ROOT).startsWith("http") && !globalPrefix.endsWith("/")) {
                 builder.append('/');
             } else if (globalPrefix.toLowerCase(Locale.ROOT).startsWith("urn") && !globalPrefix.endsWith("/")) {
-                builder.append(':') ;
+                builder.append(':');
             }
-            return parameterValue.replace(builder.toString(), "");
+            return builder.toString();
         }
-        return parameterValue;
+        return "";
     }
 
     @Override
@@ -179,6 +187,14 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
+    protected String checkProcedureIdentifier(String identifier) {
+        if (helper.isSetProcedurePrefix()) {
+            checkGlobalPrefix(helper.getProcedurePrefix() + identifier);
+        }
+        return checkGlobalPrefix(identifier);
+    }
+
+    @Override
     protected String checkObservablePropertyParameterValue(String parameterValue) {
         String globalModified = checkGlobalPrefixForParameterValue(parameterValue);
         if (helper.isSetObservablePropertyPrefix()) {
@@ -189,19 +205,13 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     private String checkGlobalPrefix(String identifier) {
         if (helper.isSetGlobalPrefix()) {
-               StringBuilder builder = new StringBuilder();
-               builder.append(helper.getGlobalPrefix());
-               if (helper.getGlobalPrefix().toLowerCase(Locale.ROOT).startsWith("http") && !helper.getGlobalPrefix().endsWith("/")) {
-                   builder.append('/');
-               } else if (helper.getGlobalPrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !helper.getGlobalPrefix().endsWith(":")) {
-                   builder.append(':') ;
-               }
-               builder.append(identifier);
-               return builder.toString();
+            StringBuilder builder = new StringBuilder(getGlobalPrefix());
+            builder.append(identifier);
+            return builder.toString();
         }
         return identifier;
     }
-
+    
     @Override
     protected String checkFeatureOfInterestIdentifier(String identifier) {
         if (helper.isSetFeatureOfInterestPrefix()) {
@@ -214,14 +224,6 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     protected String checkObservablePropertyIdentifier(String identifier) {
         if (helper.isSetObservablePropertyPrefix()) {
             checkGlobalPrefix(helper.getObservablePropertyPrefix() + identifier);
-        }
-        return checkGlobalPrefix(identifier);
-    }
-
-    @Override
-    protected String checkProcedureIdentifier(String identifier) {
-        if (helper.isSetProcedurePrefix()) {
-            checkGlobalPrefix(helper.getProcedurePrefix() + identifier);
         }
         return checkGlobalPrefix(identifier);
     }

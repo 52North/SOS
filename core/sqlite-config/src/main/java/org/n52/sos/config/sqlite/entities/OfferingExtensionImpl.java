@@ -42,8 +42,8 @@ import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
 @Entity(name = "offering_extension")
 public class OfferingExtensionImpl extends Activatable<OfferingExtensionIdentifier, OfferingExtensionImpl> implements
         SosObservationOfferingExtension, Serializable {
-    private static final long serialVersionUID = 6232652141211194202L;
     public static final String EXTENSION = "extension";
+    private static final long serialVersionUID = 6232652141211194202L;
     @Column(name = EXTENSION)
     private String extension;
 

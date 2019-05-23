@@ -43,16 +43,17 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.swe.SweDataArray;
 
 public class AqdSplitMergeObservations implements RequestResponseModifier {
 
-    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = new HashSet<>(
-            Arrays.asList(
-                    new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest()),
-                    new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest(), new GetObservationResponse())));
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES =
+            new HashSet<>(Arrays.asList(
+                    new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION,
+                            new GetObservationRequest()),
+                    new RequestResponseModifierKey(AqdConstants.AQD, AqdConstants.VERSION, new GetObservationRequest(),
+                            new GetObservationResponse())));
 
     @Override
     public Set<RequestResponseModifierKey> getKeys() {
@@ -61,9 +62,6 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
 
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
-        if (request instanceof InsertObservationRequest) {
-            // TODO
-        }
         return request;
     }
 
@@ -75,7 +73,8 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
                     ObservationMergeIndicator.sameObservationConstellation().withoutObservationType();
             GetObservationResponse observationResponse = (GetObservationResponse) response;
             observationResponse.setMergeObservations(true);
-            observationResponse.setObservationCollection(observationResponse.getObservationCollection().merge(indicator));
+            observationResponse
+                    .setObservationCollection(observationResponse.getObservationCollection().merge(indicator));
         }
         return response;
     }
@@ -97,8 +96,8 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
      * Merge result time with passed observation result time
      *
      * @param sosObservation
-     *            Observation to merge
-     * @param sosObservation
+     *            Merged observation 
+     * @param sosObservation the observation to merge
      */
     private void mergeResultTimes(final OmObservation combinedSosObs, OmObservation sosObservation) {
         if (combinedSosObs.isSetResultTime() && sosObservation.isSetResultTime()) {

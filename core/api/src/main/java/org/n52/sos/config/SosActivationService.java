@@ -126,7 +126,8 @@ public class SosActivationService extends ActivationService {
         return getActivationDao().isSosObservationOfferingExtensionActive(key);
     }
 
-    public FunctionalActivationListener<SosObservationOfferingExtensionKey> getSosObservationOfferingExtensionListener() {
+    public FunctionalActivationListener<SosObservationOfferingExtensionKey>
+        getSosObservationOfferingExtensionListener() {
         return getActivationDao()::setSosObservationOfferingExtensionStatus;
     }
 

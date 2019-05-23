@@ -71,7 +71,7 @@ public abstract class DatasetSensor implements Comparable<DatasetSensor> {
         int len = getSensorIdentifier().length();
         if (len > 0) {
             int off = 0;
-            char val[] = getSensorIdentifier().toCharArray();
+            char[] val = getSensorIdentifier().toCharArray();
 
             for (int i = 0; i < len; i++) {
                 h = 31 * h + val[off++];

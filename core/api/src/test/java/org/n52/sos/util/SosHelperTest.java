@@ -67,7 +67,7 @@ public class SosHelperTest
     public static final String VERSION_2 = "2.0.0";
 
     public static final String SERVICE_URL = "http://localhos:8080/SOS/service";
-    
+
     private static final String UTF8 = "UTF-8";
 
     @Test

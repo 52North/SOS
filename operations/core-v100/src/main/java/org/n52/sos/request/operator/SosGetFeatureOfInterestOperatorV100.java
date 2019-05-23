@@ -43,14 +43,15 @@ import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
  * @since 4.0.0
  *
  */
-public class SosGetFeatureOfInterestOperatorV100
-        extends
-        AbstractV1RequestOperator<AbstractGetFeatureOfInterestHandler, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
+public class SosGetFeatureOfInterestOperatorV100 extends
+        AbstractV1RequestOperator<AbstractGetFeatureOfInterestHandler, 
+                                    GetFeatureOfInterestRequest, 
+                                    GetFeatureOfInterestResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetFeatureOfInterest.name();
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton("http://www.opengis.net/spec/SOS/1.0/conf/enhanced");
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton("http://www.opengis.net/spec/SOS/1.0/conf/enhanced");
 
     public SosGetFeatureOfInterestOperatorV100() {
         super(OPERATION_NAME, GetFeatureOfInterestRequest.class);
@@ -75,7 +76,7 @@ public class SosGetFeatureOfInterestOperatorV100
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

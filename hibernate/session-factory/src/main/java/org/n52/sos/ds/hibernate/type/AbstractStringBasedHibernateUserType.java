@@ -37,9 +37,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 /**
- * @param <T> the type that is serialized to a string
+ * @param <T>
+ *            the type that is serialized to a string
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public abstract class AbstractStringBasedHibernateUserType<T> extends AbstractHibernateUserType {
 
@@ -53,16 +54,16 @@ public abstract class AbstractStringBasedHibernateUserType<T> extends AbstractHi
     }
 
     @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner) throws
-            HibernateException, SQLException {
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
         String s = rs.getString(names[0]);
         return (s == null) ? null : decode(s);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session) throws
-            HibernateException, SQLException {
+    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
+            throws HibernateException, SQLException {
         if (value == null) {
             st.setNull(index, Types.VARCHAR);
         } else {

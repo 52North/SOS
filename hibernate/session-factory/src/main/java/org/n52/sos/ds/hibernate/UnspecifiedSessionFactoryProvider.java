@@ -65,8 +65,8 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
-    private static SessionFactory sessionFactory = null;
-    private static Configuration configuration = null;
+    private static SessionFactory sessionFactory;
+    private static Configuration configuration;
     private DriverCleanupListener driverCleanupListener;
     private DatabaseSettingsHandler databaseSettingsHandler;
 
@@ -83,6 +83,8 @@ public abstract class UnspecifiedSessionFactoryProvider
     protected Configuration getConfiguration() {
         return configuration;
     }
+
+    protected abstract Configuration getConfiguration(Properties properties);
 
     @Override
     protected SessionFactory getSessionFactory() {
@@ -195,7 +197,5 @@ public abstract class UnspecifiedSessionFactoryProvider
                 properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
                 Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
     }
-
-    protected abstract Configuration getConfiguration(Properties properties);
 
 }

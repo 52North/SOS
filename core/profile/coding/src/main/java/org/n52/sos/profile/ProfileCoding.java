@@ -39,7 +39,7 @@ public interface ProfileCoding {
     String SHOW_METADATA_OF_EMPTY_OBS = "showMetadataOfEmptyObservations";
     String LIST_FOIS_IN_OFFERINGS = "listFeatureOfInterestsInOfferings";
     String ENCODE_CHILD_PROCS = "encodeChildProcedureDescriptions";
-    String SHOW_FULL_OPS_METADATA ="showFullOperationsMetadata";
+    String SHOW_FULL_OPS_METADATA = "showFullOperationsMetadata";
     String SHOW_FULL_OPS_METADATA_FOR_OBS = "showFullOperationsMetadataForObservations";
     String ALLOW_SUBSETTING = "allowSubsettingForSOS20OM20";
     String MERGE_VALUES = "mergeValues";

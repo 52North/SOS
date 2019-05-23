@@ -85,7 +85,6 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.OperationResponseEncoderKey;
@@ -117,14 +116,14 @@ public class SplitMergeObservations
 
     private ProfileHandler profileHandler;
 
+    private boolean includeResultTimeForMerging;
+
+    private boolean checkForDuplicity;
+
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
         this.encoderRepository = encoderRepository;
     }
-
-    private boolean includeResultTimeForMerging = false;
-
-    private boolean checkForDuplicity = false;
 
     @Setting(SosSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
     public void setIncludeResultTimeForMerging(boolean includeResultTimeForMerging) {
@@ -389,7 +388,8 @@ public class SplitMergeObservations
                 }
             }
 
-            if (encoder != null && encoder.shouldObservationsWithSameXBeMerged() && !encoder.supportsResultStreamingForMergedValues()) {
+            if (encoder != null && encoder.shouldObservationsWithSameXBeMerged()
+                    && !encoder.supportsResultStreamingForMergedValues()) {
                 if (Sos1Constants.SERVICEVERSION.equals(response.getVersion())) {
                     return checkResultModel(response);
                 }

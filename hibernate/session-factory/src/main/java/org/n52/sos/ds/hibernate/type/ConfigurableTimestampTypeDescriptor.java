@@ -49,7 +49,7 @@ import org.joda.time.DateTimeZone;
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
  * the database to use UTC instead of the JVM's timezone.
  *
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  * @since 4.3.12

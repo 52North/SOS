@@ -30,13 +30,10 @@ package org.n52.sos.ds.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.service.spi.Stoppable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Destroyable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
@@ -55,10 +52,12 @@ public abstract class AbstractSessionFactoryProvider implements Destroyable, Con
         }
 
         try {
-//            if (SessionFactoryImpl.class.isInstance(sessionFactory)
-//                && Stoppable.class.isInstance(((SessionFactoryImpl) sessionFactory).getConnectionProvider())) {
-//                ((Stoppable) ((SessionFactoryImpl) sessionFactory).getConnectionProvider()).stop();
-//            }
+            // if (SessionFactoryImpl.class.isInstance(sessionFactory)
+            // && Stoppable.class.isInstance(((SessionFactoryImpl)
+            // sessionFactory).getConnectionProvider())) {
+            // ((Stoppable) ((SessionFactoryImpl)
+            // sessionFactory).getConnectionProvider()).stop();
+            // }
             sessionFactory.close();
             LOG.info("Connection provider closed successfully!");
         } catch (HibernateException he) {

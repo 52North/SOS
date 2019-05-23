@@ -42,27 +42,27 @@ import org.n52.svalbard.decode.exception.DecodingException;
  */
 public class GetObservationKvpDecoderv100 extends AbstractSosKvpDecoder<GetObservationRequest> {
 
-    private static final Pattern SPATIAL_FILTER_REGEX = Pattern
-            .compile("^om:featureOfInterest.*(,\\s*[-+]?\\d*\\.?\\d+){4}(,.*)?$");
+    private static final Pattern SPATIAL_FILTER_REGEX =
+            Pattern.compile("^om:featureOfInterest.*(,\\s*[-+]?\\d*\\.?\\d+){4}(,.*)?$");
 
     public GetObservationKvpDecoderv100() {
-        super(GetObservationRequest::new,
-              Sos1Constants.SERVICEVERSION,
-              SosConstants.Operations.GetObservation);
+        super(GetObservationRequest::new, Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetObservation);
     }
 
     @Override
     protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
         builder.add(SosConstants.GetObservationParams.responseMode, GetObservationRequest::setResponseMode);
         builder.add(SosConstants.GetObservationParams.resultModel, GetObservationRequest::setResultModel);
-        builder.add(SosConstants.GetObservationParams.responseFormat, normalizeMediaType(GetObservationRequest::setResponseFormat));
-        builder.add(SosConstants.GetObservationParams.observedProperty, decodeList(GetObservationRequest::setObservedProperties));
+        builder.add(SosConstants.GetObservationParams.responseFormat,
+                normalizeMediaType(GetObservationRequest::setResponseFormat));
+        builder.add(SosConstants.GetObservationParams.observedProperty,
+                decodeList(GetObservationRequest::setObservedProperties));
         builder.add(SosConstants.GetObservationParams.procedure, decodeList(GetObservationRequest::setProcedures));
         builder.add(SosConstants.GetObservationParams.offering, decodeList(GetObservationRequest::setOfferings));
         builder.add(SosConstants.GetObservationParams.featureOfInterest, this::decodeFeatureOfInterest);
         builder.add(Sos1Constants.GetObservationParams.eventTime,
-                    decodeList(decodeTemporalFilter(asList(GetObservationRequest::setTemporalFilters)))
-                            .mapThird(this::sanitizeTemporalFilter));
+                decodeList(decodeTemporalFilter(asList(GetObservationRequest::setTemporalFilters)))
+                        .mapThird(this::sanitizeTemporalFilter));
     }
 
     private String sanitizeTemporalFilter(String value) {

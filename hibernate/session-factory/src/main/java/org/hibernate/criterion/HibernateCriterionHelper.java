@@ -117,11 +117,12 @@ public class HibernateCriterionHelper {
      *            Ignore case sensitivity
      * @return LikeExpression
      */
-    public static LikeExpression getLikeExpression(String propertyName, String value,
-            String escapeChar, boolean ignoreCase) {
+    public static LikeExpression getLikeExpression(String propertyName, String value, String escapeChar,
+            boolean ignoreCase) {
         if (escapeChar != null) {
             if (escapeChar.length() > 1) {
-                value = value.replace(escapeChar, "\\");
+                return new LikeExpression(propertyName, value.replace(escapeChar, "\\"), escapeChar.charAt(0),
+                        ignoreCase);
             }
             return new LikeExpression(propertyName, value, escapeChar.charAt(0), ignoreCase);
         }

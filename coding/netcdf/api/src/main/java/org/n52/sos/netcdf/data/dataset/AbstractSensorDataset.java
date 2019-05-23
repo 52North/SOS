@@ -48,40 +48,48 @@ import com.google.common.collect.Sets;
 import ucar.nc2.constants.CF;
 
 /**
- * Abstract sensor dataset class u com.google.common.collect.Lists;sed by netCDF encoding
+ * Abstract sensor dataset class u com.google.common.collect.Lists;sed by netCDF
+ * encoding
  *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
-public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset>{
+public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset> {
     private CF.FeatureType featureType;
+
     private DatasetSensor sensor;
+
     private AbstractFeature procedure;
 
     private List<OmObservableProperty> obsProps;
+
     private List<Time> times;
+
     private List<SubSensor> subSensors;
 
-    private Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues;
+    private Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues;
 
-    public AbstractSensorDataset( CF.FeatureType featureType, DatasetSensor sensor,
-            Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues, AbstractFeature procedure){
+    public AbstractSensorDataset(CF.FeatureType featureType, DatasetSensor sensor,
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, AbstractFeature procedure) {
         this.featureType = featureType;
         this.sensor = sensor;
         this.procedure = procedure;
-        //make the sensorDataValues unmodifiable, since some data summaries will be made below and we don't want the data changing
+        // make the sensorDataValues unmodifiable, since some data summaries
+        // will be made below and we don't want the data changing
         this.dataValues = Collections.unmodifiableMap(dataValues);
 
-        //set times, phenomena, and subsensors
+        // set times, phenomena, and subsensors
         Set<Time> timeSet = Sets.newHashSet();
         Set<OmObservableProperty> obsPropSet = Sets.newHashSet();
         Set<SubSensor> subSensorSet = Sets.newHashSet();
-        for( Entry<Time,Map<OmObservableProperty, Map<SubSensor,Value<?>>>> dataValuesEntry : dataValues.entrySet() ){
+        for (Entry<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValuesEntry : dataValues
+                .entrySet()) {
             Time time = dataValuesEntry.getKey();
             timeSet.add(time);
-            for( Map.Entry<OmObservableProperty, Map<SubSensor,Value<?>>> phenObsEntry : dataValuesEntry.getValue().entrySet() ){
+            for (Map.Entry<OmObservableProperty, Map<SubSensor, Value<?>>> phenObsEntry : dataValuesEntry.getValue()
+                    .entrySet()) {
                 OmObservableProperty phen = phenObsEntry.getKey();
                 Set<SubSensor> phenSubSensors = phenObsEntry.getValue().keySet();
                 obsPropSet.add(phen);
@@ -106,13 +114,12 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
         subSensors = Collections.unmodifiableList(subSensorList);
     }
 
-
     public DatasetSensor getSensor() {
         return sensor;
     }
 
     public String getSensorIdentifier() {
-       return  getSensor().getSensorIdentifier();
+        return getSensor().getSensorIdentifier();
     }
 
     public CF.FeatureType getFeatureType() {
@@ -131,7 +138,7 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
         return procedure;
     }
 
-    public List<Time> getTimes(){
+    public List<Time> getTimes() {
         return times;
     }
 
@@ -139,21 +146,22 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
         return dataValues;
     }
 
-    public static Set<AbstractSensorDataset> getAbstractAssetDatasets( Set<? extends AbstractSensorDataset> stationDatasets ){
+    public static Set<AbstractSensorDataset> getAbstractAssetDatasets(
+            Set<? extends AbstractSensorDataset> stationDatasets) {
         Set<AbstractSensorDataset> abstractStationDatasets = new HashSet<AbstractSensorDataset>();
-        abstractStationDatasets.addAll( stationDatasets );
+        abstractStationDatasets.addAll(stationDatasets);
         return abstractStationDatasets;
     }
 
     @Override
     public int compareTo(AbstractSensorDataset o) {
-        if( sensor == null && o.getSensor() == null ){
+        if (sensor == null && o.getSensor() == null) {
             return 0;
         }
-        if( sensor == null ){
+        if (sensor == null) {
             return -1;
         }
-        if( o.getSensor() == null ){
+        if (o.getSensor() == null) {
             return 1;
         }
         if (sensor.equals(o.getSensor())) {

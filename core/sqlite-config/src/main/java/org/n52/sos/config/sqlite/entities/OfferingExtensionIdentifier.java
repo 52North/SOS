@@ -34,13 +34,13 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Embeddable
 public class OfferingExtensionIdentifier implements Serializable {
-    private static final long serialVersionUID = 8330805590108988308L;
     public static final String OFFERING = "offering";
     public static final String IDENTIFIER = "identifier";
+    private static final long serialVersionUID = 8330805590108988308L;
     @Column(name = OFFERING)
     private String offering;
     @Column(name = IDENTIFIER)

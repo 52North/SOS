@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.kvp;
+package org.n52.aqd.decode.kvp.v1;
 
 import java.util.Collections;
 import java.util.Set;
@@ -38,9 +38,10 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.decode.kvp.v2.DescribeSensorKvpDecoderv20;
 
-public class AqdDescribeSensorKvpDecoder  extends DescribeSensorKvpDecoderv20 {
+public class AqdDescribeSensorKvpDecoder extends DescribeSensorKvpDecoderv20 {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(AqdConstants.AQD, AqdConstants.VERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
+    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(AqdConstants.AQD,
+            AqdConstants.VERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 
     @Override
     public Set<DecoderKey> getKeys() {

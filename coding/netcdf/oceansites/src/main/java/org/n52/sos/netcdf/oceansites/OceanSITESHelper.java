@@ -30,7 +30,6 @@ package org.n52.sos.netcdf.oceansites;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
 import com.google.common.base.Strings;
@@ -44,7 +43,7 @@ import com.google.common.base.Strings;
  *
  */
 @Configurable
-public class OceanSITESHelper implements Constructable {
+public class OceanSITESHelper {
 
     private String siteDefinition;
 
@@ -77,22 +76,6 @@ public class OceanSITESHelper implements Constructable {
     private String references;
 
     private String areaDefinition;
-
-    @Deprecated
-    private static OceanSITESHelper instance;
-
-    /**
-     * @return Returns a singleton instance of the AqdHelper.
-     */
-    @Deprecated
-    public static synchronized OceanSITESHelper getInstance() {
-        return instance;
-    }
-
-    @Override
-    public void init() {
-        OceanSITESHelper.instance = this;
-    }
 
     /**
      * @return the siteDefinition

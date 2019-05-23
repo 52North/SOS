@@ -28,7 +28,7 @@
  */
 package org.n52.sos.netcdf;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
 
 import org.junit.Test;
 import org.n52.janmayen.http.MediaType;
@@ -40,13 +40,13 @@ public class NetcdfConstantsTest implements NetcdfConstants {
 
     @Test
     public void test_netcdf_zip_version_3() {
-        assertTrue(CONTENT_TYPE_NETCDF_3_ZIP.toString()
-                .equals(new MediaType("application", "zip",
-                        ImmutableMap.of("subtype", ImmutableList.of("netcdf"), PARAM_VERSION, ImmutableList.of("3")))
+        Assert.assertTrue(CONTENT_TYPE_NETCDF_3_ZIP.toString()
+                .equals(new MediaType(APPLICATION, ZIP,
+                        ImmutableMap.of(SUBTYPE, ImmutableList.of(NETCDF), PARAM_VERSION, ImmutableList.of("3")))
                                 .toString()));
-        assertTrue(CONTENT_TYPE_NETCDF_4_ZIP.toString()
-                .equals(new MediaType("application", "zip",
-                        ImmutableMap.of("subtype", ImmutableList.of("netcdf"), PARAM_VERSION, ImmutableList.of("4")))
+        Assert.assertTrue(CONTENT_TYPE_NETCDF_4_ZIP.toString()
+                .equals(new MediaType(APPLICATION, ZIP,
+                        ImmutableMap.of(SUBTYPE, ImmutableList.of(NETCDF), PARAM_VERSION, ImmutableList.of("4")))
                                 .toString()));
     }
 

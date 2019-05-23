@@ -38,7 +38,6 @@ import org.n52.shetland.aqd.ReportObligation;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.config.sqlite.AbstractSQLiteDao;
 import org.n52.sos.config.sqlite.entities.JSONFragment;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -53,10 +52,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
     protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
+
     protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
 
     @Inject
     private DecoderRepository decoderRepository;
+
     @Inject
     private EncoderRepository encoderRepository;
 
@@ -76,22 +77,6 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
         }
     }
 
-    public RelatedParty loadRelatedParty() {
-        try {
-            return throwingExecute(new LoadReportingAuthorityAction());
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public ReportObligation loadReportObligation(ReportObligationType type) {
-        try {
-            return throwingExecute(new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
     private void save(String key, Object o) throws ConnectionProviderException {
         Encoder<JsonNode, Object> encoder = encoderRepository.getEncoder(new JSONEncoderKey(o.getClass()));
         JsonNode node;
@@ -107,6 +92,23 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
         });
     }
 
+    public RelatedParty loadRelatedParty() {
+        try {
+            return throwingExecute(new LoadReportingAuthorityAction());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public ReportObligation loadReportObligation(ReportObligationType type) {
+        try {
+            return throwingExecute(
+                    new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     private class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
 
         LoadReportingAuthorityAction() {
@@ -118,6 +120,7 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
     private class LoadJSONFragmentAction<T> implements ThrowingFunction<Session, T, Exception> {
 
         private final String key;
+
         private final Class<T> type;
 
         LoadJSONFragmentAction(String key, Class<T> type) {

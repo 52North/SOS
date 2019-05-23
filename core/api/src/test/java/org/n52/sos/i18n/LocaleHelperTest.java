@@ -50,7 +50,7 @@ public class LocaleHelperTest {
     public final ErrorCollector errors = new ErrorCollector();
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-    
+
     @Test
     @Ignore
     public void testSerialization() {

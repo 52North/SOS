@@ -37,6 +37,7 @@ package org.n52.sos.netcdf.data.dataset;
  *
  */
 public interface StaticLocationDataset {
-    public Double getLng();
-    public Double getLat();
+    Double getLng();
+
+    Double getLat();
 }

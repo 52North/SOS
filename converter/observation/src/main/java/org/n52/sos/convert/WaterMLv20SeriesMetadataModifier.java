@@ -88,7 +88,8 @@ public class WaterMLv20SeriesMetadataModifier
                     o.getValue().setMetadata(o.getObservationConstellation().getMetadata());
                 }
             }
-            return ((AbstractObservationResponse) response).setObservationCollection(ObservationStream.of(observations));
+            return ((AbstractObservationResponse) response)
+                    .setObservationCollection(ObservationStream.of(observations));
         }
         return response;
     }

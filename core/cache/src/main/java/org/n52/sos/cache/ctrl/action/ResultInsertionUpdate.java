@@ -30,28 +30,26 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.locationtech.jts.geom.Envelope;
 import org.n52.iceland.util.action.Action;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.cache.InMemoryCacheImpl;
-import org.n52.sos.cache.SosWritableContentCache;
-
-import org.locationtech.jts.geom.Envelope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * When executing this &auml;ction (see {@link Action}), the following relations are added, settings are updated in
- * cache:
+ * When executing this &auml;ction (see {@link Action}), the following relations
+ * are added, settings are updated in cache:
  * <ul>
  * <li>'Result template identifier' &rarr; 'observable property' relation</li>
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
  * TODO update list above
  *
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  * @since 4.0.0
  */
 public class ResultInsertionUpdate extends InMemoryCacheUpdate {
@@ -62,10 +60,10 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     private final String templateIdentifier;
 
     public ResultInsertionUpdate(String templateIdentifier, List<OmObservation> observations) {
-        if (observations == null || observations.isEmpty() || templateIdentifier == null || templateIdentifier.isEmpty()) {
-            String msg =
-                    String.format("Missing argument: '%s': %s; template identifier: '%s'",
-                            OmObservation.class.getName(), observations, templateIdentifier);
+        if (observations == null || observations.isEmpty() || templateIdentifier == null
+                || templateIdentifier.isEmpty()) {
+            String msg = String.format("Missing argument: '%s': %s; template identifier: '%s'",
+                    OmObservation.class.getName(), observations, templateIdentifier);
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -80,7 +78,8 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
         for (OmObservation observation : observations) {
             final String observationType = observation.getObservationConstellation().getObservationType();
             final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
-            final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
+            final String observableProperty =
+                    observation.getObservationConstellation().getObservableProperty().getIdentifier();
             final Time phenomenonTime = observation.getPhenomenonTime();
             final Time resultTime = observation.getResultTime();
 

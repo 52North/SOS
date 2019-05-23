@@ -60,7 +60,7 @@ public class AbstractSQLiteDao {
     }
 
     protected void execute(Consumer<Session> action) {
-        execute((session) -> {
+        execute(session -> {
             action.accept(session);
             return null;
         });
@@ -89,7 +89,7 @@ public class AbstractSQLiteDao {
     }
 
     protected void throwingExecute(ThrowingConsumer<Session, ? extends Exception> action) throws Exception {
-        throwingExecute((session) -> {
+        throwingExecute(session -> {
             action.accept(session);
             return null;
         });
@@ -118,7 +118,7 @@ public class AbstractSQLiteDao {
     }
 
     @Deprecated
-    public static interface HibernateAction<T> extends Function<Session, T> {
+    public interface HibernateAction<T> extends Function<Session, T> {
 
         default T call(Session session) {
             return apply(session);
@@ -126,21 +126,21 @@ public class AbstractSQLiteDao {
     }
 
     @Deprecated
-    public static interface VoidHibernateAction extends Consumer<Session> {
+    public interface VoidHibernateAction extends Consumer<Session> {
         default void call(Session session) {
             accept(session);
         }
     }
 
     @Deprecated
-    public static interface ThrowingHibernateAction<T> extends ThrowingFunction<Session, T, Exception> {
+    public interface ThrowingHibernateAction<T> extends ThrowingFunction<Session, T, Exception> {
         default T call(Session session) throws Exception {
             return apply(session);
         }
     }
 
     @Deprecated
-    public static interface ThrowingVoidHibernateAction extends ThrowingConsumer<Session, Exception> {
+    public interface ThrowingVoidHibernateAction extends ThrowingConsumer<Session, Exception> {
         default void run(Session session) throws Exception {
             accept(session);
         }

@@ -76,8 +76,9 @@ public class SosGetObservationOperatorV100 extends
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
 
-    private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
-            new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
+    private static final TemporalFilter TEMPORAL_FILTER_LATEST =
+            new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
+                    new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     public SosGetObservationOperatorV100() {
         super(OPERATION_NAME, GetObservationRequest.class);
@@ -85,7 +86,7 @@ public class SosGetObservationOperatorV100 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -168,10 +169,12 @@ public class SosGetObservationOperatorV100 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        if (sosRequest.isSetResultModel() && sosRequest.getOfferings().stream().map(getCache()::getObservationTypesForOffering)
-                    .anyMatch(observationTypes -> !observationTypes.contains(sosRequest.getResultModel()))) {
+        if (sosRequest.isSetResultModel()
+                && sosRequest.getOfferings().stream().map(getCache()::getObservationTypesForOffering)
+                        .anyMatch(observationTypes -> !observationTypes.contains(sosRequest.getResultModel()))) {
             exceptions.add(new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.resultModel)
-                    .withMessage("The value '%s' is invalid for the requested offering!", OMHelper.getEncodedResultModelFor(sosRequest.getResultModel())));
+                    .withMessage("The value '%s' is invalid for the requested offering!",
+                            OMHelper.getEncodedResultModelFor(sosRequest.getResultModel())));
         }
         exceptions.throwIfNotEmpty();
     }

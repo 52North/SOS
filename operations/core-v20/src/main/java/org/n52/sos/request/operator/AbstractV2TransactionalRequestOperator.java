@@ -59,7 +59,9 @@ import org.n52.shetland.ogc.swe.SweField;
  * @param <A>
  *            the response type
  */
-public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler,
+                                                                Q extends OwsServiceRequest,
+                                                                A extends OwsServiceResponse>
         extends AbstractTransactionalRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
 
     public AbstractV2TransactionalRequestOperator(String operationName, Class<Q> requestType) {
@@ -97,13 +99,15 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
 
     private boolean hasObservations(String observableProperty, Set<String> offerings) {
-//        if (offerings != null) {
-//            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-//                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
-//                    return true;
-//                }
-//            }
-//        }
+        // if (offerings != null) {
+        // for (String offering :
+        // getCache().getOfferingsForObservableProperty(observableProperty)) {
+        // if (offerings.contains(offering) &&
+        // getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+        // return true;
+        // }
+        // }
+        // }
         return false;
     }
 
@@ -137,7 +141,8 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
 
     protected static boolean isComplexObservation(OmObservation observation) {
-        return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equalsIgnoreCase(observation.getObservationConstellation().getObservationType()) &&
-               observation.getValue().getValue() instanceof ComplexValue;
+        return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION
+                .equalsIgnoreCase(observation.getObservationConstellation().getObservationType())
+                && observation.getValue().getValue() instanceof ComplexValue;
     }
 }

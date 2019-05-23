@@ -33,14 +33,16 @@ import javax.persistence.Entity;
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
 
 /**
- * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions
+ * Entity to store the active/inactive dynamic OWS ExtendedCapabilities
+ * extensions
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 @Entity(name = "dynamic_extended_capabilities")
-public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtendedCapabilitiesKey, DynamicOwsExtendedCapabilities> {
+public class DynamicOwsExtendedCapabilities
+        extends Activatable<DynamicOwsExtendedCapabilitiesKey, DynamicOwsExtendedCapabilities> {
 
     private static final long serialVersionUID = -209286379108756824L;
 
@@ -58,7 +60,7 @@ public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtend
      *            the {@link OwsOperationMetadataExtensionProviderKey} to set
      */
     public DynamicOwsExtendedCapabilities(OwsOperationMetadataExtensionProviderKey oeck) {
-       super(new DynamicOwsExtendedCapabilitiesKey(oeck));
+        super(new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
 
     /**

@@ -79,6 +79,18 @@ public abstract class AbstractContentCache implements ContentCache {
     }
 
     /**
+     * Creates a new empty synchronized map.
+     *
+     * @param <K> the key type
+     * @param <V> the value type
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> Map<K, V> newSynchronizedMap() {
+        return newSynchronizedMap(null);
+    }
+
+    /**
      * Creates a new synchronized set from the specified elements.
      *
      * @param <T>      the element type
@@ -96,18 +108,6 @@ public abstract class AbstractContentCache implements ContentCache {
                 return Collections.synchronizedSet(Streams.stream(elements).collect(toSet()));
             }
         }
-    }
-
-    /**
-     * Creates a new empty synchronized map.
-     *
-     * @param <K> the key type
-     * @param <V> the value type
-     *
-     * @return the synchronized map
-     */
-    protected static <K, V> Map<K, V> newSynchronizedMap() {
-        return newSynchronizedMap(null);
     }
 
     /**

@@ -143,10 +143,9 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
         }
 
         BinaryAttachmentResponse response = null;
-        try(ByteArrayOutputStream zipBoas = createZip(tempDir)) {
-            response =
-                    new BinaryAttachmentResponse(zipBoas.toByteArray(), getContentType(), String.format(
-                            DOWNLOAD_FILENAME_FORMAT, makeDateSafe(new DateTime(DateTimeZone.UTC))));
+        try (ByteArrayOutputStream zipBoas = createZip(tempDir)) {
+            response = new BinaryAttachmentResponse(zipBoas.toByteArray(), getContentType(),
+                    String.format(DOWNLOAD_FILENAME_FORMAT, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } catch (IOException e) {
             throw new EncodingException("Couldn't create netCDF zip file", e);
         } finally {

@@ -46,28 +46,28 @@ import org.locationtech.jts.geom.Point;
  *
  */
 public class FeatureUtil {
-    public static Set<Point> getFeaturePoints( Set<AbstractSamplingFeature> features ){
+    public static Set<Point> getFeaturePoints(Set<AbstractSamplingFeature> features) {
         Set<Point> featurePoints = new HashSet<Point>();
 
-        for(AbstractSamplingFeature feature : features ){
-            featurePoints.addAll(getFeaturePoints( feature ));
+        for (AbstractSamplingFeature feature : features) {
+            featurePoints.addAll(getFeaturePoints(feature));
         }
 
         return featurePoints;
     }
 
-    public static Set<Point> getFeaturePoints( AbstractSamplingFeature feature ){
+    public static Set<Point> getFeaturePoints(AbstractSamplingFeature feature) {
         Set<Point> points = new HashSet<Point>();
-        if( feature != null && feature.isSetGeometry()){
+        if (feature != null && feature.isSetGeometry()) {
             return getPoints(feature.getGeometry());
         }
         return points;
     }
 
-    public static Set<Point> getPoints(Geometry geom){
+    public static Set<Point> getPoints(Geometry geom) {
         Set<Point> points = new HashSet<Point>();
-        if( geom != null ){
-            if( geom instanceof Point ){
+        if (geom != null) {
+            if (geom instanceof Point) {
                 points.add((Point) geom);
             } else if (geom instanceof LineString) {
                 LineString lineString = (LineString) geom;
@@ -81,14 +81,14 @@ public class FeatureUtil {
         return points;
     }
 
-    public static Set<Double> getFeatureHeights( AbstractSamplingFeature feature ){
-        return getHeights(getFeaturePoints( feature ));
+    public static Set<Double> getFeatureHeights(AbstractSamplingFeature feature) {
+        return getHeights(getFeaturePoints(feature));
     }
 
-    public static Set<Double> getHeights(Set<Point> points){
+    public static Set<Double> getHeights(Set<Point> points) {
         Set<Double> heights = new HashSet<Double>();
         for (Point point : points) {
-            if(!Double.isNaN( point.getCoordinate().getZ()) ){
+            if (!Double.isNaN(point.getCoordinate().getZ())) {
                 heights.add(point.getCoordinate().getZ());
             } else {
                 heights.add(0.0);
@@ -97,11 +97,11 @@ public class FeatureUtil {
         return heights;
     }
 
-    public static Point clonePoint2d( Point point ){
-        if( point == null ){
+    public static Point clonePoint2d(Point point) {
+        if (point == null) {
             return null;
         }
-        if(Double.isNaN( point.getCoordinate().getZ()) ){
+        if (Double.isNaN(point.getCoordinate().getZ())) {
             return point;
         }
         Point clonedPoint = (Point) point.copy();
@@ -109,7 +109,7 @@ public class FeatureUtil {
         return clonedPoint;
     }
 
-    public static boolean equal2d(Point a, Point b){
+    public static boolean equal2d(Point a, Point b) {
         return a.getX() == b.getX() && a.getY() == b.getY();
     }
 }

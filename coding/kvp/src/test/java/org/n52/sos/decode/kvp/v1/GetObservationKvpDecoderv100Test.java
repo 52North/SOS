@@ -28,19 +28,14 @@
  */
 package org.n52.sos.decode.kvp.v1;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.CoreMatchers;
 import org.joda.time.DateTime;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -91,17 +86,17 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         GetObservationRequest req =
                 decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
                         OBSERVED_PROPERTY, RESPONSE_FORMAT));
-        assertThat(req, is(notNullValue()));
-        assertThat(req.getOperationName(), is(SosConstants.Operations.GetObservation.name()));
-        assertThat(req.getService(), is(SosConstants.SOS));
-        assertThat(req.getVersion(), is(Sos1Constants.SERVICEVERSION));
-        assertThat(req.getOfferings().size(), is(1));
-        assertThat(req.getOfferings().get(0), is(OFFERING));
-        assertThat(req.getProcedures().size(), is(1));
-        assertThat(req.getProcedures().get(0), is(PROCEDURE));
-        assertThat(req.getObservedProperties().size(), is(1));
-        assertThat(req.getObservedProperties().get(0), is(OBSERVED_PROPERTY));
-        assertThat(MediaType.parse(req.getResponseFormat()), is(MediaType.parse(RESPONSE_FORMAT)));
+        Assert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
+        Assert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.GetObservation.name()));
+        Assert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
+        Assert.assertThat(req.getVersion(), CoreMatchers.is(Sos1Constants.SERVICEVERSION));
+        Assert.assertThat(req.getOfferings().size(), CoreMatchers.is(1));
+        Assert.assertThat(req.getOfferings().get(0), CoreMatchers.is(OFFERING));
+        Assert.assertThat(req.getProcedures().size(), CoreMatchers.is(1));
+        Assert.assertThat(req.getProcedures().get(0), CoreMatchers.is(PROCEDURE));
+        Assert.assertThat(req.getObservedProperties().size(), CoreMatchers.is(1));
+        Assert.assertThat(req.getObservedProperties().get(0), CoreMatchers.is(OBSERVED_PROPERTY));
+        Assert.assertThat(MediaType.parse(req.getResponseFormat()), CoreMatchers.is(MediaType.parse(RESPONSE_FORMAT)));
     }
 
     @Test
@@ -111,14 +106,15 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
                         RESPONSE_FORMAT);
         map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME);
         GetObservationRequest req = decoder.decode(map);
-        assertThat(req.getTemporalFilters().size(), is(1));
+        Assert.assertThat(req.getTemporalFilters().size(), CoreMatchers.is(1));
         TemporalFilter temporalFilter = req.getTemporalFilters().get(0);
-        assertThat(temporalFilter.getTime(), instanceOf(TimePeriod.class));
+        Assert.assertThat(temporalFilter.getTime(), CoreMatchers.instanceOf(TimePeriod.class));
         TimePeriod timePeriod = (TimePeriod) temporalFilter.getTime();
-        assertThat(timePeriod.getStart().getMillis(), is(new DateTime(START_TIME).getMillis()));
-        assertThat(timePeriod.getEnd().getMillis(), is(new DateTime(END_TIME).plusMillis(999).getMillis()));
-        assertThat(timePeriod.getStartIndet(), nullValue());
-        assertThat(timePeriod.getEndIndet(), nullValue());
+        Assert.assertThat(timePeriod.getStart().getMillis(), CoreMatchers.is(new DateTime(START_TIME).getMillis()));
+        Assert.assertThat(timePeriod.getEnd().getMillis(),
+                CoreMatchers.is(new DateTime(END_TIME).plusMillis(999).getMillis()));
+        Assert.assertThat(timePeriod.getStartIndet(), CoreMatchers.nullValue());
+        Assert.assertThat(timePeriod.getEndIndet(), CoreMatchers.nullValue());
     }
 
     // TODO: This fails without a Configurator loaded. Research how to set this
@@ -131,19 +127,19 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     // map.put(SosConstants.GetObservationParams.featureOfInterest.name(),
     // SPATIAL_FILTER);
     // GetObservationRequest req = decoder.decode(map);
-    // assertThat(req.getSpatialFilter().getSrid(), is(Constants.EPSG_WGS84));
-    // assertThat(req.getSpatialFilter().getOperator(),
-    // is(SpatialOperator.BBOX));
-    // assertThat(req.getSpatialFilter().getValueReference(),
-    // is(SPATIAL_FILTER_VALUE_REFERENCE));
-    // assertThat(req.getSpatialFilter().getGeometry().getSRID(), is(Constants.EPSG_WGS84));
-    // assertThat(req.getSpatialFilter().getGeometry(),
-    // instanceOf(Polygon.class));
+    // Assert.assertThat(req.getSpatialFilter().getSrid(), CoreMatchers.is(Constants.EPSG_WGS84));
+    // Assert.assertThat(req.getSpatialFilter().getOperator(),
+    // CoreMatchers.is(SpatialOperator.BBOX));
+    // Assert.assertThat(req.getSpatialFilter().getValueReference(),
+    // CoreMatchers.is(SPATIAL_FILTER_VALUE_REFERENCE));
+    // Assert.assertThat(req.getSpatialFilter().getGeometry().getSRID(), CoreMatchers.is(Constants.EPSG_WGS84));
+    // Assert.assertThat(req.getSpatialFilter().getGeometry(),
+    // CoreMatchers.instanceOf(Polygon.class));
     // Polygon polygon = (Polygon) req.getSpatialFilter().getGeometry();
-    // assertThat(polygon.getExteriorRing().getPointN(0).getX(), is(0.0));
-    // assertThat(polygon.getExteriorRing().getPointN(0).getY(), is(0.0));
-    // assertThat(polygon.getExteriorRing().getPointN(2).getX(), is(60.0));
-    // assertThat(polygon.getExteriorRing().getPointN(2).getY(), is(60.0));
+    // Assert.assertThat(polygon.getExteriorRing().getPointN(0).getX(), CoreMatchers.is(0.0));
+    // Assert.assertThat(polygon.getExteriorRing().getPointN(0).getY(), CoreMatchers.is(0.0));
+    // Assert.assertThat(polygon.getExteriorRing().getPointN(2).getX(), CoreMatchers.is(60.0));
+    // Assert.assertThat(polygon.getExteriorRing().getPointN(2).getY(), CoreMatchers.is(60.0));
     // }
 
     @Test(expected = DecodingException.class)

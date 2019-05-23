@@ -36,8 +36,8 @@ import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 @Entity(name = "capabilities_extension")
 public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesExtensionImpl> implements
         StringBasedCapabilitiesExtension {
-    private static final long serialVersionUID = 2733205462298183289L;
     public static final String EXTENSION = "extension";
+    private static final long serialVersionUID = 2733205462298183289L;
     @Column(name = EXTENSION)
     private String extension;
 

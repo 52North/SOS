@@ -28,13 +28,10 @@
  */
 package org.n52.sos.convert;
 
-import static org.hamcrest.CoreMatchers.isA;
-
 import java.util.Collections;
 
 import javax.naming.ConfigurationException;
 
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsInstanceOf;
@@ -54,7 +51,6 @@ import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
@@ -99,9 +95,10 @@ public class UVFRequestModifierTest {
         Assert.assertThat(key.getService(), Is.is(SosConstants.SOS));
         Assert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
         Assert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
-//        Assert.assertThat(key.getRequest(), Is.isA(GetObservationRequest.class));
-//                CoreMatchers.either()
-//                        .or(Is.isA(GetObservationByIdRequest.class)));
+        // Assert.assertThat(key.getRequest(),
+        // Is.CoreMatchers.isA(GetObservationRequest.class));
+        // CoreMatchers.either()
+        // .or(Is.CoreMatchers.isA(GetObservationByIdRequest.class)));
     }
 
     // @Test
@@ -217,7 +214,7 @@ public class UVFRequestModifierTest {
     }
 
     @Test
-    public void shouldThrowConfigExcetionIfDefaultCrsEpsgIsAbovenAllowedMaximum()
+    public void shouldThrowConfigExcetionIfDefaultCrsEpsgisAbovenAllowedMaximum()
             throws ConfigurationException {
         exp.expect(ConfigurationException.class);
         exp.expectMessage("Setting with key 'uvf.default.crs': '31470' outside allowed interval ]31466, 31469[.");

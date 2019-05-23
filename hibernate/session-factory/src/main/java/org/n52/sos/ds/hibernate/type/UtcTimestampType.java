@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
-import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -49,7 +48,7 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
  * from the database are always retrieved in UTC.
  *
  * @see <a
- *      href="http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-utc-time-zone/3430957#3430957">http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-utc-time-zone/3430957#3430957</a>
+ *      href="http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-utc-time-zone/3430957#3430957"></a>
  *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  *
@@ -57,9 +56,10 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
  */
 public class UtcTimestampType extends AbstractSingleColumnStandardBasicType<Date> implements VersionType<Date>,
         LiteralType<Date> {
-    private static final long serialVersionUID = 1425445989380765998L;
 
     public static final UtcTimestampType INSTANCE = new UtcTimestampType();
+
+    private static final long serialVersionUID = 1425445989380765998L;
 
     public UtcTimestampType() {
         super(UtcTimestampTypeDescriptor.INSTANCE, JdbcTimestampTypeDescriptor.INSTANCE);
@@ -78,7 +78,17 @@ public class UtcTimestampType extends AbstractSingleColumnStandardBasicType<Date
         return TimestampType.INSTANCE.next(current, session);
     }
 
+    @Override
+    public Date next(Date current, SharedSessionContractImplementor session) {
+        return TimestampType.INSTANCE.next(current, session);
+    }
+
     public Date seed(SessionImplementor session) {
+        return TimestampType.INSTANCE.seed(session);
+    }
+
+    @Override
+    public Date seed(SharedSessionContractImplementor session) {
         return TimestampType.INSTANCE.seed(session);
     }
 
@@ -92,16 +102,6 @@ public class UtcTimestampType extends AbstractSingleColumnStandardBasicType<Date
 
     public Date fromStringValue(String xml) throws HibernateException {
         return TimestampType.INSTANCE.fromStringValue(xml);
-    }
-
-    @Override
-    public Date seed(SharedSessionContractImplementor session) {
-        return TimestampType.INSTANCE.seed(session);
-    }
-
-    @Override
-    public Date next(Date current, SharedSessionContractImplementor session) {
-        return TimestampType.INSTANCE.next(current, session);
     }
 
 }

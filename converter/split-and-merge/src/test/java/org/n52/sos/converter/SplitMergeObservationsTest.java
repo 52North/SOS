@@ -28,16 +28,11 @@
  */
 package org.n52.sos.converter;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.n52.sos.util.builder.InsertObservationRequestBuilder.aInsertObservationRequest;
-import static org.n52.sos.util.builder.ObservationBuilder.anObservation;
-
 import java.util.List;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.shetland.ogc.om.MultiObservationValues;
 import org.n52.shetland.ogc.om.ObservationValue;
@@ -59,9 +54,14 @@ import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.sos.util.builder.InsertObservationRequestBuilder;
+import org.n52.sos.util.builder.ObservationBuilder;
+
+import com.google.common.collect.Lists;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike
+ *         Hinderk</a>
  */
 public class SplitMergeObservationsTest {
 
@@ -96,8 +96,8 @@ public class SplitMergeObservationsTest {
         elementType.addField(valueField);
 
         SweDataArray dataArray = new SweDataArray();
-        dataArray.add(newArrayList("2018-11-30T11:59:00+01:00","52"));
-        dataArray.add(newArrayList("2018-11-30T10:59:00+01:00","42"));
+        dataArray.add(Lists.newArrayList("2018-11-30T11:59:00+01:00", "52"));
+        dataArray.add(Lists.newArrayList("2018-11-30T10:59:00+01:00", "42"));
         dataArray.setElementType(elementType);
         dataArray.setEncoding(new SweTextEncoding());
 
@@ -112,12 +112,9 @@ public class SplitMergeObservationsTest {
         extension.setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
         extension.setValue(new SweBoolean().setValue(true));
 
-        InsertObservationRequest request = aInsertObservationRequest()
-                .addObservation(anObservation()
-                        .setIdentifier(identifierCodeSpace, identifier)
-                        .setObservationConstellation(constellation)
-                        .setValue(value)
-                        .build())
+        InsertObservationRequest request = InsertObservationRequestBuilder.aInsertObservationRequest()
+                .addObservation(ObservationBuilder.anObservation().setIdentifier(identifierCodeSpace, identifier)
+                        .setObservationConstellation(constellation).setValue(value).build())
                 .build();
         request.addExtension(extension);
 
@@ -129,20 +126,21 @@ public class SplitMergeObservationsTest {
         /*
          * VERIFY
          */
-        assertThat(modifiedRequest, is(instanceOf(InsertObservationRequest.class)));
+        Assert.assertThat(modifiedRequest, Is.is(CoreMatchers.instanceOf(InsertObservationRequest.class)));
         List<OmObservation> splittedObservations = ((InsertObservationRequest) modifiedRequest).getObservations();
 
-        assertThat(splittedObservations.size(), is(2));
+        Assert.assertThat(splittedObservations.size(), Is.is(2));
 
         OmObservation obs0 = splittedObservations.get(0);
         OmObservation obs1 = splittedObservations.get(1);
 
-        assertThat(obs0.getObservationConstellation(), is(equalTo(obs1.getObservationConstellation())));
-        assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(),
-                is(equalTo(obs1.getIdentifierCodeWithAuthority().getCodeSpace())));
-        assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(), is(identifierCodeSpace));
-        assertThat(obs0.getIdentifier(), is(identifier + "1"));
-        assertThat(obs1.getIdentifier(), is(identifier + "2"));
+        Assert.assertThat(obs0.getObservationConstellation(),
+                Is.is(CoreMatchers.equalTo(obs1.getObservationConstellation())));
+        Assert.assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(),
+                Is.is(CoreMatchers.equalTo(obs1.getIdentifierCodeWithAuthority().getCodeSpace())));
+        Assert.assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(), Is.is(identifierCodeSpace));
+        Assert.assertThat(obs0.getIdentifier(), Is.is(identifier + "1"));
+        Assert.assertThat(obs1.getIdentifier(), Is.is(identifier + "2"));
     }
 
 }

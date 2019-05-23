@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,11 +68,8 @@ public class SQLiteSettingsDao
                 execute(session -> {
                     AbstractSettingValue<?> hSetting = (AbstractSettingValue<?>) session
                             .get(AbstractSettingValue.class, setting.getKey());
-                    if (hSetting != null) {
-                        LOG.debug("Deleting Setting {}", hSetting);
-                        session.delete(hSetting);
-                    }
-                    LOG.debug("Saving Setting {}", setting);
+                    checkAndDelete(hSetting, session);
+                    LOG.debug("Setting {} saved", setting);
                     session.save(setting);
                 });
             } else {
@@ -94,11 +92,15 @@ public class SQLiteSettingsDao
         execute(session -> {
             AbstractSettingValue<?> hSetting = (AbstractSettingValue<?>) session
                     .get(AbstractSettingValue.class, setting);
-            if (hSetting != null) {
-                LOG.debug("Deleting Setting {}", hSetting);
-                session.delete(hSetting);
-            }
+            checkAndDelete(hSetting, session);
         });
+    }
+
+    private void checkAndDelete(AbstractSettingValue<?> hSetting, Session session) {
+        if (hSetting != null) {
+            LOG.debug("Deleting Setting {}", hSetting);
+            session.delete(hSetting);
+        }
     }
 
     protected boolean isSettingsTypeChangeException(HibernateException e) {

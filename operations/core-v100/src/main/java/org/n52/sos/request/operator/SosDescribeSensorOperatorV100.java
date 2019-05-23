@@ -52,8 +52,8 @@ public class SosDescribeSensorOperatorV100 extends
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
     // TODO necessary in SOS 1.0.0, different value?
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
 
     public SosDescribeSensorOperatorV100() {
         super(OPERATION_NAME, DescribeSensorRequest.class);
@@ -61,7 +61,7 @@ public class SosDescribeSensorOperatorV100 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -102,14 +102,17 @@ public class SosDescribeSensorOperatorV100 extends
         // {
         // String exceptionText =
         // "The requested parameter is not supported by this server!";
-        // exceptions.add(Util4Exceptions.createOptionNotSupportedException(Sos2Constants.DescribeSensorParams.validTime.name(),
+        // exceptions.add(
+        // Util4Exceptions.createOptionNotSupportedException(Sos2Constants.DescribeSensorParams.validTime.name(),
         // exceptionText));
         // }
         exceptions.throwIfNotEmpty();
     }
 
-    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
-        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat, true)) {
+    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest)
+            throws MissingParameterValueException, OwsExceptionReport {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(),
+                Sos1Constants.DescribeSensorParams.outputFormat, true)) {
             checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
                     sosRequest.getService(), sosRequest.getVersion());
         }

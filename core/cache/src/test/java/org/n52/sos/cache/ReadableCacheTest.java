@@ -28,14 +28,11 @@
  */
 package org.n52.sos.cache;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.hamcrest.core.Is;
+import org.junit.Assert;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
-
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -48,48 +45,51 @@ public class ReadableCacheTest {
 
     private static final String OFFERING_IDENTIFIER = "test-offering";
 
+    private static final String FEATURE_IDENTIFIER = "test-feature";
+
     @Test
     public final void should_return_true_if_min_resulttime_for_offering_is_available() {
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
-        cache.setMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER, new DateTime(52l));
+        cache.setMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER, new DateTime(52L));
 
-        assertThat(cache.hasMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER), is(TRUE));
+        Assert.assertThat(cache.hasMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER),
+                Is.is(Boolean.TRUE));
     }
 
     @Test
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
 
-        assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
+        Assert.assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
 
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
-        assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
+        Assert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
     }
 
     @Test
     public void should_return_false_if_relatedFeature_has_no_children() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
-        final String relatedFeature = "test-feature";
-        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
+        final String relatedFeature = FEATURE_IDENTIFIER;
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(OFFERING_IDENTIFIER, relatedFeature);
 
-        assertThat(readCache.isRelatedFeatureSampled(null), is(FALSE));
-        assertThat(readCache.isRelatedFeatureSampled(""), is(FALSE));
-        assertThat(readCache.isRelatedFeatureSampled(relatedFeature), is(FALSE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(null), Is.is(Boolean.FALSE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(""), Is.is(Boolean.FALSE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.FALSE));
     }
 
     @Test
     public void should_return_true_if_relatedFeature_has_one_or_more_children() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
-        final String relatedFeature = "test-feature";
+        final String relatedFeature = FEATURE_IDENTIFIER;
         final String relatedFeature2 = "test-feature-2";
-        final String offering = "test-offering";
+        final String offering = OFFERING_IDENTIFIER;
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature);
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
         ((SosWritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
 
-        assertThat(readCache.isRelatedFeatureSampled(relatedFeature), is(TRUE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.TRUE));
     }
 
 }

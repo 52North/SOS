@@ -70,10 +70,12 @@ import ucar.nc2.NetcdfFileWriter.Version;
  */
 public class OceanSITESEncoder extends AbstractOceanSITESEncoder {
 
-private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.class);
 
-    private final Set<String> MEDIA_TYPES = Sets.newHashSet(OceanSITESConstants.CONTENT_TYPE_NETCDF_OCEANSITES.toString(),
-            OceanSITESConstants.CONTENT_TYPE_NETCDF_3_OCEANSITES.toString(), OceanSITESConstants.CONTENT_TYPE_NETCDF_4_OCEANSITES.toString());
+    private final Set<String> MEDIA_TYPES =
+            Sets.newHashSet(OceanSITESConstants.CONTENT_TYPE_NETCDF_OCEANSITES.toString(),
+                    OceanSITESConstants.CONTENT_TYPE_NETCDF_3_OCEANSITES.toString(),
+                    OceanSITESConstants.CONTENT_TYPE_NETCDF_4_OCEANSITES.toString());
 
     private final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS, (Map<String, Set<String>>) new ImmutableMap.Builder<String, Set<String>>()
@@ -121,7 +123,8 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
     }
 
     @Override
-    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws EncodingException, IOException {
+    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version)
+            throws EncodingException, IOException {
         if (CollectionHelper.isEmptyOrNull(netCDFObsList)) {
             throw new EncodingException("No feature types to encode");
         } else if (netCDFObsList.size() > 1) {
@@ -133,7 +136,8 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         if (CollectionHelper.isEmpty(netCDFObservation.getSensorDatasets())) {
             throw new EncodingException("No sensors to encode");
         } else if (netCDFObservation.getSensorDatasets().size() > 1) {
-            throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null, netCDFObservation.getSensorDatasets().size());
+            throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null,
+                    netCDFObservation.getSensorDatasets().size());
         }
 
         AbstractSensorDataset sensorDataset = netCDFObservation.getSensorDatasets().get(0);
@@ -164,7 +168,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         }
         sb.append(" and a single sensor");
         if (numSensors != null) {
-            sb.append(" (found ").append(numSensors).append(")");
+            sb.append(" (").append("found ").append(numSensors).append(")");
         }
         sb.append(". Change your request to only return a single feature type or use the zipped netCDF encoder (")
                 .append(OceanSITESConstants.CONTENT_TYPE_NETCDF_ZIP_OCEANSITES.toString()).append(").");

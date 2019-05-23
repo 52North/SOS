@@ -42,11 +42,13 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
  * @param <A>
  *            the response type
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
-public abstract class AbstractV1RequestOperator<T extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+public abstract class AbstractV1RequestOperator<T extends OperationHandler,
+                                                Q extends OwsServiceRequest,
+                                                A extends OwsServiceResponse>
         extends AbstractRequestOperator<T, Q, A> {
     public AbstractV1RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos1Constants.SERVICEVERSION, operationName, requestType);

@@ -89,7 +89,7 @@ public class SosGetObservationOperatorV20 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -126,8 +126,10 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(request.getObservedProperties(), SosConstants.GetObservationParams.observedProperty, false);
-            // add child observedProperties if isInclude == true and requested observedProperty is parent.
+            checkObservedProperties(request.getObservedProperties(),
+                    SosConstants.GetObservationParams.observedProperty, false);
+            // add child observedProperties if isInclude == true and requested
+            // observedProperty is parent.
             if (request.isSetObservableProperty()) {
                 request.setObservedProperties(addChildObservableProperties(request.getObservedProperties()));
             }
@@ -253,7 +255,7 @@ public class SosGetObservationOperatorV20 extends
         if (offeringIds != null) {
             Set<String> offerings = getCache().getOfferings();
             CompositeOwsException exceptions = new CompositeOwsException();
-            offeringIds.forEach((offeringId) -> {
+            offeringIds.forEach(offeringId -> {
                 if (offeringId == null || offeringId.isEmpty()) {
                     exceptions.add(new MissingOfferingParameterException());
                 } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
@@ -283,7 +285,8 @@ public class SosGetObservationOperatorV20 extends
                         && !supportedResponseFormatObservationTypes.isEmpty()) {
                     for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
                         for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
-                            if (st instanceof ObservationType && observationType.equals(((ObservationType) st).getValue())) {
+                            if (st instanceof ObservationType
+                                    && observationType.equals(((ObservationType) st).getValue())) {
                                 responseFormats.add(responseFormat);
                             }
                         }

@@ -53,7 +53,7 @@ public class I18NSerializerTest {
     public final ErrorCollector errors = new ErrorCollector();
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-    
+
     @Test
     @Ignore
     public void testSingle() {

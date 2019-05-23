@@ -77,25 +77,27 @@ public class SeriesTypeChecker extends AbstractRequestResponseModifier {
 
     @Override
     public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
-//       if (request instanceof InsertObservationRequest) {
-//           return checkForSeriesType((InsertObservationRequest)request);
-//       }
-       return request;
+        // if (request instanceof InsertObservationRequest) {
+        // return checkForSeriesType((InsertObservationRequest)request);
+        // }
+        return request;
     }
 
-//    private OwsServiceRequest checkForSeriesType(InsertObservationRequest request) {
-//        if (request.hasExtension(Sos2Constants.Extensions.SeriesType)) {
-//            Extension<?> seriesType = request.getExtension(Sos2Constants.Extensions.SeriesType).get();
-//            for (OmObservation observation : request.getObservations()) {
-//                if (seriesType.getValue() instanceof SweText) {
-//                    observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
-//                } else if (seriesType.getValue() instanceof SweCategory) {
-//                    observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
-//                }
-//            }
-//        }
-//        return request;
-//    }
+    // private OwsServiceRequest checkForSeriesType(InsertObservationRequest
+    // request) {
+    // if (request.hasExtension(Sos2Constants.Extensions.SeriesType)) {
+    // Extension<?> seriesType =
+    // request.getExtension(Sos2Constants.Extensions.SeriesType).get();
+    // for (OmObservation observation : request.getObservations()) {
+    // if (seriesType.getValue() instanceof SweText) {
+    // observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
+    // } else if (seriesType.getValue() instanceof SweCategory) {
+    // observation.setSeriesType(((SweText)seriesType.getValue()).getStringValue());
+    // }
+    // }
+    // }
+    // return request;
+    // }
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {

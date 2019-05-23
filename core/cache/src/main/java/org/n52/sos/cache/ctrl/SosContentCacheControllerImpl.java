@@ -74,8 +74,11 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
 
     private static final AtomicInteger COMPLETE_UPDATE_COUNT = new AtomicInteger(0);
     private static final AtomicInteger PARTIAL_UPDATE_COUNT = new AtomicInteger(0);
-    private CompleteUpdate current = null;
-    private CompleteUpdate next = null;
+    private static final String STARTING_UPDATE = "Starting update {}";
+    private static final String FINISHED_UPDATE = "Finished update {}";
+    private static final String UPDATE_FAILED = "Update failed!";
+    private CompleteUpdate current;
+    private CompleteUpdate next;
     private volatile WritableContentCache cache;
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -161,10 +164,15 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
         }
     }
 
+    @Override
+    public void update() throws OwsExceptionReport {
+        update(this.completeCacheUpdateFactory.get());
+    }
+
     private void runCurrent() throws OwsExceptionReport {
-        LOGGER.trace("Starting update {}", this.current);
+        LOGGER.trace(STARTING_UPDATE, this.current);
         this.current.execute();
-        LOGGER.trace("Finished update {}", this.current);
+        LOGGER.trace(FINISHED_UPDATE, this.current);
         lock();
         try {
             persistenceStrategy.persistOnCompleteUpdate(getCache());
@@ -216,9 +224,7 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
             runCurrent();
         } else if (isNext) {
             if (waitFor != null) {
-                LOGGER.trace("{} waiting for {}", update, waitFor);
-                waitFor.waitForCompletion();
-                LOGGER.trace("{} stopped waiting for {}", update, waitFor);
+                logAndWait(update, waitFor);
             }
             lock();
             try {
@@ -229,10 +235,14 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
             }
             runCurrent();
         } else if (waitFor != null) {
-            LOGGER.trace("{} waiting for {}", update, waitFor);
-            waitFor.waitForCompletion();
-            LOGGER.trace("{} stopped waiting for {}", update, waitFor);
+            logAndWait(update, waitFor);
         }
+    }
+
+    private void logAndWait(CompleteUpdate update, CompleteUpdate waitFor) throws OwsExceptionReport {
+        LOGGER.trace("{} waiting for {}", update, waitFor);
+        waitFor.waitForCompletion();
+        LOGGER.trace("{} stopped waiting for {}", update, waitFor);
     }
 
     private void lock() {
@@ -246,11 +256,6 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
     @Override
     public boolean isUpdateInProgress() {
         return current != null;
-    }
-
-    @Override
-    public void update() throws OwsExceptionReport {
-        update(this.completeCacheUpdateFactory.get());
     }
 
     @Override
@@ -282,13 +287,13 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
         }
 
         synchronized void execute(WritableContentCache cache) throws OwsExceptionReport {
-            LOGGER.trace("Starting Update {}", getUpdate());
+            LOGGER.trace(STARTING_UPDATE, getUpdate());
             getUpdate().reset();
             getUpdate().setCache(cache);
             getUpdate().execute();
-            LOGGER.trace("Finished Update {}", getUpdate());
+            LOGGER.trace(FINISHED_UPDATE, getUpdate());
             if (getUpdate().failed()) {
-                LOGGER.warn("Update failed!", getUpdate().getFailureCause());
+                LOGGER.warn(UPDATE_FAILED, getUpdate().getFailureCause());
                 throw getUpdate().getFailureCause();
             }
         }
@@ -368,14 +373,14 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
             }
             setState(State.RUNNING);
             getUpdate().setCache(cache);
-            LOGGER.trace("Starting update {}", getUpdate());
+            LOGGER.trace(STARTING_UPDATE, getUpdate());
             getUpdate().execute();
-            LOGGER.trace("Finished update {}", getUpdate());
+            LOGGER.trace(FINISHED_UPDATE, getUpdate());
             lock();
             try {
                 if (getUpdate().failed()) {
                     setState(State.FAILED);
-                    LOGGER.warn("Update failed!", getUpdate().getFailureCause());
+                    LOGGER.warn(UPDATE_FAILED, getUpdate().getFailureCause());
                     throw getUpdate().getFailureCause();
                 } else {
                     setState(State.APPLYING_UPDATES);
@@ -399,6 +404,7 @@ public class SosContentCacheControllerImpl implements ContentCacheController, Co
                     try {
                         finished.await();
                     } catch (InterruptedException ex) {
+                        LOGGER.warn("Error while waiting for finishing!", ex);
                     }
                 }
                 if (getState() == State.FAILED) {

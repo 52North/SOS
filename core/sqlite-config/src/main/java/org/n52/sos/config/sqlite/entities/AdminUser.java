@@ -40,10 +40,10 @@ import org.n52.iceland.config.AdministratorUser;
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-@Entity(name="administrator_user")
+@Entity(name = "administrator_user")
 public class AdminUser implements Serializable, AdministratorUser {
-    private static final long serialVersionUID = -6073682567042001348L;
     public static final String USERNAME_PROPERTY = "username";
+    private static final long serialVersionUID = -6073682567042001348L;
     @Id
     @GeneratedValue
     private Long id;
@@ -93,7 +93,8 @@ public class AdminUser implements Serializable, AdministratorUser {
         if (obj instanceof AdminUser) {
             final AdminUser other = (AdminUser) obj;
             return (getId() == null ? other.getId() == null : getId().equals(other.getId()))
-                   && (getUsername() == null ? other.getUsername() == null : getUsername().equals(other.getUsername()));
+                    && (getUsername() == null ? other.getUsername() == null
+                            : getUsername().equals(other.getUsername()));
         }
         return false;
     }

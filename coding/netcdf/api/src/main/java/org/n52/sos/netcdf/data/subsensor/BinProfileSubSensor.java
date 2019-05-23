@@ -77,8 +77,7 @@ public class BinProfileSubSensor extends ProfileSubSensor {
 
     @Override
     public boolean equals(Object obj) {
-        if (this != obj) {
-        } else {
+        if (this == obj) {
             return true;
         }
         if (obj == null) {
@@ -88,8 +87,8 @@ public class BinProfileSubSensor extends ProfileSubSensor {
             return false;
         }
         BinProfileSubSensor other = (BinProfileSubSensor) obj;
-        return Double.doubleToLongBits(bottomHeight) == Double.doubleToLongBits(other.bottomHeight) &&
-               Double.doubleToLongBits(topHeight) == Double.doubleToLongBits(other.topHeight);
+        return Double.doubleToLongBits(bottomHeight) == Double.doubleToLongBits(other.bottomHeight)
+                && Double.doubleToLongBits(topHeight) == Double.doubleToLongBits(other.topHeight);
     }
 
     @Override

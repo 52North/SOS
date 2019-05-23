@@ -39,7 +39,8 @@ import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import ucar.nc2.constants.CF;
 
 /**
- * Implementation of {@link AbstractSensorDataset} for trajectory profile sensor datasets.
+ * Implementation of {@link AbstractSensorDataset} for trajectory profile sensor
+ * datasets.
  *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -47,8 +48,8 @@ import ucar.nc2.constants.CF;
  *
  */
 public class TrajectoryProfileSensorDataset extends AbstractSensorDataset {
-    public TrajectoryProfileSensorDataset( DatasetSensor sensor,
+    public TrajectoryProfileSensorDataset(DatasetSensor sensor,
             Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, AbstractFeature procedure) {
-        super( CF.FeatureType.trajectoryProfile, sensor, dataValues, procedure);
+        super(CF.FeatureType.trajectoryProfile, sensor, dataValues, procedure);
     }
 }

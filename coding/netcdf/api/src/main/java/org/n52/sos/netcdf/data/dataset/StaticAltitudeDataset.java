@@ -37,5 +37,5 @@ package org.n52.sos.netcdf.data.dataset;
  *
  */
 public interface StaticAltitudeDataset {
-    public Double getAlt();
+    Double getAlt();
 }

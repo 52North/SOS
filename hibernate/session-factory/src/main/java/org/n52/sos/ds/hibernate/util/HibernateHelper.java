@@ -83,9 +83,8 @@ public final class HibernateHelper {
         CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
         SharedSessionContractImplementor session = criteriaImpl.getSession();
         SessionFactoryImplementor factory = session.getFactory();
-        CriteriaQueryTranslator translator =
-                new CriteriaQueryTranslator(factory, criteriaImpl, criteriaImpl.getEntityOrClassName(),
-                        CriteriaQueryTranslator.ROOT_SQL_ALIAS);
+        CriteriaQueryTranslator translator = new CriteriaQueryTranslator(factory, criteriaImpl,
+                criteriaImpl.getEntityOrClassName(), CriteriaQueryTranslator.ROOT_SQL_ALIAS);
         MetamodelImplementor metamodel = factory.getMetamodel();
         String[] implementors = metamodel.getImplementors(criteriaImpl.getEntityOrClassName());
 
@@ -100,9 +99,8 @@ public final class HibernateHelper {
         CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
         SharedSessionContractImplementor session = criteriaImpl.getSession();
         SessionFactoryImplementor factory = session.getFactory();
-        CriteriaQueryTranslator translator =
-                new CriteriaQueryTranslator(factory, criteriaImpl, criteriaImpl.getEntityOrClassName(),
-                        CriteriaQueryTranslator.ROOT_SQL_ALIAS);
+        CriteriaQueryTranslator translator = new CriteriaQueryTranslator(factory, criteriaImpl,
+                criteriaImpl.getEntityOrClassName(), CriteriaQueryTranslator.ROOT_SQL_ALIAS);
         return criterion.toSqlString(criteria, translator);
     }
 
@@ -116,9 +114,8 @@ public final class HibernateHelper {
     public static String getSqlString(Query<?> query, Session session) {
         final QueryTranslatorFactory ast = new ASTQueryTranslatorFactory();
         SessionFactory sessionFactory = session.getSessionFactory();
-        final QueryTranslatorImpl qt =
-                (QueryTranslatorImpl) ast.createQueryTranslator("id", query.getQueryString(), Maps.newHashMap(),
-                        (SessionFactoryImplementor) sessionFactory, null);
+        final QueryTranslatorImpl qt = (QueryTranslatorImpl) ast.createQueryTranslator("id", query.getQueryString(),
+                Maps.newHashMap(), (SessionFactoryImplementor) sessionFactory, null);
         qt.compile(null, false);
         return qt.getSQLString();
     }
@@ -130,7 +127,7 @@ public final class HibernateHelper {
      *            the class
      *
      * @return if the entity supported
-
+     *
      */
     public static boolean isEntitySupported(Class<?> clazz) {
         return HibernateMetadataCache.getInstance().isEntitySupported(clazz);
@@ -159,17 +156,21 @@ public final class HibernateHelper {
      * @return if the named query supported
      */
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
-        NamedQueryRepository namedQueryRepository = ((SessionImpl) session).getSessionFactory().getNamedQueryRepository();
+        NamedQueryRepository namedQueryRepository =
+                ((SessionImpl) session).getSessionFactory().getNamedQueryRepository();
         NamedQueryDefinition namedQueryDef = namedQueryRepository.getNamedQueryDefinition(namedQuery);
         NamedSQLQueryDefinition namedSQLQueryDef = namedQueryRepository.getNamedSQLQueryDefinition(namedQuery);
-//        NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
-//        NamedSQLQueryDefinition namedSQLQueryDef =
-//                ((SessionImpl) session).getSessionFactory().getNamedSQLQuery(namedQuery);
+        // NamedQueryDefinition namedQueryDef = ((SessionImpl)
+        // session).getSessionFactory().getNamedQuery(namedQuery);
+        // NamedSQLQueryDefinition namedSQLQueryDef =
+        // ((SessionImpl)
+        // session).getSessionFactory().getNamedSQLQuery(namedQuery);
         return namedQueryDef != null || namedSQLQueryDef != null;
     }
 
     public static Dialect getDialect(Session session) {
-        return ((SessionFactoryImplementor) session.getSessionFactory()).getServiceRegistry().getService( JdbcServices.class ).getDialect();
+        return ((SessionFactoryImplementor) session.getSessionFactory()).getServiceRegistry()
+                .getService(JdbcServices.class).getDialect();
     }
 
     public static List<List<Long>> getValidSizedLists(Collection<Long> queryIds) {

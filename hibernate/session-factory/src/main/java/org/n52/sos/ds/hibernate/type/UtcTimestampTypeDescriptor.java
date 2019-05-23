@@ -53,9 +53,9 @@ import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
  * @since 4.0.0
  */
 public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
-    private static final long serialVersionUID = -7983231403900402497L;
-
     public static final UtcTimestampTypeDescriptor INSTANCE = new UtcTimestampTypeDescriptor();
+
+    private static final long serialVersionUID = -7983231403900402497L;
 
     private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
@@ -89,12 +89,13 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
 
             @Override
             protected X doExtract(CallableStatement statement, int index, WrapperOptions options) throws SQLException {
-                    return javaTypeDescriptor.wrap( statement.getTimestamp( index , Calendar.getInstance(UTC)), options );
+                return javaTypeDescriptor.wrap(statement.getTimestamp(index, Calendar.getInstance(UTC)), options);
             }
 
             @Override
-            protected X doExtract(CallableStatement statement, String name, WrapperOptions options) throws SQLException {
-                    return javaTypeDescriptor.wrap( statement.getTimestamp( name, Calendar.getInstance(UTC) ), options );
+            protected X doExtract(CallableStatement statement, String name, WrapperOptions options)
+                    throws SQLException {
+                return javaTypeDescriptor.wrap(statement.getTimestamp(name, Calendar.getInstance(UTC)), options);
             }
         };
     }

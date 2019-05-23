@@ -28,11 +28,10 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import java.util.Map;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -43,6 +42,7 @@ import org.locationtech.jts.io.WKTWriter;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
+import org.n52.sos.decode.kvp.KvpTest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Maps;
@@ -51,7 +51,7 @@ import com.google.common.collect.Maps;
  * @since 4.4.2
  *
  */
-public class GetDataAvailabilityKvpDecoderTest  {
+public class GetDataAvailabilityKvpDecoderTest implements KvpTest {
     private GetDataAvailabilityKvpDecoder decoder;
     private Polygon polygon;
     private GeometryFactory geometryFactory;
@@ -74,55 +74,58 @@ public class GetDataAvailabilityKvpDecoderTest  {
     @Test
     public void should_decode_extension_resultFilter() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
-        map.put("$filter", "om:result eq '10.5'");
+        map.put(FILTER, "om:result eq '10.5'");
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        assertThat(request.hasResultFilter(), is(true));
-        assertThat(request.getResultFilter().getValueReference(), is("om:result"));
-        assertThat(request.getResultFilter() instanceof ComparisonFilter, is(true));
+        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
+        Assert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
+        Assert.assertThat(request.getResultFilter() instanceof ComparisonFilter, Matchers.is(true));
         ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
-        assertThat(filter.getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name()));
-        assertThat(filter.getValue(), is("10.5"));
+        Assert.assertThat(filter.getOperator().name(),
+                Matchers.is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name()));
+        Assert.assertThat(filter.getValue(), Matchers.is("10.5"));
     }
 
     @Test
     public void should_decode_extension_resultFilter_between() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
-        map.put("$filter", "om:result ge '10.0' and om:result le '20.0'");
+        map.put(FILTER, "om:result ge '10.0' and om:result le '20.0'");
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        assertThat(request.hasResultFilter(), is(true));
-        assertThat(request.getResultFilter().getValueReference(), is("om:result"));
-        assertThat(request.getResultFilter() instanceof ComparisonFilter, is(true));
+        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
+        Assert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
+        Assert.assertThat(request.getResultFilter() instanceof ComparisonFilter, Matchers.is(true));
         ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
-        assertThat(filter.getOperator().name(), is(FilterConstants.ComparisonOperator.PropertyIsBetween.name()));
-        assertThat(filter.getValue(), is("10.0"));
-        assertThat(filter.getValueUpper(), is("20.0"));
+        Assert.assertThat(filter.getOperator().name(),
+                Matchers.is(FilterConstants.ComparisonOperator.PropertyIsBetween.name()));
+        Assert.assertThat(filter.getValue(), Matchers.is("10.0"));
+        Assert.assertThat(filter.getValueUpper(), Matchers.is("20.0"));
     }
 
     @Test
     public void should_decode_extension_spatialFilter() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
-        map.put("$filter", String
+        map.put(FILTER, String
                 .format("geo.intersects(http://www.opengis.net/req/omxml/2.0/data/samplingGeometry,'SRID=%s;%s')",
                         polygon.getSRID(), wktGeometry));
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        assertThat(request.hasResultFilter(), is(false));
-        assertThat(request.hasSpatialFilter(), is(true));
-        assertThat(request.hasSpatialFilteringProfileSpatialFilter(), is(true));
-        assertThat(request.getSpatialFilter().getOperator().name(), is(FilterConstants.SpatialOperator.BBOX.name()));
+        Assert.assertThat(request.hasResultFilter(), Matchers.is(false));
+        Assert.assertThat(request.hasSpatialFilter(), Matchers.is(true));
+        Assert.assertThat(request.hasSpatialFilteringProfileSpatialFilter(), Matchers.is(true));
+        Assert.assertThat(request.getSpatialFilter().getOperator().name(),
+                Matchers.is(FilterConstants.SpatialOperator.BBOX.name()));
     }
 
     @Test
     public void should_decode_extension_resultFilter_spatialFilter() throws DecodingException {
         final Map<String, String> map = getDefaultMap();
-        map.put("$filter", String
+        map.put(FILTER, String
                 .format("result eq '10.5' and geo.intersects(featureOfInterest,'SRID=%s;%s')",
                         polygon.getSRID(), wktGeometry));
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        assertThat(request.hasResultFilter(), is(true));
+        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
     }
 
     private Map<String, String> getDefaultMap() {

@@ -39,14 +39,13 @@ import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 public class GetResultTemplateKvpDecoderv20 extends AbstractSosKvpDecoder<GetResultTemplateRequest> {
 
     public GetResultTemplateKvpDecoderv20() {
-        super(GetResultTemplateRequest::new,
-              Sos2Constants.SERVICEVERSION,
-              Sos2Constants.Operations.GetResultTemplate);
+        super(GetResultTemplateRequest::new, Sos2Constants.SERVICEVERSION, Sos2Constants.Operations.GetResultTemplate);
     }
 
     @Override
     protected void getRequestParameterDefinitions(Builder<GetResultTemplateRequest> builder) {
         builder.add(Sos2Constants.GetResultTemplateParams.offering, GetResultTemplateRequest::setOffering);
-        builder.add(Sos2Constants.GetResultTemplateParams.observedProperty, GetResultTemplateRequest::setObservedProperty);
+        builder.add(Sos2Constants.GetResultTemplateParams.observedProperty,
+                GetResultTemplateRequest::setObservedProperty);
     }
 }

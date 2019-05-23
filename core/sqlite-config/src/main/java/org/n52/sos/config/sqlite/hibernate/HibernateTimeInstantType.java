@@ -42,7 +42,6 @@ public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserTy
 
     private static final String VALUE_SEPARATOR = "@@";
 
-
     public HibernateTimeInstantType() {
         super(Time.class);
     }
@@ -59,15 +58,15 @@ public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserTy
     @Override
     protected String encode(Time t) throws HibernateException {
         if (t instanceof TimeInstant) {
-            return encodeTimeInstant((TimeInstant)t);
+            return encodeTimeInstant((TimeInstant) t);
         }
         return "";
     }
 
     private Time decodeTimeInstant(String s) throws DateTimeParseException {
         if (!Strings.isNullOrEmpty(s)) {
-        String[] split = s.split(VALUE_SEPARATOR);
-            TimeInstant time = (TimeInstant)DateTimeHelper.parseIsoString2DateTime2Time(split[0]);
+            String[] split = s.split(VALUE_SEPARATOR);
+            TimeInstant time = (TimeInstant) DateTimeHelper.parseIsoString2DateTime2Time(split[0]);
             if (split.length == 2) {
                 time.setRequestedTimeLength(Integer.parseInt(split[1]));
             }
@@ -83,6 +82,5 @@ public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserTy
         builder.append(t.getRequestedTimeLength());
         return builder.toString();
     }
-
 
 }

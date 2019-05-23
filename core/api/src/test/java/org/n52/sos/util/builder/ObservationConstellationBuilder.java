@@ -93,7 +93,7 @@ public class ObservationConstellationBuilder {
         }
         return sosObservationConstellation;
     }
-    
+
     public static ObservationConstellationBuilder anObservationConstellation() {
         return new ObservationConstellationBuilder();
     }

@@ -31,7 +31,6 @@ package org.n52.sos.netcdf;
 import org.n52.janmayen.http.MediaType;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -44,25 +43,37 @@ import com.google.common.collect.ImmutableMap;
  */
 public interface NetcdfConstants {
 
+    String APPLICATION = "application";
+
+    String NETCDF = "netcdf";
+
+    String PROFILE = "profile";
+
     String PARAM_VERSION = "version";
 
-    MediaType CONTENT_TYPE_NETCDF = new MediaType("application", "netcdf");
+    String SUBTYPE = "subtype";
 
-    MediaType CONTENT_TYPE_NETCDF_3 = new MediaType("application", "netcdf", PARAM_VERSION, "3");
+    String ZIP = "zip";
 
-    MediaType CONTENT_TYPE_NETCDF_4 = new MediaType("application", "netcdf", PARAM_VERSION, "4");
+    MediaType CONTENT_TYPE_NETCDF = new MediaType(APPLICATION, NETCDF);
 
-    MediaType CONTENT_TYPE_NETCDF_ZIP = new MediaType("application", "zip", "subtype", "netcdf");
+    MediaType CONTENT_TYPE_NETCDF_3 = new MediaType(APPLICATION, NETCDF, PARAM_VERSION, "3");
 
-    MediaType CONTENT_TYPE_NETCDF_3_ZIP = new MediaType("application", "zip",
-            ImmutableMap.of("subtype", ImmutableList.of("netcdf"), PARAM_VERSION, ImmutableList.of("3")));
+    MediaType CONTENT_TYPE_NETCDF_4 = new MediaType(APPLICATION, NETCDF, PARAM_VERSION, "4");
 
-    MediaType CONTENT_TYPE_NETCDF_4_ZIP = new MediaType("application", "zip",
-            ImmutableMap.of("subtype", ImmutableList.of("netcdf"), PARAM_VERSION, ImmutableList.of("4")));
+    MediaType CONTENT_TYPE_NETCDF_ZIP = new MediaType(APPLICATION, ZIP, SUBTYPE, NETCDF);
 
-//    MediaType CONTENT_TYPE_NETCDF_3_ZIP = new MediaType("application", "zip", ImmutableListMultimap.of("subtype", "netcdf", PARAM_VERSION, "3"));
-//
-//    MediaType CONTENT_TYPE_NETCDF_4_ZIP = new MediaType("application", "zip", ImmutableListMultimap.of("subtype", "netcdf", PARAM_VERSION, "4"));
+    MediaType CONTENT_TYPE_NETCDF_3_ZIP = new MediaType(APPLICATION, ZIP,
+            ImmutableMap.of(SUBTYPE, ImmutableList.of(NETCDF), PARAM_VERSION, ImmutableList.of("3")));
+
+    MediaType CONTENT_TYPE_NETCDF_4_ZIP = new MediaType(APPLICATION, ZIP,
+            ImmutableMap.of(SUBTYPE, ImmutableList.of(NETCDF), PARAM_VERSION, ImmutableList.of("4")));
+
+    // MediaType CONTENT_TYPE_NETCDF_3_ZIP = new MediaType(APPLICATION, ZIP,
+    // ImmutableListMultimap.of(SUBTYPE, NETCDF, PARAM_VERSION, "3"));
+    //
+    // MediaType CONTENT_TYPE_NETCDF_4_ZIP = new MediaType(APPLICATION, ZIP,
+    // ImmutableListMultimap.of(SUBTYPE, NETCDF, PARAM_VERSION, "4"));
 
     String CONTRIBUTOR_EMAIL = "contributor_email";
 

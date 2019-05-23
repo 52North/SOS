@@ -35,7 +35,7 @@ import org.n52.sos.ds.hibernate.type.AbstractStringBasedHibernateUserType;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class HibernateFileType extends AbstractStringBasedHibernateUserType<File> {
 

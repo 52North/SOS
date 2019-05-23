@@ -100,7 +100,8 @@ public class UVFRequestModifier
     public OwsServiceRequest modifyRequest(OwsServiceRequest request)
             throws OwsExceptionReport {
         // check for response format to avoid incomprehensible exception
-        if (request instanceof AbstractObservationRequest && ((AbstractObservationRequest) request).isSetResponseFormat()) {
+        if (request instanceof AbstractObservationRequest
+                && ((AbstractObservationRequest) request).isSetResponseFormat()) {
             checkResponseFormat(((AbstractObservationRequest) request).getResponseFormat(), request.getService(),
                     request.getVersion());
         }
@@ -169,8 +170,8 @@ public class UVFRequestModifier
      *
      * @param responseFormat
      *            String containing the value of the result format parameter
-     * @param service
-     * @param version
+     * @param service The service
+     * @param version the version
      *
      * @throws OwsExceptionReport
      *             * if the parameter value is incorrect

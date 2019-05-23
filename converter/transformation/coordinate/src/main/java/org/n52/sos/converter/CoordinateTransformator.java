@@ -140,8 +140,7 @@ import com.google.common.collect.Lists;
  * @since 4.1.0
  *
  */
-public class CoordinateTransformator
-        implements RequestResponseModifier, Constructable {
+public class CoordinateTransformator implements RequestResponseModifier, Constructable {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
@@ -154,6 +153,7 @@ public class CoordinateTransformator
     private Set<String> altitudeNames = Collections.emptySet();
 
     private ProcedureDescriptionSettings procedureSettings;
+
     private GeometryHandler geometryHandler;
 
     @Inject
@@ -173,12 +173,14 @@ public class CoordinateTransformator
      * @param omObservation
      *            Response {@link OmObservation}
      * @param targetCRS
-     * @param target3DCRS
      *            Target EPSG code
+     * @param target3DCRS
+     *            Target 3D EPSG code
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkResponseObservation(OmObservation omObservation, int targetCRS, int target3DCRS) throws OwsExceptionReport {
+    private void checkResponseObservation(OmObservation omObservation, int targetCRS, int target3DCRS)
+            throws OwsExceptionReport {
         if (omObservation.getObservationConstellation().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
             checkResponseGeometryOfSamplingFeature(
                     (AbstractSamplingFeature) omObservation.getObservationConstellation().getFeatureOfInterest(),
@@ -354,8 +356,8 @@ public class CoordinateTransformator
     private OwsServiceRequest modifyInsertResultTemplateRequest(InsertResultTemplateRequest request)
             throws OwsExceptionReport {
         if (request.getObservationTemplate().getFeatureOfInterest() instanceof AbstractSamplingFeature) {
-            checkRequestedGeometryOfSamplingFeature((AbstractSamplingFeature) request.getObservationTemplate()
-                    .getFeatureOfInterest());
+            checkRequestedGeometryOfSamplingFeature(
+                    (AbstractSamplingFeature) request.getObservationTemplate().getFeatureOfInterest());
         }
         return request;
     }
@@ -626,7 +628,8 @@ public class CoordinateTransformator
                 y = coordinate.y;
             }
             return Stream
-                    .of(new SweCoordinate<>(northingName, createSweQuantity(y, SweConstants.Y_AXIS, procedureSettings.getLatLongUom())),
+                    .of(new SweCoordinate<>(northingName,
+                            createSweQuantity(y, SweConstants.Y_AXIS, procedureSettings.getLatLongUom())),
                             new SweCoordinate<>(eastingName,
                                     createSweQuantity(x, SweConstants.X_AXIS, procedureSettings.getLatLongUom())),
                             altitude)
@@ -769,8 +772,8 @@ public class CoordinateTransformator
      *             If an error occurs when parsing the request
      */
     private int getCrsFrom(OwsServiceRequest request) throws OwsExceptionReport {
-        Optional<?> crsExtension = request.getExtension(OWSConstants.AdditionalRequestParams.crs).map((extension) ->
-                extension.getValue());
+        Optional<?> crsExtension = request.getExtension(OWSConstants.AdditionalRequestParams.crs)
+                .map(extension -> extension.getValue());
 
         if (crsExtension.isPresent()) {
             return getCrs(crsExtension.get());
@@ -787,7 +790,7 @@ public class CoordinateTransformator
      * @param request
      *            the request to get CRS from
      * @return Requested, if set, or the default response EPSG code
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     private int getRequestedCrs(OwsServiceRequest request) throws OwsExceptionReport {
         int crsFrom = getCrsFrom(request);
@@ -966,16 +969,18 @@ public class CoordinateTransformator
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void checkResponseGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature, int targetCRS, int target3DCRS)
-            throws OwsExceptionReport {
+    private void checkResponseGeometryOfSamplingFeature(AbstractSamplingFeature samplingFeature, int targetCRS,
+            int target3DCRS) throws OwsExceptionReport {
         if (samplingFeature.isSetGeometry()) {
             if (Double.isNaN(samplingFeature.getGeometry().getCoordinate().z)) {
                 if (samplingFeature.getGeometry().getSRID() != targetCRS) {
-                    samplingFeature.setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), targetCRS));
+                    samplingFeature
+                            .setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), targetCRS));
                 }
             } else {
                 if (samplingFeature.getGeometry().getSRID() != target3DCRS) {
-                    samplingFeature.setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), target3DCRS));
+                    samplingFeature
+                            .setGeometry(getGeomtryHandler().transform(samplingFeature.getGeometry(), target3DCRS));
                 }
             }
         }
@@ -992,13 +997,15 @@ public class CoordinateTransformator
      * @throws OwsExceptionReport
      *             If the transformation fails
      */
-    private void processAbstractFeature(AbstractFeature feature, int targetCRS, int target3DCRS) throws OwsExceptionReport {
+    private void processAbstractFeature(AbstractFeature feature, int targetCRS, int target3DCRS)
+            throws OwsExceptionReport {
         if (feature != null) {
             if (feature instanceof FeatureCollection) {
                 FeatureCollection featureCollection = (FeatureCollection) feature;
                 for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
                     if (abstractFeature instanceof AbstractSamplingFeature) {
-                        checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) abstractFeature, targetCRS, target3DCRS);
+                        checkResponseGeometryOfSamplingFeature((AbstractSamplingFeature) abstractFeature, targetCRS,
+                                target3DCRS);
                     }
                 }
             } else if (feature instanceof AbstractSamplingFeature) {
@@ -1025,14 +1032,14 @@ public class CoordinateTransformator
             if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                 NamedValue<Geometry> spatialFilteringProfileParameter = (NamedValue<Geometry>) namedValue;
                 if (request) {
-                    spatialFilteringProfileParameter.getValue().setValue(
-                            getGeomtryHandler().transformToStorageEpsg(spatialFilteringProfileParameter.getValue().getValue()));
+                    spatialFilteringProfileParameter.getValue().setValue(getGeomtryHandler()
+                            .transformToStorageEpsg(spatialFilteringProfileParameter.getValue().getValue()));
                 } else {
-                    spatialFilteringProfileParameter.getValue().setValue(
-                            getGeomtryHandler().transform(spatialFilteringProfileParameter.getValue().getValue(),
-                                    !Double.isNaN(spatialFilteringProfileParameter.getValue().getValue().getCoordinate().z)
-                                        ? getGeomtryHandler().getStorage3DEPSG()
-                                        : getGeomtryHandler().getStorageEPSG()));
+                    spatialFilteringProfileParameter.getValue().setValue(getGeomtryHandler().transform(
+                            spatialFilteringProfileParameter.getValue().getValue(),
+                            !Double.isNaN(spatialFilteringProfileParameter.getValue().getValue().getCoordinate().z)
+                                    ? getGeomtryHandler().getStorage3DEPSG()
+                                    : getGeomtryHandler().getStorageEPSG()));
                 }
             }
         }

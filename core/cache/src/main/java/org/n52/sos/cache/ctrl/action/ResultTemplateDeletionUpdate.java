@@ -48,7 +48,6 @@ package org.n52.sos.cache.ctrl.action;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.cache.WritableContentCache;
 import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

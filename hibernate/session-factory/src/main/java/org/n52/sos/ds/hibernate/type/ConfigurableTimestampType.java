@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
-import java.sql.Timestamp;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -53,7 +52,7 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
  *      http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-
  *      utc-time-zone/3430957#3430957</a>
  *
- * @author Shane StClair <shane@axiomalaska.com>
+ * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  * @since 4.3.12
@@ -93,6 +92,11 @@ public class ConfigurableTimestampType extends AbstractSingleColumnStandardBasic
         return TimestampType.INSTANCE.next(current, session);
     }
 
+    @Override
+    public Date next(Date current, SharedSessionContractImplementor session) {
+        return TimestampType.INSTANCE.next(current, session);
+    }
+
     public Date seed(SessionImplementor session) {
         return TimestampType.INSTANCE.seed(session);
     }
@@ -100,11 +104,6 @@ public class ConfigurableTimestampType extends AbstractSingleColumnStandardBasic
     @Override
     public Date seed(SharedSessionContractImplementor session) {
         return TimestampType.INSTANCE.seed(session);
-    }
-
-    @Override
-    public Date next(Date current, SharedSessionContractImplementor session) {
-        return TimestampType.INSTANCE.next(current, session);
     }
 
     public Comparator<Date> getComparator() {

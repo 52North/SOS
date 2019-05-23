@@ -28,17 +28,10 @@
  */
 package org.n52.sos.cache;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNot;
+import org.hamcrest.core.IsNull;
+import org.junit.Assert;
 
 import java.util.Collections;
 import java.util.Set;
@@ -65,6 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class InMemoryCacheImplTest {
     private static final String OFFERING_IDENTIFIER = "test-offering";
+    private static final String FEATURE_IDENTIFIER = "test-feature";
     private static InMemoryCacheImpl instance;
 
     @Before
@@ -105,35 +99,35 @@ public class InMemoryCacheImplTest {
     @Test
     public void defaultConstructorReturnsObject() {
         initInstance();
-        assertNotNull("instance is null", instance);
-        assertTrue("right class", instance instanceof InMemoryCacheImpl);
+        Assert.assertNotNull("instance is null", instance);
+        Assert.assertTrue("right class", instance instanceof InMemoryCacheImpl);
     }
 
     @Test
     public void equalsWithNewInstances() {
-        assertEquals("equals failed", new InMemoryCacheImpl(), new InMemoryCacheImpl());
+        Assert.assertEquals("equals failed", new InMemoryCacheImpl(), new InMemoryCacheImpl());
     }
 
     @Test
     public void equalsWithSelf() {
-        assertEquals("I am not equal with me", instance, instance);
+        Assert.assertEquals("I am not equal with me", instance, instance);
     }
 
     @Test
     public void equalsWithNull() {
-        assertNotEquals("equal with null", instance, null);
+        Assert.assertNotEquals("equal with null", instance, null);
     }
 
     @Test
     public void equalWithOtherClass() {
-        assertNotEquals("equal with Object", instance, new Object());
+        Assert.assertNotEquals("equal with Object", instance, new Object());
     }
 
     @Test
     public void should_return_different_hashCodes_for_different_instances() {
         InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setProcedures(Collections.singleton("p_1"));
-        assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new InMemoryCacheImpl());
+        Assert.assertNotEquals("hashCode() of different caches are equal", cache.hashCode(), new InMemoryCacheImpl());
     }
 
     @Test
@@ -141,59 +135,59 @@ public class InMemoryCacheImplTest {
         instance.setGlobalEnvelope(null);
         final ReferencedEnvelope emptyReferencedEnvelope = new ReferencedEnvelope(null, instance.getDefaultEPSGCode());
 
-        assertThat(instance.getGlobalEnvelope(), not(nullValue()));
-        assertThat(instance.getGlobalEnvelope(), is(emptyReferencedEnvelope));
+        Assert.assertThat(instance.getGlobalEnvelope(), IsNot.not(IsNull.nullValue()));
+        Assert.assertThat(instance.getGlobalEnvelope(), Is.is(emptyReferencedEnvelope));
     }
 
     @Test
     public void should_serialize_to_json() throws JsonProcessingException {
         String json = new ObjectMapper().writeValueAsString(instance);
-        assertNotNull(json);
-        assertFalse(json.isEmpty());
+        Assert.assertNotNull(json);
+        Assert.assertFalse(json.isEmpty());
     }
 
     @Test
     public void should_return_true_if_min_resulttime_for_offering_is_available() {
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
-        cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, new DateTime(52l));
+        cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, new DateTime(52L));
 
-        assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(TRUE));
+        Assert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.TRUE));
     }
 
     @Test
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
 
-        assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
+        Assert.assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
 
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
-        assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), is(FALSE));
+        Assert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
     }
 
     @Test
     public void should_return_false_if_relatedFeature_has_no_children() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
-        final String relatedFeature = "test-feature";
-        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering("test-offering", relatedFeature);
+        final String relatedFeature = FEATURE_IDENTIFIER;
+        ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(OFFERING_IDENTIFIER, relatedFeature);
 
-        assertThat(readCache.isRelatedFeatureSampled(null), is(FALSE));
-        assertThat(readCache.isRelatedFeatureSampled(""), is(FALSE));
-        assertThat(readCache.isRelatedFeatureSampled(relatedFeature), is(FALSE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(null), Is.is(Boolean.FALSE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(""), Is.is(Boolean.FALSE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.FALSE));
     }
 
     @Test
     public void should_return_true_if_relatedFeature_has_one_or_more_children() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
-        final String relatedFeature = "test-feature";
+        final String relatedFeature = FEATURE_IDENTIFIER;
         final String relatedFeature2 = "test-feature-2";
-        final String offering = "test-offering";
+        final String offering = OFFERING_IDENTIFIER;
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature);
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
         ((SosWritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
 
-        assertThat(readCache.isRelatedFeatureSampled(relatedFeature), is(TRUE));
+        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.TRUE));
     }
 
 }

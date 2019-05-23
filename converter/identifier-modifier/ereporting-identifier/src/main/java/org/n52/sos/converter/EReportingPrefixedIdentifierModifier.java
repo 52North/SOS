@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.aqd.AqdConstants;
@@ -77,6 +79,9 @@ import com.google.common.collect.Sets;
 public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
+    
+    @Inject
+    private EReportingPrefixedIdentifierHelper eReportingPrefixedIdentifierHelper;
 
     /**
      * Get the keys
@@ -119,7 +124,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     private OwsServiceResponse changeOmParameterValues(
             OwsServiceResponse response) {
         if (response instanceof AbstractObservationResponse) {
-            AbstractObservationResponse observationResponse = (AbstractObservationResponse)response;
+            AbstractObservationResponse observationResponse = (AbstractObservationResponse) response;
             observationResponse.setObservationCollection(observationResponse.getObservationCollection().modify(o -> {
                 checkOmParameterForEReporting(o.getParameter());
             }));
@@ -145,22 +150,23 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     private String checkFor(NamedValue<?> namedValue, String identifier, ProcessParameter processParameter) {
-       switch (processParameter) {
-        case SamplingPoint:
-            return checkOmParameterForSamplingPoint(namedValue, identifier);
-        case MonitoringStation:
-            return checkOmParameterForMonitoringStation(namedValue, identifier);
-        case Network:
-            return checkOmParameterForNetwork(namedValue, identifier);
-        default:
-            return identifier;
+        switch (processParameter) {
+            case SamplingPoint:
+                return checkOmParameterForSamplingPoint(namedValue, identifier);
+            case MonitoringStation:
+                return checkOmParameterForMonitoringStation(namedValue, identifier);
+            case Network:
+                return checkOmParameterForNetwork(namedValue, identifier);
+            default:
+                return identifier;
         }
     }
 
     private String checkOmParameterForSamplingPoint(NamedValue<?> namedValue, String identifier) {
         if (ProcessParameter.SamplingPoint.getConceptURI().equals(namedValue.getName().getHref())) {
             if (getEReportingPrefixedIdentifierHelper().isSetSamplingPointPrefix()) {
-                return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getSamplingPointPrefix() + identifier);
+                return checkNamespacePrefix(
+                        getEReportingPrefixedIdentifierHelper().getSamplingPointPrefix() + identifier);
             }
             return checkNamespacePrefix(identifier);
         }
@@ -195,18 +201,28 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     private String checkNamespacePrefixForParameterValue(String parameterValue) {
         if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(getEReportingPrefixedIdentifierHelper().getNamespacePrefix());
-            if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith("/")) {
-                builder.append("/");
-            } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(":")) {
-                builder.append(":") ;
-            }
-            return parameterValue.replace(builder.toString(), "");
+            return parameterValue.replace(getPrefix(), "");
         }
         return parameterValue;
     }
 
+    private String getPrefix() {
+        if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(getEReportingPrefixedIdentifierHelper().getNamespacePrefix());
+            if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith(
+                    "http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith("/")) {
+                builder.append("/");
+            } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT)
+                    .startsWith("urn")
+                    && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(":")) {
+                builder.append(":");
+            }
+            return builder.toString();
+        }
+        return "";
+    }
+    
     @Override
     protected String checkOfferingParameterValue(String parameterValue) {
         String globalModified = checkNamespacePrefixForParameterValue(parameterValue);
@@ -236,24 +252,23 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     @Override
     protected String checkObservablePropertyParameterValue(String parameterValue) {
-//        String globalModified = checkNamespacePrefixForParameterValue(parameterValue);
-//        if (getEReportingPrefixedIdentifierHelper().isSetObservablePropertyPrefix()) {
-//            return globalModified.replace(getEReportingPrefixedIdentifierHelper().getObservablePropertyPrefix(), "");
-//        }
+        // String globalModified =
+        // checkNamespacePrefixForParameterValue(parameterValue);
+        // if
+        // (getEReportingPrefixedIdentifierHelper().isSetObservablePropertyPrefix())
+        // {
+        // return
+        // globalModified.replace(getEReportingPrefixedIdentifierHelper().getObservablePropertyPrefix(),
+        // "");
+        // }
         return parameterValue;
     }
 
     private String checkNamespacePrefix(String identifier) {
         if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
-               StringBuilder builder = new StringBuilder();
-               builder.append(getEReportingPrefixedIdentifierHelper().getNamespacePrefix());
-               if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith("/")) {
-                   builder.append("/");
-               } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(":")) {
-                   builder.append(":") ;
-               }
-               builder.append(identifier);
-               return builder.toString();
+            StringBuilder builder = new StringBuilder(getPrefix());
+            builder.append(identifier);
+            return builder.toString();
         }
         return identifier;
     }
@@ -261,17 +276,22 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     @Override
     protected String checkFeatureOfInterestIdentifier(String identifier) {
         if (getEReportingPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
-            return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getFeatureOfInterestPrefix() + identifier);
+            return checkNamespacePrefix(
+                    getEReportingPrefixedIdentifierHelper().getFeatureOfInterestPrefix() + identifier);
         }
         return checkNamespacePrefix(identifier);
     }
 
     @Override
     protected String checkObservablePropertyIdentifier(String identifier) {
-//        if (getEReportingPrefixedIdentifierHelper().isSetObservablePropertyPrefix()) {
-//            return checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getObservablePropertyPrefix() + identifier);
-//        }
-//        return checkNamespacePrefix(identifier);
+        // if
+        // (getEReportingPrefixedIdentifierHelper().isSetObservablePropertyPrefix())
+        // {
+        // return
+        // checkNamespacePrefix(getEReportingPrefixedIdentifierHelper().getObservablePropertyPrefix()
+        // + identifier);
+        // }
+        // return checkNamespacePrefix(identifier);
         return identifier;
     }
 
@@ -298,26 +318,25 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
 
     @Override
     protected void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature) {
-            checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
+        checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
     }
 
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
-        abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
-                    .getIdentifier()));
-        if (abstractFeature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) abstractFeature).isSetXml()) {
+        abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature.getIdentifier()));
+        if (abstractFeature instanceof AbstractSamplingFeature
+                && ((AbstractSamplingFeature) abstractFeature).isSetXml()) {
             abstractFeature.setXml(null);
         }
     }
 
     @Override
     protected void checkAndChangeProcedureIdentifier(AbstractFeature abstractFeature) {
-         abstractFeature.setIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
+        abstractFeature.setIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
     }
 
     @Override
     protected void checkAndChangeObservablePropertyIdentifier(AbstractFeature abstractFeature) {
-                abstractFeature.setIdentifier(checkObservablePropertyIdentifier(abstractFeature
-                        .getIdentifier()));
+        abstractFeature.setIdentifier(checkObservablePropertyIdentifier(abstractFeature.getIdentifier()));
     }
 
     @Override
@@ -328,7 +347,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     protected EReportingPrefixedIdentifierHelper getEReportingPrefixedIdentifierHelper() {
-        return EReportingPrefixedIdentifierHelper.getInstance();
+        return eReportingPrefixedIdentifierHelper;
     }
 
     @Override

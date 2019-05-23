@@ -91,6 +91,7 @@ import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.netcdf.Nc4ForceTimeChunkingStategy;
 import org.n52.sos.netcdf.NetCDFUtil;
 import org.n52.sos.netcdf.NetcdfConstants;
+import org.n52.sos.netcdf.NetcdfHelper;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.data.dataset.StaticLocationDataset;
 import org.n52.sos.netcdf.data.subsensor.BinProfileSubSensor;
@@ -140,7 +141,8 @@ import ucar.nc2.jni.netcdf.Nc4Iosp;
  * @since 4.4.0
  *
  */
-public abstract class AbstractNetcdfEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object>, NetCDFUtil {
+public abstract class AbstractNetcdfEncoder
+        implements ObservationEncoder<BinaryAttachmentResponse, Object>, NetCDFUtil {
 
     private final Set<SupportedType> SUPPORTED_TYPES =
             ImmutableSet.<SupportedType>builder().add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE).build();
@@ -152,6 +154,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     private OperationHandlerRepository operationHandlerRepository;
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
     private GeometryHandler geometryHandler;
+    private NetcdfHelper netcdfHelper;
 
     public AbstractNetcdfEncoder() {
 
@@ -179,8 +182,18 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     @Override
+    public NetcdfHelper getNetcdfHelper() {
+        return netcdfHelper;
+    }
+
+    @Inject
+    public void setNetcdfHelper(NetcdfHelper netcdfHelper) {
+        this.netcdfHelper = netcdfHelper;
+    }
+
+    @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -371,9 +384,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         // profile/timeSeriesProfile
         Dimension dZ = writer.addDimension(null, dimensionName, numHeightDepth);
-        if (sensorDataset instanceof StaticLocationDataset) {
-            // nothing to do
-        } else {
+        if (!(sensorDataset instanceof StaticLocationDataset)) {
             // trajectory
             zDims.add(dTime);
         }
@@ -490,7 +501,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                     Value<?> value = subSensorEntry.getValue();
                     Object valObj = value.getValue();
                     if (!(valObj instanceof Double)) {
-                        throw new EncodingException("Value class %s not supported", valObj.getClass().getCanonicalName());
+                        throw new EncodingException("Value class %s not supported",
+                                valObj.getClass().getCanonicalName());
                     }
                     Index index = array.getIndex();
                     int obsPropDimCounter = 0;
@@ -509,9 +521,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                     }
                     if (array instanceof ArrayFloat) {
                         ((ArrayFloat) array).set(index,
-                                Float.parseFloat(Double.toString(((Double) valObj))));
+                                Float.parseFloat(Double.toString((Double) valObj)));
                     } else {
-                        ((ArrayDouble) array).set(index, ((Double) valObj));
+                        ((ArrayDouble) array).set(index, (Double) valObj);
                     }
                 }
             }
@@ -667,10 +679,12 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
             StaticLocationDataset LocationDataset = (StaticLocationDataset) sensorDataset;
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MIN, LocationDataset.getLat()));
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MAX, LocationDataset.getLat()));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_UNITS, CFConstants.UNITS_DEGREES_NORTH));
+            writer.addGroupAttribute(null,
+                    new Attribute(ACDDConstants.GEOSPATIAL_LAT_UNITS, CFConstants.UNITS_DEGREES_NORTH));
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_MIN, LocationDataset.getLng()));
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_MAX, LocationDataset.getLng()));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_UNITS, CFConstants.UNITS_DEGREES_EAST));
+            writer.addGroupAttribute(null,
+                    new Attribute(ACDDConstants.GEOSPATIAL_LON_UNITS, CFConstants.UNITS_DEGREES_EAST));
         } else {
             throw new EncodingException("Trajectory encoding is not supported (bbox)");
         }
@@ -821,7 +835,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return Maps.newHashMap();
     }
 
-    private void writeToFile(NetcdfFileWriter writer, Map<Variable, Array> variableArrayMap) throws EncodingException, IOException {
+    private void writeToFile(NetcdfFileWriter writer, Map<Variable, Array> variableArrayMap)
+            throws EncodingException, IOException {
         writer.create();
 
         // fill the netCDF file with data
@@ -864,9 +879,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // keywords.add(sensor.getStation());
         // keywords.add(sensor.getSensor());
         sensorDataset.getPhenomena()
-                .forEach((obsProp) -> {
+                .forEach(obsProp -> {
                     keywords.add(obsProp.getIdentifier());
-        });
+                });
         return keywords;
     }
 
@@ -900,7 +915,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableTime(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.TIME.getName()), DataType.DOUBLE, dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.TIME.getName()),
+                DataType.DOUBLE, dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.TIME.getName()));
         v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.TIME.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, getTimeUnits()));
@@ -910,7 +926,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableLatitude(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.LATITUDE.getName()), getDataType(), dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.LATITUDE.getName()),
+                getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.LATITUDE.getName()));
         v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.LATITUDE.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_DEGREES_NORTH));
@@ -921,7 +938,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableLongitude(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.LONGITUDE.getName()), getDataType(), dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.LONGITUDE.getName()),
+                getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.LONGITUDE.getName()));
         v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.LONGITUDE.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_DEGREES_EAST));
@@ -931,7 +949,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableHeight(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.HEIGHT.getName()), getDataType(), dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.HEIGHT.getName()),
+                getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.HEIGHT.getName()));
         v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.HEIGHT.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_METERS));
@@ -942,7 +961,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableDepth(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.DEPTH.getName()), getDataType(), dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.DEPTH.getName()),
+                getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.DEPTH.getName()));
         v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.DEPTH.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_METERS));
@@ -1076,8 +1096,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
             req.setProcedureDescriptionFormat(SensorMLConstants.NS_SML);
         } else {
             throw new EncodingException(
-                            "Error getting sensor description for %s! Required procedureDescriptionFormats are not supported!",
-                            procedure);
+                    "Error getting sensor description for %s! Required procedureDescriptionFormats are not supported!",
+                    procedure);
         }
         DescribeSensorResponse resp;
         try {
@@ -1190,8 +1210,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return false;
     }
 
-    protected boolean addAttributeIfClassifierExists(Variable variable, AbstractSensorML sml, String classifierDefinition,
-            String attributeName) {
+    protected boolean addAttributeIfClassifierExists(Variable variable, AbstractSensorML sml,
+            String classifierDefinition, String attributeName) {
         String value = getClassifierValue(sml, classifierDefinition);
         if (value != null) {
             variable.addAttribute(new Attribute(attributeName, value));
@@ -1308,7 +1328,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                     .map(OwsAddress::getElectronicMailAddress).map(l -> Iterables.getFirst(l, null)).orElse(null);
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.CONTRIBUTOR_NAME, individualName));
             writer.addGroupAttribute(null, new Attribute(ACDDConstants.CONTRIBUTOR_ROLE, positionName));
-            writer.addGroupAttribute(null,new Attribute(NetcdfConstants.CONTRIBUTOR_EMAIL, mail));
+            writer.addGroupAttribute(null, new Attribute(NetcdfConstants.CONTRIBUTOR_EMAIL, mail));
         }
         return true;
     }

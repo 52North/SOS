@@ -28,16 +28,13 @@
  */
 package org.n52.sos.decode.kvp.v1;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.shetland.ogc.sos.Sos1Constants;
@@ -70,11 +67,11 @@ public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     public void basic() throws DecodingException {
         DescribeSensorRequest req =
                 decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT));
-        assertThat(req, is(notNullValue()));
-        assertThat(req.getOperationName(), is(SosConstants.Operations.DescribeSensor.name()));
-        assertThat(req.getService(), is(SosConstants.SOS));
-        assertThat(req.getVersion(), is(Sos1Constants.SERVICEVERSION));
-        assertThat(req.getProcedure(), is(PROCEDURE));
+        Assert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
+        Assert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.DescribeSensor.name()));
+        Assert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
+        Assert.assertThat(req.getVersion(), CoreMatchers.is(Sos1Constants.SERVICEVERSION));
+        Assert.assertThat(req.getProcedure(), CoreMatchers.is(PROCEDURE));
     }
 
     @Test(expected = DecodingException.class)

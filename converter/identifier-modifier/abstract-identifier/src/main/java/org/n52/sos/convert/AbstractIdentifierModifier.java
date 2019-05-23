@@ -28,10 +28,6 @@
  */
 package org.n52.sos.convert;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +36,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -103,7 +100,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.svalbard.encode.EncoderRepository;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -123,7 +119,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     protected SosContentCache getCache() {
-        return (SosContentCache)getCacheController().getCache();
+        return (SosContentCache) getCacheController().getCache();
     }
 
     protected ProfileHandler getProfileHandler() {
@@ -157,9 +153,21 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     protected abstract String checkFeatureOfInterestIdentifier(String identifier);
 
+    private Collection<String> checkFeatureOfInterestIdentifier(Collection<String> identifiers) {
+        return identifiers.stream().map(this::checkFeatureOfInterestIdentifier).collect(Collectors.toList());
+    }
+
     protected abstract String checkObservablePropertyIdentifier(String identifier);
 
+    private Collection<String> checkObservablePropertyIdentifier(SortedSet<String> identifiers) {
+        return identifiers.stream().map(this::checkObservablePropertyIdentifier).collect(Collectors.toList());
+    }
+
     protected abstract String checkProcedureIdentifier(String identifier);
+
+    private Collection<String> checkProcedureIdentifier(Set<String> identifiers) {
+        return identifiers.stream().map(this::checkProcedureIdentifier).collect(Collectors.toList());
+    }
 
     protected abstract ReferenceType checkProcedureIdentifier(ReferenceType procedure);
 
@@ -407,7 +415,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
             if (procedure.isSetFeaturesOfInterestMap()) {
                 procedure.setFeaturesOfInterestMap(procedure.getFeaturesOfInterestMap().values().stream()
                         .map(Functions.mutate(this::checkAndChangeFeatureOfInterestIdentifier))
-                        .collect(toMap(AbstractFeature::getIdentifier, Function.identity())));
+                        .collect(Collectors.toMap(AbstractFeature::getIdentifier, Function.identity())));
             }
             if (procedure.isSetOfferings()) {
                 procedure.getOfferings().forEach(off -> checkAndChangOfferingIdentifier(off));
@@ -415,7 +423,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
             if (procedure.isSetPhenomenon()) {
                 procedure.setPhenomenon(procedure.getPhenomenon().values().stream()
                         .map(Functions.mutate(this::checkAndChangeObservablePropertyIdentifier))
-                        .collect(toMap(AbstractPhenomenon::getIdentifier, identity())));
+                        .collect(Collectors.toMap(AbstractPhenomenon::getIdentifier, Function.identity())));
             }
             if (procedure.isSetParentProcedure()) {
                 procedure.setParentProcedure(checkProcedureIdentifier(procedure.getParentProcedure()));
@@ -444,7 +452,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
                 .map(this::checkObservablePropertyIdentifier)
                 .map(this::checkFeatureOfInterestIdentifier)
                 .map(this::checkProcedureIdentifier)
-                .collect(toList());
+                .collect(Collectors.toList());
     }
 
     private void checkSensorML(SensorML procedure) {
@@ -555,31 +563,19 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     private List<String> checkOfferingParameterValues(Collection<String> values) {
-        return values.stream().map(this::checkOfferingParameterValue).collect(toList());
+        return values.stream().map(this::checkOfferingParameterValue).collect(Collectors.toList());
     }
 
     private List<String> checkFeatureOfInterestParameterValues(Collection<String> values) {
-        return values.stream().map(this::checkFeatureOfInterestParameterValue).collect(toList());
+        return values.stream().map(this::checkFeatureOfInterestParameterValue).collect(Collectors.toList());
     }
 
     private List<String> checkObservablePropertyParameterValues(Collection<String> values) {
-        return values.stream().map(this::checkObservablePropertyParameterValue).collect(toList());
+        return values.stream().map(this::checkObservablePropertyParameterValue).collect(Collectors.toList());
     }
 
     private List<String> checkProcedureParameterValues(Collection<String> values) {
-        return values.stream().map(this::checkProcedureParameterValue).collect(toList());
-    }
-
-    private Collection<String> checkFeatureOfInterestIdentifier(Collection<String> identifiers) {
-        return identifiers.stream().map(this::checkFeatureOfInterestIdentifier).collect(toList());
-    }
-
-    private Collection<String> checkObservablePropertyIdentifier(SortedSet<String> identifiers) {
-        return identifiers.stream().map(this::checkObservablePropertyIdentifier).collect(toList());
-    }
-
-    private Collection<String> checkProcedureIdentifier(Set<String> identifiers) {
-        return identifiers.stream().map(this::checkProcedureIdentifier).collect(toList());
+        return values.stream().map(this::checkProcedureParameterValue).collect(Collectors.toList());
     }
 
     private Optional<Function<String, String>> getIdentifierCheckerForName(String name) {

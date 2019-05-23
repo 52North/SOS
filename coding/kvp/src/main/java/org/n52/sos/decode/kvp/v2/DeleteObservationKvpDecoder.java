@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
@@ -36,26 +35,29 @@ import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- * J&uuml;rrens</a>
+ *         J&uuml;rrens</a>
  *
  * @since 1.0.0
  */
 public class DeleteObservationKvpDecoder extends AbstractSosKvpDecoder<DeleteObservationRequest> {
 
     public DeleteObservationKvpDecoder() {
-        super(DeleteObservationRequest::new,
-              Sos2Constants.SERVICEVERSION,
-              DeleteObservationConstants.Operations.DeleteObservation);
+        super(DeleteObservationRequest::new, Sos2Constants.SERVICEVERSION,
+                DeleteObservationConstants.Operations.DeleteObservation);
     }
 
     @Override
     protected void getRequestParameterDefinitions(Builder<DeleteObservationRequest> builder) {
-        builder.add(DeleteObservationConstants.PARAM_OBSERVATION, decodeList(DeleteObservationRequest::setObservationIdentifiers));
+        builder.add(DeleteObservationConstants.PARAM_OBSERVATION,
+                decodeList(DeleteObservationRequest::setObservationIdentifiers));
         builder.add(DeleteObservationConstants.PARAM_OFFERING, decodeList(DeleteObservationRequest::setOfferings));
-        builder.add(DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, decodeList(DeleteObservationRequest::setObservedProperties));
+        builder.add(DeleteObservationConstants.PARAM_OBSERVED_PROPERTY,
+                decodeList(DeleteObservationRequest::setObservedProperties));
         builder.add(DeleteObservationConstants.PARAM_PROCEDURE, decodeList(DeleteObservationRequest::setProcedures));
-        builder.add(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST, decodeList(DeleteObservationRequest::setFeatureIdentifiers));
-        builder.add(DeleteObservationConstants.PARAM_TEMPORAL_FILTER, decodeList(decodeTemporalFilter(asList(DeleteObservationRequest::setTemporalFilters))));
+        builder.add(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST,
+                decodeList(DeleteObservationRequest::setFeatureIdentifiers));
+        builder.add(DeleteObservationConstants.PARAM_TEMPORAL_FILTER,
+                decodeList(decodeTemporalFilter(asList(DeleteObservationRequest::setTemporalFilters))));
     }
 
 }

@@ -36,7 +36,7 @@ import org.n52.faroe.SettingType;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "string_settings")
-public class StringSettingValue extends AbstractSettingValue<String>{
+public class StringSettingValue extends AbstractSettingValue<String> {
     private static final long serialVersionUID = -8232540483696284048L;
 
     private String value;

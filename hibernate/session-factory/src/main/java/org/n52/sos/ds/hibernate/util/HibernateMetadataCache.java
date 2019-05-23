@@ -38,12 +38,14 @@ import org.hibernate.Session;
 
 import com.google.common.collect.ImmutableSet;
 
-public class HibernateMetadataCache {
+public final class HibernateMetadataCache {
     private static HibernateMetadataCache instance;
-    private static final Object lock = new Object();
-    private final Set<String> supportedEntities;
-    private Metamodel classMetadata;
 
+    private static final Object LOCK = new Object();
+
+    private final Set<String> supportedEntities;
+
+    private Metamodel classMetadata;
 
     private HibernateMetadataCache(Session session) {
         this.classMetadata = initClassMetadata(session);
@@ -51,19 +53,22 @@ public class HibernateMetadataCache {
     }
 
     private Metamodel initClassMetadata(Session session) {
-       return session.getEntityManagerFactory().getMetamodel();
-//        return ImmutableMap.copyOf(session.getSessionFactory().getAllClassMetadata());
+        return session.getEntityManagerFactory().getMetamodel();
+        // return
+        // ImmutableMap.copyOf(session.getSessionFactory().getAllClassMetadata());
     }
 
     private Set<String> initSupportedEntities(Metamodel classMetadata) {
-        return ImmutableSet.copyOf(classMetadata.getEntities().stream().map(e -> e.getName()).collect(Collectors.toSet()));
-//        return ImmutableSet.copyOf(classMetadata.keySet());
+        return ImmutableSet
+                .copyOf(classMetadata.getEntities().stream().map(e -> e.getName()).collect(Collectors.toSet()));
+        // return ImmutableSet.copyOf(classMetadata.keySet());
     }
 
     public boolean isColumnSupported(Class<?> entityClass, String column) {
         if (isEntitySupported(entityClass)) {
-            EntityType<?> classMetadata = this.classMetadata.entity(entityClass);
-            for (String propertyName : classMetadata.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toSet())) {
+            EntityType<?> metadata = this.classMetadata.entity(entityClass);
+            for (String propertyName : metadata.getAttributes().stream().map(a -> a.getName())
+                    .collect(Collectors.toSet())) {
                 if (propertyName.equals(column)) {
                     return true;
                 }
@@ -82,13 +87,13 @@ public class HibernateMetadataCache {
     }
 
     public static void init(Session session) {
-        synchronized (lock) {
+        synchronized (LOCK) {
             instance = new HibernateMetadataCache(session);
         }
     }
 
     public static HibernateMetadataCache getInstance() {
-        synchronized (lock) {
+        synchronized (LOCK) {
             if (instance != null) {
                 return instance;
             } else {

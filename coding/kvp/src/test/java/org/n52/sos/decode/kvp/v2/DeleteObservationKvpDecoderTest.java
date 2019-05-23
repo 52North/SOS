@@ -28,22 +28,18 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.n52.shetland.ogc.sos.SosConstants.SOS;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.svalbard.decode.OperationDecoderKey;
@@ -57,18 +53,26 @@ import org.n52.svalbard.decode.exception.DecodingException;
  */
 public class DeleteObservationKvpDecoderTest {
 
+    private static final String SERVICE = "service";
+    private static final String VERSION = "version";
+    private static final String REQUEST = "request";
+    private static final String PROCEDURE = "procedure";
+    private static final String FEATURE = "feature";
+    private static final String OFFERING = "offering";
+    private static final String OBSERVED_PROPERTY = "observedProperty";
+
     private static DeleteObservationKvpDecoder instance;
 
     private static Set<OperationDecoderKey> correctDecoderKey;
 
+    private final String OPERATION_NAME = DeleteObservationConstants.Operations.DeleteObservation.name();
+
     @BeforeClass
     public static void initGlobalFixtures() {
         correctDecoderKey =
-                Collections.singleton(new OperationDecoderKey(SOS, Sos2Constants.SERVICEVERSION,
+                Collections.singleton(new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.APPLICATION_KVP));
     }
-
-    final private String OPERATION_NAME = DeleteObservationConstants.Operations.DeleteObservation.name();
 
     @Before
     public void initInstance() {
@@ -77,115 +81,135 @@ public class DeleteObservationKvpDecoderTest {
 
     @Test
     public void should_return_correct_set_of_decoder_keys() {
-        assertTrue(instance.getKeys().equals(correctDecoderKey));
+        Assert.assertTrue(instance.getKeys().equals(correctDecoderKey));
     }
 
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_DecodingException_in_case_of_missing_parameters() throws DecodingException {
-//        instance.decode(new HashMap<String, String>(0));
-//    }
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_DecodingException_in_case_of_missing_parameters() throws
+    // DecodingException {
+    // instance.decode(new HashMap<String, String>(0));
+    // }
 
     @Test(expected = DecodingException.class)
     public void should_throw_DecodingException_in_case_of_null_parameter() throws DecodingException {
         instance.decode(null);
     }
-//
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_DecodingException_in_case_of_missing_parameters2() throws DecodingException {
-//        HashMap<String, String> evolvingMap = new HashMap<String, String>(1);
-//        evolvingMap.put("service", SOS);
-//        instance.decode(evolvingMap);
-//    }
-//
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_DecodingException_in_case_of_missing_parameters3() throws DecodingException {
-//        HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
-//        evolvingMap.put("service", SOS);
-//        evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
-//
-//        instance.decode(evolvingMap);
-//    }
-//
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters5() throws DecodingException {
-//        HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
-//        evolvingMap.put("service", SOS);
-//        evolvingMap.put("request", OPERATION_NAME);
-//
-//        instance.decode(evolvingMap);
-//    }
-//
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_DecodingException_in_case_of_missing_parameters6() throws DecodingException {
-//        HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
-//        evolvingMap.put("service", SOS);
-//        evolvingMap.put("request", OPERATION_NAME);
-//        evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION, "something");
-//
-//        instance.decode(evolvingMap);
-//    }
-//
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_DecodingException_in_case_of_missing_parameters7() throws DecodingException {
-//        HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
-//        evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
-//        evolvingMap.put("request", OPERATION_NAME);
-//        evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION, "something");
-//
-//        instance.decode(evolvingMap);
-//    }
-//
-//    @Test(expected = DecodingException.class)
-//    public void should_throw_DecodingException_in_case_of_missing_parameters8() throws DecodingException {
-//        HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
-//        evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
-//        evolvingMap.put("request", OPERATION_NAME);
-//        evolvingMap.put("request", OPERATION_NAME + "2");
-//        evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION, "something");
-//
-//        instance.decode(evolvingMap);
-//    }
+    //
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_DecodingException_in_case_of_missing_parameters2() throws
+    // DecodingException {
+    // HashMap<String, String> evolvingMap = new HashMap<String, String>(1);
+    // evolvingMap.put("service", SOS);
+    // instance.decode(evolvingMap);
+    // }
+    //
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_DecodingException_in_case_of_missing_parameters3() throws
+    // DecodingException {
+    // HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
+    // evolvingMap.put("service", SOS);
+    // evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
+    //
+    // instance.decode(evolvingMap);
+    // }
+    //
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_OwsExceptionReport_in_case_of_missing_parameters5() throws
+    // DecodingException {
+    // HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
+    // evolvingMap.put("service", SOS);
+    // evolvingMap.put("request", OPERATION_NAME);
+    //
+    // instance.decode(evolvingMap);
+    // }
+    //
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_DecodingException_in_case_of_missing_parameters6() throws
+    // DecodingException {
+    // HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
+    // evolvingMap.put("service", SOS);
+    // evolvingMap.put("request", OPERATION_NAME);
+    // evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION,
+    // "something");
+    //
+    // instance.decode(evolvingMap);
+    // }
+    //
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_DecodingException_in_case_of_missing_parameters7() throws
+    // DecodingException {
+    // HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
+    // evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
+    // evolvingMap.put("request", OPERATION_NAME);
+    // evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION,
+    // "something");
+    //
+    // instance.decode(evolvingMap);
+    // }
+    //
+    // @Test(expected = DecodingException.class)
+    // public void
+    // should_throw_DecodingException_in_case_of_missing_parameters8() throws
+    // DecodingException {
+    // HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
+    // evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
+    // evolvingMap.put("request", OPERATION_NAME);
+    // evolvingMap.put("request", OPERATION_NAME + "2");
+    // evolvingMap.put(DeleteObservationConstants.PARAM_OBSERVATION,
+    // "something");
+    //
+    // instance.decode(evolvingMap);
+    // }
 
     @Test
     public void should_decode_valid_request() throws DecodingException {
         final String observationIdentifier = "test-observation-identifier";
         HashMap<String, String> parameters = new HashMap<String, String>(4);
-        parameters.put("service", SOS);
-        parameters.put("version", Sos2Constants.SERVICEVERSION);
-        parameters.put("request", OPERATION_NAME);
+        parameters.put(SERVICE, SosConstants.SOS);
+        parameters.put(VERSION, Sos2Constants.SERVICEVERSION);
+        parameters.put(REQUEST, OPERATION_NAME);
         parameters.put(DeleteObservationConstants.PARAM_OBSERVATION, observationIdentifier);
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 
-        assertThat(decodedRequest, is(not(nullValue())));
-        assertThat(decodedRequest.getVersion(), is(Sos2Constants.SERVICEVERSION));
-        assertThat(decodedRequest.getService(), is(SOS));
-        assertThat(decodedRequest.getOperationName(), is(OPERATION_NAME));
-        assertThat(decodedRequest.getObservationIdentifiers().iterator().next(), is(observationIdentifier));
+        Assert.assertThat(decodedRequest, CoreMatchers.is(CoreMatchers.not(CoreMatchers.nullValue())));
+        Assert.assertThat(decodedRequest.getVersion(), CoreMatchers.is(Sos2Constants.SERVICEVERSION));
+        Assert.assertThat(decodedRequest.getService(), CoreMatchers.is(SosConstants.SOS));
+        Assert.assertThat(decodedRequest.getOperationName(), CoreMatchers.is(OPERATION_NAME));
+        Assert.assertThat(decodedRequest.getObservationIdentifiers().iterator().next(),
+                CoreMatchers.is(observationIdentifier));
     }
 
     @Test
     public void should_decode_valid_request_2() throws DecodingException {
         HashMap<String, String> parameters = new HashMap<String, String>(4);
-        parameters.put("service", SOS);
-        parameters.put("version", Sos2Constants.SERVICEVERSION);
-        parameters.put("request", OPERATION_NAME);
-        parameters.put(DeleteObservationConstants.PARAM_PROCEDURE, "procedure");
-        parameters.put(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST, "feature");
-        parameters.put(DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, "observedProperty");
-        parameters.put(DeleteObservationConstants.PARAM_OFFERING, "offering");
-        parameters.put(DeleteObservationConstants.PARAM_TEMPORAL_FILTER, "om:phenomeonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00");
+        parameters.put(SERVICE, SosConstants.SOS);
+        parameters.put(VERSION, Sos2Constants.SERVICEVERSION);
+        parameters.put(REQUEST, OPERATION_NAME);
+        parameters.put(DeleteObservationConstants.PARAM_PROCEDURE, PROCEDURE);
+        parameters.put(DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST, FEATURE);
+        parameters.put(DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, OBSERVED_PROPERTY);
+        parameters.put(DeleteObservationConstants.PARAM_OFFERING, OFFERING);
+        parameters.put(DeleteObservationConstants.PARAM_TEMPORAL_FILTER,
+                "om:phenomeonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00");
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 
-        assertThat(decodedRequest, is(not(nullValue())));
-        assertThat(decodedRequest.getVersion(), is(Sos2Constants.SERVICEVERSION));
-        assertThat(decodedRequest.getService(), is(SOS));
-        assertThat(decodedRequest.getOperationName(), is(OPERATION_NAME));
-        assertThat(decodedRequest.getProcedures().iterator().next(), is("procedure"));
-        assertThat(decodedRequest.getFeatureIdentifiers().iterator().next(), is("feature"));
-        assertThat(decodedRequest.getObservedProperties().iterator().next(), is("observedProperty"));
-        assertThat(decodedRequest.getOfferings().iterator().next(), is("offering"));
+        Assert.assertThat(decodedRequest, CoreMatchers.is(CoreMatchers.not(CoreMatchers.nullValue())));
+        Assert.assertThat(decodedRequest.getVersion(), CoreMatchers.is(Sos2Constants.SERVICEVERSION));
+        Assert.assertThat(decodedRequest.getService(), CoreMatchers.is(SosConstants.SOS));
+        Assert.assertThat(decodedRequest.getOperationName(), CoreMatchers.is(OPERATION_NAME));
+        Assert.assertThat(decodedRequest.getProcedures().iterator().next(), CoreMatchers.is(PROCEDURE));
+        Assert.assertThat(decodedRequest.getFeatureIdentifiers().iterator().next(), CoreMatchers.is(FEATURE));
+        Assert.assertThat(decodedRequest.getObservedProperties().iterator().next(),
+                CoreMatchers.is(OBSERVED_PROPERTY));
+        Assert.assertThat(decodedRequest.getOfferings().iterator().next(), CoreMatchers.is(OFFERING));
     }
 
 }

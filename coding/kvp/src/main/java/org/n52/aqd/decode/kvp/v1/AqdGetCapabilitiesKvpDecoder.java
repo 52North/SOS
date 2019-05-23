@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.decode.kvp;
+package org.n52.aqd.decode.kvp.v1;
 
 import java.util.Collections;
 import java.util.Set;
@@ -34,6 +34,7 @@ import java.util.Set;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.decode.kvp.GetCapabilitiesKvpDecoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.OperationDecoderKey;
 
@@ -41,16 +42,19 @@ import com.google.common.collect.Sets;
 
 public class AqdGetCapabilitiesKvpDecoder extends GetCapabilitiesKvpDecoder {
 
-    private static final Set<DecoderKey> KVP_DECODER_KEY_TYPE = Sets.<DecoderKey>newHashSet(
-            new OperationDecoderKey(AqdConstants.AQD, null,                 SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(AqdConstants.AQD, AqdConstants.VERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(null            , AqdConstants.VERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(null            , null,                 SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP)
-        );
+    private static final Set<DecoderKey> KVP_DECODER_KEY_TYPE = Sets.<DecoderKey> newHashSet(
+            new OperationDecoderKey(AqdConstants.AQD, null, SosConstants.Operations.GetCapabilities.name(),
+                    MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(AqdConstants.AQD, AqdConstants.VERSION,
+                    SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(null, AqdConstants.VERSION, SosConstants.Operations.GetCapabilities.name(),
+                    MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(null, null, SosConstants.Operations.GetCapabilities.name(),
+                    MediaTypes.APPLICATION_KVP));
 
     @Override
     public Set<DecoderKey> getKeys() {
-        return  Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
+        return Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
     }
 
 }

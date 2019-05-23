@@ -67,6 +67,8 @@ public class SensorML20SensorML101Converter
         ProcedureDescriptionConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorML20SensorML101Converter.class);
+    private static final String NOT_SUPPORTED_FORMAT = "The procedure's description format %s is not supported!";
+    private static final String NOT_SUPPORTED_TYPE = "The procedure type  %s is not supported!";
 
     private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey> builder()
             .add(new ConverterKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE,
@@ -98,18 +100,19 @@ public class SensorML20SensorML101Converter
     }
 
     @Override
-    public AbstractFeature convert(AbstractFeature objectToConvert)
-            throws ConverterException {
+    public AbstractFeature convert(AbstractFeature objectToConvert) throws ConverterException {
         if (objectToConvert instanceof AbstractSensorML) {
             return convert((AbstractSensorML) objectToConvert);
-        } else if (objectToConvert instanceof SosProcedureDescription && ((SosProcedureDescription) objectToConvert).getProcedureDescription() instanceof AbstractSensorML) {
-            AbstractSensorML convert = convert((AbstractSensorML) ((SosProcedureDescription) objectToConvert).getProcedureDescription());
+        } else if (objectToConvert instanceof SosProcedureDescription
+                && ((SosProcedureDescription) objectToConvert).getProcedureDescription() instanceof AbstractSensorML) {
+            AbstractSensorML convert =
+                    convert((AbstractSensorML) ((SosProcedureDescription) objectToConvert).getProcedureDescription());
             SosProcedureDescription sosProcedureDescription = new SosProcedureDescription(convert);
-            sosProcedureDescription.add(((SosProcedureDescription) objectToConvert));
+            sosProcedureDescription.add((SosProcedureDescription) objectToConvert);
             sosProcedureDescription.setDescriptionFormat(convert.getDefaultElementEncoding());
-           return sosProcedureDescription;
+            return sosProcedureDescription;
         }
-        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+        throw new ConverterException(String.format(NOT_SUPPORTED_FORMAT,
                 objectToConvert.getDefaultElementEncoding()));
     }
 
@@ -123,7 +126,7 @@ public class SensorML20SensorML101Converter
                 || asml.getDefaultElementEncoding().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
             return convertSensorML101ToSensorML20(asml);
         }
-        throw new ConverterException(String.format("The procedure's description format %s is not supported!",
+        throw new ConverterException(String.format(NOT_SUPPORTED_FORMAT,
                 asml.getDefaultElementEncoding()));
     }
 
@@ -139,7 +142,7 @@ public class SensorML20SensorML101Converter
             return toProcessChain((AggregateProcess) objectToConvert);
         }
         throw new ConverterException(
-                String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+                String.format(NOT_SUPPORTED_FORMAT, objectToConvert.getClass().getName()));
     }
 
     private AbstractSensorML toSystem(PhysicalSystem objectToConvert) {
@@ -189,7 +192,7 @@ public class SensorML20SensorML101Converter
             return convertSml101AbstractProcess(objectToConvert);
         }
         throw new ConverterException(
-                String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+                String.format(NOT_SUPPORTED_TYPE, objectToConvert.getClass().getName()));
     }
 
     private AbstractSensorML convertSml101AbstractProcess(AbstractSensorML objectToConvert)
@@ -204,7 +207,7 @@ public class SensorML20SensorML101Converter
             return toAggregateProcess((ProcessChain) objectToConvert);
         }
         throw new ConverterException(
-                String.format("The procedure type  %s is not supported!", objectToConvert.getClass().getName()));
+                String.format(NOT_SUPPORTED_TYPE, objectToConvert.getClass().getName()));
     }
 
     private AbstractSensorML toPhysicalSystem(System objectToConvert) {

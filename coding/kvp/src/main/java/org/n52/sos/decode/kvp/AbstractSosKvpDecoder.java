@@ -88,18 +88,28 @@ import com.google.common.base.Strings;
  * TODO JavaDoc
  *
  * @author Christian Autermann
- * @param <R> the request type
+ * @param <R>
+ *            the request type
  */
 @Configurable
 public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends AbstractKvpDecoder<R> {
-    private static ODataFesParser odataFesParser = new ODataFesParser();
-    private int storageEPSG;
-    private int storage3DEPSG;
-    private int defaultResponseEPSG;
-    private int defaultResponse3DEPSG;
-    private String srsNamePrefixUrl;
-    private String srsNamePrefixUrn;
 
+    private static final String FILTER = "$filter";
+    private static final String OM_FEATURE = "om:featureOfInterest";
+
+    private static ODataFesParser odataFesParser = new ODataFesParser();
+
+    private int storageEPSG;
+
+    private int storage3DEPSG;
+
+    private int defaultResponseEPSG;
+
+    private int defaultResponse3DEPSG;
+
+    private String srsNamePrefixUrl;
+
+    private String srsNamePrefixUrn;
 
     public AbstractSosKvpDecoder(Supplier<? extends R> supplier, String version, String operation) {
         this(supplier, SosConstants.SOS, version, operation);
@@ -129,10 +139,10 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
      * Set storage EPSG code from settings
      *
      * @param epsgCode
-     *                 EPSG code from settings
+     *            EPSG code from settings
      *
      * @throws ConfigurationError
-     *                            If an error occurs
+     *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
     public void setStorageEPSG(int epsgCode) throws ConfigurationError {
@@ -144,10 +154,10 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
      * Set storage 3D EPSG code from settings
      *
      * @param epsgCode3D
-     *                   3D EPSG code from settings
+     *            3D EPSG code from settings
      *
      * @throws ConfigurationError
-     *                            If an error occurs
+     *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
     public void setStorage3DEPSG(int epsgCode3D) throws ConfigurationError {
@@ -159,14 +169,14 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
      * Set default response EPSG code from settings
      *
      * @param epsgCode
-     *                 EPSG code from settings
+     *            EPSG code from settings
      *
      * @throws ConfigurationError
-     *                            If an error occurs
+     *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
     public void setDefaultResponseEPSG(int epsgCode) throws ConfigurationError {
-        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        Validation.greaterZero("Default response EPSG Code", epsgCode);
         this.defaultResponseEPSG = epsgCode;
     }
 
@@ -174,14 +184,14 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
      * Set default response 3D EPSG code from settings
      *
      * @param epsgCode3D
-     *                   3D EPSG code from settings
+     *            3D EPSG code from settings
      *
      * @throws ConfigurationError
-     *                            If an error occurs
+     *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
     public void setDefaultResponse3DEPSG(int epsgCode3D) throws ConfigurationError {
-        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        Validation.greaterZero("Default response 3D EPSG Code", epsgCode3D);
         this.defaultResponse3DEPSG = epsgCode3D;
     }
 
@@ -200,7 +210,8 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         super.getCommonRequestParameterDefinitions(builder);
         builder.add(OWSConstants.AdditionalRequestParams.language, OwsServiceRequest::addSweTextExtension);
         builder.add(OWSConstants.AdditionalRequestParams.crs, OwsServiceRequest::addSweTextExtension);
-//        builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier, OwsServiceRequest::addSweBooleanExtension);
+        // builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier,
+        // OwsServiceRequest::addSweBooleanExtension);
     }
 
     protected ThrowingBiConsumer<R, String, DecodingException> decodeNamespaces(
@@ -210,9 +221,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
 
     protected Map<String, String> decodeNamespaces(String value) {
         return Arrays.stream(value.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("))
-                .map(Strings::emptyToNull)
-                .filter(Objects::nonNull)
-                .map(string -> string.split(","))
+                .map(Strings::emptyToNull).filter(Objects::nonNull).map(string -> string.split(","))
                 .collect(toMap(s -> s[0], s -> s[1]));
     }
 
@@ -221,43 +230,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         return (request, name, value) -> delegate.accept(request, decodeTemporalFilter(name, value));
     }
 
-    protected ThrowingTriConsumer<R, String, String, DecodingException> decodeTime(
-            ThrowingBiConsumer<? super R, ? super Time, DecodingException> delegate) {
-        return (request, name, value) -> delegate.accept(request, decodeTime(name, value));
-    }
-
-    protected Time decodeTime(String name, String value) throws DecodingException {
-        String[] times = name.split("/");
-        switch (times.length) {
-            case 1:
-                return decodeTimeInstant(name, value);
-            case 2:
-                return decodeTimePeriod(name, times);
-            default:
-                throw new DecodingException(value, "The parameter value is not valid!");
-        }
-    }
-
-    private TimePeriod decodeTimePeriod(String name, String[] times) throws DecodingException {
-        try {
-            return new TimePeriod(DateTimeHelper.parseIsoString2DateTime(times[0]),
-                                  DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(times[1]));
-        } catch (DateTimeParseException ex) {
-            throw new DecodingException(ex, name);
-        }
-    }
-
-    private TimeInstant decodeTimeInstant(String name, String time) throws DecodingException {
-        try {
-            return new TimeInstant(DateTimeHelper.parseIsoString2DateTime(time),
-                                   DateTimeHelper.getTimeLengthBeforeTimeZone(time));
-        } catch (DateTimeParseException ex) {
-            return new TimeInstant(new IndeterminateValue(time));
-        }
-    }
-
-    protected TemporalFilter decodeTemporalFilter(String name, List<String> parameterValues)
-            throws DecodingException {
+    protected TemporalFilter decodeTemporalFilter(String name, List<String> parameterValues) throws DecodingException {
         if (parameterValues == null || parameterValues.isEmpty()) {
             return null;
         }
@@ -276,7 +249,42 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
                 value = parameterValues.get(2);
                 return createTemporalFilter(name, value, operator, valueReference);
             default:
-                throw new DecodingException(name, "The parameter value is not valid!");
+                throw new DecodingException(name, "The temporal filter parameter value is not valid!");
+        }
+    }
+
+    protected ThrowingTriConsumer<R, String, String, DecodingException> decodeTime(
+            ThrowingBiConsumer<? super R, ? super Time, DecodingException> delegate) {
+        return (request, name, value) -> delegate.accept(request, decodeTime(name, value));
+    }
+
+    protected Time decodeTime(String name, String value) throws DecodingException {
+        String[] times = name.split("/");
+        switch (times.length) {
+            case 1:
+                return decodeTimeInstant(name, value);
+            case 2:
+                return decodeTimePeriod(name, times);
+            default:
+                throw new DecodingException(value, "The time parameter value is not valid!");
+        }
+    }
+
+    private TimePeriod decodeTimePeriod(String name, String[] times) throws DecodingException {
+        try {
+            return new TimePeriod(DateTimeHelper.parseIsoString2DateTime(times[0]),
+                    DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(times[1]));
+        } catch (DateTimeParseException ex) {
+            throw new DecodingException(ex, name);
+        }
+    }
+
+    private TimeInstant decodeTimeInstant(String name, String time) throws DecodingException {
+        try {
+            return new TimeInstant(DateTimeHelper.parseIsoString2DateTime(time),
+                    DateTimeHelper.getTimeLengthBeforeTimeZone(time));
+        } catch (DateTimeParseException ex) {
+            return new TimeInstant(new IndeterminateValue(time));
         }
     }
 
@@ -308,7 +316,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     }
 
     private TemporalFilter createTemporalFilter(String name, String value, TimeOperator timeOperator,
-                                                String valueReference) throws DecodingException {
+            String valueReference) throws DecodingException {
         String[] times = value.split("/");
         final Time time;
         if (times.length == 1 && timeOperator != TimeOperator.TM_During) {
@@ -326,8 +334,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         return (request, name, value) -> delegate.accept(request, decodeSpatialFilter(name, value));
     }
 
-    protected SpatialFilter decodeSpatialFilter(String name, List<String> parameterValues)
-            throws DecodingException {
+    protected SpatialFilter decodeSpatialFilter(String name, List<String> parameterValues) throws DecodingException {
 
         List<String> values;
         Geometry geometry;
@@ -338,7 +345,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         if (parameterValues == null || parameterValues.isEmpty()) {
             return null;
         } else if (parameterValues.size() < 5 || parameterValues.size() > 6) {
-            throw new DecodingException(name, "The parameter value is not valid!");
+            throw new DecodingException(name, "The spatial filter parameter value is not valid!");
         } else if (parameterValues instanceof RandomAccess) {
             values = parameterValues;
         } else {
@@ -368,18 +375,15 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
 
         double[] coordinates = values.stream().mapToDouble(Double::valueOf).toArray();
 
-        geometry = factory.createPolygon(new Coordinate[] {
-            new Coordinate(coordinates[0], coordinates[1]),
-            new Coordinate(coordinates[0], coordinates[3]),
-            new Coordinate(coordinates[2], coordinates[3]),
-            new Coordinate(coordinates[2], coordinates[1]),
-            new Coordinate(coordinates[0], coordinates[1])
-        });
+        geometry = factory.createPolygon(new Coordinate[] { new Coordinate(coordinates[0], coordinates[1]),
+            new Coordinate(coordinates[0], coordinates[3]), new Coordinate(coordinates[2], coordinates[3]),
+            new Coordinate(coordinates[2], coordinates[1]), new Coordinate(coordinates[0], coordinates[1]) });
 
         return new SpatialFilter(SpatialOperator.BBOX, geometry, valueReference);
     }
 
-    protected boolean parseODataFes(OwsServiceRequest request, String parameterName, String parameterValues) throws DecodingException {
+    protected boolean parseODataFes(OwsServiceRequest request, String parameterName, String parameterValues)
+            throws DecodingException {
         try {
             Filter<?> filter = convertFilter(odataFesParser.decode(checkValues(parameterValues)));
             if (filter instanceof BinaryLogicFilter) {
@@ -393,43 +397,46 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
             } else {
                 if (filter instanceof SpatialFilter) {
                     request.addExtension(new SosSpatialFilter((SpatialFilter) filter));
-                } else if (filter instanceof ComparisonFilter){
+                } else if (filter instanceof ComparisonFilter) {
                     request.addExtension(new ResultFilter(filter));
                 } else {
-                    throw new OptionNotSupportedException().at("$filter");
+                    throw new OptionNotSupportedException().at(FILTER);
                 }
             }
             return true;
         } catch (DecodingException | OwsExceptionReport e) {
-            throw new DecodingException(e, "$filter");
+            throw new DecodingException(e, FILTER);
         }
     }
 
     private String checkValues(String parameterValues) {
+        String pv = parameterValues;
         if (parameterValues.contains("sams:shape")) {
-            parameterValues =  parameterValues.replaceAll("om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape", "om:featureOfInterest");
-            parameterValues =  parameterValues.replaceAll("om:featureOfInterest/*/sams:shape", "om:featureOfInterest");
+            pv = parameterValues.replaceAll(
+                    "om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape", OM_FEATURE);
+            pv = pv.replaceAll("om:featureOfInterest/*/sams:shape", OM_FEATURE);
         }
-        return parameterValues.replaceAll("om:", "")
+        return pv.replaceAll("om:", "")
                 .replaceAll(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE, "samplingGeometry");
     }
 
     private Filter<?> convertFilter(Filter<?> filter) throws DecodingException, OwsExceptionReport {
-       if (filter instanceof org.n52.shetland.ogc.filter.ComparisonFilter) {
-           return convertComparisonFilter((org.n52.shetland.ogc.filter.ComparisonFilter) filter);
-       } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter) {
-           return convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter);
-       } else if (filter instanceof org.n52.shetland.ogc.filter.BinaryLogicFilter) {
-           BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) filter;
-           Set<Filter<?>> checkForBetweenComparisonFilter = checkForBetweenComparisonFilter(binaryLogicFilter.getFilterPredicates());
-           if (checkForBetweenComparisonFilter.size() == 1 && checkForBetweenComparisonFilter.iterator().next() instanceof ComparisonFilter) {
-               return checkForBetweenComparisonFilter.iterator().next();
-           }
-           return binaryLogicFilter.addFilterPredicates(checkForBetweenComparisonFilter);
-       }
-       throw new DecodingException(filter.toString());
+        if (filter instanceof org.n52.shetland.ogc.filter.ComparisonFilter) {
+            return convertComparisonFilter((org.n52.shetland.ogc.filter.ComparisonFilter) filter);
+        } else if (filter instanceof org.n52.shetland.ogc.filter.SpatialFilter) {
+            return convertSpatialFilter((org.n52.shetland.ogc.filter.SpatialFilter) filter);
+        } else if (filter instanceof org.n52.shetland.ogc.filter.BinaryLogicFilter) {
+            BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) filter;
+            Set<Filter<?>> checkForBetweenComparisonFilter =
+                    checkForBetweenComparisonFilter(binaryLogicFilter.getFilterPredicates());
+            if (checkForBetweenComparisonFilter.size() == 1
+                    && checkForBetweenComparisonFilter.iterator().next() instanceof ComparisonFilter) {
+                return checkForBetweenComparisonFilter.iterator().next();
+            }
+            return binaryLogicFilter.addFilterPredicates(checkForBetweenComparisonFilter);
+        }
+        throw new DecodingException(filter.toString());
     }
-
 
     private ComparisonFilter convertComparisonFilter(org.n52.shetland.ogc.filter.ComparisonFilter filter) {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
@@ -468,7 +475,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
             case PropertyIsNull:
                 return FilterConstants.ComparisonOperator.PropertyIsNull;
             default:
-               return null;
+                return null;
         }
     }
 
@@ -510,8 +517,7 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
         }
     }
 
-    private Set<Filter<?>> checkForBetweenComparisonFilter(Collection<Filter<?>> set)
-            throws OwsExceptionReport {
+    private Set<Filter<?>> checkForBetweenComparisonFilter(Collection<Filter<?>> set) throws OwsExceptionReport {
         Set<Filter<?>> prepared = new LinkedHashSet<>();
         ComparisonFilter ge = null;
         for (Filter<?> filter : set) {

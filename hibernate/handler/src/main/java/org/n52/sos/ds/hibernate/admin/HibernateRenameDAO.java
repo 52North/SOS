@@ -42,7 +42,7 @@ import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
 
 /**
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class HibernateRenameDAO implements RenameDAO {
     private HibernateSessionHolder sessionHolder;

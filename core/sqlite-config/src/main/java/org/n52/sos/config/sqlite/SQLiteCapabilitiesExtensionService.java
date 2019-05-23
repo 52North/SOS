@@ -28,10 +28,7 @@
  */
 package org.n52.sos.config.sqlite;
 
-import static java.util.stream.Collectors.toMap;
-import static org.hibernate.criterion.Restrictions.and;
-import static org.hibernate.criterion.Restrictions.eq;
-
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -43,13 +40,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.hibernate.criterion.Restrictions;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 import org.n52.janmayen.function.Functions;
@@ -66,22 +62,29 @@ import org.n52.sos.config.sqlite.entities.OfferingExtensionImpl;
 import org.n52.sos.config.sqlite.entities.StaticCapabilitiesImpl;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class SQLiteCapabilitiesExtensionService
-        extends AbstractSQLiteDao
-        implements CapabilitiesExtensionService {
+public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implements CapabilitiesExtensionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(SQLiteCapabilitiesExtensionService.class);
+
     private final ReadWriteLock scLock = new ReentrantReadWriteLock();
+
     private final ReadWriteLock ceLock = new ReentrantReadWriteLock();
+
     private final ReadWriteLock oeLock = new ReentrantReadWriteLock();
+
     private String cachedScId;
+
     private String cachedSc;
+
     private Map<String, StringBasedCapabilitiesExtension> cachedCe;
+
     private Map<String, Map<String, String>> cachedOe;
 
     private ContentCacheController contentCacheController;
@@ -102,7 +105,8 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    protected <T> T throwingExecute(ThrowingFunction<Session, T, ? extends Exception> action) throws NoSuchExtensionException {
+    protected <T> T throwingExecute(ThrowingFunction<Session, T, ? extends Exception> action)
+            throws NoSuchExtensionException {
         try {
             return super.throwingExecute(action);
         } catch (Exception ex) {
@@ -113,8 +117,10 @@ public class SQLiteCapabilitiesExtensionService
             }
         }
     }
+
     @Override
-    protected void throwingExecute(ThrowingConsumer<Session, ? extends Exception> action) throws NoSuchExtensionException {
+    protected void throwingExecute(ThrowingConsumer<Session, ? extends Exception> action)
+            throws NoSuchExtensionException {
         try {
             super.throwingExecute(action);
         } catch (Exception ex) {
@@ -204,14 +210,15 @@ public class SQLiteCapabilitiesExtensionService
             oeLock.writeLock().lock();
             try {
                 if (cachedOe == null) {
-                    final  Map<String, List<SosObservationOfferingExtension>> execute
-                            = execute(new GetActiveOfferingExtensionsAction());
+                    final Map<String, List<SosObservationOfferingExtension>> execute =
+                            execute(new GetActiveOfferingExtensionsAction());
                     cachedOe = new HashMap<>(execute.size());
 
                     for (final String offering : execute.keySet()) {
-                        cachedOe.put(offering, execute.get(offering).stream()
-                                     .collect(toMap(SosObservationOfferingExtension::getIdentifier,
-                                                    SosObservationOfferingExtension::getExtension)));
+                        cachedOe.put(offering,
+                                execute.get(offering).stream()
+                                        .collect(Collectors.toMap(SosObservationOfferingExtension::getIdentifier,
+                                                SosObservationOfferingExtension::getExtension)));
                     }
                 }
             } finally {
@@ -223,7 +230,8 @@ public class SQLiteCapabilitiesExtensionService
             Map<String, String> oes = cachedOe.get(offering);
             if (oes != null) {
                 for (Entry<String, String> oe : oes.entrySet()) {
-                    List<SosObservationOfferingExtension> values = map.containsKey(offering) ? map.get(offering) : new LinkedList<>();
+                    List<SosObservationOfferingExtension> values =
+                            map.containsKey(offering) ? map.get(offering) : new LinkedList<>();
                     values.add(new OfferingExtensionImpl(offering, oe.getKey(), oe.getValue()));
                     map.put(offering, values);
                 }
@@ -233,8 +241,8 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    public void saveOfferingExtension(final String offering, final String identifier, final String value) throws
-            NoSuchOfferingException {
+    public void saveOfferingExtension(final String offering, final String identifier, final String value)
+            throws NoSuchOfferingException {
         checkOffering(offering);
         execute(new SaveOfferingExtensionAction(offering, identifier, value));
         oeLock.writeLock().lock();
@@ -252,14 +260,15 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    public void disableOfferingExtension(final String offering, final String identifier, final boolean disabled) throws
-            NoSuchExtensionException, NoSuchOfferingException {
+    public void disableOfferingExtension(final String offering, final String identifier, final boolean disabled)
+            throws NoSuchExtensionException, NoSuchOfferingException {
         checkOffering(offering);
         throwingExecute(new SetActiveOfferingExtensionAction(offering, identifier, disabled));
         oeLock.writeLock().lock();
         try {
             if (cachedOe != null) {
-                Map<String, String> forOffering = cachedOe.computeIfAbsent(offering, Functions.forSupplier(HashMap::new));
+                Map<String, String> forOffering =
+                        cachedOe.computeIfAbsent(offering, Functions.forSupplier(HashMap::new));
                 if (disabled) {
                     forOffering.remove(identifier);
                 } else if (!forOffering.containsKey(identifier)) {
@@ -273,17 +282,19 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    public void deleteOfferingExtension(final String offering, final String identifier) throws NoSuchOfferingException,
-                                                                                               NoSuchExtensionException {
+    public void deleteOfferingExtension(final String offering, final String identifier)
+            throws NoSuchOfferingException, NoSuchExtensionException {
         checkOffering(offering);
         throwingExecute(new DeleteOfferingExtensionAction(offering, identifier));
         oeLock.writeLock().lock();
         try {
             if (cachedOe != null && cachedOe.get(offering) != null) {
                 if (cachedOe.get(offering).remove(identifier) != null) {
-                    LOGGER.debug("Removed extension '{}' for offering '{}' from offering extension cache.", identifier, offering);
+                    LOGGER.debug("Removed extension '{}' for offering '{}' from offering extension cache.", identifier,
+                            offering);
                 } else {
-                    LOGGER.debug("Removing failed for extension '{}' for offering '{}' from offering extension cache.", identifier, offering);
+                    LOGGER.debug("Removing failed for extension '{}' for offering '{}' from offering extension cache.",
+                            identifier, offering);
                 }
             }
         } finally {
@@ -306,12 +317,12 @@ public class SQLiteCapabilitiesExtensionService
         try {
             if (load) {
                 if (cachedCe == null) {
-                    final Map<String, StringBasedCapabilitiesExtension> ext
-                            = execute(new GetActiveCapabilitiesExtensionAction());
+                    final Map<String, StringBasedCapabilitiesExtension> ext =
+                            execute(new GetActiveCapabilitiesExtensionAction());
                     cachedCe = new HashMap<>(ext.size());
                     for (final Entry<String, StringBasedCapabilitiesExtension> e : ext.entrySet()) {
-                        cachedCe.put(e.getKey(), new CapabilitiesExtensionImpl(
-                                     e.getValue().getSectionName(), e.getValue().getExtension()));
+                        cachedCe.put(e.getKey(), new CapabilitiesExtensionImpl(e.getValue().getSectionName(),
+                                e.getValue().getExtension()));
                     }
                 }
             }
@@ -340,8 +351,8 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    public void disableCapabilitiesExtension(final String identifier, final boolean disabled) throws
-            NoSuchExtensionException {
+    public void disableCapabilitiesExtension(final String identifier, final boolean disabled)
+            throws NoSuchExtensionException {
         throwingExecute(new DisableCapabiliesExtensionAction(identifier, disabled));
         ceLock.writeLock().lock();
         try {
@@ -376,35 +387,6 @@ public class SQLiteCapabilitiesExtensionService
     }
 
     @Override
-    public void saveStaticCapabilities(final String identifier, final String document) {
-        execute(new SaveStaticCapabilitiesAction(identifier, document));
-        scLock.writeLock().lock();
-        try {
-            if (cachedScId != null &&
-                     cachedScId.equals(identifier)) {
-                cachedSc = document;
-            }
-        } finally {
-            scLock.writeLock().unlock();
-        }
-    }
-
-    @Override
-    public void deleteStaticCapabilities(final String identifier) throws NoSuchExtensionException {
-        throwingExecute(new DeleteStaticCapabilitiesAction(identifier));
-        scLock.writeLock().lock();
-        try {
-            if (cachedScId != null &&
-                     cachedScId.equals(identifier)) {
-                cachedScId = null;
-                cachedSc = null;
-            }
-        } finally {
-            scLock.writeLock().unlock();
-        }
-    }
-
-    @Override
     public StaticCapabilities getStaticCapabilities(final String id) {
         scLock.readLock().lock();
         try {
@@ -417,6 +399,59 @@ public class SQLiteCapabilitiesExtensionService
         return execute(new GetStaticCapabilitiesWithIdAction(id));
     }
 
+    @Override
+    public void saveStaticCapabilities(final String identifier, final String document) {
+        execute(new SaveStaticCapabilitiesAction(identifier, document));
+        scLock.writeLock().lock();
+        try {
+            if (cachedScId != null && cachedScId.equals(identifier)) {
+                cachedSc = document;
+            }
+        } finally {
+            scLock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void deleteStaticCapabilities(final String identifier) throws NoSuchExtensionException {
+        throwingExecute(new DeleteStaticCapabilitiesAction(identifier));
+        scLock.writeLock().lock();
+        try {
+            if (cachedScId != null && cachedScId.equals(identifier)) {
+                cachedScId = null;
+                cachedSc = null;
+            }
+        } finally {
+            scLock.writeLock().unlock();
+        }
+    }
+
+    private Map<String, List<SosObservationOfferingExtension>> createOfferingExtensionMap(
+            Collection<OfferingExtensionImpl> extensions) {
+        final Map<String, List<SosObservationOfferingExtension>> map =
+                new LinkedHashMap<>(getCache().getOfferings().size());
+
+        for (final OfferingExtensionImpl extension : extensions) {
+            LOGGER.debug("Loaded OfferingExtension: {}", extension);
+            List<SosObservationOfferingExtension> values =
+                    map.containsKey(extension.getOfferingName()) ? map.get(extension.getOfferingName())
+                            : new LinkedList<>();
+            values.add(extension);
+            map.put(extension.getOfferingName(), values);
+        }
+        return map;
+    }
+
+    private Map<String, StringBasedCapabilitiesExtension> createCapabilitiesExtensionMap(
+            Collection<CapabilitiesExtensionImpl> extensions) {
+        final HashMap<String, StringBasedCapabilitiesExtension> map = new HashMap<>(extensions.size());
+        for (final CapabilitiesExtensionImpl extension : extensions) {
+            LOGGER.debug("Loaded CapabiltiesExtension: {}", extension);
+            map.put(extension.getKey(), extension);
+        }
+        return map;
+    }
+
     private class SetActiveStaticCapabilitiesAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String identifier;
 
@@ -426,16 +461,15 @@ public class SQLiteCapabilitiesExtensionService
 
         @Override
         public void accept(final Session session) throws NoSuchExtensionException {
-            final StaticCapabilitiesImpl sci = (StaticCapabilitiesImpl) session
-                    .get(StaticCapabilitiesImpl.class, identifier);
+            final StaticCapabilitiesImpl sci =
+                    (StaticCapabilitiesImpl) session.get(StaticCapabilitiesImpl.class, identifier);
             if (sci == null) {
                 throw new NoSuchExtensionException(identifier);
             }
             if (!sci.isActive()) {
-                final StaticCapabilitiesImpl cur = (StaticCapabilitiesImpl) session
-                        .createCriteria(StaticCapabilitiesImpl.class)
-                        .add(eq(StaticCapabilitiesImpl.ACTIVE, true))
-                        .uniqueResult();
+                final StaticCapabilitiesImpl cur =
+                        (StaticCapabilitiesImpl) session.createCriteria(StaticCapabilitiesImpl.class)
+                                .add(Restrictions.eq(StaticCapabilitiesImpl.ACTIVE, true)).uniqueResult();
                 if (cur != null) {
                     session.update(cur.setActive(false));
                 }
@@ -447,10 +481,9 @@ public class SQLiteCapabilitiesExtensionService
     private class GetActiveStaticCapabilitiesAction implements Function<Session, String> {
         @Override
         public String apply(final Session session) {
-            final StaticCapabilitiesImpl cur = (StaticCapabilitiesImpl) session
-                    .createCriteria(StaticCapabilitiesImpl.class)
-                    .add(eq(StaticCapabilitiesImpl.ACTIVE, true))
-                    .uniqueResult();
+            final StaticCapabilitiesImpl cur =
+                    (StaticCapabilitiesImpl) session.createCriteria(StaticCapabilitiesImpl.class)
+                            .add(Restrictions.eq(StaticCapabilitiesImpl.ACTIVE, true)).uniqueResult();
             return cur == null ? null : cur.getIdentifier();
         }
     }
@@ -458,36 +491,25 @@ public class SQLiteCapabilitiesExtensionService
     private class GetActiveStaticCapabilitiesDocumentAction implements Function<Session, String> {
         @Override
         public String apply(final Session session) {
-            final StaticCapabilitiesImpl cur = (StaticCapabilitiesImpl) session
-                    .createCriteria(StaticCapabilitiesImpl.class)
-                    .add(eq(StaticCapabilitiesImpl.ACTIVE, true))
-                    .uniqueResult();
+            final StaticCapabilitiesImpl cur =
+                    (StaticCapabilitiesImpl) session.createCriteria(StaticCapabilitiesImpl.class)
+                            .add(Restrictions.eq(StaticCapabilitiesImpl.ACTIVE, true)).uniqueResult();
             return cur == null ? null : cur.getDocument();
         }
     }
 
-    private class GetOfferingExtensionsAction implements Function<Session, Map<String, List<SosObservationOfferingExtension>>> {
+    private class GetOfferingExtensionsAction
+            implements Function<Session, Map<String, List<SosObservationOfferingExtension>>> {
+        @SuppressWarnings("unchecked")
         @Override
         public Map<String, List<SosObservationOfferingExtension>> apply(final Session session) {
-            @SuppressWarnings("unchecked")
-            final List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class).list();
-            final Map<String, List<SosObservationOfferingExtension>> map = new LinkedHashMap<>(
-                    getCache().getOfferings().size());
-
-            for (final OfferingExtensionImpl extension : extensions) {
-                LOGGER.debug("Loaded OfferingExtension: {}", extension);
-                List<SosObservationOfferingExtension> values =
-                        map.containsKey(extension.getOfferingName()) ? map.get(extension.getOfferingName())
-                                : new LinkedList<>();
-                values.add(extension);
-                map.put(extension.getOfferingName(), values);
-            }
-            return map;
+            return createOfferingExtensionMap(session.createCriteria(OfferingExtensionImpl.class).list());
         }
     }
 
     private class GetOfferingExtensionAction implements Function<Session, SosObservationOfferingExtension> {
         private final String offering;
+
         private final String identifier;
 
         GetOfferingExtensionAction(final String offering, final String identifier) {
@@ -498,36 +520,30 @@ public class SQLiteCapabilitiesExtensionService
         @Override
         public SosObservationOfferingExtension apply(final Session session) {
             return (SosObservationOfferingExtension) session.createCriteria(OfferingExtensionImpl.class)
-                    .add(and(eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.IDENTIFIER, identifier),
-                             eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.OFFERING, offering)))
+                    .add(Restrictions.and(
+                            Restrictions.eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.IDENTIFIER,
+                                    identifier),
+                            Restrictions.eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.OFFERING,
+                                    offering)))
                     .uniqueResult();
         }
     }
 
-    private class GetActiveOfferingExtensionsAction implements Function<Session,  Map<String, List<SosObservationOfferingExtension>>> {
+    private class GetActiveOfferingExtensionsAction
+            implements Function<Session, Map<String, List<SosObservationOfferingExtension>>> {
+        @SuppressWarnings("unchecked")
         @Override
         public Map<String, List<SosObservationOfferingExtension>> apply(final Session session) {
-            @SuppressWarnings("unchecked")
-            final List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class)
-                    .add(eq(OfferingExtensionImpl.ACTIVE, true)).list();
-            final Map<String, List<SosObservationOfferingExtension>> map = new LinkedHashMap<>(
-                    getCache().getOfferings().size());
-
-            for (final OfferingExtensionImpl extension : extensions) {
-                LOGGER.debug("Loaded OfferingExtension: {}", extension);
-                List<SosObservationOfferingExtension> values =
-                        map.containsKey(extension.getOfferingName()) ? map.get(extension.getOfferingName())
-                                : new LinkedList<>();
-                values.add(extension);
-                map.put(extension.getOfferingName(), values);
-            }
-            return map;
+            return createOfferingExtensionMap(session.createCriteria(OfferingExtensionImpl.class)
+                    .add(Restrictions.eq(OfferingExtensionImpl.ACTIVE, true)).list());
         }
     }
 
     private class SaveOfferingExtensionAction implements Consumer<Session> {
         private final String offering;
+
         private final String identifier;
+
         private final String value;
 
         SaveOfferingExtensionAction(final String offering, final String identifier, final String value) {
@@ -544,7 +560,9 @@ public class SQLiteCapabilitiesExtensionService
 
     private class SetActiveOfferingExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String offering;
+
         private final String identifier;
+
         private final boolean disabled;
 
         SetActiveOfferingExtensionAction(final String offering, final String identifier, final boolean disabled) {
@@ -555,8 +573,8 @@ public class SQLiteCapabilitiesExtensionService
 
         @Override
         public void accept(final Session session) throws NoSuchExtensionException {
-            final OfferingExtensionImpl oe = (OfferingExtensionImpl) session
-                    .get(OfferingExtensionImpl.class, new OfferingExtensionIdentifier(offering, identifier));
+            final OfferingExtensionImpl oe = (OfferingExtensionImpl) session.get(OfferingExtensionImpl.class,
+                    new OfferingExtensionIdentifier(offering, identifier));
             if (oe == null) {
                 throw new NoSuchExtensionException(identifier);
             }
@@ -566,6 +584,7 @@ public class SQLiteCapabilitiesExtensionService
 
     private class DeleteOfferingExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String offering;
+
         private final String identifier;
 
         DeleteOfferingExtensionAction(final String offering, final String identifier) {
@@ -575,8 +594,8 @@ public class SQLiteCapabilitiesExtensionService
 
         @Override
         public void accept(final Session session) throws NoSuchExtensionException {
-            final OfferingExtensionImpl oe = (OfferingExtensionImpl) session
-                    .get(OfferingExtensionImpl.class, new OfferingExtensionIdentifier(offering, identifier));
+            final OfferingExtensionImpl oe = (OfferingExtensionImpl) session.get(OfferingExtensionImpl.class,
+                    new OfferingExtensionIdentifier(offering, identifier));
             if (oe == null) {
                 throw new NoSuchExtensionException(identifier);
             }
@@ -584,37 +603,22 @@ public class SQLiteCapabilitiesExtensionService
         }
     }
 
-    private class GetActiveCapabilitiesExtensionAction implements Function<Session, Map<String, StringBasedCapabilitiesExtension>> {
+    private class GetActiveCapabilitiesExtensionAction
+            implements Function<Session, Map<String, StringBasedCapabilitiesExtension>> {
+        @SuppressWarnings("unchecked")
         @Override
         public Map<String, StringBasedCapabilitiesExtension> apply(final Session session) {
-            @SuppressWarnings("unchecked")
-            final List<CapabilitiesExtensionImpl> extensions = session
-                    .createCriteria(CapabilitiesExtensionImpl.class)
-                    .add(eq(CapabilitiesExtensionImpl.ACTIVE, true))
-                    .list();
-            final HashMap<String, StringBasedCapabilitiesExtension> map = new HashMap<>(extensions
-                    .size());
-            for (final CapabilitiesExtensionImpl extension : extensions) {
-                LOGGER.debug("Loaded CapabiltiesExtension: {}", extension);
-                map.put(extension.getKey(), extension);
-            }
-            return map;
+            return createCapabilitiesExtensionMap(session.createCriteria(CapabilitiesExtensionImpl.class)
+                    .add(Restrictions.eq(CapabilitiesExtensionImpl.ACTIVE, true)).list());
         }
     }
 
-    private class GetAllCapabilitiesExtensionAction implements Function<Session, Map<String, StringBasedCapabilitiesExtension>> {
+    private class GetAllCapabilitiesExtensionAction
+            implements Function<Session, Map<String, StringBasedCapabilitiesExtension>> {
+        @SuppressWarnings("unchecked")
         @Override
         public Map<String, StringBasedCapabilitiesExtension> apply(final Session session) {
-            @SuppressWarnings("unchecked")
-            final List<CapabilitiesExtensionImpl> extensions = session
-                    .createCriteria(CapabilitiesExtensionImpl.class).list();
-            final HashMap<String, StringBasedCapabilitiesExtension> map = new HashMap<>(extensions
-                    .size());
-            for (final CapabilitiesExtensionImpl extension : extensions) {
-                LOGGER.debug("Loaded CapabiltiesExtension: {}", extension);
-                map.put(extension.getKey(), extension);
-            }
-            return map;
+            return createCapabilitiesExtensionMap(session.createCriteria(CapabilitiesExtensionImpl.class).list());
         }
     }
 
@@ -633,6 +637,7 @@ public class SQLiteCapabilitiesExtensionService
 
     private class SaveCapabilitesExtensionAction implements Consumer<Session> {
         private final String identifier;
+
         private final String value;
 
         SaveCapabilitesExtensionAction(final String identifier, final String value) {
@@ -648,6 +653,7 @@ public class SQLiteCapabilitiesExtensionService
 
     private class DisableCapabiliesExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String identifier;
+
         private final boolean disabled;
 
         DisableCapabiliesExtensionAction(final String identifier, final boolean disabled) {
@@ -657,8 +663,8 @@ public class SQLiteCapabilitiesExtensionService
 
         @Override
         public void accept(final Session session) throws NoSuchExtensionException {
-            final CapabilitiesExtensionImpl ce = (CapabilitiesExtensionImpl) session
-                    .get(CapabilitiesExtensionImpl.class, identifier);
+            final CapabilitiesExtensionImpl ce =
+                    (CapabilitiesExtensionImpl) session.get(CapabilitiesExtensionImpl.class, identifier);
 
             if (ce == null) {
                 throw new NoSuchExtensionException(identifier);
@@ -676,8 +682,8 @@ public class SQLiteCapabilitiesExtensionService
 
         @Override
         public void accept(final Session session) throws NoSuchExtensionException {
-            final CapabilitiesExtensionImpl ce = (CapabilitiesExtensionImpl) session
-                    .get(CapabilitiesExtensionImpl.class, identifier);
+            final CapabilitiesExtensionImpl ce =
+                    (CapabilitiesExtensionImpl) session.get(CapabilitiesExtensionImpl.class, identifier);
             if (ce == null) {
                 throw new NoSuchExtensionException(identifier);
             }
@@ -701,6 +707,7 @@ public class SQLiteCapabilitiesExtensionService
 
     private class SaveStaticCapabilitiesAction implements Consumer<Session> {
         private final String identifier;
+
         private final String document;
 
         SaveStaticCapabilitiesAction(final String identifier, final String document) {
@@ -723,8 +730,8 @@ public class SQLiteCapabilitiesExtensionService
 
         @Override
         public void accept(final Session session) throws NoSuchExtensionException {
-            final StaticCapabilitiesImpl sc = (StaticCapabilitiesImpl) session
-                    .get(StaticCapabilitiesImpl.class, identifier);
+            final StaticCapabilitiesImpl sc =
+                    (StaticCapabilitiesImpl) session.get(StaticCapabilitiesImpl.class, identifier);
             if (sc == null) {
                 throw new NoSuchExtensionException(identifier);
             }
@@ -735,10 +742,9 @@ public class SQLiteCapabilitiesExtensionService
     private class DeactivateStaticCapabilitiesAction implements Consumer<Session> {
         @Override
         public void accept(final Session session) {
-            final StaticCapabilitiesImpl cur = (StaticCapabilitiesImpl) session
-                    .createCriteria(StaticCapabilitiesImpl.class)
-                    .add(eq(StaticCapabilitiesImpl.ACTIVE, true))
-                    .uniqueResult();
+            final StaticCapabilitiesImpl cur =
+                    (StaticCapabilitiesImpl) session.createCriteria(StaticCapabilitiesImpl.class)
+                            .add(Restrictions.eq(StaticCapabilitiesImpl.ACTIVE, true)).uniqueResult();
             if (cur != null) {
                 session.update(cur.setActive(false));
             }

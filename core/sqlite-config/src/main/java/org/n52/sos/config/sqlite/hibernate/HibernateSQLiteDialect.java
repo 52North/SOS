@@ -37,17 +37,18 @@ import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.hibernate.dialect.unique.UniqueDelegate;
 import org.hibernate.type.StandardBasicTypes;
 
-
-
 public class HibernateSQLiteDialect extends Dialect {
 
+    private static final String INTEGER = "integer";
+    private static final String BLOB = "blob";
+    private static final String SUBSTR = "substr";
     private final UniqueDelegate sqliteUniqueDelegate;
 
     public HibernateSQLiteDialect() {
-        registerColumnType(Types.BIT, "integer");
+        registerColumnType(Types.BIT, INTEGER);
         registerColumnType(Types.TINYINT, "tinyint");
         registerColumnType(Types.SMALLINT, "smallint");
-        registerColumnType(Types.INTEGER, "integer");
+        registerColumnType(Types.INTEGER, INTEGER);
         registerColumnType(Types.BIGINT, "bigint");
         registerColumnType(Types.FLOAT, "float");
         registerColumnType(Types.REAL, "real");
@@ -60,39 +61,19 @@ public class HibernateSQLiteDialect extends Dialect {
         registerColumnType(Types.DATE, "date");
         registerColumnType(Types.TIME, "time");
         registerColumnType(Types.TIMESTAMP, "timestamp");
-        registerColumnType(Types.BINARY, "blob");
-        registerColumnType(Types.VARBINARY, "blob");
-        registerColumnType(Types.LONGVARBINARY, "blob");
-        registerColumnType(Types.BLOB, "blob");
+        registerColumnType(Types.BINARY, BLOB);
+        registerColumnType(Types.VARBINARY, BLOB);
+        registerColumnType(Types.LONGVARBINARY, BLOB);
+        registerColumnType(Types.BLOB, BLOB);
         registerColumnType(Types.CLOB, "clob");
-        registerColumnType(Types.BOOLEAN, "integer");
+        registerColumnType(Types.BOOLEAN, INTEGER);
         registerFunction("concat", new VarArgsSQLFunction(StandardBasicTypes.STRING, "", "||", ""));
         registerFunction("mod", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 % ?2"));
-        registerFunction("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
-        registerFunction("substring", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
+        registerFunction(SUBSTR, new StandardSQLFunction(SUBSTR, StandardBasicTypes.STRING));
+        registerFunction("substring", new StandardSQLFunction(SUBSTR, StandardBasicTypes.STRING));
 
-        sqliteUniqueDelegate = new SQLiteUniqueDelegate( this );
+        sqliteUniqueDelegate = new SQLiteUniqueDelegate(this);
     }
-
-//    @Override
-//    public boolean supportsIdentityColumns() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean hasDataTypeInIdentityColumn() {
-//        return false; // As specify in NHibernate dialect
-//    }
-//
-//    @Override
-//    public String getIdentityColumnString() {
-//        return "bigint";
-//    }
-//
-//    @Override
-//    public String getIdentitySelectString() {
-//        return "select last_insert_rowid()";
-//    }
 
     @Override
     @Deprecated
@@ -103,24 +84,9 @@ public class HibernateSQLiteDialect extends Dialect {
     @Override
     @Deprecated
     protected String getLimitString(String query, boolean hasOffset) {
-        return new StringBuffer(query.length() + 20).append(query).
-                append(hasOffset ? " limit ? offset ?" : " limit ?").toString();
+        return new StringBuffer(query.length() + 20).append(query).append(hasOffset ? " limit ? offset ?" : " limit ?")
+                .toString();
     }
-
-//    @Override
-//    public boolean supportsTemporaryTables() {
-//        return true;
-//    }
-//
-//    @Override
-//    public String getCreateTemporaryTableString() {
-//        return "create temporary table if not exists";
-//    }
-//
-//    @Override
-//    public boolean dropTemporaryTableAfterUse() {
-//        return false;
-//    }
 
     @Override
     public boolean supportsCurrentTimestampSelection() {
@@ -173,9 +139,8 @@ public class HibernateSQLiteDialect extends Dialect {
     }
 
     @Override
-    public String getAddForeignKeyConstraintString(String constraintName,
-            String[] foreignKey, String referencedTable, String[] primaryKey,
-            boolean referencesPrimaryKey) {
+    public String getAddForeignKeyConstraintString(String constraintName, String[] foreignKey, String referencedTable,
+            String[] primaryKey, boolean referencesPrimaryKey) {
         throw new UnsupportedOperationException("No add foreign key syntax supported by HibernateSQLiteDialect");
     }
 

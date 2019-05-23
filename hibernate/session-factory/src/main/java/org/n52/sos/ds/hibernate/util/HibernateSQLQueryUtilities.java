@@ -35,7 +35,10 @@ import java.util.List;
  *
  * @since 4.0.0
  */
-public class HibernateSQLQueryUtilities {
+public final class HibernateSQLQueryUtilities {
+
+    private HibernateSQLQueryUtilities() {
+    }
 
     /**
      * Get distinct value for properties and table name
@@ -68,8 +71,5 @@ public class HibernateSQLQueryUtilities {
         }
         query.append(";");
         return query.toString();
-    }
-
-    private HibernateSQLQueryUtilities() {
     }
 }

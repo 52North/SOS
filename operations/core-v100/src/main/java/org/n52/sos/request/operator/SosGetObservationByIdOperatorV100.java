@@ -49,7 +49,9 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
  */
 public class SosGetObservationByIdOperatorV100
         extends
-        AbstractV1RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
+        AbstractV1RequestOperator<AbstractGetObservationByIdHandler,
+                                    GetObservationByIdRequest,
+                                    GetObservationByIdResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosGetObservationByIdOperatorV100.class.getName());
 
@@ -96,7 +98,7 @@ public class SosGetObservationByIdOperatorV100
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos1Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

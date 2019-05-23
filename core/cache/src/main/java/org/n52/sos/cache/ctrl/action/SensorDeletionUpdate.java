@@ -30,7 +30,6 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Set;
 
-import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.util.action.Action;

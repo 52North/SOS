@@ -150,7 +150,9 @@ public class ProfileImpl implements Profile {
         if (encodingNamespateForFeatureOfInterestEncoding != null) {
             this.encodingNamespaceForFeatureOfInterestEncoding = encodingNamespateForFeatureOfInterestEncoding;
         } else {
-            LOGGER.warn("The encodingNamespaceForFeatureOfInterestEncoding is null! Default encodingNamespaceForFeatureOfInterestEncoding is set!");
+            LOGGER.warn(
+                    "The encodingNamespaceForFeatureOfInterestEncoding is null! "
+                    + "Default encodingNamespaceForFeatureOfInterestEncoding is set!");
         }
 
     }

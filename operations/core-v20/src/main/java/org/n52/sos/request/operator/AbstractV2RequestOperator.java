@@ -39,14 +39,19 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
- * @param <D> The OperationDAO implementation class
- * @param <Q> the request type
- * @param <A> the response type
+ * @param <D>
+ *            The OperationDAO implementation class
+ * @param <Q>
+ *            the request type
+ * @param <A>
+ *            the response type
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+public abstract class AbstractV2RequestOperator<D extends OperationHandler,
+                                                Q extends OwsServiceRequest,
+                                                A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
 
     public AbstractV2RequestOperator(String operationName, Class<Q> requestType) {

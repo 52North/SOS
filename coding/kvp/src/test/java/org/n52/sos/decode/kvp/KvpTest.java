@@ -26,35 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.cache.ctrl;
+package org.n52.sos.decode.kvp;
 
-import javax.inject.Inject;
+public interface KvpTest {
 
-import org.n52.iceland.cache.ContentCacheUpdate;
-import org.n52.iceland.cache.ctrl.CompleteCacheUpdateFactory;
-import org.n52.iceland.coding.SupportedTypeRepository;
-import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
-import org.n52.sos.ds.CacheFeederHandler;
+    String OM_RESULT = "om:result";
 
-public class CompleteCacheUpdateFactoryImpl
-        implements CompleteCacheUpdateFactory {
-
-    private CacheFeederHandler cacheFeederHandler;
-    private SupportedTypeRepository supportedTypeRepository;
-
-    @Inject
-    public void setCacheFeederHandler(CacheFeederHandler cacheFeederHandler) {
-        this.cacheFeederHandler = cacheFeederHandler;
-    }
-
-    @Inject
-    public void setSupportedTypeRepository(SupportedTypeRepository supportedTypeRepository) {
-        this.supportedTypeRepository = supportedTypeRepository;
-    }
-
-    @Override
-    public ContentCacheUpdate get() {
-        return new CompleteCacheUpdate(this.cacheFeederHandler, this.supportedTypeRepository);
-    }
-
+    String FILTER = "$filter";
 }

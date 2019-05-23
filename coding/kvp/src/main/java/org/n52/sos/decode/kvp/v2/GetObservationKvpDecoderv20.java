@@ -57,13 +57,10 @@ import org.n52.svalbard.util.XmlHelper;
  */
 public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<GetObservationRequest> {
 
-
     private DecoderRepository decoderRepository;
 
     public GetObservationKvpDecoderv20() {
-        super(GetObservationRequest::new,
-              Sos2Constants.SERVICEVERSION,
-              SosConstants.Operations.GetObservation);
+        super(GetObservationRequest::new, Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation);
     }
 
     public GetObservationKvpDecoderv20(String version, String operation) {
@@ -90,11 +87,13 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
         super(GetObservationRequest::new, service, version, operation);
     }
 
-    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String version, String operation) {
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String version,
+            String operation) {
         super(supplier, version, operation);
     }
 
-    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String version, Enum<?> operation) {
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String version,
+            Enum<?> operation) {
         super(supplier, version, operation);
     }
 
@@ -102,15 +101,18 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
         super(supplier, keys);
     }
 
-    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, Collection<? extends DecoderKey> keys) {
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier,
+            Collection<? extends DecoderKey> keys) {
         super(supplier, keys);
     }
 
-    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String service, String version, String operation) {
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String service,
+            String version, String operation) {
         super(supplier, service, version, operation);
     }
 
-    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String service, String version, Enum<?> operation) {
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String service,
+            String version, Enum<?> operation) {
         super(supplier, service, version, operation);
     }
 
@@ -122,24 +124,20 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
     @Override
     protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
         super.getRequestParameterDefinitions(builder);
-        builder.add(SosConstants.GetObservationParams.offering,
-                    decodeList(GetObservationRequest::setOfferings));
-        builder.add(SosConstants.GetObservationParams.procedure,
-                    decodeList(GetObservationRequest::setProcedures));
+        builder.add(SosConstants.GetObservationParams.offering, decodeList(GetObservationRequest::setOfferings));
+        builder.add(SosConstants.GetObservationParams.procedure, decodeList(GetObservationRequest::setProcedures));
         builder.add(SosConstants.GetObservationParams.observedProperty,
-                    decodeList(GetObservationRequest::setObservedProperties));
+                decodeList(GetObservationRequest::setObservedProperties));
         builder.add(SosConstants.GetObservationParams.featureOfInterest,
-                    decodeList(GetObservationRequest::setFeatureIdentifiers));
+                decodeList(GetObservationRequest::setFeatureIdentifiers));
         builder.add(Sos2Constants.GetObservationParams.temporalFilter,
-                    decodeList(decodeTemporalFilter(asList(GetObservationRequest::setTemporalFilters))));
+                decodeList(decodeTemporalFilter(asList(GetObservationRequest::setTemporalFilters))));
         builder.add(Sos2Constants.GetObservationParams.spatialFilter,
-                    decodeList(decodeSpatialFilter(GetObservationRequest::setSpatialFilter)));
+                decodeList(decodeSpatialFilter(GetObservationRequest::setSpatialFilter)));
         builder.add(Sos2Constants.GetObservationParams.namespaces,
-                    decodeNamespaces(GetObservationRequest::setNamespaces));
-        builder.add(SosConstants.GetObservationParams.responseFormat,
-                    GetObservationRequest::setResponseFormat);
-        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-                    this::parseMergeObservationIntoDataArray);
+                decodeNamespaces(GetObservationRequest::setNamespaces));
+        builder.add(SosConstants.GetObservationParams.responseFormat, GetObservationRequest::setResponseFormat);
+        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray, this::parseMergeObservationIntoDataArray);
         builder.add("extension", decodeList(this::parseExtensionParameter));
         builder.add("$filter", this::parseODataFes);
 
@@ -167,7 +165,7 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder<G
         if (obj instanceof Extension) {
             return (Extension<?>) obj;
         } else if (obj instanceof SweAbstractDataComponent) {
-            return new SwesExtension<>().setValue((SweAbstractDataComponent)obj);
+            return new SwesExtension<>().setValue((SweAbstractDataComponent) obj);
         } else {
             return new SwesExtension<>().setValue(new SweText().setValue(value));
         }

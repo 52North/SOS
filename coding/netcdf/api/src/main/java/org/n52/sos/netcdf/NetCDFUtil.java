@@ -90,6 +90,8 @@ public interface NetCDFUtil {
 
     GeometryHandler getGeometryHandler();
 
+    NetcdfHelper getNetcdfHelper();
+
     /**
      * Organizes OmObservation collection into a list of NetCDFObservation
      * blocks, each of which contain a single feature type
@@ -98,6 +100,7 @@ public interface NetCDFUtil {
      *            The collection of observations to transform
      * @return List&lt;NetCDFObservation&gt; ready for encoding
      * @throws EncodingException
+     *             if an error occurs
      */
     default List<NetCDFObservation> createNetCDFSosObservations(ObservationStream omObservations)
             throws EncodingException, OwsExceptionReport {
@@ -116,7 +119,7 @@ public interface NetCDFUtil {
         SetMultimap<String, Double> sensorLats = HashMultimap.create();
         SetMultimap<String, Double> sensorHeights = HashMultimap.create();
 
-        while(omObservations.hasNext()) {
+        while (omObservations.hasNext()) {
             OmObservation sosObs = omObservations.next();
 
             OmObservationConstellation obsConst = sosObs.getObservationConstellation();
@@ -160,12 +163,12 @@ public interface NetCDFUtil {
             for (Point point : FeatureUtil.getFeaturePoints(foi)) {
                 try {
                     // TODO is this correct?
-                    point = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
+                    Point p = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
+                    sensorLngs.put(sensor, p.getX());
+                    sensorLats.put(sensor, p.getY());
                 } catch (OwsExceptionReport e) {
                     throw new EncodingException("Exception while normalizing feature coordinate axis order.", e);
                 }
-                sensorLngs.put(sensor, point.getX());
-                sensorLats.put(sensor, point.getY());
             }
             Set<Double> featureHeights = FeatureUtil.getFeatureHeights(foi);
             sensorHeights.putAll(sensor, featureHeights);
@@ -200,9 +203,6 @@ public interface NetCDFUtil {
 
                 if (isZ(phenomenon.getIdentifier())) {
                     Double zValue = quantityValue.getValue().doubleValue();
-//                    if (isDepth(phenomenon.getIdentifier())) {
-//                        zValue = 0 - zValue;
-//                    }
                     sensorHeights.get(sensor).add(zValue);
                 }
             }
@@ -221,15 +221,13 @@ public interface NetCDFUtil {
                     Set<Point> points = FeatureUtil.getPoints(geometry);
                     for (Point point : points) {
                         try {
-                            // TODO is this correct?
-                            point =
-                                    (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                            point);
+                            Point p = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
+                            sensorLngs.put(sensor, p.getX());
+                            sensorLats.put(sensor, p.getY());
                         } catch (OwsExceptionReport e) {
-                            throw new EncodingException("Exception while normalizing sampling geometry coordinate axis order.");
+                            throw new EncodingException(
+                                    "Exception while normalizing sampling geometry coordinate axis order.");
                         }
-                        sensorLngs.put(sensor, point.getX());
-                        sensorLats.put(sensor, point.getY());
                     }
                     sensorHeights.putAll(sensor, FeatureUtil.getHeights(points));
                 }
@@ -303,10 +301,11 @@ public interface NetCDFUtil {
         Envelope trajectoryEnvelope = new Envelope();
         Envelope trajectoryProfileEnvelope = new Envelope();
 
-        for (Map.Entry<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesEntry : obsValuesMap
+        for (Map.Entry<String, Map<Time, Map<OmObservableProperty,
+                Map<SubSensor, Value<?>>>>> obsValuesEntry : obsValuesMap
                 .entrySet()) {
             IdentifierDatasetSensor datasetSensor = new IdentifierDatasetSensor(obsValuesEntry.getKey());
-            String sensor  = datasetSensor.getSensorIdentifier();
+            String sensor = datasetSensor.getSensorIdentifier();
             Set<Time> sensorTimes = obsValuesEntry.getValue().keySet();
 
             int lngCount = sensorLngs.get(sensor).size();
@@ -371,8 +370,8 @@ public interface NetCDFUtil {
             } else if (!locationVaries && heightVaries) {
                 // time series profile
                 timeSeriesProfileSamplingTimePeriod.extendToContain(sensorTimes);
-                timeSeriesProfileSensorDatasets.put(sensor, new TimeSeriesProfileSensorDataset(datasetSensor, staticLng,
-                        staticLat, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
+                timeSeriesProfileSensorDatasets.put(sensor, new TimeSeriesProfileSensorDataset(datasetSensor,
+                        staticLng, staticLat, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 timeSeriesProfilePhenomena.addAll(sensorPhens.get(sensor));
                 if (staticLng != null && staticLat != null) {
                     timeSeriesProfileEnvelope.expandToInclude(staticLng, staticLat);
@@ -380,25 +379,24 @@ public interface NetCDFUtil {
             } else if (locationVaries && !heightVaries) {
                 // trajectory
                 trajectorySamplingTimePeriod.extendToContain(sensorTimes);
-                trajectorySensorDatasets.put(sensor,
-                        new TrajectorySensorDataset(datasetSensor, staticHeight, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
+                trajectorySensorDatasets.put(sensor, new TrajectorySensorDataset(datasetSensor, staticHeight,
+                        obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 trajectoryPhenomena.addAll(sensorPhens.get(sensor));
                 expandEnvelopeToInclude(trajectoryEnvelope, sensorLngs.get(sensor), sensorLats.get(sensor));
             } else if (locationVaries && heightVaries) {
                 // trajectory profile
                 trajectoryProfileSamplingTimePeriod.extendToContain(sensorTimes);
-                trajectoryProfileSensorDatasets.put(sensor,
-                        new TrajectoryProfileSensorDataset(datasetSensor, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
+                trajectoryProfileSensorDatasets.put(sensor, new TrajectoryProfileSensorDataset(datasetSensor,
+                        obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 trajectoryProfilePhenomena.addAll(sensorPhens.get(sensor));
                 expandEnvelopeToInclude(trajectoryProfileEnvelope, sensorLngs.get(sensor), sensorLats.get(sensor));
             }
         }
 
         // build NetCDFObservations
-        List<NetCDFObservation> iSosObsList = new ArrayList<>(timeSeriesSensorDatasets.size() +
-                                                              timeSeriesProfileSensorDatasets.size() +
-                                                              trajectorySensorDatasets.size() +
-                                                              trajectoryProfileSensorDatasets.size());
+        List<NetCDFObservation> iSosObsList =
+                new ArrayList<>(timeSeriesSensorDatasets.size() + timeSeriesProfileSensorDatasets.size()
+                        + trajectorySensorDatasets.size() + trajectoryProfileSensorDatasets.size());
 
         // timeSeries
         if (timeSeriesSensorDatasets.size() > 0) {
@@ -408,9 +406,9 @@ public interface NetCDFUtil {
 
         // time series profile
         if (timeSeriesProfileSensorDatasets.size() > 0) {
-            iSosObsList.add(new NetCDFObservation(CF.FeatureType.timeSeriesProfile,
-                    timeSeriesProfileSamplingTimePeriod, timeSeriesProfileSensorDatasets, timeSeriesProfilePhenomena,
-                    timeSeriesProfileEnvelope));
+            iSosObsList
+                    .add(new NetCDFObservation(CF.FeatureType.timeSeriesProfile, timeSeriesProfileSamplingTimePeriod,
+                            timeSeriesProfileSensorDatasets, timeSeriesProfilePhenomena, timeSeriesProfileEnvelope));
         }
 
         // trajectory
@@ -421,9 +419,9 @@ public interface NetCDFUtil {
 
         // trajectoryProfile
         if (trajectoryProfileSensorDatasets.size() > 0) {
-            iSosObsList.add(new NetCDFObservation(CF.FeatureType.trajectoryProfile,
-                    trajectoryProfileSamplingTimePeriod, trajectoryProfileSensorDatasets, trajectoryProfilePhenomena,
-                    trajectoryProfileEnvelope));
+            iSosObsList
+                    .add(new NetCDFObservation(CF.FeatureType.trajectoryProfile, trajectoryProfileSamplingTimePeriod,
+                            trajectoryProfileSensorDatasets, trajectoryProfilePhenomena, trajectoryProfileEnvelope));
         }
         return iSosObsList;
     }
@@ -518,14 +516,14 @@ public interface NetCDFUtil {
                 if (FeatureUtil.equal2d(topPoint, bottomPoint) && !Double.isNaN(topPoint.getCoordinate().getZ())
                         && !Double.isNaN(bottomPoint.getCoordinate().getZ())) {
                     double topHeight = Math.max(topPoint.getCoordinate().getZ(), bottomPoint.getCoordinate().getZ());
-                    double bottomHeight = Math.min(topPoint.getCoordinate().getZ(), bottomPoint.getCoordinate().getZ());
+                    double bottomHeight =
+                            Math.min(topPoint.getCoordinate().getZ(), bottomPoint.getCoordinate().getZ());
                     subSensor = new BinProfileSubSensor(topHeight, bottomHeight);
                 }
             }
         }
         return subSensor;
     }
-
 
     default boolean isLng(String phenomenon) {
         return getNetcdfHelper().getLatitude().contains(phenomenon.toLowerCase(Locale.ROOT));
@@ -537,10 +535,6 @@ public interface NetCDFUtil {
 
     default boolean isZ(String phenomenon) {
         return getNetcdfHelper().getZ().contains(phenomenon.toLowerCase(Locale.ROOT));
-    }
-
-    default NetcdfHelper getNetcdfHelper() {
-        return NetcdfHelper.getInstance();
     }
 
     default boolean hasSamplingGeometry(OmObservation sosObs) {

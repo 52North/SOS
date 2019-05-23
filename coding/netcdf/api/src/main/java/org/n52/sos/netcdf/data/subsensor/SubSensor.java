@@ -36,15 +36,16 @@ package org.n52.sos.netcdf.data.subsensor;
  * @since 4.4.0
  *
  */
-public abstract class SubSensor implements Comparable<SubSensor>{
+public abstract class SubSensor implements Comparable<SubSensor> {
     @Override
     public int compareTo(SubSensor o) {
         if (o == null) {
             throw new NullPointerException();
         }
 
-        //this should never happen (different types of subsensors shouldn't be in the same collection)
-        //but fall back on class name to group like subsensors
+        // this should never happen (different types of subsensors shouldn't be
+        // in the same collection)
+        // but fall back on class name to group like subsensors
         return this.getClass().getName().compareTo(o.getClass().getName());
     }
 }

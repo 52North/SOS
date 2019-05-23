@@ -39,8 +39,8 @@ import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 @Entity(name = "static_capabilities")
 public class StaticCapabilitiesImpl extends Activatable<String, StaticCapabilitiesImpl> implements StaticCapabilities,
                                                                                                    Serializable {
-    private static final long serialVersionUID = 869831596651387379L;
     public static final String DOCUMENT = "document";
+    private static final long serialVersionUID = 869831596651387379L;
     @Column(name = DOCUMENT)
     private String document;
 

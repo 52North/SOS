@@ -28,24 +28,17 @@
  */
 package org.n52.sos.request.operator;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyCollectionOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsCollectionContaining;
+import org.junit.Assert;
 import org.junit.Test;
-
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.n52.sos.cache.SosContentCache;
 
 import com.google.common.collect.Lists;
@@ -57,37 +50,41 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  */
 public class SosGetObservationOperatorV20Test {
+    private static final String FEATURE = "feature";
+
+    private static final String CHILD_FEATURE = "child-feature";
 
     @Test
     public void should_return_empty_list_for_bad_parameters() {
-        final SosGetObservationOperatorV20 operator = mock(SosGetObservationOperatorV20.class);
-        when(operator.addChildFeatures(anyCollectionOf(String.class))).thenCallRealMethod();
+        final SosGetObservationOperatorV20 operator = Mockito.mock(SosGetObservationOperatorV20.class);
+        Mockito.when(operator.addChildFeatures(Matchers.anyCollectionOf(String.class))).thenCallRealMethod();
 
         // null
         List<String> childFeatures = operator.addChildFeatures(null);
-        assertThat(childFeatures.isEmpty(), is(TRUE));
+        Assert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.TRUE));
 
         // empty list
         childFeatures = operator.addChildFeatures(new ArrayList<String>(0));
-        assertThat(childFeatures.isEmpty(), is(TRUE));
+        Assert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.TRUE));
     }
 
     @Test
     public void should_add_childs_for_features() {
-        final SosGetObservationOperatorV20 operator = mock(SosGetObservationOperatorV20.class);
-        final SosContentCache cache = mock(SosContentCache.class);
+        final SosGetObservationOperatorV20 operator = Mockito.mock(SosGetObservationOperatorV20.class);
+        final SosContentCache cache = Mockito.mock(SosContentCache.class);
         final Set<String> myChildFeatures = new HashSet<String>(1);
-        myChildFeatures.add("child-feature");
-        when(cache.getChildFeatures(anyString(), anyBoolean(), anyBoolean())).thenReturn(myChildFeatures);
-        when(operator.getCache()).thenReturn(cache);
-        when(operator.addChildFeatures(anyCollectionOf(String.class))).thenCallRealMethod();
+        myChildFeatures.add(CHILD_FEATURE);
+        Mockito.when(cache.getChildFeatures(Matchers.anyString(), Matchers.anyBoolean(), Matchers.anyBoolean()))
+                .thenReturn(myChildFeatures);
+        Mockito.when(operator.getCache()).thenReturn(cache);
+        Mockito.when(operator.addChildFeatures(Matchers.anyCollectionOf(String.class))).thenCallRealMethod();
 
-        final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList("feature"));
+        final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList(FEATURE));
 
-        assertThat(childFeatures.isEmpty(), is(FALSE));
-        assertThat(childFeatures.size(), is(2));
-        assertThat(childFeatures, hasItem("child-feature"));
-        assertThat(childFeatures, hasItem("feature"));
+        Assert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.FALSE));
+        Assert.assertThat(childFeatures.size(), Is.is(2));
+        Assert.assertThat(childFeatures, IsCollectionContaining.hasItem(CHILD_FEATURE));
+        Assert.assertThat(childFeatures, IsCollectionContaining.hasItem(FEATURE));
     }
 
 }

@@ -71,15 +71,6 @@ import ucar.nc2.NetcdfFileWriter.Version;
 public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfEncoder.class);
 
-    private final Set<String> MEDIA_TYPES = Sets.newHashSet(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
-            NetcdfConstants.CONTENT_TYPE_NETCDF_3.toString(), NetcdfConstants.CONTENT_TYPE_NETCDF_4.toString());
-
-    private final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
-            SosConstants.SOS, (Map<String, Set<String>>) new ImmutableMap.Builder<String, Set<String>>()
-            .put(Sos1Constants.SERVICEVERSION, MEDIA_TYPES)
-            .put(Sos2Constants.SERVICEVERSION, MEDIA_TYPES)
-            .build());
-
     private static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
           (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos1Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF),
@@ -94,6 +85,14 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
           (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_4));
 
+    private final Set<String> MEDIA_TYPES = Sets.newHashSet(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
+            NetcdfConstants.CONTENT_TYPE_NETCDF_3.toString(), NetcdfConstants.CONTENT_TYPE_NETCDF_4.toString());
+
+    private final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
+            SosConstants.SOS, (Map<String, Set<String>>) new ImmutableMap.Builder<String, Set<String>>()
+            .put(Sos1Constants.SERVICEVERSION, MEDIA_TYPES)
+            .put(Sos2Constants.SERVICEVERSION, MEDIA_TYPES)
+            .build());
 
     public NetcdfEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -120,7 +119,8 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
         return Collections.emptySet();
     }
 
-    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws EncodingException {
+    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version)
+            throws EncodingException {
         if (CollectionHelper.isEmptyOrNull(netCDFObsList)) {
             throw new EncodingException("No feature types to encode");
         } else if (netCDFObsList.size() > 1) {
@@ -132,7 +132,8 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
         if (CollectionHelper.isEmpty(netCDFObservation.getSensorDatasets())) {
             throw new EncodingException("No sensors to encode");
         } else if (netCDFObservation.getSensorDatasets().size() > 1) {
-            throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null, netCDFObservation.getSensorDatasets().size());
+            throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null,
+                    netCDFObservation.getSensorDatasets().size());
         }
 
         AbstractSensorDataset sensorDataset = netCDFObservation.getSensorDatasets().get(0);
@@ -153,13 +154,14 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
     private void throwTooManyFeatureTypesOrSensorsException(List<NetCDFObservation> netCDFObsList,
             Integer numFeatureTypes, Integer numSensors) throws EncodingException {
         StringBuilder sb = new StringBuilder();
-        sb.append("This encoder (").append(NetcdfConstants.CONTENT_TYPE_NETCDF.toString()).append(") can only encode a single feature type");
+        sb.append("This encoder (").append(NetcdfConstants.CONTENT_TYPE_NETCDF.toString())
+                .append(") can only encode a single feature type");
         if (numFeatureTypes != null) {
             sb.append(" (found ").append(numFeatureTypes).append(")");
         }
         sb.append(" and a single sensor");
         if (numSensors != null) {
-            sb.append(" (found ").append(numSensors).append(")");
+            sb.append(" (").append("found ").append(numSensors).append(")");
         }
         sb.append(". Change your request to only return a single feature type or use the zipped netCDF encoder (")
                 .append(NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP.toString()).append(").");

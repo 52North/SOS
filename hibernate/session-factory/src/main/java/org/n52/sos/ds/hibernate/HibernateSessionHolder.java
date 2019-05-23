@@ -60,10 +60,6 @@ public class HibernateSessionHolder {
         }
     }
 
-    public void returnSession(Session session) {
-        getConnectionProvider().returnConnection(session);
-    }
-
     public static Session getSession(Object connection) throws OwsExceptionReport {
         if (connection == null) {
             throw new NoApplicableCodeException().withMessage("The parameter connection is null!");
@@ -72,5 +68,9 @@ public class HibernateSessionHolder {
             throw new NoApplicableCodeException().withMessage("The parameter connection is not an Hibernate Session!");
         }
         return (Session) connection;
+    }
+
+    public void returnSession(Session session) {
+        getConnectionProvider().returnConnection(session);
     }
 }

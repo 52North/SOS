@@ -64,6 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider implements UpdateableConnectionProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
+
     private int maxConnections;
 
     @Override
@@ -76,7 +77,8 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
         if (sessionFactory == null) {
             throw new ConfigurationError("sessionFactory is null");
         }
-        Dialect dialect = ((SessionFactoryImplementor) sessionFactory).getServiceRegistry().getService( JdbcServices.class ).getDialect();
+        Dialect dialect = ((SessionFactoryImplementor) sessionFactory).getServiceRegistry()
+                .getService(JdbcServices.class).getDialect();
         if (dialect == null) {
             throw new ConfigurationError("dialect is null");
         }
@@ -85,14 +87,6 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
 
         Path createTempFile = null;
         try {
-//            DatabaseInformationImpl databaseMetadata = new DatabaseInformationImpl(serviceRegistry, jdbcEnvironment, ddlTransactionIsolator, defaultNamespace);
-//            DatabaseMetadata databaseMetadata = new DatabaseInformationImpl(conn, dialect, configuration);
-//            String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
-//            SchemaUpdate schemaUpdate = new SchemaUpdate();
-//            createTempFile = Files.createTempFile("update", "tmp");
-//            schemaUpdate.setDelimiter(";").setFormat(true).setHaltOnError(true).setOutputFile(createTempFile.toString());
-//            Metadata metadata = new MetadataSources(sessionFactory.getSessionFactory().getServiceRegistry()).buildMetadata();
-//            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata, sessionFactory.getSessionFactory().getServiceRegistry());
             returnConnection(session);
             StringBuilder updateSqlString = new StringBuilder();
             for (String sqlLine : Files.readAllLines(createTempFile)) {
@@ -141,9 +135,8 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
                         URL dirUrl = classLoader.getResource(directory);
                         if (dirUrl != null) {
                             try {
-                                hibernateDir =
-                                        new File(URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset()
-                                                .toString()));
+                                hibernateDir = new File(
+                                        URLDecoder.decode(dirUrl.getPath(), Charset.defaultCharset().toString()));
                             } catch (UnsupportedEncodingException e) {
                                 throw new ConfigurationError("Unable to encode directory URL " + dirUrl + "!");
                             }
@@ -156,10 +149,10 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
                 }
             } else {
                 // keep this as default/fallback
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_CORE_PATH).toURI()));
-                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_DATASET_PATH).toURI()));
-//              configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH).toURI()));
-//              configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SERIES_CONCEPT_VALUE_PATH).toURI()));
+                configuration
+                        .addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_CORE_PATH).toURI()));
+                configuration
+                        .addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_SIMPLE_DATASET_PATH).toURI()));
             }
             return configuration;
         } catch (HibernateException | URISyntaxException he) {

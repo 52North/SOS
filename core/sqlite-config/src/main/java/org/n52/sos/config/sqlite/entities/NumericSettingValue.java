@@ -34,7 +34,7 @@ import org.n52.faroe.SettingType;
 
 /**
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 @Entity(name = "numeric_settings")
 public class NumericSettingValue extends AbstractSettingValue<Double> {

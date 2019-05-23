@@ -38,7 +38,7 @@ import org.n52.sos.ds.procedure.ProcedureCreationContext;
 /**
  * TODO JavaDoc
  *
- * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ProcedureDescriptionEnrichments
         extends

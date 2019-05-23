@@ -38,8 +38,10 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
 
 public class IsoTimeStringType extends AbstractSingleColumnStandardBasicType<Date> implements LiteralType<Date> {
 
-    private static final long serialVersionUID = 1578546594599136420L;
     public static final IsoTimeStringType INSTANCE = new IsoTimeStringType();
+
+    private static final long serialVersionUID = 1578546594599136420L;
+
     private String name = "iso_string";
 
     public IsoTimeStringType() {
@@ -51,7 +53,8 @@ public class IsoTimeStringType extends AbstractSingleColumnStandardBasicType<Dat
     }
 
     public IsoTimeStringType(String timeZone, String dateFormat, boolean useZAsOffset) {
-        super(new IsoTimeStringTypeDescriptor(timeZone, dateFormat, useZAsOffset), JdbcTimestampTypeDescriptor.INSTANCE);
+        super(new IsoTimeStringTypeDescriptor(timeZone, dateFormat, useZAsOffset),
+                JdbcTimestampTypeDescriptor.INSTANCE);
     }
 
     @Override
@@ -61,7 +64,8 @@ public class IsoTimeStringType extends AbstractSingleColumnStandardBasicType<Dat
 
     @Override
     public String objectToSQLString(Date value, Dialect dialect) throws Exception {
-        return StringType.INSTANCE.objectToSQLString(((IsoTimeStringTypeDescriptor)getSqlTypeDescriptor()).encode(value), dialect );
+        return StringType.INSTANCE
+                .objectToSQLString(((IsoTimeStringTypeDescriptor) getSqlTypeDescriptor()).encode(value), dialect);
     }
 
 }

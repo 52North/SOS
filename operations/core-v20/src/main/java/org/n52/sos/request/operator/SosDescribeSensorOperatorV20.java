@@ -45,7 +45,6 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -98,12 +97,15 @@ import com.google.common.collect.Sets;
 public class SosDescribeSensorOperatorV20 extends
         AbstractV2RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
-    private PostProcessor postProcessor;
-    private BindingRepository bindingRepository;
-    private String serviceURL;
+    
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
+    private PostProcessor postProcessor;
+
+    private BindingRepository bindingRepository;
+
+    private String serviceURL;
 
     public SosDescribeSensorOperatorV20() {
         super(OPERATION_NAME, DescribeSensorRequest.class);
@@ -135,7 +137,7 @@ public class SosDescribeSensorOperatorV20 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -144,7 +146,8 @@ public class SosDescribeSensorOperatorV20 extends
     @Override
     public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
         return getOperationHandler().getSensorDescription(request);
-        // TODO check if sensor description position/location/observedArea should be transformed (CRS support)
+        // TODO check if sensor description position/location/observedArea
+        // should be transformed (CRS support)
     }
 
     @Override
@@ -173,7 +176,8 @@ public class SosDescribeSensorOperatorV20 extends
         // if (sosRequest.isSetValidTime()) {
         // exceptions.add(new
         // OptionNotSupportedException().at(Sos2Constants.DescribeSensorParams.validTime)
-        // .withMessage("The requested parameter is not supported by this server!"));
+        // .withMessage("The requested parameter is not supported by this
+        // server!"));
         // }
         checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
@@ -189,10 +193,12 @@ public class SosDescribeSensorOperatorV20 extends
         return super.postProcessResponse(postProcessor.process(response));
     }
 
-    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
-        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, false)) {
-            checkProcedureDescriptionFormat(sosRequest.getProcedureDescriptionFormat(),
-                    sosRequest.getService(), sosRequest.getVersion());
+    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest)
+            throws MissingParameterValueException, OwsExceptionReport {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(),
+                Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, false)) {
+            checkProcedureDescriptionFormat(sosRequest.getProcedureDescriptionFormat(), sosRequest.getService(),
+                    sosRequest.getVersion());
         }
     }
 
@@ -200,7 +206,8 @@ public class SosDescribeSensorOperatorV20 extends
         private ProcedureRequestSettingProvider procedureRequestSettingProvider;
 
         @Inject
-        public void setProcedureRequestSettingProvider(ProcedureRequestSettingProvider procedureRequestSettingProvider) {
+        public void setProcedureRequestSettingProvider(
+                ProcedureRequestSettingProvider procedureRequestSettingProvider) {
             this.procedureRequestSettingProvider = procedureRequestSettingProvider;
         }
 
@@ -208,22 +215,25 @@ public class SosDescribeSensorOperatorV20 extends
             if (response.isSetProcedureDescriptions()) {
                 for (SosProcedureDescription<?> procedureDescription : response.getProcedureDescriptions()) {
                     if (procedureDescription.getProcedureDescription() instanceof AbstractProcess) {
-                        AbstractProcess abstractProcess = (AbstractProcess)procedureDescription.getProcedureDescription();
+                        AbstractProcess abstractProcess =
+                                (AbstractProcess) procedureDescription.getProcedureDescription();
                         if (!abstractProcess.isSetOutputs()) {
                             extendOutputs(procedureDescription, abstractProcess);
                         }
                         if (SensorMLConstants.NS_SML.equalsIgnoreCase(response.getOutputFormat())) {
-                                addSpecialCapabilities(procedureDescription, abstractProcess);
+                            addSpecialCapabilities(procedureDescription, abstractProcess);
                         }
                         if (SensorML20Constants.NS_SML.equalsIgnoreCase(response.getOutputFormat())) {
                             if (procedureDescription.isSetOfferings()) {
-                                final Set<SweText> offeringsSet = convertOfferingsToSet(procedureDescription.getOfferings());
+                                final Set<SweText> offeringsSet =
+                                        convertOfferingsToSet(procedureDescription.getOfferings());
                                 mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_OFFERINGS,
                                         SensorMLConstants.OFFERING_FIELD_DEFINITION, null, offeringsSet);
                             }
-                            if (procedureDescription.isSetFeaturesOfInterest() || procedureDescription.isSetFeaturesOfInterestMap()) {
+                            if (procedureDescription.isSetFeaturesOfInterest()
+                                    || procedureDescription.isSetFeaturesOfInterestMap()) {
                                 if (abstractProcess instanceof AbstractProcessV20) {
-                                    AbstractProcessV20 abstractProcessV20 = (AbstractProcessV20)abstractProcess;
+                                    AbstractProcessV20 abstractProcessV20 = (AbstractProcessV20) abstractProcess;
                                     SmlFeatureOfInterest smlFeatureOfInterest;
                                     if (!abstractProcessV20.isSetSmlFeatureOfInterest()) {
                                         smlFeatureOfInterest = new SmlFeatureOfInterest();
@@ -235,10 +245,12 @@ public class SosDescribeSensorOperatorV20 extends
                                         smlFeatureOfInterest = abstractProcessV20.getSmlFeatureOfInterest();
                                     }
                                     if (procedureDescription.isSetFeaturesOfInterest()) {
-                                        smlFeatureOfInterest.addFeaturesOfInterest(procedureDescription.getFeaturesOfInterest());
+                                        smlFeatureOfInterest
+                                                .addFeaturesOfInterest(procedureDescription.getFeaturesOfInterest());
                                     }
                                     if (procedureDescription.isSetFeaturesOfInterestMap()) {
-                                        smlFeatureOfInterest.addFeaturesOfInterest(procedureDescription.getFeaturesOfInterestMap());
+                                        smlFeatureOfInterest.addFeaturesOfInterest(
+                                                procedureDescription.getFeaturesOfInterestMap());
                                     }
 
                                 }
@@ -246,12 +258,14 @@ public class SosDescribeSensorOperatorV20 extends
                         }
                         if (procedureDescription.isSetChildProcedures() && abstractProcess instanceof HasComponents) {
                             List<SmlComponent> smlComponents = Lists.newArrayList();
-                            smlComponents.addAll(createComponentsForChildProcedures(procedureDescription.getChildProcedures()));
+                            smlComponents.addAll(
+                                    createComponentsForChildProcedures(procedureDescription.getChildProcedures()));
                             abstractProcess.getOutputs().addAll(getOutputsFromChilds(smlComponents));
-                            ((HasComponents)abstractProcess).addComponents(smlComponents);
+                            ((HasComponents) abstractProcess).addComponents(smlComponents);
                         }
                     } else if (procedureDescription.getProcedureDescription() instanceof SensorML) {
-                        for (AbstractProcess abstractProcess : ((SensorML)procedureDescription.getProcedureDescription()).getMembers()) {
+                        for (AbstractProcess abstractProcess : ((SensorML) procedureDescription
+                                .getProcedureDescription()).getMembers()) {
                             addSpecialCapabilities(procedureDescription, abstractProcess);
                         }
                     }
@@ -268,16 +282,19 @@ public class SosDescribeSensorOperatorV20 extends
          * <li>parentProcedures</li>
          * </ul>
          * but only, if available.
+         * 
          * @param procedureDescription
          *
          * @param abstractProcess
          *            SOS abstract process.
          */
-        private void addSpecialCapabilities(SosProcedureDescription<?> procedureDescription, AbstractProcess abstractProcess) {
+        private void addSpecialCapabilities(SosProcedureDescription<?> procedureDescription,
+                AbstractProcess abstractProcess) {
             if (procedureDescription.isSetFeaturesOfInterestMap()) {
                 final Set<SweText> featureSet = convertFeaturesToSet(procedureDescription.getFeaturesOfInterestMap());
                 mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST,
-                        SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION, SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME, featureSet);
+                        SensorMLConstants.FEATURE_OF_INTEREST_FIELD_DEFINITION,
+                        SensorMLConstants.FEATURE_OF_INTEREST_FIELD_NAME, featureSet);
             } else {
                 if (procedureDescription.isSetFeaturesOfInterest()) {
                     final Map<String, String> valueNamePairs =
@@ -300,7 +317,6 @@ public class SosDescribeSensorOperatorV20 extends
                         SensorMLConstants.PARENT_PROCEDURE_FIELD_DEFINITION, valueNamePairs);
             }
         }
-
 
         private void mergeCapabilities(final AbstractProcess process, final String capabilitiesName,
                 final String definition, final Map<String, String> valueNamePairs) {
@@ -357,7 +373,7 @@ public class SosDescribeSensorOperatorV20 extends
                     // update the name of present field
                     if (field.getElement() instanceof SweText) {
                         final SweText sweText = (SweText) field.getElement();
-                     // update the definition if not present
+                        // update the definition if not present
                         if (!sweText.isSetDefinition()) {
                             sweText.setDefinition(definition);
                         }
@@ -382,12 +398,14 @@ public class SosDescribeSensorOperatorV20 extends
                     process.removeCapabilities(capabilities.get());
                 }
                 // create new capabilities
-                process.addCapabilities(createCapabilitiesFrom(capabilitiesName, definition, fieldName, sweTextFieldSet));
+                process.addCapabilities(
+                        createCapabilitiesFrom(capabilitiesName, definition, fieldName, sweTextFieldSet));
             }
         }
 
         /**
-         * Convert SOS sosOfferings to map with key == identifier and value = name
+         * Convert SOS sosOfferings to map with key == identifier and value =
+         * name
          *
          * @param offerings
          *            SOS sosOfferings
@@ -400,7 +418,9 @@ public class SosDescribeSensorOperatorV20 extends
         }
 
         /**
-         * Convert SOS sosOfferings to map with key == identifier and value = name
+         * Convert SOS sosOfferings to map with key == identifier and value =
+         * name
+         * 
          * @param map
          *            .values() SOS sosOfferings
          * @return Set with identifier, name.
@@ -420,7 +440,8 @@ public class SosDescribeSensorOperatorV20 extends
         }
 
         /**
-         * Convert SOS sosOfferings to map with key == identifier and value = name
+         * Convert SOS sosOfferings to map with key == identifier and value =
+         * name
          *
          * @param offerings
          *            SOS sosOfferings
@@ -476,6 +497,17 @@ public class SosDescribeSensorOperatorV20 extends
             return capabilities;
         }
 
+        private SmlCapabilities createCapabilitiesFrom(final String capabilitiesName, final String fieldDefinition,
+                final String fieldName, final Set<SweText> sweTextSet) {
+            final SmlCapabilities capabilities = new SmlCapabilities();
+            capabilities.setName(capabilitiesName);
+            final SweSimpleDataRecord simpleDataRecord = new SweSimpleDataRecord();
+            simpleDataRecord.setName(capabilitiesName);
+            final List<SweField> fields = createCapabilitiesFieldsFrom(fieldDefinition, fieldName, sweTextSet);
+            capabilities.setDataRecord(simpleDataRecord.setFields(fields));
+            return capabilities;
+        }
+
         private List<SweField> createCapabilitiesFieldsFrom(final String fieldDefinition,
                 final Map<String, String> valueNamePairs) {
             final List<SweField> fields = Lists.newArrayListWithExpectedSize(valueNamePairs.size());
@@ -492,18 +524,8 @@ public class SosDescribeSensorOperatorV20 extends
             return fields;
         }
 
-        private SmlCapabilities createCapabilitiesFrom(final String capabilitiesName, final String fieldDefinition, final String fieldName,
-                final Set<SweText> sweTextSet) {
-            final SmlCapabilities capabilities = new SmlCapabilities();
-            capabilities.setName(capabilitiesName);
-            final SweSimpleDataRecord simpleDataRecord = new SweSimpleDataRecord();
-            simpleDataRecord.setName(capabilitiesName);
-            final List<SweField> fields = createCapabilitiesFieldsFrom(fieldDefinition, fieldName, sweTextSet);
-            capabilities.setDataRecord(simpleDataRecord.setFields(fields));
-            return capabilities;
-        }
-
-        private List<SweField> createCapabilitiesFieldsFrom(final String fieldElementDefinition, final String fieldName, final Set<SweText> sweTextSet) {
+        private List<SweField> createCapabilitiesFieldsFrom(final String fieldElementDefinition,
+                final String fieldName, final Set<SweText> sweTextSet) {
             final List<SweField> fields = Lists.newArrayListWithExpectedSize(sweTextSet.size());
             final List<SweText> values = Lists.newArrayList(sweTextSet);
             Collections.sort(values);
@@ -514,7 +536,7 @@ public class SosDescribeSensorOperatorV20 extends
                     if (text.isSetName() && text.getName().isSetValue()) {
                         name = text.getName().getValue();
                     } else {
-                        name =  SensorMLConstants.DEFAULT_FIELD_NAME  + Integer.toString(values.indexOf(text));
+                        name = SensorMLConstants.DEFAULT_FIELD_NAME + Integer.toString(values.indexOf(text));
                     }
                 }
                 final SweField field = new SweField(name, text);
@@ -546,11 +568,11 @@ public class SosDescribeSensorOperatorV20 extends
                     if (getBindingRepository().isBindingSupported(MediaTypes.APPLICATION_KVP)) {
                         try {
                             String version = getServiceOperatorRepository().getSupportedVersions(SosConstants.SOS)
-                                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                                    .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
                                             : Sos1Constants.SERVICEVERSION;
                             String pdf = childProcedure.getDefaultElementEncoding();
-                            component.setHref(SosHelper.getDescribeSensorUrl(version, getServiceURL(), childProcedure.getIdentifier(),
-                                    pdf).toString());
+                            component.setHref(SosHelper.getDescribeSensorUrl(version, getServiceURL(),
+                                    childProcedure.getIdentifier(), pdf).toString());
                         } catch (MalformedURLException uee) {
                             component.setHref(childProcedure.getIdentifier());
                         }
@@ -598,7 +620,8 @@ public class SosDescribeSensorOperatorV20 extends
             if (procedureDescription.isSetPhenomenon()) {
                 abstractProcess.getOutputs().stream()
                         .filter(output -> procedureDescription.hasPhenomenonFor(output.getIoValue().getDefinition()))
-                        .forEach(output -> output.getIoValue().setName(procedureDescription.getPhenomenonFor(output.getIoValue().getDefinition()).getName()));
+                        .forEach(output -> output.getIoValue().setName(
+                                procedureDescription.getPhenomenonFor(output.getIoValue().getDefinition()).getName()));
             }
         }
     }

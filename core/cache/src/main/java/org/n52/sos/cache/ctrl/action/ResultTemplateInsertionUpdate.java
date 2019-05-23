@@ -28,7 +28,6 @@
  */
 package org.n52.sos.cache.ctrl.action;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,9 +83,11 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         }
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
-            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(),
+                    featureOfInterest.getFirstName().getValue());
             cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
-            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+            cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(),
+                    featureOfInterest.getFirstName().getValue());
             cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
             cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
         }
@@ -95,7 +96,8 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         if (observableProperty instanceof OmCompositePhenomenon) {
             OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;
             cache.addCompositePhenomenon(parent.getIdentifier());
-            cache.addCompositePhenomenonForProcedure(request.getObservationTemplate().getProcedureIdentifier(), parent.getIdentifier());
+            cache.addCompositePhenomenonForProcedure(request.getObservationTemplate().getProcedureIdentifier(),
+                    parent.getIdentifier());
             for (String offering : request.getObservationTemplate().getOfferings()) {
                 cache.addCompositePhenomenonForOffering(offering, parent.getIdentifier());
             }

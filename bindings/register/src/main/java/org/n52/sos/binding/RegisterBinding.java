@@ -92,8 +92,7 @@ import com.google.common.collect.Sets;
  * @since 4.4.0
  *
  */
-public class RegisterBinding
-        extends AbstractXmlBinding<OwsServiceRequest> {
+public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisterBinding.class);
 
     private static final String URL_PATTERN = "/register";
@@ -101,6 +100,8 @@ public class RegisterBinding
     private static final String PROCEDURE = "procedure";
 
     private static final String OFFERING = "offering";
+
+    private static final String IS_TYPE = "isType";
 
     private static final Set<BindingKey> KEYS = ImmutableSet.<BindingKey> builder()
             .add(new PathBindingKey(URL_PATTERN)).add(new MediaTypeBindingKey(MediaTypes.APPLICATION_XML)).build();
@@ -160,11 +161,11 @@ public class RegisterBinding
             InsertSensorRequest request = new InsertSensorRequest();
             request.setRequestContext(getRequestContext(req));
             // isType extension
-            String isType = getParameterValue("isType", parameters);
+            String isType = getParameterValue(IS_TYPE, parameters);
             boolean isTypeRequest = false;
             if (!Strings.isNullOrEmpty(isType) && Boolean.parseBoolean(isType)) {
                 SwesExtension<SweBoolean> extension = new SwesExtension<SweBoolean>();
-                extension.setDefinition("isType").setValue(new SweBoolean().setValue(true));
+                extension.setDefinition(IS_TYPE).setValue(new SweBoolean().setValue(true));
                 request.addExtension(extension);
                 isTypeRequest = true;
             }
@@ -192,8 +193,10 @@ public class RegisterBinding
                 request.setObservableProperty(Lists.newArrayList("not_defined"));
             } else {
                 throw new NoApplicableCodeException().withMessage(
-                        "The sensor description does not contain sml:outputs which is used to fetch the possible observableProperties! "
-                                + "Please add an sml:ouput section or define the observableProperties via 'observableProperty' URL parameter!'");
+                        "The sensor description does not contain sml:outputs which is used to "
+                        + "fetch the possible observableProperties! "
+                                + "Please add an sml:ouput section or define the observableProperties"
+                                + " via 'observableProperty' URL parameter!'");
             }
             // metadata
             if (!isTypeRequest) {
@@ -266,8 +269,8 @@ public class RegisterBinding
         }
     }
 
-    private List<String> checkForObservablePropertyParameter(SosProcedureDescription<?> procDesc, Map<String, String> map)
-            throws OwsExceptionReport {
+    private List<String> checkForObservablePropertyParameter(SosProcedureDescription<?> procDesc,
+            Map<String, String> map) throws OwsExceptionReport {
         final String offering = getParameterValue(Sos2Constants.InsertSensorParams.observableProperty, map);
         if (!Strings.isNullOrEmpty(offering)) {
             return checkParameterMultipleValues(offering, Sos2Constants.InsertSensorParams.observableProperty);

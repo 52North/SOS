@@ -28,7 +28,6 @@
  */
 package org.n52.sos.config.sqlite.entities;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -46,7 +45,6 @@ import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 
-
 @Entity(name = "multilingual_string_settings")
 public class MultilingualStringSettingValue extends AbstractSettingValue<MultilingualString> {
     private static final long serialVersionUID = 4066050522655079267L;
@@ -55,9 +53,8 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
     @MapKeyColumn(name = "lang")
     @Column(name = "value")
     @CollectionTable(name = "multilingual_string_settings_values",
-                     joinColumns = @JoinColumn(
-                             name = "identifier",
-                             referencedColumnName = "identifier"))
+                    joinColumns = @JoinColumn(name = "identifier",
+                                              referencedColumnName = "identifier"))
     private Map<String, String> value;
 
     public MultilingualStringSettingValue(String identifier, MultilingualString value) {
@@ -66,7 +63,7 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
     }
 
     public MultilingualStringSettingValue(Map<String, String> value) {
-    this(null, null);
+        this(null, null);
     }
 
     @Override
@@ -74,11 +71,11 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
         if (this.value == null) {
             return null;
         } else {
-            MultilingualString value = new MultilingualString();
+            MultilingualString v = new MultilingualString();
             for (Entry<String, String> e : this.value.entrySet()) {
-                value.addLocalization(new LocalizedString(LocaleHelper.decode(e.getKey()), e.getValue()));
+                v.addLocalization(new LocalizedString(LocaleHelper.decode(e.getKey()), e.getValue()));
             }
-            return value;
+            return v;
         }
     }
 
@@ -87,7 +84,8 @@ public class MultilingualStringSettingValue extends AbstractSettingValue<Multili
         if (value == null) {
             this.value = null;
         } else {
-            this.value = value.stream().collect(Collectors.toMap(x -> x.getLang().toString(), LocalizedString::getText));
+            this.value =
+                    value.stream().collect(Collectors.toMap(x -> x.getLang().toString(), LocalizedString::getText));
         }
     }
 

@@ -161,6 +161,8 @@ public abstract class ValuedObservationFactory {
                     return referenceClass();
                 case OmConstants.OBS_TYPE_UNKNOWN:
                     return blobClass();
+                default:
+                    return null;
             }
         }
         return valuedObservationClass();

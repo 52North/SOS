@@ -69,23 +69,21 @@ import com.google.common.collect.Lists;
  *        TODO - apply description enrichment to all types of procedures
  *        (creates, file, or database) - use setting switches for code flow
  */
-public class ProcedureConverter
-        extends AbstractProcedureConverter<ProcedureEntity> {
+public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEntity> {
 
     private LocalizedProducer<OwsServiceProvider> serviceProvider;
+
     private ProcedureCreationContext ctx;
 
     @Inject
-    public ProcedureConverter(
-            ProcedureCreationContext ctx) {
+    public ProcedureConverter(ProcedureCreationContext ctx) {
         this.ctx = ctx;
         this.serviceProvider = ctx.getServiceMetadataRepository().getServiceProviderFactory(SosConstants.SOS);
     }
 
     @Override
     public SosProcedureDescription<?> createSosProcedureDescription(ProcedureEntity procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n,
-            Session session)
+            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
             throws OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException()
@@ -112,8 +110,7 @@ public class ProcedureConverter
     }
 
     private Optional<SosProcedureDescription<?>> create(ProcedureEntity procedure, String descriptionFormat,
-            Locale i18n, Session session)
-            throws OwsExceptionReport {
+            Locale i18n, Session session) throws OwsExceptionReport {
         Optional<DescriptionCreationStrategy> strategy = getCreationStrategy(procedure);
         if (strategy.isPresent()) {
             return Optional.fromNullable(strategy.get().create(procedure, descriptionFormat, i18n, session));
@@ -132,7 +129,8 @@ public class ProcedureConverter
     }
 
     protected ArrayList<DescriptionCreationStrategy> getCreationStrategies() {
-        return Lists.newArrayList(new GeneratedDescriptionCreationStrategy((ProcedureDescriptionGeneratorFactoryRepository)ctx.getFactoryRepository()));
+        return Lists.newArrayList(new GeneratedDescriptionCreationStrategy(
+                (ProcedureDescriptionGeneratorFactoryRepository) ctx.getFactoryRepository()));
     }
 
     /**
@@ -161,8 +159,7 @@ public class ProcedureConverter
     }
 
     private boolean existsGenerator(String descriptionFormat) {
-        return ctx.getFactoryRepository()
-                .hasProcedureDescriptionGeneratorFactory(descriptionFormat);
+        return ctx.getFactoryRepository().hasProcedureDescriptionGeneratorFactory(descriptionFormat);
     }
 
     /**
@@ -191,14 +188,9 @@ public class ProcedureConverter
             TimePeriod validTime, Locale language, Session session) throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
                 new ProcedureDescriptionEnrichments(language, serviceProvider, ctx);
-        enrichments.setIdentifier(procedure.getIdentifier())
-                    .setProcedure(procedure)
-                    .setVersion(version)
-                    .setDescription(desc)
-                    .setProcedureDescriptionFormat(format)
-                    .setSession(session)
-                    .setValidTime(validTime)
-                    .setConverter(this);
+        enrichments.setIdentifier(procedure.getIdentifier()).setProcedure(procedure).setVersion(version)
+                .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session).setValidTime(validTime)
+                .setConverter(this);
         // if (procedure.isSetTypeOf() && desc.getProcedureDescription()
         // instanceof AbstractProcessV20) {
         // Procedure typeOf = procedure.getTypeOf();
@@ -233,15 +225,14 @@ public class ProcedureConverter
      *             if conversion fails
      */
     private SosProcedureDescription<?> convert(String fromFormat, String toFormat,
-            SosProcedureDescription<?> description)
-            throws OwsExceptionReport {
+            SosProcedureDescription<?> description) throws OwsExceptionReport {
         try {
             Converter<AbstractFeature, AbstractFeature> converter =
                     ctx.getConverterRepository().getConverter(fromFormat, toFormat);
             if (converter != null) {
                 AbstractFeature convert = converter.convert(description);
                 if (convert instanceof SosProcedureDescription) {
-                   return (SosProcedureDescription<?>) convert;
+                    return (SosProcedureDescription<?>) convert;
                 } else {
                     return new SosProcedureDescription<AbstractFeature>(convert).add(description);
                 }

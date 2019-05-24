@@ -42,14 +42,14 @@ public class HibernateGeometryCreator {
     public HibernateGeometryCreator() {
     }
 
-    public Geometry createGeometry(final HasCoordinate coodinates, GeometryHandler geometryHandler) throws OwsExceptionReport {
-      if (coodinates.isSetLongLat()) {
+    public Geometry createGeometry(final HasCoordinate coodinates, GeometryHandler geometryHandler)
+            throws OwsExceptionReport {
+        if (coodinates.isSetLongLat()) {
             int epsg = geometryHandler.getStorageEPSG();
             if (coodinates.isSetSrid()) {
                 epsg = coodinates.getSrid();
             }
-            final String wktString =
-                    geometryHandler.getWktString(coodinates.getLon(), coodinates.getLat(), epsg);
+            final String wktString = geometryHandler.getWktString(coodinates.getLon(), coodinates.getLat(), epsg);
             Geometry geom;
             try {
                 geom = JTSHelper.createGeometryFromWKT(wktString, epsg);

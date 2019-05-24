@@ -44,12 +44,14 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
+ *         J&uuml;rrens</a>
  *
  */
 public class WaterMLMetadataAdder {
 
     private OmObservation omObservation;
+
     private DatasetEntity series;
 
     public WaterMLMetadataAdder(OmObservation omObservation, DatasetEntity series) {
@@ -67,15 +69,14 @@ public class WaterMLMetadataAdder {
                 observationConstellation.setDefaultPointMetadata(new DefaultPointMetadata());
             }
             if (!observationConstellation.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()) {
-                observationConstellation.getDefaultPointMetadata().setDefaultTVPMeasurementMetadata(
-                        new DefaultTVPMeasurementMetadata());
+                observationConstellation.getDefaultPointMetadata()
+                        .setDefaultTVPMeasurementMetadata(new DefaultTVPMeasurementMetadata());
             }
             /*
              * Get interpolation type from database
              */
-            Optional<Object> interpolationTypeTitle = getMetadataElement(series,
-                    WaterMLConstants.NS_WML_20,
-                    WaterMLConstants.INTERPOLATION_TYPE);
+            Optional<Object> interpolationTypeTitle =
+                    getMetadataElement(series, WaterMLConstants.NS_WML_20, WaterMLConstants.INTERPOLATION_TYPE);
             /*
              * Default Value
              */
@@ -89,7 +90,7 @@ public class WaterMLMetadataAdder {
                 }
             }
             observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
-            .setInterpolationtype(interpolationType);
+                    .setInterpolationtype(interpolationType);
             /*
              * Add cumulative
              */
@@ -99,20 +100,18 @@ public class WaterMLMetadataAdder {
             if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
                 observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
             }
-            Optional<Object> cumulativeMetadata = getMetadataElement(series,
-                    WaterMLConstants.NS_WML_20,
+            Optional<Object> cumulativeMetadata = getMetadataElement(series, WaterMLConstants.NS_WML_20,
                     WaterMLConstants.SERIES_METADATA_CUMULATIVE);
             /*
              * Default Value
              */
             boolean cumulative = false;
             if (cumulativeMetadata.isPresent()) {
-               String cumulativeMetadataValue = cumulativeMetadata.get().toString();
-                if (!cumulativeMetadataValue.isEmpty() && (
-                            cumulativeMetadataValue.equalsIgnoreCase("true") ||
-                            cumulativeMetadataValue.equalsIgnoreCase("false") ||
-                            cumulativeMetadataValue.equalsIgnoreCase("1") ||
-                            cumulativeMetadataValue.equalsIgnoreCase("0"))) {
+                String cumulativeMetadataValue = cumulativeMetadata.get().toString();
+                if (!cumulativeMetadataValue.isEmpty() && (cumulativeMetadataValue.equalsIgnoreCase("true")
+                        || cumulativeMetadataValue.equalsIgnoreCase("false")
+                        || cumulativeMetadataValue.equalsIgnoreCase("1")
+                        || cumulativeMetadataValue.equalsIgnoreCase("0"))) {
                     if (cumulativeMetadataValue.equals("1")) {
                         cumulative = true;
                     } else {
@@ -123,14 +122,13 @@ public class WaterMLMetadataAdder {
                             cumulativeMetadataValue, null);
                 }
             }
-            ((MeasurementTimeseriesMetadata)observationConstellation.getMetadata().getTimeseriesmetadata())
-                .setCumulative(cumulative);
+            ((MeasurementTimeseriesMetadata) observationConstellation.getMetadata().getTimeseriesmetadata())
+                    .setCumulative(cumulative);
         }
         return this;
     }
 
-    private Optional<Object> getMetadataElement(DatasetEntity dataset, String domain,
-            String name) {
+    private Optional<Object> getMetadataElement(DatasetEntity dataset, String domain, String name) {
         if (dataset.hasParameters()) {
             for (ParameterEntity<?> parameter : dataset.getParameters()) {
                 if (domain.equals(parameter.getDomain()) && name.equals(parameter.getName())) {
@@ -143,11 +141,10 @@ public class WaterMLMetadataAdder {
 
     private CodedException createMetadataInvalidException(String metadataKey, String metadataContent,
             IllegalArgumentException iae) {
-        CodedException e = new NoApplicableCodeException().withMessage("Series Metadata '%s' for Series '%s' "
-                + "could not be parsed '%s'. Please contact the administrator of this service.",
-                metadataKey,
-                series.getId(),
-                metadataContent);
+        CodedException e = new NoApplicableCodeException().withMessage(
+                "Series Metadata '%s' for Series '%s' "
+                        + "could not be parsed '%s'. Please contact the administrator of this service.",
+                metadataKey, series.getId(), metadataContent);
         if (iae != null) {
             return e.causedBy(iae);
         } else {

@@ -29,7 +29,6 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -47,7 +46,6 @@ import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -69,13 +67,17 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate implements ApiQueryHelper, DatabaseQueryHelper {
+public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate
+        implements ApiQueryHelper, DatabaseQueryHelper {
 
-//    private final FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
     private final String identifier;
+
     private final Collection<DatasetEntity> datasets;
+
     private final OfferingEntity offering;
+
     private final Locale defaultLanguage;
+
     private final I18NDAORepository i18NDAORepository;
 
     /**
@@ -91,10 +93,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @param i18NDAORepository
      *            the i18n repository
      */
-    public OfferingCacheUpdateTask(OfferingEntity offering,
-                                   Collection<DatasetEntity> datasets,
-                                   Locale defaultLanguage,
-                                   I18NDAORepository i18NDAORepository) {
+    public OfferingCacheUpdateTask(OfferingEntity offering, Collection<DatasetEntity> datasets, Locale defaultLanguage,
+            I18NDAORepository i18NDAORepository) {
         this.offering = offering;
         this.identifier = offering.getIdentifier();
         this.datasets = datasets;
@@ -113,8 +113,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // since they are performed once per offering
 
         getCache().addOffering(identifier);
-        if (datasets != null && !datasets.isEmpty() && datasets.stream()
-                .anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
+        if (datasets != null && !datasets.isEmpty() && datasets.stream().anyMatch(
+            d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
             getCache().addPublishedOffering(identifier);
         }
         addOfferingNamesAndDescriptionsToCache(identifier, session);
@@ -151,7 +151,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
 
         // Features of Interest
-        getCache().setFeaturesOfInterestForOffering(identifier, DatasourceCacheUpdateHelper.getAllFeatureIdentifiersFromDatasets(datasets));
+        getCache().setFeaturesOfInterestForOffering(identifier,
+                DatasourceCacheUpdateHelper.getAllFeatureIdentifiersFromDatasets(datasets));
         getCache().setFeatureOfInterestTypesForOffering(identifier, getFeatureTypes(datasets));
         if (offering.hasFeatureTypes()) {
             getCache().setAllowedFeatureOfInterestTypeForOffering(identifier, toStringSet(offering.getFeatureTypes()));
@@ -162,10 +163,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         // Temporal extent
         // TODO get from datasets
-        getCache().setMinPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeStart()));
-        getCache().setMaxPhenomenonTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getSamplingTimeEnd()));
+        getCache().setMinPhenomenonTimeForOffering(identifier,
+                DateTimeHelper.makeDateTime(offering.getSamplingTimeStart()));
+        getCache().setMaxPhenomenonTimeForOffering(identifier,
+                DateTimeHelper.makeDateTime(offering.getSamplingTimeEnd()));
         getCache().setMinResultTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getResultTimeStart()));
-        getCache().setMaxResultTimeForOffering(identifier,DateTimeHelper.makeDateTime(offering.getResultTimeEnd()));
+        getCache().setMaxResultTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getResultTimeEnd()));
     }
 
     protected void addOfferingNamesAndDescriptionsToCache(String identifier, Session session)
@@ -188,23 +191,17 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
             } else {
                 String offeringName = identifier;
                 if (offeringName.startsWith("http")) {
-                    offeringName =
-                            offeringName.substring(offeringName.lastIndexOf('/') + 1,
-                                    offeringName.length());
+                    offeringName = offeringName.substring(offeringName.lastIndexOf('/') + 1, offeringName.length());
                 } else if (offeringName.startsWith("urn")) {
-                    offeringName =
-                            offeringName.substring(offeringName.lastIndexOf(':') + 1,
-                                    offeringName.length());
+                    offeringName = offeringName.substring(offeringName.lastIndexOf(':') + 1, offeringName.length());
                 }
                 if (offeringName.contains("#")) {
-                    offeringName =
-                            offeringName.substring(offeringName.lastIndexOf('#') + 1,
-                                    offeringName.length());
+                    offeringName = offeringName.substring(offeringName.lastIndexOf('#') + 1, offeringName.length());
                 }
                 name.addLocalization(defaultLanguage, offeringName);
             }
             if (offering.isSetDescription()) {
-                final Locale locale  = defaultLanguage;
+                final Locale locale = defaultLanguage;
                 description.addLocalization(locale, offering.getDescription());
             }
         }
@@ -240,12 +237,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         Set<String> procedures = new HashSet<>(0);
         Set<String> hiddenChilds = new HashSet<>(0);
         if (CollectionHelper.isNotEmpty(datasets)) {
-            procedures.addAll(DatasourceCacheUpdateHelper
-                    .getAllProcedureIdentifiersFromDatasets(datasets,
-                            ProcedureFlag.PARENT));
-            hiddenChilds.addAll(DatasourceCacheUpdateHelper
-                    .getAllProcedureIdentifiersFromDatasets(datasets,
-                            ProcedureFlag.HIDDEN_CHILD));
+            procedures.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromDatasets(datasets,
+                    ProcedureFlag.PARENT));
+            hiddenChilds.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromDatasets(datasets,
+                    ProcedureFlag.HIDDEN_CHILD));
         }
         Map<ProcedureFlag, Set<String>> allProcedures = Maps.newEnumMap(ProcedureFlag.class);
         allProcedures.put(ProcedureFlag.PARENT, procedures);
@@ -263,8 +258,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected Set<String> getObservablePropertyIdentifier() throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(datasets)) {
-            return DatasourceCacheUpdateHelper
-                    .getAllObservablePropertyIdentifiersFromDatasets(datasets);
+            return DatasourceCacheUpdateHelper.getAllObservablePropertyIdentifiersFromDatasets(datasets);
         } else {
             return Sets.newHashSet();
         }
@@ -272,13 +266,15 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
         if (offering.isSetGeometry()) {
-            return new ReferencedEnvelope(offering.getGeometry().getEnvelopeInternal(), offering.getGeometry().getSRID());
+            return new ReferencedEnvelope(offering.getGeometry().getEnvelopeInternal(),
+                    offering.getGeometry().getSRID());
         } else if (datasets != null && !datasets.isEmpty()) {
             Envelope e = new Envelope();
             int srid = -1;
             for (DatasetEntity de : datasets) {
-                if (de.isSetFeature() && de.getFeature().isSetGeometry() && !de.getFeature().getGeometryEntity().isEmpty()) {
-                    if (srid < 0 ) {
+                if (de.isSetFeature() && de.getFeature().isSetGeometry()
+                        && !de.getFeature().getGeometryEntity().isEmpty()) {
+                    if (srid < 0) {
                         srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();
                     }
                     e.expandToInclude(de.getFeature().getGeometryEntity().getGeometry().getEnvelopeInternal());
@@ -293,24 +289,30 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return relatedFeatures.stream().map(rf -> rf.getFeature().getIdentifier()).collect(Collectors.toSet());
     }
 
-//    private Collection<String> getObservationTypes() {
-//        Set<String> observationTypes = datasets.stream().filter(d -> d.isSetOmObservationtype()).map(d -> d.getOmObservationType().getFormat())
-//                .collect(Collectors.toSet());
-//        if (!datasets.isEmpty() && observationTypes.isEmpty()) {
-//            datasets.stream().filter(d -> !d.getValueType().equals(ValueType.not_initialized)).map(d -> d.getOmObservationType().getFormat())
-//            .collect(Collectors.toSet());
-//        }
-//        return getObservationTypes();
-//    }
-//
-//    private Collection<String> getFeatureTypes() {
-//        Set<String> featureTypes = datasets.stream().filter(d -> d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
-//                .map(d -> d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
-//        if (!datasets.isEmpty() && featureTypes.isEmpty()) {
-//
-//        }
-//        return featureTypes;
-//    }
+    // private Collection<String> getObservationTypes() {
+    // Set<String> observationTypes = datasets.stream().filter(d ->
+    // d.isSetOmObservationtype()).map(d ->
+    // d.getOmObservationType().getFormat())
+    // .collect(Collectors.toSet());
+    // if (!datasets.isEmpty() && observationTypes.isEmpty()) {
+    // datasets.stream().filter(d ->
+    // !d.getValueType().equals(ValueType.not_initialized)).map(d ->
+    // d.getOmObservationType().getFormat())
+    // .collect(Collectors.toSet());
+    // }
+    // return getObservationTypes();
+    // }
+    //
+    // private Collection<String> getFeatureTypes() {
+    // Set<String> featureTypes = datasets.stream().filter(d ->
+    // d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
+    // .map(d ->
+    // d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
+    // if (!datasets.isEmpty() && featureTypes.isEmpty()) {
+    //
+    // }
+    // return featureTypes;
+    // }
 
     @Override
     public void execute() {

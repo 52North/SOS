@@ -54,9 +54,10 @@ import org.n52.sos.wsdl.WSDLOperation;
  *
  * @since 4.0.0
  */
-public class InsertFeatureOfInterestOperator
-        extends
-        AbstractTransactionalRequestOperator<AbstractInsertFeatureOfInterestHandler, InsertFeatureOfInterestRequest, InsertFeatureOfInterestResponse>
+public class InsertFeatureOfInterestOperator extends
+        AbstractTransactionalRequestOperator<AbstractInsertFeatureOfInterestHandler,
+        InsertFeatureOfInterestRequest,
+        InsertFeatureOfInterestResponse>
         implements WSDLAwareRequestOperator {
 
     /**
@@ -106,11 +107,8 @@ public class InsertFeatureOfInterestOperator
                 abstractFeature.setIdentifier(JavaHelper.generateID(abstractFeature.toString()));
             }
             if (getCache().hasFeatureOfInterest(abstractFeature.getIdentifier())) {
-                throw new InvalidParameterValueException()
-                    .at("featureMember.identifier")
-                    .withMessage(
-                            "The featureOfInterest with identifier '%s' still exists!",
-                            abstractFeature.getIdentifier());
+                throw new InvalidParameterValueException().at("featureMember.identifier").withMessage(
+                        "The featureOfInterest with identifier '%s' still exists!", abstractFeature.getIdentifier());
             }
         }
     }

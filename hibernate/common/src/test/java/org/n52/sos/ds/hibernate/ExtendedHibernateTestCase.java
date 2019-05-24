@@ -50,14 +50,14 @@ public abstract class ExtendedHibernateTestCase extends HibernateTestCase {
         return getObservationDao().getObservationFactory().observationClass();
     }
 
-    @Deprecated
-    protected static Class<?> getObservationInfoClass(Session session) throws OwsExceptionReport {
-        return getObservationDao().getObservationFactory().contextualReferencedClass();
-    }
-
     @SuppressWarnings("rawtypes")
     protected static Class<? extends DataEntity> getObservationClass() throws OwsExceptionReport {
         return getObservationDao().getObservationFactory().observationClass();
+    }
+
+    @Deprecated
+    protected static Class<?> getObservationInfoClass(Session session) throws OwsExceptionReport {
+        return getObservationDao().getObservationFactory().contextualReferencedClass();
     }
 
     @SuppressWarnings("rawtypes")

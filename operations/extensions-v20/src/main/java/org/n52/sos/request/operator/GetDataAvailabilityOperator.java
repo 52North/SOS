@@ -53,13 +53,15 @@ import org.n52.sos.wsdl.WSDLOperation;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityOperator
-        extends
-        AbstractRequestOperator<AbstractGetDataAvailabilityHandler, GetDataAvailabilityRequest, GetDataAvailabilityResponse>
+public class GetDataAvailabilityOperator extends
+        AbstractRequestOperator<AbstractGetDataAvailabilityHandler,
+        GetDataAvailabilityRequest,
+        GetDataAvailabilityResponse>
         implements WSDLAwareRequestOperator {
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(GetDataAvailabilityConstants.CONFORMANCE_CLASS);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(GetDataAvailabilityConstants.CONFORMANCE_CLASS);
+    private static final String RESPONSE_FORMAT = "responseFormat";
 
     /**
      * Constructs a new {@code GetDataAvailabilityOperator}.
@@ -71,7 +73,7 @@ public class GetDataAvailabilityOperator
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -98,8 +100,8 @@ public class GetDataAvailabilityOperator
         }
 
         try {
-            checkObservedProperties(request.getObservedProperties(),
-                    GetDataAvailabilityParams.observedProperty.name(), false);
+            checkObservedProperties(request.getObservedProperties(), GetDataAvailabilityParams.observedProperty.name(),
+                    false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -153,18 +155,18 @@ public class GetDataAvailabilityOperator
 
     private void checkResponseFormat(String responseFormat) throws CodedOwsException {
         if (responseFormat == null || responseFormat.isEmpty()) {
-            throw new MissingParameterValueException("responseFormat");
+            throw new MissingParameterValueException(RESPONSE_FORMAT);
         }
         if (!(GetDataAvailabilityConstants.NS_GDA.equals(responseFormat)
                 || GetDataAvailabilityConstants.NS_GDA_20.equals(responseFormat))) {
-            throw new InvalidParameterValueException("responseFormat", responseFormat);
+            throw new InvalidParameterValueException(RESPONSE_FORMAT, responseFormat);
         }
     }
 
     @Override
     public WSDLOperation getSosOperationDefinition() {
-//       TODO no schema available
-//        return GetDataAvailabilityConstants.WSDL_OPERATION;
+        // TODO no schema available
+        // return GetDataAvailabilityConstants.WSDL_OPERATION;
         return null;
     }
 

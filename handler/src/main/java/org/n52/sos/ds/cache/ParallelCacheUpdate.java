@@ -30,12 +30,14 @@ package org.n52.sos.ds.cache;
 
 import org.n52.series.db.HibernateSessionStore;
 
-public class ParallelCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<AbstractThreadableDatasourceCacheUpdate> {
+public class ParallelCacheUpdate
+        extends AbstractQueueingDatasourceCacheUpdate<AbstractThreadableDatasourceCacheUpdate> {
     private static final String THREAD_GROUP_NAME = "parallel-cache-update";
 
     private final AbstractThreadableDatasourceCacheUpdate[] updates;
 
-    public ParallelCacheUpdate(int threads, HibernateSessionStore sessionStore, AbstractThreadableDatasourceCacheUpdate... updates) {
+    public ParallelCacheUpdate(int threads, HibernateSessionStore sessionStore,
+            AbstractThreadableDatasourceCacheUpdate... updates) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
         this.updates = updates;
     }

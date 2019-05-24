@@ -62,10 +62,10 @@ public class HibernateProcedureCreationContext
             GeometryHandler geometryHandler,
             BindingRepository bindingRepository,
             ServiceOperatorRepository serviceOperatorRepository,
-            ContentCacheController contentCacheController,
-            ProcedureDescriptionSettings procedureSettings) {
+            ContentCacheController contentCacheController, ProcedureDescriptionSettings procedureSettings) {
         super(serviceMetadataRepository, decoderRepository, factoryRepository, i18nr, converterRepository,
-                geometryHandler, bindingRepository, serviceOperatorRepository, contentCacheController, procedureSettings);
+                geometryHandler, bindingRepository, serviceOperatorRepository, contentCacheController,
+                procedureSettings);
         this.daoFactory = daoFactory;
     }
 

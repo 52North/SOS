@@ -66,7 +66,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
     }
 
     @Override
-    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session)
+            throws OwsExceptionReport {
         List<DatasetEntity> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -80,7 +81,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session)
+            throws OwsExceptionReport {
         return getSeriesCriteria(request.getObservationIdentifier(), session).list();
     }
 
@@ -119,7 +121,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering,
+            Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
             List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -161,12 +164,6 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
         }
     }
 
-    @Override
-    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
-            Session session) {
-        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
@@ -174,7 +171,15 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
     }
 
     @Override
-    public DatasetEntity getOrInsertSeries(ObservationContext identifiers, DataEntity<?> observation, Session session) throws OwsExceptionReport {
+    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
+            Session session) {
+        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session)
+                .uniqueResult();
+    }
+
+    @Override
+    public DatasetEntity getOrInsertSeries(ObservationContext identifiers, DataEntity<?> observation, Session session)
+            throws OwsExceptionReport {
         return (DatasetEntity) super.getOrInsert(identifiers, observation, session);
     }
 
@@ -187,7 +192,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
      *            EReportingSamplingPoint identifier to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, String samplingPoint) {
-        c.createCriteria(getSamplingPointAssociationPath()).add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, samplingPoint));
+        c.createCriteria(getSamplingPointAssociationPath())
+                .add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, samplingPoint));
 
     }
 
@@ -212,7 +218,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
      *            EReportingSamplingPoint identifiers to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
-        c.createCriteria(getSamplingPointAssociationPath()).add(Restrictions.in(EReportingSamplingPointEntity.IDENTIFIER, samplingPoints));
+        c.createCriteria(getSamplingPointAssociationPath())
+                .add(Restrictions.in(EReportingSamplingPointEntity.IDENTIFIER, samplingPoints));
     }
 
     @Override
@@ -220,7 +227,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (null == flow) {
-                throw new OptionNotSupportedException().withMessage("The request does not conatain an e-Reporting flow parameter!");
+                throw new OptionNotSupportedException()
+                        .withMessage("The request does not conatain an e-Reporting flow parameter!");
             } else {
                 switch (flow) {
                     case E1A:
@@ -231,7 +239,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
                         addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
                         break;
                     default:
-                        throw new OptionNotSupportedException().withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
+                        throw new OptionNotSupportedException()
+                            .withMessage("The requested e-Reporting flow %s is not supported!", flow.name());
                 }
             }
         }
@@ -243,8 +252,9 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
     }
 
     private void addAssessmentType(Criteria c, String assessmentType) {
-        c.createCriteria(getSamplingPointAssociationPath()).createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE).
-        add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
+        c.createCriteria(getSamplingPointAssociationPath())
+                .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE)
+                .add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
     }
 
     @Override
@@ -252,9 +262,17 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
         return EReportingDatasetFactory.getInstance();
     }
 
-    private static class EReportingDatasetFactory
-            extends
-            DatasetFactory {
+    @Override
+    public Set<Integer> getVerificationFlags() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Integer> getValidityFlags() {
+        return Collections.emptySet();
+    }
+
+    private static class EReportingDatasetFactory extends DatasetFactory {
 
         protected EReportingDatasetFactory() {
         }
@@ -321,7 +339,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
 
         @Override
         public Class<? extends DatasetEntity> categoryProfileClass() {
-            return  profileClass();
+            return profileClass();
         }
 
         @Override
@@ -343,23 +361,13 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
             return Holder.INSTANCE;
         }
 
-        private static class Holder {
+        private static final class Holder {
             private static final EReportingDatasetFactory INSTANCE = new EReportingDatasetFactory();
 
             private Holder() {
             }
         }
 
-    }
-
-    @Override
-    public Set<Integer> getVerificationFlags() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<Integer> getValidityFlags() {
-        return Collections.emptySet();
     }
 
 }

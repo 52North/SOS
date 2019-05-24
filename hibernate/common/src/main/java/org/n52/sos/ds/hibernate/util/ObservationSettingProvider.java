@@ -36,7 +36,7 @@ import org.n52.sos.request.operator.AbstractRequestOperator;
 @Configurable
 public class ObservationSettingProvider implements Constructable {
     @Deprecated
-    private static ObservationSettingProvider instance = null;
+    private static ObservationSettingProvider instance;
     private boolean includeChildObservableProperties;
 
     @Override

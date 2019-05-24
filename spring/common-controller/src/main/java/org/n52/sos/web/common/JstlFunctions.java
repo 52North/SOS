@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @since 4.0.0
  *
  */
-public class JstlFunctions {
+public final class JstlFunctions {
     public static final boolean HAS_INSTALLER = hasClass("org.n52.sos.web.install.InstallIndexController");
     public static final boolean HAS_CLIENT = hasClass("org.n52.sos.web.client.ClientController");
     public static final boolean HAS_ADMIN = hasClass("org.n52.sos.web.admin.AdminIndexController");
@@ -139,6 +139,6 @@ public class JstlFunctions {
 
     public static boolean supportsI18N() {
         return false;
-//        return I18NDAORepository.getInstance().isSupported();
+        // return I18NDAORepository.getInstance().isSupported();
     }
 }

@@ -28,9 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.valueOf;
-
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -117,9 +114,9 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
             if (id.contains("/")) {
-                s.add(valueOf(id.substring(id.indexOf("/") + 1)));
+                s.add(TemporalRestrictionTest.Identifier.valueOf(id.substring(id.indexOf("/") + 1)));
             } else {
-                s.add(valueOf(id));
+                s.add(TemporalRestrictionTest.Identifier.valueOf(id));
             }
         }
         return s;

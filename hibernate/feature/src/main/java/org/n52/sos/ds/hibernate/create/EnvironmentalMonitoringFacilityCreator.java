@@ -49,19 +49,20 @@ import org.n52.sos.util.SosHelper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
-public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacilityEntity> {
+public class EnvironmentalMonitoringFacilityCreator
+        extends AbstractFeatureCreator<EnvironmentalMonitoringFacilityEntity> {
 
     public EnvironmentalMonitoringFacilityCreator(FeatureVisitorContext context) {
-       super(context);
+        super(context);
     }
 
     @Override
-    public AbstractFeature create(EnvironmentalMonitoringFacilityEntity f)
-            throws OwsExceptionReport {
-//        if (f.isSetUrl()) {
-//            return new org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(
-//                    new SimpleAttrs().setHref(f.getUrl()));
-//        }
+    public AbstractFeature create(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport {
+        // if (f.isSetUrl()) {
+        // return new
+        // org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(
+        // new SimpleAttrs().setHref(f.getUrl()));
+        // }
         if (f instanceof EnvironmentalMonitoringFacilityEntity) {
             EnvironmentalMonitoringFacilityEntity emf = (EnvironmentalMonitoringFacilityEntity) f;
             final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(emf);
@@ -81,7 +82,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
             // emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
 
             addObservingCapabilities(emFeature, f);
-//            addHasObservations(emFeature, f);
+            // addHasObservations(emFeature, f);
 
             // final Set<FeatureOfInterest> parentFeatures = emf.getParents();
             // if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -98,8 +99,7 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     }
 
     @Override
-    public Geometry createGeometry(EnvironmentalMonitoringFacilityEntity feature)
-            throws OwsExceptionReport {
+    public Geometry createGeometry(EnvironmentalMonitoringFacilityEntity feature) throws OwsExceptionReport {
         return createGeometryFrom(feature);
     }
 
@@ -126,49 +126,60 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
         return new ObservingCapability(addParameter(getGetDataAvailabilityUrl(), "featureOfInterest", identifier));
     }
 
-//    private void addHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-//            FeatureOfInterest feature) {
-//        Map<String, Set<String>> featureOfferings = Maps.newHashMap();
-//        featureOfferings.put(feature.getIdentifier(),
-//                getContext().getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
-//        // check for child features
-//        if (feature.hasChilds()) {
-//            for (AbstractFeatureOfInterest child : feature.getChilds()) {
-//                Set<String> childOfferings = getContext().getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
-//                if (CollectionHelper.isNotEmpty(childOfferings)) {
-//                    featureOfferings.put(child.getIdentifier(), childOfferings);
-//                }
-//            }
-//        }
-//        createHasObservations(emFeature, featureOfferings);
-//    }
-//
-//    private void createHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-//            Map<String, Set<String>> featureOfferings) {
-//        if (featureOfferings != null) {
-//            for (Entry<String, Set<String>> entry : featureOfferings.entrySet()) {
-//                emFeature.addHasObservation(createObservation(entry.getKey(), entry.getValue()));
-//            }
-//        }
-//    }
-//
-//    private OmObservation createObservation(String feature, Set<String> offerings) {
-//        String getObservationUrl = getGetObservationUrl();
-//        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.featureOfInterest.name(), feature);
-//        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.offering.name(), offerings);
-//        SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(getObservationUrl);
-//        OmObservation omObservation = new OmObservation();
-//        omObservation.setSimpleAttrs(simpleAttrs);
-//        return omObservation;
-//    }
-//
-//    private OmObservation createObservation(String featureOfInterest, String offering) {
-//        SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(
-//                addParameter(getGetObservationUrl(), SosConstants.GetObservationParams.offering.name(), offering));
-//        OmObservation omObservation = new OmObservation();
-//        omObservation.setSimpleAttrs(simpleAttrs);
-//        return omObservation;
-//    }
+    // private void
+    // addHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility
+    // emFeature,
+    // FeatureOfInterest feature) {
+    // Map<String, Set<String>> featureOfferings = Maps.newHashMap();
+    // featureOfferings.put(feature.getIdentifier(),
+    // getContext().getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
+    // // check for child features
+    // if (feature.hasChilds()) {
+    // for (AbstractFeatureOfInterest child : feature.getChilds()) {
+    // Set<String> childOfferings =
+    // getContext().getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
+    // if (CollectionHelper.isNotEmpty(childOfferings)) {
+    // featureOfferings.put(child.getIdentifier(), childOfferings);
+    // }
+    // }
+    // }
+    // createHasObservations(emFeature, featureOfferings);
+    // }
+    //
+    // private void
+    // createHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility
+    // emFeature,
+    // Map<String, Set<String>> featureOfferings) {
+    // if (featureOfferings != null) {
+    // for (Entry<String, Set<String>> entry : featureOfferings.entrySet()) {
+    // emFeature.addHasObservation(createObservation(entry.getKey(),
+    // entry.getValue()));
+    // }
+    // }
+    // }
+    //
+    // private OmObservation createObservation(String feature, Set<String>
+    // offerings) {
+    // String getObservationUrl = getGetObservationUrl();
+    // getObservationUrl = addParameter(getObservationUrl,
+    // SosConstants.GetObservationParams.featureOfInterest.name(), feature);
+    // getObservationUrl = addParameter(getObservationUrl,
+    // SosConstants.GetObservationParams.offering.name(), offerings);
+    // SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(getObservationUrl);
+    // OmObservation omObservation = new OmObservation();
+    // omObservation.setSimpleAttrs(simpleAttrs);
+    // return omObservation;
+    // }
+    //
+    // private OmObservation createObservation(String featureOfInterest, String
+    // offering) {
+    // SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(
+    // addParameter(getGetObservationUrl(),
+    // SosConstants.GetObservationParams.offering.name(), offering));
+    // OmObservation omObservation = new OmObservation();
+    // omObservation.setSimpleAttrs(simpleAttrs);
+    // return omObservation;
+    // }
 
     private String getGetDataAvailabilityUrl() {
         return new StringBuilder(getBaseGetUrl()).append(getRequest("GetDataAvailability")).toString();
@@ -194,8 +205,8 @@ public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreat
     }
 
     private String getRequest(String requestName) {
-        return new StringBuilder().append('&').append(OWSConstants.RequestParams.request.name()).append('=').append(requestName)
-                .toString();
+        return new StringBuilder().append('&').append(OWSConstants.RequestParams.request.name()).append('=')
+                .append(requestName).toString();
     }
 
     private String addParameter(String url, String parameter, String value) {

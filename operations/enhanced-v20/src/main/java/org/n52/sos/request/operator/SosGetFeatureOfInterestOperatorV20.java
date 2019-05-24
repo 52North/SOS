@@ -47,12 +47,13 @@ import org.n52.svalbard.ConformanceClasses;
  * @since 4.0.0
  *
  */
-public class SosGetFeatureOfInterestOperatorV20
-        extends
-        AbstractV2RequestOperator<AbstractGetFeatureOfInterestHandler, GetFeatureOfInterestRequest, GetFeatureOfInterestResponse> {
+public class SosGetFeatureOfInterestOperatorV20 extends
+        AbstractV2RequestOperator<AbstractGetFeatureOfInterestHandler,
+        GetFeatureOfInterestRequest,
+        GetFeatureOfInterestResponse> {
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_FEATURE_OF_INTEREST_RETRIEVAL);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_FEATURE_OF_INTEREST_RETRIEVAL);
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetFeatureOfInterest.name();
 
@@ -62,7 +63,7 @@ public class SosGetFeatureOfInterestOperatorV20
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -93,7 +94,8 @@ public class SosGetFeatureOfInterestOperatorV20
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedures(request.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkQueryableProcedures(request.getProcedures(),
+                    Sos2Constants.GetFeatureOfInterestParams.procedure.name());
             // add instance and child procedures to request
             if (request.isSetProcedures()) {
                 request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
@@ -102,9 +104,10 @@ public class SosGetFeatureOfInterestOperatorV20
             exceptions.add(owse);
         }
         try {
-//            checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
-//                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
-            checkFeatureOfInterestIdentifiers(request.getFeatureIdentifiers(), Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+            // checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
+            // Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+            checkFeatureOfInterestIdentifiers(request.getFeatureIdentifiers(),
+                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
             if (request.isSetFeatureOfInterestIdentifiers()) {
                 request.setFeatureIdentifiers(addChildFeatures(request.getFeatureIdentifiers()));
             }

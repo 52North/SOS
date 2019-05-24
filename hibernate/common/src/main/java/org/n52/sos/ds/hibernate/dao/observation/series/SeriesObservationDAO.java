@@ -47,7 +47,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 
-
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
 
     public SeriesObservationDAO(DaoFactory daoFactory) {
@@ -78,7 +77,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      *            Series to get values for
      * @param offerings
      *            Offerings to get values for
-     * @param filterCriterion
+     * @param filterCriterion filter criterion
      * @param session
      *            Hibernate session
      * @return Series observations that fit
@@ -97,7 +96,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      *            Series to get values for
      * @param offerings
      *            Offerings to get values for
-     * @param sosIndeterminateTime
+     * @param sosIndeterminateTime sos indeterminate time value
      * @param session
      *            Hibernate session
      * @return Series observations that fit
@@ -106,7 +105,8 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     @Override
     public List<DataEntity<?>> getSeriesObservationForExtendedIndeterminateTimeFilter(DatasetEntity series,
             List<String> offerings, IndeterminateValue sosIndeterminateTime, Session session) {
-        return getSeriesObservationCriteriaForIndeterminateTimeFilter(series, offerings, sosIndeterminateTime, session).list();
+        return getSeriesObservationCriteriaForIndeterminateTimeFilter(series, offerings, sosIndeterminateTime, session)
+                .list();
     }
 
     /**
@@ -119,11 +119,11 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      * @param session
      *            Hibernate session
      * @return Series observations that fit
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     @Override
-    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
-            Collection<String> features, Session session) throws OwsExceptionReport {
+    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
+            Session session) throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, null, null, session);
     }
 
@@ -141,11 +141,11 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      * @param session
      *            Hibernate session
      * @return Series observations that fit
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     @Override
-    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
-            Collection<String> features, Criterion filterCriterion, Session session) throws OwsExceptionReport {
+    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
+            Criterion filterCriterion, Session session) throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, filterCriterion, null, session);
     }
 
@@ -162,12 +162,11 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      * @param session
      *            Hibernate session
      * @return Series observations that fit
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     @Override
-    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request,
-            Collection<String> features, IndeterminateValue sosIndeterminateTime, Session session)
-            throws OwsExceptionReport {
+    public List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
+            IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
 
@@ -187,24 +186,25 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      *            filter)
      * @param sosIndeterminateTime
      *            Indeterminate time to use in a temporal filter (first/latest)
-     * @param session
+     * @param session teh session
      * @return Series observations that fit
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     @Override
     protected List<DataEntity<?>> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            Criterion filterCriterion, IndeterminateValue sosIndeterminateTime, Session session)
+            throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(features)) {
             List<DataEntity<?>> observations = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
-                observations.addAll(getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session));
+                observations.addAll(
+                        getSeriesObservationCriteriaFor(request, ids, filterCriterion, sosIndeterminateTime, session));
             }
             return observations;
         } else {
             return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session);
         }
     }
-
 
     @Override
     public List<DataEntity<?>> getSeriesObservationsFor(DatasetEntity series, GetObservationRequest request,
@@ -213,8 +213,9 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
-       // nothing to add
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
+            throws CodedException {
+        // nothing to add
     }
 
     public ObservationFactory getObservationFactory() {

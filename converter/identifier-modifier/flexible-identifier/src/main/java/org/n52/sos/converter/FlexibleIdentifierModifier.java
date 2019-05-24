@@ -84,7 +84,7 @@ import com.google.common.collect.Sets;
 public class FlexibleIdentifierModifier extends AbstractIdentifierModifier {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
-    
+
     @Inject
     private FlexibleIdentifierHelper flexibleIdentifierHelper;
 

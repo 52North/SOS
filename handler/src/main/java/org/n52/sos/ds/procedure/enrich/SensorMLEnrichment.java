@@ -73,11 +73,10 @@ public abstract class SensorMLEnrichment extends ProcedureDescriptionEnrichment 
         enrich((AbstractSensorML) getDescription().getProcedureDescription());
     }
 
+    protected abstract void enrich(AbstractSensorML description) throws OwsExceptionReport;
+
     @Override
     public boolean isApplicable() {
         return getDescription().getProcedureDescription() instanceof AbstractSensorML;
     }
-
-    protected abstract void enrich(AbstractSensorML description)
-            throws OwsExceptionReport;
 }

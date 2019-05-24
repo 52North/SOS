@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.boot.Metadata;
-
 import com.google.common.base.Strings;
 
 /**
@@ -166,7 +164,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
 
         private String column;
 
-        public TableColumn(String table, String column) {
+        TableColumn(String table, String column) {
             setTable(table);
             setColumn(column);
         }

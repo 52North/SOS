@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.junit.Before;
@@ -52,7 +51,6 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.builder.SamplingFeatureBuilder;
 
-
 /**
  * TODO JavaDoc
  *
@@ -69,7 +67,13 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         geometryHandler = new GeometryHandler();
         geometryHandler.setStorageEpsg(4326);
         geometryHandler.setStorage3DEpsg(4979);
-        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder("2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700");
+        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(
+                "2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;"
+                + "2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;"
+                + "3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;"
+                + "20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;"
+                + "27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;"
+                + "31466-31700");
         geometryHandler.setDatasourceNorthingFirst(false);
     }
 
@@ -81,9 +85,8 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
             final String type = SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT;
             FeatureEntity feature = create(1, id, null, "name", "url", createFeatureOfInterestType(1L, type));
             String version = Sos2Constants.SERVICEVERSION;
-            AbstractFeature result =
-                    new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
-                            new FeatureQueryHandlerQueryObject(session).setVersion(version));
+            AbstractFeature result = new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
+                    new FeatureQueryHandlerQueryObject(session).setVersion(version));
             final AbstractFeature expectedResult =
                     SamplingFeatureBuilder.aSamplingFeature().setFeatureType(type).setIdentifier(id).build();
             assertThat(expectedResult, is(result));
@@ -94,8 +97,8 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         }
     }
 
-    public FeatureEntity create(long id, String identifier, Geometry geom, String name, String url,
-            FormatEntity type) throws CodedException {
+    public FeatureEntity create(long id, String identifier, Geometry geom, String name, String url, FormatEntity type)
+            throws CodedException {
         FeatureEntity featureOfInterest = new FeatureEntity();
         featureOfInterest.setIdentifier(identifier);
         featureOfInterest.setId(id);
@@ -113,99 +116,115 @@ public class HibernateFeatureQueryHandlerTest extends HibernateTestCase {
         return featureOfInterestType;
     }
 
-//    @Test
-//    public void shouldSwitchCoordinatesForEpsg4326() throws OwsExceptionReport {
-//        GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(4326);
-//        Geometry geometry = factory.createPoint(JTSHelperForTesting.randomCoordinate());
-//        Geometry switched = geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-//
-//        assertThat(geometryHandler.isNorthingFirstEpsgCode(4326), is(true));
-//        assertThat(switched, is(notNullValue()));
-//        assertThat(switched, is(instanceOf(geometry.getClass())));
-//        assertThat(switched, is(not(sameInstance(geometry))));
-//        assertThat(switched, is(ReverseOf.reverseOf(geometry)));
-//    }
-//
-//    @Test
-//    public void shouldSwitchCoordinatesForSosAbstractFeature() throws OwsExceptionReport {
-//        Session session = getSession();
-//        try {
-//            GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(4326);
-//            Geometry geometry = factory.createPoint(JTSHelperForTesting.randomCoordinate());
-//            FeatureOfInterest feature =
-//                    create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
-//            AbstractFeature sosFeature =
-//                    new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
-//                            new FeatureQueryHandlerQueryObject(session).setVersion(Sos2Constants.SERVICEVERSION));
-//
-//            assertThat(geometryHandler.isNorthingFirstEpsgCode(4326), is(true));
-//            assertThat(sosFeature, is(notNullValue()));
-//            assertThat(sosFeature, is(instanceOf(SamplingFeature.class)));
-//
-//            SamplingFeature ssf = (SamplingFeature) sosFeature;
-//
-//            assertThat(ssf.getGeometry(), is(notNullValue()));
-//            assertThat(ssf.getGeometry(), is(instanceOf(geometry.getClass())));
-//            assertThat(ssf.getGeometry(), is(not(sameInstance(geometry))));
-//            assertThat(ssf.getGeometry(), is(ReverseOf.reverseOf(geometry)));
-//        } catch (HibernateException he) {
-//            throw new NoApplicableCodeException().causedBy(he);
-//        } finally {
-//            returnSession(session);
-//        }
-//    }
-//
-//    @Test
-//    public void shouldNotSwitchCoordinatesForEpsg2181() throws OwsExceptionReport {
-//        GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(2094);
-//        Geometry geometry = factory.createPoint(JTSHelperForTesting.randomCoordinate());
-//        Geometry switched = geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-//
-//        assertThat(geometryHandler.isNorthingFirstEpsgCode(2094), is(false));
-//        assertThat(switched, is(notNullValue()));
-//        assertThat(switched, is(instanceOf(geometry.getClass())));
-//        // assertThat(switched, is(sameInstance(geometry)));
-//        // assertThat(switched, is(not(reverseOf(geometry))));
-//    }
-//
-//    @Test
-//    public void shouldNotSwitchCoordinatesForSosAbstractFeature() throws OwsExceptionReport {
-//        Session session = getSession();
-//        try {
-//            GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(2181);
-//            Geometry geometry = factory.createPoint(JTSHelperForTesting.randomCoordinate());
-//
-//            assertThat(geometryHandler.isNorthingFirstEpsgCode(2181), is(false));
-//
-//            FeatureOfInterest feature =
-//                    create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1, "type"));
-//            AbstractFeature sosFeature =
-//                    new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
-//                            new FeatureQueryHandlerQueryObject(session).setVersion(Sos2Constants.SERVICEVERSION));
-//
-//            assertThat(geometryHandler.isNorthingFirstEpsgCode(4326), is(true));
-//            assertThat(sosFeature, is(notNullValue()));
-//            assertThat(sosFeature, is(instanceOf(SamplingFeature.class)));
-//
-//            SamplingFeature ssf = (SamplingFeature) sosFeature;
-//
-//            assertThat(ssf.getGeometry(), is(notNullValue()));
-//            assertThat(ssf.getGeometry(), is(instanceOf(geometry.getClass())));
-//            assertThat(ssf.getGeometry(), is(sameInstance(geometry)));
-//            assertThat(ssf.getGeometry(), is(not(ReverseOf.reverseOf(geometry))));
-//        } catch (HibernateException he) {
-//            throw new NoApplicableCodeException().causedBy(he);
-//        } finally {
-//            returnSession(session);
-//        }
-//    }
+    // @Test
+    // public void shouldSwitchCoordinatesForEpsg4326() throws
+    // OwsExceptionReport {
+    // GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(4326);
+    // Geometry geometry =
+    // factory.createPoint(JTSHelperForTesting.randomCoordinate());
+    // Geometry switched =
+    // geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+    //
+    // assertThat(geometryHandler.isNorthingFirstEpsgCode(4326), is(true));
+    // assertThat(switched, is(notNullValue()));
+    // assertThat(switched, is(instanceOf(geometry.getClass())));
+    // assertThat(switched, is(not(sameInstance(geometry))));
+    // assertThat(switched, is(ReverseOf.reverseOf(geometry)));
+    // }
+    //
+    // @Test
+    // public void shouldSwitchCoordinatesForSosAbstractFeature() throws
+    // OwsExceptionReport {
+    // Session session = getSession();
+    // try {
+    // GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(4326);
+    // Geometry geometry =
+    // factory.createPoint(JTSHelperForTesting.randomCoordinate());
+    // FeatureOfInterest feature =
+    // create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1,
+    // "type"));
+    // AbstractFeature sosFeature =
+    // new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
+    // new
+    // FeatureQueryHandlerQueryObject(session).setVersion(Sos2Constants.SERVICEVERSION));
+    //
+    // assertThat(geometryHandler.isNorthingFirstEpsgCode(4326), is(true));
+    // assertThat(sosFeature, is(notNullValue()));
+    // assertThat(sosFeature, is(instanceOf(SamplingFeature.class)));
+    //
+    // SamplingFeature ssf = (SamplingFeature) sosFeature;
+    //
+    // assertThat(ssf.getGeometry(), is(notNullValue()));
+    // assertThat(ssf.getGeometry(), is(instanceOf(geometry.getClass())));
+    // assertThat(ssf.getGeometry(), is(not(sameInstance(geometry))));
+    // assertThat(ssf.getGeometry(), is(ReverseOf.reverseOf(geometry)));
+    // } catch (HibernateException he) {
+    // throw new NoApplicableCodeException().causedBy(he);
+    // } finally {
+    // returnSession(session);
+    // }
+    // }
+    //
+    // @Test
+    // public void shouldNotSwitchCoordinatesForEpsg2181() throws
+    // OwsExceptionReport {
+    // GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(2094);
+    // Geometry geometry =
+    // factory.createPoint(JTSHelperForTesting.randomCoordinate());
+    // Geometry switched =
+    // geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+    //
+    // assertThat(geometryHandler.isNorthingFirstEpsgCode(2094), is(false));
+    // assertThat(switched, is(notNullValue()));
+    // assertThat(switched, is(instanceOf(geometry.getClass())));
+    // // assertThat(switched, is(sameInstance(geometry)));
+    // // assertThat(switched, is(not(reverseOf(geometry))));
+    // }
+    //
+    // @Test
+    // public void shouldNotSwitchCoordinatesForSosAbstractFeature() throws
+    // OwsExceptionReport {
+    // Session session = getSession();
+    // try {
+    // GeometryFactory factory = JTSHelper.getGeometryFactoryForSRID(2181);
+    // Geometry geometry =
+    // factory.createPoint(JTSHelperForTesting.randomCoordinate());
+    //
+    // assertThat(geometryHandler.isNorthingFirstEpsgCode(2181), is(false));
+    //
+    // FeatureOfInterest feature =
+    // create(1, "id", geometry, "name", "url", createFeatureOfInterestType(1,
+    // "type"));
+    // AbstractFeature sosFeature =
+    // new HibernateFeatureQueryHandler().createSosAbstractFeature(feature,
+    // new
+    // FeatureQueryHandlerQueryObject(session).setVersion(Sos2Constants.SERVICEVERSION));
+    //
+    // assertThat(geometryHandler.isNorthingFirstEpsgCode(4326), is(true));
+    // assertThat(sosFeature, is(notNullValue()));
+    // assertThat(sosFeature, is(instanceOf(SamplingFeature.class)));
+    //
+    // SamplingFeature ssf = (SamplingFeature) sosFeature;
+    //
+    // assertThat(ssf.getGeometry(), is(notNullValue()));
+    // assertThat(ssf.getGeometry(), is(instanceOf(geometry.getClass())));
+    // assertThat(ssf.getGeometry(), is(sameInstance(geometry)));
+    // assertThat(ssf.getGeometry(), is(not(ReverseOf.reverseOf(geometry))));
+    // } catch (HibernateException he) {
+    // throw new NoApplicableCodeException().causedBy(he);
+    // } finally {
+    // returnSession(session);
+    // }
+    // }
 
     @Test
     public void shouldNotFailOnReferencedFeature() throws OwsExceptionReport {
-        String url = "http://example.com/wfs?service=WFS&version=1.1.0&request=GetFeature&typeName=waterdata:sampling&featureid=foi1";
+        String url =
+                "http://example.com/wfs?service=WFS&version=1.1.0&"
+                + "request=GetFeature&typeName=waterdata:sampling&featureid=foi1";
         SamplingFeature ssf = new SamplingFeature(null);
         ssf.setUrl(url);
         // TODO check
-//        assertThat(insertFeature(ssf, null), is(url));
+        // assertThat(insertFeature(ssf, null), is(url));
     }
 }

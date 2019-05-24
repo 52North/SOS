@@ -80,8 +80,9 @@ public class RelatedProceduresEnrichment
                             continue;
                         }
 
-                        if (childHistory == null || cph.getEndTime() == null || (cph.getEndTime() != null
-                                && childHistory.getEndTime() != null && cph.getEndTime().after(childHistory.getEndTime()))) {
+                        if (childHistory == null || cph.getEndTime() == null
+                                || (cph.getEndTime() != null && childHistory.getEndTime() != null
+                                        && cph.getEndTime().after(childHistory.getEndTime()))) {
                             childHistory = cph;
                         }
                     }

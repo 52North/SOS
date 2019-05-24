@@ -59,7 +59,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import com.google.common.collect.Maps;
 
 /**
- * Factory methods to create {@link Criterion Criterions} for {@link TemporalFilter TemporalFilters}.
+ * Factory methods to create {@link Criterion Criterions} for
+ * {@link TemporalFilter TemporalFilters}.
  *
  * @see AfterRestriction
  * @see BeforeRestriction
@@ -77,7 +78,7 @@ import com.google.common.collect.Maps;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public class SosTemporalRestrictions {
+public final class SosTemporalRestrictions {
 
     /**
      * Fields describing the phenomenon time of a {@code Observation}.
@@ -93,8 +94,8 @@ public class SosTemporalRestrictions {
      *
      * @see Observation#RESULT_TIME
      */
-    public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            DataEntity.PROPERTY_RESULT_TIME);
+    public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS =
+            new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_RESULT_TIME);
 
     /**
      * Fields describing the valid time of a {@code Observation}.
@@ -102,8 +103,8 @@ public class SosTemporalRestrictions {
      * @see Observation#VALID_TIME_START
      * @see Observation#VALID_TIME_END
      */
-    public static final TimePrimitiveFieldDescriptor VALID_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            DataEntity.PROPERTY_VALID_TIME_START, DataEntity.PROPERTY_VALID_TIME_END);
+    public static final TimePrimitiveFieldDescriptor VALID_TIME_FIELDS =
+            new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_VALID_TIME_START, DataEntity.PROPERTY_VALID_TIME_END);
 
     /**
      * Fields describing the valid time of a {@code ValidProcedureTime}.
@@ -111,8 +112,8 @@ public class SosTemporalRestrictions {
      * @see ValidProcedureTime#START_TIME
      * @see ValidProcedureTime#END_TIME
      */
-    public static final TimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS
-            = new TimePrimitiveFieldDescriptor(ProcedureHistoryEntity.START_TIME, ProcedureHistoryEntity.END_TIME);
+    public static final TimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS =
+            new TimePrimitiveFieldDescriptor(ProcedureHistoryEntity.START_TIME, ProcedureHistoryEntity.END_TIME);
 
     /**
      * Private constructor due to static access.
@@ -121,47 +122,50 @@ public class SosTemporalRestrictions {
         // noop
     }
 
-
     /**
      * Create a new {@code Criterion} using the specified filter.
      *
-     * @param filter the filter
+     * @param filter
+     *            the filter
      *
      * @return the {@code Criterion}
      *
-     * @throws UnsupportedTimeException if the value and property combination is not applicable for this
-     *                                            restriction
-     * @throws UnsupportedValueReferenceException if the {@link TemporalFilter#getValueReference() value
+     * @throws UnsupportedTimeException
+     *             if the value and property combination is not applicable for
+     *             this restriction
+     * @throws UnsupportedValueReferenceException
+     *             if the {@link TemporalFilter#getValueReference() value
      *             reference} can not be decoded
-     * @throws UnsupportedOperatorException if no restriction definition for the {@link TimeOperator} is found
+     * @throws UnsupportedOperatorException
+     *             if no restriction definition for the {@link TimeOperator} is
+     *             found
      */
-    public static Criterion filter(TemporalFilter filter) throws UnsupportedTimeException,
-                                                                 UnsupportedValueReferenceException,
-                                                                 UnsupportedOperatorException {
-        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()), filter.getTime());
+    public static Criterion filter(TemporalFilter filter)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()),
+                filter.getTime());
     }
-
-    public static Criterion filterHql(TemporalFilter filter, Integer count) throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
-        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()), filter.getTime(), count);
-    }
-
 
     /**
      * Creates a {@link Conjunction} for the specified temporal filters.
      *
-     * @param temporalFilters the filters
+     * @param temporalFilters
+     *            the filters
      *
      * @return Hibernate temporal filter criterion
      *
-     * @throws UnsupportedTimeException if the value and property combination is not applicable for this
-     *                                            restriction
-     * @throws UnsupportedValueReferenceException if the {@link TemporalFilter#getValueReference() value
+     * @throws UnsupportedTimeException
+     *             if the value and property combination is not applicable for
+     *             this restriction
+     * @throws UnsupportedValueReferenceException
+     *             if the {@link TemporalFilter#getValueReference() value
      *             reference} can not be decoded
-     * @throws UnsupportedOperatorException if no restriction definition for the {@link TimeOperator} is found
+     * @throws UnsupportedOperatorException
+     *             if no restriction definition for the {@link TimeOperator} is
+     *             found
      */
-    public static Criterion filter(Iterable<TemporalFilter> temporalFilters) throws UnsupportedTimeException,
-                                                                                    UnsupportedValueReferenceException,
-                                                                                    UnsupportedOperatorException {
+    public static Criterion filter(Iterable<TemporalFilter> temporalFilters)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Conjunction conjunction = Restrictions.conjunction();
         Collection<Disjunction> disjunctions = getDisjunction(temporalFilters);
         if (disjunctions.size() == 1) {
@@ -169,6 +173,12 @@ public class SosTemporalRestrictions {
         }
         disjunctions.forEach(conjunction::add);
         return conjunction;
+    }
+
+    public static Criterion filterHql(TemporalFilter filter, Integer count)
+            throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
+        return TemporalRestrictions.filter(filter.getOperator(), getFields(filter.getValueReference()),
+                filter.getTime(), count);
     }
 
     public static Criterion filterHql(Iterable<TemporalFilter> temporalFilters)
@@ -185,17 +195,23 @@ public class SosTemporalRestrictions {
     }
 
     /**
-     * Creates {@link Disjunction}s for the specified temporal filters with the same valueReference.
+     * Creates {@link Disjunction}s for the specified temporal filters with the
+     * same valueReference.
      *
-     * @param temporalFilters the filters
+     * @param temporalFilters
+     *            the filters
      *
      * @return {@link Collection} of {@link Disjunction}
      *
-     * @throws UnsupportedTimeException if the value and property combination is not applicable for this
-     *                                            restriction
-     * @throws UnsupportedValueReferenceException if the {@link TemporalFilter#getValueReference() value
+     * @throws UnsupportedTimeException
+     *             if the value and property combination is not applicable for
+     *             this restriction
+     * @throws UnsupportedValueReferenceException
+     *             if the {@link TemporalFilter#getValueReference() value
      *             reference} can not be decoded
-     * @throws UnsupportedOperatorException if no restriction definition for the {@link TimeOperator} is found
+     * @throws UnsupportedOperatorException
+     *             if no restriction definition for the {@link TimeOperator} is
+     *             found
      */
     private static Collection<Disjunction> getDisjunction(Iterable<TemporalFilter> temporalFilters)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
@@ -232,7 +248,8 @@ public class SosTemporalRestrictions {
     /**
      * Gets the field descriptor for the specified value reference.
      *
-     * @param valueReference the value reference
+     * @param valueReference
+     *            the value reference
      *
      * @return the property descriptor
      *
@@ -243,7 +260,8 @@ public class SosTemporalRestrictions {
      * @see #RESULT_TIME_FIELDS
      * @see #VALID_TIME_FIELDS
      *
-     * @throws UnsupportedValueReferenceException if the {@code valueReference} can not be decoded
+     * @throws UnsupportedValueReferenceException
+     *             if the {@code valueReference} can not be decoded
      */
     public static TimePrimitiveFieldDescriptor getFields(String valueReference)
             throws UnsupportedValueReferenceException {

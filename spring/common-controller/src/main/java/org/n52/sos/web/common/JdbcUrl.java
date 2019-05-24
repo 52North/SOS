@@ -30,6 +30,7 @@ package org.n52.sos.web.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 import org.apache.http.NameValuePair;
@@ -45,9 +46,9 @@ public class JdbcUrl {
 
     private static final String QUERY_PARAMETER_PASSWORD = "password";
 
-    private static final String DEFAULT_USERNAME = "user";
+    private static final String DEFAULT_USERNAME = QUERY_PARAMETER_USER;
 
-    private static final String DEFAULT_PASSWORD = "password";
+    private static final String DEFAULT_PASSWORD = QUERY_PARAMETER_PASSWORD;
 
     private static final String DEFAULT_HOST = "localhost";
 
@@ -118,7 +119,7 @@ public class JdbcUrl {
         } else if (path.length == 2 && path[0].isEmpty() && !path[1].isEmpty()) {
             database = path[1];
         }
-        for (NameValuePair nvp : URLEncodedUtils.parse(uri, "UTF-8")) {
+        for (NameValuePair nvp : URLEncodedUtils.parse(uri, Charset.forName("UTF-8"))) {
             if (nvp.getName().equals(QUERY_PARAMETER_USER)) {
                 user = nvp.getValue();
             } else if (nvp.getName().equals(QUERY_PARAMETER_PASSWORD)) {
@@ -178,10 +179,10 @@ public class JdbcUrl {
         return scheme;
     }
 
-
     public void setScheme(String scheme) {
         this.scheme = scheme;
     }
+
     public boolean isSchemeValid() {
         return getScheme() != null && getScheme().equals(SCHEME);
     }
@@ -190,10 +191,10 @@ public class JdbcUrl {
         return type;
     }
 
-
     public void setType(String type) {
         this.type = type;
     }
+
     public boolean isTypeValid() {
         return getType() != null && getType().equals(TYPE);
     }
@@ -202,10 +203,10 @@ public class JdbcUrl {
         return host;
     }
 
-
     public void setHost(String host) {
         this.host = host;
     }
+
     public boolean isHostValid() {
         return getHost() != null && !getHost().isEmpty();
     }
@@ -214,10 +215,10 @@ public class JdbcUrl {
         return port;
     }
 
-
     public void setPort(int port) {
         this.port = port;
     }
+
     public boolean isPortValid() {
         return getPort() >= 0;
     }
@@ -226,10 +227,10 @@ public class JdbcUrl {
         return database;
     }
 
-
     public void setDatabase(String database) {
         this.database = database;
     }
+
     public boolean isDatabaseValid() {
         return getDatabase() != null && !getDatabase().isEmpty();
     }
@@ -238,10 +239,10 @@ public class JdbcUrl {
         return user;
     }
 
-
     public void setUser(String user) {
         this.user = user;
     }
+
     public boolean isUserValid() {
         return getUser() != null && !getUser().isEmpty();
     }
@@ -250,33 +251,32 @@ public class JdbcUrl {
         return password;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
     }
+
     public boolean isPasswordValid() {
         return getPassword() != null && !getPassword().isEmpty();
     }
 
     @Override
     public String toString() {
-        return new StringBuilder(getConnectionString()).append('?').append(QUERY_PARAMETER_USER)
-                .append('=').append(getUser()).append('&').append(QUERY_PARAMETER_PASSWORD)
-                .append('=').append(getPassword()).toString();
+        return new StringBuilder(getConnectionString()).append('?').append(QUERY_PARAMETER_USER).append('=')
+                .append(getUser()).append('&').append(QUERY_PARAMETER_PASSWORD).append('=').append(getPassword())
+                .toString();
     }
 
     public String getConnectionString() {
-        return new StringBuilder().append(getScheme()).append(':').append(getType()).append(':')
-                .append('/').append('/').append(getHost()).append(':').append(getPort())
-                .append('/').append(getDatabase()).toString();
+        return new StringBuilder().append(getScheme()).append(':').append(getType()).append(':').append('/')
+                .append('/').append(getHost()).append(':').append(getPort()).append('/').append(getDatabase())
+                .toString();
     }
+
     private static String toURI(Properties p) {
         StringBuilder sb = new StringBuilder();
         sb.append(p.getProperty(CONNECTION_STRING_PROPERTY));
-        sb.append('?').append(QUERY_PARAMETER_USER).append('=')
-                .append(p.getProperty(USER_PROPERTY));
-        sb.append('&').append(QUERY_PARAMETER_PASSWORD).append('=')
-                .append(p.getProperty(PASS_PROPERTY));
+        sb.append('?').append(QUERY_PARAMETER_USER).append('=').append(p.getProperty(USER_PROPERTY));
+        sb.append('&').append(QUERY_PARAMETER_PASSWORD).append('=').append(p.getProperty(PASS_PROPERTY));
         return sb.toString();
     }
 }

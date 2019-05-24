@@ -86,9 +86,8 @@ public class AqdGetObservationOperatorV10 extends
         checkRequestForFlowAndTemporalFilter(request, flow);
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
         request.setMergeObservationValues(checkForMergeObservationsInResponse);
-        final GetObservationResponse response =
-                (GetObservationResponse) changeResponseServiceVersion(getOperationHandler().getObservation(
-                        (GetObservationRequest) changeRequestServiceVersion(request)));
+        final GetObservationResponse response = (GetObservationResponse) changeResponseServiceVersion(
+                getOperationHandler().getObservation((GetObservationRequest) changeRequestServiceVersion(request)));
         changeRequestServiceVersionToAqd(request);
         response.setExtensions(request.getExtensions());
         setObservationResponseResponseFormatAndContentType(request, response);
@@ -103,7 +102,8 @@ public class AqdGetObservationOperatorV10 extends
         return getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(request);
     }
 
-    private void checkRequestForFlowAndTemporalFilter(GetObservationRequest request, ReportObligationType flow) throws CodedException {
+    private void checkRequestForFlowAndTemporalFilter(GetObservationRequest request, ReportObligationType flow)
+            throws CodedException {
         try {
             if (!request.isSetTemporalFilter()) {
                 DateTime start = null;
@@ -120,20 +120,18 @@ public class AqdGetObservationOperatorV10 extends
                     String year = Integer.toString(dateTime.minusYears(1).getYear());
                     start = DateTimeHelper.parseIsoString2DateTime(year);
                     int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(year);
-                    end =
-                            DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-                                    DateTimeHelper.parseIsoString2DateTime(year), timeLength);
+                    end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
+                            DateTimeHelper.parseIsoString2DateTime(year), timeLength);
                 }
                 if (start != null && end != null) {
-                    request.setTemporalFilters(getTemporalFilter(new TimePeriod(start.minusMillis(1), end
-                            .plusMillis(2))));
+                    request.setTemporalFilters(
+                            getTemporalFilter(new TimePeriod(start.minusMillis(1), end.plusMillis(2))));
                 }
             }
         } catch (DateTimeFormatException | DateTimeParseException e) {
-            throw new NoApplicableCodeException()
-                    .causedBy(e)
-                    .withMessage(
-                            "The request does not contain a temporal filter and the temporal filter creation for the flow fails!");
+            throw new NoApplicableCodeException().causedBy(e).withMessage(
+                    "The request does not contain a temporal filter "
+                    + "and the temporal filter creation for the flow fails!");
         }
     }
 
@@ -255,8 +253,7 @@ public class AqdGetObservationOperatorV10 extends
     private void checkObservedProperties(final List<String> observedProperties) throws OwsExceptionReport {
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
-            final Collection<String> validObservedProperties =
-                    getCache().getObservableProperties();
+            final Collection<String> validObservedProperties = getCache().getObservableProperties();
             for (final String obsProp : observedProperties) {
                 if (obsProp.isEmpty()) {
                     exceptions.add(new MissingObservedPropertyParameterException());

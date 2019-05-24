@@ -55,7 +55,9 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 
 public class AbstractObservationDAOTest {
 
-    TestObservationDAO dao = new TestObservationDAO(new DaoFactory());
+    private static final String PHENOMENON_TIME = "#phenomenonTime";
+
+    private TestObservationDAO dao = new TestObservationDAO(new DaoFactory());
 
     /*
      * PhenomenonTime with TimeInstant
@@ -79,14 +81,14 @@ public class AbstractObservationDAOTest {
         Assert.assertTrue(observation.getSamplingTimeEnd() != null);
     }
 
-    @Test(expected=InvalidParameterValueException.class)
+    @Test(expected = InvalidParameterValueException.class)
     public void add_phenomenonTime_instant_timeIndeterminatePosition_other() throws OwsExceptionReport {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant phenomenonTime = new TimeInstant(IndeterminateValue.UNKNOWN);
         dao.addPhenomenonTimeToObservation(observation, phenomenonTime);
     }
 
-    @Test(expected=MissingParameterValueException.class)
+    @Test(expected = MissingParameterValueException.class)
     public void add_phenomenonTime_instant_timeIndeterminatePosition_missing() throws OwsExceptionReport {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant phenomenonTime = new TimeInstant();
@@ -113,14 +115,14 @@ public class AbstractObservationDAOTest {
         Assert.assertTrue(observation.getResultTime() != null);
     }
 
-    @Test(expected=InvalidParameterValueException.class)
+    @Test(expected = InvalidParameterValueException.class)
     public void add_resultTime_timeIndeterminatePosition_other() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant(IndeterminateValue.UNKNOWN);
         dao.addResultTimeToObservation(observation, resultTime, null);
     }
 
-    @Test(expected=NoApplicableCodeException.class)
+    @Test(expected = NoApplicableCodeException.class)
     public void add_resultTime_timeIndeterminatePosition_missing() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
@@ -131,7 +133,7 @@ public class AbstractObservationDAOTest {
     public void add_resultTime_value_from_phenomenonTime() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
-        resultTime.setGmlId("#phenomenonTime");
+        resultTime.setGmlId();
         TimeInstant phenomeonTime = new TimeInstant(new DateTime());
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
         Assert.assertTrue(observation.getResultTime() != null);
@@ -141,26 +143,26 @@ public class AbstractObservationDAOTest {
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_now() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
-        resultTime.setGmlId("#phenomenonTime");
+        resultTime.setGmlId(PHENOMENON_TIME);
         TimeInstant phenomeonTime = new TimeInstant(IndeterminateValue.NOW);
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
         Assert.assertTrue(observation.getResultTime() != null);
     }
 
-    @Test(expected=InvalidParameterValueException.class)
+    @Test(expected = InvalidParameterValueException.class)
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_other() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
-        resultTime.setGmlId("#phenomenonTime");
+        resultTime.setGmlId(PHENOMENON_TIME);
         TimeInstant phenomeonTime = new TimeInstant(IndeterminateValue.UNKNOWN);
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
     }
 
-    @Test(expected=NoApplicableCodeException.class)
+    @Test(expected = NoApplicableCodeException.class)
     public void add_resultTime_from_phenomenonTime_timeIndeterminatePosition_missing() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
-        resultTime.setGmlId("#phenomenonTime");
+        resultTime.setGmlId(PHENOMENON_TIME);
         TimeInstant phenomeonTime = new TimeInstant();
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
     }
@@ -172,8 +174,8 @@ public class AbstractObservationDAOTest {
         }
 
         @Override
-        protected DatasetEntity addObservationContextToObservation(ObservationContext ctx,
-                DataEntity<?> observation, Session session) throws CodedException {
+        protected DatasetEntity addObservationContextToObservation(ObservationContext ctx, DataEntity<?> observation,
+                Session session) throws CodedException {
             return null;
         }
 
@@ -239,8 +241,8 @@ public class AbstractObservationDAOTest {
         }
 
         @Override
-        public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, DatasetEntity observationConstellation, Session session)
-                throws CodedException {
+        public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation,
+                DatasetEntity observationConstellation, Session session) throws CodedException {
             return null;
         }
 

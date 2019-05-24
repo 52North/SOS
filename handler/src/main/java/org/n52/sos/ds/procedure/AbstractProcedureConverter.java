@@ -53,12 +53,9 @@ public abstract class AbstractProcedureConverter<T> {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public abstract SosProcedureDescription<?> createSosProcedureDescription(
-            T procedure,
-            String requestedDescriptionFormat,
-            String requestedServiceVersion,
-            Locale i18n,
-            Session session) throws OwsExceptionReport;
+    public abstract SosProcedureDescription<?> createSosProcedureDescription(T procedure,
+            String requestedDescriptionFormat, String requestedServiceVersion, Locale i18n, Session session)
+            throws OwsExceptionReport;
 
     /**
      * Create procedure description from file, single XML text or generate
@@ -77,13 +74,10 @@ public abstract class AbstractProcedureConverter<T> {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription<?> createSosProcedureDescription(
-            T procedure,
-            String requestedDescriptionFormat,
-            String requestedServiceVersion,
-            Session session)
-            throws OwsExceptionReport {
+    public SosProcedureDescription<?> createSosProcedureDescription(T procedure, String requestedDescriptionFormat,
+            String requestedServiceVersion, Session session) throws OwsExceptionReport {
         // child hierarchy procedures haven't been queried yet, pass null
-        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null, session);
+        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null,
+                session);
     }
 }

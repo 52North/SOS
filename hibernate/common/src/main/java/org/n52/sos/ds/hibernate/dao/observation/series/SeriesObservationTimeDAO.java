@@ -46,8 +46,9 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
  * @since 4.0.0
  *
  */
-public class SeriesObservationTimeDAO
-        extends AbstractObservationTimeDAO {
+public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
+
+    private static final String DS_OFF_PREFIX = "ds.off";
 
     /**
      * Create criteria for series
@@ -61,9 +62,9 @@ public class SeriesObservationTimeDAO
      * @return Criteria for series
      */
     private Criteria createCriteriaFor(Class<?> clazz, DatasetEntity series, Session session) {
-        final Criteria criteria = session.createCriteria(clazz)
-                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        final Criteria criteria =
+                session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
+                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
         return criteria;
     }
@@ -79,12 +80,12 @@ public class SeriesObservationTimeDAO
      *            Hibernate session
      * @return Criteria for time values
      */
-    public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(DatasetEntity series, Collection<String> offerings,
-            Session session) {
+    public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(DatasetEntity series,
+            Collection<String> offerings, Session session) {
         Criteria criteria = createCriteriaFor(DataEntity.class, series, session);
-        criteria.setProjection(Projections.projectionList()
-                .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
-                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
+        criteria.setProjection(
+                Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                        .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
         return criteria;
     }
 
@@ -93,10 +94,10 @@ public class SeriesObservationTimeDAO
         Criteria criteria = createCriteriaFor(DataEntity.class, series, session);
         Criteria datasetCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET, "ds");
         if (CollectionHelper.isNotEmpty(offerings)) {
-            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING, "ds.off")
+            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING, DS_OFF_PREFIX)
                     .add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
         } else {
-            datasetCriteria.createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off");
+            datasetCriteria.createAlias(DatasetEntity.PROPERTY_OFFERING, DS_OFF_PREFIX);
         }
         criteria.setProjection(
                 Projections.projectionList().add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER))

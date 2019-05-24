@@ -42,43 +42,44 @@ import org.n52.sos.ds.DatabaseQueryHelper;
 import org.n52.sos.ds.hibernate.util.FeatureParameterAdder;
 import org.n52.sos.util.SosHelper;
 
-public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> extends AbstractFeatureCreator<T> implements DatabaseQueryHelper{
+public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> extends AbstractFeatureCreator<T>
+        implements DatabaseQueryHelper {
 
-        public AbstractFeatureOfInerestCreator(FeatureVisitorContext context) {
+    public AbstractFeatureOfInerestCreator(FeatureVisitorContext context) {
         super(context);
     }
 
-        public AbstractFeature createFeature(FeatureEntity f) throws OwsExceptionReport {
-            final CodeWithAuthority identifier = getIdentifier(f);
-            if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(f.getIdentifier(), getContext().getVersion())) {
-                identifier.setValue(null);
-            }
-            final AbstractFeature absFeat = createFeature(identifier);
-            addNameAndDescription(getContext().getRequestedLanguage(), f, absFeat);
-            if (absFeat instanceof AbstractSamplingFeature) {
-                AbstractSamplingFeature absSampFeat = (AbstractSamplingFeature) absFeat;
-                absSampFeat.setGeometry(createGeometryFrom(f));
-                absSampFeat.setFeatureType(getFeatureTypes(f));
-                absSampFeat.setUrl(f.getUrl());
-                if (f.isSetXml()) {
-                    absSampFeat.setXml(f.getXml());
-                }
-                addParameter(absSampFeat, f);
-                final Set<FeatureEntity> parentFeatures = f.getParents();
-                if (parentFeatures != null && !parentFeatures.isEmpty()) {
-                    final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
-                    for (final AbstractFeatureEntity parentFeature : parentFeatures) {
-                        sampledFeatures.add(new HibernateFeatureVisitor(getContext()).visit(parentFeature));
-                    }
-                    absSampFeat.setSampledFeatures(sampledFeatures);
-                }
-            }
-            return absFeat;
+    public AbstractFeature createFeature(FeatureEntity f) throws OwsExceptionReport {
+        final CodeWithAuthority identifier = getIdentifier(f);
+        if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(f.getIdentifier(), getContext().getVersion())) {
+            identifier.setValue(null);
         }
-
-        protected abstract AbstractFeature createFeature(CodeWithAuthority identifier);
-
-        protected void addParameter(AbstractSamplingFeature absSampFeat, FeatureEntity f) throws OwsExceptionReport {
-            new FeatureParameterAdder(absSampFeat, f).add();
+        final AbstractFeature absFeat = createFeature(identifier);
+        addNameAndDescription(getContext().getRequestedLanguage(), f, absFeat);
+        if (absFeat instanceof AbstractSamplingFeature) {
+            AbstractSamplingFeature absSampFeat = (AbstractSamplingFeature) absFeat;
+            absSampFeat.setGeometry(createGeometryFrom(f));
+            absSampFeat.setFeatureType(getFeatureTypes(f));
+            absSampFeat.setUrl(f.getUrl());
+            if (f.isSetXml()) {
+                absSampFeat.setXml(f.getXml());
+            }
+            addParameter(absSampFeat, f);
+            final Set<FeatureEntity> parentFeatures = f.getParents();
+            if (parentFeatures != null && !parentFeatures.isEmpty()) {
+                final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
+                for (final AbstractFeatureEntity parentFeature : parentFeatures) {
+                    sampledFeatures.add(new HibernateFeatureVisitor(getContext()).visit(parentFeature));
+                }
+                absSampFeat.setSampledFeatures(sampledFeatures);
+            }
         }
+        return absFeat;
+    }
+
+    protected abstract AbstractFeature createFeature(CodeWithAuthority identifier);
+
+    protected void addParameter(AbstractSamplingFeature absSampFeat, FeatureEntity f) throws OwsExceptionReport {
+        new FeatureParameterAdder(absSampFeat, f).add();
+    }
 }

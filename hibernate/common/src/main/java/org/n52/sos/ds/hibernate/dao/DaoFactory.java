@@ -161,10 +161,8 @@ public class DaoFactory {
     public boolean isSeriesDAO() {
         if (HibernateHelper.isEntitySupported(EReportingProfileDataEntity.class)) {
             return true;
-        } else if (HibernateHelper.isEntitySupported(DataEntity.class)) {
-            return true;
         } else {
-           return false;
+            return HibernateHelper.isEntitySupported(DataEntity.class);
         }
     }
 
@@ -194,7 +192,7 @@ public class DaoFactory {
         if (HibernateHelper.isEntitySupported(EReportingProfileDataEntity.class)) {
             return new EReportingValueDAO(this.verificationFlags, this.validityFlags);
         }
-        return new SeriesValueDAO();
+        return new SeriesValueDAO(geometryHandler);
     }
 
     public AbstractSeriesValueTimeDAO getValueTimeDAO() {

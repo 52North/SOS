@@ -111,7 +111,7 @@ public class EReportingValuedObservationFactory
         return Holder.INSTANCE;
     }
 
-    private static class Holder {
+    private static final class Holder {
         private static final EReportingValuedObservationFactory INSTANCE
                 = new EReportingValuedObservationFactory();
 

@@ -64,9 +64,8 @@ public class HibernateTestCase extends Matchers implements ConnectionProvider {
     }
 
     @Override
-    public Object getConnection()
-            throws ConnectionProviderException {
-       return getSession();
+    public Object getConnection() throws ConnectionProviderException {
+        return getSession();
     }
 
     @Override

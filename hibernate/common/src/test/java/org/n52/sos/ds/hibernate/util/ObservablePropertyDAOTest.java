@@ -55,6 +55,13 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 
 public class ObservablePropertyDAOTest extends HibernateTestCase {
 
+    private static final String CHILD = "child";
+    private static final String PARENT = "parent";
+    private static final String SINGLE = "single";
+
+    @Rule
+    public final ErrorCollector errors = new ErrorCollector();
+
     @After
     public void clean() {
         Session session = getSession();
@@ -85,16 +92,13 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         H2Configuration.truncate();
     }
 
-    @Rule
-    public final ErrorCollector errors = new ErrorCollector();
-
     @Test
     public void testCompositePhenomenon() {
-        OmCompositePhenomenon compositePhenomenon = new OmCompositePhenomenon("parent");
-        compositePhenomenon.addPhenomenonComponent(new OmObservableProperty("child1"));
-        compositePhenomenon.addPhenomenonComponent(new OmObservableProperty("child2"));
-        compositePhenomenon.addPhenomenonComponent(new OmObservableProperty("child3"));
-        OmObservableProperty simpleObservableProperty = new OmObservableProperty("single");
+        OmCompositePhenomenon compositePhenomenon = new OmCompositePhenomenon(PARENT);
+        compositePhenomenon.addPhenomenonComponent(new OmObservableProperty(CHILD + "1"));
+        compositePhenomenon.addPhenomenonComponent(new OmObservableProperty(CHILD + "2"));
+        compositePhenomenon.addPhenomenonComponent(new OmObservableProperty(CHILD + "3"));
+        OmObservableProperty simpleObservableProperty = new OmObservableProperty(SINGLE);
 
         Session session = getSession();
         Transaction transaction = null;
@@ -121,17 +125,17 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         assertThat(observableProperties, is(notNullValue()));
         errors.checkThat(observableProperties.keySet(), hasSize(5));
 
-        assertThat(observableProperties.get("parent"), is(instanceOf(PhenomenonEntity.class)));
-        assertThat(observableProperties.get("child1"), is(instanceOf(PhenomenonEntity.class)));
-        assertThat(observableProperties.get("child2"), is(instanceOf(PhenomenonEntity.class)));
-        assertThat(observableProperties.get("child3"), is(instanceOf(PhenomenonEntity.class)));
-        assertThat(observableProperties.get("single"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get(PARENT), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get(CHILD + "1"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get(CHILD + "2"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get(CHILD + "3"), is(instanceOf(PhenomenonEntity.class)));
+        assertThat(observableProperties.get(SINGLE), is(instanceOf(PhenomenonEntity.class)));
 
-        PhenomenonEntity parent = observableProperties.get("parent");
-        PhenomenonEntity child1 = observableProperties.get("child1");
-        PhenomenonEntity child2 = observableProperties.get("child2");
-        PhenomenonEntity child3 = observableProperties.get("child3");
-        PhenomenonEntity single = observableProperties.get("single");
+        PhenomenonEntity parent = observableProperties.get(PARENT);
+        PhenomenonEntity child1 = observableProperties.get(CHILD + "1");
+        PhenomenonEntity child2 = observableProperties.get(CHILD + "2");
+        PhenomenonEntity child3 = observableProperties.get(CHILD + "3");
+        PhenomenonEntity single = observableProperties.get(SINGLE);
 
         errors.checkThat(parent.getParents(), is(empty()));
         errors.checkThat(parent.getChildren(), containsInAnyOrder(child1, child2, child3));

@@ -36,13 +36,17 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
+import org.n52.sos.util.GeometryHandler;
 
 public class EReportingValueDAO extends AbstractSeriesValueDAO implements EReportingDaoHelper {
 
     private final Set<Integer> verificationFlags;
+
     private final Set<Integer> validityFlags;
 
-    public EReportingValueDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
+    public EReportingValueDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags,
+            GeometryHandler geometryHandler) {
+        super(geometryHandler);
         this.verificationFlags = verificationFlags;
         this.validityFlags = validityFlags;
     }
@@ -58,13 +62,14 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO implements ERepor
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
+            throws OwsExceptionReport {
         addValidityAndVerificationRestrictions(c, request, logArgs);
     }
 
-        @Override
-        protected ValuedObservationFactory getValuedObservationFactory() {
-            return EReportingValuedObservationFactory.getInstance();
-        }
+    @Override
+    protected ValuedObservationFactory getValuedObservationFactory() {
+        return EReportingValuedObservationFactory.getInstance();
+    }
 
 }

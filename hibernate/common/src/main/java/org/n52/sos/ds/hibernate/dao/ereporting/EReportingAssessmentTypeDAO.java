@@ -43,24 +43,26 @@ public class EReportingAssessmentTypeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingAssessmentTypeDAO.class);
 
+    private static final String LOG_TEMPLATE = "QUERY getEReportingAssessmentTypes(): {}";
+
     @SuppressWarnings("unchecked")
     public List<EReportingAssessmentTypeEntity> getEReportingAssessmentTypes(Session session) {
         Criteria c = getDefaultCriteria(session);
-        LOGGER.debug("QUERY getEReportingAssessmentTypes(): {}", HibernateHelper.getSqlString(c));
+        LOGGER.debug(LOG_TEMPLATE, HibernateHelper.getSqlString(c));
         return (List<EReportingAssessmentTypeEntity>) c.list();
     }
 
     public EReportingAssessmentTypeEntity getEReportingAssessmentType(AssessmentType assessmentType, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingAssessmentTypeEntity.ID, assessmentType.getId()));
-        LOGGER.debug("QUERY getEReportingAssessmentTypes(): {}", HibernateHelper.getSqlString(c));
+        LOGGER.debug(LOG_TEMPLATE, HibernateHelper.getSqlString(c));
         return (EReportingAssessmentTypeEntity) c.uniqueResult();
     }
 
     public EReportingAssessmentTypeEntity getEReportingAssessmentType(String assessmentType, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingAssessmentTypeEntity.ID, assessmentType));
-        LOGGER.debug("QUERY getEReportingAssessmentTypes(): {}", HibernateHelper.getSqlString(c));
+        LOGGER.debug(LOG_TEMPLATE, HibernateHelper.getSqlString(c));
         return (EReportingAssessmentTypeEntity) c.uniqueResult();
     }
 

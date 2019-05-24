@@ -36,13 +36,14 @@ import org.n52.sos.ds.procedure.generator.AbstractProcedureDescriptionGeneratorF
 /**
  * Repository for {@link HibernateProcedureDescriptionGeneratorFactory}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author Carsten Hollmann
  * @since 4.2.0
  *
  */
-public class HibernateProcedureDescriptionGeneratorFactoryRepository
-        extends
-        AbstractProcedureDescriptionGeneratorFactoryRepository<HibernateProcedureDescriptionGeneratorKey, HibernateProcedureDescriptionGenerator, HibernateProcedureDescriptionGeneratorFactory> {
+public class HibernateProcedureDescriptionGeneratorFactoryRepository extends
+        AbstractProcedureDescriptionGeneratorFactoryRepository<HibernateProcedureDescriptionGeneratorKey,
+        HibernateProcedureDescriptionGenerator,
+        HibernateProcedureDescriptionGeneratorFactory> {
 
     public HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat) {
         return getFactory(new HibernateProcedureDescriptionGeneratorKey(descriptionFormat));

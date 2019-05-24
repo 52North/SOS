@@ -194,7 +194,7 @@ public class AbstractProcedureCreationContext {
      * @return the contentCacheController
      */
     public SosContentCache getCache() {
-        return (SosContentCache)contentCacheController.getCache();
+        return (SosContentCache) contentCacheController.getCache();
     }
 
     /**

@@ -47,11 +47,13 @@ import org.n52.svalbard.ConformanceClasses;
  * @since 4.0.0
  *
  */
-public class SosGetObservationByIdOperatorV20
-        extends AbstractV2RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
+public class SosGetObservationByIdOperatorV20 extends
+        AbstractV2RequestOperator<AbstractGetObservationByIdHandler,
+        GetObservationByIdRequest,
+        GetObservationByIdResponse> {
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_OBSERVATION_BY_ID_RETRIEVAL);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_OBSERVATION_BY_ID_RETRIEVAL);
 
     public SosGetObservationByIdOperatorV20() {
         super(SosConstants.Operations.GetObservationById.name(), GetObservationByIdRequest.class);
@@ -59,7 +61,7 @@ public class SosGetObservationByIdOperatorV20
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

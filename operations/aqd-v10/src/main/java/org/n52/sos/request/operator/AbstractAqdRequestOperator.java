@@ -45,9 +45,10 @@ import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.util.AqdHelper;
 
-public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
+public abstract class AbstractAqdRequestOperator<D extends OperationHandler,
+                                                    Q extends OwsServiceRequest,
+                                                    A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
     private EReportObligationRepository reportObligationRepository;
@@ -100,8 +101,7 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
     }
 
     @Override
-    protected void checkServiceParameter(String service)
-            throws OwsExceptionReport {
+    protected void checkServiceParameter(String service) throws OwsExceptionReport {
         if (service == null || service.equalsIgnoreCase("NOT_SET")) {
             throw new MissingServiceParameterException();
         } else if (!service.equals(AqdConstants.AQD)) {

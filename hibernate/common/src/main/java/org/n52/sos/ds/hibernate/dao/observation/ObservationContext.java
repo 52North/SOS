@@ -49,7 +49,7 @@ import org.n52.series.db.beans.UnitEntity;
  * Class to carry observation identifiers (featureOfInterest,
  * observableProperty, procedure).
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author Carsten Hollmann
  * @author <a href="mailto:e.h.juerrens@52north.org">J&uuml;rrens, Eike Hinderk</a>
  * @since 4.0.0
  *
@@ -60,7 +60,7 @@ public class ObservationContext {
     private ProcedureEntity procedure;
     private OfferingEntity offering;
     private CategoryEntity category;
-    private boolean hiddenChild = false;
+    private boolean hiddenChild;
     private boolean publish = true;
     private FormatEntity observationType;
     private UnitEntity unit;

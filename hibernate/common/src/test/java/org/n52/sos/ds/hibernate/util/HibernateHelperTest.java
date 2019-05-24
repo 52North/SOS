@@ -28,10 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -40,13 +39,13 @@ public class HibernateHelperTest {
 
     @Test
     public void shouldReturnListsOfLists() {
-        assertTrue( HibernateHelper.getValidSizedLists(getList()).size() == 11);
+        Assert.assertTrue(HibernateHelper.getValidSizedLists(getList()).size() == 11);
     }
 
     @Test
     public void shouldListSizeLessThanLimitExpressionDepth() {
-        for (List<Long> validSizedList :  HibernateHelper.getValidSizedLists(getList())) {
-            assertTrue(validSizedList.size() <= HibernateConstants.LIMIT_EXPRESSION_DEPTH);
+        for (List<Long> validSizedList : HibernateHelper.getValidSizedLists(getList())) {
+            Assert.assertTrue(validSizedList.size() <= HibernateConstants.LIMIT_EXPRESSION_DEPTH);
         }
     }
 

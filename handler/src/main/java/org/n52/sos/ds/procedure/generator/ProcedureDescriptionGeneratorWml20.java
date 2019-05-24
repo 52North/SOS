@@ -51,12 +51,13 @@ import org.n52.sos.util.GeometryHandler;
 class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGenerator {
 
     public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(new ProcedureDescriptionGeneratorKey(
-                    WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+            CollectionHelper.set(new ProcedureDescriptionGeneratorKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
+
     private ProfileHandler profileHandler;
+
     private GeometryHandler geometryHandler;
 
-    public ProcedureDescriptionGeneratorWml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
+    ProcedureDescriptionGeneratorWml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController) {
         super(i18ndaoRepository, cacheController);
         this.profileHandler = profileHandler;
@@ -82,8 +83,8 @@ class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGen
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription<AbstractFeature> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
-            throws OwsExceptionReport {
+    public SosProcedureDescription<AbstractFeature> generateProcedureDescription(ProcedureEntity procedure,
+            Locale i18n, Session session) throws OwsExceptionReport {
         setLocale(i18n);
         final ObservationProcess op = new ObservationProcess();
         setCommonData(procedure, op, session);
@@ -95,7 +96,7 @@ class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGen
     private void addName(ProcedureEntity procedure, ObservationProcess op) {
         String name = procedure.getIdentifier();
         if (procedure.isSetName()) {
-           name = procedure.getName();
+            name = procedure.getName();
         }
         op.addParameter(createName("shortName", name));
         op.addParameter(createName("longName", name));

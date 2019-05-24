@@ -79,7 +79,7 @@ import com.google.common.collect.Sets;
 public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
-    
+
     @Inject
     private EReportingPrefixedIdentifierHelper eReportingPrefixedIdentifierHelper;
 
@@ -222,7 +222,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         }
         return "";
     }
-    
+
     @Override
     protected String checkOfferingParameterValue(String parameterValue) {
         String globalModified = checkNamespacePrefixForParameterValue(parameterValue);

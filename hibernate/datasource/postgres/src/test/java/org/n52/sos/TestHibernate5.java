@@ -39,6 +39,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 public class TestHibernate5 {
 
+    private static final String POSTGRES = "postgres";
+
     private static StandardServiceRegistry registry;
     private static SessionFactory sessionFactory;
 
@@ -50,15 +52,17 @@ public class TestHibernate5 {
                 Map<String, String> settings = new HashMap<>();
                 settings.put("hibernate.connection.driver_class", "org.postgresql.Driver");
                 settings.put("hibernate.connection.url", "jdbc:postgresql://localhost:5432/sos");
-                settings.put("hibernate.connection.username", "postgres");
-                settings.put("hibernate.connection.password", "postgres");
+                settings.put("hibernate.connection.username", POSTGRES);
+                settings.put("hibernate.connection.password", POSTGRES);
                 settings.put("hibernate.show_sql", "true");
 
                 registryBuilder.applySettings(settings);
 
                 registry = registryBuilder.build();
 
-                MetadataSources sources = new MetadataSources(registry).addInputStream(this.getClass().getResourceAsStream("/Codespace.hbm.xml"));
+                MetadataSources sources = new MetadataSources(registry)
+                                                .addInputStream(this.getClass()
+                                                .getResourceAsStream("/Codespace.hbm.xml"));
 
 
                 Metadata metadata = sources.getMetadataBuilder().build();
@@ -81,11 +85,10 @@ public class TestHibernate5 {
         }
     }
 
-    public static void main(String[] args) {
-        TestHibernate5 test = new TestHibernate5();
-        test.getSessionFactory();
-
-        test.shutdown();
-
-    }
+    // public static void main(String[] args) {
+    // TestHibernate5 test = new TestHibernate5();
+    // test.getSessionFactory();
+    // test.shutdown();
+    //
+    // }
 }

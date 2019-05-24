@@ -82,19 +82,14 @@ import org.slf4j.LoggerFactory;
  */
 public class ParameterDAO {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(ParameterDAO.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ParameterDAO.class);
 
-    public Set<ParameterEntity<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
+    public Set<ParameterEntity<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache,
+            Session session) throws OwsExceptionReport {
         Set<ParameterEntity<?>> parameters = new HashSet<>();
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                ParameterPersister persister = new ParameterPersister(
-                        this,
-                        namedValue,
-                        unitCache,
-                        session
-                );
+                ParameterPersister persister = new ParameterPersister(this, namedValue, unitCache, session);
                 parameters.add(namedValue.getValue().accept(persister));
             }
         }
@@ -108,7 +103,7 @@ public class ParameterDAO {
      *            Unit
      * @param localCache
      *            Cache (possibly null)
-     * @param session
+     * @param session the session
      * @return Unit
      */
     protected UnitEntity getUnit(String unit, Map<UoM, UnitEntity> localCache, Session session) {
@@ -122,7 +117,7 @@ public class ParameterDAO {
      *            Unit
      * @param localCache
      *            Cache (possibly null)
-     * @param session
+     * @param session the session
      * @return Unit
      */
     protected UnitEntity getUnit(UoM unit, Map<UoM, UnitEntity> localCache, Session session) {
@@ -144,16 +139,18 @@ public class ParameterDAO {
 
     public static class ParameterPersister implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
         private final Caches caches;
+
         private final Session session;
+
         private final NamedValue<?> namedValue;
+
         private final DAOs daos;
+
         private final ParameterFactory parameterFactory;
 
-        public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, Map<UoM, UnitEntity> unitCache, Session session) {
-            this(new DAOs(parameterDAO),
-                    new Caches(unitCache),
-                    namedValue,
-                    session);
+        public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, Map<UoM, UnitEntity> unitCache,
+                Session session) {
+            this(new DAOs(parameterDAO), new Caches(unitCache), namedValue, session);
         }
 
         public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, Session session) {
@@ -162,66 +159,6 @@ public class ParameterDAO {
             this.daos = daos;
             this.namedValue = namedValue;
             this.parameterFactory = daos.parameter.getParameterFactory();
-        }
-
-        private static class Caches {
-            private final Map<UoM, UnitEntity> units;
-
-            Caches(Map<UoM, UnitEntity> units) {
-                this.units = units;
-            }
-
-            public Map<UoM, UnitEntity> units() {
-                return units;
-            }
-        }
-
-        private static class DAOs {
-            private final ParameterDAO parameter;
-
-            DAOs(ParameterDAO parameter) {
-                this.parameter = parameter;
-            }
-
-            public ParameterDAO parameter() {
-                return this.parameter;
-            }
-        }
-
-        private <V, T extends ParameterEntity<V>> T setUnitAndPersist(T parameter, Value<V> value) throws OwsExceptionReport {
-            if (parameter instanceof HasUnit) {
-                ((HasUnit)parameter).setUnit(getUnit(value));
-            }
-            return persist(parameter, value.getValue());
-        }
-
-        private UnitEntity getUnit(Value<?> value) {
-            return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
-        }
-
-        private <V, T extends ParameterEntity<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
-            return persist(parameter, value.getValue());
-        }
-
-        private <V, T extends ParameterEntity<V>> T persist(T parameter, V value) throws OwsExceptionReport {
-            Criteria c = session.createCriteria(parameter.getClass())
-                    .setResultTransformer(RootEntityResultTransformer.INSTANCE)
-                    .add(Restrictions.eq(ValuedParameter.NAME, namedValue.getName().getHref()))
-                    .add(Restrictions.eq(ValuedParameter.VALUE, value));
-            if (parameter instanceof HasUnit && !((HasUnit)parameter).isSetUnit()) {
-                ((HasUnit)parameter).setUnit(getUnit(namedValue.getValue()));
-                c.add(Restrictions.eq(HasUnit.UNIT, ((HasUnit)parameter).getUnit()));
-            }
-            LOG.trace("QUERY parameter: {}",
-                    HibernateHelper.getSqlString(c));
-            ParameterEntity p = (ParameterEntity) c.uniqueResult();
-            if (p != null) {
-                return (T) p;
-            }
-            parameter.setName(namedValue.getName().getHref());
-            parameter.setValue(value);
-            session.saveOrUpdate(parameter);
-            return parameter;
         }
 
         @Override
@@ -329,11 +266,69 @@ public class ParameterDAO {
             throw notSupported(value);
         }
 
-        private OwsExceptionReport notSupported(Value<?> value)
+        private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
+            throw new NoApplicableCodeException().withMessage("Unsupported om:parameter value %s",
+                    value.getClass().getCanonicalName());
+        }
+
+        private <V, T extends ParameterEntity<V>> T setUnitAndPersist(T parameter, Value<V> value)
                 throws OwsExceptionReport {
-            throw new NoApplicableCodeException()
-                    .withMessage("Unsupported om:parameter value %s", value
-                                 .getClass().getCanonicalName());
+            if (parameter instanceof HasUnit) {
+                ((HasUnit) parameter).setUnit(getUnit(value));
+            }
+            return persist(parameter, value.getValue());
+        }
+
+        private UnitEntity getUnit(Value<?> value) {
+            return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
+        }
+
+        private <V, T extends ParameterEntity<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
+            return persist(parameter, value.getValue());
+        }
+
+        private <V, T extends ParameterEntity<V>> T persist(T parameter, V value) throws OwsExceptionReport {
+            Criteria c = session.createCriteria(parameter.getClass())
+                    .setResultTransformer(RootEntityResultTransformer.INSTANCE)
+                    .add(Restrictions.eq(ValuedParameter.NAME, namedValue.getName().getHref()))
+                    .add(Restrictions.eq(ValuedParameter.VALUE, value));
+            if (parameter instanceof HasUnit && !((HasUnit) parameter).isSetUnit()) {
+                ((HasUnit) parameter).setUnit(getUnit(namedValue.getValue()));
+                c.add(Restrictions.eq(HasUnit.UNIT, ((HasUnit) parameter).getUnit()));
+            }
+            LOG.trace("QUERY parameter: {}", HibernateHelper.getSqlString(c));
+            ParameterEntity p = (ParameterEntity) c.uniqueResult();
+            if (p != null) {
+                return (T) p;
+            }
+            parameter.setName(namedValue.getName().getHref());
+            parameter.setValue(value);
+            session.saveOrUpdate(parameter);
+            return parameter;
+        }
+
+        private static class Caches {
+            private final Map<UoM, UnitEntity> units;
+
+            Caches(Map<UoM, UnitEntity> units) {
+                this.units = units;
+            }
+
+            public Map<UoM, UnitEntity> units() {
+                return units;
+            }
+        }
+
+        private static class DAOs {
+            private final ParameterDAO parameter;
+
+            DAOs(ParameterDAO parameter) {
+                this.parameter = parameter;
+            }
+
+            public ParameterDAO parameter() {
+                return this.parameter;
+            }
         }
     }
 

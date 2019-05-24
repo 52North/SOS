@@ -30,7 +30,6 @@ package org.n52.sos.ds.cache;
 
 import org.n52.iceland.util.action.CompositeAction;
 import org.n52.iceland.util.action.CompositeSerialAction;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

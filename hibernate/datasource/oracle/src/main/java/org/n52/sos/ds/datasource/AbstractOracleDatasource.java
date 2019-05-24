@@ -51,48 +51,50 @@ import org.slf4j.LoggerFactory;
 
 import oracle.jdbc.OracleDriver;
 
-
 /**
  * Abstract class for Oracle datasources
+ * 
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDatasource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
-
     protected static final String ORACLE_DRIVER_CLASS = "oracle.jdbc.OracleDriver";
 
-    protected static final Pattern JDBC_THIN_URL_PATTERN = Pattern
-            .compile("^jdbc:oracle:thin:@//([^:]+):([0-9]+)/(.*)$");
+    protected static final Pattern JDBC_THIN_URL_PATTERN =
+            Pattern.compile("^jdbc:oracle:thin:@//([^:]+):([0-9]+)/(.*)$");
 
-    protected static final Pattern JDBC_THIN_SID_URL_PATTERN = Pattern
-            .compile("^jdbc:oracle:thin:@([^:]+):([0-9]+):(.*)$");
+    protected static final Pattern JDBC_THIN_SID_URL_PATTERN =
+            Pattern.compile("^jdbc:oracle:thin:@([^:]+):([0-9]+):(.*)$");
 
     protected static final Pattern JDBC_OCI_URL_PATTERN = Pattern.compile("^jdbc:oracle:oci:@([^:]+):([0-9]+)/(.*)$");
 
-    protected static final String USERNAME_DESCRIPTION = "Your database server user name. "
-            + "The default value for Oracle Spatial is \"oracle\".";
+    protected static final String USERNAME_DESCRIPTION =
+            "Your database server user name. " + "The default value for Oracle Spatial is \"oracle\".";
 
     protected static final String USERNAME_DEFAULT_VALUE = "oracle";
 
-    protected static final String PASSWORD_DESCRIPTION = "Your database server password. "
-            + "The default value is \"oracle\".";
+    protected static final String PASSWORD_DESCRIPTION =
+            "Your database server password. " + "The default value is \"oracle\".";
 
-    protected static final String PASSWORD_DEFAULT_VALUE = "oracle";
+    protected static final String PASSWORD_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
 
     protected static final String HOST_DESCRIPTION = "Set this to the IP/net location of "
             + "Oracle Spatial database server. The default value for Oracle is " + "\"localhost\".";
 
-    protected static final String PORT_DESCRIPTION = "Set this to the port number of your "
-            + "Oracle Spatial server. The default value for Oracle is 1521.";
+    protected static final String PORT_DESCRIPTION =
+            "Set this to the port number of your " + "Oracle Spatial server. The default value for Oracle is 1521.";
 
     protected static final int PORT_DEFAULT_VALUE = 1521;
 
     protected static final boolean PROVIDED_JDBC_DEFAULT_VALUE = true;
 
-    protected static final String SCHEMA_DEFAULT_VALUE = "oracle";
+    protected static final String SCHEMA_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
+    
+    private static final String CANNOT_CLEAR = "Cannot clear!";
 
     protected enum Mode {
         THIN, OCI
@@ -124,9 +126,9 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
 
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
-         Properties p = super.getDatasourceProperties(settings);
-         p.put(HibernateSpatialConfigurationSettings.CONNECTION_FINDER, OracleC3P0ConnectionFinder.class.getName());
-         return p;
+        Properties p = super.getDatasourceProperties(settings);
+        p.put(HibernateSpatialConfigurationSettings.CONNECTION_FINDER, OracleC3P0ConnectionFinder.class.getName());
+        return p;
     }
 
     @Override
@@ -158,12 +160,10 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     void doCheckSchemaCreation(String schema, Statement stmt) throws SQLException {
         final String schemaPrefix = schema == null ? "" : "" + schema + ".";
         final String testTable = schemaPrefix + "sos_test";
-        final String command =
-                String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n"
-                        + "  EXCEPTION\n" + "    WHEN OTHERS THEN\n" + "      IF SQLCODE != -942 THEN\n"
-                        + "        RAISE;\n" + "      END IF;\n" + "  END;\n"
-                        + "  EXECUTE IMMEDIATE 'CREATE TABLE %1$s (id integer NOT NULL)';\n"
-                        + "  EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n" + "END;\n", testTable);
+        final String command = String.format("BEGIN\n" + "  BEGIN\n" + "    EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n"
+                + "  EXCEPTION\n" + "    WHEN OTHERS THEN\n" + "      IF SQLCODE != -942 THEN\n" + "        RAISE;\n"
+                + "      END IF;\n" + "  END;\n" + "  EXECUTE IMMEDIATE 'CREATE TABLE %1$s (id integer NOT NULL)';\n"
+                + "  EXECUTE IMMEDIATE 'DROP TABLE %1$s';\n" + "END;\n", testTable);
         stmt.execute(command);
     }
 
@@ -190,13 +190,13 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
                 }
 
                 if (clearedThisPass == 0) {
-                    throw new RuntimeException("Cannot clear!");
+                    throw new RuntimeException(CANNOT_CLEAR);
                 }
             }
 
             conn.commit();
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot clear!", e);
+            throw new RuntimeException(CANNOT_CLEAR, e);
         } finally {
             close(stmt);
             close(conn);
@@ -215,14 +215,14 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     }
 
     @Override
-    public void validateSchema(Map<String,Object> settings) {
+    public void validateSchema(Map<String, Object> settings) {
         Connection conn = null;
         String schema = null;
         try {
             conn = openConnection(settings);
             Metadata metadata = getMetadata(conn, settings);
             // fix problem with quoted tables
-            schema = (String)settings.get(SCHEMA_KEY);
+            schema = (String) settings.get(SCHEMA_KEY);
             settings.put(SCHEMA_KEY, null);
             new SchemaValidator().validate(metadata);
         } catch (HibernateException | SQLException ex) {
@@ -333,8 +333,8 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         try {
             Class.forName(ORACLE_DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
-            throw new ConfigurationException("Oracle jar file (ojdbc6.jar) must be "
-                    + "included in the server classpath. ", e);
+            throw new ConfigurationException(
+                    "Oracle jar file (ojdbc6.jar) must be " + "included in the server classpath. ", e);
         }
     }
 }

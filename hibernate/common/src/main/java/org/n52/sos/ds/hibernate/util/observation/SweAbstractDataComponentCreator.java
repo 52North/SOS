@@ -126,12 +126,6 @@ public class SweAbstractDataComponentCreator
         return setCommonValues(record, o);
     }
 
-    protected String getFieldName(DataEntity<?> sub) {
-        String name = sub.getDataset().getObservableProperty().getName();
-        if (name != null && !name.isEmpty()) { return name; }
-        return NcName.makeValid(sub.getDataset().getObservableProperty().getIdentifier());
-    }
-
     @Override
     public SweCount visit(CountDataEntity o) throws CodedException {
         SweCount component = new SweCount();
@@ -148,12 +142,10 @@ public class SweAbstractDataComponentCreator
     }
 
     @Override
-    public SweDataArray visit(DataArrayDataEntity o)
-            throws OwsExceptionReport {
+    public SweDataArray visit(DataArrayDataEntity o) throws OwsExceptionReport {
         SweDataArray array = new SweDataArray();
         // TODO
-
-       return array;
+        return array;
     }
 
     @Override
@@ -170,6 +162,14 @@ public class SweAbstractDataComponentCreator
             component.setValue(o.getValueName());
         }
         return setCommonValues(component, o);
+    }
+
+    protected String getFieldName(DataEntity<?> sub) {
+        String name = sub.getDataset().getObservableProperty().getName();
+        if (name != null && !name.isEmpty()) {
+            return name;
+        }
+        return NcName.makeValid(sub.getDataset().getObservableProperty().getIdentifier());
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(

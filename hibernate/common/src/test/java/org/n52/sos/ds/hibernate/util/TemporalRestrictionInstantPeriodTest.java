@@ -28,12 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.IP_AFTER_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.IP_BEFORE_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.IP_BEGINS_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.IP_DURING_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.IP_ENDS_ID;
-
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -60,11 +54,11 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
 
             transaction = session.beginTransaction();
             HibernateObservationBuilder b = getBuilder(session);
-            b.createObservation(IP_BEFORE_ID, ref.minus(2));
-            b.createObservation(IP_BEGINS_ID, ref.minus(1));
-            b.createObservation(IP_DURING_ID, ref);
-            b.createObservation(IP_ENDS_ID, ref.plus(1));
-            b.createObservation(IP_AFTER_ID, ref.plus(2));
+            b.createObservation(TemporalRestrictionTest.Identifier.IP_BEFORE_ID, ref.minus(2));
+            b.createObservation(TemporalRestrictionTest.Identifier.IP_BEGINS_ID, ref.minus(1));
+            b.createObservation(TemporalRestrictionTest.Identifier.IP_DURING_ID, ref);
+            b.createObservation(TemporalRestrictionTest.Identifier.IP_ENDS_ID, ref.plus(1));
+            b.createObservation(TemporalRestrictionTest.Identifier.IP_AFTER_ID, ref.plus(2));
             session.flush();
             transaction.commit();
             return new TimePeriod(ref.minus(1), ref.plus(1));
@@ -82,7 +76,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_AFTER_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_AFTER_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -95,7 +89,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_AFTER_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_AFTER_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -108,7 +102,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_BEFORE_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_BEFORE_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -121,7 +115,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_BEFORE_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_BEFORE_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -178,7 +172,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.during());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_DURING_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_DURING_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -191,7 +185,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.during());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_DURING_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_DURING_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -204,7 +198,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begins());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_BEGINS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_BEGINS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -217,7 +211,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.begins());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_BEGINS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_BEGINS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -251,7 +245,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.ends());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_ENDS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_ENDS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -264,7 +258,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.ends());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_ENDS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_ENDS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -343,7 +337,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.meets());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_BEGINS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_BEGINS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -366,7 +360,7 @@ public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTes
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.metBy());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(IP_ENDS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.IP_ENDS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);

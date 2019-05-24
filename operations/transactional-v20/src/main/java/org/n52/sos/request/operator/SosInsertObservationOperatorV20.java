@@ -62,12 +62,14 @@ import org.n52.sos.wsdl.WSDLOperation;
 import org.n52.svalbard.ConformanceClasses;
 
 public class SosInsertObservationOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler, InsertObservationRequest, InsertObservationResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler,
+        InsertObservationRequest,
+        InsertObservationResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.InsertObservation.name();
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
 
     public SosInsertObservationOperatorV20() {
         super(OPERATION_NAME, InsertObservationRequest.class);
@@ -127,19 +129,16 @@ public class SosInsertObservationOperatorV20 extends
      * definitions.
      *
      * @param request
-     *                Request
+     *            Request
      *
      * @throws CodedException
-     *                        If more than one sampling geometry is defined
+     *             If more than one sampling geometry is defined
      */
     private void checkParameterForSpatialFilteringProfile(InsertObservationRequest request) throws OwsExceptionReport {
         for (OmObservation observation : request.getObservations()) {
             if (observation.isSetParameter()) {
-                long count = observation.getParameter().stream()
-                        .map(NamedValue::getName)
-                        .map(ReferenceType::getHref)
-                        .filter(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE::equals)
-                        .count();
+                long count = observation.getParameter().stream().map(NamedValue::getName).map(ReferenceType::getHref)
+                        .filter(Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE::equals).count();
                 if (count > 1) {
                     throw new InvalidParameterValueException().at("om:parameter").withMessage(
                             "The observation contains more than one ({}) sampling geometry definitions!", count);
@@ -161,7 +160,8 @@ public class SosInsertObservationOperatorV20 extends
                 } else if (!getCache().getOfferings().contains(offering)) {
                     exceptions.add(new InvalidOfferingParameterException(offering));
                 } else {
-                    request.getObservations().forEach(observation -> observation.getObservationConstellation().addOffering(offering));
+                    request.getObservations()
+                            .forEach(observation -> observation.getObservationConstellation().addOffering(offering));
                 }
             }
             exceptions.throwIfNotEmpty();
@@ -183,11 +183,11 @@ public class SosInsertObservationOperatorV20 extends
                     exceptions.add(new InvalidObservationTypeException(obsConstallation.getObservationType()));
                 } else if (obsConstallation.isSetOfferings()) {
                     for (final String offeringID : obsConstallation.getOfferings()) {
-                        final Collection<String> allowedObservationTypes = cache
-                                .getAllowedObservationTypesForOffering(offeringID);
-                        if ((allowedObservationTypes == null ||
-                                 !allowedObservationTypes.contains(obsConstallation.getObservationType())) &&
-                                 !request.isSetExtensionSplitDataArrayIntoObservations()) {
+                        final Collection<String> allowedObservationTypes =
+                                cache.getAllowedObservationTypesForOffering(offeringID);
+                        if ((allowedObservationTypes == null
+                                || !allowedObservationTypes.contains(obsConstallation.getObservationType()))
+                                && !request.isSetExtensionSplitDataArrayIntoObservations()) {
                             exceptions.add(new InvalidObservationTypeForOfferingException(
                                     obsConstallation.getObservationType(), offeringID));
                         }
@@ -209,12 +209,14 @@ public class SosInsertObservationOperatorV20 extends
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
         checkForCompositeObservableProperty(observableProperty, obsConstallation.getOfferings(),
-                                            Sos2Constants.InsertObservationParams.observedProperty);
+                Sos2Constants.InsertObservationParams.observedProperty);
 
-        checkTransactionalProcedure(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure.name());
-        checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
+        checkTransactionalProcedure(obsConstallation.getProcedure().getIdentifier(),
+                Sos2Constants.InsertObservationParams.procedure.name());
+        checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty,
+                true);
         checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(),
-                               Sos2Constants.InsertObservationParams.featureOfInterest);
+                Sos2Constants.InsertObservationParams.featureOfInterest);
     }
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)
@@ -223,11 +225,12 @@ public class SosInsertObservationOperatorV20 extends
         final String obsTypeFromValue = OMHelper.getObservationTypeFor(sosObservation.getValue().getValue());
         if (observationConstellation.isSetObservationType() && !isSplitObservations) {
             checkObservationType(observationConstellation.getObservationType(),
-                                 Sos2Constants.InsertObservationParams.observationType.name());
-            if (obsTypeFromValue != null &&
-                     !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
+                    Sos2Constants.InsertObservationParams.observationType.name());
+            if (obsTypeFromValue != null
+                    && !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
                 throw new NoApplicableCodeException().withMessage(
-                        "The requested observation is invalid! The result element does not comply with the defined type (%s)!",
+                        "The requested observation is invalid! "
+                        + "The result element does not comply with the defined type (%s)!",
                         sosObservation.getObservationConstellation().getObservationType());
             }
         } else if (!isSplitObservations) {

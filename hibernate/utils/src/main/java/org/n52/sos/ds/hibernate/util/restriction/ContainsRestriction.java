@@ -63,7 +63,8 @@ public class ContainsRestriction implements TemporalRestriction {
 
     @Override
     public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.lt(selfBegin, getStartPlaceHolder(count)), Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
+        return Restrictions.and(Restrictions.lt(selfBegin, getStartPlaceHolder(count)),
+                Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
     }
 
     @Override
@@ -73,6 +74,7 @@ public class ContainsRestriction implements TemporalRestriction {
 
     @Override
     public Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.lt(selfBegin, getInstantPlaceHolder(count)), Restrictions.gt(selfEnd, getInstantPlaceHolder(count)));
+        return Restrictions.and(Restrictions.lt(selfBegin, getInstantPlaceHolder(count)),
+                Restrictions.gt(selfEnd, getInstantPlaceHolder(count)));
     }
 }

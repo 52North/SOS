@@ -63,26 +63,30 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         LOGGER.debug("Executing FeatureOfInterestCacheUpdate");
         startStopwatch();
         try {
-            Collection<FeatureEntity> features = new FeatureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
+            Collection<FeatureEntity> features =
+                    new FeatureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
             for (FeatureEntity featureEntity : features) {
                 String identifier = featureEntity.getIdentifier();
                 getCache().addFeatureOfInterest(identifier);
-                Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
+                Collection<DatasetEntity> datasets =
+                        new DatasetDao<>(getSession()).get(createDatasetDbQuery(featureEntity));
                 if (datasets != null && !datasets.isEmpty()) {
-                    if (datasets.stream().anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
+                    if (datasets.stream().anyMatch(
+                        d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
                         getCache().addPublishedFeatureOfInterest(identifier);
                     }
                     getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(datasets));
                 }
                 if (featureEntity.isSetName()) {
-                        getCache().addFeatureOfInterestIdentifierHumanReadableName(identifier, featureEntity.getName());
+                    getCache().addFeatureOfInterestIdentifierHumanReadableName(identifier, featureEntity.getName());
                 }
                 if (featureEntity.hasParents()) {
                     getCache().addParentFeatures(identifier, getParents(featureEntity));
                 }
             }
         } catch (HibernateException he) {
-            getErrors().add(new NoApplicableCodeException().causedBy(he).withMessage("Error while updating featureOfInterest cache!"));
+            getErrors().add(new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while updating featureOfInterest cache!"));
         }
         LOGGER.debug("Finished executing FeatureOfInterestCacheUpdate ({})", getStopwatchResult());
     }
@@ -117,9 +121,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
      * @return Identifiers from featureOfInterest entities
      */
     protected Set<String> getFeatureIdentifiers(Collection<FeatureEntity> features) {
-        return features.stream()
-                .map(FeatureEntity::getIdentifier)
-                .collect(Collectors.toSet());
+        return features.stream().map(FeatureEntity::getIdentifier).collect(Collectors.toSet());
     }
 
     private DbQuery createDatasetDbQuery(FeatureEntity feature) {

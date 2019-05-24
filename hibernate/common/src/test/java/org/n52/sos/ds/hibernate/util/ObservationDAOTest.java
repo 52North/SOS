@@ -60,7 +60,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationDAOTest.class);
 
-    private AbstractObservationDAO observationDAO = null;
+    private AbstractObservationDAO observationDAO;
+
     private OfferingDAO offeringDAO;
 
     @Before
@@ -100,7 +101,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            try (ScrollableIterable<DataEntity<?>> i = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
+            try (ScrollableIterable<DataEntity<?>> i =
+                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
                 for (DataEntity<?> o : i) {
                     session.delete(o);
                 }
@@ -137,9 +139,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
     }
 
     private void timePeriodStartIsBeforeEndOrEqual(TimePeriod temporalBBox) {
-        boolean startBeforeEndOrEqual =
-                temporalBBox.getStart().isEqual(temporalBBox.getEnd())
-                        || temporalBBox.getStart().isBefore(temporalBBox.getEnd());
+        boolean startBeforeEndOrEqual = temporalBBox.getStart().isEqual(temporalBBox.getEnd())
+                || temporalBBox.getStart().isBefore(temporalBBox.getEnd());
         assertThat("start is before end or equal", startBeforeEndOrEqual, is(true));
     }
 
@@ -151,17 +152,18 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
     }
 
     @Test
-    public void getTemporalBoundingBoxForOfferingsContainsNoNullElements() throws ConnectionProviderException, OwsExceptionReport {
+    public void getTemporalBoundingBoxForOfferingsContainsNoNullElements()
+            throws ConnectionProviderException, OwsExceptionReport {
         Session session = getSession();
         try {
             Map<String, TimePeriod> tempBBoxMap = offeringDAO.getTemporalBoundingBoxesForOfferings(session);
-            assertThat("map is empty", tempBBoxMap.isEmpty(), is(false));
+            assertThat("bbox map is empty", tempBBoxMap.isEmpty(), is(false));
             for (String offeringId : tempBBoxMap.keySet()) {
                 assertThat("offering id", offeringId, is(not(nullValue())));
                 TimePeriod offeringBBox = tempBBoxMap.get(offeringId);
                 assertThat("offering temp bbox", offeringBBox, is(not(nullValue())));
                 assertThat("offering temporal bbox start", offeringBBox.getStart(), is(not(nullValue())));
-                assertThat("offering temporal bbox start", offeringBBox.getEnd(), is(not(nullValue())));
+                assertThat("offering temporal bbox end", offeringBBox.getEnd(), is(not(nullValue())));
                 timePeriodStartIsBeforeEndOrEqual(offeringBBox);
             }
         } finally {
@@ -171,7 +173,10 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
 
     @Test
     public void runtimeComparisonGetGlobalTemporalBoundingBoxes() throws ConnectionProviderException {
-        long startOldWay, startNewWay, endOldWay, endNewWay;
+        long startOldWay;
+        long startNewWay;
+        long endOldWay;
+        long endNewWay;
         Session session = getSession();
         try {
             startOldWay = System.currentTimeMillis();
@@ -181,9 +186,10 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
             startNewWay = System.currentTimeMillis();
             observationDAO.getGlobalTemporalBoundingBox(session);
             endNewWay = System.currentTimeMillis();
-            long oldTime = endOldWay - startOldWay, newTime = endNewWay - startNewWay;
-            assertThat(String.format("old way is faster? Old way: %sms\\nNew Way: %sms", oldTime, newTime),
-                    newTime, lessThanOrEqualTo(oldTime));
+            long oldTime = endOldWay - startOldWay;
+            long newTime = endNewWay - startNewWay;
+            assertThat(String.format("old way is faster? Old way: %sms\\nNew Way: %sms", oldTime, newTime), newTime,
+                    lessThanOrEqualTo(oldTime));
             LOGGER.debug("ObservationDAO global temporal bbox: Old way: {}ms\\nNew Way: {}ms", oldTime, newTime);
         } finally {
             returnSession(session);

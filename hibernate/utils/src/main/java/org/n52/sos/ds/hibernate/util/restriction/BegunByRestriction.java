@@ -63,7 +63,8 @@ public class BegunByRestriction implements TemporalRestriction {
 
     @Override
     public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.and(Restrictions.eq(selfBegin, getStartPlaceHolder(count)), Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
+        return Restrictions.and(Restrictions.eq(selfBegin, getStartPlaceHolder(count)),
+                Restrictions.gt(selfEnd, getEndPlaceHolder(count)));
     }
 
     @Override

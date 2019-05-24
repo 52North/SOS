@@ -89,11 +89,19 @@ import com.google.common.collect.Lists;
 public class ResultTemplateDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultTemplateDAO.class);
+
+    private static final String LOG_TEMPLATE =
+            "The requested resultStructure is different from already inserted result "
+                    + "template for procedure (%s) observedProperty  (%s) and offering (%s)!";
+
     private EncoderRepository encoderRepository;
+
     private DecoderRepository decoderRepository;
+
     private XmlOptionsHelper xmlOptionsHelper;
 
-    public ResultTemplateDAO(EncoderRepository encoderRepository, XmlOptionsHelper xmlOptionsHelper, DecoderRepository decoderRepository) {
+    public ResultTemplateDAO(EncoderRepository encoderRepository, XmlOptionsHelper xmlOptionsHelper,
+            DecoderRepository decoderRepository) {
         this.encoderRepository = encoderRepository;
         this.xmlOptionsHelper = xmlOptionsHelper;
         this.decoderRepository = decoderRepository;
@@ -109,12 +117,72 @@ public class ResultTemplateDAO {
      * @return Result template object
      */
     public ResultTemplateEntity getResultTemplateObject(final String identifier, final Session session) {
-        Criteria criteria =
-                session.createCriteria(ResultTemplateEntity.class)
-                        .add(Restrictions.eq(ResultTemplateEntity.PROPERTY_IDENTIFIER, identifier))
-                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        Criteria criteria = session.createCriteria(ResultTemplateEntity.class)
+                .add(Restrictions.eq(ResultTemplateEntity.PROPERTY_IDENTIFIER, identifier))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         LOGGER.debug("QUERY getResultTemplateObject(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (ResultTemplateEntity) criteria.uniqueResult();
+    }
+
+    /**
+     * Get result template objects for offering identifier, observable property
+     * identifier and featureOfInterest identifier
+     *
+     * @param offering
+     *            Offering identifier
+     * @param observedProperty
+     *            Observable property identifier
+     * @param featureOfInterest
+     *            FeatureOfInterest identifier
+     * @param session
+     *            Hibernate session
+     * @return Result template objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<ResultTemplateEntity> getResultTemplateObject(final String offering, final String observedProperty,
+            final Collection<String> featureOfInterest, final Session session) {
+        final Criteria rtc =
+                session.createCriteria(ResultTemplateEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
+        if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
+            rtc.createAlias(ResultTemplateEntity.PROPERTY_FEATURE, "foi", JoinType.LEFT_OUTER_JOIN);
+            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplateEntity.PROPERTY_FEATURE),
+                    Restrictions.in("foi." + AbstractFeatureEntity.IDENTIFIER, featureOfInterest)));
+            // rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
+            // Restrictions.in(FeatureOfInterest.IDENTIFIER,
+            // featureOfInterest));
+        }
+        LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
+                HibernateHelper.getSqlString(rtc));
+        return rtc.list();
+    }
+
+    /**
+     * Get result template object for offering identifier and observable
+     * property identifier
+     *
+     * @param offering
+     *            Offering identifier
+     * @param observedProperty
+     *            Observable property identifier
+     * @param session
+     *            Hibernate session
+     * @return Result template object
+     */
+    @SuppressWarnings("unchecked")
+    public ResultTemplateEntity getResultTemplateObject(final String offering, final String observedProperty,
+            final Session session) {
+        final Criteria rtc = session.createCriteria(ResultTemplateEntity.class).setMaxResults(1);
+        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
+        /* there can be multiple but equal result templates... */
+        LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty): {}",
+                HibernateHelper.getSqlString(rtc));
+        final List<ResultTemplateEntity> templates = rtc.list();
+        return templates.isEmpty() ? null : templates.iterator().next();
     }
 
     /**
@@ -129,8 +197,7 @@ public class ResultTemplateDAO {
         return session.createCriteria(ResultTemplateEntity.class)
                 .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
                 .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN)
-                .list();
+                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
     }
 
     /**
@@ -169,67 +236,6 @@ public class ResultTemplateDAO {
     }
 
     /**
-     * Get result template object for offering identifier and observable
-     * property identifier
-     *
-     * @param offering
-     *            Offering identifier
-     * @param observedProperty
-     *            Observable property identifier
-     * @param session
-     *            Hibernate session
-     * @return Result template object
-     */
-    @SuppressWarnings("unchecked")
-    public ResultTemplateEntity getResultTemplateObject(final String offering, final String observedProperty,
-            final Session session) {
-        final Criteria rtc = session.createCriteria(ResultTemplateEntity.class).setMaxResults(1);
-        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON).add(
-                Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
-        /* there can be multiple but equal result templates... */
-        LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty): {}",
-                HibernateHelper.getSqlString(rtc));
-        final List<ResultTemplateEntity> templates = rtc.list();
-        return templates.isEmpty() ? null : templates.iterator().next();
-    }
-
-    /**
-     * Get result template objects for offering identifier, observable property
-     * identifier and featureOfInterest identifier
-     *
-     * @param offering
-     *            Offering identifier
-     * @param observedProperty
-     *            Observable property identifier
-     * @param featureOfInterest
-     *            FeatureOfInterest identifier
-     * @param session
-     *            Hibernate session
-     * @return Result template objects
-     */
-    @SuppressWarnings("unchecked")
-    public List<ResultTemplateEntity> getResultTemplateObject(final String offering, final String observedProperty,
-            final Collection<String> featureOfInterest, final Session session) {
-        final Criteria rtc =
-                session.createCriteria(ResultTemplateEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON).add(
-                Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
-        if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
-            rtc.createAlias(ResultTemplateEntity.PROPERTY_FEATURE, "foi", JoinType.LEFT_OUTER_JOIN);
-            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplateEntity.PROPERTY_FEATURE),
-                    Restrictions.in("foi." + AbstractFeatureEntity.IDENTIFIER, featureOfInterest)));
-            // rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
-            // Restrictions.in(FeatureOfInterest.IDENTIFIER,
-            // featureOfInterest));
-        }
-        LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
-                HibernateHelper.getSqlString(rtc));
-        return rtc.list();
-    }
-
-    /**
      * Check or insert result template
      *
      * @param request
@@ -237,6 +243,7 @@ public class ResultTemplateDAO {
      * @param observationConstellation
      *            Observation constellation object
      * @param procedure
+     *            the procedure
      * @param featureOfInterest
      *            FeatureOfInterest object
      * @param session
@@ -245,11 +252,8 @@ public class ResultTemplateDAO {
      *             If the requested structure/encoding is invalid
      */
     public void checkOrInsertResultTemplate(InsertResultTemplateRequest request,
-            DatasetEntity observationConstellation,
-            ProcedureEntity procedure,
-            AbstractFeatureEntity featureOfInterest,
-            Session session)
-            throws OwsExceptionReport {
+            DatasetEntity observationConstellation, ProcedureEntity procedure, AbstractFeatureEntity featureOfInterest,
+            Session session) throws OwsExceptionReport {
         try {
             String offering = observationConstellation.getOffering().getIdentifier();
             String observableProperty = observationConstellation.getObservableProperty().getIdentifier();
@@ -263,25 +267,19 @@ public class ResultTemplateDAO {
 
                 for (ResultTemplateEntity storedResultTemplate : resultTemplates) {
                     storedIdentifiers.add(storedResultTemplate.getIdentifier());
-                    SosResultStructure storedStructure =
-                            createSosResultStructure(storedResultTemplate.getStructure());
-                    SosResultEncoding storedEncoding =
-                            createSosResultEncoding(storedResultTemplate.getEncoding());
+                    SosResultStructure storedStructure = createSosResultStructure(storedResultTemplate.getStructure());
+                    SosResultEncoding storedEncoding = createSosResultEncoding(storedResultTemplate.getEncoding());
 
                     if (!storedStructure.equals(request.getResultStructure())) {
                         throw new InvalidParameterValueException()
                                 .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
-                                .withMessage(
-                                        "The requested resultStructure is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
-                                        procedure.getIdentifier(), observableProperty, offering);
+                                .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty, offering);
                     }
 
                     if (!storedEncoding.equals(request.getResultEncoding())) {
                         throw new InvalidParameterValueException()
                                 .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
-                                .withMessage(
-                                        "The requested resultEncoding is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
-                                        procedure.getIdentifier(), observableProperty, offering);
+                                .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty, offering);
                     }
                 }
                 if (request.getIdentifier() != null && request.getIdentifier().isSetValue()
@@ -305,17 +303,17 @@ public class ResultTemplateDAO {
      * @param observationConstellation
      *            Observation constellation object
      * @param procedure
+     *            the procedure
      * @param featureOfInterest
      *            FeatureOfInterest object
      * @param session
      *            Hibernate session
      * @throws OwsExceptionReport
+     *             If an error occurs
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
             final DatasetEntity observationConstellation, ProcedureEntity procedure,
-            final AbstractFeatureEntity featureOfInterest,
-            final Session session)
-            throws EncodingException {
+            final AbstractFeatureEntity featureOfInterest, final Session session) throws EncodingException {
         final ResultTemplateEntity resultTemplate = new ResultTemplateEntity();
         resultTemplate.setIdentifier(request.getIdentifier().getValue());
         resultTemplate.setPhenomenon(observationConstellation.getObservableProperty());
@@ -344,28 +342,23 @@ public class ResultTemplateDAO {
         session.flush();
     }
 
-    private SosResultEncoding createSosResultEncoding(String resultEncoding)
-            throws DecodingException {
+    private SosResultEncoding createSosResultEncoding(String resultEncoding) throws DecodingException {
         return new SosResultEncoding((SweAbstractEncoding) decodeXmlObject(resultEncoding), resultEncoding);
     }
 
-    private SosResultStructure createSosResultStructure(String resultStructure)
-            throws DecodingException {
+    private SosResultStructure createSosResultStructure(String resultStructure) throws DecodingException {
         return new SosResultStructure((SweAbstractDataComponent) decodeXmlObject(resultStructure), resultStructure);
     }
 
-    private String encodeObjectToXmlText(String namespace, Object object)
-            throws EncodingException {
+    private String encodeObjectToXmlText(String namespace, Object object) throws EncodingException {
         return encodeObjectToXml(namespace, object).xmlText(this.xmlOptionsHelper.getXmlOptions());
     }
 
-    private XmlObject encodeObjectToXml(String namespace, Object object)
-            throws EncodingException {
+    private XmlObject encodeObjectToXml(String namespace, Object object) throws EncodingException {
         return getEncoder(namespace, object).encode(object, EncodingContext.of(XmlBeansEncodingFlags.DOCUMENT, true));
     }
 
-    private <T> Encoder<XmlObject, T> getEncoder(String namespace, T o)
-            throws EncodingException {
+    private <T> Encoder<XmlObject, T> getEncoder(String namespace, T o) throws EncodingException {
         EncoderKey key = new XmlEncoderKey(namespace, o.getClass());
         Encoder<XmlObject, T> encoder = encoderRepository.getEncoder(key);
         if (encoder == null) {
@@ -374,13 +367,12 @@ public class ResultTemplateDAO {
         return encoder;
     }
 
-    private <T> T decodeXmlObject(XmlObject xbObject)
-            throws DecodingException {
+    private <T> T decodeXmlObject(XmlObject xbObject) throws DecodingException {
         DecoderKey key = CodingHelper.getDecoderKey(xbObject);
         Decoder<T, XmlObject> decoder = decoderRepository.getDecoder(key);
         if (decoder == null) {
-            DecoderKey schemaTypeKey = new XmlNamespaceDecoderKey(xbObject.schemaType().getName().getNamespaceURI(),
-                    xbObject.getClass());
+            DecoderKey schemaTypeKey =
+                    new XmlNamespaceDecoderKey(xbObject.schemaType().getName().getNamespaceURI(), xbObject.getClass());
             decoder = decoderRepository.getDecoder(schemaTypeKey);
         }
         if (decoder == null) {
@@ -389,8 +381,7 @@ public class ResultTemplateDAO {
         return decoder.decode(xbObject);
     }
 
-    private Object decodeXmlObject(String xmlString)
-            throws DecodingException {
+    private Object decodeXmlObject(String xmlString) throws DecodingException {
         try {
             return decodeXmlObject(XmlObject.Factory.parse(xmlString));
         } catch (final XmlException e) {

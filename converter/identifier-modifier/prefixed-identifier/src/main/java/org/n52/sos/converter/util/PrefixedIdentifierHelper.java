@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
  */
 @Configurable
 public class PrefixedIdentifierHelper {
-    
+
     private String globalPrefix;
 
     private String offeringPrefix;

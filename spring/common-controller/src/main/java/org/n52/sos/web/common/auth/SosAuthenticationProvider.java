@@ -55,6 +55,8 @@ import org.n52.iceland.config.AdministratorUser;
 public class SosAuthenticationProvider implements AuthenticationProvider, Serializable {
     private static final long serialVersionUID = -3207103212342510378L;
 
+    private static final String BAD_CREDENTIALS = "Bad Credentials";
+
     private static final Logger LOG = LoggerFactory.getLogger(SosAuthenticationProvider.class);
 
     private static final Set<AdministratorAuthority> ADMIN_AUTHORITIES
@@ -76,7 +78,7 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
     public AdministratorUser authenticate(String username, String password) throws AuthenticationException {
 
         if (username == null || password == null) {
-            throw new BadCredentialsException("Bad Credentials");
+            throw new BadCredentialsException(BAD_CREDENTIALS);
         }
         if (!this.adminUserService.hasAdminUser()) {
             LOG.warn("No admin user is defined! Use the default credentials '{}:{}' "
@@ -91,11 +93,11 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
         AdministratorUser user = this.adminUserService.getAdminUser(username);
 
         if (user == null) {
-            throw new BadCredentialsException("Bad Credentials");
+            throw new BadCredentialsException(BAD_CREDENTIALS);
         }
 
         if (!username.equals(user.getUsername()) || !getPasswordEncoder().matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Bad Credentials");
+            throw new BadCredentialsException(BAD_CREDENTIALS);
         }
 
         return user;

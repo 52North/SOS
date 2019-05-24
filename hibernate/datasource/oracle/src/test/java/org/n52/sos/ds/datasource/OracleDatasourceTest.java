@@ -28,13 +28,6 @@
  */
 package org.n52.sos.ds.datasource;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -43,6 +36,9 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 
 import junit.framework.TestCase;
 
@@ -59,15 +55,30 @@ public class OracleDatasourceTest extends TestCase {
     private static final String ORACLE_PASS = "oracle_pass";
     private static final String ORACLE_USER_NO_RIGHTS = "oracle_user_no_rights";
     private static final String ORACLE_PASS_NO_RIGHTS = "oracle_pass_no_rights";
+    
+    private static final String ORACLE = "oracle";
+    private static final String LOCALHOST = "localhost";
+    private static final String DB = "db";
+    private static final String JDBC_URL = "jdbc:oracle:thin://localhost:1521/db";
 
-    private static String host, user, pass, schema, userNoRights, passNoRights;
+    private static String host;
+    private static String user;
+    private static String pass;
+    private static String schema;
+    private static String userNoRights;
+    private static String passNoRights;
     private static int port;
+    private AbstractOracleDatasource ds;
+    private Connection conn;
+    private Connection connNoRights;
+    private Statement stmt;
+    private Statement stmtNoRights;
 
     static {
         initialize();
     }
 
-    private static final void initialize() {
+    private static void initialize() {
         String conf = System.getenv(SOS_TEST_CONF);
         if (conf == null) {
             throw new RuntimeException(
@@ -89,10 +100,6 @@ public class OracleDatasourceTest extends TestCase {
         userNoRights = props.getProperty(ORACLE_USER_NO_RIGHTS);
         passNoRights = props.getProperty(ORACLE_PASS_NO_RIGHTS);
     }
-
-    private AbstractOracleDatasource ds;
-    private Connection conn, connNoRights;
-    private Statement stmt, stmtNoRights;
 
     protected void setUp() throws Exception {
         ds = new OracleDatasource();
@@ -126,7 +133,7 @@ public class OracleDatasourceTest extends TestCase {
     }
 
     public void testSchemaCreationSuccess() throws Exception {
-        ds.doCheckSchemaCreation("oracle", stmt);
+        ds.doCheckSchemaCreation(ORACLE, stmt);
     }
 
     public void testSchemaCreationFailure() throws Exception {
@@ -140,47 +147,45 @@ public class OracleDatasourceTest extends TestCase {
 
     @SuppressWarnings("unchecked")
     public void testCheckSchemaCreationSuccess() throws Exception {
-        ds = spy(ds);
-        Statement stmt = mock(Statement.class);
-        Connection conn = mock(Connection.class);
-        when(conn.createStatement()).thenReturn(stmt);
-        doReturn(conn).when(ds).openConnection(anyMap());
+        ds = Mockito.spy(ds);
+        Statement s = Mockito.mock(Statement.class);
+        Connection c = Mockito.mock(Connection.class);
+        Mockito.when(c.createStatement()).thenReturn(s);
+        Mockito.doReturn(c).when(ds).openConnection(ArgumentMatchers.anyMap());
         assertTrue(ds.checkSchemaCreation(new HashMap<String, Object>()));
     }
 
-    @SuppressWarnings("unchecked")
     public void testCheckSchemaCreationFailure() throws Exception {
-        ds = spy(ds);
-        Statement stmt = mock(Statement.class);
-        when(stmt.execute(anyString())).thenThrow(new SQLException());
+        ds = Mockito.spy(ds);
+        Statement s = Mockito.mock(Statement.class);
+        Mockito.when(s.execute(ArgumentMatchers.anyString())).thenThrow(new SQLException());
 
-        Connection conn = mock(Connection.class);
-        when(conn.createStatement()).thenReturn(stmt);
-        doReturn(conn).when(ds).openConnection(anyMap());
+        Connection c = Mockito.mock(Connection.class);
+        Mockito.when(c.createStatement()).thenReturn(stmt);
+        Mockito.doReturn(c).when(ds).openConnection(ArgumentMatchers.anyMap());
 
         assertFalse(ds.checkSchemaCreation(new HashMap<String, Object>()));
     }
 
     public void testToURL() throws Exception {
         Map<String, Object> settings = new HashMap<String, Object>();
-        settings.put(AbstractHibernateDatasource.HOST_KEY, "localhost");
+        settings.put(AbstractHibernateDatasource.HOST_KEY, LOCALHOST);
         settings.put(AbstractHibernateDatasource.PORT_KEY, 1521);
-        settings.put(AbstractHibernateDatasource.USERNAME_KEY, "oracle");
-        settings.put(AbstractHibernateDatasource.PASSWORD_KEY, "oracle");
-        settings.put(AbstractHibernateDatasource.DATABASE_KEY, "db");
+        settings.put(AbstractHibernateDatasource.USERNAME_KEY, ORACLE);
+        settings.put(AbstractHibernateDatasource.PASSWORD_KEY, ORACLE);
+        settings.put(AbstractHibernateDatasource.DATABASE_KEY, DB);
         settings.put(AbstractHibernateDatasource.SCHEMA_KEY, "schema");
 
-        assertEquals("jdbc:oracle:thin://localhost:1521/db", ds.toURL(settings));
+        assertEquals(JDBC_URL, ds.toURL(settings));
     }
 
     public void testFromURL() throws Exception {
-        String url = "jdbc:oracle:thin://localhost:1521/db";
-        String[] parsed = ds.parseURL(url);
+        String[] parsed = ds.parseURL(JDBC_URL);
 
         assertEquals(3, parsed.length);
-        assertEquals("localhost", parsed[0]);
+        assertEquals(LOCALHOST, parsed[0]);
         assertEquals("1521", parsed[1]);
-        assertEquals("db", parsed[2]);
+        assertEquals(DB, parsed[2]);
     }
 
     private static Map<String, Object> getDefaultSettings() {

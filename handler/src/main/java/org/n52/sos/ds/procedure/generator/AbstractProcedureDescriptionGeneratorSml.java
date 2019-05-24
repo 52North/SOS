@@ -89,9 +89,9 @@ import com.google.common.collect.Maps;
 @Configurable
 public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractProcedureDescriptionGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGeneratorSml.class);
-
     protected static final String POSITION_NAME = "sensorPosition";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGeneratorSml.class);
 
     private GeometryHandler geometryHandler;
 
@@ -205,32 +205,32 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
         DatasetEntity dataset = allInstances.iterator().next();
         SweAbstractSimpleType simpleType = null;
         switch (dataset.getValueType()) {
-        case quantity:
-            final SweQuantity quantity = new SweQuantity();
-            if (dataset.getUnit() != null) {
-                quantity.setUom(dataset.getUnit().getName());
-            }
-            simpleType = quantity;
-            break;
-        case bool:
-            simpleType = new SweBoolean();
-            break;
-        case count:
-            simpleType = new SweCount();
-            break;
-        case text:
-            simpleType = new SweText();
-            break;
-        case category:
-            final SweCategory category = new SweCategory();
-            if (dataset.getUnit() != null) {
-                category.setUom(dataset.getUnit().getIdentifier());
-            }
-            simpleType = category;
-            break;
-        default:
-            logTypeNotSupported(dataset.getValueType());
-            break;
+            case quantity:
+                final SweQuantity quantity = new SweQuantity();
+                if (dataset.getUnit() != null) {
+                    quantity.setUom(dataset.getUnit().getName());
+                }
+                simpleType = quantity;
+                break;
+            case bool:
+                simpleType = new SweBoolean();
+                break;
+            case count:
+                simpleType = new SweCount();
+                break;
+            case text:
+                simpleType = new SweText();
+                break;
+            case category:
+                final SweCategory category = new SweCategory();
+                if (dataset.getUnit() != null) {
+                    category.setUom(dataset.getUnit().getIdentifier());
+                }
+                simpleType = category;
+                break;
+            default:
+                logTypeNotSupported(dataset.getValueType());
+                break;
         }
         if (simpleType != null) {
             simpleType.setDefinition(observableProperty.getIdentifier());
@@ -286,7 +286,7 @@ public abstract class AbstractProcedureDescriptionGeneratorSml extends AbstractP
      *            Hibernate procedure entity
      *
      * @return SensorML Position
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     protected SmlPosition createPosition(ProcedureEntity procedure, Session session) throws CodedException {
         try {

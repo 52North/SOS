@@ -36,25 +36,24 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 
-public class AqdDescribeSensorOperatorV10
-        extends AbstractAqdRequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
+public class AqdDescribeSensorOperatorV10 extends
+        AbstractAqdRequestOperator<AbstractDescribeSensorHandler,
+        DescribeSensorRequest,
+        DescribeSensorResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
     public AqdDescribeSensorOperatorV10() {
         super(OPERATION_NAME, DescribeSensorRequest.class);
     }
 
-
     @Override
-    public DescribeSensorResponse receive(DescribeSensorRequest request)
-            throws OwsExceptionReport {
+    public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
         return (DescribeSensorResponse) changeResponseServiceVersion(getOperationHandler()
                 .getSensorDescription((DescribeSensorRequest) changeRequestServiceVersion(request)));
     }
 
     @Override
-    protected void checkParameters(DescribeSensorRequest request)
-            throws OwsExceptionReport {
+    protected void checkParameters(DescribeSensorRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -67,22 +66,21 @@ public class AqdDescribeSensorOperatorV10
             exceptions.add(owse);
         }
         try {
-            checkProcedure(request.getProcedure(),
-                    SosConstants.DescribeSensorParams.procedure.name());
+            checkProcedure(request.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureDescriptionFormat(
-                    request.getProcedureDescriptionFormat(),
-                    SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+            checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(), SosConstants.SOS,
+                    Sos2Constants.SERVICEVERSION);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         // if (sosRequest.isSetValidTime()) {
         // exceptions.add(new
         // OptionNotSupportedException().at(Sos2Constants.DescribeSensorParams.validTime)
-        // .withMessage("The requested parameter is not supported by this server!"));
+        // .withMessage("The requested parameter is not supported by this
+        // server!"));
         // }
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();

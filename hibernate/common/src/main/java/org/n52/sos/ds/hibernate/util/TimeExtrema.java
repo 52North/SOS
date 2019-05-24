@@ -88,7 +88,7 @@ public class TimeExtrema {
                 return new TimeInstant(getMaxPhenomenonTime());
             }
             return new TimePeriod(getMinPhenomenonTime(), getMaxPhenomenonTime());
-            }
+        }
         return null;
     }
 

@@ -41,8 +41,8 @@ import org.n52.series.db.beans.i18n.I18nFeatureEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 
-
-public class FeatureI18NDAO extends AbstractHibernateI18NDAO<AbstractFeatureEntity, I18NFeatureMetadata, I18nFeatureEntity> {
+public class FeatureI18NDAO
+        extends AbstractHibernateI18NDAO<AbstractFeatureEntity, I18NFeatureMetadata, I18nFeatureEntity> {
     private DaoFactory daoFactory;
 
     @Inject

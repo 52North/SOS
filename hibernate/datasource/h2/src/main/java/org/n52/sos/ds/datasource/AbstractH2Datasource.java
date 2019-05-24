@@ -66,8 +66,8 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     protected static final String DEFAULT_PASSWORD = "";
 
-    protected static final Pattern CREATE_INDEX_PATTERN
-                    = Pattern.compile("^create index [a-z]* on observation \\(samplingGeometry\\)$", Pattern.CASE_INSENSITIVE);
+    protected static final Pattern CREATE_INDEX_PATTERN =
+            Pattern.compile("^create index [a-z]* on observation \\(samplingGeometry\\)$", Pattern.CASE_INSENSITIVE);
 
     @Override
     protected Dialect createDialect() {
@@ -87,7 +87,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     }
 
     @Override
-    public  Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties p) {
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties p) {
         return Collections.emptySet();
     }
 
@@ -126,8 +126,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     @Override
     public DatasourceCallback getCallback() {
-        return DatasourceCallback.chain(super.getCallback(),
-                                        new DatasourceCallback() {
+        return DatasourceCallback.chain(super.getCallback(), new DatasourceCallback() {
             @Override
             public Properties onInit(Properties props) {
                 initGeoDB(parseDatasourceProperties(props));
@@ -170,8 +169,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     @SuppressWarnings("unchecked")
     public static <T> T[] createArray(Class<?> type, int length) {
-        return ((Object)type == (Object)Object[].class)
-               ? (T[]) new Object[length]
-               : (T[]) Array.newInstance(type.getComponentType(), length);
+        return ((Object) type == (Object) Object[].class) ? (T[]) new Object[length]
+                : (T[]) Array.newInstance(type.getComponentType(), length);
     }
 }

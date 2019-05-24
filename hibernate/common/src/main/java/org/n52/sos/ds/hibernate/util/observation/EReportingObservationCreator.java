@@ -44,14 +44,11 @@ import org.n52.svalbard.util.SweHelper;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
-    private static final Set<AdditionalObservationCreatorKey> KEYS
-            = AdditionalObservationCreatorRepository
-            .encoderKeysForElements(AqdConstants.NS_AQD,
-                                    DataEntity.class,
-                                    EReportingQualityEntity.class);
-
+    private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
+            .encoderKeysForElements(AqdConstants.NS_AQD, DataEntity.class, EReportingQualityEntity.class);
 
     private final EReportingObservationHelper helper = new EReportingObservationHelper();
+
     private SweHelper sweHelper;
 
     public void setSweHelper(SweHelper sweHelper) {
@@ -68,7 +65,8 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         if (observation.hasEreportingProfile()) {
             create(omObservation, observation.getDataset());
             add(omObservation, observation);
-            omObservation.setValue(new EReportingHelper(sweHelper).createSweDataArrayValue(omObservation, observation));
+            omObservation
+                    .setValue(new EReportingHelper(sweHelper).createSweDataArrayValue(omObservation, observation));
             omObservation.getObservationConstellation().setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         }
         return omObservation;
@@ -83,12 +81,14 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session)
+            throws CodedException {
         return create(omObservation, series);
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException {
+    public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
+            throws CodedException {
         return create(omObservation, observation);
     }
 

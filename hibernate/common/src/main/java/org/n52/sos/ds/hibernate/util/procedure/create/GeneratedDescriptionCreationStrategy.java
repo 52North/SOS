@@ -43,15 +43,12 @@ import com.google.common.base.Strings;
 /**
  * Strategy to generate a description.
  */
-public class GeneratedDescriptionCreationStrategy
-        implements DescriptionCreationStrategy {
+public class GeneratedDescriptionCreationStrategy implements DescriptionCreationStrategy {
 
     @Override
     public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
-            HibernateProcedureCreationContext ctx, Session s)
-            throws OwsExceptionReport {
-        SosProcedureDescription<?> desc =
-                getFactory(descriptionFormat, ctx).generateProcedureDescription(p, i18n, s);
+            HibernateProcedureCreationContext ctx, Session s) throws OwsExceptionReport {
+        SosProcedureDescription<?> desc = getFactory(descriptionFormat, ctx).generateProcedureDescription(p, i18n, s);
         desc.setDescriptionFormat(descriptionFormat);
         return desc;
     }
@@ -64,6 +61,6 @@ public class GeneratedDescriptionCreationStrategy
     @VisibleForTesting
     HibernateProcedureDescriptionGenerator getFactory(String descriptionFormat,
             HibernateProcedureCreationContext ctx) {
-        return (HibernateProcedureDescriptionGenerator)ctx.getFactoryRepository().getFactory(descriptionFormat);
+        return (HibernateProcedureDescriptionGenerator) ctx.getFactoryRepository().getFactory(descriptionFormat);
     }
 }

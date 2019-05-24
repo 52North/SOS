@@ -92,7 +92,7 @@ public class EReportingObservationHelper {
             NamedValue<ReferenceType> namedValue = new NamedValue<>();
             namedValue.setName(new ReferenceType(ProcessParameter.SamplingPoint.getConceptURI()));
             ReferenceValue value = createReferenceValue(samplingPoint.getIdentifier());
-//            value.getValue().setTitle(samplingPoint.getName());
+            // value.getValue().setTitle(samplingPoint.getName());
             namedValue.setValue(value);
             return namedValue;
         }
@@ -114,7 +114,8 @@ public class EReportingObservationHelper {
         return hrefAttributeValue;
     }
 
-    private HrefAttributeValue createHrefAttributeValueFromAssessmentType(EReportingAssessmentTypeEntity assessmentType) {
+    private HrefAttributeValue createHrefAttributeValueFromAssessmentType(
+            EReportingAssessmentTypeEntity assessmentType) {
         if (assessmentType.isSetUri()) {
             return createHrefAttributeValue(assessmentType.getUri());
         } else {

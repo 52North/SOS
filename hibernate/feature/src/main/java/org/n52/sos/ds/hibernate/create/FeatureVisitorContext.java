@@ -153,7 +153,8 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param defaultLanguage the defaultLanguage to set
+     * @param defaultLanguage
+     *            the defaultLanguage to set
      */
     public FeatureVisitorContext setDefaultLanguage(Locale defaultLanguage) {
         this.defaultLanguage = defaultLanguage;
@@ -168,7 +169,8 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param version the version to set
+     * @param version
+     *            the version to set
      */
     public FeatureVisitorContext setVersion(String version) {
         this.version = version;
@@ -183,7 +185,8 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param requestedLanguage the requestedLanguage to set
+     * @param requestedLanguage
+     *            the requestedLanguage to set
      * @return
      */
     public FeatureVisitorContext setRequestedLanguage(Locale requestedLanguage) {
@@ -199,14 +202,16 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param showAllLanguages the showAllLanguages to set
+     * @param showAllLanguages
+     *            the showAllLanguages to set
      */
     public FeatureVisitorContext setShowAllLanguages(boolean showAllLanguages) {
         this.showAllLanguages = showAllLanguages;
         return this;
     }
 
-    public FeatureVisitorContext setCreateFeatureGeometryFromSamplingGeometries(boolean createFeatureGeometryFromSamplingGeometries) {
+    public FeatureVisitorContext setCreateFeatureGeometryFromSamplingGeometries(
+            boolean createFeatureGeometryFromSamplingGeometries) {
         this.createFeatureGeometryFromSamplingGeometries = createFeatureGeometryFromSamplingGeometries;
         return this;
     }
@@ -232,7 +237,8 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param i18ndaoRepository the i18NDAORepository to set
+     * @param i18ndaoRepository
+     *            the i18NDAORepository to set
      */
     public FeatureVisitorContext setI18NDAORepository(I18NDAORepository i18ndaoRepository) {
         i18NDAORepository = i18ndaoRepository;
@@ -240,7 +246,8 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @param cache the cache to set
+     * @param cache
+     *            the cache to set
      */
     public FeatureVisitorContext setCache(SosContentCache cache) {
         this.cache = cache;

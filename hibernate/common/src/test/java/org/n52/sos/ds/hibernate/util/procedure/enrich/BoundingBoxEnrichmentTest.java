@@ -28,80 +28,77 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.util.Collection;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.locationtech.jts.geom.Envelope;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.swe.SweEnvelope;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.ds.procedure.enrich.BoundingBoxEnrichment;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Lists;
-import org.locationtech.jts.geom.Envelope;
-
 
 public class BoundingBoxEnrichmentTest {
 
-    final BoundingBoxEnrichment enrichmentMock = mock(BoundingBoxEnrichment.class);
+    private final BoundingBoxEnrichment enrichmentMock = Mockito.mock(BoundingBoxEnrichment.class);
 
     @Before
     public void setUp() throws OwsExceptionReport {
         final SosOffering sosOffering = new SosOffering("offeringIdentifier", "offeringName");
         final Collection<SosOffering> sosOfferings = Lists.newArrayList(sosOffering);
-        final Envelope envelope = new Envelope(1.0,2.0,3.0,4.0);
+        final Envelope envelope = new Envelope(1.0, 2.0, 3.0, 4.0);
         final ReferencedEnvelope sosEnvelope = new ReferencedEnvelope(envelope, 4326);
-        when(enrichmentMock.getSosOfferings()).thenReturn(sosOfferings);
-        when(enrichmentMock.createEnvelopeForOfferings()).thenReturn(sosEnvelope);
-        final ProcedureDescriptionSettings procSettMock = mock(ProcedureDescriptionSettings.class);
-        when(procSettMock.getLatLongUom()).thenReturn("deg");
-        when(enrichmentMock.procedureSettings()).thenReturn(procSettMock);
-        doCallRealMethod().when(enrichmentMock).enrich((AbstractSensorML) any());
-        final GeometryHandler geomHandlerMock = mock(GeometryHandler.class);
-        final AbstractProcedureCreationContext ctxMock = mock(AbstractProcedureCreationContext.class);
-        when(ctxMock.getGeometryHandler()).thenReturn(geomHandlerMock);
-        when(geomHandlerMock.isNorthingFirstEpsgCode(sosEnvelope.getSrid())).thenReturn(true);
-        when(enrichmentMock.getProcedureCreationContext()).thenReturn(ctxMock);
+        Mockito.when(enrichmentMock.getSosOfferings()).thenReturn(sosOfferings);
+        Mockito.when(enrichmentMock.createEnvelopeForOfferings()).thenReturn(sosEnvelope);
+        final ProcedureDescriptionSettings procSettMock = Mockito.mock(ProcedureDescriptionSettings.class);
+        Mockito.when(procSettMock.getLatLongUom()).thenReturn("deg");
+        Mockito.when(enrichmentMock.procedureSettings()).thenReturn(procSettMock);
+        Mockito.doCallRealMethod().when(enrichmentMock).enrich((AbstractSensorML) ArgumentMatchers.any());
+        final GeometryHandler geomHandlerMock = Mockito.mock(GeometryHandler.class);
+        final AbstractProcedureCreationContext ctxMock = Mockito.mock(AbstractProcedureCreationContext.class);
+        Mockito.when(ctxMock.getGeometryHandler()).thenReturn(geomHandlerMock);
+        Mockito.when(geomHandlerMock.isNorthingFirstEpsgCode(sosEnvelope.getSrid())).thenReturn(true);
+        Mockito.when(enrichmentMock.getProcedureCreationContext()).thenReturn(ctxMock);
     }
 
     @Test
-    public void should_set_definition_of_observed_bbox_envelope()
-            throws OwsExceptionReport {
+    public void should_set_definition_of_observed_bbox_envelope() throws OwsExceptionReport {
         final SensorML sml = new SensorML();
         final System system = new System();
         sml.addMember(system);
         enrichmentMock.enrich(sml);
-        assertThat(sml.getCapabilities(),hasSize(1));
-        assertThat(sml.getCapabilities().get(0).getName(), is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
-        assertThat(sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement().getDefinition(), is(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN));
+        Assert.assertThat(sml.getCapabilities(), Matchers.hasSize(1));
+        Assert.assertThat(sml.getCapabilities().get(0).getName(),
+                Matchers.is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
+        Assert.assertThat(sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement().getDefinition(),
+                Matchers.is(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN));
     }
 
     @Test
-    public void should_set_reference_frame_of_observed_bbox_envelope()
-            throws OwsExceptionReport {
+    public void should_set_reference_frame_of_observed_bbox_envelope() throws OwsExceptionReport {
         final SensorML sml = new SensorML();
         final System system = new System();
         sml.addMember(system);
         enrichmentMock.enrich(sml);
-        assertThat(sml.getCapabilities(),hasSize(1));
-        assertThat(sml.getCapabilities().get(0).getName(), is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
-        assertThat(((SweEnvelope)sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement()).getReferenceFrame(), is("4326"));
+        Assert.assertThat(sml.getCapabilities(), Matchers.hasSize(1));
+        Assert.assertThat(sml.getCapabilities().get(0).getName(),
+                Matchers.is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
+        Assert.assertThat(((SweEnvelope) sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement())
+                .getReferenceFrame(), Matchers.is("4326"));
     }
 
 }

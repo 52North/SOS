@@ -54,6 +54,7 @@ import com.google.common.collect.Maps;
 
 public class ProfileGeneratorSplitter {
     private static final Logger LOG = LoggerFactory.getLogger(ProfileGeneratorSplitter.class);
+
     private ObservationValueCreator creator;
 
     public ProfileGeneratorSplitter(ObservationValueCreator creator) {
@@ -92,8 +93,15 @@ public class ProfileGeneratorSplitter {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
-                QuantityValue levelStart = observation.hasVerticalFrom() && observation.hasVerticalInterval() ? getLevelStart(observation.getVerticalFrom(), entity.getVerticalFromName(), entity.getVerticalUnit()) : null;
-                QuantityValue levelEnd =  observation.hasVerticalTo() ? getLevelEnd(observation.getVerticalTo(), entity.getVerticalToName(), entity.getVerticalUnit()) : null;
+                QuantityValue levelStart =
+                        observation.hasVerticalFrom() && observation.hasVerticalInterval() ? getLevelStart(
+                                observation.getVerticalFrom(), entity.getVerticalFromName(), entity.getVerticalUnit())
+                                : null;
+                QuantityValue levelEnd =
+                        observation.hasVerticalTo()
+                                ? getLevelEnd(observation.getVerticalTo(), entity.getVerticalToName(),
+                                        entity.getVerticalUnit())
+                                : null;
                 if (levelStart == null && levelEnd == null && observation.hasParameters()) {
                     levelStart = getLevelStart(observation.getParameters());
                     levelEnd = getLevelEnd(observation.getParameters());
@@ -116,7 +124,7 @@ public class ProfileGeneratorSplitter {
                 }
             }
         }
-        return (List<ProfileLevel>)Lists.newArrayList(map.values());
+        return (List<ProfileLevel>) Lists.newArrayList(map.values());
     }
 
     private BigDecimal getKey(QuantityValue levelStart, QuantityValue levelEnd) {
@@ -125,7 +133,7 @@ public class ProfileGeneratorSplitter {
         } else if (levelEnd != null && levelEnd.isSetValue()) {
             return levelEnd.getValue();
         }
-       return null;
+        return null;
     }
 
     @SuppressWarnings("rawtypes")
@@ -134,23 +142,7 @@ public class ProfileGeneratorSplitter {
             if (checkParameterForStartLevel(parameter.getName())) {
                 NamedValue namedValue = new ParameterVisitor().visit(parameter);
                 if (namedValue.getValue() instanceof QuantityValue) {
-                    QuantityValue value = (QuantityValue)namedValue.getValue();
-                    value.setDefinition(parameter.getName());
-                    value.setName(parameter.getName());
-                    return value;
-                }
-            }
-        }
-        return null;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private QuantityValue getLevelEnd(Set<ParameterEntity<?>> parameters) throws OwsExceptionReport {
-        for (ParameterEntity<?> parameter : parameters) {
-            if (checkParameterForEndLevel(parameter.getName())) {
-                NamedValue namedValue = new ParameterVisitor().visit(parameter);
-                if (namedValue.getValue() instanceof QuantityValue) {
-                    QuantityValue value = (QuantityValue)namedValue.getValue();
+                    QuantityValue value = (QuantityValue) namedValue.getValue();
                     value.setDefinition(parameter.getName());
                     value.setName(parameter.getName());
                     return value;
@@ -162,17 +154,31 @@ public class ProfileGeneratorSplitter {
 
     private QuantityValue getLevelStart(BigDecimal fromLevel, String fromLevelName, UnitEntity levelUnit) {
         if (fromLevel != null) {
-            return fromLevelName != null && !fromLevelName.isEmpty()
-                    ? getLevel(fromLevel, fromLevelName, levelUnit)
+            return fromLevelName != null && !fromLevelName.isEmpty() ? getLevel(fromLevel, fromLevelName, levelUnit)
                     : getLevel(fromLevel, "from", levelUnit);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private QuantityValue getLevelEnd(Set<ParameterEntity<?>> parameters) throws OwsExceptionReport {
+        for (ParameterEntity<?> parameter : parameters) {
+            if (checkParameterForEndLevel(parameter.getName())) {
+                NamedValue namedValue = new ParameterVisitor().visit(parameter);
+                if (namedValue.getValue() instanceof QuantityValue) {
+                    QuantityValue value = (QuantityValue) namedValue.getValue();
+                    value.setDefinition(parameter.getName());
+                    value.setName(parameter.getName());
+                    return value;
+                }
+            }
         }
         return null;
     }
 
     private QuantityValue getLevelEnd(BigDecimal toLevel, String toLevelName, UnitEntity levelUnit) {
         if (toLevel != null) {
-            return toLevelName != null && !toLevelName.isEmpty()
-                    ? getLevel(toLevel, toLevelName, levelUnit)
+            return toLevelName != null && !toLevelName.isEmpty() ? getLevel(toLevel, toLevelName, levelUnit)
                     : getLevel(toLevel, "to", levelUnit);
         }
         return null;

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.procedure.enrich;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collection;
 import java.util.Locale;
 
@@ -44,6 +42,7 @@ import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.util.I18NHelper;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
@@ -99,7 +98,7 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
     }
 
     public ProcedureDescriptionEnrichment setDescription(SosProcedureDescription<?> description) {
-        this.description = checkNotNull(description);
+        this.description = Preconditions.checkNotNull(description);
         return this;
     }
 
@@ -108,7 +107,7 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
     }
 
     public ProcedureDescriptionEnrichment setVersion(String version) {
-        this.version = checkNotNull(version);
+        this.version = Preconditions.checkNotNull(version);
         return this;
     }
 
@@ -117,7 +116,7 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
     }
 
     public ProcedureDescriptionEnrichment setIdentifier(String identifier) {
-        this.identifier = checkNotNull(identifier);
+        this.identifier = Preconditions.checkNotNull(identifier);
         return this;
     }
 
@@ -139,7 +138,7 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
     }
 
     public ProcedureDescriptionEnrichment setSession(Session session) {
-        this.session = checkNotNull(session);
+        this.session = Preconditions.checkNotNull(session);
         return this;
     }
 

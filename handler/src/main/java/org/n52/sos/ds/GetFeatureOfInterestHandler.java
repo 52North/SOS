@@ -45,7 +45,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -53,7 +52,6 @@ import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -81,8 +79,14 @@ import com.google.common.collect.Maps;
 public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHandler implements ApiQueryHelper {
 
     private HibernateSessionStore sessionStore;
+
     private GetFeatureOfInterestDao dao;
+
     private GeometryHandler geometryHandler;
+
+    public GetFeatureOfInterestHandler() {
+        super(SosConstants.SOS);
+    }
 
     @Inject
     public void setGeometryHandler(GeometryHandler geometryHandler) {
@@ -99,10 +103,6 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         if (getFeatureOfInterestDao.isPresent()) {
             this.dao = getFeatureOfInterestDao.get();
         }
-    }
-
-    public GetFeatureOfInterestHandler() {
-        super(SosConstants.SOS);
     }
 
     @Override
@@ -122,13 +122,13 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
                 } else if (isFeatureIdentifierRequest(request) || isSpatialFilterRequest(request)) {
                     response.setAbstractFeature(getFeatures(request, session));
                 } else {
-                    throw new CompositeOwsException(new MissingParameterValueException(
-                            Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID),
+                    throw new CompositeOwsException(
+                            new MissingParameterValueException(
+                                    Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID),
                             new MissingParameterValueException(Sos1Constants.GetFeatureOfInterestParams.location));
                 }
-            } else // SOS 2.0
-            {
-            response.setAbstractFeature(getFeatures(request, session));
+            } else {
+                response.setAbstractFeature(getFeatures(request, session));
             }
             return response;
         } catch (HibernateException he) {
@@ -162,13 +162,15 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             return new FeatureCollection();
         }
         if (dao != null) {
-            request.setFeatureIdentifiers(featureEntities.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet()));
+            request.setFeatureIdentifiers(
+                    featureEntities.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet()));
             return new FeatureCollection(dao.getFeatureOfInterest(request));
         }
         return new FeatureCollection(createFeatures(featureEntities));
     }
 
-    private Map<String, AbstractFeature> createFeatures(Set<AbstractFeatureEntity> featureEntities) throws InvalidSridException, OwsExceptionReport {
+    private Map<String, AbstractFeature> createFeatures(Set<AbstractFeatureEntity> featureEntities)
+            throws InvalidSridException, OwsExceptionReport {
         final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
         for (final AbstractFeatureEntity feature : featureEntities) {
             final AbstractFeature abstractFeature = createFeature(feature);
@@ -177,7 +179,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return map;
     }
 
-    private AbstractFeature createFeature(AbstractFeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
+    private AbstractFeature createFeature(AbstractFeatureEntity feature)
+            throws InvalidSridException, OwsExceptionReport {
         final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getIdentifier()));
         if (feature.isSetName()) {
             sampFeat.addName(feature.getName());
@@ -186,8 +189,8 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             sampFeat.setDescription(feature.getDescription());
         }
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
-            sampFeat.setGeometry(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                    feature.getGeometryEntity().getGeometry()));
+            sampFeat.setGeometry(getGeometryHandler()
+                    .switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
         }
         final Set<FeatureEntity> parentFeatures = feature.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -199,6 +202,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         }
         return sampFeat;
     }
+
     /**
      * Get featureOfInterest identifiers for requested parameters
      *
@@ -210,22 +214,21 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
      * @throws OwsExceptionReport
      *             If an error occurs during processing
      */
-    private Collection<AbstractFeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req, Session session)
-            throws OwsExceptionReport {
-//        try {
-             Collection<DatasetEntity> datasets = new DatasetDao(session).get(createDbQuery(req));
+    private Collection<AbstractFeatureEntity> queryFeaturesForParameter(GetFeatureOfInterestRequest req,
+            Session session) throws OwsExceptionReport {
+        // try {
+        Collection<DatasetEntity> datasets = new DatasetDao(session).get(createDbQuery(req));
         if (datasets != null) {
-            return datasets.stream()
-                    .filter(d -> d.isSetFeature() && (d.isPublished() || !d.isPublished()
-                            && d.getDatasetType().equals(DatasetType.not_initialized)))
+            return datasets.stream().filter(d -> d.isSetFeature()
+                    && (d.isPublished() || !d.isPublished() && d.getDatasetType().equals(DatasetType.not_initialized)))
                     .map(d -> d.getFeature()).collect(Collectors.toSet());
         }
         return Collections.emptySet();
-//            return new FeatureDao(session).getAllInstances(createDbQuery(req));
-//        } catch (DataAccessException dae) {
-//            throw new NoApplicableCodeException().causedBy(dae)
-//                    .withMessage("Error while querying data for GetFeatureOfInterest!");
-//        }
+        // return new FeatureDao(session).getAllInstances(createDbQuery(req));
+        // } catch (DataAccessException dae) {
+        // throw new NoApplicableCodeException().causedBy(dae)
+        // .withMessage("Error while querying data for GetFeatureOfInterest!");
+        // }
     }
 
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req) {
@@ -276,10 +279,10 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     }
 
     private Double[] toArray(double x, double y) {
-       Double[] array = new Double[2];
-       array[0] = x;
-       array[1] = y;
-       return array;
+        Double[] array = new Double[2];
+        array[0] = x;
+        array[1] = y;
+        return array;
     }
 
     /**

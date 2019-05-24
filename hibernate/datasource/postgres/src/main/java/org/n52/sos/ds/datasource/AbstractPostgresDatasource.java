@@ -56,10 +56,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public abstract class AbstractPostgresDatasource
-        extends AbstractHibernateFullDBDatasource {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
+public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
@@ -73,10 +70,11 @@ public abstract class AbstractPostgresDatasource
     protected static final String PASSWORD_DESCRIPTION =
             "Your database server password. The default value is \"postgres\".";
 
-    protected static final String PASSWORD_DEFAULT_VALUE = "postgres";
+    protected static final String PASSWORD_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
 
     protected static final String HOST_DESCRIPTION =
-            "Set this to the IP/net location of PostgreSQL database server. The default value for PostgreSQL is \"localhost\".";
+            "Set this to the IP/net location of PostgreSQL database server. "
+            + "The default value for PostgreSQL is \"localhost\".";
 
     protected static final String PORT_DESCRIPTION =
             "Set this to the port number of your PostgreSQL server. The default value for PostgreSQL is 5432.";
@@ -90,6 +88,8 @@ public abstract class AbstractPostgresDatasource
     protected static final String FUNC_POSTGIS_VERSION = "postgis_version()";
 
     protected static final String TAB_SPATIAL_REF_SYS = "spatial_ref_sys";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
     public AbstractPostgresDatasource() {
         super();
@@ -166,9 +166,9 @@ public abstract class AbstractPostgresDatasource
     protected void checkSpatialRefSys(Connection con, Metadata metadata, Map<String, Object> settings) {
         Statement stmt = null;
         try {
-//            if (!metadata.isTable("spatial_ref_sys")) {
-//                throw new ConfigurationError("Missing 'spatial_ref_sys' table.");
-//            }
+            // if (!metadata.isTable("spatial_ref_sys")) {
+            // throw new ConfigurationError("Missing 'spatial_ref_sys' table.");
+            // }
             StringBuilder builder = new StringBuilder();
             builder.append(SELECT);
             builder.append(' ');

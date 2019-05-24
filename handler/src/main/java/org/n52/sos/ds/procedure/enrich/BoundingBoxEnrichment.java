@@ -91,11 +91,25 @@ public class BoundingBoxEnrichment
         return createCapabilities(sosEnv);
     }
 
+    private Optional<SmlCapabilities> createCapabilities(final ReferencedEnvelope bbox) throws CodedException {
+        if (bbox.isSetEnvelope()) {
+            // add merged bbox to capabilities as swe:envelope
+            final SweEnvelope envelope = new SweEnvelope(bbox, procedureSettings().getLatLongUom(),
+                    getProcedureCreationContext().getGeometryHandler().isNorthingFirstEpsgCode(bbox.getSrid()));
+            envelope.setDefinition(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN);
+            final SweField field = new SweField(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX, envelope);
+            return Optional.of(new SmlCapabilities().setName(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX)
+                    .setDataRecord(new SweDataRecord().addField(field)));
+        } else {
+            return Optional.empty();
+        }
+    }
+
     /**
      * Merge offering sosEnvelopes.
      *
      * @return merged sosEnvelope
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     public ReferencedEnvelope createEnvelopeForOfferings()
             throws CodedException {
@@ -116,20 +130,6 @@ public class BoundingBoxEnrichment
      */
     private ReferencedEnvelope getEnvelope(final SosOffering offering) {
         return getCache().getEnvelopeForOffering(offering.getIdentifier());
-    }
-
-    private Optional<SmlCapabilities> createCapabilities(final ReferencedEnvelope bbox) throws CodedException {
-        if (bbox.isSetEnvelope()) {
-            // add merged bbox to capabilities as swe:envelope
-            final SweEnvelope envelope = new SweEnvelope(bbox, procedureSettings().getLatLongUom(),
-                    getProcedureCreationContext().getGeometryHandler().isNorthingFirstEpsgCode(bbox.getSrid()));
-            envelope.setDefinition(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN);
-            final SweField field = new SweField(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX, envelope);
-            return Optional.of(new SmlCapabilities().setName(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX)
-                    .setDataRecord(new SweDataRecord().addField(field)));
-        } else {
-            return Optional.empty();
-        }
     }
 
     @Override

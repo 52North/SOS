@@ -28,7 +28,6 @@
  */
 package org.n52.sos.request.operator;
 
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -51,15 +50,15 @@ import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
  *
  * @since 1.0.0
  */
-public class DeleteObservationRequestOperator
-        extends AbstractTransactionalRequestOperator<AbstractDeleteObservationHandler, DeleteObservationRequest, DeleteObservationResponse>
+public class DeleteObservationRequestOperator extends
+        AbstractTransactionalRequestOperator<AbstractDeleteObservationHandler,
+        DeleteObservationRequest,
+        DeleteObservationResponse>
         implements RequestOperator {
 
     public DeleteObservationRequestOperator() {
-        super(SosConstants.SOS,
-              Sos2Constants.SERVICEVERSION,
-              DeleteObservationConstants.Operations.DeleteObservation,
-              DeleteObservationRequest.class);
+        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation,
+                DeleteObservationRequest.class);
     }
 
     @Override
@@ -84,14 +83,16 @@ public class DeleteObservationRequestOperator
         }
         if (DeleteObservationConstants.NS_SOSDO_1_0.equals(sosRequest.getResponseFormat())) {
             try {
-                checkObservationIDs(sosRequest.getObservationIdentifiers(), DeleteObservationConstants.PARAM_OBSERVATION);
+                checkObservationIDs(sosRequest.getObservationIdentifiers(),
+                        DeleteObservationConstants.PARAM_OBSERVATION);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
         } else {
             if (sosRequest.isSetObservationIdentifiers()) {
                 try {
-                    checkObservationIDs(sosRequest.getObservationIdentifiers(), DeleteObservationConstants.PARAM_OBSERVATION);
+                    checkObservationIDs(sosRequest.getObservationIdentifiers(),
+                            DeleteObservationConstants.PARAM_OBSERVATION);
                 } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
@@ -102,7 +103,8 @@ public class DeleteObservationRequestOperator
                 exceptions.add(owse);
             }
             try {
-                checkObservedProperties(sosRequest.getObservedProperties(), DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, false);
+                checkObservedProperties(sosRequest.getObservedProperties(),
+                        DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, false);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
@@ -112,7 +114,8 @@ public class DeleteObservationRequestOperator
                 exceptions.add(owse);
             }
             try {
-                checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(), DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST);
+                checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(),
+                        DeleteObservationConstants.PARAM_FEATURE_OF_INTEREST);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
@@ -155,7 +158,7 @@ public class DeleteObservationRequestOperator
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(DeleteObservationConstants.CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

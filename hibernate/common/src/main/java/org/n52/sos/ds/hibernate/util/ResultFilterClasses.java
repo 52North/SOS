@@ -37,22 +37,13 @@ import org.n52.series.db.beans.TextDataEntity;
 
 public class ResultFilterClasses {
 
-    public Class<? extends QuantityDataEntity> numeric;
-    public Class<? extends CountDataEntity> count;
-    public Class<? extends TextDataEntity> text;
-    public Class<? extends CategoryDataEntity> category;
-    public Class<? extends ComplexDataEntity> complex;
-    public Class<? extends ProfileDataEntity> profile;
+    private Class<? extends QuantityDataEntity> numeric;
+    private Class<? extends CountDataEntity> count;
+    private Class<? extends TextDataEntity> text;
+    private Class<? extends CategoryDataEntity> category;
+    private Class<? extends ComplexDataEntity> complex;
+    private Class<? extends ProfileDataEntity> profile;
 
-
-    /**
-     * @param numeric
-     * @param count
-     * @param text
-     * @param category
-     * @param complex
-     * @param profile
-     */
     public ResultFilterClasses(
             Class<? extends QuantityDataEntity> numeric, Class<? extends CountDataEntity> count,
             Class<? extends TextDataEntity> text, Class<? extends CategoryDataEntity> category,

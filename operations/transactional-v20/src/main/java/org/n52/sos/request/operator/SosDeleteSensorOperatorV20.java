@@ -49,10 +49,15 @@ import org.n52.svalbard.ConformanceClasses;
  * @since 4.0.0
  *
  */
-public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOperator<AbstractDeleteSensorHandler, DeleteSensorRequest, DeleteSensorResponse> {
+public class SosDeleteSensorOperatorV20 extends
+        AbstractV2TransactionalRequestOperator<AbstractDeleteSensorHandler,
+        DeleteSensorRequest,
+        DeleteSensorResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.DeleteSensor.name();
-    private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_SENSOR_DELETION);
+
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_SENSOR_DELETION);
 
     public SosDeleteSensorOperatorV20() {
         super(OPERATION_NAME, DeleteSensorRequest.class);
@@ -60,7 +65,7 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

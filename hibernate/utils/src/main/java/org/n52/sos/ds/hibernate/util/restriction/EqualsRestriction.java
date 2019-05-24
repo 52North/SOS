@@ -82,7 +82,7 @@ public class EqualsRestriction implements TemporalRestriction {
 
     @Override
     public Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
-        return Restrictions.and(Restrictions.ge(selfPosition, getStartPlaceHolder( count)),
+        return Restrictions.and(Restrictions.ge(selfPosition, getStartPlaceHolder(count)),
                 Restrictions.le(selfPosition, getStartPlaceHolder(count)));
     }
 

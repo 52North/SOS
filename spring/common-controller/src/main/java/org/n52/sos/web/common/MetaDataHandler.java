@@ -36,8 +36,7 @@ import org.n52.iceland.util.AbstractEnumPropertiesFileHandler;
  * @since 4.0.0
  *
  */
-public class MetaDataHandler extends AbstractEnumPropertiesFileHandler<MetaDataHandler.Metadata> {
-
+public final class MetaDataHandler extends AbstractEnumPropertiesFileHandler<MetaDataHandler.Metadata> {
 
     private static final String PROPERTIES = "/WEB-INF/classes/meta.properties";
 

@@ -63,7 +63,7 @@ import org.n52.sos.service.profile.DefaultProfileHandler;
 
 /**
  * The class <code>HibernateObservationUtilitiesTest</code> contains tests for
- * the class {@link <code>HibernateObservationUtilities</code>}
+ * the class {@link HibernateObservationUtilities}
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
  *         HinderkJ&uuml;rrens</a>
@@ -71,8 +71,13 @@ import org.n52.sos.service.profile.DefaultProfileHandler;
  * @since 4.0.0
  *
  */
-public class HibernateObservationUtilitiesTest
-        extends HibernateTestCase {
+public class HibernateObservationUtilitiesTest extends HibernateTestCase {
+    public static final String FEATURE_OF_INTEREST_TYPE = "junit_feature_of_interest_type";
+
+    public static final String OFFERING = "junit_offering";
+
+    public static final String CODESPACE = "junit_codespace";
+
     private static final String PROCEDURE = "junit_test_procedure_id";
 
     /*
@@ -84,17 +89,12 @@ public class HibernateObservationUtilitiesTest
 
     private static final String PROCEDURE_DESCRIPTION_FORMAT = "junit_procedure_description_format";
 
-    public static final String FEATURE_OF_INTEREST_TYPE = "junit_feature_of_interest_type";
-
-    public static final String OFFERING = "junit_offering";
-
-    public static final String CODESPACE = "junit_codespace";
-
     @Test
-    public void returnEmptyCollectionIfCalledWithoutAnyParameters()
-            throws OwsExceptionReport, ConverterException {
-        ObservationStream resultList = HibernateObservationUtilities
-                .createSosObservationFromObservationConstellation(null, null, null, null, null, new OmObservationCreatorContext(null, null, null, null, null, null, null, null, null, null, null, null, null), null);
+    public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
+        ObservationStream resultList = HibernateObservationUtilities.createSosObservationFromObservationConstellation(
+                null, null, null, null, null, new OmObservationCreatorContext(null, null, null, null, null, null, null,
+                        null, null, null, null, null, null),
+                null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.hasNext(), is(false));
     }

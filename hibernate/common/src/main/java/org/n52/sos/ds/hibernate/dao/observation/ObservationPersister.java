@@ -100,61 +100,56 @@ import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.util.GeometryHandler;
 
-public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExceptionReport>, ProfileLevelVisitor<DataEntity<?>> {
+public class ObservationPersister
+        implements ValueVisitor<DataEntity<?>, OwsExceptionReport>, ProfileLevelVisitor<DataEntity<?>> {
 
     private final DatasetEntity dataset;
+
     private final AbstractFeatureEntity featureOfInterest;
+
     private final Caches caches;
+
     private final Session session;
+
     private final Geometry samplingGeometry;
+
     private final DAOs daos;
+
     private final ObservationFactory observationFactory;
+
     private final OmObservation omObservation;
+
     private final boolean childObservation;
 
     private final Set<OfferingEntity> offerings;
+
     private GeometryHandler geometryHandler;
 
-    public ObservationPersister(
-            GeometryHandler geometryHandler,
-            AbstractObservationDAO observationDao,
-            DaoFactory daoFactory,
-            OmObservation sosObservation,
-            DatasetEntity hDataset,
-            AbstractFeatureEntity hFeature,
-            Map<String, CodespaceEntity> codespaceCache,
-            Map<UoM, UnitEntity> unitCache,
-            Set<OfferingEntity> hOfferings,
-            Session session) throws OwsExceptionReport {
+    public ObservationPersister(GeometryHandler geometryHandler, AbstractObservationDAO observationDao,
+            DaoFactory daoFactory, OmObservation sosObservation, DatasetEntity hDataset,
+            AbstractFeatureEntity hFeature, Map<String, CodespaceEntity> codespaceCache,
+            Map<UoM, UnitEntity> unitCache, Set<OfferingEntity> hOfferings, Session session)
+            throws OwsExceptionReport {
         this(geometryHandler, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache),
                 sosObservation, hDataset, hFeature, null, hOfferings, session, false);
     }
 
-    private ObservationPersister(
-            GeometryHandler geometryHandler,
-            DAOs daos, Caches caches,
-            OmObservation observation,
-            DatasetEntity hDataset,
-            AbstractFeatureEntity hFeature,
-            Geometry samplingGeometry,
-            Set<OfferingEntity> hOfferings,
-            Session session, boolean childObservation)
-            throws OwsExceptionReport {
+    private ObservationPersister(GeometryHandler geometryHandler, DAOs daos, Caches caches, OmObservation observation,
+            DatasetEntity hDataset, AbstractFeatureEntity hFeature, Geometry samplingGeometry,
+            Set<OfferingEntity> hOfferings, Session session, boolean childObservation) throws OwsExceptionReport {
         this.geometryHandler = geometryHandler;
         this.dataset = hDataset;
         this.featureOfInterest = hFeature;
         this.caches = caches;
         this.omObservation = observation;
-        this.samplingGeometry = samplingGeometry != null ? samplingGeometry : getSamplingGeometry(omObservation, geometryHandler);
+        this.samplingGeometry =
+                samplingGeometry != null ? samplingGeometry : getSamplingGeometry(omObservation, geometryHandler);
         this.session = session;
         this.daos = daos;
         this.observationFactory = daos.observation().getObservationFactory();
         this.childObservation = childObservation;
         this.offerings = hOfferings;
-;
     }
-
-
 
     @Override
     public DataEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
@@ -162,30 +157,25 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     @Override
-    public DataEntity<?> visit(CategoryValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(CategoryValue value) throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.category(), value);
     }
 
     @Override
-    public DataEntity<?> visit(CountValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(CountValue value) throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.count(), value);
     }
 
     @Override
-    public DataEntity<?> visit(GeometryValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(GeometryValue value) throws OwsExceptionReport {
         GeometryDataEntity geometry = observationFactory.geometry();
-        return persist((DataEntity)geometry,value.getValue());
+        return persist((DataEntity) geometry, value.getValue());
     }
 
     @Override
-    public DataEntity<?> visit(QuantityValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.numeric(), value);
     }
-
 
     @Override
     public DataEntity<?> visit(QuantityRangeValue value) throws OwsExceptionReport {
@@ -193,61 +183,52 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     @Override
-    public DataEntity<?> visit(TextValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(TextValue value) throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.text(), value);
     }
 
     @Override
-    public DataEntity<?> visit(UnknownValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(UnknownValue value) throws OwsExceptionReport {
         return setUnitAndPersist(observationFactory.blob(), value);
     }
 
     @Override
-    public DataEntity<?> visit(SweDataArrayValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
         // return persist(observationFactory.sweDataArray(), value.getValue());
         // TODO
         return null;
     }
 
     @Override
-    public DataEntity<?> visit(ComplexValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
         ComplexDataEntity complex = observationFactory.complex();
-        return persist((DataEntity)complex, persistChildren(value.getValue()));
+        return persist((DataEntity) complex, persistChildren(value.getValue()));
     }
 
     @Override
-    public DataEntity<?> visit(HrefAttributeValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public DataEntity<?> visit(NilTemplateValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(NilTemplateValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public DataEntity<?> visit(ReferenceValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(ReferenceValue value) throws OwsExceptionReport {
         ReferencedDataEntity reference = observationFactory.reference();
         reference.setName(value.getValue().getTitle());
         return persist(reference, value.getValue().getHref());
     }
 
     @Override
-    public DataEntity<?> visit(TVPValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(TVPValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
-    public DataEntity<?> visit(TLVTValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(TLVTValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
@@ -284,7 +265,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             }
         }
         omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
-        return persist((DataEntity)profile, persistChildren(value.getValue()));
+        return persist((DataEntity) profile, persistChildren(value.getValue()));
     }
 
     @Override
@@ -307,8 +288,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     @Override
-    public DataEntity<?> visit(XmlValue value)
-            throws OwsExceptionReport {
+    public DataEntity<?> visit(XmlValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
@@ -321,7 +301,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             throws HibernateException, OwsExceptionReport {
         Set<DataEntity<?>> children = new TreeSet<>();
         for (SweField field : dataRecord.getFields()) {
-            PhenomenonEntity  observableProperty = getObservablePropertyForField(field);
+            PhenomenonEntity observableProperty = getObservablePropertyForField(field);
             ObservationPersister childPersister = createChildPersister(observableProperty);
             children.add(field.accept(ValueCreatingSweDataComponentVisitor.getInstance()).accept(childPersister));
         }
@@ -333,13 +313,15 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         Set<DataEntity<?>> children = new TreeSet<>();
         for (ProfileLevel level : values) {
             if (level.isSetValue()) {
-//                for (Value<?> v : level.getValue()) {
-//                    if (v instanceof SweAbstractDataComponent && ((SweAbstractDataComponent) v).isSetDefinition()) {
-//                        children.add(v.accept(createChildPersister(level, ((SweAbstractDataComponent) v).getDefinition())));
-//                    } else {
-                        children.addAll(level.accept(createChildPersister(level)));
-//                    }
-//                }
+                // for (Value<?> v : level.getValue()) {
+                // if (v instanceof SweAbstractDataComponent &&
+                // ((SweAbstractDataComponent) v).isSetDefinition()) {
+                // children.add(v.accept(createChildPersister(level,
+                // ((SweAbstractDataComponent) v).getDefinition())));
+                // } else {
+                children.addAll(level.accept(createChildPersister(level)));
+                // }
+                // }
             }
         }
         session.flush();
@@ -349,7 +331,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     private OmObservation getObservationWithLevelParameter(ProfileLevel level) {
         OmObservation o = new OmObservation();
         omObservation.copyTo(o);
-//        o.setParameter(level.getLevelStartEndAsParameter());
+        // o.setParameter(level.getLevelStartEndAsParameter());
         if (level.isSetPhenomenonTime()) {
             o.setValue(new SingleObservationValue<>());
             o.getValue().setPhenomenonTime(level.getPhenomenonTime());
@@ -360,50 +342,46 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     private ObservationPersister createChildPersister(ProfileLevel level, String observableProperty)
             throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                getObservationConstellation(getObservableProperty(new OmObservableProperty(observableProperty))), featureOfInterest,
-                getSamplingGeometryFromLevel(level), offerings, session, true);
+                getObservationConstellation(getObservableProperty(new OmObservableProperty(observableProperty))),
+                featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, true);
     }
 
     private ObservationPersister createChildPersister(ProfileLevel level) throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                dataset, featureOfInterest, getSamplingGeometryFromLevel(level), offerings,
-                session, true);
+                dataset, featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, true);
 
     }
 
-    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty)
-            throws OwsExceptionReport {
+    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty) throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, omObservation,
                 getObservationConstellation(observableProperty), featureOfInterest, samplingGeometry, offerings,
                 session, true);
     }
 
-    private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty)
-            throws OwsExceptionReport {
-        return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(), dataset.getCategory(), featureOfInterest,
-                true, session);
+    private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty) throws OwsExceptionReport {
+        return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(),
+                dataset.getCategory(), featureOfInterest, true, session);
     }
 
-     private OwsExceptionReport notSupported(Value<?> value)
-            throws OwsExceptionReport {
-        throw new NoApplicableCodeException()
-                .withMessage("Unsupported observation value %s", value
-                             .getClass().getCanonicalName());
+    private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
+        throw new NoApplicableCodeException().withMessage("Unsupported observation value %s",
+                value.getClass().getCanonicalName());
     }
 
-    private PhenomenonEntity  getObservablePropertyForField(SweField field) {
+    private PhenomenonEntity getObservablePropertyForField(SweField field) {
         String definition = field.getElement().getDefinition();
         if (omObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
-           for (OmObservableProperty component : ((OmCompositePhenomenon)omObservation.getObservationConstellation().getObservableProperty()).getPhenomenonComponents()) {
-               if (component.getIdentifier().equals(definition)) {
-                   getObservableProperty(component);
-               }
-           }
+            for (OmObservableProperty component : ((OmCompositePhenomenon) omObservation.getObservationConstellation()
+                    .getObservableProperty()).getPhenomenonComponents()) {
+                if (component.getIdentifier().equals(definition)) {
+                    getObservableProperty(component);
+                }
+            }
         }
         return getObservableProperty(new OmObservableProperty(definition));
     }
 
-    private PhenomenonEntity  getObservableProperty(AbstractPhenomenon observableProperty) {
+    private PhenomenonEntity getObservableProperty(AbstractPhenomenon observableProperty) {
         return daos.observableProperty().getOrInsertObservableProperty(observableProperty, session);
     }
 
@@ -416,6 +394,43 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private UnitEntity getUnit(Value<?> value) {
         return value.isSetUnit() ? daos.observation().getUnit(value.getUnitObject(), caches.units(), session) : null;
+    }
+
+    /**
+     * If the local unit cache isn't null, use it when retrieving unit.
+     *
+     * @param unit
+     *            Unit
+     * @param localCache
+     *            Cache (possibly null)
+     * @param session the session
+     * @return Unit
+     */
+    protected UnitEntity getUnit(String unit, Map<UoM, UnitEntity> localCache, Session session) {
+        return getUnit(new UoM(unit), localCache, session);
+    }
+
+    /**
+     * If the local unit cache isn't null, use it when retrieving unit.
+     *
+     * @param unit
+     *            Unit
+     * @param localCache
+     *            Cache (possibly null)
+     * @param session the session
+     * @return Unit
+     */
+    protected UnitEntity getUnit(UoM unit, Map<UoM, UnitEntity> localCache, Session session) {
+        if (localCache != null && localCache.containsKey(unit)) {
+            return localCache.get(unit);
+        } else {
+            // query unit and set cache
+            UnitEntity hUnit = daos.unit.getOrInsertUnit(unit, session);
+            if (localCache != null) {
+                localCache.put(unit, hUnit);
+            }
+            return hUnit;
+        }
     }
 
     private <V, T extends DataEntity<V>> T persist(T observation, V value) throws OwsExceptionReport {
@@ -438,16 +453,18 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         }
         ObservationContext observationContext = daos.observation().createObservationContext();
 
-        String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity)observation);
+        String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity) observation);
 
-        observationContext.setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
+        observationContext
+                .setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
 
         if (dataset != null) {
             if (!isProfileObservation(dataset) || (isProfileObservation(dataset) && !childObservation)) {
                 offerings.add(dataset.getOffering());
                 if (!daos.dataset().checkObservationType(dataset, observationType, session)) {
                     throw new InvalidParameterValueException().withMessage(
-                            "The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
+                            "The requested observationType (%s) is invalid for procedure = "
+                            + "%s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
                             observationType, observation.getDataset().getProcedure().getIdentifier(),
                             dataset.getObservableProperty().getIdentifier(), dataset.getOffering().getIdentifier(),
                             dataset.getOmObservationType().getFormat());
@@ -466,10 +483,11 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         observationContext.setFeatureOfInterest(featureOfInterest);
 
         daos.observation().fillObservationContext(observationContext, omObservation, session);
-        DatasetEntity persitedDataset = daos.observation().addObservationContextToObservation(observationContext, observation, session);
+        DatasetEntity persitedDataset =
+                daos.observation().addObservationContextToObservation(observationContext, observation, session);
         if (omObservation.isSetParameter()) {
-            Set<ParameterEntity<?>> insertParameter = daos.parameter().insertParameter(omObservation.getParameter(),
-                    caches.units, session);
+            Set<ParameterEntity<?>> insertParameter =
+                    daos.parameter().insertParameter(omObservation.getParameter(), caches.units, session);
             observation.setParameters(insertParameter);
         }
         session.saveOrUpdate(observation);
@@ -483,13 +501,13 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     private boolean isProfileObservation(DatasetEntity observationConstellation) {
         return observationConstellation.isSetOmObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
                 .equals(observationConstellation.getOmObservationType().getFormat())
-                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(observationConstellation.getOmObservationType().getFormat())
+                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG
+                        .equals(observationConstellation.getOmObservationType().getFormat())
                 || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE
                         .equals(observationConstellation.getOmObservationType().getFormat()));
     }
 
-    private Geometry getSamplingGeometryFromLevel(ProfileLevel level)
-            throws OwsExceptionReport {
+    private Geometry getSamplingGeometryFromLevel(ProfileLevel level) throws OwsExceptionReport {
         if (level.isSetLocation()) {
             return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(level.getLocation());
         }
@@ -500,7 +518,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         return getSamplingGeometry(sosObservation, geometryHandler);
     }
 
-    private Geometry getSamplingGeometry(OmObservation sosObservation, GeometryHandler geometryHandler) throws OwsExceptionReport {
+    private Geometry getSamplingGeometry(OmObservation sosObservation, GeometryHandler geometryHandler)
+            throws OwsExceptionReport {
         if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
             return null;
         }
@@ -512,8 +531,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         }
         NamedValue<org.locationtech.jts.geom.Geometry> spatialFilteringProfileParameter =
                 sosObservation.getSpatialFilteringProfileParameter();
-        return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
-                spatialFilteringProfileParameter.getValue().getValue());
+        return geometryHandler
+                .switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilteringProfileParameter.getValue().getValue());
     }
 
     private void checkUpdateFeatureOfInterestGeometry() throws CodedException {
@@ -529,45 +548,9 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         return true;
     }
 
-    /**
-     * If the local unit cache isn't null, use it when retrieving unit.
-     *
-     * @param unit
-     *            Unit
-     * @param localCache
-     *            Cache (possibly null)
-     * @param session
-     * @return Unit
-     */
-    protected UnitEntity getUnit(String unit, Map<UoM, UnitEntity> localCache, Session session) {
-       return getUnit(new UoM(unit), localCache, session);
-    }
-
-    /**
-     * If the local unit cache isn't null, use it when retrieving unit.
-     *
-     * @param unit
-     *            Unit
-     * @param localCache
-     *            Cache (possibly null)
-     * @param session
-     * @return Unit
-     */
-    protected UnitEntity getUnit(UoM unit, Map<UoM, UnitEntity> localCache, Session session) {
-        if (localCache != null && localCache.containsKey(unit)) {
-            return localCache.get(unit);
-        } else {
-            // query unit and set cache
-            UnitEntity hUnit = daos.unit.getOrInsertUnit(unit, session);
-            if (localCache != null) {
-                localCache.put(unit, hUnit);
-            }
-            return hUnit;
-        }
-}
-
     private static class Caches {
         private final Map<String, CodespaceEntity> codespaces;
+
         private final Map<UoM, UnitEntity> units;
 
         Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units) {
@@ -587,11 +570,17 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private static class DAOs {
         private final ObservablePropertyDAO observableProperty;
+
         private final AbstractObservationDAO observation;
+
         private final FormatDAO observationType;
+
         private final ParameterDAO parameter;
+
         private final FeatureOfInterestDAO feature;
+
         private final AbstractSeriesDAO dataset;
+
         private final UnitDAO unit;
 
         DAOs(AbstractObservationDAO observationDao, DaoFactory daoFactory) {

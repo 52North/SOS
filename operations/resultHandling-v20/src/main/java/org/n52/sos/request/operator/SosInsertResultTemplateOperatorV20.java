@@ -61,14 +61,20 @@ import org.n52.svalbard.ConformanceClasses;
  *
  */
 @Configurable
-public class SosInsertResultTemplateOperatorV20
-        extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateHandler, InsertResultTemplateRequest, InsertResultTemplateResponse> {
+public class SosInsertResultTemplateOperatorV20 extends
+        AbstractV2TransactionalRequestOperator<AbstractInsertResultTemplateHandler,
+        InsertResultTemplateRequest,
+        InsertResultTemplateResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResultTemplate.name();
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
-    private boolean allowTemplateWithoutProcedureAndFeature = false;
+    private static final String TEMPLATE = "template";
+    private static final String PROCEDURE_NIL_REASON = ".procedure.nilReason";
+    private static final String FEATURE_NIL_REASON = ".featureOfInterest.nilReason";
+
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
+
+    private boolean allowTemplateWithoutProcedureAndFeature;
 
     public SosInsertResultTemplateOperatorV20() {
         super(OPERATION_NAME, InsertResultTemplateRequest.class);
@@ -81,7 +87,7 @@ public class SosInsertResultTemplateOperatorV20
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -126,11 +132,11 @@ public class SosInsertResultTemplateOperatorV20
                     && request.getObservationTemplate().getNillableProcedure().isNil()) {
                 if (!request.getObservationTemplate().getNillableProcedure().hasReason()) {
                     throw new MissingParameterValueException(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".procedure.nilReason");
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + PROCEDURE_NIL_REASON);
                 } else if (!request.getObservationTemplate().getNillableProcedure().getNilReason().get()
-                        .equals("template")) {
+                        .equals(TEMPLATE)) {
                     throw new InvalidParameterValueException(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".procedure.nilReason",
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + PROCEDURE_NIL_REASON,
                             request.getObservationTemplate().getNillableProcedure().getNilReason().get());
                 }
             } else {
@@ -159,11 +165,13 @@ public class SosInsertResultTemplateOperatorV20
                     && request.getObservationTemplate().getNillableFeatureOfInterest().isNil()) {
                 if (!request.getObservationTemplate().getNillableFeatureOfInterest().hasReason()) {
                     throw new MissingParameterValueException(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".featureOfInterest.nilReason");
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name()
+                                    + FEATURE_NIL_REASON);
                 } else if (!request.getObservationTemplate().getNillableFeatureOfInterest().getNilReason().get()
-                        .equals("template")) {
+                        .equals(TEMPLATE)) {
                     throw new InvalidParameterValueException(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name() + ".featureOfInterest.nilReason",
+                            Sos2Constants.InsertResultTemplateParams.proposedTemplate.name()
+                                    + FEATURE_NIL_REASON,
                             request.getObservationTemplate().getNillableFeatureOfInterest().getNilReason().get());
                 }
             } else {
@@ -237,12 +245,14 @@ public class SosInsertResultTemplateOperatorV20
     }
 
     private void createCompositePhenomenons(InsertResultTemplateRequest request) throws OwsExceptionReport {
-        if (request.getResultStructure().isDecoded() && request.getResultStructure().get().get() instanceof SweDataRecord) {
+        if (request.getResultStructure().isDecoded()
+                && request.getResultStructure().get().get() instanceof SweDataRecord) {
             SweDataRecord record = (SweDataRecord) request.getResultStructure().get().get();
             String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
             if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
                 if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
-                    ComplexValue cv = new ComplexValue((SweDataRecord)record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
+                    ComplexValue cv = new ComplexValue(
+                            (SweDataRecord) record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
                     OmObservation observation = new OmObservation();
                     observation.setObservationConstellation(request.getObservationTemplate());
                     observation.setValue(new SingleObservationValue<>(cv));
@@ -268,7 +278,7 @@ public class SosInsertResultTemplateOperatorV20
         OmObservationConstellation observationConstellation = request.getObservationTemplate();
         if (observationConstellation.isSetObservationType()) {
             // TODO check why setting SweArray_Observation as type
-            //observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            // observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             // check if observation type is supported
             checkObservationType(observationConstellation.getObservationType(),
                     Sos2Constants.InsertResultTemplateParams.observationType.name());
@@ -276,8 +286,7 @@ public class SosInsertResultTemplateOperatorV20
 
         Set<String> validObservationTypesForOffering = new HashSet<>(0);
         for (String offering : observationConstellation.getOfferings()) {
-            validObservationTypesForOffering.addAll(getCache()
-                    .getAllowedObservationTypesForOffering(offering));
+            validObservationTypesForOffering.addAll(getCache().getAllowedObservationTypesForOffering(offering));
         }
         // check if observation type is valid for offering
         if (!validObservationTypesForOffering.contains(observationConstellation.getObservationType())) {

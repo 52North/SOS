@@ -49,10 +49,14 @@ import org.n52.svalbard.ConformanceClasses;
  *
  */
 public class SosInsertResultOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertResultHandler, InsertResultRequest, InsertResultResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertResultHandler,
+        InsertResultRequest,
+        InsertResultResponse> {
 
     private static final String OPERATION_NAME = Sos2Constants.Operations.InsertResult.name();
-    private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
+
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_RESULT_INSERTION);
 
     public SosInsertResultOperatorV20() {
         super(OPERATION_NAME, InsertResultRequest.class);
@@ -60,7 +64,7 @@ public class SosInsertResultOperatorV20 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

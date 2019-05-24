@@ -48,34 +48,34 @@ import org.n52.sos.ds.hibernate.util.observation.ObservationVisitor;
  *
  * @author Christian Autermann
  */
-public class ObservationTypeObservationVisitor implements ObservationVisitor<String> {
+public final class ObservationTypeObservationVisitor implements ObservationVisitor<String> {
 
     private ObservationTypeObservationVisitor() {
     }
 
     public String visit(DataEntity o) {
-       if (o instanceof QuantityDataEntity) {
-           return visit((QuantityDataEntity)o);
-       } else if (o instanceof BlobDataEntity) {
-           return visit((BlobDataEntity)o);
-       } else if (o instanceof BooleanDataEntity) {
-           return visit((BooleanDataEntity)o);
-       } else if (o instanceof CategoryDataEntity) {
-           return visit((CategoryDataEntity)o);
-       } else if (o instanceof ComplexDataEntity) {
-           return visit((ComplexDataEntity)o);
-       } else if (o instanceof CountDataEntity) {
-           return visit((CountDataEntity)o);
-       } else if (o instanceof GeometryDataEntity) {
-           return visit((GeometryDataEntity)o);
-       } else if (o instanceof TextDataEntity) {
-           return visit((TextDataEntity)o);
-       } else if (o instanceof ProfileDataEntity) {
-           return visit((ProfileDataEntity)o);
-       } else if (o instanceof ReferencedDataEntity) {
-           return visit((ReferencedDataEntity)o);
-       }
-       return null;
+        if (o instanceof QuantityDataEntity) {
+            return visit((QuantityDataEntity) o);
+        } else if (o instanceof BlobDataEntity) {
+            return visit((BlobDataEntity) o);
+        } else if (o instanceof BooleanDataEntity) {
+            return visit((BooleanDataEntity) o);
+        } else if (o instanceof CategoryDataEntity) {
+            return visit((CategoryDataEntity) o);
+        } else if (o instanceof ComplexDataEntity) {
+            return visit((ComplexDataEntity) o);
+        } else if (o instanceof CountDataEntity) {
+            return visit((CountDataEntity) o);
+        } else if (o instanceof GeometryDataEntity) {
+            return visit((GeometryDataEntity) o);
+        } else if (o instanceof TextDataEntity) {
+            return visit((TextDataEntity) o);
+        } else if (o instanceof ProfileDataEntity) {
+            return visit((ProfileDataEntity) o);
+        } else if (o instanceof ReferencedDataEntity) {
+            return visit((ReferencedDataEntity) o);
+        }
+        return null;
     }
 
     @Override
@@ -129,7 +129,7 @@ public class ObservationTypeObservationVisitor implements ObservationVisitor<Str
     }
 
     @Override
-    public String visit(ReferencedDataEntity o)  {
+    public String visit(ReferencedDataEntity o) {
         return OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
     }
 
@@ -138,8 +138,7 @@ public class ObservationTypeObservationVisitor implements ObservationVisitor<Str
     }
 
     private static final class Holder {
-        private static final ObservationTypeObservationVisitor INSTANCE
-                = new ObservationTypeObservationVisitor();
+        private static final ObservationTypeObservationVisitor INSTANCE = new ObservationTypeObservationVisitor();
 
         private Holder() {
         }

@@ -28,15 +28,11 @@
  */
 package org.n52.sos.ds.cache;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.util.action.CompositeParallelAction;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -54,7 +50,8 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
 
     private final ThreadLocalSessionFactory sessionFactory;
 
-    public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName, HibernateSessionStore sessionStore) {
+    public AbstractQueueingDatasourceCacheUpdate(int threads, String threadGroupName,
+            HibernateSessionStore sessionStore) {
         this.threads = threads;
         this.threadGroupName = threadGroupName;
         this.sessionFactory = new ThreadLocalSessionFactory(sessionStore);
@@ -73,27 +70,28 @@ public abstract class AbstractQueueingDatasourceCacheUpdate<T extends AbstractTh
             return;
         }
         CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate> compositeParallelAction =
-                new CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate>(threads, threadGroupName, updatesToExecute) {
+                new CompositeParallelAction<AbstractThreadableDatasourceCacheUpdate>(threads, threadGroupName,
+                        updatesToExecute) {
 
-            @Override
-            protected void pre(AbstractThreadableDatasourceCacheUpdate action) {
-                action.setCache(getCache());
-                action.setErrors(getErrors());
-                action.setSessionFactory(sessionFactory);
-            }
+                @Override
+                protected void pre(AbstractThreadableDatasourceCacheUpdate action) {
+                    action.setCache(getCache());
+                    action.setErrors(getErrors());
+                    action.setSessionFactory(sessionFactory);
+                }
 
-            @Override
-            protected void post(AbstractThreadableDatasourceCacheUpdate action) {
-                if (action.getSession() != null) {
-                    try {
-                        action.getSession().clear();
-                    } catch (Exception e) {
-                        LOGGER.error("Error while returning connection after cache update!", e);
+                @Override
+                protected void post(AbstractThreadableDatasourceCacheUpdate action) {
+                    if (action.getSession() != null) {
+                        try {
+                            action.getSession().clear();
+                        } catch (Exception e) {
+                            LOGGER.error("Error while returning connection after cache update!", e);
+                        }
                     }
                 }
-            }
-        };
-        //execute multiple threads
+            };
+        // execute multiple threads
         compositeParallelAction.execute();
 
         try {

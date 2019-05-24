@@ -52,6 +52,8 @@ public class FileDescriptionCreationStrategy
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileDescriptionCreationStrategy.class);
 
+    private static final String STANDARD = "standard";
+
     @Override
     public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
             HibernateProcedureCreationContext ctx, Session s)
@@ -71,12 +73,13 @@ public class FileDescriptionCreationStrategy
         final StringBuilder builder = new StringBuilder();
         // check if filename contains placeholder for configured
         // sensor directory
-        if (filename.startsWith("standard")) {
-            filename = filename.replace("standard", "");
+        String f = filename;
+        if (filename.startsWith(STANDARD)) {
+            f = filename.replace(STANDARD, "");
             builder.append(ctx.getSensorDirectory());
             builder.append("/");
         }
-        builder.append(filename);
+        builder.append(f);
         LOGGER.debug("Procedure description file name '{}'!", filename);
         return this.getClass().getResourceAsStream(builder.toString());
     }

@@ -41,14 +41,15 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 /**
  * Generator class for WaterML 2.0 procedure descriptions
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author Carsten Hollmann
  * @since 4.2.0
  *
  */
 public class HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30
-implements HibernateProcedureDescriptionGeneratorFactory {
+        implements HibernateProcedureDescriptionGeneratorFactory {
 
     private final DaoFactory daoFactory;
+
     private final I18NDAORepository i18NDAORepository;
     private final ContentCacheController cacheController;
     private final SettingsService settingsService;

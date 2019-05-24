@@ -71,8 +71,8 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     private AbstractProcedureCreationContext ctx;
 
-    public AbstractProcedureDescriptionEnrichments(
-            Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider, AbstractProcedureCreationContext ctx) {
+    public AbstractProcedureDescriptionEnrichments(Locale locale,
+            LocalizedProducer<OwsServiceProvider> serviceProvider, AbstractProcedureCreationContext ctx) {
         this.serviceProvider = serviceProvider;
         this.locale = locale;
         this.ctx = ctx;
@@ -235,14 +235,12 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     public TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
-        return setValues(new TypeOfEnrichment(ctx)).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
+        return setValues(new TypeOfEnrichment(ctx)).setTypeOfIdentifier(typeOfIdentifier)
+                .setTypeOfFormat(typeOfFormat);
     }
 
     protected <S extends ProcedureDescriptionEnrichment> S setValues(S enrichment) {
-        enrichment.setDescription(description)
-                .setIdentifier(identifier)
-                .setVersion(version)
-                .setLocale(locale)
+        enrichment.setDescription(description).setIdentifier(identifier).setVersion(version).setLocale(locale)
                 .setSession(session);
         return enrichment;
     }

@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.dao.i18n;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -49,7 +48,8 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
  *
  * @author Christian Autermann
  */
-public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<ProcedureEntity, I18NProcedureMetadata, I18nProcedureEntity> {
+public class ProcedureI18NDAO
+        extends AbstractHibernateI18NDAO<ProcedureEntity, I18NProcedureMetadata, I18nProcedureEntity> {
     private DaoFactory daoFactory;
 
     @Inject
@@ -78,32 +78,27 @@ public class ProcedureI18NDAO extends AbstractHibernateI18NDAO<ProcedureEntity, 
     }
 
     @Override
-    protected void fillHibernateObject(I18NProcedureMetadata i18n,
-            I18nProcedureEntity h18n) {
+    protected void fillHibernateObject(I18NProcedureMetadata i18n, I18nProcedureEntity h18n) {
         super.fillHibernateObject(i18n, h18n);
-        Optional<LocalizedString> longName
-                = i18n.getLongName().getLocalization(LocaleHelper.decode(h18n.getLocale()));
+        Optional<LocalizedString> longName = i18n.getLongName().getLocalization(LocaleHelper.decode(h18n.getLocale()));
         if (longName.isPresent()) {
             h18n.setLongName(longName.get().getText());
         }
-        Optional<LocalizedString> shortName
-                = i18n.getShortName().getLocalization(LocaleHelper.decode(h18n.getLocale()));
+        Optional<LocalizedString> shortName =
+                i18n.getShortName().getLocalization(LocaleHelper.decode(h18n.getLocale()));
         if (shortName.isPresent()) {
             h18n.setShortName(shortName.get().getText());
         }
     }
 
     @Override
-    protected void fillSosObject(I18nProcedureEntity h18n,
-                                 I18NProcedureMetadata i18n) {
+    protected void fillSosObject(I18nProcedureEntity h18n, I18NProcedureMetadata i18n) {
         super.fillSosObject(h18n, i18n);
         if (h18n.hasLongName()) {
-            i18n.getLongName().addLocalization(h18n.getLocale(),
-                                               h18n.getLongName());
+            i18n.getLongName().addLocalization(h18n.getLocale(), h18n.getLongName());
         }
         if (h18n.hasShortName()) {
-            i18n.getShortName().addLocalization(h18n.getLocale(),
-                                                h18n.getShortName());
+            i18n.getShortName().addLocalization(h18n.getLocale(), h18n.getShortName());
         }
     }
 

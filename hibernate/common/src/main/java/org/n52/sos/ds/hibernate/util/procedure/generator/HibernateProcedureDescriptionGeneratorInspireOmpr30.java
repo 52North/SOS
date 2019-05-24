@@ -50,13 +50,13 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 public class HibernateProcedureDescriptionGeneratorInspireOmpr30
         extends AbstractHibernateProcedureDescriptionGenerator {
 
+    public static final Set<HibernateProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES =
+            CollectionHelper.set(new HibernateProcedureDescriptionGeneratorKey(InspireOMPRConstants.NS_OMPR_30));
+
     public HibernateProcedureDescriptionGeneratorInspireOmpr30(
             DaoFactory daoFactory, I18NDAORepository i18NDAORepository, ContentCacheController cacheController) {
         super(daoFactory, i18NDAORepository, cacheController);
     }
-
-    public static final Set<HibernateProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(new HibernateProcedureDescriptionGeneratorKey(InspireOMPRConstants.NS_OMPR_30));
 
     @Override
     public Set<HibernateProcedureDescriptionGeneratorKey> getKeys() {
@@ -88,18 +88,19 @@ public class HibernateProcedureDescriptionGeneratorInspireOmpr30
     }
 
     private void addResponsibleParty(Process process) throws OwsExceptionReport {
-//        SosServiceProvider serviceProvider = Configurator.getInstance().getServiceProvider();
-//        RelatedParty responsibleParty = new RelatedParty();
-//        if (serviceProvider.hasIndividualName()) {
-//            responsibleParty.setIndividualName(createPT_FreeText(serviceProvider.getIndividualName()));
-//        }
-//        if (serviceProvider.hasName()) {
-//            responsibleParty.setOrganisationName(createPT_FreeText(serviceProvider.getName()));
-//        }
-//        if (serviceProvider.hasPositionName()) {
-//            responsibleParty.setPositionName(createPT_FreeText(serviceProvider.getPositionName()));
-//        }
-//        responsibleParty.setContact(createContact(serviceProvider));
+        // SosServiceProvider serviceProvider =
+        // Configurator.getInstance().getServiceProvider();
+        // RelatedParty responsibleParty = new RelatedParty();
+        // if (serviceProvider.hasIndividualName()) {
+        // responsibleParty.setIndividualName(createPT_FreeText(serviceProvider.getIndividualName()));
+        // }
+        // if (serviceProvider.hasName()) {
+        // responsibleParty.setOrganisationName(createPT_FreeText(serviceProvider.getName()));
+        // }
+        // if (serviceProvider.hasPositionName()) {
+        // responsibleParty.setPositionName(createPT_FreeText(serviceProvider.getPositionName()));
+        // }
+        // responsibleParty.setContact(createContact(serviceProvider));
     }
 
     private Contact createContact(OwsContact owsContact) {
@@ -137,5 +138,4 @@ public class HibernateProcedureDescriptionGeneratorInspireOmpr30
 
         return contact;
     }
-
 }

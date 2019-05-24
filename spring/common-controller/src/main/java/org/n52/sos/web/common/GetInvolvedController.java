@@ -53,9 +53,10 @@ import org.n52.iceland.service.ServiceSettings;
 @Controller
 @RequestMapping(ControllerConstants.Paths.GET_INVOLVED)
 public class GetInvolvedController extends AbstractController {
-    private static final Logger LOG = LoggerFactory.getLogger(GetInvolvedController.class);
 
     public static final String SERVICE_URL_MODEL_ATTRIBUTE = "serviceUrl";
+
+    private static final Logger LOG = LoggerFactory.getLogger(GetInvolvedController.class);
 
     @Inject
     private SettingsService settingsManager;

@@ -135,7 +135,7 @@ public class SeriesObservationFactory extends ObservationFactory {
         return Holder.INSTANCE;
     }
 
-    private static class Holder {
+    private static final class Holder {
         private static final SeriesObservationFactory INSTANCE
                 = new SeriesObservationFactory();
 

@@ -101,12 +101,11 @@ public class ContactsEnrichment
      * @return SensorML Contact
      */
     private Optional<SmlResponsibleParty> createContactFromServiceContact() {
-        Optional<OwsServiceProvider> serviceProvider = getServiceProvider();
-        if (!serviceProvider.isPresent()) {
+        if (!getServiceProvider().isPresent()) {
             return Optional.absent();
         }
         SmlResponsibleParty rp = new SmlResponsibleParty();
-        OwsServiceProvider sp = serviceProvider.get();
+        OwsServiceProvider sp = getServiceProvider().get();
         OwsResponsibleParty serviceContact = sp.getServiceContact();
         java.util.Optional<OwsContact> contactInfo = serviceContact.getContactInfo();
         java.util.Optional<OwsAddress> address = contactInfo.flatMap(OwsContact::getAddress);

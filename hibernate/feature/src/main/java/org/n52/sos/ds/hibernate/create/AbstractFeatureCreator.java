@@ -105,7 +105,8 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
                     i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getSession());
                 } else {
                     // load only name in default locale
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getDefaultLanguage(), getContext().getSession());
+                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getDefaultLanguage(),
+                            getContext().getSession());
                 }
                 for (LocalizedString name : i18n.getName()) {
                     // either all or default only
@@ -147,9 +148,9 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
     /**
      * Get the geometry from featureOfInterest object.
      *
-     * @param feature
-     * @return geometry
-     * @throws OwsExceptionReport
+     * @param feature the feature entity
+     * @return geometry the geometry
+     * @throws OwsExceptionReport If an error occurs
      */
     protected Geometry createGeometryFrom(FeatureEntity feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
@@ -169,7 +170,7 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
                             Geometry lastGeoemtry = null;
                             for (Geometry geometry : geometries) {
                                 if (geometry != null) {
-                                    if ((lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
+                                    if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
                                         coordinates.add(getContext().getGeometryHandler()
                                                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)
                                                 .getCoordinate());

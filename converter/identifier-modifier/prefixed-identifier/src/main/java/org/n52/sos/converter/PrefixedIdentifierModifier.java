@@ -136,7 +136,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         }
         return parameterValue;
     }
-    
+
     private String getGlobalPrefix() {
         if (this.helper.isSetGlobalPrefix()) {
             StringBuilder builder = new StringBuilder();
@@ -211,7 +211,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         }
         return identifier;
     }
-    
+
     @Override
     protected String checkFeatureOfInterestIdentifier(String identifier) {
         if (helper.isSetFeatureOfInterestPrefix()) {

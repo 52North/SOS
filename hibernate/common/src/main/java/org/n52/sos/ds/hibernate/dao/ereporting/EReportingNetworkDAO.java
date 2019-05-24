@@ -61,7 +61,8 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
      * @return Default criteria
      */
     public Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(EReportingNetworkEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return session.createCriteria(EReportingNetworkEntity.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
     /**

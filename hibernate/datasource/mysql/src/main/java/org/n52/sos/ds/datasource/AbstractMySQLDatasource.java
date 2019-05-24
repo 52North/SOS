@@ -55,8 +55,6 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDatasource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMySQLDatasource.class);
-
     protected static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
 
     protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:mysql://([^:]+):([0-9]+)/(.*)$");
@@ -80,6 +78,8 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     protected static final int PORT_DEFAULT_VALUE = 3306;
 
     protected static final String SCHEMA_DEFAULT_VALUE = "sos";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMySQLDatasource.class);
 
     AbstractMySQLDatasource(boolean supportsSchema) {
         super(supportsSchema);

@@ -57,11 +57,13 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
         startStopwatch();
         try {
             // TODD Use TimerPeriod.expand from OfferingTimes
-            List<OfferingEntity> offerings = new OfferingDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            List<OfferingEntity> offerings =
+                    new OfferingDao(getSession()).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             TimePeriod phenomenonTime = new TimePeriod();
             TimePeriod resultTime = new TimePeriod();
             for (OfferingEntity offering : offerings) {
-                phenomenonTime.extendToContain(new TimePeriod(offering.getPhenomenonTimeStart(), offering.getPhenomenonTimeEnd()));
+                phenomenonTime.extendToContain(
+                        new TimePeriod(offering.getSamplingTimeStart(), offering.getSamplingTimeEnd()));
                 resultTime.extendToContain(new TimePeriod(offering.getResultTimeStart(), offering.getResultTimeEnd()));
             }
             getCache().setMinPhenomenonTime(phenomenonTime.getStart());

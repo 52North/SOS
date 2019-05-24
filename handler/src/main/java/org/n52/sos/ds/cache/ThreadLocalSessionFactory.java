@@ -35,11 +35,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.shetland.util.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -54,7 +53,7 @@ public class ThreadLocalSessionFactory {
     private final Lock lock = new ReentrantLock();
     private final Set<Session> createdSessions = CollectionHelper.synchronizedSet();
     private final ThreadLocal<Session> threadLocal;
-    private boolean closed = false;
+    private boolean closed;
 
     public ThreadLocalSessionFactory(HibernateSessionStore sessionStore) {
         this.sessionStore = Objects.requireNonNull(sessionStore);

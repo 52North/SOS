@@ -71,11 +71,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping(value = "/admin/ereporting")
 public class AdminEReportingHeaderController extends AbstractController {
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(AdminEReportingHeaderController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AdminEReportingHeaderController.class);
 
     private EReportObligationRepository reportObligationRepository;
+
     private EncoderRepository encoderRepository;
+
     private DecoderRepository decoderRepository;
 
     @Inject
@@ -102,9 +103,12 @@ public class AdminEReportingHeaderController extends AbstractController {
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
     public String getJSON() throws OwsExceptionReport, EncodingException {
         ObjectNode node = Json.nodeFactory().objectNode();
-        Encoder<JsonNode, ReportObligation> reportObligationEncoder = encoderRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
-        Encoder<JsonNode, RelatedParty> relatedPartyEncoder = encoderRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
-        node.set(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
+        Encoder<JsonNode, ReportObligation> reportObligationEncoder =
+                encoderRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
+        Encoder<JsonNode, RelatedParty> relatedPartyEncoder =
+                encoderRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
+        node.set(AQDJSONConstants.REPORTING_AUTHORITY,
+                relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
         ArrayNode ros = node.putArray(AQDJSONConstants.REPORT_OBLIGATIONS);
         for (ReportObligationType reportObligationType : ReportObligationType.values()) {
             ReportObligation reportObligation = reportObligationRepository.getReportObligation(reportObligationType);
@@ -120,14 +124,15 @@ public class AdminEReportingHeaderController extends AbstractController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void save(@RequestBody String json) throws OwsExceptionReport, DecodingException {
         LOG.info("Saving {}", json);
-        Decoder<ReportObligation, JsonNode> reportObligationDecoder = decoderRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
-        Decoder<RelatedParty, JsonNode> relatedPartyDecoder = decoderRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
+        Decoder<ReportObligation, JsonNode> reportObligationDecoder =
+                decoderRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
+        Decoder<RelatedParty, JsonNode> relatedPartyDecoder =
+                decoderRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
 
         JsonNode node = Json.loadString(json);
 
         RelatedParty relatedParty = relatedPartyDecoder.decode(node.path(AQDJSONConstants.REPORTING_AUTHORITY));
         reportObligationRepository.saveReportingAuthority(relatedParty);
-
 
         JsonNode obligations = node.path(AQDJSONConstants.REPORT_OBLIGATIONS);
         Iterator<String> it = obligations.fieldNames();

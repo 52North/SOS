@@ -51,7 +51,7 @@ public class ValidTimeEnrichment extends SensorMLEnrichment {
     protected void enrich(AbstractSensorML description)
             throws OwsExceptionReport {
         if (description instanceof AbstractProcess) {
-            AbstractProcess abstractProcess =  (AbstractProcess)description;
+            AbstractProcess abstractProcess = (AbstractProcess) description;
             if (abstractProcess.getValidTime() != null) {
                 validTime.extendToContain(abstractProcess.getValidTime());
             }

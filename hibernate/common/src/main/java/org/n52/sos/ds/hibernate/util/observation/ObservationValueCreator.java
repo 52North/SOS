@@ -76,31 +76,30 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public Value<?> visit(DataEntity o)
-            throws OwsExceptionReport {
-       if (o instanceof QuantityDataEntity) {
-           return visit((QuantityDataEntity)o);
-       } else if (o instanceof BlobDataEntity) {
-           return visit((BlobDataEntity)o);
-       } else if (o instanceof BooleanDataEntity) {
-           return visit((BooleanDataEntity)o);
-       } else if (o instanceof CategoryDataEntity) {
-           return visit((CategoryDataEntity)o);
-       } else if (o instanceof ComplexDataEntity) {
-           return visit((ComplexDataEntity)o);
-       } else if (o instanceof CountDataEntity) {
-           return visit((CountDataEntity)o);
-       } else if (o instanceof GeometryDataEntity) {
-           return visit((GeometryDataEntity)o);
-       } else if (o instanceof TextDataEntity) {
-           return visit((TextDataEntity)o);
-       } else if (o instanceof DataArrayDataEntity) {
-           return visit((DataArrayDataEntity)o);
-       } else if (o instanceof ProfileDataEntity) {
-           return visit((ProfileDataEntity)o);
-       } else if (o instanceof ReferencedDataEntity) {
-           return visit((ReferencedDataEntity)o);
-       }
+    public Value<?> visit(DataEntity o) throws OwsExceptionReport {
+        if (o instanceof QuantityDataEntity) {
+            return visit((QuantityDataEntity) o);
+        } else if (o instanceof BlobDataEntity) {
+            return visit((BlobDataEntity) o);
+        } else if (o instanceof BooleanDataEntity) {
+            return visit((BooleanDataEntity) o);
+        } else if (o instanceof CategoryDataEntity) {
+            return visit((CategoryDataEntity) o);
+        } else if (o instanceof ComplexDataEntity) {
+            return visit((ComplexDataEntity) o);
+        } else if (o instanceof CountDataEntity) {
+            return visit((CountDataEntity) o);
+        } else if (o instanceof GeometryDataEntity) {
+            return visit((GeometryDataEntity) o);
+        } else if (o instanceof TextDataEntity) {
+            return visit((TextDataEntity) o);
+        } else if (o instanceof DataArrayDataEntity) {
+            return visit((DataArrayDataEntity) o);
+        } else if (o instanceof ProfileDataEntity) {
+            return visit((ProfileDataEntity) o);
+        } else if (o instanceof ReferencedDataEntity) {
+            return visit((ReferencedDataEntity) o);
+        }
         return null;
     }
 
@@ -112,7 +111,6 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
         }
         return v;
     }
-
 
     @Override
     public UnknownValue visit(BlobDataEntity o) {
@@ -145,8 +143,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     @Override
     public ComplexValue visit(ComplexDataEntity o) throws OwsExceptionReport {
-        SweAbstractDataComponentCreator visitor
-                = new SweAbstractDataComponentCreator(decoderRepository);
+        SweAbstractDataComponentCreator visitor = new SweAbstractDataComponentCreator(decoderRepository);
         SweDataRecord record = visitor.visit(o);
         return new ComplexValue(record);
     }
@@ -177,8 +174,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     }
 
     @Override
-    public SweDataArrayValue visit(DataArrayDataEntity o)
-            throws OwsExceptionReport {
+    public SweDataArrayValue visit(DataArrayDataEntity o) throws OwsExceptionReport {
         SweDataArray array = new SweDataArray();
         // TODO
         return new SweDataArrayValue(array);
@@ -217,8 +213,8 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     @SuppressWarnings("rawtypes")
     protected void addDefinitionFromObservableProperty(DataEntity o, SweAbstractSimpleType v) {
         if (o instanceof HasObservablePropertyGetter) {
-            if (((HasObservablePropertyGetter)o).getObservableProperty() != null) {
-                v.setDefinition(((HasObservablePropertyGetter)o).getObservableProperty().getIdentifier());
+            if (((HasObservablePropertyGetter) o).getObservableProperty() != null) {
+                v.setDefinition(((HasObservablePropertyGetter) o).getObservableProperty().getIdentifier());
             }
         }
     }

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds;
 
-import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +38,7 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.dao.DbQuery;
@@ -59,10 +57,10 @@ import org.n52.sos.ds.procedure.ProcedureConverter;
 
 import com.google.common.collect.Maps;
 
-public class DescribeSensorHandler
-        extends AbstractDescribeSensorHandler {
+public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
 
     private HibernateSessionStore sessionStore;
+
     private DescribeSensorDao dao;
 
     private ProcedureConverter procedureConverter;
@@ -99,8 +97,7 @@ public class DescribeSensorHandler
     }
 
     @Override
-    public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request)
-            throws OwsExceptionReport {
+    public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionStore.getSession();
@@ -109,12 +106,11 @@ public class DescribeSensorHandler
             response.setVersion(request.getVersion());
             response.setOutputFormat(request.getProcedureDescriptionFormat());
 
-            Collection<ProcedureEntity> entities =
-                    new ProcedureDao(session).get(createDbQuery(request));
+            Collection<ProcedureEntity> entities = new ProcedureDao(session).get(createDbQuery(request));
             if (entities == null || entities.isEmpty()) {
                 throw new NoApplicableCodeException()
                         .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
-                        .setStatus(INTERNAL_SERVER_ERROR);
+                        .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             if (dao != null) {
                 response.setSensorDescriptions(dao.querySensorDescriptions(request));
@@ -136,8 +132,7 @@ public class DescribeSensorHandler
     }
 
     private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,
-            DescribeSensorRequest request, Session session)
-            throws OwsExceptionReport {
+            DescribeSensorRequest request, Session session) throws OwsExceptionReport {
         return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
                 request.getVersion(), getRequestedLocale(request), session);
     }

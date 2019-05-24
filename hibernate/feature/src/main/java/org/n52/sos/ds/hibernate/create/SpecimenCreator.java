@@ -52,49 +52,48 @@ import org.n52.shetland.w3c.xlink.Referenceable;
 
 public class SpecimenCreator extends AbstractFeatureOfInerestCreator<SpecimenEntity> {
 
-
     public SpecimenCreator(FeatureVisitorContext context) {
         super(context);
     }
 
     @Override
     public AbstractFeature create(SpecimenEntity f) throws OwsExceptionReport {
-         AbstractFeature absFeat = createFeature(f);
-         if (absFeat instanceof SfSpecimen) {
-             SfSpecimen specimen = (SfSpecimen)absFeat;
-             specimen.setMaterialClass(new ReferenceType(f.getMaterialClass()));
-             specimen.setSamplingTime(getSamplingTime(f));
-             if (f.isSetSamplingMethod()) {
-                 Reference ref = new Reference().setHref(URI.create(f.getSamplingMethod()));
-                 Referenceable<SfProcess> of = Referenceable.of(ref);;
-                 specimen.setSamplingMethod(of);
-             }
-             if (f.isSetSize()) {
-                 QuantityValue size = new QuantityValue(f.getSize());
-                 if (f.isSetSizeUnit()) {
-                     UoM uom = new UoM(f.getSizeUnit().getUnit());
-                     if (f.getSizeUnit().isSetName()) {
-                         uom.setName(f.getSizeUnit().getName());
-                     }
-                     if (f.getSizeUnit().isSetLink()) {
-                         uom.setLink(f.getSizeUnit().getLink());
-                     }
-                     size.setUnit(uom);
-                 } else {
-                     size.setUnit(OGCConstants.UNKNOWN);
-                 }
-                 specimen.setSize(size);
-             }
-             if (f.isSetCurrentLocation()) {
-                 Reference ref = new Reference().setHref(URI.create(f.getCurrentLocation()));
-                 Referenceable<SpecLocation> of = Referenceable.of(ref);;
-                 specimen.setCurrentLocation(of);
-             }
-             if (f.isSetSpecimenType()) {
-                 specimen.setSpecimenType(new ReferenceType(f.getSpecimenType()));
-             }
-         }
-         return absFeat;
+        AbstractFeature absFeat = createFeature(f);
+        if (absFeat instanceof SfSpecimen) {
+            SfSpecimen specimen = (SfSpecimen) absFeat;
+            specimen.setMaterialClass(new ReferenceType(f.getMaterialClass()));
+            specimen.setSamplingTime(getSamplingTime(f));
+            if (f.isSetSamplingMethod()) {
+                Reference ref = new Reference().setHref(URI.create(f.getSamplingMethod()));
+                Referenceable<SfProcess> of = Referenceable.of(ref);
+                specimen.setSamplingMethod(of);
+            }
+            if (f.isSetSize()) {
+                QuantityValue size = new QuantityValue(f.getSize());
+                if (f.isSetSizeUnit()) {
+                    UoM uom = new UoM(f.getSizeUnit().getUnit());
+                    if (f.getSizeUnit().isSetName()) {
+                        uom.setName(f.getSizeUnit().getName());
+                    }
+                    if (f.getSizeUnit().isSetLink()) {
+                        uom.setLink(f.getSizeUnit().getLink());
+                    }
+                    size.setUnit(uom);
+                } else {
+                    size.setUnit(OGCConstants.UNKNOWN);
+                }
+                specimen.setSize(size);
+            }
+            if (f.isSetCurrentLocation()) {
+                Reference ref = new Reference().setHref(URI.create(f.getCurrentLocation()));
+                Referenceable<SpecLocation> of = Referenceable.of(ref);
+                specimen.setCurrentLocation(of);
+            }
+            if (f.isSetSpecimenType()) {
+                specimen.setSpecimenType(new ReferenceType(f.getSpecimenType()));
+            }
+        }
+        return absFeat;
     }
 
     private Time getSamplingTime(SpecimenEntity s) {

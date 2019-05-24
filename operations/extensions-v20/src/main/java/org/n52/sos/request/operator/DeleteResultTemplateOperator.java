@@ -50,9 +50,9 @@ import org.n52.sos.event.events.ResultTemplatesDeletion;
  *
  * @since 4.0.0
  */
-public class DeleteResultTemplateOperator
-        extends
-        AbstractTransactionalRequestOperator<AbstractDeleteResultTemplateHandler, DeleteResultTemplateRequest,
+public class DeleteResultTemplateOperator extends
+        AbstractTransactionalRequestOperator<AbstractDeleteResultTemplateHandler,
+        DeleteResultTemplateRequest,
         DeleteResultTemplateResponse>
         implements RequestOperator {
 
@@ -60,24 +60,19 @@ public class DeleteResultTemplateOperator
      * Constructs a new {@code DeleteResultTemplateOperator}.
      */
     public DeleteResultTemplateOperator() {
-        super(SosConstants.SOS,
-                Sos2Constants.SERVICEVERSION,
-                DeleteResultTemplateConstants.OPERATION_NAME,
+        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteResultTemplateConstants.OPERATION_NAME,
                 DeleteResultTemplateRequest.class);
     }
 
     @Override
-    public DeleteResultTemplateResponse receive(
-            DeleteResultTemplateRequest request) throws OwsExceptionReport {
-        DeleteResultTemplateResponse response =
-                getOperationHandler().deleteResultTemplates(request);
+    public DeleteResultTemplateResponse receive(DeleteResultTemplateRequest request) throws OwsExceptionReport {
+        DeleteResultTemplateResponse response = getOperationHandler().deleteResultTemplates(request);
         getServiceEventBus().submit(new ResultTemplatesDeletion(request, response));
         return response;
     }
 
     @Override
-    protected void checkParameters(DeleteResultTemplateRequest request)
-            throws OwsExceptionReport {
+    protected void checkParameters(DeleteResultTemplateRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
 
         try {
@@ -99,13 +94,13 @@ public class DeleteResultTemplateOperator
         exceptions.throwIfNotEmpty();
     }
 
-    private void checkObservedPropertyOfferingPairs(DeleteResultTemplateRequest request, CompositeOwsException exceptions) {
+    private void checkObservedPropertyOfferingPairs(DeleteResultTemplateRequest request,
+            CompositeOwsException exceptions) {
         if (request.isSetObservedPropertyOfferingPairs()) {
             for (Map.Entry<String, String> propertyOfferingPair : request.getObservedPropertyOfferingPairs()) {
                 if (!getCache().hasOffering(propertyOfferingPair.getValue())) {
                     exceptions.add(new InvalidParameterValueException(
-                            DeleteResultTemplateConstants.PARAMETERS.offering,
-                            propertyOfferingPair.getValue()));
+                            DeleteResultTemplateConstants.PARAMETERS.offering, propertyOfferingPair.getValue()));
                 }
                 if (!getCache().hasObservableProperty(propertyOfferingPair.getKey())) {
                     exceptions.add(new InvalidParameterValueException(
@@ -121,28 +116,22 @@ public class DeleteResultTemplateOperator
             for (String resultTemplate : request.getResultTemplates()) {
                 if (!getCache().hasResultTemplate(resultTemplate)) {
                     exceptions.add(new InvalidParameterValueException(
-                            DeleteResultTemplateConstants.PARAMETERS.resultTemplate,
-                            resultTemplate));
+                            DeleteResultTemplateConstants.PARAMETERS.resultTemplate, resultTemplate));
                 }
             }
         }
     }
 
-    private void checkAnyParameter(DeleteResultTemplateRequest request,
-            CompositeOwsException exceptions) {
-        if (!request.isSetResultTemplates() &&
-                !request.isSetObservedPropertyOfferingPairs()) {
-            exceptions.add(new MissingParameterValueException(
-                    "resultTemplate XOR offering and observedProperty."));
+    private void checkAnyParameter(DeleteResultTemplateRequest request, CompositeOwsException exceptions) {
+        if (!request.isSetResultTemplates() && !request.isSetObservedPropertyOfferingPairs()) {
+            exceptions.add(new MissingParameterValueException("resultTemplate XOR offering and observedProperty."));
         }
     }
 
-    private void checkInvalidAllParameters(DeleteResultTemplateRequest request,
-            CompositeOwsException exceptions) {
-        if (request.isSetResultTemplates() &&
-                request.isSetObservedPropertyOfferingPairs()) {
-            exceptions.add(new MissingParameterValueException(
-                    "only resultTemplate XOR offering and observedProperty."));
+    private void checkInvalidAllParameters(DeleteResultTemplateRequest request, CompositeOwsException exceptions) {
+        if (request.isSetResultTemplates() && request.isSetObservedPropertyOfferingPairs()) {
+            exceptions
+                    .add(new MissingParameterValueException("only resultTemplate XOR offering and observedProperty."));
         }
     }
 

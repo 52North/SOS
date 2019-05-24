@@ -105,13 +105,13 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
         return instantiate(textClass());
     }
 
-//    public Class<? extends XmlParameter> xmlClass() {
-//        return XmlParameter.class;
-//    }
-//
-//    public XmlParameter xml() throws OwsExceptionReport {
-//        return instantiate(xmlClass());
-//    }
+    // public Class<? extends XmlParameter> xmlClass() {
+    // return XmlParameter.class;
+    // }
+    //
+    // public XmlParameter xml() throws OwsExceptionReport {
+    // return instantiate(xmlClass());
+    // }
 
     private <T extends ParameterEntity<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
 
@@ -239,7 +239,7 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
         return Holder.INSTANCE;
     }
 
-    private static class Holder {
+    private static final class Holder {
         private static final ParameterFactory INSTANCE = new ParameterFactory();
 
         private Holder() {

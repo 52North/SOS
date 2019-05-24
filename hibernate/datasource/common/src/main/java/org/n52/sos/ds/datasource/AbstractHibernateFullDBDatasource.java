@@ -45,6 +45,7 @@ import com.google.common.collect.Sets;
 
 
 public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernateDatasource {
+    
     private String schemaDefault;
     private String schemaDescription;
     private int batchSizeDefault;
@@ -134,14 +135,14 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.C3P0_ACQUIRE_INCREMENT, "1");
         p.put(HibernateConstants.C3P0_TIMEOUT, "0");
         p.put(HibernateConstants.C3P0_MAX_STATEMENTS, "0");
-        p.put(HibernateConstants.C3P0_PRIVILEGE_SPAWNED_THREAD, "true");
+        p.put(HibernateConstants.C3P0_PRIVILEGE_SPAWNED_THREAD, Boolean.TRUE.toString());
         p.put(HibernateConstants.C3P0_CONTEXT_CLASS_LOADER_SOURCE, "library");
         if (settings.containsKey(BATCH_SIZE_KEY)) {
             p.put(HibernateConstants.JDBC_BATCH_SIZE, settings.get(BATCH_SIZE_KEY).toString());
         }
-        p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT, "true");
-        p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT_FOR_POOLS, "true");
-        p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
+        p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT, Boolean.TRUE.toString());
+        p.put(HibernateConstants.CONNECTION_AUTO_RECONNECT_FOR_POOLS, Boolean.TRUE.toString());
+        p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, Boolean.TRUE.toString());
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(FEATURE_CONCEPT_KEY, settings.get(FEATURE_CONCEPT_KEY));
@@ -219,7 +220,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
     }
 
     public void setBatchSizeDefault(Integer batchSizeDefaultValue) {
-       this.batchSizeDefault = batchSizeDefaultValue;
+        this.batchSizeDefault = batchSizeDefaultValue;
     }
 
     public void setProvidedJdbcDefault(final boolean providedJdbc) {

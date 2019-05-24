@@ -35,7 +35,7 @@ import java.util.Map;
  * @since 4.0.0
  *
  */
-public class ControllerUtils {
+public final class ControllerUtils {
 
     private  ControllerUtils() {
     }

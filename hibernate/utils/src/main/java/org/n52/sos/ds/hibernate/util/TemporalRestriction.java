@@ -42,11 +42,12 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
- * Implements the 13 temporal relationships identified by Allen as {@link Criterion Criterions}. Specification can be
- * found in:
+ * Implements the 13 temporal relationships identified by Allen as
+ * {@link Criterion Criterions}. Specification can be found in:
  * <ul>
  * <li>ISO 19143:2009, Geographic information — Filter encoding</li>
- * <li>ISO 19108:2002, Geographic Information — Temporal schema, Section 5.2.3.5</li>
+ * <li>ISO 19108:2002, Geographic Information — Temporal schema, Section
+ * 5.2.3.5</li>
  * </ul>
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -55,18 +56,24 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 public interface TemporalRestriction {
 
     String START = "start";
+
     String END = "end";
+
     String INSTANT = "instant";
 
     /**
-     * Creates a criterion from this restriction for the specified fields and time.
+     * Creates a criterion from this restriction for the specified fields and
+     * time.
      *
-     * @param ref  the descriptor holding the property name(s)
-     * @param time the compared time
+     * @param ref
+     *            the descriptor holding the property name(s)
+     * @param time
+     *            the compared time
      *
      * @return a {@code Criterion} that describes this restriction
      *
-     * @throws UnsupportedTimeException if the supplied time can not be used with this restriction
+     * @throws UnsupportedTimeException
+     *             if the supplied time can not be used with this restriction
      */
     default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time) throws UnsupportedTimeException {
         if (time instanceof TimePeriod) {
@@ -78,7 +85,8 @@ public interface TemporalRestriction {
         }
     }
 
-    default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time, Integer count) throws UnsupportedTimeException {
+    default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time, Integer count)
+            throws UnsupportedTimeException {
         if (time instanceof TimePeriod) {
             return filterWithPeriod((TimePeriod) time, ref, false, count);
         } else if (time instanceof TimeInstant) {
@@ -107,12 +115,17 @@ public interface TemporalRestriction {
     /**
      * Applies this restriction to the specified time periods.
      *
-     * @param selfBegin  the property name of the begin time stamp
-     * @param selfEnd    the property name of the end time stamp
-     * @param otherBegin the begin instance of the compared time period
-     * @param otherEnd   the end instance of the compared time period
+     * @param selfBegin
+     *            the property name of the begin time stamp
+     * @param selfEnd
+     *            the property name of the end time stamp
+     * @param otherBegin
+     *            the begin instance of the compared time period
+     * @param otherEnd
+     *            the end instance of the compared time period
      *
-     * @return the criterion for the temporal relation (or {@code null} if not applicable)
+     * @return the criterion for the temporal relation (or {@code null} if not
+     *         applicable)
      */
     default Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
         return null;
@@ -125,25 +138,27 @@ public interface TemporalRestriction {
     /**
      * Applies this restriction to the specified time instance and time period.
      *
-     * @param selfPosition                             the property name of the instance
-     * @param otherBegin                               the begin instance of the compared time period
-     * @param otherEnd                                 the end instance of the compared time period
-     * @param isOtherPeriodFromReducedPrecisionInstant was the period interpreted from a reduced precision time? see
-     *                                                 DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition
+     * @param selfPosition
+     *            the property name of the instance
+     * @param otherBegin
+     *            the begin instance of the compared time period
+     * @param otherEnd
+     *            the end instance of the compared time period
+     * @param isOtherPeriodFromReducedPrecisionInstant
+     *            was the period interpreted from a reduced precision time? see
+     *            DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition
      *
-     * @return the criterion for the temporal relation (or {@code null} if not applicable)
+     * @return the criterion for the temporal relation (or {@code null} if not
+     *         applicable)
      */
     default Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
             boolean isOtherPeriodFromReducedPrecisionInstant) {
         return null;
     }
 
-
     default Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
         return null;
     }
-
-
 
     default Criterion filterInstantWithPeriod(String position, String endPosition, Date begin, Date end,
             boolean periodFromReducedPrecisionInstant) {
@@ -153,11 +168,15 @@ public interface TemporalRestriction {
     /**
      * Applies this restriction to the specified time period and time instance.
      *
-     * @param selfBegin     the property name of the begin time stamp
-     * @param selfEnd       the property name of the end time stamp
-     * @param otherPosition the position of the compared time instance
+     * @param selfBegin
+     *            the property name of the begin time stamp
+     * @param selfEnd
+     *            the property name of the end time stamp
+     * @param otherPosition
+     *            the position of the compared time instance
      *
-     * @return the criterion for the temporal relation (or {@code null} if not applicable)
+     * @return the criterion for the temporal relation (or {@code null} if not
+     *         applicable)
      */
     default Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
         return null;
@@ -170,10 +189,13 @@ public interface TemporalRestriction {
     /**
      * Applies this restriction to the specified time instantes.
      *
-     * @param selfPosition  the property name of the time instance
-     * @param otherPosition the position of the compared time instance
+     * @param selfPosition
+     *            the property name of the time instance
+     * @param otherPosition
+     *            the position of the compared time instance
      *
-     * @return the criterion for the temporal relation (or {@code null} if not applicable)
+     * @return the criterion for the temporal relation (or {@code null} if not
+     *         applicable)
      */
     default Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
         return null;
@@ -182,19 +204,25 @@ public interface TemporalRestriction {
     default Criterion filterInstantWithInstant(String selfPosition, String otherPosition, Integer count) {
         return null;
     }
+
     /**
-     * Create a filter for the specified period and fields. If the period is no real period but a instance, the method
-     * will call {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor) filterWithInstant()}.
+     * Create a filter for the specified period and fields. If the period is no
+     * real period but a instance, the method will call
+     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)
+     * filterWithInstant()}.
      *
-     * @param time the time
-     * @param r    the property name(s)
+     * @param time
+     *            the time
+     * @param r
+     *            the property name(s)
      *
      * @return the {@code Criterion} that describes this restriction
      */
     default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
-                                       boolean periodFromReducedPrecisionInstant) {
+            boolean periodFromReducedPrecisionInstant) {
         Date begin = time.resolveStart().toDate();
-        // FIXME should also incorporate reduced precision like getRequestedTimeLength()
+        // FIXME should also incorporate reduced precision like
+        // getRequestedTimeLength()
         // (Partially?) fixed with use of periodFromReducedPrecisionInstant?
         Date end = time.resolveEnd().toDate();
         if (begin.equals(end)) {
@@ -202,17 +230,19 @@ public interface TemporalRestriction {
         }
         if (r.isPeriod()) {
             return getPropertyCheckingCriterion(
-                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
+                    filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
+                    filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
         } else {
             return filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
         }
 
     }
 
-    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r, boolean periodFromReducedPrecisionInstant, Integer count) {
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant, Integer count) {
         Date begin = time.resolveStart().toDate();
-        // FIXME should also incorporate reduced precision like getRequestedTimeLength()
+        // FIXME should also incorporate reduced precision like
+        // getRequestedTimeLength()
         // (Partially?) fixed with use of periodFromReducedPrecisionInstant?
         Date end = time.resolveEnd().toDate();
         if (begin.equals(end)) {
@@ -225,20 +255,24 @@ public interface TemporalRestriction {
                             filterInstantWithPeriod(r.getPosition(), r.getPosition(), count), r)
                     : getPropertyCheckingCriterion(
                             filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
+                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant),
+                            r);
         } else {
-            return count != null
-                    ? filterInstantWithPeriod(r.getBeginPosition(), r.getEndPosition(), count)
+            return count != null ? filterInstantWithPeriod(r.getBeginPosition(), r.getEndPosition(), count)
                     : filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
         }
     }
 
     /**
-     * Creates a filter for the specfied instant and fields. In case of a instance with reduced precision a the method
-     * will call {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor) filterWithPeriod()}.
+     * Creates a filter for the specfied instant and fields. In case of a
+     * instance with reduced precision a the method will call
+     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor)
+     * filterWithPeriod()}.
      *
-     * @param time the time
-     * @param r    the property name(s)
+     * @param time
+     *            the time
+     * @param r
+     *            the property name(s)
      *
      * @return the {@code Criterion} that describes this restriction
      */
@@ -286,38 +320,47 @@ public interface TemporalRestriction {
                             filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count), r);
 
         } else {
-            return count != null
-                    ? filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count)
+            return count != null ? filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count)
                     : filterInstantWithInstant(r.getPosition(), begin);
         }
     }
 
     /**
-     * Check if {@code time} is a instance with reduces precision that describes a period (a day, a hour, etc.).
+     * Check if {@code time} is a instance with reduces precision that describes
+     * a period (a day, a hour, etc.).
      *
-     * @param time the instant to check
+     * @param time
+     *            the instant to check
      *
-     * @return the end date of the period the instance with reduced precision started or {@code null} if there is no
-     *         reduced precision
+     * @return the end date of the period the instance with reduced precision
+     *         started or {@code null} if there is no reduced precision
      */
     static Date checkInstantWithReducedPrecision(TimeInstant time) {
-        DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-                time.getValue(), time.getRequestedTimeLength());
+        DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(time.getValue(),
+                time.getRequestedTimeLength());
         return time.getValue().equals(end) ? null : end.toDate();
     }
 
     /**
-     * Creates a {@code Criterion} that takes care of instants that are saved as periods ({@code begin == end}). The
-     * method builds a composite that applies {@code periods} to "real" periods and {@code instants} to periods that are
-     * instants by definition.
+     * Creates a {@code Criterion} that takes care of instants that are saved as
+     * periods ({@code begin == end}). The method builds a composite that
+     * applies {@code periods} to "real" periods and {@code instants} to periods
+     * that are instants by definition.
      *
-     * @param periods  the {@code Criterion} for "real" periods (may be {@code null})
-     * @param instants the {@code Criterion} for periods with equal begin and end (may be {@code null})
-     * @param r        the {@code TimePrimitiveFieldDescriptor} that holds the property names
+     * @param periods
+     *            the {@code Criterion} for "real" periods (may be {@code null})
+     * @param instants
+     *            the {@code Criterion} for periods with equal begin and end
+     *            (may be {@code null})
+     * @param r
+     *            the {@code TimePrimitiveFieldDescriptor} that holds the
+     *            property names
      *
-     * @return the composite criterion or {@code null} if no {@code Criterion} could be applied
+     * @return the composite criterion or {@code null} if no {@code Criterion}
+     *         could be applied
      */
-    static Criterion getPropertyCheckingCriterion(Criterion periods, Criterion instants, TimePrimitiveFieldDescriptor r) {
+    static Criterion getPropertyCheckingCriterion(Criterion periods, Criterion instants,
+            TimePrimitiveFieldDescriptor r) {
         if (periods == null) {
             if (instants == null) {
                 return null;
@@ -327,15 +370,16 @@ public interface TemporalRestriction {
         } else if (instants == null) {
             return Restrictions.and(isPeriod(r), periods);
         } else {
-            return Restrictions.or(Restrictions.and(isPeriod(r), periods),
-                                   Restrictions.and(isInstant(r), instants));
+            return Restrictions.or(Restrictions.and(isPeriod(r), periods), Restrictions.and(isInstant(r), instants));
         }
     }
 
     /**
-     * Creates a {@code Criterion} that checks that the persisted period is a "real" period ({@code begin != end}).
+     * Creates a {@code Criterion} that checks that the persisted period is a
+     * "real" period ({@code begin != end}).
      *
-     * @param r the property names
+     * @param r
+     *            the property names
      *
      * @return the {@code Criterion}
      */
@@ -344,9 +388,11 @@ public interface TemporalRestriction {
     }
 
     /**
-     * Creates a {@code Criterion} that checks that the persisted period is a instant period ({@code begin == end}).
+     * Creates a {@code Criterion} that checks that the persisted period is a
+     * instant period ({@code begin == end}).
      *
-     * @param r the property names
+     * @param r
+     *            the property names
      *
      * @return the {@code Criterion}
      */

@@ -246,7 +246,7 @@ public abstract class DatasetFactory {
             } else if (o instanceof ComplexDataEntity) {
                 return complex();
             } else if (o instanceof ProfileDataEntity) {
-                Optional<DataEntity<?>> value = ((ProfileDataEntity)o).getValue().stream().findFirst();
+                Optional<DataEntity<?>> value = ((ProfileDataEntity) o).getValue().stream().findFirst();
                 if (value.isPresent()) {
                     if (value.get() instanceof QuantityDataEntity) {
                         return quantityProfile();

@@ -35,7 +35,7 @@ import org.n52.faroe.annotation.Setting;
 public class MetaDataConfigurations {
 
     private static MetaDataConfigurations instance;
-    private boolean showCiOnlineReourceInObservations = false;
+    private boolean showCiOnlineReourceInObservations;
 
     /**
      * @return Returns a singleton instance of the
@@ -44,7 +44,7 @@ public class MetaDataConfigurations {
     public static synchronized MetaDataConfigurations getInstance() {
         if (instance == null) {
             instance = new MetaDataConfigurations();
-//            SettingsManager.getInstance().configure(instance);
+            // SettingsManager.getInstance().configure(instance);
         }
         return instance;
     }

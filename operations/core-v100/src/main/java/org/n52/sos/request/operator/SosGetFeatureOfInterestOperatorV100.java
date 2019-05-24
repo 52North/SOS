@@ -44,8 +44,8 @@ import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
  *
  */
 public class SosGetFeatureOfInterestOperatorV100 extends
-        AbstractV1RequestOperator<AbstractGetFeatureOfInterestHandler, 
-                                    GetFeatureOfInterestRequest, 
+        AbstractV1RequestOperator<AbstractGetFeatureOfInterestHandler,
+                                    GetFeatureOfInterestRequest,
                                     GetFeatureOfInterestResponse> {
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetFeatureOfInterest.name();

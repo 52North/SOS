@@ -55,6 +55,7 @@ import org.n52.sos.util.GeometryHandler;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann
  */
 public class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHibernateProcedureDescriptionGeneratorSml {
@@ -62,37 +63,39 @@ public class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHiberna
             new HibernateProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
             new HibernateProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
-    public HibernateProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler,
-                                                       GeometryHandler geometryHandler, DaoFactory daoFactory,
-                                                       I18NDAORepository i18NDAORepository,
-                                                       ContentCacheController cacheController) {
+    public HibernateProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
+            DaoFactory daoFactory, I18NDAORepository i18NDAORepository, ContentCacheController cacheController) {
         super(profileHandler, geometryHandler, daoFactory, i18NDAORepository, cacheController);
     }
 
     @Override
-    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
-            throws OwsExceptionReport {
+    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
+            Session session) throws OwsExceptionReport {
         setLocale(i18n);
         // 2 try to get position from entity
-//        if (procedure.isSpatial()) {
-//            // 2.1 if position is available -> system -> own class <- should
-//            // be compliant with SWE lightweight profile
-//            if (hasChildProcedure(procedure.getIdentifier())) {
-//                return new SosProcedureDescription<>(createPhysicalSystem(procedure, session));
-//            } else {
-//                return new SosProcedureDescription<>(createPhysicalComponent(procedure, session));
-//            }
-//        } else {
-            // 2.2 if no position is available -> SimpleProcess -> own class
-            //                if (hasChildProcedure(procedure.getIdentifier())) {
-            //                    return createAggregateProcess(procedure, session);
-            //                } else {
-            return new SosProcedureDescription<>(createSimpleProcess(procedure, session));
-            //                }
-//        }
+        // if (procedure.isSpatial()) {
+        // // 2.1 if position is available -> system -> own class <- should
+        // // be compliant with SWE lightweight profile
+        // if (hasChildProcedure(procedure.getIdentifier())) {
+        // return new SosProcedureDescription<>(createPhysicalSystem(procedure,
+        // session));
+        // } else {
+        // return new
+        // SosProcedureDescription<>(createPhysicalComponent(procedure,
+        // session));
+        // }
+        // } else {
+        // 2.2 if no position is available -> SimpleProcess -> own class
+        // if (hasChildProcedure(procedure.getIdentifier())) {
+        // return createAggregateProcess(procedure, session);
+        // } else {
+        return new SosProcedureDescription<>(createSimpleProcess(procedure, session));
+        // }
+        // }
     }
 
-    private PhysicalComponent createPhysicalComponent(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
+    private PhysicalComponent createPhysicalComponent(ProcedureEntity procedure, Session session)
+            throws OwsExceptionReport {
         PhysicalComponent physicalComponent = new PhysicalComponent();
         setIdentifier(physicalComponent, procedure);
         setCommonValues(procedure, physicalComponent, session);
@@ -114,7 +117,8 @@ public class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHiberna
         return simpleProcess;
     }
 
-    private AggregateProcess createAggregateProcess(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
+    private AggregateProcess createAggregateProcess(ProcedureEntity procedure, Session session)
+            throws OwsExceptionReport {
         AggregateProcess aggregateProcess = new AggregateProcess();
         setIdentifier(aggregateProcess, procedure);
         setCommonValues(procedure, aggregateProcess, session);

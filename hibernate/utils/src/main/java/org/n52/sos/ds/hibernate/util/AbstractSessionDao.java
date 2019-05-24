@@ -53,7 +53,8 @@ public abstract class AbstractSessionDao {
         this.sessionFactory = Objects.requireNonNull(sessionFactory);
     }
 
-    protected <T, X extends Exception> Optional<T> throwingQueryOptional(ThrowingFunction<Session, T, X> query) throws X {
+    protected <T, X extends Exception> Optional<T> throwingQueryOptional(ThrowingFunction<Session, T, X> query)
+            throws X {
         T throwingQuery = throwingQuery(query);
         return Optional.ofNullable(throwingQuery);
     }

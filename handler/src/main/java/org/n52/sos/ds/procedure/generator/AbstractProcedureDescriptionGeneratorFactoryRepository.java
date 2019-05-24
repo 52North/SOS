@@ -43,11 +43,9 @@ import org.n52.janmayen.lifecycle.Constructable;
 
 import com.google.common.collect.Maps;
 
-public abstract class AbstractProcedureDescriptionGeneratorFactoryRepository<K, C extends Component<K>, F extends ComponentFactory<K, C>>
-        extends
-        AbstractComponentRepository<K, C, F>
-        implements
-        Constructable {
+public abstract class AbstractProcedureDescriptionGeneratorFactoryRepository<K, C extends Component<K>,
+                                                                             F extends ComponentFactory<K, C>>
+        extends AbstractComponentRepository<K, C, F> implements Constructable {
 
     private final Map<K, Producer<C>> factories = Maps.newHashMap();
 
@@ -78,8 +76,7 @@ public abstract class AbstractProcedureDescriptionGeneratorFactoryRepository<K, 
      */
     public abstract boolean hasProcedureDescriptionGeneratorFactory(String descriptionFormat);
 
-
-   protected Map<K, Producer<C>> getFactories() {
-       return factories;
-   }
+    protected Map<K, Producer<C>> getFactories() {
+        return factories;
+    }
 }

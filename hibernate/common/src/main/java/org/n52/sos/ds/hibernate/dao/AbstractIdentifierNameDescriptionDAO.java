@@ -55,30 +55,23 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         this.daoFactory = daoFactory;
     }
 
-    public void addIdentifierNameDescription(AbstractGML abstractFeature,
-            IdentifierNameDescriptionEntity entity,
-                                             Session session) {
+    public void addIdentifierNameDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
+            Session session) {
         addIdentifier(abstractFeature, entity, session);
         addName(abstractFeature, entity, session);
         addDescription(abstractFeature, entity);
     }
 
-    public void addIdentifier(AbstractGML abstractFeature,
-                    IdentifierNameDescriptionEntity entity,
-                              Session session) {
+    public void addIdentifier(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity, Session session) {
         addIdentifier(entity, abstractFeature.getIdentifierCodeWithAuthority(), session);
     }
 
-    public void addIdentifier(IdentifierNameDescriptionEntity entity,
-                              CodeWithAuthority identifier, Session session) {
-        String value = identifier != null && identifier.isSetValue()
-                               ? identifier.getValue() : null;
-        String codespace = identifier != null && identifier.isSetCodeSpace()
-                                   ? identifier.getCodeSpace()
-                           : OGCConstants.UNKNOWN;
+    public void addIdentifier(IdentifierNameDescriptionEntity entity, CodeWithAuthority identifier, Session session) {
+        String value = identifier != null && identifier.isSetValue() ? identifier.getValue() : null;
+        String codespace =
+                identifier != null && identifier.isSetCodeSpace() ? identifier.getCodeSpace() : OGCConstants.UNKNOWN;
         entity.setIdentifier(value);
-        entity.setIdentifierCodespace(new CodespaceDAO()
-                .getOrInsertCodespace(codespace, session));
+        entity.setIdentifierCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
     }
 
     public void addIdentifier(IdentifierNameDescriptionEntity entity, String identifier, Session session) {
@@ -88,9 +81,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         entity.setIdentifierCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
     }
 
-    public void addName(AbstractGML abstractFeature,
-            IdentifierNameDescriptionEntity entity,
-                        Session session) {
+    public void addName(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity, Session session) {
         addName(entity, abstractFeature.getFirstName(), session);
     }
 
@@ -101,24 +92,19 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         entity.setNameCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
     }
 
-    public void addName(IdentifierNameDescriptionEntity entity, CodeType name,
-                        Session session) {
-        String value = name != null && name.isSetValue()
-                               ? name.getValue() : null;
-        String codespace = name != null && name.isSetCodeSpace()
-                                   ? name.getCodeSpace().toString() : OGCConstants.UNKNOWN;
+    public void addName(IdentifierNameDescriptionEntity entity, CodeType name, Session session) {
+        String value = name != null && name.isSetValue() ? name.getValue() : null;
+        String codespace =
+                name != null && name.isSetCodeSpace() ? name.getCodeSpace().toString() : OGCConstants.UNKNOWN;
         entity.setName(value);
-        entity.setNameCodespace(new CodespaceDAO()
-                .getOrInsertCodespace(codespace, session));
+        entity.setNameCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
     }
 
-    public void addDescription(AbstractGML abstractFeature,
-            IdentifierNameDescriptionEntity entity) {
+    public void addDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity) {
         addDescription(entity, abstractFeature.getDescription());
     }
 
-    public void addDescription(IdentifierNameDescriptionEntity entity,
-                               String description) {
+    public void addDescription(IdentifierNameDescriptionEntity entity, String description) {
         if (description != null && !description.isEmpty()) {
             entity.setDescription(description);
         }
@@ -147,7 +133,8 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
                 try {
                     name.setCodeSpace(new URI(entity.getNameCodespace().getName()));
                 } catch (URISyntaxException e) {
-                    throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", entity.getNameCodespace().getName());
+                    throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
+                            entity.getNameCodespace().getName());
                 }
             }
             return name;
@@ -162,25 +149,28 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return null;
     }
 
-    public void insertNames(AbstractFeatureEntity feature, List<CodeType> name, I18NDAORepository i18nr, Session session) {
+    public void insertNames(AbstractFeatureEntity feature, List<CodeType> name, I18NDAORepository i18nr,
+            Session session) {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
         I18NDAO<I18NFeatureMetadata> dao = i18nr.getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
             CodespaceEntity codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
-//            i18ndao.insertI18N(feature, new I18NInsertionObject(codespace, codeType.getValue()), session);
+            // i18ndao.insertI18N(feature, new I18NInsertionObject(codespace,
+            // codeType.getValue()), session);
         }
     }
 
-    public void insertNameAndDescription(IdentifierNameDescriptionEntity entity,
-                                         AbstractFeature abstractFeature,
-                                         Session session) {
-        if (abstractFeature.isSetName()) {
-
-        }
-//        session.saveOrUpdate(
-//
-//        AbstractI18NDAO<?, ?> i18ndao = DaoFactory.getInstance().getI18NDAO(feature, session);
-//        featureOfInterestDAO.addIdentifierNameDescription(samplingFeature, feature, session);
+    public void insertNameAndDescription(IdentifierNameDescriptionEntity entity, AbstractFeature abstractFeature,
+            Session session) {
+        // if (abstractFeature.isSetName()) {
+        //
+        // }
+        // session.saveOrUpdate(
+        //
+        // AbstractI18NDAO<?, ?> i18ndao =
+        // DaoFactory.getInstance().getI18NDAO(feature, session);
+        // featureOfInterestDAO.addIdentifierNameDescription(samplingFeature,
+        // feature, session);
     }
 
     public DaoFactory getDaoFactory() {

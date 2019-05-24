@@ -41,11 +41,11 @@ public interface AdditionalObservationCreator extends Component<AdditionalObserv
 
     OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException;
 
-    OmObservation add(OmObservation omObservation, DataEntity<?> observation);
-
     OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException;
 
     OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
+
+    OmObservation add(OmObservation omObservation, DataEntity<?> observation);
 
     OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
 

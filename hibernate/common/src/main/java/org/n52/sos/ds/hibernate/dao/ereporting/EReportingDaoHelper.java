@@ -45,17 +45,21 @@ import org.n52.shetland.util.CollectionHelper;
 
 public interface EReportingDaoHelper {
 
-    default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request, StringBuilder logArgs)
-            throws OwsExceptionReport {
+    default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request,
+            StringBuilder logArgs) throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 if (isSetValidityFlags()) {
-                    c.add(Restrictions.in(DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION, getValidityFlags()));
+                    c.add(Restrictions.in(
+                            DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION,
+                            getValidityFlags()));
                     logArgs.append(", validationFlag");
                 }
                 if (isSetVerificationFlags()) {
-                    c.add(Restrictions.in(DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION, getVerificationFlags()));
+                    c.add(Restrictions.in(
+                            DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION,
+                            getVerificationFlags()));
                     logArgs.append(", verification");
                 }
             }

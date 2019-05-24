@@ -36,7 +36,6 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
-import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
@@ -64,7 +63,12 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
 
     private HibernateSessionStore sessionStore;
+
     private GetObservationDao dao;
+
+    public GetObservationHandler() {
+        super(SosConstants.SOS);
+    }
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
@@ -76,19 +80,14 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         this.dao = getObservationDao;
     }
 
-    public GetObservationHandler() {
-        super(SosConstants.SOS);
-    }
-
     @Override
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
-        if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) &&
-                request.getObservedProperties().isEmpty()) {
-           throw new MissingObservedPropertyParameterException();
-       }
-//       if (request.isSetResultFilter()) {
-//           throw new NotYetSupportedException("result filtering");
-//       }
+        if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) && request.getObservedProperties().isEmpty()) {
+            throw new MissingObservedPropertyParameterException();
+        }
+        // if (request.isSetResultFilter()) {
+        // throw new NotYetSupportedException("result filtering");
+        // }
         Session session = sessionStore.getSession();
         try {
             GetObservationResponse response = new GetObservationResponse();
@@ -104,8 +103,8 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
             dao.queryObservationData(request, response);
             return response;
         } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                    "Error while querying data for GetObservation!");
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying data for GetObservation!");
         } finally {
             sessionStore.returnSession(session);
         }
@@ -123,8 +122,10 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         }
         if (request.isSetSpatialFilter() && !request.hasSpatialFilteringProfileSpatialFilter()) {
             if (SpatialOperator.BBOX.equals(request.getSpatialFilter().getOperator())) {
-                if (request.getSpatialFilter().getGeometry().isGeometry() && request.getSpatialFilter().getGeometry().getGeometry().isPresent()) {
-                    Envelope envelope = request.getSpatialFilter().getGeometry().getGeometry().get().getEnvelopeInternal();
+                if (request.getSpatialFilter().getGeometry().isGeometry()
+                        && request.getSpatialFilter().getGeometry().getGeometry().isPresent()) {
+                    Envelope envelope =
+                            request.getSpatialFilter().getGeometry().getGeometry().get().getEnvelopeInternal();
                     if (envelope != null) {
                         List<Double> bbox = Lists.newArrayList();
                         bbox.add(envelope.getMinX());
@@ -133,7 +134,8 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
                         bbox.add(envelope.getMaxY());
                         map.put(IoParameters.BBOX, Joiner.on(",").join(bbox));
                     }
-                } else if (request.getSpatialFilter().getGeometry().isEnvelope() && request.getSpatialFilter().getGeometry().getEnvelope().isPresent()){
+                } else if (request.getSpatialFilter().getGeometry().isEnvelope()
+                        && request.getSpatialFilter().getGeometry().getEnvelope().isPresent()) {
                     Envelope envelope = request.getSpatialFilter().getGeometry().getEnvelope().get().getEnvelope();
                     if (envelope != null) {
                         List<Double> bbox = Lists.newArrayList();
@@ -156,6 +158,6 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         array[0] = x;
         array[1] = y;
         return array;
-     }
+    }
 
 }

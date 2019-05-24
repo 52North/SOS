@@ -46,43 +46,46 @@ import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implements EReportingDaoHelper {
-    private final Set<Integer> verificationFlags;
-    private final Set<Integer> validityFlags;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingValueTimeDAO.class);
 
-    public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags) {
+    private final Set<Integer> verificationFlags;
+
+    private final Set<Integer> validityFlags;
+
+    public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags,
+            GeometryHandler geometryHandler) {
+        super(geometryHandler);
         this.verificationFlags = verificationFlags;
         this.validityFlags = validityFlags;
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
+            throws OwsExceptionReport {
         // add quality restrictions
         addValidityAndVerificationRestrictions(c, request, logArgs);
     }
 
     @Override
-    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series, Criterion temporalFilterCriterion,
-            Session session) throws OwsExceptionReport {
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series,
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeries(series, temporalFilter): {}",
-                HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getTimeExtremaForSeries(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
 
     @Override
-    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilterCriterion,
-            Session session) throws OwsExceptionReport {
+    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series,
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaForSeriesIds(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}",
-                HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
 

@@ -79,9 +79,9 @@ import com.google.common.collect.Sets;
 @Configurable
 public abstract class AbstractProcedureDescriptionGenerator implements ProcedureDescriptionGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGenerator.class);
-
     protected static final Joiner COMMA_JOINER = Joiner.on(",");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGenerator.class);
 
     private Locale locale;
     private I18NDAORepository i18NDAORepository;

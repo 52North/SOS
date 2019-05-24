@@ -41,7 +41,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -75,19 +74,20 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
     }
 
     @Override
-    public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+    public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject)
+            throws OwsExceptionReport {
         return new ReferencedEnvelope(null, getStorageEPSG());
     }
 
     @Override
     public int getStorageEPSG() {
-//        return super.getStorageEPSG();
+        // return super.getStorageEPSG();
         return 0;
     }
 
     @Override
     public int getStorage3DEPSG() {
-//        return super.getStorage3DEPSG();
+        // return super.getStorage3DEPSG();
         return 0;
     }
 

@@ -60,8 +60,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws
-            OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features, Session session)
+            throws OwsExceptionReport {
         List<DatasetEntity> series = new ArrayList<>();
         if (CollectionHelper.isNotEmpty(features)) {
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -76,7 +76,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session)
+            throws OwsExceptionReport {
         return getSeriesCriteria(request.getObservationIdentifier(), session).list();
     }
 
@@ -102,7 +103,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @Override
     @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(Collection<String> procedures, Collection<String> observedProperties,
-                                  Collection<String> features, Session session) {
+            Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
             List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -145,7 +146,8 @@ public class SeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+    public List<DatasetEntity> getSeries(String procedure, String observedProperty, String offering,
+            Collection<String> features, Session session) {
         if (CollectionHelper.isNotEmpty(features)) {
             List<DatasetEntity> series = new ArrayList<>();
             for (List<String> ids : QueryHelper.getListsForIdentifiers(features)) {
@@ -157,18 +159,21 @@ public class SeriesDAO extends AbstractSeriesDAO {
         }
     }
 
-    @Override
-    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest, Session session) {
-        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session).uniqueResult();
-    }
-
     @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session) {
         return (List<DatasetEntity>) getSeriesCriteriaFor(procedure, observableProperty, session).list();
     }
 
     @Override
-    public DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation, final Session session) throws OwsExceptionReport {
+    public DatasetEntity getSeriesFor(String procedure, String observableProperty, String featureOfInterest,
+            Session session) {
+        return (DatasetEntity) getSeriesCriteriaFor(procedure, observableProperty, featureOfInterest, session)
+                .uniqueResult();
+    }
+
+    @Override
+    public DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation, final Session session)
+            throws OwsExceptionReport {
         return getOrInsert(ctx, observation, session);
     }
 
@@ -186,9 +191,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
         return DefaultDatasetFactory.getInstance();
     }
 
-    private static class DefaultDatasetFactory
-            extends
-            DatasetFactory {
+    private static class DefaultDatasetFactory extends DatasetFactory {
 
         protected DefaultDatasetFactory() {
         }
@@ -277,7 +280,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
             return Holder.INSTANCE;
         }
 
-        private static class Holder {
+        private static final class Holder {
             private static final DefaultDatasetFactory INSTANCE = new DefaultDatasetFactory();
 
             private Holder() {

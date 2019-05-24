@@ -46,32 +46,34 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Maps;
 
 public class AdditionalObservationCreatorRepository extends
-        AbstractComponentRepository<AdditionalObservationCreatorKey, AdditionalObservationCreator, AdditionalObservationCreatorFactory>
+        AbstractComponentRepository<AdditionalObservationCreatorKey,
+        AdditionalObservationCreator,
+        AdditionalObservationCreatorFactory>
         implements Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
 
     @Deprecated
     private static AdditionalObservationCreatorRepository instance;
-    private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
-            = Maps.newHashMap();
 
+    private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>>
+                                        additionalObservationCreator = Maps.newHashMap();
 
     @Inject
     private Optional<Collection<AdditionalObservationCreator>> components = Optional.of(Collections.emptyList());
 
     @Inject
-    private Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories = Optional.of(Collections.emptyList());
+    private Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories =
+            Optional.of(Collections.emptyList());
 
     @Override
     public void init() {
         AdditionalObservationCreatorRepository.instance = this;
-        Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> implementations
-                = getUniqueProviders(this.components, this.componentFactories);
-                this.additionalObservationCreator.clear();
+        Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> implementations =
+                getUniqueProviders(this.components, this.componentFactories);
+        this.additionalObservationCreator.clear();
         this.additionalObservationCreator.putAll(implementations);
     }
-
 
     public AdditionalObservationCreator get(AdditionalObservationCreatorKey key) {
         Producer<AdditionalObservationCreator> producer = additionalObservationCreator.get(key);

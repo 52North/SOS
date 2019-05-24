@@ -60,7 +60,7 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
             new ProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE),
             new ProcedureDescriptionGeneratorKey(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL));
 
-    public ProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
+    ProcedureDescriptionGeneratorSml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl,
             boolean isAddOutputsToSensorML) {
         super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl,
@@ -73,8 +73,8 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
     }
 
     @Override
-    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
-            throws OwsExceptionReport {
+    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
+            Session session) throws OwsExceptionReport {
         setLocale(i18n);
         try {
             // 2 try to get position from entity
@@ -96,11 +96,12 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
             }
         } catch (DataAccessException e) {
             throw new NoApplicableCodeException().causedBy(e)
-            .withMessage("Error while querying data for DescribeSensor document!");
-}
+                    .withMessage("Error while querying data for DescribeSensor document!");
+        }
     }
 
-    private PhysicalComponent createPhysicalComponent(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
+    private PhysicalComponent createPhysicalComponent(ProcedureEntity procedure, Session session)
+            throws OwsExceptionReport {
         PhysicalComponent physicalComponent = new PhysicalComponent();
         setIdentifier(physicalComponent, procedure);
         setCommonValues(procedure, physicalComponent, session);
@@ -122,7 +123,8 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
         return simpleProcess;
     }
 
-    private AggregateProcess createAggregateProcess(ProcedureEntity procedure, Session session) throws OwsExceptionReport {
+    private AggregateProcess createAggregateProcess(ProcedureEntity procedure, Session session)
+            throws OwsExceptionReport {
         AggregateProcess aggregateProcess = new AggregateProcess();
         setIdentifier(aggregateProcess, procedure);
         setCommonValues(procedure, aggregateProcess, session);
@@ -136,7 +138,7 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
 
     @Override
     protected SweAbstractDataComponent getInputComponent(String observableProperty) {
-        return  new SweText().setDefinition(observableProperty);
+        return new SweText().setDefinition(observableProperty);
     }
 
 }

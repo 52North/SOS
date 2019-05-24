@@ -62,22 +62,26 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdate.class);
 
     private static final String THREAD_GROUP_NAME = "procedure-cache-update";
+
     private Collection<ProcedureEntity> procedures = new ArrayList<>();
-    private Map<String,Collection<DatasetEntity>> procedureDatasetMap = new HashMap<>();
+
+    private Map<String, Collection<DatasetEntity>> procedureDatasetMap = new HashMap<>();
 
     /**
      * constructor
-     * @param threads Thread count
+     *
+     * @param threads
+     *            Thread count
      */
     public ProcedureCacheUpdate(int threads, HibernateSessionStore sessionStore) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String,Collection<DatasetEntity>> getProcedureDatasets() throws OwsExceptionReport {
+    private Map<String, Collection<DatasetEntity>> getProcedureDatasets() throws OwsExceptionReport {
         if (procedureDatasetMap.isEmpty()) {
-            Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper.mapByProcedure(
-                    new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
+            Map<String, Collection<DatasetEntity>> map = DatasourceCacheUpdateHelper
+                    .mapByProcedure(new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
             if (map != null) {
                 procedureDatasetMap.putAll(map);
             }
@@ -95,9 +99,11 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 
     private void setAggregatedProcedure(ProcedureEntity procedure) {
         if (procedure.isAggregation()) {
-            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION, procedure.getIdentifier());
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION,
+                    procedure.getIdentifier());
         } else {
-            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT, procedure.getIdentifier());
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT,
+                    procedure.getIdentifier());
         }
     }
 
@@ -118,17 +124,18 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
         for (ProcedureEntity procedure : procedures) {
-            procedureUpdateTasks.add(new ProcedureCacheUpdateTask(procedure, procedureDatasetMap.get(procedure.getIdentifier())));
+            procedureUpdateTasks
+                    .add(new ProcedureCacheUpdateTask(procedure, procedureDatasetMap.get(procedure.getIdentifier())));
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
 
     @Override
     public void execute() {
-        //single threaded updates
+        // single threaded updates
         LOGGER.debug("Executing ProcedureCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
-//        getProcedureDescriptionFormat();
+        // getProcedureDescriptionFormat();
         try {
             procedures = new ProcedureDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
             getProcedureDatasets();
@@ -156,29 +163,35 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating procedure cache!"));
         }
-//        //time ranges
-//        //TODO querying procedure time extrema in a single query is definitely faster for a properly
-//        //     indexed Postgres db, but may not be true for all platforms. move back to multithreaded execution
-//        //     in ProcedureCacheUpdateTask if needed
-//        Map<String, TimeExtrema> procedureTimeExtrema = null;
-//        try {
-//            procedureTimeExtrema = procedureDAO.getProcedureTimeExtrema(getSession());
-//
-//        } catch (OwsExceptionReport ce) {
-//            LOGGER.error("Error while querying offering time ranges!", ce);
-//            getErrors().add(ce);
-//        }
-//        if (!CollectionHelper.isEmpty(procedureTimeExtrema)) {
-//            for (Entry<String, TimeExtrema> entry : procedureTimeExtrema.entrySet()) {
-//                String procedureId = entry.getKey();
-//                TimeExtrema te = entry.getValue();
-//                getCache().setMinPhenomenonTimeForProcedure(procedureId, te.getMinPhenomenonTime());
-//                getCache().setMaxPhenomenonTimeForProcedure(procedureId, te.getMaxPhenomenonTime());
-//            }
-//        }
+        // //time ranges
+        // //TODO querying procedure time extrema in a single query is
+        // definitely faster for a properly
+        // // indexed Postgres db, but may not be true for all platforms. move
+        // back to multithreaded execution
+        // // in ProcedureCacheUpdateTask if needed
+        // Map<String, TimeExtrema> procedureTimeExtrema = null;
+        // try {
+        // procedureTimeExtrema =
+        // procedureDAO.getProcedureTimeExtrema(getSession());
+        //
+        // } catch (OwsExceptionReport ce) {
+        // LOGGER.error("Error while querying offering time ranges!", ce);
+        // getErrors().add(ce);
+        // }
+        // if (!CollectionHelper.isEmpty(procedureTimeExtrema)) {
+        // for (Entry<String, TimeExtrema> entry :
+        // procedureTimeExtrema.entrySet()) {
+        // String procedureId = entry.getKey();
+        // TimeExtrema te = entry.getValue();
+        // getCache().setMinPhenomenonTimeForProcedure(procedureId,
+        // te.getMinPhenomenonTime());
+        // getCache().setMaxPhenomenonTimeForProcedure(procedureId,
+        // te.getMaxPhenomenonTime());
+        // }
+        // }
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
-        //multi-threaded execution
+        // multi-threaded execution
         LOGGER.debug("Executing ProcedureCacheUpdate (Multi-Threaded Tasks)");
         startStopwatch();
         super.execute();

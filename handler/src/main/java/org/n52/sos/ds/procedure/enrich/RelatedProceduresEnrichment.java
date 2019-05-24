@@ -83,7 +83,7 @@ public class RelatedProceduresEnrichment
     /**
      * Get parent procedures
      *
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     protected Set<String> getParentProcedures()
             throws OwsExceptionReport {

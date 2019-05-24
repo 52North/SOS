@@ -36,7 +36,6 @@ import java.util.Set;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DbQuery;
@@ -57,7 +56,9 @@ import com.google.common.collect.Sets;
 class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdateTask.class);
+
     private ProcedureEntity procedure;
+
     private Collection<DatasetEntity> datasets = new HashSet<>();
 
     /**
@@ -81,17 +82,17 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         if (datasets != null) {
             String identifier = procedure.getIdentifier();
             getCache().addProcedure(identifier);
-            if (!datasets.isEmpty() && datasets.stream()
-                    .anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
+            if (!datasets.isEmpty() && datasets.stream().anyMatch(d -> d.isPublished()
+                    || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
                 getCache().addPublishedProcedure(identifier);
             }
             if (procedure.isSetName()) {
                 getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
             }
-            getCache().setOfferingsForProcedure(identifier, DatasourceCacheUpdateHelper
-                    .getAllOfferingIdentifiersFromDatasets(datasets));
-            getCache().setObservablePropertiesForProcedure(identifier, DatasourceCacheUpdateHelper
-                    .getAllObservablePropertyIdentifiersFromDatasets(datasets));
+            getCache().setOfferingsForProcedure(identifier,
+                    DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromDatasets(datasets));
+            getCache().setObservablePropertiesForProcedure(identifier,
+                    DatasourceCacheUpdateHelper.getAllObservablePropertyIdentifiersFromDatasets(datasets));
 
             if (procedure.hasParents()) {
                 Collection<String> parents = getParents(procedure);

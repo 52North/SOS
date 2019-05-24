@@ -36,20 +36,25 @@ import org.n52.shetland.util.CollectionHelper;
 import com.google.common.collect.Maps;
 
 /**
- * Simple class for returning observation constellation info, designed to be fast and to
- * load all necessary info for all observation constellations in a single query
- * (useful during cache loading)
+ * Simple class for returning observation constellation info, designed to be
+ * fast and to load all necessary info for all observation constellations in a
+ * single query (useful during cache loading)
  */
 public class ObservationConstellationInfo {
     private String offering;
+
     private String procedure;
+
     private String observableProperty;
+
     private String observationType;
-    private boolean hiddenChild = false;
+
+    private boolean hiddenChild;
 
     public String getOffering() {
         return offering;
     }
+
     public void setOffering(String offering) {
         this.offering = offering;
     }
@@ -57,6 +62,7 @@ public class ObservationConstellationInfo {
     public String getProcedure() {
         return procedure;
     }
+
     public void setProcedure(String procedure) {
         this.procedure = procedure;
     }
@@ -64,6 +70,7 @@ public class ObservationConstellationInfo {
     public String getObservableProperty() {
         return observableProperty;
     }
+
     public void setObservableProperty(String observableProperty) {
         this.observableProperty = observableProperty;
     }
@@ -71,6 +78,7 @@ public class ObservationConstellationInfo {
     public String getObservationType() {
         return observationType;
     }
+
     public void setObservationType(String observationType) {
         this.observationType = observationType;
     }
@@ -78,31 +86,32 @@ public class ObservationConstellationInfo {
     public boolean isHiddenChild() {
         return hiddenChild;
     }
+
     public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
     }
 
-    public static Map<String,Collection<ObservationConstellationInfo>> mapByOffering(
+    public static Map<String, Collection<ObservationConstellationInfo>> mapByOffering(
             Collection<ObservationConstellationInfo> ocis) {
-        Map<String,Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
+        Map<String, Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
         for (ObservationConstellationInfo oci : ocis) {
             CollectionHelper.addToCollectionMap(oci.getOffering(), oci, map);
         }
         return map;
     }
 
-    public static Map<String,Collection<ObservationConstellationInfo>> mapByProcedure(
+    public static Map<String, Collection<ObservationConstellationInfo>> mapByProcedure(
             Collection<ObservationConstellationInfo> ocis) {
-        Map<String,Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
+        Map<String, Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
         for (ObservationConstellationInfo oci : ocis) {
             CollectionHelper.addToCollectionMap(oci.getProcedure(), oci, map);
         }
         return map;
     }
 
-    public static Map<String,Collection<ObservationConstellationInfo>> mapByObservableProperty(
+    public static Map<String, Collection<ObservationConstellationInfo>> mapByObservableProperty(
             Collection<ObservationConstellationInfo> ocis) {
-        Map<String,Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
+        Map<String, Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
         for (ObservationConstellationInfo oci : ocis) {
             CollectionHelper.addToCollectionMap(oci.getObservableProperty(), oci, map);
         }

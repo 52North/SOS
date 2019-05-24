@@ -40,8 +40,9 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
  *
  * @since 4.0.0
  */
-public class SpatialRestrictions {
+public final class SpatialRestrictions {
     private static final int DWITHIN_DISTANCE = 10;
+
     private SpatialRestrictions() {
     }
 

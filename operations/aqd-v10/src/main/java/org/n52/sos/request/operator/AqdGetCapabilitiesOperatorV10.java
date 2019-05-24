@@ -28,20 +28,16 @@
  */
 package org.n52.sos.request.operator;
 
-
-import static java.util.stream.Collectors.toList;
-import static org.n52.janmayen.function.Functions.mutate;
-
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.janmayen.function.Functions;
+import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -55,11 +51,12 @@ import org.n52.shetland.ogc.ows.OwsServiceIdentification;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.http.HTTPMethods;
-import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
-
+import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 
 public class AqdGetCapabilitiesOperatorV10 extends
         AbstractAqdRequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
@@ -72,12 +69,12 @@ public class AqdGetCapabilitiesOperatorV10 extends
 
     @Override
     public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
-        return modifyCapabilities((GetCapabilitiesResponse) changeResponseServiceVersion(getOperationHandler().getCapabilities(
-                (GetCapabilitiesRequest) changeRequestServiceVersion(request))));
+        return modifyCapabilities((GetCapabilitiesResponse) changeResponseServiceVersion(
+                getOperationHandler().getCapabilities((GetCapabilitiesRequest) changeRequestServiceVersion(request))));
     }
 
     private GetCapabilitiesResponse modifyCapabilities(GetCapabilitiesResponse response) {
-        SosCapabilities capabilities = (SosCapabilities)response.getCapabilities();
+        SosCapabilities capabilities = (SosCapabilities) response.getCapabilities();
         capabilities.setVersion(AqdConstants.VERSION);
         capabilities.setService(AqdConstants.AQD);
         capabilities.getServiceIdentification().ifPresent(this::modifyServiceIdentification);
@@ -87,21 +84,18 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     private void addFlowParameter(OwsOperation operation) {
-        operation.addParameter(new OwsDomain(AqdConstants.EXTENSION_FLOW, new OwsAllowedValues(Arrays
-                                    .stream(ReportObligationType.values())
-                                    .map(ReportObligationType::name).map(OwsValue::new))));
+        operation.addParameter(new OwsDomain(AqdConstants.EXTENSION_FLOW, new OwsAllowedValues(
+                Arrays.stream(ReportObligationType.values()).map(ReportObligationType::name).map(OwsValue::new))));
     }
 
     private void removeJSONEndpoint(OwsOperation operation) {
-        operation.getDCP().stream()
-                .filter(OwsDCP::isHTTP)
-                .map(OwsDCP::asHTTP)
+        operation.getDCP().stream().filter(OwsDCP::isHTTP).map(OwsDCP::asHTTP)
                 .forEach(http -> http.removeRequestMethodIf(this::isJsonEndpoint));
     }
 
-    private boolean isJsonEndpoint(OwsRequestMethod  method) {
-        return method.getHttpMethod().equals(HTTPMethods.POST) &&
-               method.getHref().map(URI::getPath).map(path -> path.endsWith("/json")).orElse(false);
+    private boolean isJsonEndpoint(OwsRequestMethod method) {
+        return method.getHttpMethod().equals(HTTPMethods.POST)
+                && method.getHref().map(URI::getPath).map(path -> path.endsWith("/json")).orElse(false);
     }
 
     @Override
@@ -158,10 +152,11 @@ public class AqdGetCapabilitiesOperatorV10 extends
 
         SortedSet<OwsOperation> operations = operationsMetadata.getOperations();
         operationsMetadata.setOperations(Stream.concat(
-                operations.stream().filter(this::isGetCapabilities).map(mutate(this::setAcceptVersionsParameter)),
-                operations.stream().filter(this::isGetObservation).map(mutate(this::setResponseFormat))
-        )
-                .map(mutate(this::removeJSONEndpoint)).map(mutate(this::addFlowParameter)).collect(toList()));
+                operations.stream().filter(this::isGetCapabilities)
+                        .map(Functions.mutate(this::setAcceptVersionsParameter)),
+                operations.stream().filter(this::isGetObservation).map(Functions.mutate(this::setResponseFormat)))
+                .map(Functions.mutate(this::removeJSONEndpoint)).map(Functions.mutate(this::addFlowParameter))
+                .collect(Collectors.toList()));
     }
 
     private void modifyContents(Collection<SosObservationOffering> contents) {
@@ -173,12 +168,10 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     private void modifyCommonParameters(SortedSet<OwsDomain> parameters) {
-        parameters.stream()
-                .filter(d -> d.getName().equals(OWSConstants.RequestParams.service.name()))
+        parameters.stream().filter(d -> d.getName().equals(OWSConstants.RequestParams.service.name()))
                 .forEach(d -> d.setPossibleValues(new OwsAllowedValues(new OwsValue(AqdConstants.AQD))));
 
-        parameters.stream()
-                .filter(d -> d.getName().equals(OWSConstants.RequestParams.version.name()))
+        parameters.stream().filter(d -> d.getName().equals(OWSConstants.RequestParams.version.name()))
                 .forEach(d -> d.setPossibleValues(new OwsAllowedValues(new OwsValue(AqdConstants.VERSION))));
     }
 

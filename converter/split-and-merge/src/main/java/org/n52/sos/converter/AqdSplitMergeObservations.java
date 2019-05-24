@@ -96,7 +96,7 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
      * Merge result time with passed observation result time
      *
      * @param sosObservation
-     *            Merged observation 
+     *            Merged observation
      * @param sosObservation the observation to merge
      */
     private void mergeResultTimes(final OmObservation combinedSosObs, OmObservation sosObservation) {

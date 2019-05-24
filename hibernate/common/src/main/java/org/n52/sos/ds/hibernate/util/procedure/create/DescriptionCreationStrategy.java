@@ -43,7 +43,7 @@ import com.google.common.base.Predicate;
  */
 public interface DescriptionCreationStrategy extends Predicate<ProcedureEntity> {
 
-    SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n, HibernateProcedureCreationContext ctx, Session s)
-            throws OwsExceptionReport;
+    SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
+            HibernateProcedureCreationContext ctx, Session s) throws OwsExceptionReport;
 
 }

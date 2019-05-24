@@ -29,11 +29,9 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
@@ -63,7 +61,8 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
             Collection<PhenomenonEntity> observableProperties =
                     new PhenomenonDao(getSession()).get(new DbQuery(IoParameters.createDefaults()));
             for (PhenomenonEntity observableProperty : observableProperties) {
-                Collection<DatasetEntity> datasets = new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
+                Collection<DatasetEntity> datasets =
+                        new DatasetDao<>(getSession()).get(createDatasetDbQuery(observableProperty));
                 String identifier = observableProperty.getIdentifier();
 
                 if (observableProperty.isSetName()) {
@@ -77,18 +76,15 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                     }
                 }
 
-
-
                 if (datasets != null && !datasets.isEmpty()) {
-                    if (datasets.stream().anyMatch(d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
+                    if (datasets.stream().anyMatch(
+                        d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized))) {
                         getCache().addPublishedObservableProperty(identifier);
                     }
                     getCache().setOfferingsForObservableProperty(identifier,
-                            DatasourceCacheUpdateHelper
-                                    .getAllOfferingIdentifiersFromDatasets(datasets));
+                            DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromDatasets(datasets));
                     getCache().setProceduresForObservableProperty(identifier,
-                            DatasourceCacheUpdateHelper
-                                    .getAllProcedureIdentifiersFromDatasets(datasets));
+                            DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromDatasets(datasets));
                 }
             }
         } catch (HibernateException he) {

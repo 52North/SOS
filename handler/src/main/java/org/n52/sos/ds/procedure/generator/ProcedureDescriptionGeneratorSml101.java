@@ -55,11 +55,11 @@ import org.n52.sos.util.GeometryHandler;
 
 class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGeneratorSml {
 
-    public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES = CollectionHelper
-            .set(new ProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
-                 new ProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
+    public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES = CollectionHelper.set(
+            new ProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
+            new ProcedureDescriptionGeneratorKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL));
 
-    public ProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler, GeometryHandler geometryHandler,
+    ProcedureDescriptionGeneratorSml101(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController, String srsNamePrefixUrl,
             boolean isAddOutputsToSensorML) {
         super(profileHandler, geometryHandler, i18ndaoRepository, cacheController, srsNamePrefixUrl,
@@ -86,7 +86,8 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
      *             If an error occurs
      */
     @Override
-    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session) throws OwsExceptionReport {
+    public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
+            Session session) throws OwsExceptionReport {
         setLocale(i18n);
         try {
             // 2 try to get position from entity
@@ -119,7 +120,7 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
         final ProcessModel processModel = new ProcessModel();
         setCommonValues(procedure, processModel, session);
         processModel.setMethod(createMethod(procedure, getObservablePropertiesForProcedure(procedure, session)));
-//        processModel.setNames(createNames(procedure));
+        // processModel.setNames(createNames(procedure));
         return processModel;
     }
 
@@ -176,6 +177,6 @@ class ProcedureDescriptionGeneratorSml101 extends AbstractProcedureDescriptionGe
 
     @Override
     protected SweAbstractDataComponent getInputComponent(String observableProperty) {
-        return  new SweObservableProperty().setDefinition(observableProperty);
+        return new SweObservableProperty().setDefinition(observableProperty);
     }
 }

@@ -28,17 +28,14 @@
  */
 package org.n52.sos.ds.datasource;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.text.IsEmptyString.isEmptyString;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.text.IsEmptyString;
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.faroe.SettingDefinition;
 
@@ -49,6 +46,15 @@ import org.n52.faroe.SettingDefinition;
  */
 public class AbstractSqlServerDatasourceTest {
 
+    private static final String PORT = "port";
+    private static final String SERVER = "server";
+    private static final String INSTANCE = "instance";
+    private static final String DATABASE = "database";
+    private static final String DATABASE_NAME = ";databaseName=";
+    private static final String INSTANCE_NAME = ";instance=";
+    private static final String JDBC = "jdbc:sqlserver://";
+    private static final String PORT_VALUE = "1433";
+    
     @Test
     public void databaseDescriptionShouldNotBeHostDescription() {
         String databaseDescription = "";
@@ -62,9 +68,9 @@ public class AbstractSqlServerDatasourceTest {
                 hostDescription = settingDefinition.getDescription();
             }
         }
-        assertThat(hostDescription, not(isEmptyString()));
-        assertThat(databaseDescription, not(isEmptyString()));
-        assertThat(hostDescription, is(not(databaseDescription)));
+        Assert.assertThat(hostDescription, CoreMatchers.not(IsEmptyString.isEmptyString()));
+        Assert.assertThat(databaseDescription, CoreMatchers.not(IsEmptyString.isEmptyString()));
+        Assert.assertThat(hostDescription, CoreMatchers.is(CoreMatchers.not(databaseDescription)));
     }
 
     @Test
@@ -76,42 +82,42 @@ public class AbstractSqlServerDatasourceTest {
             if (settingDefinition.getKey().equalsIgnoreCase(AbstractSqlServerDatasource.INSTANCE_KEY)) {
                 found = true;
                 if (!settingDefinition.isOptional()) {
-                    fail("Instance setting is not optional");
+                    Assert.fail("Instance setting is not optional");
                 }
             }
         }
         if (!found) {
-            fail("Instance setting not found");
+            Assert.fail("Instance setting not found");
         }
     }
 
     @Test
     public void toUrlShouldEncodeWithoutOptionalInstance() {
-        String port = "port";
-        String server = "server";
-        String database = "database";
-        final String expected = "jdbc:sqlserver://" +
+        String port = PORT;
+        String server = SERVER;
+        String database = DATABASE;
+        final String expected = JDBC +
                 server + ":" +
-                port + ";databaseName=" +
+                port + DATABASE_NAME +
                 database;
         final Map<String, Object> settings = new LinkedHashMap<>();
         settings.put(AbstractHibernateCoreDatasource.HOST_KEY, server);
         settings.put(AbstractHibernateCoreDatasource.PORT_KEY, port);
         settings.put(AbstractHibernateCoreDatasource.DATABASE_KEY, database);
         final String created = new AbstractSqlServerDatasourceSeam().toURL(settings);
-        assertThat(created, is(expected));
+        Assert.assertThat(created, CoreMatchers.is(expected));
     }
 
     @Test
     public void toUrlShouldEncodeServerPortInstanceAndDatabaseName() {
-        String instance = "instance";
-        String port = "port";
-        String server = "server";
-        String database = "database";
-        final String expected = "jdbc:sqlserver://" +
+        String instance = INSTANCE;
+        String port = PORT;
+        String server = SERVER;
+        String database = DATABASE;
+        final String expected = JDBC +
                 server + ":" +
-                port + ";instance=" +
-                instance + ";databaseName=" +
+                port + INSTANCE_NAME +
+                instance + DATABASE_NAME +
                 database;
         final Map<String, Object> settings = new LinkedHashMap<>();
         settings.put(AbstractHibernateCoreDatasource.HOST_KEY, server);
@@ -119,38 +125,38 @@ public class AbstractSqlServerDatasourceTest {
         settings.put(AbstractHibernateCoreDatasource.DATABASE_KEY, database);
         settings.put(AbstractSqlServerDatasource.INSTANCE_KEY, instance);
         final String created = new AbstractSqlServerDatasourceSeam().toURL(settings);
-        assertThat(created, is(expected));
+        Assert.assertThat(created, CoreMatchers.is(expected));
     }
 
     @Test
-    public void parseUrlShouldExtractInstancePortDatabaseNameAndServer(){
-        String expectedServer = "server";
-        String expectedPort = "1433";
-        String expectedInstance = "instance";
-        String expectedDatabaseName = "database";
-        String[] parsedValues = new AbstractSqlServerDatasourceSeam().parseURL("jdbc:sqlserver://" +
+    public void parseUrlShouldExtractInstancePortDatabaseNameAndServer() {
+        String expectedServer = SERVER;
+        String expectedPort = PORT_VALUE;
+        String expectedInstance = INSTANCE;
+        String expectedDatabaseName = DATABASE;
+        String[] parsedValues = new AbstractSqlServerDatasourceSeam().parseURL(JDBC +
                 expectedServer + ":" +
-                expectedPort + ";instance=" +
-                expectedInstance + ";databaseName=" +
+                expectedPort + INSTANCE_NAME +
+                expectedInstance + DATABASE_NAME +
                 expectedDatabaseName);
-        assertThat(parsedValues[0], is(expectedServer));
-        assertThat(parsedValues[1], is(expectedPort));
-        assertThat(parsedValues[2], is(expectedDatabaseName));
-        assertThat(parsedValues[3], is(expectedInstance));
+        Assert.assertThat(parsedValues[0], CoreMatchers.is(expectedServer));
+        Assert.assertThat(parsedValues[1], CoreMatchers.is(expectedPort));
+        Assert.assertThat(parsedValues[2], CoreMatchers.is(expectedDatabaseName));
+        Assert.assertThat(parsedValues[3], CoreMatchers.is(expectedInstance));
     }
 
     @Test
-    public void parseUrlShouldWorkWithoutOptionalInstance(){
-        String expectedServer = "server";
-        String expectedPort = "1433";
-        String expectedDatabaseName = "database";
-        String[] parsedValues = new AbstractSqlServerDatasourceSeam().parseURL("jdbc:sqlserver://" +
+    public void parseUrlShouldWorkWithoutOptionalInstance() {
+        String expectedServer = SERVER;
+        String expectedPort = PORT_VALUE;
+        String expectedDatabaseName = DATABASE;
+        String[] parsedValues = new AbstractSqlServerDatasourceSeam().parseURL(JDBC +
                 expectedServer + ":" +
-                expectedPort + ";databaseName=" +
+                expectedPort + DATABASE_NAME +
                 expectedDatabaseName);
-        assertThat(parsedValues[0], is(expectedServer));
-        assertThat(parsedValues[1], is(expectedPort));
-        assertThat(parsedValues[2], is(expectedDatabaseName));
+        Assert.assertThat(parsedValues[0], CoreMatchers.is(expectedServer));
+        Assert.assertThat(parsedValues[1], CoreMatchers.is(expectedPort));
+        Assert.assertThat(parsedValues[2], CoreMatchers.is(expectedDatabaseName));
     }
 
     private class AbstractSqlServerDatasourceSeam extends AbstractSqlServerDatasource {

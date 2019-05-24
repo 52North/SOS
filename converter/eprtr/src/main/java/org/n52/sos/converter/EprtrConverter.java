@@ -96,7 +96,7 @@ import com.google.common.collect.Sets;
 public class EprtrConverter implements RequestResponseModifier {
 
     public static final String MERGE_FOR_EPRTR = "misc.merge.eprtr";
-    
+
     private static final String POLLUTANTS = "pollutants";
     private static final String METHOD_USED = "MethodUsed";
     private static final String REMARK_TEXT = "RemarkText";
@@ -124,8 +124,8 @@ public class EprtrConverter implements RequestResponseModifier {
     private static final String POLLUTANT_RELEASE = "PollutantRelease";
     private static final String POLLUTANT_TRANSFER = "PollutantTransfer";
     private static final String WASTE_TRANSFER = "WasteTransfer";
-    
-    
+
+
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEYS = getKey();
 
     private static final ObservationMergeIndicator INDICATOR =

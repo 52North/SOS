@@ -30,9 +30,10 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
 import java.util.Set;
-import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingQualityData;
+
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
+import org.n52.series.db.beans.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.PrimaryObservation;
 import org.n52.shetland.aqd.AqdUomRepository;
@@ -89,19 +90,18 @@ public class EReportingHelper {
      * @param omObservation
      *            Corresponding {@link OmObservation}
      * @param observation
-     *            {@link DataEntity} to create {@link ObservationValue}
-     *            from
+     *            {@link DataEntity} to create {@link ObservationValue} from
      * @return Created {@link ObservationValue}.
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
-            DataEntity observation) throws CodedException {
+    public SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation, DataEntity observation)
+            throws CodedException {
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         sweDataArrayValue.setValue(createSweDataArray(omObservation, observation));
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
-        observationValue.setPhenomenonTime(getPhenomenonTime(omObservation,
-                DataTimeCreator.createPhenomenonTime(observation)));
+        observationValue.setPhenomenonTime(
+                getPhenomenonTime(omObservation, DataTimeCreator.createPhenomenonTime(observation)));
         addQuality(observation.getEreportingProfile(), observationValue);
         return observationValue;
     }
@@ -118,7 +118,8 @@ public class EReportingHelper {
     public SweDataArray createSweDataArray(OmObservation omObservation, DataEntity observation) {
         SweDataArray sweDataArray = new SweDataArray();
         sweDataArray.setElementCount(createElementCount(omObservation));
-        PrimaryObservation primaryObservation = PrimaryObservation.from(observation.getEreportingProfile().getPrimaryObservation());
+        PrimaryObservation primaryObservation =
+                PrimaryObservation.from(observation.getEreportingProfile().getPrimaryObservation());
         sweDataArray.setElementType(createElementType(primaryObservation, getUnit(omObservation, observation)));
         sweDataArray.setEncoding(createEncoding(omObservation));
         sweDataArray.setValues(createValue(omObservation, observation, primaryObservation));
@@ -239,7 +240,7 @@ public class EReportingHelper {
     private void addValue(List<String> value, DataEntity observation, OmObservation omObservation) {
         if (observation.getValue() != null) {
             // TODO check if this is the best solution
-            if (omObservation.isSetDecimalSeparator() && omObservation.getDecimalSeparator() != ".") {
+            if (omObservation.isSetDecimalSeparator() && !omObservation.getDecimalSeparator().equals(".")) {
                 value.add(observation.getValue().toString().replace(".", omObservation.getDecimalSeparator()));
             } else {
                 value.add(observation.getValue().toString());
@@ -249,7 +250,8 @@ public class EReportingHelper {
         }
     }
 
-    private List<List<String>> createValue(OmObservation omObservation, DataEntity observation, PrimaryObservation primaryObservation) {
+    private List<List<String>> createValue(OmObservation omObservation, DataEntity observation,
+            PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
         addTimes(value, DataTimeCreator.createPhenomenonTime(observation));
         addIntegerValue(value, observation.getEreportingProfile().getVerification());
@@ -292,11 +294,13 @@ public class EReportingHelper {
         return time;
     }
 
-    private void addQuality(EReportingProfileDataEntity eReportingProfileDataEntity, SingleObservationValue<?> value) throws CodedException {
+    private void addQuality(EReportingProfileDataEntity eReportingProfileDataEntity, SingleObservationValue<?> value)
+            throws CodedException {
         value.addQualityList(getGmdDomainConsistency(eReportingProfileDataEntity, false));
     }
 
-    public Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingQualityData, boolean force) throws CodedException {
+    public Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingQualityData, boolean force)
+            throws CodedException {
         Set<OmResultQuality> set = Sets.newHashSet();
         if (eReportingQualityData.isSetDataCaptureFlag()) {
             set.add(GmdDomainConsistency.dataCapture(eReportingQualityData.getDataCaptureFlag()));
@@ -305,8 +309,7 @@ public class EReportingHelper {
         }
         if (eReportingQualityData.isSetTimeCoverageFlag()) {
             set.add(GmdDomainConsistency.timeCoverage(eReportingQualityData.getTimeCoverageFlag()));
-        }
-        else if (force) {
+        } else if (force) {
             set.add(GmdDomainConsistency.timeCoverage(GmlConstants.NilReason.unknown));
         }
         if (eReportingQualityData.isSetUncertaintyEstimation()) {

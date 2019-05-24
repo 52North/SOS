@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds;
 
-import static org.n52.sos.ds.cache.CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +52,7 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosWritableContentCache;
+import org.n52.sos.ds.cache.CacheFeederSettingDefinitionProvider;
 import org.n52.sos.ds.cache.InitialCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
 import org.slf4j.Logger;
@@ -68,6 +67,11 @@ import org.slf4j.LoggerFactory;
 public class SosCacheFeederHandler implements CacheFeederHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosCacheFeederHandler.class);
+
+    private static final String ERROR_UPDATE_CACHE = "Error while updating ContentCache!";
+
+    private static final String ERROR_RETURNING_CONNECTION = "Error while returning connection after cache update!";
+
 
     /**
      * Defines the number of threads available in the thread pool of the cache
@@ -99,7 +103,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         this.i18NDAORepository = i18NDAORepository;
     }
 
-    @Setting(CACHE_THREAD_COUNT)
+    @Setting(CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
         this.cacheThreadCount = threads;
@@ -129,14 +133,14 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
 
             logCacheLoadTime(cacheUpdateStartTime);
         } catch (Exception e) {
-            LOGGER.error("Error while updating ContentCache!", e);
-            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
+            LOGGER.error(ERROR_UPDATE_CACHE, e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage(ERROR_UPDATE_CACHE));
         } finally {
             try {
                 this.sessionStore.returnSession(session);
             } catch (Exception e2) {
                 // TODO check why this is necessary
-                LOGGER.error("Error while returning connection after cache update!", e2);
+                LOGGER.error(ERROR_RETURNING_CONNECTION, e2);
             }
         }
         if (!errors.isEmpty()) {
@@ -169,14 +173,14 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         try {
             update.execute();
         } catch (Exception e) {
-            LOGGER.error("Error while updating ContentCache!", e);
-            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
+            LOGGER.error(ERROR_UPDATE_CACHE, e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage(ERROR_UPDATE_CACHE));
         } finally {
             try {
                 this.sessionStore.returnSession(session);
             } catch (Exception e2) {
                 // TODO check why this is necessary
-                LOGGER.error("Error while returning connection after cache update!", e2);
+                LOGGER.error(ERROR_RETURNING_CONNECTION, e2);
             }
         }
 

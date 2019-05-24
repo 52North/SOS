@@ -64,13 +64,6 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
     private String srsNamePrefixUrl = "";
     private BindingRepository bindingRepository;
 
-    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
-    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
-        if (!Strings.isNullOrEmpty(srsNamePrefixUrl)) {
-            this.srsNamePrefixUrl = srsNamePrefixUrl;
-        }
-    }
-
     @Inject
     public ProcedureDescriptionGeneratorFactorySml20(SettingsService settingsService,
                                                                GeometryHandler geometryHandler,
@@ -86,6 +79,13 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
         this.bindingRepository = bindingRepository;
     }
 
+    @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
+    public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
+        if (!Strings.isNullOrEmpty(srsNamePrefixUrl)) {
+            this.srsNamePrefixUrl = srsNamePrefixUrl;
+        }
+    }
+
     @Override
     public Set<ProcedureDescriptionGeneratorKey> getKeys() {
         return Collections.unmodifiableSet(ProcedureDescriptionGeneratorSml20.GENERATOR_KEY_TYPES);
@@ -95,11 +95,11 @@ public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescr
     public ProcedureDescriptionGenerator create(ProcedureDescriptionGeneratorKey key) {
         ProcedureDescriptionGenerator generator
                 = new ProcedureDescriptionGeneratorSml20(getProfileHandler(),
-                                                                   getGeometryHandler(),
-                                                                   getI18NDAORepository(),
-                                                                   getCacheController(),
-                                                                   getSrsNamePrefixUrl(),
-                                                                   bindingRepository.isActive(MediaTypes.APPLICATION_KVP));
+                                                           getGeometryHandler(),
+                                                           getI18NDAORepository(),
+                                                           getCacheController(),
+                                                           getSrsNamePrefixUrl(),
+                                                           bindingRepository.isActive(MediaTypes.APPLICATION_KVP));
         getSettingsService().configureOnce(key);
         return generator;
     }

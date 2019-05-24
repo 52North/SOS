@@ -41,20 +41,20 @@ import org.hibernate.ScrollableResults;
  * @since 4.0.0
  */
 public class ScrollableIterable<T> implements Iterable<T>, Closeable {
-    public static <T> ScrollableIterable<T> fromResults(ScrollableResults sr) {
-        return new ScrollableIterable<>(sr);
-    }
-
-    public static <T> ScrollableIterable<T> fromCriteria(Criteria c) {
-        return new ScrollableIterable<>(c.scroll());
-    }
-
     private final ScrollableResults results;
 
     private Iterator<T> iterator;
 
     public ScrollableIterable(ScrollableResults results) {
         this.results = results;
+    }
+
+    public static <T> ScrollableIterable<T> fromResults(ScrollableResults sr) {
+        return new ScrollableIterable<>(sr);
+    }
+
+    public static <T> ScrollableIterable<T> fromCriteria(Criteria c) {
+        return new ScrollableIterable<>(c.scroll());
     }
 
     @Override

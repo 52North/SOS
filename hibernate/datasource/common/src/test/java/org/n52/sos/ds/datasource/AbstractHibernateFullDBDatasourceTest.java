@@ -53,11 +53,13 @@ import junit.framework.TestCase;
  */
 public class AbstractHibernateFullDBDatasourceTest
         extends TestCase {
-    private AbstractHibernateFullDBDatasource ds;
+    private static final String POSTGRES = "postgres";
 
     private static int CHANGEABLE_COUNT = 10;
 
     private static int MAX_COUNT = 17;
+    
+    private AbstractHibernateFullDBDatasource ds;
 
     @Override
     protected void setUp() throws Exception {
@@ -78,8 +80,8 @@ public class AbstractHibernateFullDBDatasourceTest
     public void testParseDatasourceProperties() throws Exception {
         Properties current = new Properties();
         current.put(HibernateConstants.DEFAULT_CATALOG, "public");
-        current.put(HibernateConstants.CONNECTION_USERNAME, "postgres");
-        current.put(HibernateConstants.CONNECTION_PASSWORD, "postgres");
+        current.put(HibernateConstants.CONNECTION_USERNAME, POSTGRES);
+        current.put(HibernateConstants.CONNECTION_PASSWORD, POSTGRES);
         current.put(HibernateConstants.CONNECTION_URL, "jdbc:postgresql://localhost:5432/test");
         current.put(HibernateConstants.C3P0_MIN_SIZE, "10");
         current.put(HibernateConstants.C3P0_MAX_SIZE, "30");

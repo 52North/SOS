@@ -30,8 +30,11 @@ package org.n52.sos.ds.hibernate.util;
 
 import org.hibernate.transform.BasicTransformerAdapter;
 
-public class NoopTransformerAdapter extends BasicTransformerAdapter {
-    private static final long serialVersionUID = -6236027454442644513L;
+public final class NoopTransformerAdapter extends BasicTransformerAdapter {
     public static final NoopTransformerAdapter INSTANCE = new NoopTransformerAdapter();
-    private NoopTransformerAdapter() {}
+
+    private static final long serialVersionUID = -6236027454442644513L;
+
+    private NoopTransformerAdapter() {
+    }
 }

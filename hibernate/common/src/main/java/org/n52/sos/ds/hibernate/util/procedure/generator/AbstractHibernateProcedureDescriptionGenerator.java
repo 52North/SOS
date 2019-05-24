@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
-import static org.n52.sos.service.ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -45,7 +43,6 @@ import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
@@ -78,21 +75,26 @@ import com.google.common.collect.Lists;
  *
  */
 @Configurable
-public abstract class AbstractHibernateProcedureDescriptionGenerator implements HibernateProcedureDescriptionGenerator {
+public abstract class AbstractHibernateProcedureDescriptionGenerator
+        implements HibernateProcedureDescriptionGenerator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateProcedureDescriptionGenerator.class);
 
     private final DaoFactory daoFactory;
+
     private final I18NDAORepository i18NDAORepository;
+
     private final ContentCacheController cacheController;
 
     private Locale defaultLanguage;
+
     private boolean showAllLanguages;
+
     private String descriptionTemplate;
+
     private Locale locale;
 
-    public AbstractHibernateProcedureDescriptionGenerator(DaoFactory daoFactory,
-                                                          I18NDAORepository i18NDAORepository,
-                                                          ContentCacheController cacheController) {
+    public AbstractHibernateProcedureDescriptionGenerator(DaoFactory daoFactory, I18NDAORepository i18NDAORepository,
+            ContentCacheController cacheController) {
         this.daoFactory = daoFactory;
         this.i18NDAORepository = i18NDAORepository;
         this.cacheController = cacheController;
@@ -100,7 +102,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
 
     @Setting(ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE)
     public void setDescriptionTemplate(String descriptionTemplate) {
-        Validation.notNullOrEmpty(DESCRIPTION_TEMPLATE, descriptionTemplate);
+        Validation.notNullOrEmpty(ProcedureDescriptionSettings.DESCRIPTION_TEMPLATE, descriptionTemplate);
         this.descriptionTemplate = descriptionTemplate;
     }
 
@@ -122,7 +124,6 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-
 
     protected Locale getDefaultLocale() {
         return this.defaultLanguage;
@@ -160,8 +161,10 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
         feature.setIdentifier(identifier);
     }
 
-    protected void addNameAndDescription(ProcedureEntity procedure, AbstractFeature feature, Session session) throws OwsExceptionReport {
-        HibernateI18NDAO<I18NProcedureMetadata> i18nDAO = (HibernateI18NDAO<I18NProcedureMetadata>) i18NDAORepository.getDAO(I18NProcedureMetadata.class);
+    protected void addNameAndDescription(ProcedureEntity procedure, AbstractFeature feature, Session session)
+            throws OwsExceptionReport {
+        HibernateI18NDAO<I18NProcedureMetadata> i18nDAO =
+                (HibernateI18NDAO<I18NProcedureMetadata>) i18NDAORepository.getDAO(I18NProcedureMetadata.class);
         Locale requestedLocale = getLocale();
         if (i18nDAO == null) {
             // no locale support
@@ -219,7 +222,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator implements 
         String template = this.descriptionTemplate;
         String identifier = procedure.getIdentifier();
         String obsProps = Arrays.stream(observableProperties).collect(Collectors.joining(","));
-//        String type = procedure.isSpatial() ? "sensor system" : "procedure";
+        // String type = procedure.isSpatial() ? "sensor system" : "procedure";
         String type = "procedure";
         return Lists.newArrayList(String.format(template, type, identifier, obsProps));
     }

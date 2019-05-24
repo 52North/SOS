@@ -49,9 +49,11 @@ public class UnitDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnitDAO.class);
 
+    private static final String QUERY_UNIT_TEMPLATE = "QUERY getUnit(): {}";
+
     public List<UnitEntity> getUnits(Session session) {
         Criteria criteria = session.createCriteria(UnitEntity.class);
-        LOGGER.debug("QUERY getUnits(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.debug(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -65,8 +67,9 @@ public class UnitDAO {
      * @return Unit object
      */
     public UnitEntity getUnit(String unit, Session session) {
-        Criteria criteria = session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit));
-        LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
+        Criteria criteria =
+                session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit));
+        LOGGER.debug(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (UnitEntity) criteria.uniqueResult();
     }
 
@@ -80,8 +83,9 @@ public class UnitDAO {
      * @return Unit object
      */
     public UnitEntity getUnit(UoM unit, Session session) {
-        Criteria criteria = session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit.getUom()));
-        LOGGER.debug("QUERY getUnit(): {}", HibernateHelper.getSqlString(criteria));
+        Criteria criteria =
+                session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit.getUom()));
+        LOGGER.debug(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (UnitEntity) criteria.uniqueResult();
     }
 

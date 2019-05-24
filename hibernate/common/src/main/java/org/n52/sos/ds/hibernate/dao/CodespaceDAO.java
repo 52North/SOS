@@ -56,8 +56,8 @@ public class CodespaceDAO {
      * @return Codespace object
      */
     public CodespaceEntity getCodespace(final String codespace, final Session session) {
-        Criteria criteria =
-                session.createCriteria(CodespaceEntity.class).add(Restrictions.eq(CodespaceEntity.PROPERTY_NAME, codespace));
+        Criteria criteria = session.createCriteria(CodespaceEntity.class)
+                .add(Restrictions.eq(CodespaceEntity.PROPERTY_NAME, codespace));
         LOGGER.debug("QUERY getCodespace(codespace): {}", HibernateHelper.getSqlString(criteria));
         return (CodespaceEntity) criteria.uniqueResult();
     }

@@ -97,7 +97,7 @@ import com.google.common.collect.Sets;
 public class SosDescribeSensorOperatorV20 extends
         AbstractV2RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
-    
+
     private static final Set<String> CONFORMANCE_CLASSES =
             Collections.singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
 
@@ -282,7 +282,7 @@ public class SosDescribeSensorOperatorV20 extends
          * <li>parentProcedures</li>
          * </ul>
          * but only, if available.
-         * 
+         *
          * @param procedureDescription
          *
          * @param abstractProcess
@@ -420,7 +420,7 @@ public class SosDescribeSensorOperatorV20 extends
         /**
          * Convert SOS sosOfferings to map with key == identifier and value =
          * name
-         * 
+         *
          * @param map
          *            .values() SOS sosOfferings
          * @return Set with identifier, name.

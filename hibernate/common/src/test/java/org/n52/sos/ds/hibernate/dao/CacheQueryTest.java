@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,6 +41,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.iceland.ds.ConnectionProviderException;
@@ -64,6 +63,8 @@ import org.slf4j.LoggerFactory;
 // performance evaluation.
 public class CacheQueryTest extends ExtendedHibernateTestCase {
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheQueryTest.class);
+
+    private static final String LOG_TEMPLATE = "Creating test observation {} of {}";
 
     @Test
     public void runtimeComparisonObservationQueries() throws ConnectionProviderException, OwsExceptionReport {
@@ -96,6 +97,8 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
                     case HQL:
                         addToResultTimeMap(resultTimes, qt, getFoiForOfferingHqlTime());
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -110,15 +113,16 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
 
         // note: this will fail for very low numbers of observations (old way is
         // faster)
-        assertTrue("Old way is faster", observationInfoTime < observationTime);
+        Assert.assertTrue("Old way is faster", observationInfoTime < observationTime);
 
         // note: hql is faster!
-        // assertTrue("HQL is faster", observationInfoTime < hqlTime);
+        // Assert.assertTrue("HQL is faster", observationInfoTime < hqlTime);
     }
 
-    private void addToResultTimeMap(Map<QueryType, Long> resultTimes, QueryType qt, long foiForOfferingObservationInfoTime) {
+    private void addToResultTimeMap(Map<QueryType, Long> resultTimes, QueryType qt,
+            long foiForOfferingObservationInfoTime) {
         if (resultTimes.containsKey(qt)) {
-            foiForOfferingObservationInfoTime += resultTimes.get(qt);
+            resultTimes.put(qt, foiForOfferingObservationInfoTime + resultTimes.get(qt));
         }
         resultTimes.put(qt, foiForOfferingObservationInfoTime);
 
@@ -128,15 +132,17 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // new way using ObservationInfo class (excludes value table joins)
         Session session = getSession();
         long start = System.currentTimeMillis();
-        Criteria c = session.createCriteria(getContextualReferencedObservationClass()).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-//        c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
-//                Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-//        c.createCriteria(DataEntity.OFFERINGS).add(
-//                Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
+        Criteria c = session.createCriteria(getContextualReferencedObservationClass())
+                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
+        // c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
+        // Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
+        // c.createCriteria(DataEntity.OFFERINGS).add(
+        // Restrictions.eq(Offering.IDENTIFIER,
+        // HibernateObservationBuilder.OFFERING_1));
         c.list();
         long time = System.currentTimeMillis() - start;
         LOGGER.debug("QUERY get featureOfInterest identifiers for offering new way: {}",
-                     HibernateHelper.getSqlString(c));
+                HibernateHelper.getSqlString(c));
         returnSession(session);
         return time;
     }
@@ -145,15 +151,17 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // old way using full Observation class (includes value table joins)
         Session session = getSession();
         long start = System.currentTimeMillis();
-        final Criteria c = session.createCriteria(getObservationClass()).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-//        c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
-//                Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-//        c.createCriteria(DataEntity.OFFERINGS).add(
-//                Restrictions.eq(Offering.IDENTIFIER, HibernateObservationBuilder.OFFERING_1));
+        final Criteria c =
+                session.createCriteria(getObservationClass()).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
+        // c.createCriteria(DataEntity.FEATURE_OF_INTEREST).setProjection(
+        // Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
+        // c.createCriteria(DataEntity.OFFERINGS).add(
+        // Restrictions.eq(Offering.IDENTIFIER,
+        // HibernateObservationBuilder.OFFERING_1));
         c.list();
         long time = System.currentTimeMillis() - start;
         LOGGER.debug("QUERY get featureOfInterest identifiers for offering old way: {}",
-                     HibernateHelper.getSqlString(c));
+                HibernateHelper.getSqlString(c));
         returnSession(session);
         return time;
     }
@@ -162,16 +170,20 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         // hql method
         Session session = getSession();
         long start = System.currentTimeMillis();
-//        Query<?> query =
-//                session.createQuery(
-//                        "select distinct foi." + FeatureOfInterest.IDENTIFIER + " from Observation o" + " join o."
-//                        + AbstractObservation.OFFERINGS + " offs " + " join o." + AbstractObservation.FEATURE_OF_INTEREST
-//                        + " foi" + " where o.deleted = 'F' and offs." + Offering.IDENTIFIER + " = :offering")
-//                            .setParameter("offering", HibernateObservationBuilder.OFFERING_1);
-//        query.list();
+        // Query<?> query =
+        // session.createQuery(
+        // "select distinct foi." + FeatureOfInterest.IDENTIFIER + " from
+        // Observation o" + " join o."
+        // + AbstractObservation.OFFERINGS + " offs " + " join o." +
+        // AbstractObservation.FEATURE_OF_INTEREST
+        // + " foi" + " where o.deleted = 'F' and offs." + Offering.IDENTIFIER +
+        // " = :offering")
+        // .setParameter("offering", HibernateObservationBuilder.OFFERING_1);
+        // query.list();
         long time = System.currentTimeMillis() - start;
-//        LOGGER.debug("QUERY get featureOfInterest identifiers for offering HQL way: {}",
-//                     HibernateHelper.getSqlString(query, session));
+        // LOGGER.debug("QUERY get featureOfInterest identifiers for offering
+        // HQL way: {}",
+        // HibernateHelper.getSqlString(query, session));
         return time;
     }
 
@@ -189,13 +201,13 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
             int numObs = 10000;
             for (int i = 0; i < numObs; ++i) {
                 if (i % 50 == 0) {
-                    LOGGER.debug("Creating test observation {} of {}", i, numObs);
+                    LOGGER.debug(LOG_TEMPLATE, i, numObs);
                     session.flush();
                     session.clear();
                 }
                 b.createObservation(String.valueOf(i), begin.plusHours(i));
             }
-            LOGGER.debug("Creating test observation {} of {}", numObs, numObs);
+            LOGGER.debug(LOG_TEMPLATE, numObs, numObs);
             session.flush();
             transaction.commit();
         } catch (HibernateException | CodedException he) {
@@ -215,8 +227,8 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            try (ScrollableIterable<DataEntity<?>> i
-                    = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
+            try (ScrollableIterable<DataEntity<?>> i =
+                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
                 for (DataEntity<?> o : i) {
                     session.delete(o);
                 }
@@ -231,12 +243,10 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         } finally {
             returnSession(session);
         }
-//        SettingsManager.getInstance().cleanup();
+        // SettingsManager.getInstance().cleanup();
     }
 
     private enum QueryType {
-        OBSERVATION_INFO,
-        OBSERVATION,
-        HQL
+        OBSERVATION_INFO, OBSERVATION, HQL
     }
 }

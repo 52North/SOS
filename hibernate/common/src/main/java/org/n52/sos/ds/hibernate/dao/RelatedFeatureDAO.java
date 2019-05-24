@@ -72,7 +72,8 @@ public class RelatedFeatureDAO {
     @SuppressWarnings("unchecked")
     public List<RelatedFeatureEntity> getRelatedFeatureForOffering(final String offering, final Session session) {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        criteria.createCriteria(RelatedFeatureEntity.OFFERINGS).add(Restrictions.eq(OfferingEntity.PROPERTY_IDENTIFIER, offering));
+        criteria.createCriteria(RelatedFeatureEntity.OFFERINGS)
+                .add(Restrictions.eq(OfferingEntity.PROPERTY_IDENTIFIER, offering));
         LOGGER.debug("QUERY getRelatedFeatureForOffering(offering): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -103,8 +104,8 @@ public class RelatedFeatureDAO {
     @SuppressWarnings("unchecked")
     public List<RelatedFeatureEntity> getRelatedFeatures(final String targetIdentifier, final Session session) {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        criteria.createCriteria(RelatedFeatureEntity.FEATURE_OF_INTEREST).add(
-                Restrictions.eq(AbstractFeatureEntity.PROPERTY_IDENTIFIER, targetIdentifier));
+        criteria.createCriteria(RelatedFeatureEntity.FEATURE_OF_INTEREST)
+                .add(Restrictions.eq(AbstractFeatureEntity.PROPERTY_IDENTIFIER, targetIdentifier));
         LOGGER.debug("QUERY getRelatedFeatures(targetIdentifier): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -125,7 +126,8 @@ public class RelatedFeatureDAO {
     public List<RelatedFeatureEntity> getOrInsertRelatedFeature(final AbstractFeature feature, final String role,
             final Session session) throws OwsExceptionReport {
         // TODO: create featureOfInterest and link to relatedFeature
-        List<RelatedFeatureEntity> relFeats = getRelatedFeatures(feature.getIdentifierCodeWithAuthority().getValue(), session);
+        List<RelatedFeatureEntity> relFeats =
+                getRelatedFeatures(feature.getIdentifierCodeWithAuthority().getValue(), session);
         if (relFeats == null) {
             relFeats = new LinkedList<>();
         }
@@ -135,12 +137,10 @@ public class RelatedFeatureDAO {
             String url = null;
             if (feature instanceof AbstractSamplingFeature) {
                 identifier =
-                        daoFactory.getFeatureQueryHandler()
-                                .insertFeature((AbstractSamplingFeature) feature, session);
+                        daoFactory.getFeatureQueryHandler().insertFeature((AbstractSamplingFeature) feature, session);
                 url = ((AbstractSamplingFeature) feature).getUrl();
             }
-            relFeat.setFeature(daoFactory.getFeatureOfInterestDAO().getOrInsert(identifier, url,
-                    session));
+            relFeat.setFeature(daoFactory.getFeatureOfInterestDAO().getOrInsert(identifier, url, session));
             relFeat.setRole(role);
             session.save(relFeat);
             session.flush();

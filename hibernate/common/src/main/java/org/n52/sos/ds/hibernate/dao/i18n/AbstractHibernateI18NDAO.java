@@ -129,39 +129,6 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     @Override
-    public void saveMetadata(S i18n)
-            throws OwsExceptionReport {
-        Session session = null;
-        try {
-            session = sessionHolder.getSession();
-            saveMetadata(i18n, session);
-        } finally {
-            sessionHolder.returnSession(session);
-        }
-    }
-
-    @Override
-    public Collection<Locale> getAvailableLocales()
-            throws OwsExceptionReport {
-        Session session = null;
-        try {
-            session = sessionHolder.getSession();
-            return getAvailableLocales(session);
-        } finally {
-            sessionHolder.returnSession(session);
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Collection<Locale> getAvailableLocales(Session session)
-            throws OwsExceptionReport {
-        Criteria criteria = session.createCriteria(getHibernateEntityClass());
-        criteria.setProjection(Projections.distinct(Projections.property(I18nEntity.PROPERTY_LOCALE)));
-        return criteria.list();
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public S getMetadata(String id, Session session)
             throws OwsExceptionReport {
@@ -242,9 +209,44 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     @Override
+    public void saveMetadata(S i18n)
+            throws OwsExceptionReport {
+        Session session = null;
+        try {
+            session = sessionHolder.getSession();
+            saveMetadata(i18n, session);
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+    }
+
+    @Override
+    public Collection<Locale> getAvailableLocales()
+            throws OwsExceptionReport {
+        Session session = null;
+        try {
+            session = sessionHolder.getSession();
+            return getAvailableLocales(session);
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Collection<Locale> getAvailableLocales(Session session)
+            throws OwsExceptionReport {
+        Criteria criteria = session.createCriteria(getHibernateEntityClass());
+        criteria.setProjection(Projections.distinct(Projections.property(I18nEntity.PROPERTY_LOCALE)));
+        return criteria.list();
+    }
+
+    @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(getHibernateEntityClass());
     }
+
+    protected abstract S createSosObject(String id);
 
     protected Collection<S> createSosObject(List<H> hi18ns) {
         Map<String, S> map = Maps.newHashMap();
@@ -316,7 +318,8 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     protected abstract T getEntity(String id, Session session);
+
     protected abstract Class<H> getHibernateEntityClass();
+
     protected abstract H createHibernateObject();
-    protected abstract S createSosObject(String id);
 }

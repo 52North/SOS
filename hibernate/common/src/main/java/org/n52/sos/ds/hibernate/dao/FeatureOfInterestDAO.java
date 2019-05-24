@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import static org.n52.janmayen.http.HTTPStatus.BAD_REQUEST;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,13 +35,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;import org.hibernate.query.Query;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.janmayen.function.Suppliers;
@@ -85,11 +88,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-
 
 /**
  * Hibernate data access class for featureOfInterest
@@ -115,17 +113,13 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     public AbstractFeatureEntity insertFeature(AbstractFeature abstractFeature, Session session)
             throws OwsExceptionReport {
 
-        FeatureOfInterestPersister persister = new FeatureOfInterestPersister(
-                this,
-                getDaoFactory().getGeometryHandler(),
-                session
-        );
+        FeatureOfInterestPersister persister =
+                new FeatureOfInterestPersister(this, getDaoFactory().getGeometryHandler(), session);
         return abstractFeature.accept(persister);
     }
 
     /**
-    /**
-     * Get featureOfInterest object for identifier
+     * /** Get featureOfInterest object for identifier
      *
      * @param identifier
      *            FeatureOfInterest identifier
@@ -148,11 +142,26 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session Hibernate session
      * @return FeatureOfInterest identifiers for observation constellation
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     @SuppressWarnings("unchecked")
     public List<String> getIdentifiers(DatasetEntity oc, Session session) throws OwsExceptionReport {
         return Lists.newArrayList(oc.getFeature().getIdentifier());
+    }
+
+    /**
+     * Get all featureOfInterest identifiers
+     *
+     * @param session
+     *            Hibernate session
+     * @return FeatureOfInterest identifiers
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getIdentifiers(Session session) {
+        Criteria criteria = session.createCriteria(FeatureEntity.class)
+                .setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
+        LOGGER.debug("QUERY getFeatureOfInterestIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
     }
 
     /**
@@ -163,11 +172,10 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session Hibernate session
      * @return FeatureOfInterest identifiers for offering
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     @SuppressWarnings({ "unchecked" })
-    public List<String> getIdentifiersForOffering(String offering, Session session)
-            throws OwsExceptionReport {
+    public List<String> getIdentifiersForOffering(String offering, Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING,
                 session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
@@ -177,10 +185,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             return namedQuery.list();
         } else {
             AbstractSeriesDAO datasetDAO = getDaoFactory().getSeriesDAO();
-            Criteria c = datasetDAO.getDefaultSeriesCriteria(session)
-                    .createCriteria(DatasetEntity.PROPERTY_FEATURE)
-                        .setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-
+            Criteria c = datasetDAO.getDefaultSeriesCriteria(session).createCriteria(DatasetEntity.PROPERTY_FEATURE)
+                    .setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
 
             getDaoFactory().getOfferingDAO().addOfferingRestricionForObservation(c, offering);
             LOGGER.debug("QUERY getFeatureOfInterestIdentifiersForOffering(offeringIdentifiers): {}",
@@ -189,9 +195,11 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         }
     }
 
-    private DetachedCriteria getDetachedCriteriaSeriesForOffering(String offering, Session session) throws OwsExceptionReport {
+    private DetachedCriteria getDetachedCriteriaSeriesForOffering(String offering, Session session)
+            throws OwsExceptionReport {
         final DetachedCriteria detachedCriteria = getDetachedCriteriaSeries(session);
-        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
         return detachedCriteria;
     }
 
@@ -237,15 +245,14 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * Load FOI identifiers and parent ids for use in the cache. Just loading
      * the ids allows us to not load the geometry columns, XML, etc.
      *
-     * @param session
+     * @param session the session
      * @return Map keyed by FOI identifiers, with value collections of parent
      *         FOI identifiers if supported
      */
-    public Map<String,Collection<String>> getIdentifiersWithParents(Session session) {
+    public Map<String, Collection<String>> getIdentifiersWithParents(Session session) {
         Criteria criteria = session.createCriteria(FeatureEntity.class)
                 .createAlias(AbstractFeatureEntity.PROPERTY_PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN)
-                .setProjection(Projections.projectionList()
-                        .add(Projections.property(AbstractFeatureEntity.IDENTIFIER))
+                .setProjection(Projections.projectionList().add(Projections.property(AbstractFeatureEntity.IDENTIFIER))
                         .add(Projections.property("pfoi." + AbstractFeatureEntity.IDENTIFIER)));
         // return as List<Object[]> even if there's only one column for
         // consistency
@@ -269,21 +276,6 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     }
 
     /**
-     * Get all featureOfInterest identifiers
-     *
-     * @param session
-     *            Hibernate session
-     * @return FeatureOfInterest identifiers
-     */
-    @SuppressWarnings("unchecked")
-    public List<String> getIdentifiers(Session session) {
-        Criteria criteria = session.createCriteria(FeatureEntity.class)
-                .setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-        LOGGER.debug("QUERY getFeatureOfInterestIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
-        return criteria.list();
-    }
-
-    /**
      * Insert and/or get featureOfInterest object for identifier
      *
      * @param identifier
@@ -302,8 +294,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             if (url != null && !url.isEmpty()) {
                 feature.setUrl(url);
             }
-            FormatEntity type =
-                    new FormatDAO().getOrInsertFormatEntity(OGCConstants.UNKNOWN, session);
+            FormatEntity type = new FormatDAO().getOrInsertFormatEntity(OGCConstants.UNKNOWN, session);
             feature.setFeatureType(type);
             session.save(feature);
         } else if (feature.getUrl() != null && !feature.getUrl().isEmpty() && url != null && !url.isEmpty()) {
@@ -324,7 +315,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session
      */
-    public void insertRelationship(AbstractFeatureEntity parentFeature, AbstractFeatureEntity childFeature, Session session) {
+    public void insertRelationship(AbstractFeatureEntity parentFeature, AbstractFeatureEntity childFeature,
+            Session session) {
         parentFeature.getChildren().add(childFeature);
         session.saveOrUpdate(parentFeature);
         // don't flush here because we may be batching
@@ -341,10 +333,13 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session
      */
-    public void checkOrInsertRelatedFeatureRelation(AbstractFeatureEntity featureOfInterest, OfferingEntity offering, Session session) {
+    public void checkOrInsertRelatedFeatureRelation(AbstractFeatureEntity featureOfInterest, OfferingEntity offering,
+            Session session) {
         getDaoFactory().getRelatedFeatureDAO().getRelatedFeatureForOffering(offering.getIdentifier(), session).stream()
-                .filter(relatedFeature -> !featureOfInterest.getIdentifier().equals(relatedFeature.getFeature().getIdentifier()))
-                .forEachOrdered(relatedFeature -> insertRelationship(relatedFeature.getFeature(), featureOfInterest, session));
+                .filter(relatedFeature -> !featureOfInterest.getIdentifier()
+                        .equals(relatedFeature.getFeature().getIdentifier()))
+                .forEachOrdered(
+                    relatedFeature -> insertRelationship(relatedFeature.getFeature(), featureOfInterest, session));
 
     }
 
@@ -375,20 +370,95 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             return getFeature(featureOfInterest.getIdentifier(), session);
         } else {
             throw new NoApplicableCodeException().withMessage("The used feature type '%s' is not supported.",
-                    featureOfInterest.getClass().getName()).setStatus(BAD_REQUEST);
+                    featureOfInterest.getClass().getName()).setStatus(HTTPStatus.BAD_REQUEST);
         }
+    }
+
+    public void updateFeatureOfInterestGeometry(AbstractFeatureEntity featureOfInterest, Geometry geom,
+            Session session) {
+        if (featureOfInterest != null) {
+            if (featureOfInterest.isSetGeometry()) {
+                if (geom instanceof Point) {
+                    List<Coordinate> coords = Lists.newArrayList();
+                    Geometry convert = featureOfInterest.getGeometry();
+                    if (convert instanceof Point) {
+                        coords.add(convert.getCoordinate());
+                    } else if (convert instanceof LineString) {
+                        coords.addAll(Lists.newArrayList(convert.getCoordinates()));
+                    }
+                    if (!coords.isEmpty()) {
+                        coords.add(geom.getCoordinate());
+                        Geometry newGeometry =
+                                new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
+                        newGeometry.setSRID(featureOfInterest.getGeometry().getSRID());
+                        featureOfInterest.setGeometry(newGeometry);
+                    }
+                }
+            } else {
+                featureOfInterest.setGeometry(geom);
+            }
+            session.saveOrUpdate(featureOfInterest);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<FeatureEntity> getPublishedFeatureOfInterest(Session session) throws OwsExceptionReport {
+        Criteria c = getPublishedFeatureOfInterestCriteria(session);
+        LOGGER.debug("QUERY getPublishedFeatureOfInterest(): {}", HibernateHelper.getSqlString(c));
+        return c.list();
+    }
+
+    public Criteria getPublishedFeatureOfInterestCriteria(Session session) throws OwsExceptionReport {
+        Criteria c = getDefaultCriteria(session);
+        if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
+            c.add(Subqueries.propertyNotIn(AbstractFeatureEntity.PROPERTY_ID,
+                    getPublishedDetachedCriteriaSeries(session)));
+        }
+        return c;
+    }
+
+    private DetachedCriteria getPublishedDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true),
+                Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_FEATURE)));
+        return detachedCriteria;
+    }
+
+    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false))
+                .add(Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, true));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_FEATURE)));
+        return detachedCriteria;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getPublishedFeatureOfInterestIdentifiers(Session session) throws OwsExceptionReport {
+        Criteria c = getPublishedFeatureOfInterestCriteria(session);
+        c.setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
+        LOGGER.debug("QUERY getPublishedFeatureOfInterestIdentifiers(): {}", HibernateHelper.getSqlString(c));
+        return c.list();
+    }
+
+    private FeatureQueryHandler getFeatureQueryHandler() {
+        return getDaoFactory().getFeatureQueryHandler();
     }
 
     public static class FeatureOfInterestPersister implements FeatureOfInterestVisitor<AbstractFeatureEntity> {
 
         private FeatureOfInterestDAO dao;
+
         private Session session;
+
         private GeometryHandler geometryHandler;
 
         public FeatureOfInterestPersister(FeatureOfInterestDAO dao, GeometryHandler geometryHandler, Session sesion) {
-           this.dao = dao;
-           this.session = sesion;
-           this.geometryHandler = geometryHandler;
+            this.dao = dao;
+            this.session = sesion;
+            this.geometryHandler = geometryHandler;
         }
 
         @Override
@@ -435,23 +505,22 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
         @Override
         public AbstractFeatureEntity visit(WmlMonitoringPoint monitoringPoint) throws OwsExceptionReport {
-           throw new NotYetSupportedException(WmlMonitoringPoint.class.getSimpleName());
+            throw new NotYetSupportedException(WmlMonitoringPoint.class.getSimpleName());
         }
 
         @Override
-        public AbstractFeatureEntity visit(TsmlMonitoringFeature value)
-                throws OwsExceptionReport {
+        public AbstractFeatureEntity visit(TsmlMonitoringFeature value) throws OwsExceptionReport {
             throw new NotYetSupportedException(TsmlMonitoringFeature.class.getSimpleName());
         }
 
-        private AbstractFeatureEntity persist(AbstractFeatureEntity feature, AbstractFeature abstractFeature, boolean add) throws OwsExceptionReport {
+        private AbstractFeatureEntity persist(AbstractFeatureEntity feature, AbstractFeature abstractFeature,
+                boolean add) throws OwsExceptionReport {
             if (add) {
                 dao.addIdentifierNameDescription(abstractFeature, feature, session);
                 if (abstractFeature instanceof FeatureWithGeometry) {
                     if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
-                        feature.setGeometry(
-                                geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
-                                        ((FeatureWithGeometry) abstractFeature).getGeometry()));
+                        feature.setGeometry(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                                ((FeatureWithGeometry) abstractFeature).getGeometry()));
                     }
                 }
                 if (abstractFeature.isSetXml()) {
@@ -462,10 +531,11 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     feature.setFeatureType(new FormatDAO().getOrInsertFormatEntity(
                             ((FeatureWithFeatureType) abstractFeature).getFeatureType(), session));
                 }
-                if (abstractFeature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
+                if (abstractFeature instanceof AbstractSamplingFeature
+                        && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
                     Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
-                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(((AbstractSamplingFeature) abstractFeature).getParameters(),
-                           unitCache, session);
+                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(
+                            ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, session);
                     feature.setParameters(parameter);
                 }
                 if (abstractFeature instanceof AbstractSamplingFeature) {
@@ -474,7 +544,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                         Set<AbstractFeatureEntity> parents =
                                 Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
                         for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
-                            if (!OGCConstants.UNKNOWN.equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
+                            if (!OGCConstants.UNKNOWN
+                                    .equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
                                 if (sampledFeature instanceof AbstractSamplingFeature) {
                                     parents.add(dao.insertFeature((AbstractSamplingFeature) sampledFeature, session));
                                 } else {
@@ -503,74 +574,5 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             Geometry geom = ((FeatureWithGeometry) value).getGeometry();
             return dao.getFeatureOfInterest(newId, geom, session);
         }
-    }
-
-    public void updateFeatureOfInterestGeometry(AbstractFeatureEntity featureOfInterest, Geometry geom, Session session) {
-        if (featureOfInterest != null) {
-            if (featureOfInterest.isSetGeometry()) {
-                if (geom instanceof Point) {
-                    List<Coordinate> coords = Lists.newArrayList();
-                    Geometry convert = featureOfInterest.getGeometry();
-                    if (convert instanceof Point) {
-                        coords.add(convert.getCoordinate());
-                    } else if (convert instanceof LineString) {
-                        coords.addAll(Lists.newArrayList(convert.getCoordinates()));
-                    }
-                    if (!coords.isEmpty()) {
-                        coords.add(geom.getCoordinate());
-                        Geometry newGeometry =
-                                new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
-                        newGeometry.setSRID(featureOfInterest.getGeometry().getSRID());
-                        featureOfInterest.setGeometry(newGeometry);
-                    }
-                }
-            } else {
-                featureOfInterest.setGeometry(geom);
-            }
-            session.saveOrUpdate(featureOfInterest);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<FeatureEntity> getPublishedFeatureOfInterest(Session session) throws OwsExceptionReport {
-        Criteria c = getPublishedFeatureOfInterestCriteria(session);
-        LOGGER.debug("QUERY getPublishedFeatureOfInterest(): {}", HibernateHelper.getSqlString(c));
-        return c.list();
-    }
-
-    public Criteria getPublishedFeatureOfInterestCriteria(Session session) throws OwsExceptionReport {
-        Criteria c = getDefaultCriteria(session);
-        if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
-            c.add(Subqueries.propertyNotIn(AbstractFeatureEntity.PROPERTY_ID, getPublishedDetachedCriteriaSeries(session)));
-        }
-        return c;
-    }
-
-    private DetachedCriteria getPublishedDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
-        final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_FEATURE)));
-        return detachedCriteria;
-    }
-
-    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
-        final DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-        detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false)).add(Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, true));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_FEATURE)));
-        return detachedCriteria;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<String> getPublishedFeatureOfInterestIdentifiers(Session session) throws OwsExceptionReport {
-        Criteria c = getPublishedFeatureOfInterestCriteria(session);
-        c.setProjection(Projections.distinct(Projections.property(AbstractFeatureEntity.IDENTIFIER)));
-        LOGGER.debug("QUERY getPublishedFeatureOfInterestIdentifiers(): {}", HibernateHelper.getSqlString(c));
-        return c.list();
-    }
-
-    private FeatureQueryHandler getFeatureQueryHandler() {
-        return getDaoFactory().getFeatureQueryHandler();
     }
 }

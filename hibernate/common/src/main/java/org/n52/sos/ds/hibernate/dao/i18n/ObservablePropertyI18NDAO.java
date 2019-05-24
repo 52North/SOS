@@ -46,7 +46,9 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
  *
  * @author Christian Autermann
  */
-public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<PhenomenonEntity, I18NObservablePropertyMetadata, I18nPhenomenonEntity> {
+public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<PhenomenonEntity,
+                                                                        I18NObservablePropertyMetadata,
+                                                                        I18nPhenomenonEntity> {
     private final DaoFactory daoFactory;
 
     @Inject

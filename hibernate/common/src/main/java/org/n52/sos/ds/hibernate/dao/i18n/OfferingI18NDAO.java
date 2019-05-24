@@ -41,7 +41,9 @@ import org.n52.series.db.beans.i18n.I18nOfferingEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 
-public class OfferingI18NDAO extends AbstractHibernateI18NDAO<OfferingEntity, I18NOfferingMetadata, I18nOfferingEntity> {
+public class OfferingI18NDAO extends AbstractHibernateI18NDAO<OfferingEntity,
+                                                                I18NOfferingMetadata,
+                                                                I18nOfferingEntity> {
     private final DaoFactory daoFactory;
 
     @Inject

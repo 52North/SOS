@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 @Configurable
 public class InspireObservationCreator extends AbstractAdditionalObservationCreator {
 
-    private final static String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
+    private static final String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
             .encoderKeysForElements(NS_OMSO_30, DataEntity.class, DatasetEntity.class);

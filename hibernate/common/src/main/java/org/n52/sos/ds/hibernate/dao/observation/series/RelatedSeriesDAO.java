@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 public class RelatedSeriesDAO {
 
-private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.class);
 
     public List<RelatedDatasetEntity> getRelatedSeries(DatasetEntity series, Session session) {
         return getRelatedSeries(series.getId(), session);
@@ -60,8 +60,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(RelatedSeriesDAO.cl
     }
 
     private Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(RelatedDatasetEntity.class)
-                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return session.createCriteria(RelatedDatasetEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
 }

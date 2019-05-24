@@ -50,9 +50,12 @@ import org.n52.svalbard.ConformanceClasses;
  * @since 4.0.0
  *
  */
-public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<AbstractGetResultTemplateHandler, GetResultTemplateRequest, GetResultTemplateResponse> {
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_RESULT_RETRIEVAL);
+public class SosGetResultTemplateOperatorV20 extends
+        AbstractV2RequestOperator<AbstractGetResultTemplateHandler,
+        GetResultTemplateRequest,
+        GetResultTemplateResponse> {
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_RESULT_RETRIEVAL);
 
     public SosGetResultTemplateOperatorV20() {
         super(Sos2Constants.Operations.GetResultTemplate.name(), GetResultTemplateRequest.class);
@@ -60,7 +63,7 @@ public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<A
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

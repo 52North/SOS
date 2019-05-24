@@ -75,8 +75,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
 
     protected static final String PASSWORD_KEY = HibernateConstants.CONNECTION_PASSWORD;
 
-    protected static final String C3P0_CONNECTION_POOL =
-            "org.hibernate.c3p0.internal.C3P0ConnectionProvider";
+    protected static final String C3P0_CONNECTION_POOL = "org.hibernate.c3p0.internal.C3P0ConnectionProvider";
 
     // protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE =
     // false;
@@ -111,8 +110,10 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
 
     protected static final String TIMEZONE_DESCRIPTION =
             "Define the time zone of the datasource to ensure time is always queried in the defined time zone. "
-            + "Valid values are see <a href=\"http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html\" target=\"_blank\">Java TimeZone</a>."
-            + " Default is UTC.";
+                    + "Valid values are see "
+                    + "<a href=\"http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html\" "
+                    + "target=\"_blank\">Java TimeZone</a>."
+                    + " Default is UTC.";
 
     protected static final String TIMEZONE_KEY = "datasource.timezone";
 
@@ -123,7 +124,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String TIME_STRING_FORMAT_TITLE = "Datasource time string format";
 
     protected static final String TIME_STRING_FORMAT_DESCRIPTION =
-            "Define the time string format of the datasource to ensure time is always parsed in the defined time format";
+            "Define the time string format of the datasource to ensure time is always "
+            + "parsed in the defined time format";
 
     protected static final String TIME_STRING_FORMAT_DEFAULT_VALUE = "";
 
@@ -163,12 +165,9 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
         return Sets.<SettingDefinition<?>> newHashSet(createUsernameDefinition(usernameDefault),
-                createPasswordDefinition(passwordDefault),
-                createDatabaseDefinition(databaseDefault),
-                createHostDefinition(hostDefault),
-                createPortDefinition(portDefault),
-                createMinPoolSizeDefinition(minPoolSizeDefault),
-                createMaxPoolSizeDefinition(maxPoolSizeDefault),
+                createPasswordDefinition(passwordDefault), createDatabaseDefinition(databaseDefault),
+                createHostDefinition(hostDefault), createPortDefinition(portDefault),
+                createMinPoolSizeDefinition(minPoolSizeDefault), createMaxPoolSizeDefinition(maxPoolSizeDefault),
                 createTimeZoneDefinition(TIMEZONE_DEFAULT_VALUE),
                 createTimeStringFormatDefinition(TIME_STRING_FORMAT_DEFAULT_VALUE),
                 createTimeStringZDefinition(TIME_STRING_Z_DEFAULT_VALUE));
@@ -203,6 +202,13 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         return def;
     }
 
+    protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
+        StringSettingDefinition def = createUsernameDefinition();
+        def.setDescription(usernameDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
+    }
+
     /**
      * Create settings definition for password
      *
@@ -214,6 +220,13 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         def.setOrder(2);
         def.setKey(PASSWORD_KEY);
         def.setTitle(PASSWORD_TITLE);
+        return def;
+    }
+
+    protected StringSettingDefinition createPasswordDefinition(String defaultValue) {
+        StringSettingDefinition def = createPasswordDefinition();
+        def.setDescription(passwordDescription);
+        def.setDefaultValue(defaultValue);
         return def;
     }
 
@@ -233,6 +246,13 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         return def;
     }
 
+    protected StringSettingDefinition createDatabaseDefinition(String defaultValue) {
+        StringSettingDefinition def = createDatabaseDefinition();
+        def.setDescription(databaseDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
+    }
+
     /**
      * Create settings definition for host
      *
@@ -249,6 +269,13 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         return def;
     }
 
+    protected StringSettingDefinition createHostDefinition(String defaultValue) {
+        StringSettingDefinition def = createHostDefinition();
+        def.setDescription(hostDescription);
+        def.setDefaultValue(defaultValue);
+        return def;
+    }
+
     /**
      * Create settings definition for port
      *
@@ -260,6 +287,13 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         def.setOrder(5);
         def.setKey(PORT_KEY);
         def.setTitle(PORT_TITLE);
+        return def;
+    }
+
+    protected IntegerSettingDefinition createPortDefinition(int defaultValue) {
+        IntegerSettingDefinition def = createPortDefinition();
+        def.setDescription(portDescription);
+        def.setDefaultValue(defaultValue);
         return def;
     }
 
@@ -279,6 +313,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         return def;
     }
 
+    protected SettingDefinition<?> createMinPoolSizeDefinition(Integer defaultValue) {
+        IntegerSettingDefinition def = createMinPoolSizeDefinition();
+        def.setDefaultValue(defaultValue);
+        return def;
+    }
+
     /**
      * Create settings definition for maximal connection pool size
      *
@@ -292,6 +332,12 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         def.setTitle(MAX_POOL_SIZE_TITLE);
         def.setDescription(MAX_POOL_SIZE_DESCRIPTION);
         def.setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
+        return def;
+    }
+
+    protected SettingDefinition<?> createMaxPoolSizeDefinition(Integer defaultValue) {
+        IntegerSettingDefinition def = createMaxPoolSizeDefinition();
+        def.setDefaultValue(defaultValue);
         return def;
     }
 
@@ -312,86 +358,31 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         return def;
     }
 
-    protected StringSettingDefinition createTimeStringFormatDefinition() {
-        StringSettingDefinition def = new StringSettingDefinition();
-                def.setDefaultValue(TIME_STRING_FORMAT_DEFAULT_VALUE)
-                .setGroup(ADVANCED_GROUP)
-                .setKey(TIME_STRING_FORMAT_KEY)
-                .setTitle(TIME_STRING_FORMAT_TITLE)
-                .setDescription(TIME_STRING_FORMAT_DESCRIPTION)
-                .setOptional(true);
-                def.setOrder(100);
-                    return def;
-    }
-
-    protected BooleanSettingDefinition createTimeStringZDefinition() {
-        BooleanSettingDefinition def = new BooleanSettingDefinition();
-        def.setDefaultValue(TIME_STRING_Z_DEFAULT_VALUE)
-                .setGroup(ADVANCED_GROUP)
-                .setKey(TIME_STRING_Z_KEY)
-                .setTitle(TIME_STRING_Z_TITLE)
-                .setDescription(TIME_STRING_Z_DESCRIPTION)
-                .setOptional(true);
-                def.setOrder(11);
-                return def;
-    }
-
-    protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
-        StringSettingDefinition def = createUsernameDefinition();
-        def.setDescription(usernameDescription);
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
-    protected StringSettingDefinition createPasswordDefinition(String defaultValue) {
-        StringSettingDefinition def = createPasswordDefinition();
-        def.setDescription(passwordDescription);
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
-    protected StringSettingDefinition createDatabaseDefinition(String defaultValue) {
-        StringSettingDefinition def = createDatabaseDefinition();
-        def.setDescription(databaseDescription);
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
-    protected StringSettingDefinition createHostDefinition(String defaultValue) {
-        StringSettingDefinition def = createHostDefinition();
-        def.setDescription(hostDescription);
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
-    protected IntegerSettingDefinition createPortDefinition(int defaultValue) {
-        IntegerSettingDefinition def = createPortDefinition();
-        def.setDescription(portDescription);
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
-    protected SettingDefinition<?> createMinPoolSizeDefinition(Integer defaultValue) {
-        IntegerSettingDefinition def = createMinPoolSizeDefinition();
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
-    protected SettingDefinition<?> createMaxPoolSizeDefinition(Integer defaultValue) {
-        IntegerSettingDefinition def = createMaxPoolSizeDefinition();
-        def.setDefaultValue(defaultValue);
-        return def;
-    }
-
     protected StringSettingDefinition createTimeZoneDefinition(String defaultValue) {
         StringSettingDefinition def = createTimeZoneDefinition();
         def.setDefaultValue(defaultValue);
         return def;
     }
 
+    protected StringSettingDefinition createTimeStringFormatDefinition() {
+        StringSettingDefinition def = new StringSettingDefinition();
+        def.setDefaultValue(TIME_STRING_FORMAT_DEFAULT_VALUE).setGroup(ADVANCED_GROUP).setKey(TIME_STRING_FORMAT_KEY)
+                .setTitle(TIME_STRING_FORMAT_TITLE).setDescription(TIME_STRING_FORMAT_DESCRIPTION).setOptional(true);
+        def.setOrder(100);
+        return def;
+    }
+
     protected StringSettingDefinition createTimeStringFormatDefinition(String defaultValue) {
         StringSettingDefinition def = createTimeStringFormatDefinition();
         def.setDefaultValue(defaultValue);
+        return def;
+    }
+
+    protected BooleanSettingDefinition createTimeStringZDefinition() {
+        BooleanSettingDefinition def = new BooleanSettingDefinition();
+        def.setDefaultValue(TIME_STRING_Z_DEFAULT_VALUE).setGroup(ADVANCED_GROUP).setKey(TIME_STRING_Z_KEY)
+                .setTitle(TIME_STRING_Z_TITLE).setDescription(TIME_STRING_Z_DESCRIPTION).setOptional(true);
+        def.setOrder(11);
         return def;
     }
 

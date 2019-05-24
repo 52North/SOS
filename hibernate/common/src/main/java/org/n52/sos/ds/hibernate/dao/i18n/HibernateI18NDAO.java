@@ -43,10 +43,16 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
  */
 public interface HibernateI18NDAO<T extends AbstractI18NMetadata> extends I18NDAO<T> {
     T getMetadata(String id, Session session) throws OwsExceptionReport;
+
     T getMetadata(String id, Locale locale, Session session) throws OwsExceptionReport;
+
     Collection<T> getMetadata(Session session) throws OwsExceptionReport;
+
     Collection<T> getMetadata(Collection<String> id, Session session) throws OwsExceptionReport;
+
     Collection<T> getMetadata(Collection<String> id, Locale locale, Session session) throws OwsExceptionReport;
+
     void saveMetadata(T i18n, Session session) throws OwsExceptionReport;
+
     Collection<Locale> getAvailableLocales(Session session) throws OwsExceptionReport;
 }

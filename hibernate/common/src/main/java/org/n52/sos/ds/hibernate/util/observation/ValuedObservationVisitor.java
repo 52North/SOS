@@ -71,10 +71,8 @@ public interface ValuedObservationVisitor<T> {
 
     T visit(DataArrayDataEntity o) throws OwsExceptionReport;
 
-    T visit(ProfileDataEntity o)
-            throws OwsExceptionReport;
-    T visit(ReferencedDataEntity o)
-            throws OwsExceptionReport;
+    T visit(ProfileDataEntity o) throws OwsExceptionReport;
 
+    T visit(ReferencedDataEntity o) throws OwsExceptionReport;
 
 }

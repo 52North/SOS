@@ -67,21 +67,19 @@ import org.n52.shetland.ogc.swe.stream.StreamingSweDataArray;
  *
  * @author Christian Autermann
  */
-public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVisitor<Value<?>, OwsExceptionReport> {
+public final class ValueCreatingSweDataComponentVisitor
+        implements SweDataComponentVisitor<Value<?>, OwsExceptionReport> {
 
     private ValueCreatingSweDataComponentVisitor() {
     }
 
-    private OwsExceptionReport notSupported(SweAbstractDataComponent component)
-            throws OwsExceptionReport {
-        throw new NoApplicableCodeException()
-                .withMessage("SweDataComponent {} is not supported as an observation value", component
-                             .getDataComponentType());
+    private OwsExceptionReport notSupported(SweAbstractDataComponent component) throws OwsExceptionReport {
+        throw new NoApplicableCodeException().withMessage(
+                "SweDataComponent {} is not supported as an observation value", component.getDataComponentType());
     }
 
     @Override
-    public Value<?> visit(SweField component)
-            throws OwsExceptionReport {
+    public Value<?> visit(SweField component) throws OwsExceptionReport {
         return component.getElement().accept(this);
     }
 
@@ -198,7 +196,7 @@ public class ValueCreatingSweDataComponentVisitor implements SweDataComponentVis
         return Holder.INSTANCE;
     }
 
-    private static class Holder {
+    private static final class Holder {
         private static final ValueCreatingSweDataComponentVisitor INSTANCE
                 = new ValueCreatingSweDataComponentVisitor();
 

@@ -28,20 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_AFTER_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_BEFORE_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_BEGINS_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_BEGUN_BY_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_CONTAINS_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_DURING_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_ENDED_BY_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_ENDS_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_EQUALS_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_MEETS_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_MET_BY_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_OVERLAPPED_BY_ID;
-import static org.n52.sos.ds.hibernate.util.TemporalRestrictionTest.Identifier.PP_OVERLAPS_ID;
-
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -69,19 +55,19 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
             DateTime ref = new DateTime(DateTimeZone.UTC).minusDays(1);
             transaction = session.beginTransaction();
             HibernateObservationBuilder b = getBuilder(session);
-            b.createObservation(PP_AFTER_ID, ref.plus(3), ref.plus(4));
-            b.createObservation(PP_MET_BY_ID, ref.plus(2), ref.plus(3));
-            b.createObservation(PP_OVERLAPPED_BY_ID, ref.plus(1), ref.plus(3));
-            b.createObservation(PP_ENDS_ID, ref.plus(1), ref.plus(2));
-            b.createObservation(PP_ENDED_BY_ID, ref.minus(3), ref.plus(2));
-            b.createObservation(PP_DURING_ID, ref.minus(1), ref.plus(1));
-            b.createObservation(PP_EQUALS_ID, ref.minus(2), ref.plus(2));
-            b.createObservation(PP_CONTAINS_ID, ref.minus(3), ref.plus(3));
-            b.createObservation(PP_BEGUN_BY_ID, ref.minus(2), ref.plus(3));
-            b.createObservation(PP_BEGINS_ID, ref.minus(2), ref.minus(1));
-            b.createObservation(PP_OVERLAPS_ID, ref.minus(3), ref.minus(1));
-            b.createObservation(PP_MEETS_ID, ref.minus(3), ref.minus(2));
-            b.createObservation(PP_BEFORE_ID, ref.minus(4), ref.minus(3));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_AFTER_ID, ref.plus(3), ref.plus(4));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_MET_BY_ID, ref.plus(2), ref.plus(3));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_OVERLAPPED_BY_ID, ref.plus(1), ref.plus(3));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_ENDS_ID, ref.plus(1), ref.plus(2));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_ENDED_BY_ID, ref.minus(3), ref.plus(2));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_DURING_ID, ref.minus(1), ref.plus(1));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_EQUALS_ID, ref.minus(2), ref.plus(2));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_CONTAINS_ID, ref.minus(3), ref.plus(3));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_BEGUN_BY_ID, ref.minus(2), ref.plus(3));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_BEGINS_ID, ref.minus(2), ref.minus(1));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_OVERLAPS_ID, ref.minus(3), ref.minus(1));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_MEETS_ID, ref.minus(3), ref.minus(2));
+            b.createObservation(TemporalRestrictionTest.Identifier.PP_BEFORE_ID, ref.minus(4), ref.minus(3));
             session.flush();
             transaction.commit();
             return new TimePeriod(ref.minus(2), ref.plus(2));
@@ -99,7 +85,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_AFTER_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_AFTER_ID));
             assertThat(filtered, hasSize(5));
         } finally {
             returnSession(session);
@@ -112,7 +98,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.after());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_AFTER_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_AFTER_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -125,7 +111,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_BEFORE_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_BEFORE_ID));
             assertThat(filtered, hasSize(5));
         } finally {
             returnSession(session);
@@ -138,7 +124,10 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.before());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItems(PP_BEFORE_ID, PP_MEETS_ID, PP_CONTAINS_ID, PP_ENDED_BY_ID, PP_OVERLAPS_ID));
+            assertThat(filtered, hasItems(TemporalRestrictionTest.Identifier.PP_BEFORE_ID,
+                    TemporalRestrictionTest.Identifier.PP_MEETS_ID, TemporalRestrictionTest.Identifier.PP_CONTAINS_ID,
+                    TemporalRestrictionTest.Identifier.PP_ENDED_BY_ID,
+                    TemporalRestrictionTest.Identifier.PP_OVERLAPS_ID));
             assertThat(filtered, hasSize(5));
         } finally {
             returnSession(session);
@@ -151,7 +140,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.equals());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_EQUALS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_EQUALS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -174,7 +163,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.contains());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_CONTAINS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_CONTAINS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -197,7 +186,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.during());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_DURING_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_DURING_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -210,7 +199,8 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.during());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItems(PP_OVERLAPPED_BY_ID, PP_ENDS_ID, PP_DURING_ID));
+            assertThat(filtered, hasItems(TemporalRestrictionTest.Identifier.PP_OVERLAPPED_BY_ID,
+                    TemporalRestrictionTest.Identifier.PP_ENDS_ID, TemporalRestrictionTest.Identifier.PP_DURING_ID));
             assertThat(filtered, hasSize(3));
         } finally {
             returnSession(session);
@@ -223,7 +213,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begins());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_BEGINS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_BEGINS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -236,7 +226,10 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.begins());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItems(PP_BEGINS_ID, PP_EQUALS_ID, PP_BEGUN_BY_ID));
+            assertThat(filtered,
+                    hasItems(TemporalRestrictionTest.Identifier.PP_BEGINS_ID,
+                            TemporalRestrictionTest.Identifier.PP_EQUALS_ID,
+                            TemporalRestrictionTest.Identifier.PP_BEGUN_BY_ID));
             assertThat(filtered, hasSize(3));
         } finally {
             returnSession(session);
@@ -249,7 +242,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begunBy());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_BEGUN_BY_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_BEGUN_BY_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -272,7 +265,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.ends());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_ENDS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_ENDS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -285,7 +278,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.ends());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_MET_BY_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_MET_BY_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -298,7 +291,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.endedBy());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_ENDED_BY_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_ENDED_BY_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -321,7 +314,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.overlaps());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_OVERLAPS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_OVERLAPS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -344,7 +337,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.overlappedBy());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_OVERLAPPED_BY_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_OVERLAPPED_BY_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -367,7 +360,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.meets());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_MEETS_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_MEETS_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
@@ -390,7 +383,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
         try {
             Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.metBy());
             assertThat(filtered, is(notNullValue()));
-            assertThat(filtered, hasItem(PP_MET_BY_ID));
+            assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_MET_BY_ID));
             assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);

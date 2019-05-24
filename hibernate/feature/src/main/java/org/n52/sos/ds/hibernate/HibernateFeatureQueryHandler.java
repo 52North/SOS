@@ -75,7 +75,6 @@ import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.create.FeatureVisitorContext;
 import org.n52.sos.ds.hibernate.create.HibernateFeatureVisitor;
 import org.n52.sos.ds.hibernate.create.HibernateGeometryVisitor;
@@ -354,7 +353,7 @@ public class HibernateFeatureQueryHandler
      *
      * @param features FeatureOfInterest objects
      * @param queryObject SOS version
-     * @param session
+     * @param session the session
      * @return Map with FOI identifier and SOS feature
      * @throws OwsExceptionReport * If feature type is not supported
      */
@@ -392,10 +391,10 @@ public class HibernateFeatureQueryHandler
      * Creates a SOS feature from the FeatureOfInterest object
      *
      * @param feature FeatureOfInterest object
-     * @param queryObject
-     * @param session
-     * @return SOS feature
-     * @throws OwsExceptionReport
+     * @param queryObject Query object
+     * @param session the session 
+     * @return SOS feature An SOS feature
+     * @throws OwsExceptionReport  If an error occurs
      */
     protected AbstractFeature createSosAbstractFeature(final AbstractFeatureEntity feature,
             final FeatureQueryHandlerQueryObject queryObject, Session session) throws OwsExceptionReport {
@@ -419,7 +418,7 @@ public class HibernateFeatureQueryHandler
         .setUpdateFeatureGeometry(updateFeatureGeometry)
         .setCreateFeatureGeometryFromSamplingGeometries(createFeatureGeometryFromSamplingGeometries)
         .setI18NDAORepository(i18NDAORepository)
-        .setCache((SosContentCache)contentCacheController.getCache())
+        .setCache((SosContentCache) contentCacheController.getCache())
         .setServiceURL(serviceURL);
     }
 
@@ -470,8 +469,8 @@ public class HibernateFeatureQueryHandler
         }
         if (queryObject.isSetSpatialFilters()) {
             for (final SpatialFilter filter : queryObject.getSpatialFilters()) {
-                filter.setGeometry(
-                        getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry().toGeometry()));
+                filter.setGeometry(getGeometryHandler()
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry().toGeometry()));
             }
         }
         List<AbstractFeatureEntity> features = daoFactory.getFeatureDAO().getFeatures(queryObject.getFeatures(),

@@ -123,8 +123,8 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
                     try {
                         name.setCodeSpace(new URI(vde.getNameCodespace().getName()));
                     } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
-                                vde.getNameCodespace().getName());
+                        throw new NoApplicableCodeException().causedBy(e)
+                                .withMessage("Error while creating URI from '{}'", vde.getNameCodespace().getName());
                     }
 
                 }
@@ -274,7 +274,6 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             return Referenceable.<VerticalCS> of(reference);
         } else {
             List<Referenceable<CoordinateSystemAxis>> coordinateSystemAxis = new ArrayList<>();
-            ;
             if (vcs.hasCoordinateSystemAxis()) {
                 for (CoordinateSystemAxisEntity csae : vcs.getCoordinateSystemAxis()) {
                     coordinateSystemAxis.add(createCoordinateSystemAxis(csae));
@@ -295,7 +294,8 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
         }
     }
 
-    private Referenceable<CoordinateSystemAxis> createCoordinateSystemAxis(CoordinateSystemAxisEntity csae) throws CodedException {
+    private Referenceable<CoordinateSystemAxis> createCoordinateSystemAxis(CoordinateSystemAxisEntity csae)
+            throws CodedException {
         if (csae.isSetNilReason()) {
             return Referenceable.<CoordinateSystemAxis> of(Nillable.<CoordinateSystemAxis> nil(csae.getNilReason()));
         } else if (csae.isSetHref()) {
@@ -333,7 +333,8 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
         }
     }
 
-    private Referenceable<CiResponsibleParty> createCiResponsibleParty(ResponsiblePartyEntity rpe) throws CodedException {
+    private Referenceable<CiResponsibleParty> createCiResponsibleParty(ResponsiblePartyEntity rpe)
+            throws CodedException {
         if (rpe.isSetNilReason()) {
             return Referenceable.<CiResponsibleParty> of(Nillable.<CiResponsibleParty> nil(rpe.getNilReason()));
         } else if (rpe.isSetHref()) {
@@ -466,7 +467,8 @@ public abstract class AbstractMonitoringFeatureCreator<T extends AbstractMonitor
             return Referenceable.<CiOnlineResource> of(createReferenceValues(ore));
         } else {
             Nillable<URI> linkage = null;
-            linkage = ore.isSetLinkage() ? Nillable.<URI> of(createUri(ore.getLinkage(), ore.getClass())) : Nillable.<URI> missing();
+            linkage = ore.isSetLinkage() ? Nillable.<URI> of(createUri(ore.getLinkage(), ore.getClass()))
+                    : Nillable.<URI> missing();
             CiOnlineResource onlineResource = new CiOnlineResource(linkage);
             if (ore.isSetId()) {
                 onlineResource.setId(ore.getId());

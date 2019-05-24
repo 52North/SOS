@@ -55,7 +55,11 @@ import com.google.common.base.Strings;
 public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TypeOfEnrichment.class);
+
+    private static final String ERROR_URL_ENCODING = "Error while encoding DescribeSensor URL!";
+
     private String typeOfIdentifier;
+
     private String typeOfFormat;
 
     public TypeOfEnrichment(AbstractProcedureCreationContext ctx) {
@@ -117,24 +121,24 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
             final String version =
                     getProcedureCreationContext().getServiceOperatorRepository().getSupportedVersions(SosConstants.SOS)
                             .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                            : Sos1Constants.SERVICEVERSION;
+                                    : Sos1Constants.SERVICEVERSION;
             try {
-                href =
-                        SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(),
-                                identifier, format).toString();
+                href = SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(),
+                        identifier, format).toString();
             } catch (MalformedURLException murle) {
-               LOGGER.error("Error while encoding DescribeSensor URL!", murle);
+                LOGGER.error(ERROR_URL_ENCODING, murle);
             }
         }
         try {
-            String version = getProcedureCreationContext().getServiceOperatorRepository().isVersionSupported(SosConstants.SOS,
-                                                                               Sos2Constants.SERVICEVERSION)
-                                     ? Sos2Constants.SERVICEVERSION
-                                     : Sos1Constants.SERVICEVERSION;
+            String version = getProcedureCreationContext().getServiceOperatorRepository()
+                    .isVersionSupported(SosConstants.SOS, Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                            : Sos1Constants.SERVICEVERSION;
 
-            return SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(), identifier, format).toString();
+            return SosHelper
+                    .getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(), identifier, format)
+                    .toString();
         } catch (MalformedURLException murle) {
-            LOGGER.error("Error while encoding DescribeSensor URL!", murle);
+            LOGGER.error(ERROR_URL_ENCODING, murle);
             return identifier;
         }
     }

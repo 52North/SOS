@@ -76,19 +76,32 @@ import geodb.GeoDB;
  * @since 4.0.0
  *
  */
-public class H2Configuration implements ConnectionProvider {
+public final class H2Configuration implements ConnectionProvider {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
 
     private static final String HIBERNATE_CONNECTION_URL = HibernateConstants.CONNECTION_URL;
 
-    private static final String HIBERNATE_CONNECTION_DRIVER_CLASS =
-            DefaultHibernateConstants.DRIVER_PROPERTY;
+    private static final String HIBERNATE_CONNECTION_DRIVER_CLASS = DefaultHibernateConstants.DRIVER_PROPERTY;
 
     private static final String HIBERNATE_DIALECT = HibernateConstants.DIALECT;
 
     private static final String H2_DRIVER = "org.h2.Driver";
 
     private static final String H2_CONNECTION_URL = "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;MULTI_THREADED=true";
+
+    private static final String DB_INITIALIZED = "Database is not initialized";
+
+    private static final String  ECEXUTING_TEMPLATE = "Executing {}";
+
+    // private List<String> createScript;
+    //
+    // private List<String> dropScript;
+
+    private static SchemaExport schemaExport;
+
+    private static Metadata metadata;
+
+    private static SessionFactory sessionFactory;
 
     private static Properties properties = new Properties() {
         private static final long serialVersionUID = 3109256773218160485L;
@@ -136,23 +149,21 @@ public class H2Configuration implements ConnectionProvider {
 
     private Configuration configuration;
 
-//    private List<String> createScript;
-//
-//    private List<String> dropScript;
+    // private List<String> createScript;
+    //
+    // private List<String> dropScript;
 
-    private static SchemaExport schemaExport;
-
-    private static Metadata metadata;
-
-    private static SessionFactory sessionFactory;
+    private H2Configuration() throws IOException, OwsExceptionReport, ConnectionProviderException {
+        init();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
+    }
 
     public static void assertInitialized() {
         synchronized (LOCK) {
             if (instance == null) {
                 try {
                     instance = new H2Configuration();
-                } catch (IOException | OwsExceptionReport |
-                        ConnectionProviderException ex) {
+                } catch (IOException | OwsExceptionReport | ConnectionProviderException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -187,24 +198,24 @@ public class H2Configuration implements ConnectionProvider {
     public static void recreate() {
         synchronized (LOCK) {
             if (instance == null) {
-                throw new IllegalStateException("Database is not initialized");
+                throw new IllegalStateException(DB_INITIALIZED);
             }
             Session session = null;
             Transaction transaction = null;
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-//                session.doWork(connection -> {
-//                    try (Statement stmt = connection.createStatement()) {
-//                        for (String cmd : instance.getDropScript()) {
-//                            stmt.addBatch(cmd);
-//                        }
-//                        for (String cmd : instance.getCreateScript()) {
-//                            stmt.addBatch(cmd);
-//                        }
-//                        stmt.executeBatch();
-//                    }
-//                });
+                // session.doWork(connection -> {
+                // try (Statement stmt = connection.createStatement()) {
+                // for (String cmd : instance.getDropScript()) {
+                // stmt.addBatch(cmd);
+                // }
+                // for (String cmd : instance.getCreateScript()) {
+                // stmt.addBatch(cmd);
+                // }
+                // stmt.executeBatch();
+                // }
+                // });
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.DROP, metadata);
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
                 transaction.commit();
@@ -222,10 +233,11 @@ public class H2Configuration implements ConnectionProvider {
     public static void truncate() {
         synchronized (LOCK) {
             if (instance == null) {
-                throw new IllegalStateException("Database is not initialized");
+                throw new IllegalStateException(DB_INITIALIZED);
             }
-            Metadata metadata = new MetadataSources().buildMetadata(instance.getConfiguration().getStandardServiceRegistryBuilder().build());
-            final Collection<Table> tableMappings = metadata.collectTableMappings();
+            Metadata m = new MetadataSources()
+                    .buildMetadata(instance.getConfiguration().getStandardServiceRegistryBuilder().build());
+            final Collection<Table> tableMappings = m.collectTableMappings();
             final List<String> tableNames = new LinkedList<>();
             GeoDBDialect dialect = new GeoDBDialect();
             for (Table table : tableMappings) {
@@ -256,11 +268,6 @@ public class H2Configuration implements ConnectionProvider {
                 returnSession(session);
             }
         }
-    }
-
-    private H2Configuration() throws IOException, OwsExceptionReport, ConnectionProviderException {
-        init();
-        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
 
     private void cleanup() {
@@ -298,22 +305,21 @@ public class H2Configuration implements ConnectionProvider {
             Class.forName(H2_DRIVER);
             try (Connection conn = DriverManager.getConnection(H2_CONNECTION_URL)) {
                 GeoDB.InitGeoDB(conn);
-//                Path createTempFile = null;
-//                Path dropTempFile = null;
+                // Path createTempFile = null;
+                // Path dropTempFile = null;
                 try (Statement stmt = conn.createStatement()) {
                     configuration = new Configuration().configure("/hibernate.cfg.xml");
                     configuration.setProperty(HibernateConstants.CONNECTION_URL, H2_CONNECTION_URL);
                     configuration.setProperty(HibernateConstants.DIALECT, GeoDBDialect.class.getName());
                     configuration.addProperties(properties);
                     @SuppressWarnings("unchecked")
-                    List<String> resources = (List<String>) properties
-                            .get(SessionFactoryProvider.HIBERNATE_RESOURCES);
+                    List<String> resources = (List<String>) properties.get(SessionFactoryProvider.HIBERNATE_RESOURCES);
                     for (String resource : resources) {
                         configuration.addInputStream(getClass().getResourceAsStream(resource));
                     }
-//                    final GeoDBDialect dialect = new GeoDBDialect();
-//                    createTempFile = Files.createTempFile("create", ".tmp");
-//                    dropTempFile = Files.createTempFile("drop", ".tmp");
+                    // final GeoDBDialect dialect = new GeoDBDialect();
+                    // createTempFile = Files.createTempFile("create", ".tmp");
+                    // dropTempFile = Files.createTempFile("drop", ".tmp");
                     schemaExport = new SchemaExport();
                     schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true);
 
@@ -327,35 +333,40 @@ public class H2Configuration implements ConnectionProvider {
                     }
                     metadata = metadataSources.getMetadataBuilder().build();
 
-//                    Metadata metadata = new MetadataSources(configuration.getStandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build()).buildMetadata();
+                    // Metadata metadata = new
+                    // MetadataSources(configuration.getStandardServiceRegistryBuilder()
+                    // .applySettings(configuration.getProperties()).build()).buildMetadata();
                     schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
-//                    createScript = Files.readAllLines(createTempFile);
-//                    schemaExport.setOutputFile(dropTempFile.toString());
-//                    schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.DROP, metadata);
-//                    dropScript = Files.readAllLines(dropTempFile);
-//                    for (final String s : createScript) {
-//                        LOG.debug("Executing {}", s);
-//                        stmt.execute(s);
-//                    }
+                    // createScript = Files.readAllLines(createTempFile);
+                    // schemaExport.setOutputFile(dropTempFile.toString());
+                    // schemaExport.execute(EnumSet.of(TargetType.DATABASE),
+                    // Action.DROP, metadata);
+                    // dropScript = Files.readAllLines(dropTempFile);
+                    // for (final String s : createScript) {
+                    // LOG.debug("Executing {}", s);
+                    // stmt.execute(s);
+                    // }
                 } catch (Exception e) {
                     new RuntimeException(e);
-                } finally {
-//                    try {
-//                        if (createTempFile != null) {
-//                            Files.deleteIfExists(createTempFile);
-//                        }
-//
-//                    } catch (IOException e) {
-//                        LOG.info("Unable to delete temp file {}", createTempFile.toString());
-//                    }
-//                    try {
-//                        if (dropTempFile != null) {
-//                            Files.deleteIfExists(dropTempFile);
-//                        }
-//
-//                    } catch (IOException e) {
-//                        LOG.info("Unable to delete temp file {}", dropTempFile.toString());
-//                    }
+                    // } finally {
+                    // try {
+                    // if (createTempFile != null) {
+                    // Files.deleteIfExists(createTempFile);
+                    // }
+                    //
+                    // } catch (IOException e) {
+                    // LOG.info("Unable to delete temp file {}",
+                    // createTempFile.toString());
+                    // }
+                    // try {
+                    // if (dropTempFile != null) {
+                    // Files.deleteIfExists(dropTempFile);
+                    // }
+                    //
+                    // } catch (IOException e) {
+                    // LOG.info("Unable to delete temp file {}",
+                    // dropTempFile.toString());
+                    // }
                 }
             }
         } catch (ClassNotFoundException | SQLException | MappingException ex) {
@@ -373,11 +384,11 @@ public class H2Configuration implements ConnectionProvider {
                     String substring = s.substring(0, s.indexOf('('));
                     if (!nonDuplicateCreate.contains(substring)) {
                         nonDuplicateCreate.add(substring);
-                        LOG.debug("Executing {}", s);
+                        LOG.debug(ECEXUTING_TEMPLATE, s);
                         finalScript.add(s);
                     }
                 } else {
-                    LOG.debug("Executing {}", s);
+                    LOG.debug(ECEXUTING_TEMPLATE, s);
                     finalScript.add(s);
                 }
                 nonDublicates.add(s);
@@ -408,8 +419,7 @@ public class H2Configuration implements ConnectionProvider {
     }
 
     @Override
-    public Object getConnection()
-            throws ConnectionProviderException {
+    public Object getConnection() throws ConnectionProviderException {
         return getSession();
     }
 
@@ -423,11 +433,11 @@ public class H2Configuration implements ConnectionProvider {
         return 0;
     }
 
-//    public List<String> getCreateScript() {
-//        return createScript;
-//    }
-//
-//    public List<String> getDropScript() {
-//        return dropScript;
-//    }
+    // public List<String> getCreateScript() {
+    // return createScript;
+    // }
+    //
+    // public List<String> getDropScript() {
+    // return dropScript;
+    // }
 }

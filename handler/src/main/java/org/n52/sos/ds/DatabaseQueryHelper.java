@@ -67,22 +67,22 @@ public interface DatabaseQueryHelper {
 
     default String getObservationTypeForValueType(ValueType valueType) {
         switch (valueType) {
-        case bool:
-            return  OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
-        case category:
-            return  OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
-        case count:
-            return  OmConstants.OBS_TYPE_COUNT_OBSERVATION;
-        case geometry:
-            return  OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION;
-        case quantity:
-            return  OmConstants.OBS_TYPE_MEASUREMENT;
-        case referenced:
-            return  OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
-        case text:
-            return  OmConstants.OBS_TYPE_TEXT_OBSERVATION;
-        default:
-            return OmConstants.OBS_TYPE_OBSERVATION;
+            case bool:
+                return  OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
+            case category:
+                return  OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
+            case count:
+                return  OmConstants.OBS_TYPE_COUNT_OBSERVATION;
+            case geometry:
+                return  OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION;
+            case quantity:
+                return  OmConstants.OBS_TYPE_MEASUREMENT;
+            case referenced:
+                return  OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
+            case text:
+                return  OmConstants.OBS_TYPE_TEXT_OBSERVATION;
+            default:
+                return OmConstants.OBS_TYPE_OBSERVATION;
         }
     }
 
@@ -119,14 +119,14 @@ public interface DatabaseQueryHelper {
 
     default String getFeatureTypeForGeoemtry(Geometry geometry) {
         switch (geometry.getGeometryType()) {
-        case "Point":
-            return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT;
-        case "LineString":
-            return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE;
-        case "Polygon":
-            return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE;
-        default:
-            return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_FEATURE;
+            case "Point":
+                return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_POINT;
+            case "LineString":
+                return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE;
+            case "Polygon":
+                return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE;
+            default:
+                return SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_FEATURE;
         }
     }
 }

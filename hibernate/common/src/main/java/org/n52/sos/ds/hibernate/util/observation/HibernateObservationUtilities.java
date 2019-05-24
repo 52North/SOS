@@ -50,15 +50,15 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
  * @since 4.0.0
  *
  */
-public class HibernateObservationUtilities {
+public final class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
     }
 
     public static ObservationStream createSosObservationsFromObservations(Collection<DataEntity<?>> o,
             AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx, Session s)
             throws OwsExceptionReport, ConverterException {
-        return new ObservationOmObservationCreator(o, r, LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, s)
-                .create();
+        return new ObservationOmObservationCreator(o, r,
+                LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, s).create();
     }
 
     public static ObservationStream createSosObservationsFromObservations(Collection<DataEntity<?>> o,
@@ -99,16 +99,15 @@ public class HibernateObservationUtilities {
      *             If observation creation fails
      */
     public static ObservationStream createSosObservationFromObservationConstellation(DatasetEntity dataset,
-            List<String> fois, AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx, Session session)
-            throws OwsExceptionReport, ConverterException {
+            List<String> fois, AbstractObservationRequest r, String pdf, OmObservationCreatorContext ctx,
+            Session session) throws OwsExceptionReport, ConverterException {
         return createSosObservationFromObservationConstellation(dataset, fois, r,
                 LocaleHelper.decode(r.getRequestedLanguage(), ctx.getDefaultLanguage()), pdf, ctx, session);
     }
 
     public static ObservationStream createSosObservationFromObservationConstellation(DatasetEntity dataset,
             List<String> fois, AbstractObservationRequest request, Locale l, String pdf,
-            OmObservationCreatorContext ctx, Session session)
-            throws OwsExceptionReport, ConverterException {
+            OmObservationCreatorContext ctx, Session session) throws OwsExceptionReport, ConverterException {
         return new ObservationConstellationOmObservationCreator(dataset, fois, request, l, pdf, ctx, session).create();
     }
 
@@ -164,7 +163,6 @@ public class HibernateObservationUtilities {
             throws OwsExceptionReport, ConverterException {
         return new EReportingSeriesOmObservationCreator(dataset, r, l, pdf, ctx, session).create();
     }
-
 
     /**
      * Get observation ids from observation objects

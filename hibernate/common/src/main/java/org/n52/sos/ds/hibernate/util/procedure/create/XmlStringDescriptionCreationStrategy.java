@@ -47,13 +47,11 @@ import com.google.common.base.Strings;
 /**
  * Strategy to create the {@link SosProcedureDescription} from a XML string.
  */
-public class XmlStringDescriptionCreationStrategy
-        implements DescriptionCreationStrategy {
+public class XmlStringDescriptionCreationStrategy implements DescriptionCreationStrategy {
 
     @Override
     public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
-            HibernateProcedureCreationContext ctx, Session s)
-            throws OwsExceptionReport {
+            HibernateProcedureCreationContext ctx, Session s) throws OwsExceptionReport {
         SosProcedureDescription<?> desc = new SosProcedureDescription<>(readXml(p.getDescriptionFile(), ctx));
         desc.setIdentifier(p.getIdentifier());
         desc.setDescriptionFormat(p.getFormat().getFormat());
@@ -65,15 +63,14 @@ public class XmlStringDescriptionCreationStrategy
         return !Strings.isNullOrEmpty(p.getDescriptionFile()) && p.getDescriptionFile().startsWith("<");
     }
 
-    protected AbstractFeature readXml(String xml, HibernateProcedureCreationContext ctx)
-            throws OwsExceptionReport {
+    protected AbstractFeature readXml(String xml, HibernateProcedureCreationContext ctx) throws OwsExceptionReport {
         try {
             XmlObject parsed = XmlHelper.parseXmlString(xml);
-            return (AbstractFeature) ctx.getDecoderRepository().getDecoder(CodingHelper.getDecoderKey(parsed)).decode(parsed);
+            return (AbstractFeature) ctx.getDecoderRepository().getDecoder(CodingHelper.getDecoderKey(parsed))
+                    .decode(parsed);
         } catch (DecodingException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while creating procedure description from XML string");
         }
-
     }
 }

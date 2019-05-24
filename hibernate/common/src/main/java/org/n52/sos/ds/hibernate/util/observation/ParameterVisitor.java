@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public class ParameterVisitor {
 
-   @SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes")
     public NamedValue visit(ParameterQuantityEntity p) throws OwsExceptionReport {
         NamedValue<BigDecimal> namedValue = new NamedValue<>();
         addName(namedValue, p);
@@ -60,7 +60,7 @@ public class ParameterVisitor {
         return namedValue;
     }
 
-   @SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes")
     public NamedValue visit(ParameterBooleanEntity p) throws OwsExceptionReport {
         NamedValue<Boolean> namedValue = new NamedValue<>();
         addName(namedValue, p);
@@ -68,7 +68,7 @@ public class ParameterVisitor {
         return namedValue;
     }
 
-   @SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes")
     public NamedValue visit(ParameterCategoryEntity p) throws OwsExceptionReport {
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, p);
@@ -77,7 +77,7 @@ public class ParameterVisitor {
         return namedValue;
     }
 
-   @SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes")
     public NamedValue visit(ParameterCountEntity p) throws OwsExceptionReport {
         NamedValue<Integer> namedValue = new NamedValue<>();
         addName(namedValue, p);
@@ -93,33 +93,13 @@ public class ParameterVisitor {
         return namedValue;
     }
 
-//   @SuppressWarnings("rawtypes")
-//    public NamedValue visit(Para p) throws OwsExceptionReport {
-//        NamedValue<XmlObject> namedValue = new NamedValue<>();
-//        addName(namedValue, p);
-//        namedValue.setValue(new XmlValue(p.getValueAsXml()));
-//        return namedValue;
-//    }
-
-    protected void addUnit(ParameterEntity<?> vp, Value<?> v) {
-        if (!v.isSetUnit() && vp instanceof HasUnit && ((HasUnit) vp).isSetUnit()) {
-            UnitEntity unit = ((HasUnit)vp).getUnit();
-            UoM uom = new UoM(unit.getUnit());
-            if (unit.isSetName()) {
-                uom.setName(unit.getName());
-            }
-            if (unit.isSetLink()) {
-                uom.setLink(unit.getLink());
-            }
-            v.setUnit(uom);
-        }
-    }
-
-    protected NamedValue<?> addName(NamedValue<?> namedValue, ParameterEntity<?> p) {
-        ReferenceType referenceType = new ReferenceType(p.getName());
-        namedValue.setName(referenceType);
-        return namedValue;
-    }
+    // @SuppressWarnings("rawtypes")
+    // public NamedValue visit(Para p) throws OwsExceptionReport {
+    // NamedValue<XmlObject> namedValue = new NamedValue<>();
+    // addName(namedValue, p);
+    // namedValue.setValue(new XmlValue(p.getValueAsXml()));
+    // return namedValue;
+    // }
 
     public NamedValue<?> visit(ParameterEntity parameter) throws OwsExceptionReport {
         if (parameter instanceof ParameterQuantityEntity) {
@@ -137,6 +117,24 @@ public class ParameterVisitor {
         return namedValue;
     }
 
+    protected void addUnit(ParameterEntity<?> vp, Value<?> v) {
+        if (!v.isSetUnit() && vp instanceof HasUnit && ((HasUnit) vp).isSetUnit()) {
+            UnitEntity unit = ((HasUnit) vp).getUnit();
+            UoM uom = new UoM(unit.getUnit());
+            if (unit.isSetName()) {
+                uom.setName(unit.getName());
+            }
+            if (unit.isSetLink()) {
+                uom.setLink(unit.getLink());
+            }
+            v.setUnit(uom);
+        }
+    }
 
+    protected NamedValue<?> addName(NamedValue<?> namedValue, ParameterEntity<?> p) {
+        ReferenceType referenceType = new ReferenceType(p.getName());
+        namedValue.setName(referenceType);
+        return namedValue;
+    }
 
 }

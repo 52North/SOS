@@ -61,82 +61,58 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 
 import com.google.common.collect.Lists;
 
-
 /**
  * @since 4.0.0
  *
  */
-public class QueryHelper {
+public final class QueryHelper {
 
     private static final int LIMIT_EXPRESSION_DEPTH = 1000;
 
     private static final String SAMS_SHAPE = "sams:shape";
+
     private static final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
 
-    private static final TimeOperator[] DEFAULT_INSTANT_TIME_OPERATORS
-            = new TimeOperator[] {
-                TimeOperator.TM_EndedBy,
-                TimeOperator.TM_Contains,
-                TimeOperator.TM_Equals,
-                TimeOperator.TM_BegunBy
-            };
+    private static final TimeOperator[] DEFAULT_INSTANT_TIME_OPERATORS = new TimeOperator[] { TimeOperator.TM_EndedBy,
+        TimeOperator.TM_Contains, TimeOperator.TM_Equals, TimeOperator.TM_BegunBy };
 
-    private static final TimeOperator[] DEFAULT_PERIOD_TIME_OPERATORS
-            = new TimeOperator[] {
-                TimeOperator.TM_Meets,
-                TimeOperator.TM_Overlaps,
-                TimeOperator.TM_Begins,
-                TimeOperator.TM_BegunBy,
-                TimeOperator.TM_During,
-                TimeOperator.TM_Contains,
-                TimeOperator.TM_Equals,
-                TimeOperator.TM_OverlappedBy,
-                TimeOperator.TM_Ends,
-                TimeOperator.TM_EndedBy,
-                TimeOperator.TM_MetBy
-            };
+    private static final TimeOperator[] DEFAULT_PERIOD_TIME_OPERATORS = new TimeOperator[] { TimeOperator.TM_Meets,
+        TimeOperator.TM_Overlaps, TimeOperator.TM_Begins, TimeOperator.TM_BegunBy, TimeOperator.TM_During,
+        TimeOperator.TM_Contains, TimeOperator.TM_Equals, TimeOperator.TM_OverlappedBy, TimeOperator.TM_Ends,
+        TimeOperator.TM_EndedBy, TimeOperator.TM_MetBy };
 
     private QueryHelper() {
     }
 
-    public static Set<String> getFeatures(FeatureQueryHandler featureQueryHandler,
-                                          SpatialFeatureQueryRequest request,
-                                          Session session)
-            throws OwsExceptionReport {
+    public static Set<String> getFeatures(FeatureQueryHandler featureQueryHandler, SpatialFeatureQueryRequest request,
+            Session session) throws OwsExceptionReport {
         SpatialFilter spatialFilter = null;
         if (!request.hasSpatialFilteringProfileSpatialFilter()) {
             spatialFilter = request.getSpatialFilter();
         }
-        return QueryHelper.getFeatureIdentifier(featureQueryHandler,
-                                                spatialFilter,
-                                                request.getFeatureIdentifiers(),
-                                                session);
+        return QueryHelper.getFeatureIdentifier(featureQueryHandler, spatialFilter, request.getFeatureIdentifiers(),
+                session);
     }
 
     public static Set<String> getFeatureIdentifier(FeatureQueryHandler featureQueryHandler,
-                                                   SpatialFilter spatialFilter,
-                                                   List<String> featureIdentifier,
-                                                   Session session) throws OwsExceptionReport {
+            SpatialFilter spatialFilter, List<String> featureIdentifier, Session session) throws OwsExceptionReport {
         Set<String> foiIDs = null;
         // spatial filter
         if (spatialFilter != null) {
             String valueReference = spatialFilter.getValueReference();
-            if (!valueReference.contains(OM_FEATURE_OF_INTEREST) ||
-                !valueReference.contains(SAMS_SHAPE)) {
-                throw new NoApplicableCodeException()
-                        .withMessage("The requested valueReference for spatial filters is not supported by this server!");
+            if (!valueReference.contains(OM_FEATURE_OF_INTEREST) || !valueReference.contains(SAMS_SHAPE)) {
+                throw new NoApplicableCodeException().withMessage(
+                        "The requested valueReference for spatial filters is not supported by this server!");
             }
-            FeatureQueryHandlerQueryObject query = new FeatureQueryHandlerQueryObject(session).addSpatialFilter(spatialFilter);
+            FeatureQueryHandlerQueryObject query =
+                    new FeatureQueryHandlerQueryObject(session).addSpatialFilter(spatialFilter);
             foiIDs = new HashSet<>(featureQueryHandler.getFeatureIDs(query));
         }
 
         // feature of interest
         if (CollectionHelper.isNotEmpty(featureIdentifier)) {
-            return (foiIDs == null)
-                           ? new HashSet<>(featureIdentifier)
-                           : featureIdentifier.stream()
-                            .filter(foiIDs::contains)
-                            .collect(Collectors.toSet());
+            return (foiIDs == null) ? new HashSet<>(featureIdentifier)
+                    : featureIdentifier.stream().filter(foiIDs::contains).collect(Collectors.toSet());
         }
         return foiIDs;
     }
@@ -145,20 +121,19 @@ public class QueryHelper {
      * Get Criterion for DescribeSensor validTime parameter.
      *
      * @param validTime
-     *                  ValidTime parameter value
+     *            ValidTime parameter value
      *
      * @return Criterion with temporal filters
      *
      * @throws UnsupportedTimeException
-     *                                            If the time value is invalid
+     *             If the time value is invalid
      * @throws UnsupportedValueReferenceException
-     *                                            If the valueReference is not supported
+     *             If the valueReference is not supported
      * @throws UnsupportedOperatorException
-     *                                            If the temporal operator is not supported
+     *             If the temporal operator is not supported
      */
-    public static Criterion getValidTimeCriterion(Time validTime) throws UnsupportedTimeException,
-                                                                         UnsupportedValueReferenceException,
-                                                                         UnsupportedOperatorException {
+    public static Criterion getValidTimeCriterion(Time validTime)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         if (validTime instanceof TimeInstant) {
             return SosTemporalRestrictions.filter(getFiltersForTimeInstant((TimeInstant) validTime));
         } else if (validTime instanceof TimePeriod) {
@@ -172,14 +147,13 @@ public class QueryHelper {
      * Get temporal filters for validTime TimeInstant
      *
      * @param validTime
-     *                  TimeInstant
+     *            TimeInstant
      *
      * @return Collection with temporal filters
      */
     private static Collection<TemporalFilter> getFiltersForTimeInstant(TimeInstant validTime) {
-        IndeterminateValue indeterminateValue = Optional
-                .ofNullable(validTime.getIndeterminateValue())
-                .orElse(IndeterminateValue.UNKNOWN);
+        IndeterminateValue indeterminateValue =
+                Optional.ofNullable(validTime.getIndeterminateValue()).orElse(IndeterminateValue.UNKNOWN);
         if (indeterminateValue.isAfter()) {
             return Collections.singleton(createBeforeFilter(validTime));
         } else if (indeterminateValue.isBefore()) {
@@ -194,19 +168,19 @@ public class QueryHelper {
 
     private static TemporalFilter createAfterFilter(TimeInstant validTime) {
         return new TemporalFilter(TimeOperator.TM_Before, validTime,
-                                  TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
+                TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
     }
 
     private static TemporalFilter createBeforeFilter(TimeInstant validTime) {
         return new TemporalFilter(TimeOperator.TM_After, validTime,
-                                  TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
+                TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
     }
 
     /**
      * Get default filters for valid TimeInstant
      *
      * @param validTime
-     *                  TimeInstant
+     *            TimeInstant
      *
      * @return default filters
      */
@@ -218,7 +192,7 @@ public class QueryHelper {
      * Get temporal filters for validTime TimePeriod
      *
      * @param validTime
-     *                  TimePeriod
+     *            TimePeriod
      *
      * @return Collection with temporal filters
      */
@@ -228,14 +202,13 @@ public class QueryHelper {
 
     private static Collection<TemporalFilter> getFiltersForOperators(Time validTime, TimeOperator... operators) {
         String reference = TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE;
-        return Arrays.asList(operators).stream()
-                .map(op -> new TemporalFilter(op, validTime, reference))
+        return Arrays.asList(operators).stream().map(op -> new TemporalFilter(op, validTime, reference))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Creates a criterion for objects, considers if size is > 1000 (Oracle expression
-     * limit).
+     * Creates a criterion for objects, considers if size is > 1000 (Oracle
+     * expression limit).
      *
      * @param propertyName
      *            Column name.

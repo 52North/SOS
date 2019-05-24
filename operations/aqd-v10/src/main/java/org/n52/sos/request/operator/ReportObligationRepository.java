@@ -46,10 +46,13 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.config.sqlite.ReportingHeaderSQLiteManager;
 
-public class ReportObligationRepository implements EReportObligationRepository {
+public final class ReportObligationRepository implements EReportObligationRepository {
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
+
     private final ReadWriteLock obligationsLock = new ReentrantReadWriteLock();
+
     private RelatedParty reportingAuthority;
+
     private final Map<ReportObligationType, ReportObligation> obligations;
 
     @Inject
@@ -133,11 +136,11 @@ public class ReportObligationRepository implements EReportObligationRepository {
         ReportObligation reportObligation = getReportObligation(flow);
         if (!reportObligation.isValid()) {
             throw new NoApplicableCodeException().at("AQD Repoting Header").withMessage(
-                    "No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting) and configure the AQD Repoting Header!",
+                    "No AQD Repoting Header set for %s! Please go to the admin interface "
+                    + "(Admin -> Settings -> eReporting) and configure the AQD Repoting Header!",
                     flow.name());
         }
-        return new EReportingHeader()
-                .setChange(reportObligation.getChange())
+        return new EReportingHeader().setChange(reportObligation.getChange())
                 .setInspireID(reportObligation.getInspireID())
                 .setReportingPeriod(reportObligation.getReportingPeriod())
                 .setReportingAuthority(getReportingAuthority());

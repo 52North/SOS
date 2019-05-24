@@ -64,6 +64,12 @@ public class H2FileDatasource extends AbstractH2Datasource {
             .compile("^jdbc:h2:(.+)$");
 
     private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
+    
+    private static final String USER_HOME = "user.home";
+    
+    private static final String SOS = "sos";
+    
+    private static final String DESCRIPTION = "Set this to the name/path of the database you want to use for SOS.";
 
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
@@ -85,16 +91,16 @@ public class H2FileDatasource extends AbstractH2Datasource {
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
         AbstractSettingDefinition<String> h2Database = createDatabaseDefinition().setDescription(
-                "Set this to the name/path of the database you want to use for SOS.").setDefaultValue(
-                System.getProperty("user.home") + File.separator + "sos");
+                DESCRIPTION).setDefaultValue(
+                System.getProperty(USER_HOME) + File.separator + SOS);
         return Sets.<SettingDefinition<?>> newHashSet(h2Database, getDatabaseConceptDefinition(),
                 getDatabaseExtensionDefinition(), getFeatureConceptDefinition());
     }
 
     private StringSettingDefinition getDatabaseDefinition() {
         StringSettingDefinition def = createDatabaseDefinition();
-        def.setDescription("Set this to the name/path of the database you want to use for SOS.");
-        def.setDefaultValue(System.getProperty("user.home") + File.separator + "sos");
+        def.setDescription(DESCRIPTION);
+        def.setDefaultValue(System.getProperty(USER_HOME) + File.separator + SOS);
         return def;
     }
 

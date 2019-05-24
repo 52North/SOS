@@ -67,7 +67,6 @@ import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
@@ -88,10 +87,14 @@ import com.google.common.collect.Sets;
  */
 @Configurable
 public class SosInsertSensorOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractInsertSensorHandler, InsertSensorRequest, InsertSensorResponse> {
+        AbstractV2TransactionalRequestOperator<AbstractInsertSensorHandler,
+        InsertSensorRequest,
+        InsertSensorResponse> {
 
     private static final Set<String> CONFORMANCE_CLASSES = Sets
             .newHashSet(ConformanceClasses.SOS_V2_INSERTION_CAPABILITIES, ConformanceClasses.SOS_V2_SENSOR_INSERTION);
+
+    private static final String ABSTRACT_PROCESS_TYPE_OF_TITLE  = "sml:AbstractProcess.typeOf.title";
 
     private static SosOffering sensorTypeDummyOffering = new SosOffering("sensorTypeDummyOffering", "");
 
@@ -187,7 +190,8 @@ public class SosInsertSensorOperatorV20 extends
                 }
             } else {
                 exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.observationType));
-                exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
+                exceptions.add(
+                        new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
             }
         }
         exceptions.throwIfNotEmpty();
@@ -201,9 +205,8 @@ public class SosInsertSensorOperatorV20 extends
                 Optional<Extension<?>> extension = request.getExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
                 if (extension.isPresent()) {
                     if (extension.get().getValue() instanceof DataRecord) {
-                        procedureDescription
-                                .addOfferings(SosOffering.fromSet(((DataRecord) extension.get().getValue())
-                                        .getSweAbstractSimpleTypeFromFields(SweText.class)));
+                        procedureDescription.addOfferings(SosOffering.fromSet(((DataRecord) extension.get().getValue())
+                                .getSweAbstractSimpleTypeFromFields(SweText.class)));
                     } else if (extension.get().getValue() instanceof SweText) {
                         procedureDescription.addOffering(SosOffering.from((SweText) extension.get().getValue()));
                     }
@@ -350,7 +353,8 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkAndSetAssignedProcedureID(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
+    private void checkAndSetAssignedProcedureID(InsertSensorRequest request, String generatedId)
+            throws OwsExceptionReport {
         if (request.getProcedureDescription().isSetIdentifier()) {
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
@@ -362,7 +366,8 @@ public class SosInsertSensorOperatorV20 extends
                 Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId)
+            throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
 
         // if no offerings are assigned, generate one
@@ -379,10 +384,12 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
-            if (!offering.isParentOffering() && getCache().getPublishedOfferings().contains(offering.getIdentifier())) {
+            if (!offering.isParentOffering()
+                    && getCache().getPublishedOfferings().contains(offering.getIdentifier())) {
                 throw new InvalidParameterValueException().at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
-                                "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",
+                                "The offering with the identifier '%s' still exists in this service "
+                                + "and it is not allowed to insert more than one procedure to an offering!",
                                 offering.getIdentifier());
             }
         }
@@ -425,10 +432,10 @@ public class SosInsertSensorOperatorV20 extends
                 if (typeOf.isSetTitle()) {
                     String title = typeOf.getTitle();
                     if (!getCache().hasProcedure(title)) {
-                        throw new InvalidParameterValueException("sml:AbstractProcess.typeOf.title", title);
+                        throw new InvalidParameterValueException(ABSTRACT_PROCESS_TYPE_OF_TITLE, title);
                     }
                 } else {
-                    throw new MissingParameterValueException("sml:AbstractProcess.typeOf.title");
+                    throw new MissingParameterValueException(ABSTRACT_PROCESS_TYPE_OF_TITLE);
                 }
             }
         }

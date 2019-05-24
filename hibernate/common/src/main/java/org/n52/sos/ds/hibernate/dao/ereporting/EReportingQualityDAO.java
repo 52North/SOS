@@ -40,13 +40,14 @@ public class EReportingQualityDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingQualityDAO.class);
 
-    public EReportingQualityEntity getEReportingQuality(long series, int year, String primaryObservation, Session session) {
+    public EReportingQualityEntity getEReportingQuality(long series, int year, String primaryObservation,
+            Session session) {
         Criteria c = session.createCriteria(EReportingQualityEntity.class);
         c.add(Restrictions.eq(EReportingQualityEntity.DATASET, series));
         c.add(Restrictions.eq(EReportingQualityEntity.YEAR, year));
         c.add(Restrictions.ilike(EReportingQualityEntity.PRIMARY_OBSERVATION, primaryObservation));
         LOGGER.debug("QUERY getEReportingQuality(series, year, primaryObservation): {}",
                 HibernateHelper.getSqlString(c));
-        return (EReportingQualityEntity)c.uniqueResult();
+        return (EReportingQualityEntity) c.uniqueResult();
     }
 }

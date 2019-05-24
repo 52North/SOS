@@ -73,9 +73,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      */
     @SuppressWarnings("unchecked")
     public List<PhenomenonEntity> getObservableProperties(final List<String> identifiers, final Session session) {
-        Criteria criteria =
-                session.createCriteria(PhenomenonEntity.class).add(
-                        Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
+        Criteria criteria = session.createCriteria(PhenomenonEntity.class)
+                .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getObservableProperties(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -95,13 +94,10 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     public List<String> getObservablePropertyIdentifiersForOffering(final String offeringIdentifier,
             final Session session) throws OwsExceptionReport {
         Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyIn(
-                    ProcedureEntity.PROPERTY_ID,
-                    getDetachedCriteriaObservablePropertiesForOfferingFromDatasetEntity(offeringIdentifier,
-                            session)));
-            c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
-        LOGGER.debug(
-                "QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
+        c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
+                getDetachedCriteriaObservablePropertiesForOfferingFromDatasetEntity(offeringIdentifier, session)));
+        c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
+        LOGGER.debug("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -119,44 +115,41 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     public List<String> getObservablePropertyIdentifiersForProcedure(final String procedureIdentifier,
             final Session session) {
         Criteria c = getDefaultCriteria(session);
-            c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
-            c.add(Subqueries.propertyIn(
-                    PhenomenonEntity.PROPERTY_ID,
-                    getDetachedCriteriaObservablePropertyForProcedureFromDatasetEntity(procedureIdentifier)));
-        LOGGER.debug(
-                "QUERY getObservablePropertyIdentifiersForProcedure(observablePropertyIdentifier): {}",
+        c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
+        c.add(Subqueries.propertyIn(PhenomenonEntity.PROPERTY_ID,
+                getDetachedCriteriaObservablePropertyForProcedureFromDatasetEntity(procedureIdentifier)));
+        LOGGER.debug("QUERY getObservablePropertyIdentifiersForProcedure(observablePropertyIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
 
-
     /**
-     * Get map keyed by observable properties with
-     * collections of child observable properties (if supported) as values
-     * @param session
-     * @return Map keyed by observable properties with values of child observable properties collections
+     * Get map keyed by observable properties with collections of child
+     * observable properties (if supported) as values
+     *
+     * @param session the session
+     * @return Map keyed by observable properties with values of child
+     *         observable properties collections
      */
-    public Map<PhenomenonEntity,Collection<PhenomenonEntity>> getObservablePropertyHierarchy(final Session session) {
+    public Map<PhenomenonEntity, Collection<PhenomenonEntity>> getObservablePropertyHierarchy(final Session session) {
 
-            List<PhenomenonEntity> observablePropertyObjects
-                    = getObservablePropertyObjects(session);
-            Map<PhenomenonEntity, Collection<PhenomenonEntity>> map
-                    = new HashMap<>(observablePropertyObjects.size());
-            for (PhenomenonEntity op : observablePropertyObjects) {
-                map.put(op, op.getChildren());
-            }
-            return map;
-//        } else {
-//            List<PhenomenonEntity> observablePropertyObjects
-//                    = getObservablePropertyObjects(session);
-//            Map<ObservableProperty, Collection<PhenomenonEntity>> map
-//                    = new HashMap<>(observablePropertyObjects.size());
-//            Set<PhenomenonEntity> empty = Collections.emptySet();
-//            for (PhenomenonEntity op : observablePropertyObjects) {
-//                map.put(op, empty);
-//            }
-//            return map;
-//        }
+        List<PhenomenonEntity> observablePropertyObjects = getObservablePropertyObjects(session);
+        Map<PhenomenonEntity, Collection<PhenomenonEntity>> map = new HashMap<>(observablePropertyObjects.size());
+        for (PhenomenonEntity op : observablePropertyObjects) {
+            map.put(op, op.getChildren());
+        }
+        return map;
+        // } else {
+        // List<PhenomenonEntity> observablePropertyObjects
+        // = getObservablePropertyObjects(session);
+        // Map<ObservableProperty, Collection<PhenomenonEntity>> map
+        // = new HashMap<>(observablePropertyObjects.size());
+        // Set<PhenomenonEntity> empty = Collections.emptySet();
+        // for (PhenomenonEntity op : observablePropertyObjects) {
+        // map.put(op, empty);
+        // }
+        // return map;
+        // }
     }
 
     private Criteria getDefaultCriteria(Session session) {
@@ -180,7 +173,6 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return (PhenomenonEntity) criteria.uniqueResult();
     }
 
-
     /**
      * Get observable properties by identifiers
      *
@@ -193,9 +185,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     @SuppressWarnings("unchecked")
     public List<PhenomenonEntity> getObservablePropertiesForIdentifiers(final Collection<String> identifiers,
             final Session session) {
-        Criteria criteria =
-                session.createCriteria(PhenomenonEntity.class).add(
-                        Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
+        Criteria criteria = session.createCriteria(PhenomenonEntity.class)
+                .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getObservablePropertiesForIdentifiers(identifiers): {}",
                 HibernateHelper.getSqlString(criteria));
         return (List<PhenomenonEntity>) criteria.list();
@@ -216,23 +207,6 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     }
 
     /**
-     * Get all transactional observable property objects
-     *
-     * @param session
-     *                Hibernate session
-     *
-     * @return Observable property objects
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public List<PhenomenonEntity> getTObservablePropertyObjects(final Session session) {
-        Criteria criteria = session.createCriteria(PhenomenonEntity.class);
-        LOGGER.debug("QUERY getTObservablePropertyObjects(): {}", HibernateHelper
-                     .getSqlString(criteria));
-        return criteria.list();
-    }
-
-    /**
      * Insert and/or get observable property objects for SOS observable
      * properties
      *
@@ -247,14 +221,6 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return new ArrayList<>(getOrInsertObservablePropertyAsMap(observableProperties, session).values());
     }
 
-    public Map<String, PhenomenonEntity> getOrInsertObservablePropertyAsMap(
-            List<? extends AbstractPhenomenon> observableProperties, Session session) {
-        Map<String, PhenomenonEntity> existing = getExistingObservableProperties(observableProperties, session);
-        insertNonExisting(observableProperties, existing, session);
-        insertHierachy(observableProperties, existing, session);
-        return existing;
-    }
-
     public PhenomenonEntity getOrInsertObservableProperty(AbstractPhenomenon observableProperty, Session session) {
         PhenomenonEntity obsProp = getObservablePropertyForIdentifier(observableProperty.getIdentifier(), session);
         if (obsProp == null) {
@@ -267,20 +233,23 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return obsProp;
     }
 
-    protected void insertNonExisting(
-            List<? extends AbstractPhenomenon> observableProperties,
-            Map<String, PhenomenonEntity> existing,
-            Session session)
-            throws HibernateException {
+    public Map<String, PhenomenonEntity> getOrInsertObservablePropertyAsMap(
+            List<? extends AbstractPhenomenon> observableProperties, Session session) {
+        Map<String, PhenomenonEntity> existing = getExistingObservableProperties(observableProperties, session);
+        insertNonExisting(observableProperties, existing, session);
+        insertHierachy(observableProperties, existing, session);
+        return existing;
+    }
+
+    protected void insertNonExisting(List<? extends AbstractPhenomenon> observableProperties,
+            Map<String, PhenomenonEntity> existing, Session session) throws HibernateException {
         for (AbstractPhenomenon sosObsProp : observableProperties) {
             insertNonExisting(sosObsProp, existing, session);
         }
     }
 
-    protected void insertNonExisting(AbstractPhenomenon sosObsProp,
-                                     Map<String, PhenomenonEntity> existing,
-                                     Session session)
-            throws HibernateException {
+    protected void insertNonExisting(AbstractPhenomenon sosObsProp, Map<String, PhenomenonEntity> existing,
+            Session session) throws HibernateException {
         if (!existing.containsKey(sosObsProp.getIdentifier())) {
             PhenomenonEntity obsProp = new PhenomenonEntity();
             addIdentifierNameDescription(sosObsProp, obsProp, session);
@@ -295,8 +264,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     }
 
     protected Map<String, PhenomenonEntity> getExistingObservableProperties(
-            List<? extends AbstractPhenomenon> observableProperty,
-            Session session) {
+            List<? extends AbstractPhenomenon> observableProperty, Session session) {
         List<String> identifiers = getIdentifiers(observableProperty);
         return getObservablePropertiesAsMap(identifiers, session);
     }
@@ -306,8 +274,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         for (AbstractPhenomenon sosObservableProperty : observableProperty) {
             identifiers.add(sosObservableProperty.getIdentifier());
             if (sosObservableProperty instanceof OmCompositePhenomenon) {
-                OmCompositePhenomenon parent
-                        = (OmCompositePhenomenon) sosObservableProperty;
+                OmCompositePhenomenon parent = (OmCompositePhenomenon) sosObservableProperty;
                 for (OmObservableProperty child : parent.getPhenomenonComponents()) {
                     identifiers.add(child.getIdentifier());
                 }
@@ -317,8 +284,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     }
 
     protected void insertHierachy(List<? extends AbstractPhenomenon> observableProperty,
-                                  Map<String, PhenomenonEntity> existing,
-                                  Session session) {
+            Map<String, PhenomenonEntity> existing, Session session) {
         for (AbstractPhenomenon sosObsProp : observableProperty) {
             if (sosObsProp instanceof OmCompositePhenomenon) {
                 insertHierachy((OmCompositePhenomenon) sosObsProp, existing, session);
@@ -326,21 +292,22 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         }
     }
 
-    protected void insertHierachy(OmCompositePhenomenon parent,
-                                  Map<String, PhenomenonEntity> existing,
-                                  Session session) throws HibernateException {
+    protected void insertHierachy(OmCompositePhenomenon parent, Map<String, PhenomenonEntity> existing,
+            Session session) throws HibernateException {
         PhenomenonEntity parentObsProp = getObservableProperty(parent.getIdentifier(), existing, session);
         for (OmObservableProperty child : parent) {
             PhenomenonEntity childObsProp = getObservableProperty(child.getIdentifier(), existing, session);
             childObsProp.addParent(parentObsProp);
             session.update(childObsProp);
         }
-        // do not save the parent, as it would result in a duplicate key error...
+        // do not save the parent, as it would result in a duplicate key
+        // error...
         session.flush();
         session.refresh(parentObsProp);
     }
 
-    private PhenomenonEntity getObservableProperty(String identifier, Map<String, PhenomenonEntity> observableProperties, Session session) {
+    private PhenomenonEntity getObservableProperty(String identifier,
+            Map<String, PhenomenonEntity> observableProperties, Session session) {
         // TODO check if this is still required
         if (identifier == null) {
             return null;
@@ -360,11 +327,10 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return (PhenomenonEntity) session.get(PhenomenonEntity.class, id);
     }
 
-    protected Map<String, PhenomenonEntity> getObservablePropertiesAsMap(
-            List<String> identifiers, Session session) {
+    protected Map<String, PhenomenonEntity> getObservablePropertiesAsMap(List<String> identifiers, Session session) {
         List<PhenomenonEntity> obsProps = getObservableProperties(identifiers, session);
         Map<String, PhenomenonEntity> existing = new HashMap<>(identifiers.size());
-        for (PhenomenonEntity obsProp  : obsProps) {
+        for (PhenomenonEntity obsProp : obsProps) {
             existing.put(obsProp.getIdentifier(), obsProp);
         }
         return existing;
@@ -382,10 +348,9 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             String procedureIdentifier) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE)
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
                 .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections
-                .property(DatasetEntity.PROPERTY_PHENOMENON)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
         return detachedCriteria;
     }
 
@@ -403,8 +368,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE).add(
-                Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
+                .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
         return detachedCriteria;
     }
@@ -423,10 +388,9 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             String offeringIdentifier, Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(
-                Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections
-                .property(DatasetEntity.PROPERTY_PHENOMENON)));
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
         return detachedCriteria;
     }
 
@@ -438,13 +402,15 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             return c.list();
         }
         return getObservablePropertyObjects(session);
-     }
+    }
 
-     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
-         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
-         detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
-         return detachedCriteria;
-}
+    private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(getDaoFactory().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true),
+                Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_PHENOMENON)));
+        return detachedCriteria;
+    }
 
 }

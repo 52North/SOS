@@ -93,8 +93,6 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
-
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
 
     protected static final String SCHEMA_TITLE = "Schema";
@@ -147,6 +145,18 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final Integer BATCH_SIZE_DEFAULT_VALUE = 20;
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
+    
+    private static final String SETTING_NOT_FOUND_TEMPLATE =
+            "Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'. "
+            + "If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n";
+
+    private static final String TMP_FILE_ENDING = ".tmp";
+    
+    private static final String TABLE_SCHEMA = "TABLE_SCHEM";
+    
+    private static final String UNABLE_DELETE_FILE_TEMPLATE = "Unable to delete temp file {}";
+    
     private Dialect dialect;
 
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
@@ -321,16 +331,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_PATH)) {
                 concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
             }
-            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
-                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+            LOG.error(SETTING_NOT_FOUND_TEMPLATE,
                     featureConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
                     featureConceptDefinition.getKey(), concept);
         }
         switch (FeatureConcept.valueOf(concept)) {
-        case EXTENDED_FEATURE_CONCEPT:
-            return HIBERNATE_MAPPING_FEATURE_PATH;
-        default:
-            return null;
+            case EXTENDED_FEATURE_CONCEPT:
+                return HIBERNATE_MAPPING_FEATURE_PATH;
+            default:
+                return null;
         }
     }
 
@@ -361,10 +370,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH)) {
                 concept = DatabaseConcept.EREPORTING.name();
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
-            concept = DatabaseConcept.TRANSACTIONAL.name();
-        }
-            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
-                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+                concept = DatabaseConcept.TRANSACTIONAL.name();
+            }
+            LOG.error(SETTING_NOT_FOUND_TEMPLATE,
                     databaseConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
                     databaseConceptDefinition.getKey(), concept);
         }
@@ -372,19 +380,19 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     private String getDatabaseConceptBasePath(Map<String, Object> settings) {
-       return getDatabaseConceptBasePath(getDatabaseConcept(settings));
+        return getDatabaseConceptBasePath(getDatabaseConcept(settings));
     }
 
     private String getDatabaseConceptBasePath(DatabaseConcept conept) {
         switch (conept) {
-        case SIMPLE:
-            return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
-        case EREPORTING:
-            return HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH;
-        case TRANSACTIONAL:
-            return HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH;
-        default:
-            return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
+            case SIMPLE:
+                return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
+            case EREPORTING:
+                return HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH;
+            case TRANSACTIONAL:
+                return HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH;
+            default:
+                return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
         }
     }
 
@@ -413,8 +421,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_SAMPLING_PATH)) {
                 extension = DatabaseExtension.SAMPLING.name();
             }
-            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
-                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+            LOG.error(SETTING_NOT_FOUND_TEMPLATE,
                     databaseExtensionDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, extension,
                     databaseExtensionDefinition.getKey(), extension);
         }
@@ -440,12 +447,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String[] createSchema(Map<String, Object> settings) {
         Path createTempFile = null;
         try {
-            Metadata metadata = getMetadata(settings);
-            createTempFile = Files.createTempFile("create", ".tmp");
+            Metadata m = getMetadata(settings);
+            createTempFile = Files.createTempFile("create", TMP_FILE_ENDING);
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
                     .setOutputFile(createTempFile.toString());
-            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, metadata);
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, m);
             List<String> readAllLines = Files.readAllLines(createTempFile, Charset.defaultCharset());
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
             String[] pre = getPreSchemaScript();
@@ -463,7 +470,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     Files.deleteIfExists(createTempFile);
                 }
             } catch (IOException e) {
-                LOG.info("Unable to delete temp file {}", createTempFile.toString());
+                LOG.info(UNABLE_DELETE_FILE_TEMPLATE, createTempFile.toString());
             }
         }
 
@@ -473,12 +480,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String[] dropSchema(Map<String, Object> settings) {
         Path dropTempFile = null;
         try {
-            Metadata metadata = getMetadata(settings);
-            dropTempFile = Files.createTempFile("drop", ".tmp");
+            Metadata m = getMetadata(settings);
+            dropTempFile = Files.createTempFile("drop", TMP_FILE_ENDING);
             SchemaExport schemaExport = new SchemaExport();
             schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
                     .setOutputFile(dropTempFile.toString());
-            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, metadata);
+            schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.DROP, m);
             List<String> readAllLines = Files.readAllLines(dropTempFile);
             return readAllLines.toArray(new String[readAllLines.size()]);
         } catch (IOException ex) {
@@ -489,7 +496,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     Files.deleteIfExists(dropTempFile);
                 }
             } catch (IOException e) {
-                LOG.info("Unable to delete temp file {}", dropTempFile.toString());
+                LOG.info(UNABLE_DELETE_FILE_TEMPLATE, dropTempFile.toString());
             }
         }
     }
@@ -498,12 +505,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String[] updateSchema(Map<String, Object> settings) {
         Path createTempFile = null;
         try {
-            Metadata metadata = getMetadata(settings);
-            createTempFile = Files.createTempFile("update", ".tmp");
+            createTempFile = Files.createTempFile("update", TMP_FILE_ENDING);
             SchemaUpdate schemaUpdate = new SchemaUpdate();
             schemaUpdate.setDelimiter(";").setFormat(false).setHaltOnError(true)
                     .setOutputFile(createTempFile.toString());
-            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), metadata);
+            schemaUpdate.execute(EnumSet.of(TargetType.SCRIPT), getMetadata(settings));
             Set<String> nonDublicated = Sets.newLinkedHashSet(Files.readAllLines(createTempFile));
             return nonDublicated.toArray(new String[nonDublicated.size()]);
         } catch (IOException ex) {
@@ -514,7 +520,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     Files.deleteIfExists(createTempFile);
                 }
             } catch (IOException e) {
-                LOG.info("Unable to delete temp file {}", createTempFile.toString());
+                LOG.info(UNABLE_DELETE_FILE_TEMPLATE, createTempFile.toString());
             }
         }
     }
@@ -525,11 +531,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             SchemaValidator schemaValidator = new SchemaValidator();
             getServiceRegistry(settings);
             metadata = null;
-            Metadata metadata = getMetadata(settings);
-            schemaValidator.validate(metadata, registry);
+            schemaValidator.validate(getMetadata(settings), registry);
         } catch (HibernateException ex) {
             throw new ConfigurationError(ex);
         }
+    }
+
+    @Override
+    public void validateSchema(Properties current, Map<String, Object> changed) {
+        validateSchema(mergeProperties(current, changed));
     }
 
     protected Metadata getMetadata(Connection conn, Map<String, Object> settings) throws SQLException {
@@ -560,31 +570,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return registry;
     }
 
-    @Override
-    public boolean checkIfSchemaExists(Map<String, Object> settings) {
-        Connection conn = null;
-        try {
-            /* check if any of the needed tables is existing */
-            conn = openConnection(settings);
-            Metadata metadata = getMetadata(conn, settings);
-            Iterator<Table> iter = metadata.collectTableMappings().iterator();
-            String catalog = checkCatalog(conn);
-            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
-            Set<String> tableNames = getTableNames(conn, catalog, schema);
-            while (iter.hasNext()) {
-                Table table = iter.next();
-                if (table.isPhysicalTable() && tableNames.contains(table.getName())) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (SQLException ex) {
-            throw new ConfigurationError(ex);
-        } finally {
-            close(conn);
-        }
-    }
-
     protected Set<String> getTableNames(Connection conn, String catalog, String schema) throws SQLException {
         Set<String> tableNames = new HashSet<>();
         ResultSet rs = conn.getMetaData().getTables(catalog, schema, null, null);
@@ -599,9 +584,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (!Strings.isNullOrEmpty(rs.getString("TABLE_SCHEM"))
-                        && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
-                    return rs.getString("TABLE_SCHEM");
+                if (!Strings.isNullOrEmpty(rs.getString(TABLE_SCHEMA))
+                        && rs.getString(TABLE_SCHEMA).equalsIgnoreCase(schema)) {
+                    return rs.getString(TABLE_SCHEMA);
                 }
             }
             if (!Strings.isNullOrEmpty(schema)) {
@@ -629,15 +614,37 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
     }
 
-    @Override
-    public void validateConnection(Map<String, Object> settings) {
-        Connection conn = null;
+    /**
+     * Execute SQL script
+     *
+     * @param sql
+     *            SQL script to execute
+     * @param conn
+     *            SQL connection
+     * @throws HibernateException
+     *             If an error occurs
+     */
+    protected void execute(Collection<String> sql, Connection conn) throws HibernateException {
+        Statement stmt = null;
+        String lastCmd = null;
         try {
-            conn = openConnection(settings);
+            stmt = conn.createStatement();
+            LOG.debug("Start executing SQL commands: ");
+            for (String cmd : sql) {
+                if (!Strings.isNullOrEmpty(cmd)) {
+                    lastCmd = cmd;
+                    LOG.debug("Execute: {}", cmd);
+                    stmt.execute(cmd);
+                }
+            }
         } catch (SQLException ex) {
-            throw new ConfigurationError(ex);
+            if (lastCmd != null) {
+                throw new ConfigurationError(ex.getMessage() + ". Command: " + lastCmd, ex);
+            } else {
+                throw new ConfigurationError(ex);
+            }
         } finally {
-            close(conn);
+            close(stmt);
         }
     }
 
@@ -651,8 +658,36 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         Connection conn = null;
         try {
             conn = openConnection(settings);
-            Metadata metadata = getMetadata(conn, settings);
-            validatePrerequisites(conn, metadata, settings);
+            validatePrerequisites(conn, getMetadata(conn, settings), settings);
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(conn);
+        }
+    }
+
+    @Override
+    public void validatePrerequisites(Properties current, Map<String, Object> changed) {
+        validatePrerequisites(mergeProperties(current, changed));
+    }
+
+    /**
+     * Check if the required extensions are available
+     *
+     * @param con
+     *            SQL connection
+     * @param metadata
+     *            Current database metadata
+     * @param settings
+     *            Datasource settings
+     */
+    protected abstract void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings);
+
+    @Override
+    public void validateConnection(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            conn = openConnection(settings);
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
@@ -666,13 +701,27 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     @Override
-    public void validatePrerequisites(Properties current, Map<String, Object> changed) {
-        validatePrerequisites(mergeProperties(current, changed));
-    }
-
-    @Override
-    public void validateSchema(Properties current, Map<String, Object> changed) {
-        validateSchema(mergeProperties(current, changed));
+    public boolean checkIfSchemaExists(Map<String, Object> settings) {
+        Connection conn = null;
+        try {
+            /* check if any of the needed tables is existing */
+            conn = openConnection(settings);
+            Iterator<Table> iter = getMetadata(conn, settings).collectTableMappings().iterator();
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Set<String> tableNames = getTableNames(conn, catalog, schema);
+            while (iter.hasNext()) {
+                Table table = iter.next();
+                if (table.isPhysicalTable() && tableNames.contains(table.getName())) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(conn);
+        }
     }
 
     @Override
@@ -731,40 +780,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             dialect = createDialect();
         }
         return dialect;
-    }
-
-    /**
-     * Execute SQL script
-     *
-     * @param sql
-     *            SQL script to execute
-     * @param conn
-     *            SQL connection
-     * @throws HibernateException
-     *             If an error occurs
-     */
-    protected void execute(Collection<String> sql, Connection conn) throws HibernateException {
-        Statement stmt = null;
-        String lastCmd = null;
-        try {
-            stmt = conn.createStatement();
-            LOG.debug("Start executing SQL commands: ");
-            for (String cmd : sql) {
-                if (!Strings.isNullOrEmpty(cmd)) {
-                    lastCmd = cmd;
-                    LOG.debug("Execute: {}", cmd);
-                    stmt.execute(cmd);
-                }
-            }
-        } catch (SQLException ex) {
-            if (lastCmd != null) {
-                throw new ConfigurationError(ex.getMessage() + ". Command: " + lastCmd, ex);
-            } else {
-                throw new ConfigurationError(ex);
-            }
-        } finally {
-            close(stmt);
-        }
     }
 
     /**
@@ -1042,7 +1057,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *            User name
      * @param password
      *            Password
-     * @throws SQLException
+     * @throws SQLException If an error occurs
      */
     protected void precheckDriver(String url, String user, String password) throws SQLException {
         Driver driver = DriverManager.getDriver(url);
@@ -1064,18 +1079,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return the driver class.
      */
     protected abstract String getDriverClass();
-
-    /**
-     * Check if the required extensions are available
-     *
-     * @param con
-     *            SQL connection
-     * @param metadata
-     *            Current database metadata
-     * @param settings
-     *            Datasource settings
-     */
-    protected abstract void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings);
 
     /**
      * Create a new Hibernate dialect

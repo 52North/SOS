@@ -43,7 +43,7 @@ import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext
  */
 public class ValidProcedureTimeDescriptionCreationStrategy
         extends XmlStringDescriptionCreationStrategy {
-    final ProcedureHistoryEntity vpt;
+    private final ProcedureHistoryEntity vpt;
 
     public ValidProcedureTimeDescriptionCreationStrategy(ProcedureHistoryEntity validProcedureTime) {
         this.vpt = validProcedureTime;

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.procedure.enrich;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Set;
 
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -39,6 +37,8 @@ import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.procedure.AbstractProcedureConverter;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
+
+import com.google.common.base.Preconditions;
 
 public abstract class AbstractRelatedProceduresEnrichment<T>
         extends ProcedureDescriptionEnrichment {
@@ -60,7 +60,7 @@ public abstract class AbstractRelatedProceduresEnrichment<T>
     }
 
     public AbstractRelatedProceduresEnrichment<T> setProcedureDescriptionFormat(String pdf) {
-        this.procedureDescriptionFormat = checkNotNull(pdf);
+        this.procedureDescriptionFormat = Preconditions.checkNotNull(pdf);
         return this;
     }
 

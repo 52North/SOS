@@ -74,7 +74,7 @@ public class AfterRestriction implements TemporalRestriction {
 
     @Override
     public Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
-        return Restrictions.gt(selfPosition, getEndPlaceHolder( count));
+        return Restrictions.gt(selfPosition, getEndPlaceHolder(count));
     }
 
     @Override

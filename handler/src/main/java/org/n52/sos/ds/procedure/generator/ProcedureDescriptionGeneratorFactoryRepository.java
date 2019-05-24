@@ -36,14 +36,15 @@ import org.n52.janmayen.lifecycle.Constructable;
 /**
  * Repository for {@link ProcedureDescriptionGeneratorFactory}
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
-public class ProcedureDescriptionGeneratorFactoryRepository
-    extends AbstractProcedureDescriptionGeneratorFactoryRepository<ProcedureDescriptionGeneratorKey, ProcedureDescriptionGenerator, ProcedureDescriptionGeneratorFactory>
-    implements Constructable {
-
+public class ProcedureDescriptionGeneratorFactoryRepository extends
+        AbstractProcedureDescriptionGeneratorFactoryRepository<ProcedureDescriptionGeneratorKey,
+        ProcedureDescriptionGenerator,
+        ProcedureDescriptionGeneratorFactory>
+        implements Constructable {
 
     public ProcedureDescriptionGenerator getFactory(String descriptionFormat) {
         return getFactory(new ProcedureDescriptionGeneratorKey(descriptionFormat));
@@ -56,7 +57,8 @@ public class ProcedureDescriptionGeneratorFactoryRepository
     /**
      * Checks if a factory is available to generate the description
      *
-     * @param descriptionFormat Default format
+     * @param descriptionFormat
+     *            Default format
      *
      * @return If a factory is available
      */

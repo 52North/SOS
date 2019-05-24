@@ -29,18 +29,18 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link AbstractValueDAO} for series concept
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @author Carsten Hollmann
  * @since 4.1.0
  *
  */
@@ -48,9 +48,14 @@ public class SeriesValueDAO extends AbstractSeriesValueDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueDAO.class);
 
+    public SeriesValueDAO(GeometryHandler geometryHandler) {
+        super(geometryHandler);
+    }
+
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws CodedException {
-        // nothing  to add
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
+            throws CodedException {
+        // nothing to add
     }
 
     @Override

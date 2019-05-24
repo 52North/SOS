@@ -71,7 +71,6 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,11 +86,17 @@ import com.google.common.collect.Maps;
 public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstants {
 
     private static final String SQL_QUERY_OFFERING_TIME_EXTREMA = "getOfferingTimeExtrema";
+
     private static final String SQL_QUERY_GET_MIN_DATE_FOR_OFFERING = "getMinDate4Offering";
+
     private static final String SQL_QUERY_GET_MAX_DATE_FOR_OFFERING = "getMaxDate4Offering";
+
     private static final String SQL_QUERY_GET_MIN_RESULT_TIME_FOR_OFFERING = "getMinResultTime4Offering";
+
     private static final String SQL_QUERY_GET_MAX_RESULT_TIME_FOR_OFFERING = "getMaxResultTime4Offering";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingDAO.class);
+
     private final OfferingeTimeTransformer transformer = new OfferingeTimeTransformer();
 
     private DaoFactory daoFactory;
@@ -124,8 +129,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @return Offering objects
      */
     public List<OfferingEntity> getOfferings(final Session session) {
-        Criteria criteria =
-                session.createCriteria(OfferingEntity.class);
+        Criteria criteria = session.createCriteria(OfferingEntity.class);
         LOGGER.debug("QUERY getOfferings(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -161,8 +165,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @return Offering object
      */
     public OfferingEntity getOfferingForIdentifier(final String identifier, final Session session) {
-        Criteria criteria =
-                getDefaultCriteria(session).add(Restrictions.eq(OfferingEntity.IDENTIFIER, identifier));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(OfferingEntity.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getOfferingForIdentifier(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (OfferingEntity) criteria.uniqueResult();
     }
@@ -179,8 +182,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public Collection<OfferingEntity> getOfferingsForIdentifiers(final Collection<String> identifiers,
             final Session session) {
-        Criteria criteria =
-                getDefaultCriteria(session).add(Restrictions.in(OfferingEntity.IDENTIFIER, identifiers));
+        Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(OfferingEntity.IDENTIFIER, identifiers));
         LOGGER.debug("QUERY getOfferingsForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return (List<OfferingEntity>) criteria.list();
     }
@@ -193,18 +195,16 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session
      * @return Offering identifiers
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     @SuppressWarnings("unchecked")
     public List<String> getOfferingIdentifiersForProcedure(final String procedureIdentifier, final Session session)
             throws OwsExceptionReport {
         Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyIn(OfferingEntity.PROPERTY_ID,
-                    getDetachedCriteriaOfferingForProcedureFromObservationConstellation(procedureIdentifier,
-                            session)));
-            c.setProjection(Projections.distinct(Projections.property(OfferingEntity.IDENTIFIER)));
-        LOGGER.debug(
-                "QUERY getOfferingIdentifiersForProcedure(procedureIdentifier): {}",
+        c.add(Subqueries.propertyIn(OfferingEntity.PROPERTY_ID,
+                getDetachedCriteriaOfferingForProcedureFromObservationConstellation(procedureIdentifier, session)));
+        c.setProjection(Projections.distinct(Projections.property(OfferingEntity.IDENTIFIER)));
+        LOGGER.debug("QUERY getOfferingIdentifiersForProcedure(procedureIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -217,18 +217,17 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session
      * @return Offering identifiers
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     @SuppressWarnings("unchecked")
     public Collection<String> getOfferingIdentifiersForObservableProperty(final String observablePropertyIdentifier,
             final Session session) throws OwsExceptionReport {
         Criteria c = getDefaultCriteria(session);
-            c.add(Subqueries.propertyIn(OfferingEntity.PROPERTY_ID,
-                    getDetachedCriteriaOfferingForObservablePropertyFromObservationConstellation(
-                            observablePropertyIdentifier, session)));
-            c.setProjection(Projections.distinct(Projections.property(OfferingEntity.IDENTIFIER)));
-        LOGGER.debug(
-                "QUERY getOfferingIdentifiersForObservableProperty(observablePropertyIdentifier): {}",
+        c.add(Subqueries.propertyIn(OfferingEntity.PROPERTY_ID,
+                getDetachedCriteriaOfferingForObservablePropertyFromObservationConstellation(
+                        observablePropertyIdentifier, session)));
+        c.setProjection(Projections.distinct(Projections.property(OfferingEntity.IDENTIFIER)));
+        LOGGER.debug("QUERY getOfferingIdentifiersForObservableProperty(observablePropertyIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -242,7 +241,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session Hibernate session
      * @return Map of offering time extrema, keyed by offering identifier
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     @SuppressWarnings("unchecked")
     public Map<String, OfferingTimeExtrema> getOfferingTimeExtrema(final Collection<String> identifiers,
@@ -258,24 +257,21 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             results = namedQuery.list();
         } else {
             Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getJdbcServices().getDialect();
-            Criteria criteria =
-                    daoFactory.getObservationDAO()
-                            .getDefaultObservationInfoCriteria(
-                                    session)
-                            .createAlias(DataEntity.PROPERTY_DATASET, "ds")
-                            .createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off");
-                            ProjectionList projectionList = Projections.projectionList()
-                                    .add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER))
-                                    .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
-                                    .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
-                                    .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
-                                    .add(Projections.min(DataEntity.PROPERTY_RESULT_TIME))
-                                    .add(Projections.max(DataEntity.PROPERTY_RESULT_TIME));
-                if (daoFactory.getGeometryHandler().isSpatialDatasource()
-                        && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
-                    projectionList.add(SpatialProjections.extent(DataEntity.PROPERTY_GEOMETRY_ENTITY));
-                }
-                criteria.setProjection(projectionList);
+            Criteria criteria = daoFactory.getObservationDAO().getDefaultObservationInfoCriteria(session)
+                    .createAlias(DataEntity.PROPERTY_DATASET, "ds")
+                    .createAlias(DatasetEntity.PROPERTY_OFFERING, "ds.off");
+            ProjectionList projectionList =
+                    Projections.projectionList().add(Projections.groupProperty("ds.off." + OfferingEntity.IDENTIFIER))
+                            .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                            .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
+                            .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
+                            .add(Projections.min(DataEntity.PROPERTY_RESULT_TIME))
+                            .add(Projections.max(DataEntity.PROPERTY_RESULT_TIME));
+            if (daoFactory.getGeometryHandler().isSpatialDatasource()
+                    && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
+                projectionList.add(SpatialProjections.extent(DataEntity.PROPERTY_GEOMETRY_ENTITY));
+            }
+            criteria.setProjection(projectionList);
             if (CollectionHelper.isNotEmpty(identifiers)) {
                 criteria.add(Restrictions.in(OfferingEntity.IDENTIFIER, identifiers));
             }
@@ -301,7 +297,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session Hibernate session
      * @return min time for offering
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     public DateTime getMinDate4Offering(final String offering, final Session session) throws OwsExceptionReport {
         Object min;
@@ -312,8 +308,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                     SQL_QUERY_GET_MIN_DATE_FOR_OFFERING);
             min = namedQuery.uniqueResult();
         } else {
-            Criteria criteria =
-                    daoFactory.getObservationDAO().getDefaultObservationInfoCriteria(session);
+            Criteria criteria = daoFactory.getObservationDAO().getDefaultObservationInfoCriteria(session);
             addOfferingRestricionForObservation(criteria, offering);
             addMinMaxProjection(criteria, MinMax.MIN, DataEntity.PROPERTY_SAMPLING_TIME_START);
             LOGGER.debug("QUERY Series-getMinDate4Offering(offering): {}", HibernateHelper.getSqlString(criteria));
@@ -333,7 +328,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session Hibernate session
      * @return max time for offering
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     public DateTime getMaxDate4Offering(final String offering, final Session session) throws OwsExceptionReport {
         Object maxStart;
@@ -387,7 +382,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Hibernate session Hibernate session
      *
      * @return min result time for offering
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     public DateTime getMinResultTime4Offering(final String offering, final Session session) throws OwsExceptionReport {
         Object min;
@@ -398,8 +393,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                     SQL_QUERY_GET_MIN_RESULT_TIME_FOR_OFFERING);
             min = namedQuery.uniqueResult();
         } else {
-            Criteria criteria =
-                    daoFactory.getObservationDAO().getDefaultObservationInfoCriteria(session);
+            Criteria criteria = daoFactory.getObservationDAO().getDefaultObservationInfoCriteria(session);
             addOfferingRestricionForObservation(criteria, offering);
             addMinMaxProjection(criteria, MinMax.MIN, DataEntity.PROPERTY_RESULT_TIME);
             LOGGER.debug("QUERY getMinResultTime4Offering(offering): {}", HibernateHelper.getSqlString(criteria));
@@ -420,7 +414,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Hibernate session Hibernate session
      *
      * @return max result time for offering
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     public DateTime getMaxResultTime4Offering(final String offering, final Session session) throws OwsExceptionReport {
         Object maxStart;
@@ -451,13 +445,12 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param session
      *            Hibernate session
      * @return a Map containing the temporal bounding box for each offering
-     * @throws CodedException
+     * @throws CodedException If an error occurs
      */
     public Map<String, TimePeriod> getTemporalBoundingBoxesForOfferings(final Session session)
             throws OwsExceptionReport {
         if (session != null) {
-            Criteria criteria =
-                    daoFactory.getSeriesDAO().getDefaultSeriesCriteria(session);
+            Criteria criteria = daoFactory.getSeriesDAO().getDefaultSeriesCriteria(session);
             criteria.createCriteria(DatasetEntity.PROPERTY_OFFERING, "off");
             criteria.setProjection(
                     Projections.projectionList().add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT))
@@ -563,7 +556,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
         detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observablePropertyIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property( DatasetEntity.PROPERTY_OFFERING)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_OFFERING)));
         return detachedCriteria;
     }
 
@@ -581,9 +574,9 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             String procedureIdentifier, Session session) {
         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DatasetEntity.class);
         detachedCriteria.add(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, false));
-        detachedCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE)
+        detachedCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
                 .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property( DatasetEntity.PROPERTY_OFFERING)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_OFFERING)));
         return detachedCriteria;
     }
 
@@ -623,50 +616,13 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Offering identifier
      */
     public void addOfferingRestricionForObservation(Criteria c, String offering) {
-        c.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        c.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
     }
 
     public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {
-        dc.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria( DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-    }
-
-    /**
-     * Offering time extrema {@link ResultTransformer}
-     *
-     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
-     * @since 4.4.0
-     *
-     */
-    private class OfferingeTimeTransformer implements ResultTransformer {
-        private static final long serialVersionUID = -373512929481519459L;
-
-        @Override
-        public OfferingTimeExtrema transformTuple(Object[] tuple, String[] aliases) {
-            OfferingTimeExtrema offeringTimeExtrema = new OfferingTimeExtrema();
-            if (tuple != null) {
-                offeringTimeExtrema.setOffering(tuple[0].toString());
-                offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
-                if (tuple.length == 7) {
-                    DateTime maxPhenStart = DateTimeHelper.makeDateTime(tuple[2]);
-                    DateTime maxPhenEnd = DateTimeHelper.makeDateTime(tuple[3]);
-                    offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
-                    offeringTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[4]));
-                    offeringTimeExtrema.setMaxResultTime(DateTimeHelper.makeDateTime(tuple[5]));
-                    offeringTimeExtrema.setEnvelope((Geometry) tuple[6]);
-                } else {
-                    offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
-                    offeringTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[3]));
-                    offeringTimeExtrema.setMaxResultTime(DateTimeHelper.makeDateTime(tuple[4]));
-                }
-            }
-            return offeringTimeExtrema;
-        }
-
-        @Override
-        @SuppressWarnings({ "rawtypes" })
-        public List transformList(List collection) {
-            return collection;
-        }
+        dc.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
     }
 
     public Map<String, Collection<String>> getOfferingIdentifiers(Session session) {
@@ -706,7 +662,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Offering identifier
      */
     public void addOfferingRestricionForSeries(Criteria c, String offering) {
-        addOfferingRestrictionFor(c, offering,  DatasetEntity.PROPERTY_OFFERING);
+        addOfferingRestrictionFor(c, offering, DatasetEntity.PROPERTY_OFFERING);
     }
 
     private void addOfferingRestrictionFor(Criteria c, String offering, String associationPath) {
@@ -714,7 +670,8 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
 
     @SuppressWarnings("unchecked")
-    public List<OfferingEntity> getPublishedOffering(Collection<String> identifiers, Session session) throws OwsExceptionReport {
+    public List<OfferingEntity> getPublishedOffering(Collection<String> identifiers, Session session)
+            throws OwsExceptionReport {
         if (HibernateHelper.isEntitySupported(DatasetEntity.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Subqueries.propertyNotIn(OfferingEntity.PROPERTY_ID, getDetachedCriteriaSeries(session)));
@@ -724,10 +681,12 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
 
     private DetachedCriteria getDetachedCriteriaSeries(Session session) throws OwsExceptionReport {
-         final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());
-         detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true), Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
-         detachedCriteria.setProjection(Projections.distinct(Projections.property( DatasetEntity.PROPERTY_OFFERING)));
-         return detachedCriteria;
+        final DetachedCriteria detachedCriteria =
+                DetachedCriteria.forClass(daoFactory.getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.disjunction(Restrictions.eq(DatasetEntity.PROPERTY_DELETED, true),
+                Restrictions.eq(DatasetEntity.PROPERTY_PUBLISHED, false)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(DatasetEntity.PROPERTY_OFFERING)));
+        return detachedCriteria;
     }
 
     protected Criteria getDefaultCriteria(Session session) {
@@ -739,34 +698,34 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
 
     public OfferingEntity updateOfferingMetadata(OfferingEntity offering, DataEntity<?> observation, Session session) {
-        if (offering.getSamplingTimeStart() == null || (offering.getSamplingTimeStart() != null
-                && observation.getSamplingTimeStart() != null
-                && offering.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {
+        if (offering.getSamplingTimeStart() == null
+                || (offering.getSamplingTimeStart() != null && observation.getSamplingTimeStart() != null
+                        && offering.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {
             offering.setSamplingTimeStart(observation.getSamplingTimeStart());
         }
-        if (offering.getSamplingTimeEnd() == null || (offering.getSamplingTimeEnd() != null
-                && observation.getSamplingTimeEnd() != null
-                && offering.getSamplingTimeEnd().before(observation.getSamplingTimeEnd()))) {
+        if (offering.getSamplingTimeEnd() == null
+                || (offering.getSamplingTimeEnd() != null && observation.getSamplingTimeEnd() != null
+                        && offering.getSamplingTimeEnd().before(observation.getSamplingTimeEnd()))) {
             offering.setSamplingTimeEnd(observation.getSamplingTimeEnd());
         }
-        if (offering.getResultTimeStart() == null || (offering.getResultTimeStart() != null
-                && observation.getResultTime() != null
-                && offering.getResultTimeStart().after(observation.getResultTime()))) {
+        if (offering.getResultTimeStart() == null
+                || (offering.getResultTimeStart() != null && observation.getResultTime() != null
+                        && offering.getResultTimeStart().after(observation.getResultTime()))) {
             offering.setResultTimeStart(observation.getResultTime());
         }
-        if (offering.getResultTimeEnd() == null || (offering.getResultTimeEnd() != null
-                && observation.getResultTime() != null
-                && offering.getResultTimeEnd().before(observation.getResultTime()))) {
+        if (offering.getResultTimeEnd() == null
+                || (offering.getResultTimeEnd() != null && observation.getResultTime() != null
+                        && offering.getResultTimeEnd().before(observation.getResultTime()))) {
             offering.setResultTimeEnd(observation.getResultTime());
         }
-        if (offering.getValidTimeStart() == null || (offering.getValidTimeStart() != null
-                && observation.getValidTimeStart() != null
-                && offering.getValidTimeStart().after(observation.getValidTimeStart()))) {
+        if (offering.getValidTimeStart() == null
+                || (offering.getValidTimeStart() != null && observation.getValidTimeStart() != null
+                        && offering.getValidTimeStart().after(observation.getValidTimeStart()))) {
             offering.setValidTimeStart(observation.getValidTimeStart());
         }
-        if (offering.getValidTimeEnd() == null || (offering.getValidTimeEnd() != null
-                && observation.getValidTimeEnd() != null
-                && offering.getValidTimeEnd().before(observation.getValidTimeEnd()))) {
+        if (offering.getValidTimeEnd() == null
+                || (offering.getValidTimeEnd() != null && observation.getValidTimeEnd() != null
+                        && offering.getValidTimeEnd().before(observation.getValidTimeEnd()))) {
             offering.setValidTimeEnd(observation.getValidTimeEnd());
         }
         if (observation.isSetGeometryEntity()) {
@@ -787,19 +746,63 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         return offering;
     }
 
-    public void updateAfterObservationDeletion(org.n52.series.db.beans.OfferingEntity offering, DataEntity<?> observation, Session session) {
+    public void updateAfterObservationDeletion(org.n52.series.db.beans.OfferingEntity offering,
+            DataEntity<?> observation, Session session) {
         SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO(daoFactory);
-        if (offering.hasPhenomenonTimeStart() && offering.getSamplingTimeStart().equals(observation.getSamplingTimeStart())) {
-            DataEntity<?> firstDataEntity = seriesObservationDAO.getFirstObservationFor(observation.getDataset(), session);
+        if (offering.hasPhenomenonTimeStart()
+                && offering.getSamplingTimeStart().equals(observation.getSamplingTimeStart())) {
+            DataEntity<?> firstDataEntity =
+                    seriesObservationDAO.getFirstObservationFor(observation.getDataset(), session);
             if (firstDataEntity != null) {
                 offering.setSamplingTimeStart(firstDataEntity.getSamplingTimeStart());
             }
         }
-        if (offering.hasPhenomenonTimeEnd() && offering.getSamplingTimeEnd().equals(observation.getSamplingTimeEnd())) {
-            DataEntity<?> latestDataEntity = seriesObservationDAO.getLastObservationFor(observation.getDataset(), session);
+        if (offering.hasPhenomenonTimeEnd()
+                && offering.getSamplingTimeEnd().equals(observation.getSamplingTimeEnd())) {
+            DataEntity<?> latestDataEntity =
+                    seriesObservationDAO.getLastObservationFor(observation.getDataset(), session);
             if (latestDataEntity != null) {
                 offering.setSamplingTimeEnd(latestDataEntity.getSamplingTimeEnd());
             }
+        }
+    }
+
+    /**
+     * Offering time extrema {@link ResultTransformer}
+     *
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
+    private class OfferingeTimeTransformer implements ResultTransformer {
+        private static final long serialVersionUID = -373512929481519459L;
+
+        @Override
+        public OfferingTimeExtrema transformTuple(Object[] tuple, String[] aliases) {
+            OfferingTimeExtrema offeringTimeExtrema = new OfferingTimeExtrema();
+            if (tuple != null) {
+                offeringTimeExtrema.setOffering(tuple[0].toString());
+                offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
+                if (tuple.length == 7) {
+                    DateTime maxPhenStart = DateTimeHelper.makeDateTime(tuple[2]);
+                    DateTime maxPhenEnd = DateTimeHelper.makeDateTime(tuple[3]);
+                    offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.max(maxPhenStart, maxPhenEnd));
+                    offeringTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[4]));
+                    offeringTimeExtrema.setMaxResultTime(DateTimeHelper.makeDateTime(tuple[5]));
+                    offeringTimeExtrema.setEnvelope((Geometry) tuple[6]);
+                } else {
+                    offeringTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
+                    offeringTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[3]));
+                    offeringTimeExtrema.setMaxResultTime(DateTimeHelper.makeDateTime(tuple[4]));
+                }
+            }
+            return offeringTimeExtrema;
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes" })
+        public List transformList(List collection) {
+            return collection;
         }
     }
 

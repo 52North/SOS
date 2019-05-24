@@ -35,6 +35,7 @@ import org.hibernate.criterion.Criterion;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * Abstract valut time data access object
@@ -45,9 +46,14 @@ import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
  */
 public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
 
-    public abstract ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series, Criterion temporalFilter, Session session) throws OwsExceptionReport;
+    public AbstractValueTimeDAO(GeometryHandler geometryHandler) {
+        super(geometryHandler);
+    }
 
-    public abstract ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilter, Session session) throws OwsExceptionReport;
+    public abstract ObservationTimeExtrema getTimeExtremaForSeries(Collection<DatasetEntity> series,
+            Criterion temporalFilter, Session session) throws OwsExceptionReport;
 
+    public abstract ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series,
+            Criterion temporalFilter, Session session) throws OwsExceptionReport;
 
 }

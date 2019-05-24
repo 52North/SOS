@@ -47,8 +47,8 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.ApiQueryHelper;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.SosHelper;
 
@@ -84,10 +84,10 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
      *
      * @return Collection with featureOfInterests
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    private Collection<String> getFeatureOfInterestIDs()
-            throws OwsExceptionReport {
+    private Collection<String> getFeatureOfInterestIDs() throws OwsExceptionReport {
         Set<String> features = Sets.newHashSet();
         // add cache map for proc/fois and get fois for proc
         for (String offering : getCache().getOfferingsForProcedure(getIdentifier())) {
@@ -108,8 +108,8 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
             object.setI18N(getLocale());
         }
         try {
-            return createFeatures(new HashSet<>(
-                    new FeatureDao(getSession()).getAllInstances(createDbQuery(featureOfInterestIDs))));
+            return createFeatures(
+                    new HashSet<>(new FeatureDao(getSession()).getAllInstances(createDbQuery(featureOfInterestIDs))));
         } catch (InvalidSridException | DataAccessException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while querying data for GetFeatureOfInterest!");
@@ -125,7 +125,8 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
-    private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities) throws InvalidSridException, OwsExceptionReport {
+    private Map<String, AbstractFeature> createFeatures(Set<FeatureEntity> featureEntities)
+            throws InvalidSridException, OwsExceptionReport {
         final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
         for (final FeatureEntity feature : featureEntities) {
             final AbstractFeature abstractFeature = createFeature(feature);
@@ -145,8 +146,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
             if (getProcedureCreationContext().getGeometryHandler() != null) {
                 sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler()
-                        .switchCoordinateAxisFromToDatasourceIfNeeded(
-                                feature.getGeometryEntity().getGeometry()));
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
             } else {
                 sampFeat.setGeometry(feature.getGeometryEntity().getGeometry());
             }

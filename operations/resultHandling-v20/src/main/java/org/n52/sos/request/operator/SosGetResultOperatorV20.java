@@ -46,9 +46,10 @@ import org.n52.svalbard.ConformanceClasses;
  * @since 4.0.0
  *
  */
-public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractGetResultHandler, GetResultRequest, GetResultResponse> {
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_RESULT_RETRIEVAL);
+public class SosGetResultOperatorV20
+        extends AbstractV2RequestOperator<AbstractGetResultHandler, GetResultRequest, GetResultResponse> {
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_RESULT_RETRIEVAL);
 
     public SosGetResultOperatorV20() {
         super(SosConstants.Operations.GetResult.name(), GetResultRequest.class);
@@ -56,21 +57,19 @@ public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractG
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
     }
 
     @Override
-    public GetResultResponse receive(GetResultRequest request)
-            throws OwsExceptionReport {
+    public GetResultResponse receive(GetResultRequest request) throws OwsExceptionReport {
         return getOperationHandler().getResult(request);
     }
 
     @Override
-    protected void checkParameters(GetResultRequest request) throws
-            OwsExceptionReport {
+    protected void checkParameters(GetResultRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -83,26 +82,23 @@ public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractG
             exceptions.add(owse);
         }
         try {
-            checkOffering(request.getOffering(),
-                          Sos2Constants.GetResultTemplateParams.offering);
+            checkOffering(request.getOffering(), Sos2Constants.GetResultTemplateParams.offering);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
             checkObservedProperty(request.getObservedProperty(),
-                                  Sos2Constants.GetResultTemplateParams.observedProperty, false);
+                    Sos2Constants.GetResultTemplateParams.observedProperty, false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSpatialFilter(request.getSpatialFilter(),
-                               SosConstants.GetObservationParams.featureOfInterest);
+            checkSpatialFilter(request.getSpatialFilter(), SosConstants.GetObservationParams.featureOfInterest);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkTemporalFilter(request.getTemporalFilter(),
-                                Sos2Constants.GetObservationParams.temporalFilter);
+            checkTemporalFilter(request.getTemporalFilter(), Sos2Constants.GetObservationParams.temporalFilter);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

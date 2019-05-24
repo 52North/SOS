@@ -59,21 +59,31 @@ import com.google.common.collect.Maps;
  *
  * @since 4.0.0
  */
-public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask> implements ApiQueryHelper {
+public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask>
+        implements ApiQueryHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
+
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
+
     private OfferingDao offeringDAO;
+
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
+
     private Collection<OfferingEntity> offeringsToUpdate;
-    private Map<String,Collection<DatasetEntity>> offDatasetMap;
+
+    private Map<String, Collection<DatasetEntity>> offDatasetMap;
+
     private final Locale defaultLanguage;
+
     private final I18NDAORepository i18NDAORepository;
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, HibernateSessionStore sessionStore) {
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
+            HibernateSessionStore sessionStore) {
         this(threads, defaultLanguage, i18NDAORepository, sessionStore, null);
     }
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository, HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate) {
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
+            HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
         if (offeringIdsToUpdate != null) {
             this.offeringsIdToUpdate.addAll(offeringIdsToUpdate);
@@ -108,13 +118,14 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String,Collection<DatasetEntity>> getOfferingDatasets() throws OwsExceptionReport {
+    private Map<String, Collection<DatasetEntity>> getOfferingDatasets() throws OwsExceptionReport {
         if (offDatasetMap == null) {
             try {
-                offDatasetMap = DatasourceCacheUpdateHelper.mapByOffering(
-                    new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
+                offDatasetMap = DatasourceCacheUpdateHelper
+                        .mapByOffering(new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
             } catch (HibernateException dae) {
-                throw new NoApplicableCodeException().causedBy(dae).withMessage("Error while querying datasets for offerings");
+                throw new NoApplicableCodeException().causedBy(dae)
+                        .withMessage("Error while querying datasets for offerings");
             }
         }
         return offDatasetMap;
@@ -127,7 +138,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         this.offeringsToUpdate = getOfferingsToUpdate();
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
-        //execute multi-threaded updates
+        // execute multi-threaded updates
         LOGGER.debug("Executing OfferingCacheUpdate (Multi-Threaded Tasks)");
         startStopwatch();
         super.execute();
@@ -137,14 +148,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     @Override
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
-        for (OfferingEntity offering : getOfferingsToUpdate()){
-                Collection<DatasetEntity> datasets
-                        = getOfferingDatasets().get(offering.getIdentifier());
-                offeringUpdateTasks.add(new OfferingCacheUpdateTask(
-                        offering,
-                        datasets,
-                        this.defaultLanguage,
-                        this.i18NDAORepository));
+        for (OfferingEntity offering : getOfferingsToUpdate()) {
+            Collection<DatasetEntity> datasets = getOfferingDatasets().get(offering.getIdentifier());
+            offeringUpdateTasks.add(
+                    new OfferingCacheUpdateTask(offering, datasets, this.defaultLanguage, this.i18NDAORepository));
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }

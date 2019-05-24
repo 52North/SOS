@@ -29,15 +29,10 @@
 package org.hibernate.spatial.dialect.mysql;
 
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.internal.util.StringHelper;
-import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Index;
-import org.hibernate.mapping.Table;
 import org.n52.sos.ds.datasource.SpatialIndexDialect;
 
 /**
@@ -51,24 +46,26 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 public class MySQLSpatial5InnoDBTimestampDialect extends MySQL56InnoDBSpatialDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 4518550802945449263L;
+    
+    private static final String TIMESTAMP = "timestamp";
 
     public MySQLSpatial5InnoDBTimestampDialect() {
         super();
-        registerColumnType( Types.TIMESTAMP, "timestamp" );
+        registerColumnType(Types.TIMESTAMP, TIMESTAMP);
     }
 
     @Override
     public String getTypeName(int code, long length, int precision, int scale) throws HibernateException {
-        if (Types.TIMESTAMP == code ) {
-            return "timestamp";
+        if (Types.TIMESTAMP == code) {
+            return TIMESTAMP;
         }
         return super.getTypeName(code, length, precision, scale);
     }
 
     @Override
     public String getTypeName(int code) throws HibernateException {
-        if (Types.TIMESTAMP == code ) {
-            return "timestamp";
+        if (Types.TIMESTAMP == code) {
+            return TIMESTAMP;
         }
         return super.getTypeName(code);
     }
@@ -76,35 +73,36 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQL56InnoDBSpatialDia
     // https://dev.mysql.com/doc/refman/5.0/en/creating-spatial-indexes.html
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
 
-
         // only for NOT NULL columns and ENGINE=MyISAM
         // https://dev.mysql.com/doc/refman/5.7/en/creating-spatial-indexes.html
 
-//        String name = index.getName();
-//        Table table = index.getTable();
-//        Iterator<Column> columns = index.getColumnIterator();
-//        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-//
-//
-//        StringBuilder buf = new StringBuilder( "create" )
-//                        .append( " spatial index " )
-//                        .append( this.qualifyIndexName() ?
-//                                        name :
-//                                        StringHelper.unqualify( name ) )
-//                        .append( " on " )
-//                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
-//                        .append( " (" );
-//        while (columns.hasNext()) {
-//            Column column = columns.next();
-//            buf.append(column.getQuotedName(this));
-//            if (columnOrderMap.containsKey(column)) {
-//                buf.append(" ").append(columnOrderMap.get(column));
-//            }
-//            if (columns.hasNext())
-//                buf.append(", ");
-//        }
-//        buf.append(")");
-//        return buf.toString();
+        // String name = index.getName();
+        // Table table = index.getTable();
+        // Iterator<Column> columns = index.getColumnIterator();
+        // java.util.Map<Column, String> columnOrderMap = new HashMap<Column,
+        // String>();
+        //
+        //
+        // StringBuilder buf = new StringBuilder( "create" )
+        // .append( " spatial index " )
+        // .append( this.qualifyIndexName() ?
+        // name :
+        // StringHelper.unqualify( name ) )
+        // .append( " on " )
+        // .append( table.getQualifiedName( this, defaultCatalog, defaultSchema
+        // ) )
+        // .append( " (" );
+        // while (columns.hasNext()) {
+        // Column column = columns.next();
+        // buf.append(column.getQuotedName(this));
+        // if (columnOrderMap.containsKey(column)) {
+        // buf.append(" ").append(columnOrderMap.get(column));
+        // }
+        // if (columns.hasNext())
+        // buf.append(", ");
+        // }
+        // buf.append(")");
+        // return buf.toString();
         return "";
     }
 

@@ -52,8 +52,11 @@ import org.n52.svalbard.ConformanceClasses;
  *
  */
 public class SosUpdateSensorDescriptionOperatorV20 extends
-        AbstractV2TransactionalRequestOperator<AbstractUpdateSensorDescriptionHandler, UpdateSensorRequest, UpdateSensorResponse>{
-    private static final Set<String> CONFORMANCE_CLASSES = Collections.singleton(ConformanceClasses.SOS_V2_UPDATE_SENSOR_DESCRIPTION);
+        AbstractV2TransactionalRequestOperator<AbstractUpdateSensorDescriptionHandler,
+        UpdateSensorRequest,
+        UpdateSensorResponse> {
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_UPDATE_SENSOR_DESCRIPTION);
 
     public SosUpdateSensorDescriptionOperatorV20() {
         super(Sos2Constants.Operations.UpdateSensorDescription.name(), UpdateSensorRequest.class);
@@ -61,7 +64,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();

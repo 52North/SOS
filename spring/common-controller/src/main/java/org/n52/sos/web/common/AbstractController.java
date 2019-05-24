@@ -87,9 +87,9 @@ public class AbstractController {
         return parseBoolean(parameters.get(name));
     }
 
-    protected Boolean parseBoolean(String s) {
-        if (s != null && !s.trim().isEmpty()) {
-            s = s.trim();
+    protected Boolean parseBoolean(String v) {
+        if (v != null && !v.trim().isEmpty()) {
+            String s = v.trim();
             if (s.equals("true") || s.equals("yes") || s.equals("on")) {
                 return Boolean.TRUE;
             }

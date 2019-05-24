@@ -51,10 +51,11 @@ import org.n52.sos.util.GeometryHandler;
 public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedureDescriptionGenerator {
 
     public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES =
-            CollectionHelper.set(
-                    new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.NS_OMPR_30),
+            CollectionHelper.set(new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.NS_OMPR_30),
                     new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS));
+
     private ProfileHandler profileHandler;
+
     private GeometryHandler geometryHandler;
 
     public ProcedureDescriptionGeneratorInspireOmpr30(ProfileHandler profileHandler, GeometryHandler geometryHandler,
@@ -83,8 +84,8 @@ public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedur
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription<AbstractFeature> generateProcedureDescription(ProcedureEntity procedure, Locale i18n, Session session)
-            throws OwsExceptionReport {
+    public SosProcedureDescription<AbstractFeature> generateProcedureDescription(ProcedureEntity procedure,
+            Locale i18n, Session session) throws OwsExceptionReport {
         setLocale(i18n);
         final Process process = new Process();
         setCommonData(procedure, process, session);
@@ -94,18 +95,18 @@ public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedur
     }
 
     private void addResponsibleParty(Process process) throws OwsExceptionReport {
-//        SosServiceProvider serviceProvider = Configurator.getInstance().ge;
-//        RelatedParty responsibleParty = new RelatedParty();
-//        if (serviceProvider.hasIndividualName()) {
-//            responsibleParty.setIndividualName(createPT_FreeText(serviceProvider.getIndividualName()));
-//        }
-//        if (serviceProvider.hasName()) {
-//            responsibleParty.setOrganisationName(createPT_FreeText(serviceProvider.getName()));
-//        }
-//        if (serviceProvider.hasPositionName()) {
-//            responsibleParty.setPositionName(createPT_FreeText(serviceProvider.getPositionName()));
-//        }
-//        responsibleParty.setContact(createContact(serviceProvider));
+        // SosServiceProvider serviceProvider = Configurator.getInstance().ge;
+        // RelatedParty responsibleParty = new RelatedParty();
+        // if (serviceProvider.hasIndividualName()) {
+        // responsibleParty.setIndividualName(createPT_FreeText(serviceProvider.getIndividualName()));
+        // }
+        // if (serviceProvider.hasName()) {
+        // responsibleParty.setOrganisationName(createPT_FreeText(serviceProvider.getName()));
+        // }
+        // if (serviceProvider.hasPositionName()) {
+        // responsibleParty.setPositionName(createPT_FreeText(serviceProvider.getPositionName()));
+        // }
+        // responsibleParty.setContact(createContact(serviceProvider));
     }
 
     private Contact createContact(OwsContact owsContact) {

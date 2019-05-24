@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract DAO class for querying {@link ValuedObservation<?>}
+ * Abstract DAO class for querying {@link ValuedObservation}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
@@ -66,6 +66,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
+    private GeometryHandler geometryHandler;
+
+    public AbstractValueDAO(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
      * criteria
@@ -76,7 +81,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            GetObservationRequest request
      * @param session
      *            Hiberante Session
-     * @param logArgs
+     * @param logArgs log arguments
      * @throws OwsExceptionReport
      *             If Spatial Filteirng Profile is not supported or an error
      *             occurs.
@@ -84,13 +89,12 @@ public abstract class AbstractValueDAO extends TimeCreator {
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session, StringBuilder logArgs) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
-            if (((GetObservationRequest)request).hasSpatialFilteringProfileSpatialFilter()) {
-                if (GeometryHandler.getInstance().isSpatialDatasource()) {
-                    c.add(SpatialRestrictions.filter(
-                            DataEntity.PROPERTY_GEOMETRY_ENTITY,
-                            ((GetObservationRequest)request).getSpatialFilter().getOperator(),
-                            GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                    ((GetObservationRequest)request).getSpatialFilter().getGeometry())));
+            if (((GetObservationRequest) request).hasSpatialFilteringProfileSpatialFilter()) {
+                if (getGeometryHandler().isSpatialDatasource()) {
+                    c.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY,
+                            ((GetObservationRequest) request).getSpatialFilter().getOperator(),
+                            getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                    ((GetObservationRequest) request).getSpatialFilter().getGeometry())));
                     logArgs.append(", spatialFilter");
                 } else {
                     // TODO add filter with lat/lon
@@ -100,8 +104,8 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
     }
 
-    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request, SubQueryIdentifier identifier, Session session, StringBuilder logArgs)
-            throws OwsExceptionReport {
+    protected void checkAndAddResultFilterCriterion(Criteria c, GetObservationRequest request,
+            SubQueryIdentifier identifier, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         if (request.hasResultFilter()) {
             Filter<?> resultFilter = request.getResultFilter();
             Criterion resultFilterExpression = ResultFilterRestrictions.getResultFilterExpression(resultFilter,
@@ -114,11 +118,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
     }
 
     protected ResultFilterClasses getResultFilterClasses() {
-        return new ResultFilterClasses(getValuedObservationFactory().numericClass(), getValuedObservationFactory().countClass(),
-                getValuedObservationFactory().textClass(), getValuedObservationFactory().categoryClass(),
-                getValuedObservationFactory().complexClass(), getValuedObservationFactory().profileClass());
+        return new ResultFilterClasses(getValuedObservationFactory().numericClass(),
+                getValuedObservationFactory().countClass(), getValuedObservationFactory().textClass(),
+                getValuedObservationFactory().categoryClass(), getValuedObservationFactory().complexClass(),
+                getValuedObservationFactory().profileClass());
     }
-
 
     protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, StringBuilder logArgs) {
         if (temporalFilterCriterion != null) {
@@ -140,7 +144,8 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime, StringBuilder logArgs) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime,
+            StringBuilder logArgs) {
         if (sosIndeterminateTime != null) {
             // get extrema indeterminate time
             c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
@@ -201,10 +206,11 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Chunk size
      * @param currentRow
      *            Start row
-     * @param request
-     * @param logArgs
+     * @param request the request
+     * @param logArgs log arguments
      */
-    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, AbstractObservationRequest request, StringBuilder logArgs) {
+    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow,
+            AbstractObservationRequest request, StringBuilder logArgs) {
         if (chunkSize > 0) {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
             logArgs.append(", chunk(" + currentRow + "," + chunkSize + ")");
@@ -213,10 +219,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     protected String getOrderColumn(AbstractObservationRequest request) {
         if (request instanceof GetObservationRequest) {
-            if (((GetObservationRequest)request).isSetTemporalFilter()) {
-                TemporalFilter filter = ((GetObservationRequest)request).getTemporalFilters().iterator().next();
+            if (((GetObservationRequest) request).isSetTemporalFilter()) {
+                TemporalFilter filter = ((GetObservationRequest) request).getTemporalFilters().iterator().next();
                 if (filter.getValueReference().contains(DataEntity.PROPERTY_RESULT_TIME)) {
-                   return DataEntity.PROPERTY_RESULT_TIME;
+                    return DataEntity.PROPERTY_RESULT_TIME;
                 }
             }
         }
@@ -225,8 +231,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     @SuppressWarnings("rawtypes")
     protected Criteria getDefaultCriteria(Class clazz, Session session) {
-        Criteria criteria = session.createCriteria(clazz)
-                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
+        Criteria criteria = session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
         // FIXME check if this works
         if (!isIncludeChildObservableProperties()) {
@@ -235,20 +240,25 @@ public abstract class AbstractValueDAO extends TimeCreator {
             criteria.add(Restrictions.or(Restrictions.isNotNull(DataEntity.PROPERTY_PARENT),
                     Restrictions.and(Restrictions.isNull(DataEntity.PROPERTY_PARENT),
                             Restrictions.sizeEq(DataEntity.PROPERTY_VALUE, 0))));
-//            criteria.add(Restrictions.isNotNull(DataEntity.PROPERTY_PARENT));
+            // criteria.add(Restrictions.isNotNull(DataEntity.PROPERTY_PARENT));
         }
         criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
-    protected boolean isIncludeChildObservableProperties(){
+    protected boolean isIncludeChildObservableProperties() {
         if (ObservationSettingProvider.getInstance() != null) {
             return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
         }
         return false;
     }
 
-    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs) throws OwsExceptionReport;
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
+            throws OwsExceptionReport;
 
     protected abstract ValuedObservationFactory getValuedObservationFactory();
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
 }

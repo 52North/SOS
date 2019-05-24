@@ -63,16 +63,6 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
-
-    private static final int INSTANCE = 3;
-
-    private static final int DATABASE = 4;
-
-    private static final int PORT = 2;
-
-    private static final int HOST = 1;
-
     protected static final String URL_INSTANCE = "instance=";
 
     protected static final String URL_DATABASE_NAME = "databaseName=";
@@ -97,19 +87,32 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     protected static final String PASSWORD_DESCRIPTION =
             "Your database server password. The default value is \"sqlserver\".";
 
-    protected static final String PASSWORD_DEFAULT_VALUE = "sqlserver";
+    protected static final String PASSWORD_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
 
     protected static final String HOST_DESCRIPTION =
-            "Set this to the IP/net location of SQL Server database server. The default value for SQL Server is \"localhost\".";
+            "Set this to the IP/net location of SQL Server database server. "
+            + "The default value for SQL Server is \"localhost\".";
 
     protected static final String PORT_DESCRIPTION =
             "Set this to the port number of your SQL Server server. The default value for SQL Server is \"1433\".";
 
     protected static final int PORT_DEFAULT_VALUE = 1433;
 
+    protected static final String SCHEMA_DEFAULT_VALUE = "dbo";
+
     private static final boolean PROVIDED_JDBC_DEFAULT_VALUE = true;
 
-    protected static final String SCHEMA_DEFAULT_VALUE = "dbo";
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
+
+    private static final int INSTANCE = 3;
+
+    private static final int DATABASE = 4;
+
+    private static final int PORT = 2;
+
+    private static final int HOST = 1;
+    
+    private static final String ALTER_TABLE = "ALTER TABLE \"";
 
     public AbstractSqlServerDatasource() {
         super();
@@ -221,7 +224,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         if (settings.containsKey(INSTANCE_KEY) &&
                 settings.get(INSTANCE_KEY) != null &&
                 settings.get(INSTANCE_KEY) instanceof String &&
-                !((String)settings.get(INSTANCE_KEY)).isEmpty()) {
+                !((String) settings.get(INSTANCE_KEY)).isEmpty()) {
             builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(';');
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
@@ -278,7 +281,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                 StringBuffer statement = new StringBuffer();
                 // alter table MyOtherTable nocheck constraint all
                 for (String table : names) {
-                    statement = statement.append("ALTER TABLE \"")
+                    statement = statement.append(ALTER_TABLE)
                             .append(table)
                             .append("\" NOCHECK CONSTRAINT ALL; ");
                 }
@@ -292,7 +295,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                 }
                 // alter table MyOtherTable check constraint all
                 for (String table : names) {
-                    statement = statement.append("ALTER TABLE \"")
+                    statement = statement.append(ALTER_TABLE)
                             .append(table)
                             .append("\" CHECK CONSTRAINT ALL; ");
                 }

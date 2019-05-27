@@ -493,7 +493,8 @@ public abstract class AbstractNetcdfEncoder
 
             // data values
             Map<OmObservableProperty, Map<SubSensor, Value<?>>> obsPropMap = sensorDataset.getDataValues().get(time);
-            for (OmObservableProperty obsProp : obsPropMap.keySet()) {
+            for (Entry<OmObservableProperty, Map<SubSensor, Value<?>>> entry : obsPropMap.entrySet()) {
+                OmObservableProperty obsProp = entry.getKey();
                 Variable variable = obsPropVarMap.get(obsProp);
                 Array array = varDataArrayMap.get(variable);
                 for (Entry<SubSensor, Value<?>> subSensorEntry : obsPropMap.get(obsProp).entrySet()) {

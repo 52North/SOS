@@ -76,4 +76,14 @@ public class StaticCapabilitiesImpl extends Activatable<String, StaticCapabiliti
     public String toString() {
         return String.format("%s[identifier=%s]", getClass().getSimpleName(), getIdentifier());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof StaticCapabilitiesImpl ? true : super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

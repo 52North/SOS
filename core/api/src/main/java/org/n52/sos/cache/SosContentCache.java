@@ -719,7 +719,7 @@ public interface SosContentCache
      *
      * @return the procedures
      */
-    Set<String> getQueryableProcedures();
+    Set<String> getQueryableProcedures(boolean instances, boolean aggregates);
 
     /**
      * Checks whether the specified procedure exists for querying.
@@ -728,8 +728,8 @@ public interface SosContentCache
      *
      * @return {@code true} if it exists
      */
-    default boolean hasQueryableProcedure(String procedureID) {
-        return getQueryableProcedures().contains(procedureID);
+    default boolean hasQueryableProcedure(String procedureID, boolean instances, boolean aggregates) {
+        return getQueryableProcedures(instances, aggregates).contains(procedureID);
     }
 
     Set<String> getTypeInstanceProcedure(TypeInstance typeInstance);

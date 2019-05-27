@@ -57,7 +57,7 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
  *
  * @since 5.0.0
  */
-public abstract class AbstractDescribeSensorHandler extends AbstractOperationHandler {
+public abstract class AbstractDescribeSensorHandler extends AbstractSosOperationHandler {
 
     private ProcedureDescriptionFormatRepository descriptionFormatRepository;
 

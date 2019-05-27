@@ -61,7 +61,7 @@ import org.n52.shetland.ogc.sos.response.BatchResponse;
  *
  * @since 5.0.0
  */
-public class BatchOperationHandler extends AbstractOperationHandler {
+public class BatchOperationHandler extends AbstractSosOperationHandler {
 
     private ServiceOperatorRepository serviceOperatorRepository;
 

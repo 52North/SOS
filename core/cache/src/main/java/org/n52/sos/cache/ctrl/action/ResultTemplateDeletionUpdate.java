@@ -69,7 +69,7 @@ public class ResultTemplateDeletionUpdate extends InMemoryCacheUpdate {
             String msg =
                     String.format("Missing argument: '%s': %s;",
                             DeleteResultTemplateResponse.class.getName(),
-                            response);
+                            "response");
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }

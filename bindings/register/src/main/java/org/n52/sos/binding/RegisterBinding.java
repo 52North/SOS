@@ -231,8 +231,7 @@ public class RegisterBinding extends AbstractXmlBinding<OwsServiceRequest> {
             }
             return request;
         }
-        throw new InvalidRequestException().withMessage("The requested sensor description {} is not supported!",
-                object != null ? object.getClass().getName() : "null");
+        throw new InvalidRequestException().withMessage("The requested sensor description null is not supported!");
     }
 
     private String getServiceParameterValue(Map<String, String> map) {

@@ -61,7 +61,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
     public SensorDeletionUpdate(CacheFeederHandler cacheFeederDAO, DeleteSensorRequest request) {
         super(cacheFeederDAO);
         if (request == null) {
-            String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), request);
+            String msg = String.format("Missing argument: '%s': %s", DeleteSensorRequest.class.getName(), "request");
             LOGGER.error(msg);
             throw new IllegalArgumentException(msg);
         }

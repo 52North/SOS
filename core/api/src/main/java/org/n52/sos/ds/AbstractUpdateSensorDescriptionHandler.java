@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
  * @since 5.0.0
  *
  */
-public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOperationHandler {
+public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractSosOperationHandler {
 
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 

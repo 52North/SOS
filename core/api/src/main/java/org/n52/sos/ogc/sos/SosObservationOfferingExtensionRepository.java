@@ -68,8 +68,6 @@ public class SosObservationOfferingExtensionRepository extends
         SosObservationOfferingExtensionProviderFactory>
         implements ActivationManager<SosObservationOfferingExtensionKey>,
         ActivationSource<SosObservationOfferingExtensionKey>, Constructable {
-    @Deprecated
-    private static SosObservationOfferingExtensionRepository instance;
 
     private final Map<SosObservationOfferingExtensionKey, Producer<SosObservationOfferingExtensionProvider>>
         offeringExtensionProviders = new HashMap<>(0);
@@ -86,7 +84,6 @@ public class SosObservationOfferingExtensionRepository extends
 
     @Override
     public void init() {
-        SosObservationOfferingExtensionRepository.instance = this;
         this.offeringExtensionProviders.clear();
         this.offeringExtensionProviders.putAll(getUniqueProviders(this.components, this.componentFactories));
     }
@@ -260,15 +257,4 @@ public class SosObservationOfferingExtensionRepository extends
                 .map(SosObservationOfferingExtensionKey::getDomain).collect(toSet());
     }
 
-    /**
-     * For singleton use
-     *
-     * @return The single instance
-     *
-     * @deprecated use injection
-     */
-    @Deprecated
-    public static SosObservationOfferingExtensionRepository getInstance() {
-        return SosObservationOfferingExtensionRepository.instance;
-    }
 }

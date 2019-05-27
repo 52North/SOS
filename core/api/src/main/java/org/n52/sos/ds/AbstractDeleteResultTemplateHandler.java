@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateResponse;
  * @since 4.4.0
  */
 @Configurable
-public abstract class AbstractDeleteResultTemplateHandler extends AbstractOperationHandler {
+public abstract class AbstractDeleteResultTemplateHandler extends AbstractSosOperationHandler {
 
     public AbstractDeleteResultTemplateHandler() {
         super(SosConstants.SOS, DeleteResultTemplateConstants.OPERATION_NAME);

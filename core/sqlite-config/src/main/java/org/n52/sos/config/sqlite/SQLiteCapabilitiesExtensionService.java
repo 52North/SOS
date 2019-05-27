@@ -214,9 +214,9 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
                             execute(new GetActiveOfferingExtensionsAction());
                     cachedOe = new HashMap<>(execute.size());
 
-                    for (final String offering : execute.keySet()) {
-                        cachedOe.put(offering,
-                                execute.get(offering).stream()
+                    for (final Entry<String, List<SosObservationOfferingExtension>> entry : execute.entrySet()) {
+                        cachedOe.put(entry.getKey(),
+                                execute.get(entry.getKey()).stream()
                                         .collect(Collectors.toMap(SosObservationOfferingExtension::getIdentifier,
                                                 SosObservationOfferingExtension::getExtension)));
                     }
@@ -226,14 +226,14 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
             }
         }
         final Map<String, List<SosObservationOfferingExtension>> map = new LinkedHashMap<>();
-        for (String offering : cachedOe.keySet()) {
-            Map<String, String> oes = cachedOe.get(offering);
+        for (Entry<String, Map<String, String>> entry : cachedOe.entrySet()) {
+            Map<String, String> oes = cachedOe.get(entry.getKey());
             if (oes != null) {
                 for (Entry<String, String> oe : oes.entrySet()) {
                     List<SosObservationOfferingExtension> values =
-                            map.containsKey(offering) ? map.get(offering) : new LinkedList<>();
-                    values.add(new OfferingExtensionImpl(offering, oe.getKey(), oe.getValue()));
-                    map.put(offering, values);
+                            map.containsKey(entry.getKey()) ? map.get(entry.getKey()) : new LinkedList<>();
+                    values.add(new OfferingExtensionImpl(entry.getKey(), oe.getKey(), oe.getValue()));
+                    map.put(entry.getKey(), values);
                 }
             }
         }
@@ -452,7 +452,8 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         return map;
     }
 
-    private class SetActiveStaticCapabilitiesAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
+    private static class SetActiveStaticCapabilitiesAction
+            implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String identifier;
 
         SetActiveStaticCapabilitiesAction(final String identifier) {
@@ -478,7 +479,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class GetActiveStaticCapabilitiesAction implements Function<Session, String> {
+    private static class GetActiveStaticCapabilitiesAction implements Function<Session, String> {
         @Override
         public String apply(final Session session) {
             final StaticCapabilitiesImpl cur =
@@ -488,7 +489,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class GetActiveStaticCapabilitiesDocumentAction implements Function<Session, String> {
+    private static class GetActiveStaticCapabilitiesDocumentAction implements Function<Session, String> {
         @Override
         public String apply(final Session session) {
             final StaticCapabilitiesImpl cur =
@@ -507,7 +508,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class GetOfferingExtensionAction implements Function<Session, SosObservationOfferingExtension> {
+    private static class GetOfferingExtensionAction implements Function<Session, SosObservationOfferingExtension> {
         private final String offering;
 
         private final String identifier;
@@ -539,7 +540,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class SaveOfferingExtensionAction implements Consumer<Session> {
+    private static class SaveOfferingExtensionAction implements Consumer<Session> {
         private final String offering;
 
         private final String identifier;
@@ -558,7 +559,8 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class SetActiveOfferingExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
+    private static class SetActiveOfferingExtensionAction
+            implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String offering;
 
         private final String identifier;
@@ -582,7 +584,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class DeleteOfferingExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
+    private static class DeleteOfferingExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String offering;
 
         private final String identifier;
@@ -622,7 +624,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class GetCapabilitiesExtensionAction implements Function<Session, CapabilitiesExtensionImpl> {
+    private static class GetCapabilitiesExtensionAction implements Function<Session, CapabilitiesExtensionImpl> {
         private final String identifier;
 
         GetCapabilitiesExtensionAction(final String identifier) {
@@ -635,7 +637,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class SaveCapabilitesExtensionAction implements Consumer<Session> {
+    private static class SaveCapabilitesExtensionAction implements Consumer<Session> {
         private final String identifier;
 
         private final String value;
@@ -651,7 +653,8 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class DisableCapabiliesExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
+    private static class DisableCapabiliesExtensionAction
+            implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String identifier;
 
         private final boolean disabled;
@@ -673,7 +676,8 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class DeleteCapabilitiesExtensionAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
+    private static class DeleteCapabilitiesExtensionAction
+            implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String identifier;
 
         DeleteCapabilitiesExtensionAction(final String identifier) {
@@ -691,7 +695,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class GetStaticCapabilitiesAction implements Function<Session, Map<String, StaticCapabilities>> {
+    private static class GetStaticCapabilitiesAction implements Function<Session, Map<String, StaticCapabilities>> {
         @Override
         public Map<String, StaticCapabilities> apply(final Session session) {
             @SuppressWarnings("unchecked")
@@ -705,7 +709,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class SaveStaticCapabilitiesAction implements Consumer<Session> {
+    private static class SaveStaticCapabilitiesAction implements Consumer<Session> {
         private final String identifier;
 
         private final String document;
@@ -721,7 +725,8 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class DeleteStaticCapabilitiesAction implements ThrowingConsumer<Session, NoSuchExtensionException> {
+    private static class DeleteStaticCapabilitiesAction
+            implements ThrowingConsumer<Session, NoSuchExtensionException> {
         private final String identifier;
 
         DeleteStaticCapabilitiesAction(final String identifier) {
@@ -739,7 +744,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class DeactivateStaticCapabilitiesAction implements Consumer<Session> {
+    private static class DeactivateStaticCapabilitiesAction implements Consumer<Session> {
         @Override
         public void accept(final Session session) {
             final StaticCapabilitiesImpl cur =
@@ -751,7 +756,7 @@ public class SQLiteCapabilitiesExtensionService extends AbstractSQLiteDao implem
         }
     }
 
-    private class GetStaticCapabilitiesWithIdAction implements Function<Session, StaticCapabilities> {
+    private static class GetStaticCapabilitiesWithIdAction implements Function<Session, StaticCapabilities> {
         private final String id;
 
         GetStaticCapabilitiesWithIdAction(final String id) {

@@ -138,7 +138,7 @@ public class SQLiteActivationDao extends AbstractSQLiteDao implements Activation
         return execute(new GetKeysAction<>(c));
     }
 
-    protected class GetKeysAction<K extends Serializable, T extends Activatable<K, T>>
+    protected static class GetKeysAction<K extends Serializable, T extends Activatable<K, T>>
             implements Function<Session, List<K>> {
 
         private final Class<T> type;
@@ -154,7 +154,7 @@ public class SQLiteActivationDao extends AbstractSQLiteDao implements Activation
         }
     }
 
-    protected class IsActiveAction<K extends Serializable, T extends Activatable<K, T>>
+    protected static class IsActiveAction<K extends Serializable, T extends Activatable<K, T>>
             implements Function<Session, Boolean> {
 
         private final K key;
@@ -180,7 +180,8 @@ public class SQLiteActivationDao extends AbstractSQLiteDao implements Activation
         }
     }
 
-    protected class SetActiveAction<K extends Serializable, T extends Activatable<K, T>> implements Consumer<Session> {
+    protected static class SetActiveAction<K extends Serializable, T extends Activatable<K, T>>
+            implements Consumer<Session> {
 
         private final Activatable<K, T> activatable;
 

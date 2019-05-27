@@ -74,4 +74,14 @@ public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesE
     public String getSectionName() {
         return getKey();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof CapabilitiesExtensionImpl ? true : super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

@@ -143,7 +143,7 @@ public class OceanSITESZipEncoder extends AbstractOceanSITESEncoder {
                     new BinaryAttachmentResponse(zipBoas.toByteArray(), getContentType(), String.format(
                             DOWNLOAD_FILENAME_FORMAT, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } finally {
-            tempDir.delete();
+            LOGGER.debug("Temporary file deleted: {}", tempDir.delete());
         }
 
         return response;
@@ -151,12 +151,16 @@ public class OceanSITESZipEncoder extends AbstractOceanSITESEncoder {
 
     private static ByteArrayOutputStream createZip(File dirToZip) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ZipOutputStream zipfile = new ZipOutputStream(bos)) {
-            ZipEntry zipentry = null;
-            for (File file : dirToZip.listFiles()) {
-                zipentry = new ZipEntry(file.getName());
-                zipfile.putNextEntry(zipentry);
-                zipfile.write(Files.toByteArray(file));
+        if (dirToZip != null) {
+            try (ZipOutputStream zipfile = new ZipOutputStream(bos)) {
+                File[] listFiles = dirToZip.listFiles();
+                if (listFiles != null) {
+                    for (File file : listFiles) {
+                        ZipEntry zipentry = new ZipEntry(file.getName());
+                        zipfile.putNextEntry(zipentry);
+                        zipfile.write(Files.toByteArray(file));
+                    }
+                }
             }
         }
         return bos;

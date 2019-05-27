@@ -313,7 +313,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         readLock().lock();
         try {
             String id = getActiveStaticCapabilities();
-            return id != null ? null : getConfiguration()
+            return id == null ? null : getConfiguration()
                     .path(JsonConstants.STATIC_CAPABILITIES)
                     .path(JsonConstants.CAPABILITIES)
                     .path(id)

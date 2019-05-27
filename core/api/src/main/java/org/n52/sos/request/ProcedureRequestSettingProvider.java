@@ -30,7 +30,6 @@ package org.n52.sos.request;
 
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.janmayen.lifecycle.Constructable;
 
 /**
  * ProcedureRequestSettings for procedure request/response handling
@@ -40,57 +39,16 @@ import org.n52.janmayen.lifecycle.Constructable;
  * @deprecated inject the settings directly
  *
  */
-@Configurable
 @Deprecated
-public class ProcedureRequestSettingProvider implements Constructable {
-    public static final String ALLOW_QUERYING_FOR_INSTANCES_ONLY = "request.procedure.instancesOnly";
-    public static final String SHOW_ONLY_AGGREGATED_PROCEDURES = "request.procedure.aggregationOnly";
+@Configurable
+public class ProcedureRequestSettingProvider {
     public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
-    @Deprecated
-    private static ProcedureRequestSettingProvider instance;
-
-    private boolean allowQueryingForInstancesOnly;
-    private boolean showOnlyAggregatedProcedures;
     private boolean encodeFullChildrenInDescribeSensor;
     private boolean addOutputsToSensorML;
 
 
-    @Override
-    public void init() {
-        ProcedureRequestSettingProvider.instance = this;
-    }
-
-    /**
-     * @return the allowQueryingForInstancesOnly
-     */
-    public boolean isAllowQueryingForInstancesOnly() {
-        return allowQueryingForInstancesOnly;
-    }
-
-    /**
-     * @param allowQueryingForInstancesOnly the allowQueryingForInstancesOnly to set
-     */
-    @Setting(ProcedureRequestSettingProvider.ALLOW_QUERYING_FOR_INSTANCES_ONLY)
-    public void setAllowQueryingForInstancesOnly(boolean allowQueryingForInstancesOnly) {
-        this.allowQueryingForInstancesOnly = allowQueryingForInstancesOnly;
-    }
-
-    /**
-     * @return the showOnlyAggregatedProcedures
-     */
-    public boolean isShowOnlyAggregatedProcedures() {
-        return showOnlyAggregatedProcedures;
-    }
-
-    /**
-     * @param showOnlyAggregatedProcedures the showOnlyAggregatedProcedures to set
-     */
-    @Setting(ProcedureRequestSettingProvider.SHOW_ONLY_AGGREGATED_PROCEDURES)
-    public void setShowOnlyAggregatedProcedures(boolean showOnlyAggregatedProcedures) {
-        this.showOnlyAggregatedProcedures = showOnlyAggregatedProcedures;
-    }
 
     public boolean isEncodeFullChildrenInDescribeSensor() {
         return encodeFullChildrenInDescribeSensor;
@@ -108,11 +66,6 @@ public class ProcedureRequestSettingProvider implements Constructable {
     @Setting(ProcedureRequestSettingProvider.ADD_OUTPUTS_TO_SENSOR_ML)
     public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
         this.addOutputsToSensorML = addOutputsToSensorML;
-    }
-
-    @Deprecated
-    public static ProcedureRequestSettingProvider getInstance() {
-        return ProcedureRequestSettingProvider.instance;
     }
 
 }

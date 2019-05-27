@@ -66,15 +66,6 @@ public class InMemoryCacheImplTest {
         // overwrite these methods as these are doing getInstance()-calls
         instance = new InMemoryCacheImpl() {
             private static final long serialVersionUID = -2571450058666530166L;
-            @Override
-            boolean isAllowQueryingForInstancesOnly() {
-                return false;
-            }
-
-            @Override
-            boolean isShowOnlyAggregatedProcedures() {
-                return false;
-            }
 
             @Override
             public Set<String> getFeatureOfInterestTypes() {

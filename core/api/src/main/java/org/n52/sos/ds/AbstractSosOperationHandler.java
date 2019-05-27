@@ -31,6 +31,7 @@ package org.n52.sos.ds;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -67,8 +68,11 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public abstract class AbstractOperationHandler
+public abstract class AbstractSosOperationHandler
         extends org.n52.iceland.request.handler.AbstractOperationHandler {
+
+    public static final String ALLOW_QUERYING_FOR_INSTANCES_ONLY = "request.procedure.instancesOnly";
+    public static final String SHOW_ONLY_AGGREGATED_PROCEDURES = "request.procedure.aggregationOnly";
 
     private final OperationHandlerKey key;
     private ContentCacheController contentCacheController;
@@ -76,8 +80,10 @@ public abstract class AbstractOperationHandler
     private ProfileHandler profileHandler;
     private EncoderRepository encoderRepository;
     private boolean listOnlyParentOfferings;
+    private boolean allowQueryingForInstancesOnly;
+    private boolean showOnlyAggregatedProcedures;
 
-    public AbstractOperationHandler(String service, String operationName) {
+    public AbstractSosOperationHandler(String service, String operationName) {
         this.key = new OperationHandlerKey(service, operationName);
     }
 
@@ -88,6 +94,29 @@ public abstract class AbstractOperationHandler
     @Setting(AbstractRequestOperator.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
+    }
+
+    /**
+     * @return the allowQueryingForInstancesOnly
+     */
+    public boolean isAllowQueryingForInstancesOnly() {
+        return allowQueryingForInstancesOnly;
+    }
+
+    /**
+     * @param allowQueryingForInstancesOnly
+     *            the allowQueryingForInstancesOnly to set
+     */
+    @Setting(ALLOW_QUERYING_FOR_INSTANCES_ONLY)
+    public void setAllowQueryingForInstancesOnly(boolean allowQueryingForInstancesOnly) {
+        this.allowQueryingForInstancesOnly = allowQueryingForInstancesOnly;
+    }
+
+    /**
+     * @return the showOnlyAggregatedProcedures
+     */
+    public boolean isShowOnlyAggregatedProcedures() {
+        return showOnlyAggregatedProcedures;
     }
 
     protected ContentCacheController getCacheController() {
@@ -164,7 +193,8 @@ public abstract class AbstractOperationHandler
     }
 
     protected OwsDomain getQueryableProcedureParameter(String service, String version) {
-        return getProcedureParameter(service, version, getCache().getQueryableProcedures());
+        return getProcedureParameter(service, version, getCache()
+                .getQueryableProcedures(isAllowQueryingForInstancesOnly(), isShowOnlyAggregatedProcedures()));
     }
 
     protected OwsDomain getPublishedProcedureParameter(String service, String version) {
@@ -257,11 +287,12 @@ public abstract class AbstractOperationHandler
                         oe.getSupportedResponseFormatObservationTypes();
                 if (supportedResponseFormatObservationTypes != null
                         && !supportedResponseFormatObservationTypes.isEmpty()) {
-                    for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
-                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
+                    for (final Entry<String, Set<SupportedType>> entry : supportedResponseFormatObservationTypes
+                            .entrySet()) {
+                        for (SupportedType st : supportedResponseFormatObservationTypes.get(entry.getKey())) {
                             if (st instanceof ObservationType
                                     && observationType.equals(((ObservationType) st).getValue())) {
-                                responseFormats.add(responseFormat);
+                                responseFormats.add(entry.getKey());
                             }
                         }
                     }

@@ -52,7 +52,7 @@ import org.n52.sos.util.SosHelper;
  * @since 5.0.0
  *
  */
-public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperationHandler {
+public abstract class AbstractGetFeatureOfInterestHandler extends AbstractSosOperationHandler {
 
     public AbstractGetFeatureOfInterestHandler(String service) {
         super(service, SosConstants.Operations.GetFeatureOfInterest.name());

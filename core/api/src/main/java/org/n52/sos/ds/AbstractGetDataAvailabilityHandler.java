@@ -54,7 +54,7 @@ import com.google.common.collect.Sets;
  * @since 5.0.0
  */
 @Configurable
-public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperationHandler {
+public abstract class AbstractGetDataAvailabilityHandler extends AbstractSosOperationHandler {
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
     public static final String SHOW_COUNT = "ShowCount";
     private boolean forceValueCount;

@@ -71,6 +71,11 @@ public class ProcedureDescriptionBuilder {
         return this;
     }
 
+    public ProcedureDescriptionBuilder setOfferingDescription(String description) {
+        this.offeringDescription = description;
+        return this;
+    }
+
     public SosProcedureDescription<?> build() {
         SosProcedureDescription<?> description = new SosProcedureDescriptionUnknownType(procedureIdentifer, null, null);
         if (offeringIdentifier != null && offeringName != null) {

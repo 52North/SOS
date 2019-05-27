@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
  * @since 5.0.0
  *
  */
-public abstract class AbstractInsertObservationHandler extends AbstractOperationHandler {
+public abstract class AbstractInsertObservationHandler extends AbstractSosOperationHandler {
 
     public AbstractInsertObservationHandler(String service) {
         super(service, SosConstants.Operations.InsertObservation.name());

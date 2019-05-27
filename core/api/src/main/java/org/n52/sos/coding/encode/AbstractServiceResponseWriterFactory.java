@@ -30,12 +30,10 @@ package org.n52.sos.coding.encode;
 
 import javax.inject.Inject;
 
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.iceland.service.StreamingSettings;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -57,7 +55,6 @@ public class AbstractServiceResponseWriterFactory
             = new ResponseWriterKey(OwsServiceResponse.class);
 
     private ResponseWriterRepository responseWriterRepository;
-    private boolean forceStreamingEncoding;
     private EncoderRepository encoderRepository;
 
     @Inject
@@ -69,11 +66,6 @@ public class AbstractServiceResponseWriterFactory
     public void setResponseWriterRepository(
             ResponseWriterRepository responseWriterRepository) {
         this.responseWriterRepository = responseWriterRepository;
-    }
-
-    @Setting(StreamingSettings.FORCE_STREAMING_ENCODING)
-    public void setForceStreamingEncoding(boolean forceStreamingEncoding) {
-        this.forceStreamingEncoding = forceStreamingEncoding;
     }
 
     @Override

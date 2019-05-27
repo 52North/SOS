@@ -151,7 +151,7 @@ public class OceanSITESEncoder extends AbstractOceanSITESEncoder {
             response = new BinaryAttachmentResponse(Files.toByteArray(netcdfFile), getContentType(),
                     String.format(filename, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } finally {
-            tempDir.delete();
+            LOGGER.debug("Temporary file deleted: {}", tempDir.delete());
         }
 
         return response;

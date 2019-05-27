@@ -951,7 +951,7 @@ public class ContentCacheControllerImplTest {
 
     private void checkFeatureNotInCache(String feature) {
         Assert.assertTrue("feature NOT in cache",
-                getCache().getProcedures().contains(feature));
+                getCache().getFeaturesOfInterest().contains(feature));
     }
 
     private void checkParentFeatureForFeature(String feature) {

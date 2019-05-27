@@ -123,10 +123,14 @@ import com.google.common.collect.Sets;
  */
 @Configurable
 public abstract class AbstractRequestOperator<D extends OperationHandler,
-                                              Q extends OwsServiceRequest,
-                                              A extends OwsServiceResponse>
+                                                Q extends OwsServiceRequest,
+                                                A extends OwsServiceResponse>
         implements RequestOperator {
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
+
+    public static final String ALLOW_QUERYING_FOR_INSTANCES_ONLY = "request.procedure.instancesOnly";
+
+    public static final String SHOW_ONLY_AGGREGATED_PROCEDURES = "request.procedure.aggregationOnly";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
 
@@ -154,41 +158,47 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
     private static final String DUPLICATED = "duplicated";
 
     // TODO make supported ValueReferences dynamic
-    private static final Set<String> VALID_TEMPORAL_FILTER_VALUE_REFERENCES = Sets.newHashSet(
-            "phenomenonTime",
-            "om:phenomenonTime",
-            "resultTime",
-            "om:resultTime",
-            "validTime",
-            "om:validTime");
+    private static final Set<String> VALID_TEMPORAL_FILTER_VALUE_REFERENCES = Sets.newHashSet("phenomenonTime",
+            "om:phenomenonTime", "resultTime", "om:resultTime", "validTime", "om:validTime");
 
     private RequestOperatorKey requestOperatorKey;
+
     private Class<Q> requestType;
+
     private OperationHandlerRepository operationHandlerRepository;
+
     private RequestResponseModifierRepository requestResponseModifierRepository;
+
     private ContentCacheController contentCacheController;
+
     private ProfileHandler profileHandler;
+
     private ServiceOperatorRepository serviceOperatorRepository;
+
     private EventBus serviceEventBus;
+
     private boolean includeChildObservableProperties;
+
     private String service;
+
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     private ResponseFormatRepository responseFormatRepository;
+
     private ConverterRepository converterRepository;
+
     private EncoderRepository encoderRepository;
 
-    public AbstractRequestOperator(String service,
-                                   String version,
-                                   String operationName,
-                                   Class<Q> requestType) {
+    private boolean allowQueryingForInstancesOnly;
+
+    private boolean showOnlyAggregatedProcedures;
+
+    public AbstractRequestOperator(String service, String version, String operationName, Class<Q> requestType) {
         this(service, version, operationName, true, requestType);
     }
 
-    public AbstractRequestOperator(String service,
-                                   String version,
-                                   String operationName,
-                                   boolean defaultActive,
-                                   Class<Q> requestType) {
+    public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive,
+            Class<Q> requestType) {
         this.requestOperatorKey = new RequestOperatorKey(service, version, operationName, defaultActive);
         this.service = service;
         this.requestType = requestType;
@@ -287,6 +297,38 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
     }
 
     /**
+     * @return the allowQueryingForInstancesOnly
+     */
+    public boolean isAllowQueryingForInstancesOnly() {
+        return allowQueryingForInstancesOnly;
+    }
+
+    /**
+     * @param allowQueryingForInstancesOnly
+     *            the allowQueryingForInstancesOnly to set
+     */
+    @Setting(ALLOW_QUERYING_FOR_INSTANCES_ONLY)
+    public void setAllowQueryingForInstancesOnly(boolean allowQueryingForInstancesOnly) {
+        this.allowQueryingForInstancesOnly = allowQueryingForInstancesOnly;
+    }
+
+    /**
+     * @return the showOnlyAggregatedProcedures
+     */
+    public boolean isShowOnlyAggregatedProcedures() {
+        return showOnlyAggregatedProcedures;
+    }
+
+    /**
+     * @param showOnlyAggregatedProcedures
+     *            the showOnlyAggregatedProcedures to set
+     */
+    @Setting(SHOW_ONLY_AGGREGATED_PROCEDURES)
+    public void setShowOnlyAggregatedProcedures(boolean showOnlyAggregatedProcedures) {
+        this.showOnlyAggregatedProcedures = showOnlyAggregatedProcedures;
+    }
+
+    /**
      * @deprecated Use {@link #getOperationHandler()}
      */
     @Deprecated
@@ -300,9 +342,9 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
     }
 
     protected D getOperationHandler() {
-        return getOptionalOperationHandler().orElseThrow(() ->
-                new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
-                                                       requestOperatorKey.getOperationName())));
+        return getOptionalOperationHandler().orElseThrow(
+            () -> new NullPointerException(String.format("OperationDAO for Operation %s has no implementation!",
+                        requestOperatorKey.getOperationName())));
     }
 
     protected Optional<D> getOptionalOperationHandler() {
@@ -582,7 +624,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
     protected void checkQueryableProcedureID(String procedure, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().hasQueryableProcedure(procedure)) {
+        } else if (!getCache().hasQueryableProcedure(procedure, isAllowQueryingForInstancesOnly(),
+                isShowOnlyAggregatedProcedures())) {
             throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
@@ -627,7 +670,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
     protected void checkQueryableProcedure(String procedure, String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedure)) {
             throw new MissingProcedureParameterException();
-        } else if (!getCache().hasQueryableProcedure(procedure)) {
+        } else if (!getCache().hasQueryableProcedure(procedure, isAllowQueryingForInstancesOnly(),
+                isShowOnlyAggregatedProcedures())) {
             throw new InvalidParameterValueException(parameterName, procedure);
         }
     }
@@ -958,11 +1002,9 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
 
     protected List<String> addChildOfferings(List<String> offerings) {
         Set<String> allOfferings = Sets.newHashSet(offerings);
-        if (offerings != null) {
-            for (String offering : offerings) {
-                allOfferings.add(offering);
-                allOfferings.addAll(getCache().getChildOfferings(offering, true, false));
-            }
+        for (String offering : offerings) {
+            allOfferings.add(offering);
+            allOfferings.addAll(getCache().getChildOfferings(offering, true, false));
         }
         return Lists.newArrayList(allOfferings);
     }
@@ -1169,8 +1211,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
             if (filter.getOperator() == null) {
                 throw new MissingParameterValueException(SPATIAL_FILTER_OPERATOR);
             } else if (!filter.getOperator().equals(SpatialOperator.BBOX)) {
-                throw new InvalidParameterValueException(SPATIAL_FILTER_OPERATOR,
-                        filter.getOperator().toString());
+                throw new InvalidParameterValueException(SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
             }
 
             if (filter.getGeometry() == null) {
@@ -1217,8 +1258,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
                 }
             }
         }
-        possibleFormats.addAll(getConverterRepository().getFromNamespaceConverterTo(
-                procedureDescriptionFormat));
+        possibleFormats.addAll(getConverterRepository().getFromNamespaceConverterTo(procedureDescriptionFormat));
         return !possibleFormats.isEmpty();
     }
 

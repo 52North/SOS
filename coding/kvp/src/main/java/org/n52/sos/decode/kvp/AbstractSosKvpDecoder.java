@@ -101,12 +101,6 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
 
     private int storageEPSG;
 
-    private int storage3DEPSG;
-
-    private int defaultResponseEPSG;
-
-    private int defaultResponse3DEPSG;
-
     private String srsNamePrefixUrl;
 
     private String srsNamePrefixUrn;
@@ -148,51 +142,6 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
     public void setStorageEPSG(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         this.storageEPSG = epsgCode;
-    }
-
-    /**
-     * Set storage 3D EPSG code from settings
-     *
-     * @param epsgCode3D
-     *            3D EPSG code from settings
-     *
-     * @throws ConfigurationError
-     *             If an error occurs
-     */
-    @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEPSG(int epsgCode3D) throws ConfigurationError {
-        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
-        this.storage3DEPSG = epsgCode3D;
-    }
-
-    /**
-     * Set default response EPSG code from settings
-     *
-     * @param epsgCode
-     *            EPSG code from settings
-     *
-     * @throws ConfigurationError
-     *             If an error occurs
-     */
-    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEPSG(int epsgCode) throws ConfigurationError {
-        Validation.greaterZero("Default response EPSG Code", epsgCode);
-        this.defaultResponseEPSG = epsgCode;
-    }
-
-    /**
-     * Set default response 3D EPSG code from settings
-     *
-     * @param epsgCode3D
-     *            3D EPSG code from settings
-     *
-     * @throws ConfigurationError
-     *             If an error occurs
-     */
-    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEPSG(int epsgCode3D) throws ConfigurationError {
-        Validation.greaterZero("Default response 3D EPSG Code", epsgCode3D);
-        this.defaultResponse3DEPSG = epsgCode3D;
     }
 
     @Setting(CodingSettings.SRS_NAME_PREFIX_URL)

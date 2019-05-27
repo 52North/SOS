@@ -71,7 +71,7 @@ public class ProcedureDescriptionFormatRepository
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
     /**
-     * This class does not implement {@link Constructable} due to some circular
+     * This class does not implement "Constructable" due to some circular
      * dependencies that can lead to an incorrect initialization order; instead
      * {@link ProcedureDescriptionFormatRepositoryInitializer} does this for us.
      *

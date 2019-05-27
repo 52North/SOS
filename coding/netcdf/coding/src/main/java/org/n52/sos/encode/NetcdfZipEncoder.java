@@ -149,7 +149,7 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
         } catch (IOException e) {
             throw new EncodingException("Couldn't create netCDF zip file", e);
         } finally {
-            tempDir.delete();
+            LOGGER.debug("Temporary file deleted: {}", tempDir.delete());
         }
 
         return response;
@@ -157,12 +157,16 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
 
     private static ByteArrayOutputStream createZip(File dirToZip) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (ZipOutputStream zipfile = new ZipOutputStream(bos)) {
-            ZipEntry zipentry = null;
-            for (File file : dirToZip.listFiles()) {
-                zipentry = new ZipEntry(file.getName());
-                zipfile.putNextEntry(zipentry);
-                zipfile.write(Files.toByteArray(file));
+        if (dirToZip != null) {
+            try (ZipOutputStream zipfile = new ZipOutputStream(bos)) {
+                File[] listFiles = dirToZip.listFiles();
+                if (listFiles != null) {
+                    for (File file : listFiles) {
+                        ZipEntry zipentry = new ZipEntry(file.getName());
+                        zipfile.putNextEntry(zipentry);
+                        zipfile.write(Files.toByteArray(file));
+                    }
+                }
             }
         }
         return bos;

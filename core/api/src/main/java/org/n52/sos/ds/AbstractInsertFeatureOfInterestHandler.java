@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
  * @since 4.0.0
  */
 @Configurable
-public abstract class AbstractInsertFeatureOfInterestHandler extends AbstractOperationHandler {
+public abstract class AbstractInsertFeatureOfInterestHandler extends AbstractSosOperationHandler {
 
     public AbstractInsertFeatureOfInterestHandler(String service) {
         super(service, InsertFeatureOfInterestConstants.OPERATION_NAME);

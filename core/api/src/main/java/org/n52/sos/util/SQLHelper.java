@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,7 +70,7 @@ public final class SQLHelper {
         try {
             /* FIXME DataInputStream!? */
             in = new FileInputStream(path);
-            br = new BufferedReader(new InputStreamReader(new DataInputStream(in)));
+            br = new BufferedReader(new InputStreamReader(new DataInputStream(in), Charset.forName("UTF-8")));
             st = conn.createStatement();
             boolean stringLiteral = false;
             String strLine;
@@ -82,7 +83,7 @@ public final class SQLHelper {
                         stringLiteral = !stringLiteral;
                     }
                     sql.append(' ').append(strLine).append(' ');
-                    if (!stringLiteral && strLine.substring(strLine.length() - 1).equals(';')) {
+                    if (!stringLiteral && strLine.substring(strLine.length() - 1).equals(";")) {
                         st.execute(sql.substring(0, sql.length() - 1));
                         sql = new StringBuilder();
                     }

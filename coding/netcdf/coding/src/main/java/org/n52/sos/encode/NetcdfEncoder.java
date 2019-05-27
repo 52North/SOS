@@ -147,7 +147,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder {
         } catch (IOException e) {
             throw new EncodingException("Couldn't create netCDF file", e);
         } finally {
-            tempDir.delete();
+            LOGGER.debug("Temporary file deleted: {}", tempDir.delete());
         }
     }
 

@@ -69,7 +69,7 @@ import org.n52.sos.util.SosHelper;
  * @since 5.0.0
  *
  */
-public abstract class AbstractGetObservationHandler extends AbstractOperationHandler {
+public abstract class AbstractGetObservationHandler extends AbstractSosOperationHandler {
 
     private ResponseFormatRepository responseFormatRepository;
 

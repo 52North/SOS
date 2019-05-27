@@ -48,7 +48,7 @@ import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
  *
  * @since 5.0.0
  */
-public abstract class AbstractDeleteObservationHandler extends AbstractOperationHandler {
+public abstract class AbstractDeleteObservationHandler extends AbstractSosOperationHandler {
 
     public AbstractDeleteObservationHandler() {
         super(SosConstants.SOS, DeleteObservationConstants.Operations.DeleteObservation.name());

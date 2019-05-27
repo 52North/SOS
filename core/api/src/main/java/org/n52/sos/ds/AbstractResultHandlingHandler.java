@@ -57,7 +57,7 @@ import org.n52.svalbard.util.XmlHelper;
  * @since 5.0.0
  *
  */
-public abstract class AbstractResultHandlingHandler extends AbstractOperationHandler {
+public abstract class AbstractResultHandlingHandler extends AbstractSosOperationHandler {
 
     private DecoderRepository decodingRepository;
 

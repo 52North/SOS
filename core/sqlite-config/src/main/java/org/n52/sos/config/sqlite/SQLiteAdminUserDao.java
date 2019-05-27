@@ -85,7 +85,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         execute(new DeleteAllAction());
     }
 
-    private class DeleteAllAction implements Consumer<Session> {
+    private static class DeleteAllAction implements Consumer<Session> {
         @Override
         @SuppressWarnings("unchecked")
         public void accept(Session session) {
@@ -96,7 +96,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class GetAdminUserAction implements Function<Session, AdminUser> {
+    private static class GetAdminUserAction implements Function<Session, AdminUser> {
         private final String username;
 
         GetAdminUserAction(String username) {
@@ -111,7 +111,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class DeleteAdminUserAction implements Consumer<Session> {
+    private static class DeleteAdminUserAction implements Consumer<Session> {
         private final String username;
 
         DeleteAdminUserAction(String username) {
@@ -130,7 +130,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class GetAdminUsersAction implements Function<Session, Set<AdministratorUser>> {
+    private static class GetAdminUsersAction implements Function<Session, Set<AdministratorUser>> {
         @Override
         @SuppressWarnings("unchecked")
         public Set<AdministratorUser> apply(Session session) {
@@ -139,7 +139,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class SaveAdminUserAction implements Consumer<Session> {
+    private static class SaveAdminUserAction implements Consumer<Session> {
         private final AdministratorUser user;
 
         SaveAdminUserAction(AdministratorUser user) {
@@ -153,7 +153,7 @@ public class SQLiteAdminUserDao extends AbstractSQLiteDao
         }
     }
 
-    private class CreateAdminUserAction implements Function<Session, AdminUser> {
+    private static class CreateAdminUserAction implements Function<Session, AdminUser> {
         private final String username;
 
         private final String password;

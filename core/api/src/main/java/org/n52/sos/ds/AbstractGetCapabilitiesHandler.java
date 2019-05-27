@@ -60,7 +60,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
  *
  * @since 5.0.0
  */
-public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHandler {
+public abstract class AbstractGetCapabilitiesHandler extends AbstractSosOperationHandler {
 
     @Inject
     private ServiceOperatorRepository serviceOperatorRepository;

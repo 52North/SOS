@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
  * @since 5.0.0
  *
  */
-public abstract class AbstractDeleteSensorHandler extends AbstractOperationHandler {
+public abstract class AbstractDeleteSensorHandler extends AbstractSosOperationHandler {
 
     public AbstractDeleteSensorHandler(String service) {
         super(service, Sos2Constants.Operations.DeleteSensor.name());

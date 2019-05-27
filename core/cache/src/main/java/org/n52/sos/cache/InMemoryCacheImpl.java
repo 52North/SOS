@@ -28,8 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import org.n52.sos.util.SosHelper;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -53,11 +51,10 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.MinMax;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.request.ProcedureRequestSettingProvider;
+import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Sets;
@@ -2254,15 +2251,15 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
     }
 
     @Override
-    public Set<String> getQueryableProcedures() {
+    public Set<String> getQueryableProcedures(boolean instances, boolean aggregates) {
         Set<String> procs = getPublishedProcedures();
         // allowQueryingForInstancesOnly
-        if (isAllowQueryingForInstancesOnly()) {
+        if (instances) {
             procs = CollectionHelper.conjunctCollectionsToSet(procedures,
                     getTypeInstanceProcedure(TypeInstance.INSTANCE));
         }
         // showOnlyAggregatedProcedures
-        if (isShowOnlyAggregatedProcedures()) {
+        if (aggregates) {
             procs = CollectionHelper.conjunctCollectionsToSet(procedures,
                     getComponentAggregationProcedure(ComponentAggregation.AGGREGATION));
 
@@ -2792,20 +2789,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
             return false;
         }
         return true;
-    }
-
-    private ProcedureRequestSettingProvider getProcedureRequestSettingProvider() {
-        return ProcedureRequestSettingProvider.getInstance();
-    }
-
-    @VisibleForTesting
-    boolean isAllowQueryingForInstancesOnly() {
-        return getProcedureRequestSettingProvider().isAllowQueryingForInstancesOnly();
-    }
-
-    @VisibleForTesting
-    boolean isShowOnlyAggregatedProcedures() {
-        return getProcedureRequestSettingProvider().isShowOnlyAggregatedProcedures();
     }
 
     private static <X, T> Function<X, Set<T>> createSynchronizedSet() {

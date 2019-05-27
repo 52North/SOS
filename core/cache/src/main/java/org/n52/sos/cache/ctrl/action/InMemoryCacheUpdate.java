@@ -77,8 +77,8 @@ public abstract class InMemoryCacheUpdate extends SosContentCacheUpdate {
         } else if (f instanceof FeatureCollection) {
             return asStream((FeatureCollection) f);
         } else {
-            Object name = f != null ? f .getClass().getName() : f;
-            String errorMessage = String.format("Feature Type \"%s\" not supported.", name);
+            String errorMessage =
+                    String.format("Feature Type \"%s\" not supported.", f != null ? f.getClass().getName() : "null");
             LOGGER.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }

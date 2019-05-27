@@ -45,7 +45,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
  * @since 5.0.0
  *
  */
-public abstract class AbstractGetObservationByIdHandler extends AbstractOperationHandler {
+public abstract class AbstractGetObservationByIdHandler extends AbstractSosOperationHandler {
     public AbstractGetObservationByIdHandler(String service) {
         super(service, SosConstants.Operations.GetObservationById.name());
     }

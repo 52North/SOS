@@ -40,17 +40,17 @@ import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
  *
  * @author Christian Autermann
  */
-public class XmlValue implements org.n52.shetland.ogc.om.values.XmlValue<XmlObject> {
+public class SosXmlValue implements org.n52.shetland.ogc.om.values.XmlValue<XmlObject> {
 
     private XmlObject xml;
     private UoM unit;
 
-    public XmlValue(XmlObject xml) {
+    public SosXmlValue(XmlObject xml) {
         this.xml = xml;
     }
 
     @Override
-    public XmlValue setValue(XmlObject value) {
+    public SosXmlValue setValue(XmlObject value) {
         this.xml = value;
         return this;
     }
@@ -113,7 +113,7 @@ public class XmlValue implements org.n52.shetland.ogc.om.values.XmlValue<XmlObje
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final XmlValue other = (XmlValue) obj;
+        final SosXmlValue other = (SosXmlValue) obj;
         if (!Objects.equals(this.unit, other.unit)) {
             return false;
         }

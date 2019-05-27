@@ -37,7 +37,6 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
 
@@ -48,7 +47,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.UpdateableConnectionProvider;
@@ -83,7 +81,6 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
             throw new ConfigurationError("dialect is null");
         }
         Session session = getConnection();
-        Connection conn = ((SessionImplementor) session).connection();
 
         Path createTempFile = null;
         try {

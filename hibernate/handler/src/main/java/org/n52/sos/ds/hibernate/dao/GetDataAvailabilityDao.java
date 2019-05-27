@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +46,7 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -76,7 +75,9 @@ import com.google.common.collect.Lists;
 public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDao.class);
+
     private HibernateSessionHolder sessionHolder;
+
     private Locale defaultLanguage;
 
     @Inject
@@ -95,40 +96,45 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
         try {
             session = sessionHolder.getSession();
             Map<String, NamedValue<?>> map = new HashMap<>();
-//            if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
-//                List<SeriesMetadata> metadataList = new SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
-//                if (CollectionHelper.isNotEmpty(metadataList)) {
-//                    for (SeriesMetadata seriesMetadata : metadataList) {
-//                        map.put(seriesMetadata.getDomain(), new NamedValue<>(new ReferenceType(seriesMetadata.getIdentifier()),
-//                                new ReferenceValue(new ReferenceType(seriesMetadata.getValue()))));
-//                    }
-//                }
-//            }
+            // if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
+            // List<SeriesMetadata> metadataList = new
+            // SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
+            // if (CollectionHelper.isNotEmpty(metadataList)) {
+            // for (SeriesMetadata seriesMetadata : metadataList) {
+            // map.put(seriesMetadata.getDomain(), new NamedValue<>(new
+            // ReferenceType(seriesMetadata.getIdentifier()),
+            // new ReferenceValue(new
+            // ReferenceType(seriesMetadata.getValue()))));
+            // }
+            // }
+            // }
             return map;
         } catch (final HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying metadata for GetDataAvailability!")
-            .setStatus(INTERNAL_SERVER_ERROR);
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying metadata for GetDataAvailability!")
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
         }
     }
 
     @Override
-    public List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request) throws OwsExceptionReport {
+    public List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request)
+            throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
             Criteria c = getDefaultObservationInfoCriteria(session);
             Criteria datasetCriteria = c.createCriteria(DataEntity.PROPERTY_DATASET);
-            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_FEATURE).add(
-                    Restrictions.eq(DatasetEntity.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
-            datasetCriteria.createCriteria( DatasetEntity.PROPERTY_PROCEDURE).add(
-                    Restrictions.eq(ProcedureEntity.IDENTIFIER, dataAvailability.getProcedure().getHref()));
+            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_FEATURE)
+                    .add(Restrictions.eq(DatasetEntity.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
+            datasetCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
+                    .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, dataAvailability.getProcedure().getHref()));
             datasetCriteria.createCriteria(DatasetEntity.PROPERTY_PHENOMENON).add(
                     Restrictions.eq(PhenomenonEntity.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
             if (request.isSetOfferings()) {
-                c.createCriteria( DatasetEntity.PROPERTY_OFFERING).add(
-                        Restrictions.in(OfferingEntity.IDENTIFIER, request.getOfferings()));
+                c.createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                        .add(Restrictions.in(OfferingEntity.IDENTIFIER, request.getOfferings()));
             }
             if (hasPhenomenonTimeFilter(request.getExtensions())) {
                 c.add(SosTemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
@@ -142,16 +148,16 @@ public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailab
             }
             return resultTimes;
         } catch (final HibernateException | OwsExceptionReport he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result time for GetDataAvailability!")
-                    .setStatus(INTERNAL_SERVER_ERROR);
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while querying result time for GetDataAvailability!")
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
         }
     }
 
     private Criteria getDefaultObservationInfoCriteria(Session session) {
-        return session.createCriteria(DataEntity.class)
-                .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
+        return session.createCriteria(DataEntity.class).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

@@ -68,13 +68,14 @@ public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
         r.setAcceptVersions(Arrays.asList("1.0", "1.1"));
 
         resolve.setEvent(new RequestEvent(r));
-        new OwsServiceRequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.53")));
+        new OwsServiceRequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.54")));
 
         dataHandler.persist(resolve.resolve());
         // eventually realtime should be enough
         Thread.sleep(2000);
 
-        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
+        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
+                .setTypes(clientSettings.getTypeId()).get();
         Assert.assertEquals(1, resp.getHits().getTotalHits());
     }
 }

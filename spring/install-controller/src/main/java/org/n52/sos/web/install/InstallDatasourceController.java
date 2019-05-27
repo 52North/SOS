@@ -173,10 +173,8 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
     }
 
     protected Map<String, Object> parseDatasourceSettings(Datasource datasource, Map<String, String> parameters) {
-        return datasource.getSettingDefinitions().stream()
-                .collect(toMap(def -> def.getKey(),
-                               def -> this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey()))
-                                       .getValue()));
+        return datasource.getSettingDefinitions().stream().collect(toMap(def -> def.getKey(),
+            def -> this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey())).getValue()));
     }
 
     protected Map<String, Datasource> getDatasources() {

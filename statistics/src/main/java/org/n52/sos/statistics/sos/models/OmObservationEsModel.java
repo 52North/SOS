@@ -38,7 +38,7 @@ import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.om.OmObservation;
 
-public class OmObservationEsModel extends AbstractElasticsearchModel {
+public final class OmObservationEsModel extends AbstractElasticsearchModel {
 
     private final OmObservation observation;
 
@@ -62,12 +62,13 @@ public class OmObservationEsModel extends AbstractElasticsearchModel {
 
     @Override
     protected Map<String, Object> getAsMap() {
-        Map<String, Object> constellation = OmObservationConstellationEsModel.convert(observation.getObservationConstellation());
+        Map<String, Object> constellation =
+                OmObservationConstellationEsModel.convert(observation.getObservationConstellation());
         put(ObjectEsParameterFactory.OMOBS_CONSTELLATION, constellation);
 
         if (observation.getSpatialFilteringProfileParameter() != null) {
-            SpatialFilter dummy =
-                    new SpatialFilter(SpatialOperator.BBOX, observation.getSpatialFilteringProfileParameter().getValue().getValue(), null);
+            SpatialFilter dummy = new SpatialFilter(SpatialOperator.BBOX,
+                    observation.getSpatialFilteringProfileParameter().getValue().getValue(), null);
             put(ObjectEsParameterFactory.OMOBS_SAMPLING_GEOMETRY, SpatialFilterEsModel.convert(dummy));
         }
 

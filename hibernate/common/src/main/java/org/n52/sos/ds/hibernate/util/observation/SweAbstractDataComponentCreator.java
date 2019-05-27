@@ -62,7 +62,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.svalbard.decode.DecoderRepository;
 
 /**
- * {@code ValuedObservationVisitor} to create {@link SweAbstractDataEntityComponent}
+ * {@code ValuedObservationVisitor} to create {@link SweAbstractDataComponent}
  * from observations.
  *
  * @author Christian Autermann

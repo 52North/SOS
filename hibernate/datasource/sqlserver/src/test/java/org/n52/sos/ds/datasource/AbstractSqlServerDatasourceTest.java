@@ -54,7 +54,7 @@ public class AbstractSqlServerDatasourceTest {
     private static final String INSTANCE_NAME = ";instance=";
     private static final String JDBC = "jdbc:sqlserver://";
     private static final String PORT_VALUE = "1433";
-    
+
     @Test
     public void databaseDescriptionShouldNotBeHostDescription() {
         String databaseDescription = "";

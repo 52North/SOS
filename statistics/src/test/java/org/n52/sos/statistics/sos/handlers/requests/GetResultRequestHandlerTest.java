@@ -44,6 +44,12 @@ import basetest.HandlerBaseTest;
 
 public class GetResultRequestHandlerTest extends HandlerBaseTest {
 
+    private static final String FI_1 = "fi1";
+    private static final String FI_2 = "fi2";
+    private static final String TEMPLATE_1 = "template1";
+    private static final String OBP = "obp";
+    private static final String OFF = "off";
+
     @InjectMocks
     private GetResultRequestHandler handler;
 
@@ -51,19 +57,20 @@ public class GetResultRequestHandlerTest extends HandlerBaseTest {
     @Test
     public void validateAllFields() {
         GetResultRequest request = new GetResultRequest();
-        request.setFeatureIdentifiers(Arrays.asList("fi1", "fi2"));
-        request.setObservationTemplateIdentifier("template1");
-        request.setObservedProperty("obp");
-        request.setOffering("off");
+        request.setFeatureIdentifiers(Arrays.asList(FI_1, FI_2));
+        request.setObservationTemplateIdentifier(TEMPLATE_1);
+        request.setObservedProperty(OBP);
+        request.setOffering(OFF);
         request.setSpatialFilter(spatialFilter);
         request.setTemporalFilter(Arrays.asList(temporalFilter));
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GR_FEATURE_IDENTIFIERS.getName()), CoreMatchers.hasItems("fi1", "fi2"));
-        Assert.assertEquals("template1", map.get(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER.getName()));
-        Assert.assertEquals("obp", map.get(SosDataMapping.GR_OBSERVATION_PROPERTY.getName()));
-        Assert.assertEquals("off", map.get(SosDataMapping.GR_OFFERING.getName()));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GR_FEATURE_IDENTIFIERS.getName()),
+                CoreMatchers.hasItems(FI_1, FI_2));
+        Assert.assertEquals(TEMPLATE_1, map.get(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER.getName()));
+        Assert.assertEquals(OBP, map.get(SosDataMapping.GR_OBSERVATION_PROPERTY.getName()));
+        Assert.assertEquals(OFF, map.get(SosDataMapping.GR_OFFERING.getName()));
         Assert.assertNotNull(map.get(SosDataMapping.GR_SPATIAL_FILTER.getName()));
         Assert.assertNotNull(map.get(SosDataMapping.GR_TEMPORAL_FILTER.getName()));
     }

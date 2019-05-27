@@ -84,7 +84,8 @@ public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
             setDeleteSensorFlag(request.getProcedureIdentifier(), true, session);
-            daoFactory.getValidProcedureTimeDAO().setValidProcedureDescriptionEndTime(request.getProcedureIdentifier(), session);
+            daoFactory.getValidProcedureTimeDAO().setValidProcedureDescriptionEndTime(request.getProcedureIdentifier(),
+                    session);
             transaction.commit();
             response.setDeletedProcedure(request.getProcedureIdentifier());
         } catch (HibernateException he) {

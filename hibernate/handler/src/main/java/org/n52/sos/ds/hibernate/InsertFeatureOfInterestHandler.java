@@ -50,6 +50,10 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
 
     private DaoFactory daoFactory;
 
+    public InsertFeatureOfInterestHandler() {
+        super(SosConstants.SOS);
+    }
+
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -58,10 +62,6 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
-    public InsertFeatureOfInterestHandler() {
-        super(SosConstants.SOS);
     }
 
     @Override

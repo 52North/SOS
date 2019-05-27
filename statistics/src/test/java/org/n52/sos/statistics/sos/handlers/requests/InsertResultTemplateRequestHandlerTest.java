@@ -43,13 +43,15 @@ import basetest.HandlerBaseTest;
 
 public class InsertResultTemplateRequestHandlerTest extends HandlerBaseTest {
 
+    private static final String ID = "id";
+
     @InjectMocks
     private InsertResultTemplateRequestHandler handler;
 
     @Test
     public void validateAllFields() throws OwsExceptionReport {
         InsertResultTemplateRequest request = new InsertResultTemplateRequest();
-        request.setIdentifier("id");
+        request.setIdentifier(ID);
         request.setObservationTemplate(omConstellation);
         // SosResultEncoding encoding = new SosResultEncoding();
         // encoding.setEncoding(new SweTextEncoding());
@@ -57,7 +59,7 @@ public class InsertResultTemplateRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertEquals(new CodeWithAuthority("id"), map.get(SosDataMapping.IRT_IDENTIFIER.getName()));
+        Assert.assertEquals(new CodeWithAuthority(ID), map.get(SosDataMapping.IRT_IDENTIFIER.getName()));
         Assert.assertNotNull(map.get(SosDataMapping.IRT_OBSERVATION_TEMPLATE.getName()));
         // Assert.assertEquals("xml",
         // map.get(SosDataMapping.IRT_RESULT_ENCODING));

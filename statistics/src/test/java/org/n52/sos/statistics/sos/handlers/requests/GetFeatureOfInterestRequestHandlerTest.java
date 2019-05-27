@@ -44,25 +44,35 @@ import basetest.HandlerBaseTest;
 
 public class GetFeatureOfInterestRequestHandlerTest extends HandlerBaseTest {
 
+    private static final String OB_1 = "ob1";
+    private static final String OB_2 = "ob2";
+    private static final String ID_1 = "id1";
+    private static final String ID_2 = "id2";
+    private static final String P_1 = "p1";
+    private static final String P_2 = "p2";
+
     @InjectMocks
-    GetFeatureOfInterestRequestHandler handler;
+    private GetFeatureOfInterestRequestHandler handler;
 
     @SuppressWarnings("unchecked")
     @Test
     public void validateAllFields() {
         GetFeatureOfInterestRequest request = new GetFeatureOfInterestRequest();
 
-        request.setFeatureIdentifiers(Arrays.asList("id1", "id2"));
-        request.setObservedProperties(Arrays.asList("ob1", "ob2"));
-        request.setProcedures(Arrays.asList("p1", "p2"));
+        request.setFeatureIdentifiers(Arrays.asList(ID_1, ID_2));
+        request.setObservedProperties(Arrays.asList(OB_1, OB_2));
+        request.setProcedures(Arrays.asList(P_1, P_2));
         request.setSpatialFilters(Arrays.asList(spatialFilter));
         request.setTemporalFilters(Arrays.asList(temporalFilter));
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_FEATURE_IDENTIFIERS.getName()), CoreMatchers.hasItems("id1", "id2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_OBSERVED_PROPERTIES.getName()), CoreMatchers.hasItems("ob1", "ob2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_PROCEDURES.getName()), CoreMatchers.hasItems("p1", "p2"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_FEATURE_IDENTIFIERS.getName()),
+                CoreMatchers.hasItems(ID_1, ID_2));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_OBSERVED_PROPERTIES.getName()),
+                CoreMatchers.hasItems(OB_1, OB_2));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_PROCEDURES.getName()),
+                CoreMatchers.hasItems(P_1, P_2));
         Assert.assertNotNull(map.get(SosDataMapping.GFOI_SPATIAL_FILTER.getName()));
         Assert.assertNotNull(map.get(SosDataMapping.GFOI_TEMPORAL_FILTER.getName()));
     }

@@ -44,24 +44,33 @@ import basetest.HandlerBaseTest;
 
 public class GetCabailitiesRequestHandlerTest extends HandlerBaseTest {
 
+    private static final String VER_1 = "ver1";
+    private static final String VER_2 = "ver2";
+    private static final String FOR_1 = "for1";
+    private static final String FOR_2 = "for2";
+    private static final String UPDATE_SEQ = "update-norbi";
+
     @InjectMocks
-    GetCapabilitiesRequestHandler handler;
+    private GetCapabilitiesRequestHandler handler;
 
     @SuppressWarnings("unchecked")
     @Test
     public void testAllFields() {
         GetCapabilitiesRequest request = new GetCapabilitiesRequest("SOS");
-        request.setAcceptVersions(Arrays.asList("ver1","ver2"));
-        request.setAcceptFormats(Arrays.asList("for1","for2"));
-        request.setSections(Arrays.asList("a","b","c"));
-        request.setUpdateSequence("update-norbi");
+        request.setAcceptVersions(Arrays.asList(VER_1, VER_2));
+        request.setAcceptFormats(Arrays.asList(FOR_1, FOR_2));
+        request.setSections(Arrays.asList("a", "b", "c"));
+        request.setUpdateSequence(UPDATE_SEQ);
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertEquals("update-norbi", map.get(SosDataMapping.GC_UPDATE_SEQUENCE.getName()));
-        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_VERSIONS_FIELD.getName()), CoreMatchers.hasItems("ver1","ver2"));
-        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_FORMATS_FIELD.getName()), CoreMatchers.hasItems("for1","for2"));
-        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_SECTIONS.getName()), CoreMatchers.hasItems("a","b","c"));
+        Assert.assertEquals(UPDATE_SEQ, map.get(SosDataMapping.GC_UPDATE_SEQUENCE.getName()));
+        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_VERSIONS_FIELD.getName()),
+                CoreMatchers.hasItems(VER_1, VER_2));
+        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_FORMATS_FIELD.getName()),
+                CoreMatchers.hasItems(FOR_1, FOR_2));
+        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_SECTIONS.getName()),
+                CoreMatchers.hasItems("a", "b", "c"));
     }
 
 }

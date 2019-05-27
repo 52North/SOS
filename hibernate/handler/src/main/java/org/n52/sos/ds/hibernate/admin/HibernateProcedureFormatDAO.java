@@ -38,7 +38,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
@@ -61,7 +60,7 @@ public class HibernateProcedureFormatDAO implements ProcedureFormatDAO {
     @Override
     public Map<String, String> getProcedureFormatMap() throws OwsExceptionReport {
         Session session = null;
-        Map<String,String> procedureFormatMap = null;
+        Map<String, String> procedureFormatMap = null;
         try {
             session = this.sessionHolder.getSession();
             procedureFormatMap = daoFactory.getProcedureDAO().getProcedureFormatMap(session);

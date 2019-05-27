@@ -68,14 +68,16 @@ import org.n52.sos.util.GeometryHandler;
  * @since 4.0.0
  *
  */
-public class InsertResultTemplateHandler
-        extends AbstractInsertResultTemplateHandler
-        implements Constructable {
+public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHandler implements Constructable {
 
     private HibernateSessionHolder sessionHolder;
+
     private DaoFactory daoFactory;
+
     private ResultHandlingHelper helper;
+
     private GeometryHandler geometryHandler;
+
     private boolean allowTemplateWithoutProcedureAndFeature;
 
     public InsertResultTemplateHandler() {
@@ -122,8 +124,8 @@ public class InsertResultTemplateHandler
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             DatasetEntity obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
-                obsConst = daoFactory.getSeriesDAO().checkSeries(sosObsConst,
-                        offeringID, session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                obsConst = daoFactory.getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
+                        Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
                     // check if result structure elements are supported
                     checkResultStructure(request.getResultStructure(),
@@ -170,14 +172,12 @@ public class InsertResultTemplateHandler
     }
 
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity obsConst,
-            ProcedureEntity procedure, AbstractFeatureEntity feature, Session session)
-            throws OwsExceptionReport {
+            ProcedureEntity procedure, AbstractFeatureEntity feature, Session session) throws OwsExceptionReport {
         daoFactory.getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty,
-            OmObservationConstellation sosObsConst)
-            throws OwsExceptionReport {
+            OmObservationConstellation sosObsConst) throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
         final SweDataRecord record = setRecordFrom(resultStructure.get().get());
 
@@ -204,32 +204,32 @@ public class InsertResultTemplateHandler
                     && helper.checkFields(record.getFields(), helper.OM_FEATURE_OF_INTEREST) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                         .withMessage(
-                                "Missing swe:field content with element definition '%s' because the featureOfInterest is not defined in the observationTemplate!",
+                                "Missing swe:field content with element definition '%s' because the "
+                                        + "featureOfInterest is not defined in the observationTemplate!",
                                 helper.OM_FEATURE_OF_INTEREST);
             }
             if (sosObsConst.getNillableProcedure().isNil()
                     && helper.checkFields(record.getFields(), helper.OM_PROCEDURE) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                        .withMessage(
-                                "Missing swe:field content with element definition '%s' because the procdure is not defined in the observationTemplate!",
-                                helper.OM_PROCEDURE);
+                        .withMessage("Missing swe:field content with element definition '%s' because the procdure "
+                                + "is not defined in the observationTemplate!", helper.OM_PROCEDURE);
             }
         }
         if (record.getFields().size() > getAllowedSize(record)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
-                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition '%s', "
-                                    + " optional swe:Time with element definition '%s' and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
-                                    + "with element definition '%s' or swe:Vector with element defintion '%s' or swe:Text with element definitions "
-                                    + "'%s' and '%s' and swe:DataRecord with element definition '%s'!",
+                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element "
+                                    + "definition '%s', optional swe:Time with element definition '%s' and swe:field "
+                                    + "content swe:AbstractSimpleComponent or swe:DataRecord  with element definition"
+                                    + " '%s' or swe:Vector with element defintion '%s' or swe:Text with element"
+                                    + " definitions '%s' and '%s' and swe:DataRecord with element definition '%s'!",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty,
                             OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, helper.OM_FEATURE_OF_INTEREST,
                             helper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
         }
     }
 
-    private int getAllowedSize(SweDataRecord record)
-            throws CodedException {
+    private int getAllowedSize(SweDataRecord record) throws CodedException {
         int allowedSize = 2;
         if (helper.hasResultTime(record) > -1) {
             allowedSize++;

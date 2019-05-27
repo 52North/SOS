@@ -34,15 +34,6 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.BindingRepository;
@@ -52,9 +43,16 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.janmayen.Json;
 import org.n52.janmayen.http.MediaType;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -90,7 +88,9 @@ public class AdminBindingController extends AbstractAdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT,
+                    method = RequestMethod.GET,
+                    produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() {
         ObjectNode node = Json.nodeFactory().objectNode();
         node.set(JSONConstants.BINDINGS_KEY, getBindings());
@@ -102,15 +102,16 @@ public class AdminBindingController extends AbstractAdminController {
         ArrayNode a = Json.nodeFactory().arrayNode();
         for (Entry<MediaType, Binding> e : bindings.entrySet()) {
             MediaType mediaType = e.getKey();
-            a.addObject()
-                    .put(JSONConstants.BINDING_KEY, mediaType.toString())
-                    .put(JSONConstants.ACTIVE_KEY, this.bindingRepository.isActive(new MediaTypeBindingKey(mediaType)));
+            a.addObject().put(JSONConstants.BINDING_KEY, mediaType.toString()).put(JSONConstants.ACTIVE_KEY,
+                    this.bindingRepository.isActive(new MediaTypeBindingKey(mediaType)));
         }
         return a;
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_BINDINGS_JSON_ENDPOINT,
+                    method = RequestMethod.POST,
+                    consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public void change(@RequestBody String request) throws IOException {
         JsonNode json = Json.loadString(request);
         if (json.has(JSONConstants.BINDING_KEY)) {

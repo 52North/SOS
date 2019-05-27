@@ -49,7 +49,7 @@ import basetest.SpringBaseTest;
 public class GeoShapeInsert extends SpringBaseTest {
 
     @Inject
-    IStatisticsDataHandler handler;
+    private IStatisticsDataHandler handler;
 
     @Test
     public void insert() throws Exception {

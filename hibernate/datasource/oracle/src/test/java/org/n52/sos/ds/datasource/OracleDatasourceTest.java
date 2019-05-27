@@ -55,7 +55,7 @@ public class OracleDatasourceTest extends TestCase {
     private static final String ORACLE_PASS = "oracle_pass";
     private static final String ORACLE_USER_NO_RIGHTS = "oracle_user_no_rights";
     private static final String ORACLE_PASS_NO_RIGHTS = "oracle_pass_no_rights";
-    
+
     private static final String ORACLE = "oracle";
     private static final String LOCALHOST = "localhost";
     private static final String DB = "db";

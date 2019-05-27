@@ -91,14 +91,14 @@ import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
  *
  */
 @Configurable
-public class InspireExtendedCapabilitiesProvider
-        extends AbstractInspireProvider
+public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
         implements OwsOperationMetadataExtensionProvider {
 
-    private final OwsOperationMetadataExtensionProviderKey key
-            = new OwsOperationMetadataExtensionProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
+    private final OwsOperationMetadataExtensionProviderKey key = new OwsOperationMetadataExtensionProviderKey(
+            SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
     private OwsServiceMetadataRepository serviceMetadataRepository;
+
     private String serviceURL;
 
     @Inject
@@ -177,8 +177,8 @@ public class InspireExtendedCapabilitiesProvider
      * @throws OwsExceptionReport
      *             If an error occurs when creating the capabilities
      */
-    private FullInspireExtendedCapabilities getFullInspireExtendedCapabilities(String language, int crs, String version)
-            throws OwsExceptionReport {
+    private FullInspireExtendedCapabilities getFullInspireExtendedCapabilities(String language, int crs,
+            String version) throws OwsExceptionReport {
         InspireLanguageISO6392B responseLanguage = getInspireHelper().checkRequestedLanguage(language);
         /* ResourceLocator 1..* */
         /* SpatialDataSetIdentifier 1..* */
@@ -200,12 +200,12 @@ public class InspireExtendedCapabilitiesProvider
         fullInspireExtendedCapabilities.addTemporalReference(getTemporalReference());
 
         /* MetadataDate 1..1 */
-        fullInspireExtendedCapabilities.setMetadataDate((TimeInstant) DateTimeHelper
-                .parseIsoString2DateTime2Time(getInspireHelper().getMetadataDate()));
+        fullInspireExtendedCapabilities.setMetadataDate(
+                (TimeInstant) DateTimeHelper.parseIsoString2DateTime2Time(getInspireHelper().getMetadataDate()));
 
         /* MandatoryKeyword 1..* */
-        fullInspireExtendedCapabilities.addMandatoryKeyword(new InspireMandatoryKeyword(
-                InspireMandatoryKeywordValue.infoFeatureAccessService));
+        fullInspireExtendedCapabilities.addMandatoryKeyword(
+                new InspireMandatoryKeyword(InspireMandatoryKeywordValue.infoFeatureAccessService));
 
         /* Keyword 0..* */
 
@@ -239,7 +239,8 @@ public class InspireExtendedCapabilitiesProvider
      */
     private InspireResourceLocator getResourceLocator() throws OwsExceptionReport {
         try {
-            InspireResourceLocator resourceLocator = new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest(serviceURL).toString());
+            InspireResourceLocator resourceLocator =
+                    new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest(serviceURL).toString());
             resourceLocator.addMediaType(MediaTypes.APPLICATION_XML);
             return resourceLocator;
         } catch (MalformedURLException ex) {
@@ -267,6 +268,7 @@ public class InspireExtendedCapabilitiesProvider
      *
      * @return the conformity
      * @throws CodedException
+     *             If an error occurs
      */
     private InspireConformity getConformity() throws CodedException {
         try {
@@ -278,7 +280,6 @@ public class InspireExtendedCapabilitiesProvider
             throw new NoApplicableCodeException().causedBy(e);
         }
     }
-
 
     /**
      * Get the temporal reference
@@ -319,9 +320,8 @@ public class InspireExtendedCapabilitiesProvider
      * @return the coordinate reference system
      */
     private int getRequestedCrs(OwsServiceRequest request) {
-        int targetSrid = request.getExtension(OWSConstants.AdditionalRequestParams.crs)
-                .map(Extension::getValue)
-                .map(value -> {
+        int targetSrid =
+                request.getExtension(OWSConstants.AdditionalRequestParams.crs).map(Extension::getValue).map(value -> {
                     if (value instanceof SweCount) {
                         return ((SweCount) value).getValue();
                     } else if (value instanceof Integer) {
@@ -331,8 +331,8 @@ public class InspireExtendedCapabilitiesProvider
                     }
                 }).orElse(-1);
 
-        return getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid))
-               ? targetSrid : getGeometryHandler().getDefaultResponseEPSG();
+        return getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid)) ? targetSrid
+                : getGeometryHandler().getDefaultResponseEPSG();
     }
 
 }

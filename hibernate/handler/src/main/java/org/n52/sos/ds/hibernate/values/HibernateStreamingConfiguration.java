@@ -41,9 +41,9 @@ import org.n52.faroe.annotation.Setting;
 @Configurable
 public class HibernateStreamingConfiguration {
 
-    public static int DEFAULT_CHUNK_SIZE = 10000;
-    public static boolean DEFAULT_STREAMING_DATASOURCE = true;
-    public static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
+    private static int DEFAULT_CHUNK_SIZE = 10000;
+    private static boolean DEFAULT_STREAMING_DATASOURCE = true;
+    private static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
 
     private boolean streamingDatasource = DEFAULT_STREAMING_DATASOURCE;
     private boolean chunkDatasourceStreaming = DEFAULT_CHUNK_STREAMING_DATASOURCE;

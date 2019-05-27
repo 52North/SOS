@@ -55,6 +55,13 @@ import basetest.ElasticsearchAwareTest;
 @Deprecated
 public class ServiceEventBusIt extends ElasticsearchAwareTest {
 
+    private static final String IP = "241.56.199.99";
+    private static final String PROCEDURE = "http://www.test.ru/producer1";
+    private static final String SERVICE = "sos";
+    private static final String VERSION = "10.1";
+    private static final String FORAMT = "my-format";
+
+
     @Inject
     private AbstractStatisticsServiceEventListener listener;
 
@@ -65,14 +72,14 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
     public void sendSosNormalFlowToElasticSearch() throws InterruptedException {
 
         OwsServiceRequestContext ctx = new OwsServiceRequestContext();
-        ctx.setIPAddress(new IPAddress("241.56.199.99"));
+        ctx.setIPAddress(new IPAddress(IP));
 
         DescribeSensorRequest request = new DescribeSensorRequest();
         request.setRequestContext(ctx);
-        request.setProcedure("http://www.test.ru/producer1");
-        request.setService("sos");
-        request.setVersion("10.1");
-        request.setProcedureDescriptionFormat("my-format");
+        request.setProcedure(PROCEDURE);
+        request.setService(SERVICE);
+        request.setVersion(VERSION);
+        request.setProcedureDescriptionFormat(FORAMT);
 
         RequestEvent evt = new RequestEvent(request);
 
@@ -95,12 +102,14 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         // wait for the other thread to stop, hopefully
         Thread.sleep(9000);
 
-        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
+        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
+                .setTypes(clientSettings.getTypeId()).get();
 
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
-//        Assert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
+        // Assert.assertThat(hit.getSourceAsMap().values(),
+        // CoreMatchers.hasItem(request.getOperationName()));
         Assert.assertThat(hit.sourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
 
     }
@@ -108,14 +117,14 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
     @Test
     public void sendSosExceptionFlowTriadtToElasticSearch() throws InterruptedException {
         OwsServiceRequestContext ctx = new OwsServiceRequestContext();
-        ctx.setIPAddress(new IPAddress("241.56.199.99"));
+        ctx.setIPAddress(new IPAddress(IP));
 
         DescribeSensorRequest request = new DescribeSensorRequest();
         request.setRequestContext(ctx);
-        request.setProcedure("http://www.test.ru/producer1");
-        request.setService("sos");
-        request.setVersion("10.1");
-        request.setProcedureDescriptionFormat("my-format");
+        request.setProcedure(PROCEDURE);
+        request.setService(SERVICE);
+        request.setVersion(VERSION);
+        request.setProcedureDescriptionFormat(FORAMT);
 
         RequestEvent evt = new RequestEvent(request);
 
@@ -130,12 +139,14 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         // wait for the other thread to stop, hopefully
         Thread.sleep(9000);
 
-        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
+        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
+                .setTypes(clientSettings.getTypeId()).get();
 
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
-//        Assert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
+        // Assert.assertThat(hit.getSourceAsMap().values(),
+        // CoreMatchers.hasItem(request.getOperationName()));
         Assert.assertThat(hit.sourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
     }
 

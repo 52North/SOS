@@ -83,6 +83,7 @@ public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
      * @return query result
      *
      * @throws SQLException
+     *             If an error occurs
      */
     @Override
     public QueryResult query(final String query) throws SQLException {

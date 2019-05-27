@@ -37,7 +37,8 @@ public class InsertResultTemplateRequestHandler extends AbstractSosRequestHandle
     @Override
     protected void resolveConcreteRequest() {
         put(SosDataMapping.IRT_IDENTIFIER, request.getIdentifier());
-        put(SosDataMapping.IRT_OBSERVATION_TEMPLATE, OmObservationConstellationEsModel.convert(request.getObservationTemplate()));
+        put(SosDataMapping.IRT_OBSERVATION_TEMPLATE,
+                OmObservationConstellationEsModel.convert(request.getObservationTemplate()));
         // try {
         // put(SosDataMapping.IRT_RESULT_ENCODING,
         // request.getResultEncoding().getXml());

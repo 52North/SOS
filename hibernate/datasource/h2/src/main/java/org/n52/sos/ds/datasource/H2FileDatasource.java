@@ -64,11 +64,11 @@ public class H2FileDatasource extends AbstractH2Datasource {
             .compile("^jdbc:h2:(.+)$");
 
     private static final String JDBC_URL_FORMAT = "jdbc:h2:%s";
-    
+
     private static final String USER_HOME = "user.home";
-    
+
     private static final String SOS = "sos";
-    
+
     private static final String DESCRIPTION = "Set this to the name/path of the database you want to use for SOS.";
 
     @Override

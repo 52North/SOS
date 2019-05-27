@@ -59,7 +59,8 @@ public class SosExceptionEventResolverIt extends ElasticsearchAwareTest {
         // eventually realtime should be enough
         Thread.sleep(2500);
 
-        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
+        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
+                .setTypes(clientSettings.getTypeId()).get();
         Assert.assertEquals(1L, resp.getHits().getTotalHits());
 
     }

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.cache.proxy;
 
-import static org.quartz.TriggerBuilder.newTrigger;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,12 +39,13 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HibernateDataSourceHarvesterScheduler implements Destroyable {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(HibernateDataSourceHarvesterScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateDataSourceHarvesterScheduler.class);
 
     private List<ScheduledJob> scheduledJobs = new ArrayList<>();
 
@@ -58,14 +57,18 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
 
     public void init() {
         if (!enabled) {
-            LOGGER.info("Job schedular disabled. No jobs will be triggered. This is also true for particularly enabled jobs.");
+            LOGGER.info(
+                    "Job schedular disabled. No jobs will be triggered. "
+                    + "This is also true for particularly enabled jobs.");
             return;
         }
 
         for (ScheduledJob scheduledJob : scheduledJobs) {
-//            LOGGER.info(dataSourceConfig.getItemName() + " " + dataSourceConfig.getUrl());
-//            HibernateDataSourceHarvesterJob dataSourceJob = new HibernateDataSourceHarvesterJob();
-//            dataSourceJob.init(dataSourceConfig);
+            // LOGGER.info(dataSourceConfig.getItemName() + " " +
+            // dataSourceConfig.getUrl());
+            // HibernateDataSourceHarvesterJob dataSourceJob = new
+            // HibernateDataSourceHarvesterJob();
+            // dataSourceJob.init(dataSourceConfig);
             scheduleJob(scheduledJob);
         }
 
@@ -92,11 +95,11 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
             LOGGER.debug("Schedule job '{}' will be executed at '{}'!", details.getKey(), new DateTime(nextExecution));
             if (taskToSchedule.isTriggerAtStartup()) {
                 LOGGER.debug("Schedule job '{}' to run once at startup.", details.getKey());
-                Trigger onceAtStartup = newTrigger()
-                        .withIdentity(details.getKey() + "_onceAtStartup")
+                Trigger onceAtStartup = TriggerBuilder.newTrigger().withIdentity(details.getKey() + "_onceAtStartup")
                         .forJob(details.getKey()).build();
                 Date startupExecution = scheduler.scheduleJob(onceAtStartup);
-                LOGGER.debug("Schedule job '{}' will be executed on startup at '{}'!", details.getKey(), new DateTime(startupExecution));
+                LOGGER.debug("Schedule job '{}' will be executed on startup at '{}'!", details.getKey(),
+                        new DateTime(startupExecution));
             }
         } catch (SchedulerException e) {
             LOGGER.warn("Could not schdule Job '{}'.", taskToSchedule.getJobName(), e);

@@ -44,6 +44,8 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 
 public class TimeEsModelTest {
 
+    private static final String VAL_REF = "val-ref";
+
     @Test
     public void timeInstant() {
         TimeInstant instant = new TimeInstant(DateTime.now());
@@ -59,11 +61,11 @@ public class TimeEsModelTest {
 
         Assert.assertEquals(period.getStart(), map.get(ObjectEsParameterFactory.TIME_START.getName()));
         Assert.assertEquals(period.getEnd(), map.get(ObjectEsParameterFactory.TIME_END.getName()));
-        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), map.get(ObjectEsParameterFactory.TIME_DURARTION.getName()));
+        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000),
+                map.get(ObjectEsParameterFactory.TIME_DURARTION.getName()));
     }
 
-    @Test(
-            expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void invalidStartEndTimePeriod() {
         TimePeriod period = new TimePeriod(DateTime.now().plusHours(3), DateTime.now());
         Map<String, Object> map = TimeEsModel.convert(period);
@@ -75,22 +77,24 @@ public class TimeEsModelTest {
 
     @Test
     public void temporalFilterConversion() {
-        TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), "val-ref");
+        TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), VAL_REF);
         Map<String, Object> map = TimeEsModel.convert(filter);
 
-        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
-        Assert.assertEquals("val-ref", map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
+        Assert.assertEquals(TimeOperator.TM_After.toString(),
+                map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
+        Assert.assertEquals(VAL_REF, map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
     }
 
     @Test
     public void temporalFilterListConversion() {
-        TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), "val-ref");
+        TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), VAL_REF);
         List<Map<String, Object>> list = TimeEsModel.convert(Arrays.asList(filter));
 
         Map<String, Object> map = list.get(0);
 
-        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
-        Assert.assertEquals("val-ref", map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
+        Assert.assertEquals(TimeOperator.TM_After.toString(),
+                map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
+        Assert.assertEquals(VAL_REF, map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
     }
 
     @Test

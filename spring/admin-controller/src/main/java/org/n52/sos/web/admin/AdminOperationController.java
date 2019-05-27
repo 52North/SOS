@@ -32,6 +32,14 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,15 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.request.operator.RequestOperatorKey;
-import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
-import org.n52.janmayen.Json;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

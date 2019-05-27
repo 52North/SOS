@@ -41,38 +41,38 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.JTSHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.io.ParseException;
-
 public class SpatialFilterEsModelTest {
+
+    private static final String VAL_REF = "value-ref";
+    private static final String WKT_POLYGON = "POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))";
 
     @Test
     public void createBBOXGeometryAndConvert() throws OwsExceptionReport, DecodingException, ParseException {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
+        Geometry geom = JTSHelper.createGeometryFromWKT(WKT_POLYGON, 4326);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, VAL_REF);
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
-        Assert.assertEquals("value-ref", map.get(ObjectEsParameterFactory.SPATIAL_FILTER_VALUE_REF.getName()));
-        Assert.assertEquals(SpatialOperator.BBOX.toString(), map.get(ObjectEsParameterFactory.SPATIAL_FILTER_OPERATOR.getName()));
+        Assert.assertEquals(VAL_REF, map.get(ObjectEsParameterFactory.SPATIAL_FILTER_VALUE_REF.getName()));
+        Assert.assertEquals(SpatialOperator.BBOX.toString(),
+                map.get(ObjectEsParameterFactory.SPATIAL_FILTER_OPERATOR.getName()));
         Assert.assertNotNull(map.get(ObjectEsParameterFactory.SPATIAL_FILTER_SHAPE.getName()));
     }
 
     @Test
     public void createInvalidOperatorTypeGeometry() throws OwsExceptionReport, DecodingException, ParseException {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, "value-ref");
+        Geometry geom = JTSHelper.createGeometryFromWKT(WKT_POLYGON, 4326);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, VAL_REF);
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
         Assert.assertNull(map);
     }
 
-    @Test(
-            expected = IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createInvalidGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, "value-ref");
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, VAL_REF);
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
@@ -86,8 +86,8 @@ public class SpatialFilterEsModelTest {
 
     @Test
     public void createInvalidSridGeometry() throws OwsExceptionReport, DecodingException, ParseException {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 9999);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
+        Geometry geom = JTSHelper.createGeometryFromWKT(WKT_POLYGON, 9999);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, VAL_REF);
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
@@ -97,7 +97,7 @@ public class SpatialFilterEsModelTest {
     @Test
     public void createPointGeometry() throws OwsExceptionReport, DecodingException, ParseException {
         Geometry geom = JTSHelper.createGeometryFromWKT("POINT (40 40)", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, "value-ref");
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, VAL_REF);
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
@@ -106,8 +106,8 @@ public class SpatialFilterEsModelTest {
 
     @Test
     public void createPointButItisPologyonGeometry() throws OwsExceptionReport, DecodingException, ParseException {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, "value-ref");
+        Geometry geom = JTSHelper.createGeometryFromWKT(WKT_POLYGON, 4326);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, VAL_REF);
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 

@@ -32,15 +32,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.elasticsearch.common.geo.builders.*;
+
+import org.elasticsearch.common.geo.builders.PointBuilder;
+import org.elasticsearch.common.geo.builders.PolygonBuilder;
+import org.elasticsearch.common.geo.builders.ShapeBuilder;
 import org.locationtech.jts.geom.Coordinate;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SpatialFilterEsModel extends AbstractElasticsearchModel {
+public final class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     private static final Logger logger = LoggerFactory.getLogger(SpatialFilterEsModel.class);
 
@@ -63,12 +65,10 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     /**
      * Transform the geomtry to Elatisearch geo_shape type.
-     * {@linkplain https://www.elastic.co/guide/en/elasticsearch/reference/1.6/mapping-geo-shape-type.html}
+     * {@see https://www.elastic.co/guide/en/elasticsearch/reference/1.6/mapping-geo-shape-type.html}
      *
      * If other the 4326 SRID coordinates are present it needed to be
      * transformed before conver in to Elasticsearch geo_shape
-     *
-     * {@linkplain}
      *
      */
     @Override
@@ -79,12 +79,13 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
         try {
             switch (spatialFilter.getSrid()) {
-            case 4326:
-                transform4326(spatialFilter);
-                break;
+                case 4326:
+                    transform4326(spatialFilter);
+                    break;
 
-            default:
-                throw new IllegalArgumentException("Unsupported SRID coordination system " + spatialFilter.getSrid());
+                default:
+                    throw new IllegalArgumentException("Unsupported SRID coordination system "
+                            + spatialFilter.getSrid());
             }
             return dataMap;
         } catch (Throwable e) {
@@ -95,14 +96,14 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     private void transform4326(SpatialFilter spatialFilter) {
         switch (spatialFilter.getOperator()) {
-        case BBOX:
-            createBbox(spatialFilter);
-            break;
-        case Equals:
-            createEquals(spatialFilter);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported operator " + spatialFilter.getOperator().toString());
+            case BBOX:
+                createBbox(spatialFilter);
+                break;
+            case Equals:
+                createEquals(spatialFilter);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operator " + spatialFilter.getOperator().toString());
         }
 
     }
@@ -110,10 +111,11 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
     private void createEquals(SpatialFilter filter) {
         Coordinate[] points = filter.getGeometry().getCoordinates();
         if (points.length != 1) {
-            throw new IllegalArgumentException("Invalid number of coordinates in geometry. It should be a point. Got " + points.length);
+            throw new IllegalArgumentException(
+                    "Invalid number of coordinates in geometry. It should be a point. Got " + points.length);
         }
         PointBuilder point = PointBuilder.newPoint(points[0].x, points[0].y);
-//        PointBuilder point = new PointBuilder(points[0].x, points[0].y);
+        // PointBuilder point = new PointBuilder(points[0].x, points[0].y);
         createSpatialFilter(filter, point);
     }
 
@@ -122,14 +124,16 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
      * + 1 vertices to create an n-sided polygon and a minimum of 4 vertices.
      *
      * @param filter
+     *            the spatial filter
      */
     private void createBbox(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
         for (Coordinate coord : filter.getGeometry().getCoordinates()) {
             polygon.point(coord.getX(), coord.getY());
         }
-//        PolygonBuilder polygon =
-//                new PolygonBuilder(new CoordinatesBuilder().coordinates(filter.getGeometry().getCoordinates()));
+        // PolygonBuilder polygon =
+        // new PolygonBuilder(new
+        // CoordinatesBuilder().coordinates(filter.getGeometry().getCoordinates()));
         createSpatialFilter(filter, polygon);
 
     }

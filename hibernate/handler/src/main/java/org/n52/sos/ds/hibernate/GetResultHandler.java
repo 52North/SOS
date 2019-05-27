@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
-import static org.n52.shetland.util.CollectionHelper.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,6 +43,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ResultTemplateEntity;
@@ -89,8 +88,11 @@ public class GetResultHandler extends AbstractGetResultHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultHandler.class);
 
     private HibernateSessionHolder sessionHolder;
+
     private FeatureQueryHandler featureQueryHandler;
+
     private DaoFactory daoFactory;
+
     private GeometryHandler geometryHandler;
 
     private boolean strictSpatialFilteringProfile;
@@ -133,19 +135,23 @@ public class GetResultHandler extends AbstractGetResultHandler {
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             final Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
-            final List<ResultTemplateEntity> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
-            if (isNotEmpty(resultTemplates)) {
-                final SosResultEncoding sosResultEncoding = createSosResultEncoding(resultTemplates.get(0).getEncoding());
-                final SosResultStructure sosResultStructure = createSosResultStructure(resultTemplates.get(0).getStructure());
+            final List<ResultTemplateEntity> resultTemplates =
+                    queryResultTemplate(request, featureIdentifier, session);
+            if (CollectionHelper.isNotEmpty(resultTemplates)) {
+                final SosResultEncoding sosResultEncoding =
+                        createSosResultEncoding(resultTemplates.get(0).getEncoding());
+                final SosResultStructure sosResultStructure =
+                        createSosResultStructure(resultTemplates.get(0).getStructure());
                 final List<DataEntity<?>> observations;
-                    observations = querySeriesObservation(request, featureIdentifier, session);
-                response.setResultValues(new ResultHandlingHelper(geometryHandler, daoFactory.getSweHelper()).createResultValuesFromObservations(observations,
-                        sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder()));
+                observations = querySeriesObservation(request, featureIdentifier, session);
+                response.setResultValues(new ResultHandlingHelper(geometryHandler, daoFactory.getSweHelper())
+                        .createResultValuesFromObservations(observations, sosResultEncoding, sosResultStructure,
+                                getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder()));
             }
             return response;
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
-                    .setStatus(INTERNAL_SERVER_ERROR);
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -153,7 +159,7 @@ public class GetResultHandler extends AbstractGetResultHandler {
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             try {
                 Session session = sessionHolder.getSession();
                 if (strictSpatialFilteringProfile) {
@@ -223,9 +229,8 @@ public class GetResultHandler extends AbstractGetResultHandler {
      */
     private List<ResultTemplateEntity> queryResultTemplate(final GetResultRequest request,
             final Set<String> featureIdentifier, final Session session) {
-        final List<ResultTemplateEntity> resultTemplates =
-                daoFactory.getResultTemplateDAO().getResultTemplateObject(request.getOffering(), request.getObservedProperty(),
-                        featureIdentifier, session);
+        final List<ResultTemplateEntity> resultTemplates = daoFactory.getResultTemplateDAO().getResultTemplateObject(
+                request.getOffering(), request.getObservedProperty(), featureIdentifier, session);
         return resultTemplates;
     }
 
@@ -243,8 +248,8 @@ public class GetResultHandler extends AbstractGetResultHandler {
      * @throws UnsupportedOperatorException
      *             If the temporal operator is not supported
      */
-    private void addTemporalFilter(Criteria c, List<TemporalFilter> temporalFilter) throws UnsupportedTimeException,
-            UnsupportedValueReferenceException, UnsupportedOperatorException {
+    private void addTemporalFilter(Criteria c, List<TemporalFilter> temporalFilter)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         c.add(SosTemporalRestrictions.filter(temporalFilter));
     }
 
@@ -270,7 +275,6 @@ public class GetResultHandler extends AbstractGetResultHandler {
         c.add(Restrictions.isNull(DataEntity.PROPERTY_PARENT));
     }
 
-
     /**
      * @param criteria
      *            Hibernate Criteria to add restriction
@@ -285,11 +289,10 @@ public class GetResultHandler extends AbstractGetResultHandler {
     private void addSpatialFilteringProfileRestrictions(Criteria criteria, GetResultRequest request, Session session)
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-                criteria.add(SpatialRestrictions.filter(
-                        DataEntity.PROPERTY_GEOMETRY_ENTITY,
-                        request.getSpatialFilter().getOperator(),
-                        geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
-                                request.getSpatialFilter().getGeometry().toGeometry())));
+            criteria.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY,
+                    request.getSpatialFilter().getOperator(),
+                    geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                            request.getSpatialFilter().getGeometry().toGeometry())));
         }
     }
 }

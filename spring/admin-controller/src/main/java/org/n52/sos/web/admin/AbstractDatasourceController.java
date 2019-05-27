@@ -52,7 +52,7 @@ public class AbstractDatasourceController extends AbstractReloadContextControlle
                     throw new RuntimeException("Missing Datasource Property!");
                 }
                 datasource = (Datasource) Class.forName(className).newInstance();
-            } catch (ClassNotFoundException|InstantiationException|IllegalAccessException ex) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
                 LOG.error("Can not instantiate Datasource!", ex);
                 throw new RuntimeException(ex);
             }

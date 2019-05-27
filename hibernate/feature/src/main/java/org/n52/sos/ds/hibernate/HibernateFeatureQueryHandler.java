@@ -392,7 +392,7 @@ public class HibernateFeatureQueryHandler
      *
      * @param feature FeatureOfInterest object
      * @param queryObject Query object
-     * @param session the session 
+     * @param session the session
      * @return SOS feature An SOS feature
      * @throws OwsExceptionReport  If an error occurs
      */

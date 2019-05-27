@@ -33,15 +33,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-
 import org.n52.janmayen.Json;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.web.admin.AbstractAdminController;
 import org.n52.sos.web.common.ControllerConstants;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_I18N)

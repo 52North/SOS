@@ -35,8 +35,9 @@ import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 
-public abstract class AbstractSosResponseHandler<T extends OwsServiceResponse> extends AbstractElasticSearchDataHolder implements
-        StatisticsServiceEventHandler<OwsServiceResponse> {
+public abstract class AbstractSosResponseHandler<T extends OwsServiceResponse>
+        extends AbstractElasticSearchDataHolder
+        implements StatisticsServiceEventHandler<OwsServiceResponse> {
 
     protected T response;
 

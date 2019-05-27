@@ -33,6 +33,15 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchIdentifierException;
+import org.n52.sos.exception.NoSuchOfferingException;
+import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -43,16 +52,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.janmayen.Json;
-import org.n52.shetland.ogc.ows.extension.StringBasedCapabilitiesExtension;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchIdentifierException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,8 +64,8 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getCapabilitiesExtensions() {
         ObjectNode response = Json.nodeFactory().objectNode();
-        Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions
-                = getCapabilitiesExtensionService().getActiveCapabilitiesExtensions();
+        Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions =
+                getCapabilitiesExtensionService().getActiveCapabilitiesExtensions();
         for (String id : capabilitiesExtensions.keySet()) {
             response.set(id, toJson(capabilitiesExtensions.get(id)));
         }
@@ -74,8 +73,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     }
 
     private JsonNode toJson(StringBasedCapabilitiesExtension capabilitiesExtension) {
-        return Json.nodeFactory().objectNode()
-                .put(IDENTIFIER_PROPERTY, capabilitiesExtension.getSectionName())
+        return Json.nodeFactory().objectNode().put(IDENTIFIER_PROPERTY, capabilitiesExtension.getSectionName())
                 .put(DISABLED_PROPERTY, capabilitiesExtension.isDisabled())
                 .put(EXTENSION_PROPERTY, capabilitiesExtension.getExtension());
 
@@ -83,9 +81,11 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value="/{identifier}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String getCapabilitiesExtension(@PathVariable("identifier") String identifier) throws NoSuchIdentifierException {
-        StringBasedCapabilitiesExtension ce = getCapabilitiesExtensionService().getActiveCapabilitiesExtensions().get(identifier);
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String getCapabilitiesExtension(@PathVariable("identifier") String identifier)
+            throws NoSuchIdentifierException {
+        StringBasedCapabilitiesExtension ce =
+                getCapabilitiesExtensionService().getActiveCapabilitiesExtensions().get(identifier);
         if (ce == null) {
             throw new NoSuchIdentifierException(identifier);
         }
@@ -93,22 +93,21 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void setCapabilitiesExtensionSettings(
-            @PathVariable("identifier") String identifier,
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void setCapabilitiesExtensionSettings(@PathVariable("identifier") String identifier,
             @RequestBody String settings) throws NoSuchExtensionException, NoSuchOfferingException, IOException {
         JsonNode request = Json.loadString(settings);
 
         if (request.has(DISABLED_PROPERTY)) {
-            getCapabilitiesExtensionService().disableCapabilitiesExtension(identifier, request.path(DISABLED_PROPERTY).asBoolean());
+            getCapabilitiesExtensionService().disableCapabilitiesExtension(identifier,
+                    request.path(DISABLED_PROPERTY).asBoolean());
         }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
-    public void saveCapabilitiesExtension(
-            @PathVariable("identifier") String identifier,
-            @RequestBody String extension) throws XmlException, InvalidIdentifierException {
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
+    public void saveCapabilitiesExtension(@PathVariable("identifier") String identifier, @RequestBody String extension)
+            throws XmlException, InvalidIdentifierException {
 
         if (contains(identifier)) {
             throw new InvalidIdentifierException(identifier);
@@ -138,9 +137,9 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/{identifier}", method = RequestMethod.DELETE)
-    public void deleteCapabilitiesExtension(
-            @PathVariable("identifier") String identifier) throws NoSuchExtensionException {
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+    public void deleteCapabilitiesExtension(@PathVariable("identifier") String identifier)
+            throws NoSuchExtensionException {
         getCapabilitiesExtensionService().deleteCapabiltiesExtension(identifier);
     }
 

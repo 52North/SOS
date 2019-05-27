@@ -72,8 +72,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class GetObservationByIdDao extends AbstractObservationDao
-        implements org.n52.sos.ds.dao.GetObservationByIdDao {
+public class GetObservationByIdDao extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationByIdDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDao.class);
 
@@ -126,10 +125,9 @@ public class GetObservationByIdDao extends AbstractObservationDao
         try {
             session = sessionHolder.getSession();
             List<OmObservation> omObservations = querySeriesObservation(request, session);
-            HibernateObservationUtilities
-                    .createSosObservationsFromObservations(
-                            checkObservations(queryObservation(request, session), request), request,
-                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session)
+            HibernateObservationUtilities.createSosObservationsFromObservations(
+                    checkObservations(queryObservation(request, session), request), request,
+                    getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session)
                     .forEachRemaining(omObservations::add);
             return omObservations;
 
@@ -213,7 +211,7 @@ public class GetObservationByIdDao extends AbstractObservationDao
             observationTemplate.setValue(streamingValue);
             result.add(observationTemplate);
         }
-        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        LOGGER.debug("Time to query observations needs {} ms!", System.currentTimeMillis() - start);
         return result;
     }
 

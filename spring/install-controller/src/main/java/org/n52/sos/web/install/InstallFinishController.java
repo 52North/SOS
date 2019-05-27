@@ -81,8 +81,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
 
     @Override
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView post(HttpServletRequest req, HttpServletResponse resp) throws InstallationRedirectError,
-            InstallationSettingsError {
+    public ModelAndView post(HttpServletRequest req, HttpServletResponse resp)
+            throws InstallationRedirectError, InstallationSettingsError {
         HttpSession session = checkPrevious(req);
         process(getParameters(req), getSettings(session));
         session.invalidate();
@@ -129,8 +129,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
                 LOG.debug("Updating the database finished!");
             }
         } catch (Throwable e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_CONNECT_TO_THE_DATABASE,
-                    e.getMessage()), e);
+            throw new InstallationSettingsError(c,
+                    String.format(ErrorMessages.COULD_NOT_CONNECT_TO_THE_DATABASE, e.getMessage()), e);
         }
         saveServiceSettings(c);
         createAdministratorUser(c);
@@ -165,8 +165,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
             getDatabaseSettingsHandler().saveAll(properties);
         } catch (ConfigurationError e) {
             /* TODO desctruct configurator? */
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_WRITE_DATASOURCE_CONFIG,
-                    e.getMessage()), e);
+            throw new InstallationSettingsError(c,
+                    String.format(ErrorMessages.COULD_NOT_WRITE_DATASOURCE_CONFIG, e.getMessage()), e);
         }
     }
 
@@ -190,8 +190,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
                 this.settingsService.changeSetting(e);
             }
         } catch (ConfigurationError e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS,
-                    e.getMessage()), e);
+            throw new InstallationSettingsError(c,
+                    String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS, e.getMessage()), e);
         }
     }
 
@@ -199,8 +199,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         try {
             userService.createAdmin(c.getUsername(), c.getPassword());
         } catch (Throwable e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_SAVE_ADMIN_CREDENTIALS,
-                    e.getMessage()), e);
+            throw new InstallationSettingsError(c,
+                    String.format(ErrorMessages.COULD_NOT_SAVE_ADMIN_CREDENTIALS, e.getMessage()), e);
         }
     }
 
@@ -208,7 +208,8 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
         try {
             this.settingsService.deleteAll();
         } catch (Throwable e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_DELETE_PREVIOUS_SETTINGS, e.getMessage()), e);
+            throw new InstallationSettingsError(c,
+                    String.format(ErrorMessages.COULD_NOT_DELETE_PREVIOUS_SETTINGS, e.getMessage()), e);
         }
     }
 }

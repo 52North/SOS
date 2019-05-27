@@ -39,7 +39,7 @@ import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext
 
 /**
  * Strategy to create the {@link SosProcedureDescription} from a
- * {@link ValidProcedureTime}.
+ * {@link ProcedureHistoryEntity}.
  */
 public class ValidProcedureTimeDescriptionCreationStrategy
         extends XmlStringDescriptionCreationStrategy {

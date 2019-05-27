@@ -34,6 +34,16 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.iceland.coding.encode.ResponseFormatKey;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,17 +52,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
-import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.JSONException;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
-import org.n52.janmayen.Json;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.JSONConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -84,7 +83,9 @@ public class AdminEncodingController extends AbstractAdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT,
+                    method = RequestMethod.GET,
+                    produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() {
         ObjectNode node = Json.nodeFactory().objectNode();
         node.set(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings());
@@ -93,24 +94,25 @@ public class AdminEncodingController extends AbstractAdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT,
+                    method = RequestMethod.POST,
+                    consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public void change(@RequestBody String request) throws IOException {
         JsonNode json = Json.loadString(request);
 
         if (json.has(JSONConstants.RESPONSE_FORMAT_KEY)) {
-            OwsServiceKey sokt =
-                    new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
-                            json.path(JSONConstants.VERSION_KEY).asText());
-            ResponseFormatKey rfkt = new ResponseFormatKey(sokt, json.path(JSONConstants.RESPONSE_FORMAT_KEY).asText());
+            OwsServiceKey sokt = new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+                    json.path(JSONConstants.VERSION_KEY).asText());
+            ResponseFormatKey rfkt =
+                    new ResponseFormatKey(sokt, json.path(JSONConstants.RESPONSE_FORMAT_KEY).asText());
             this.responseFormatRepository.setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY)) {
-            OwsServiceKey sokt =
-                    new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
-                            json.path(JSONConstants.VERSION_KEY).asText());
-            ProcedureDescriptionFormatKey pdfkt =
-                    new ProcedureDescriptionFormatKey(sokt,
-                            json.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY).asText());
-            this.procedureDescriptionFormatRepository.setActive(pdfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            OwsServiceKey sokt = new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+                    json.path(JSONConstants.VERSION_KEY).asText());
+            ProcedureDescriptionFormatKey pdfkt = new ProcedureDescriptionFormatKey(sokt,
+                    json.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY).asText());
+            this.procedureDescriptionFormatRepository.setActive(pdfkt,
+                    json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
@@ -118,13 +120,11 @@ public class AdminEncodingController extends AbstractAdminController {
 
     protected ArrayNode getObservationEncodings() {
         ArrayNode joes = Json.nodeFactory().arrayNode();
-        final Map<OwsServiceKey, Set<String>> oes =
-                this.responseFormatRepository.getAllSupportedResponseFormats();
+        final Map<OwsServiceKey, Set<String>> oes = this.responseFormatRepository.getAllSupportedResponseFormats();
         for (OwsServiceKey sokt : oes.keySet()) {
             for (String responseFormat : oes.get(sokt)) {
                 ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
-                joes.addObject()
-                        .put(JSONConstants.SERVICE_KEY, rfkt.getService())
+                joes.addObject().put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.RESPONSE_FORMAT_KEY, rfkt.getResponseFormat())
                         .put(JSONConstants.ACTIVE_KEY, this.responseFormatRepository.isActive(rfkt));
@@ -141,8 +141,7 @@ public class AdminEncodingController extends AbstractAdminController {
             for (String procedureDescriptionFormat : oes.get(sokt)) {
                 ProcedureDescriptionFormatKey rfkt =
                         new ProcedureDescriptionFormatKey(sokt, procedureDescriptionFormat);
-                jpes.addObject()
-                        .put(JSONConstants.SERVICE_KEY, rfkt.getService())
+                jpes.addObject().put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY, rfkt.getProcedureDescriptionFormat())
                         .put(JSONConstants.ACTIVE_KEY, this.procedureDescriptionFormatRepository.isActive(rfkt));

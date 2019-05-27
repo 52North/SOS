@@ -31,14 +31,11 @@ package org.n52.sos.web.admin;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;
 import org.n52.sos.web.common.auth.AdministratorUserPrinciple;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;

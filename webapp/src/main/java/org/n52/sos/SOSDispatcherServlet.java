@@ -50,13 +50,12 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class SOSDispatcherServlet
         extends DispatcherServlet
         implements ContextSwitcher {
-    private static final Logger LOG = LoggerFactory.getLogger(SOSDispatcherServlet.class);
-    private static final long serialVersionUID = -5390564503165988702L;
-    private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     public static final String UNCONFIGURED_CONFIG_LOCATION_PARAM = "unconfiguredConfigLocations";
     public static final String CONFIGURED_CONFIG_LOCATION_PARAM = "configuredConfigLocations";
     public static final String COMMON_CONFIG_LOCATION_PARAM = "commonConfigLocation";
-
+    private static final Logger LOG = LoggerFactory.getLogger(SOSDispatcherServlet.class);
+    private static final long serialVersionUID = -5390564503165988702L;
+    private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     private boolean configured;
 
     @Override
@@ -137,5 +136,4 @@ public class SOSDispatcherServlet
         LOG.info("Reloading context");
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
     }
-
 }

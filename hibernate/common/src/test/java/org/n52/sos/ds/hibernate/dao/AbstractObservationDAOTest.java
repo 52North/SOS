@@ -56,6 +56,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 public class AbstractObservationDAOTest {
 
     private static final String PHENOMENON_TIME = "#phenomenonTime";
+    private static final String RESULT_TIME = "#resultTime";
 
     private TestObservationDAO dao = new TestObservationDAO(new DaoFactory());
 
@@ -133,7 +134,7 @@ public class AbstractObservationDAOTest {
     public void add_resultTime_value_from_phenomenonTime() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
-        resultTime.setGmlId();
+        resultTime.setGmlId(RESULT_TIME);
         TimeInstant phenomeonTime = new TimeInstant(new DateTime());
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
         Assert.assertTrue(observation.getResultTime() != null);

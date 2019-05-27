@@ -36,6 +36,18 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.n52.iceland.binding.Binding;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.exception.HTTPException;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.ds.ProcedureFormatDAO;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.svalbard.decode.OperationDecoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,19 +58,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.iceland.binding.Binding;
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.cache.ContentCacheController;
-import org.n52.svalbard.decode.OperationDecoderKey;
-import org.n52.iceland.exception.HTTPException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.janmayen.http.MediaTypes;
-import org.n52.sos.ds.ProcedureFormatDAO;
-import org.n52.sos.web.common.ControllerConstants;
 
 import com.google.common.collect.Lists;
 
@@ -159,7 +158,7 @@ public class SensorDescriptionController extends AbstractAdminController {
         }
         model.put(IS_DELETE_SENSOR_SUPPORTED, delete);
         model.put(IS_UPDATE_SENSOR_SUPPORTED, update);
-        model.put(IS_DESCRIBE_SENSOR_SUPPORTED, getKvp||getSoap);
+        model.put(IS_DESCRIBE_SENSOR_SUPPORTED, getKvp || getSoap);
         List<String> procedures = Lists.newArrayList(getCache().getProcedures());
         Collections.sort(procedures);
         model.put(SENSORS, procedures);

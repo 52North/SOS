@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 
-public class OmObservationConstellationEsModel extends AbstractElasticsearchModel {
+public final class OmObservationConstellationEsModel extends AbstractElasticsearchModel {
 
     private final OmObservationConstellation constellation;
 
@@ -55,7 +55,8 @@ public class OmObservationConstellationEsModel extends AbstractElasticsearchMode
         if (observationConstellation == null || observationConstellation.isEmpty()) {
             return null;
         }
-        return observationConstellation.stream().map(OmObservationConstellationEsModel::convert).collect(Collectors.toList());
+        return observationConstellation.stream().map(OmObservationConstellationEsModel::convert)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -64,10 +65,12 @@ public class OmObservationConstellationEsModel extends AbstractElasticsearchMode
             put(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE, constellation.getProcedure().getIdentifier());
         }
         if (constellation.getObservableProperty() != null) {
-            put(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY, constellation.getObservableProperty().getIdentifier());
+            put(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY,
+                    constellation.getObservableProperty().getIdentifier());
         }
         if (constellation.getFeatureOfInterest() != null) {
-            put(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST, constellation.getFeatureOfInterest().getIdentifier());
+            put(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST,
+                    constellation.getFeatureOfInterest().getIdentifier());
         }
 
         put(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE, constellation.getObservationType());

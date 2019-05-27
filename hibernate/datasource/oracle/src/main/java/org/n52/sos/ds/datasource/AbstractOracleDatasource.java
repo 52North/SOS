@@ -53,7 +53,7 @@ import oracle.jdbc.OracleDriver;
 
 /**
  * Abstract class for Oracle datasources
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -93,7 +93,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     protected static final String SCHEMA_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
-    
+
     private static final String CANNOT_CLEAR = "Cannot clear!";
 
     protected enum Mode {

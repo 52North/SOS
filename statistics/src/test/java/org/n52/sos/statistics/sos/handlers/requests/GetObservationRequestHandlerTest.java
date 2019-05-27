@@ -45,8 +45,18 @@ import basetest.HandlerBaseTest;
 
 public class GetObservationRequestHandlerTest extends HandlerBaseTest {
 
+    private static final String OF_1 = "of1";
+    private static final String OF_2 = "of2";
+    private static final String OB_1 = "ob1";
+    private static final String OB_2 = "ob2";
+    private static final String ID_1 = "id1";
+    private static final String ID_2 = "id2";
+    private static final String P_1 = "p1";
+    private static final String P_2 = "p2";
+    private static final String RESPONSE_FORMAT = "batman arkham night";
+
     @InjectMocks
-    GetObservationRequestHandler handler;
+    private GetObservationRequestHandler handler;
 
     @SuppressWarnings("unchecked")
     @Test
@@ -54,25 +64,31 @@ public class GetObservationRequestHandlerTest extends HandlerBaseTest {
         GetObservationRequest request = new GetObservationRequest();
         request.setRequestContext(requestContext);
 
-        request.setOfferings(Arrays.asList("of1", "of2"));
-        request.setProcedures(Arrays.asList("p1", "p2"));
-        request.setObservedProperties(Arrays.asList("ob1", "ob2"));
-        request.setFeatureIdentifiers(Arrays.asList("id1", "id2"));
+        request.setOfferings(Arrays.asList(OF_1, OF_2));
+        request.setProcedures(Arrays.asList(P_1, P_2));
+        request.setObservedProperties(Arrays.asList(OB_1, OB_2));
+        request.setFeatureIdentifiers(Arrays.asList(ID_1, ID_2));
         request.setMergeObservationValues(true);
-        request.setResponseFormat("batman arkham night");
+        request.setResponseFormat(RESPONSE_FORMAT);
 
         request.setSpatialFilter(spatialFilter);
         request.setTemporalFilters(Arrays.asList(temporalFilter));
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OFFERINGS.getName()), CoreMatchers.hasItems("of1", "of2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_PROCEDURES.getName()), CoreMatchers.hasItems("p1", "p2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OBSERVED_PROPERTIES.getName()), CoreMatchers.hasItems("ob1", "ob2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName()), CoreMatchers.hasItems("id1", "id2"));
-        Assert.assertThat(map.get(SosDataMapping.GO_RESPONSE_FORMAT.getName()), CoreMatchers.is("batman arkham night"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OFFERINGS.getName()),
+                CoreMatchers.hasItems(OF_1, OF_2));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_PROCEDURES.getName()),
+                CoreMatchers.hasItems(P_1, P_2));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OBSERVED_PROPERTIES.getName()),
+                CoreMatchers.hasItems(OB_1, OB_2));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName()),
+                CoreMatchers.hasItems(ID_1, ID_2));
+        Assert.assertThat(map.get(SosDataMapping.GO_RESPONSE_FORMAT.getName()),
+                CoreMatchers.is(RESPONSE_FORMAT));
         Assert.assertThat(map.get(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES.getName()), CoreMatchers.is(true));
         Assert.assertThat(map.get(SosDataMapping.GO_SPATIAL_FILTER.getName()), CoreMatchers.notNullValue());
-        Assert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName()), CoreMatchers.allOf(CoreMatchers.instanceOf(List.class)));
+        Assert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName()),
+                CoreMatchers.allOf(CoreMatchers.instanceOf(List.class)));
     }
 }

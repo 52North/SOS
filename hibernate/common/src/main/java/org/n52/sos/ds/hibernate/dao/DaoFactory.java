@@ -190,16 +190,16 @@ public class DaoFactory {
 
     public AbstractSeriesValueDAO getValueDAO() {
         if (HibernateHelper.isEntitySupported(EReportingProfileDataEntity.class)) {
-            return new EReportingValueDAO(this.verificationFlags, this.validityFlags);
+            return new EReportingValueDAO(this.verificationFlags, this.validityFlags, geometryHandler);
         }
         return new SeriesValueDAO(geometryHandler);
     }
 
     public AbstractSeriesValueTimeDAO getValueTimeDAO() {
         if (HibernateHelper.isEntitySupported(EReportingProfileDataEntity.class)) {
-            return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags);
+            return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags, geometryHandler);
         }
-        return new SeriesValueTimeDAO();
+        return new SeriesValueTimeDAO(geometryHandler);
     }
 
     public AbstractFeatureOfInterestDAO getFeatureDAO() throws CodedException {

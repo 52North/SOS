@@ -64,10 +64,18 @@ import org.locationtech.jts.io.ParseException;
 public abstract class HandlerBaseTest extends MockitoBaseTest {
 
     protected static OwsServiceRequestContext requestContext;
+
     protected static SpatialFilter spatialFilter;
+
     protected static TemporalFilter temporalFilter;
+
     protected static OmObservation omObservation;
+
     protected static OmObservationConstellation omConstellation;
+
+    private static final String ID = "id";
+
+    private static final String WKT_POLYGON = "POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))";
 
     @Mock
     protected IStatisticsLocationUtil locationUtil;
@@ -79,7 +87,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
         requestContext.setAcceptType(Arrays.asList(new MediaType("*", "*")));
         requestContext.setIPAddress(new IPAddress("123.123.123.123"));
 
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
+        Geometry geom = JTSHelper.createGeometryFromWKT(WKT_POLYGON, 4326);
         spatialFilter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
         temporalFilter = new TemporalFilter(TimeOperator.TM_Equals, new TimeInstant(DateTime.now()), "nothing");
@@ -91,8 +99,8 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
     private static void createOmConstellation() {
         // constellation
         omConstellation = new OmObservationConstellation();
-        omConstellation.setProcedure(new SosProcedureDescriptionUnknownType("id", "format", "xml"));
-        omConstellation.setObservableProperty(new OmObservableProperty("id", "desc", "unit", "value"));
+        omConstellation.setProcedure(new SosProcedureDescriptionUnknownType(ID, "format", "xml"));
+        omConstellation.setObservableProperty(new OmObservableProperty(ID, "desc", "unit", "value"));
         omConstellation.setFeatureOfInterest(new OmObservation() {
             {
                 setIdentifier("foi");
@@ -103,7 +111,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
 
     private static void createOmObservation() throws OwsExceptionReport, DecodingException, ParseException {
         omObservation = new OmObservation();
-        omObservation.setIdentifier("id");
+        omObservation.setIdentifier(ID);
 
         omObservation.setObservationConstellation(omConstellation);
 
@@ -121,7 +129,8 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
         // spatial profile
         NamedValue<Geometry> spatial = new NamedValue<>();
         spatial.setName(new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));
-        GeometryValue geometryValue = new GeometryValue(JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326));
+        GeometryValue geometryValue = new GeometryValue(
+                JTSHelper.createGeometryFromWKT(WKT_POLYGON, 4326));
         spatial.setValue(geometryValue);
         omObservation.addParameter(spatial);
     }

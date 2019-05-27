@@ -74,7 +74,8 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
     }
 
     @Override
-    public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+    public ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject)
+            throws OwsExceptionReport {
         return new ReferencedEnvelope(null, getStorageEPSG());
     }
 

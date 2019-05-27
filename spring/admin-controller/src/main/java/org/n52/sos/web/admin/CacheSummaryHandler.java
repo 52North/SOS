@@ -41,7 +41,7 @@ import org.n52.sos.cache.SosContentCache;
  * @since 4.0.0
  *
  */
-public class CacheSummaryHandler {
+public final class CacheSummaryHandler {
 
     public static final String LAST_UPDATE_TIME = "last_update";
     public static final String MIN_PHENOMENON_TIME = "min_phenomenon_time";

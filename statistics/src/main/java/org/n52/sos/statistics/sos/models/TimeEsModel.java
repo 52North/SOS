@@ -43,13 +43,19 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 
-public class TimeEsModel extends AbstractElasticsearchModel {
-    private DateTime timeInstant = null;
-    private DateTime start = null;
-    private DateTime end = null;
-    private Long duration = null;
+public final class TimeEsModel extends AbstractElasticsearchModel {
+    private DateTime timeInstant;
+
+    private DateTime start;
+
+    private DateTime end;
+
+    private Long duration;
+
     private String timeOperator;
+
     private String valueReference;
+
     private Time time;
 
     private TimeEsModel(Time time) {
@@ -84,7 +90,7 @@ public class TimeEsModel extends AbstractElasticsearchModel {
 
             if (p.getStart() != null && p.getEnd() != null) {
                 if (p.getEnd().compareTo(p.getStart()) >= 0) {
-                    this.duration = ((p.getEnd().getMillis() - p.getStart().getMillis()));
+                    this.duration = p.getEnd().getMillis() - p.getStart().getMillis();
                 }
             }
 
@@ -112,8 +118,10 @@ public class TimeEsModel extends AbstractElasticsearchModel {
             return null;
         }
         List<DateTime> result = new ArrayList<>();
-        DateTime temp = new DateTime(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth(), 0, 0, DateTimeZone.UTC);
-        while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear() || temp.getDayOfMonth() != end.getDayOfMonth()) {
+        DateTime temp =
+                new DateTime(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth(), 0, 0, DateTimeZone.UTC);
+        while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear()
+                || temp.getDayOfMonth() != end.getDayOfMonth()) {
             result.add(temp);
             temp = temp.plusDays(1);
         }
@@ -127,7 +135,8 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         }
         if (!start.isBefore(end)) {
             throw new IllegalArgumentException(
-                    String.format("Start date is not before the end date. Start date %s end date %s", start.toString(), end.toString()));
+                    String.format("Start date is not before the end date. Start date %s end date %s", start.toString(),
+                            end.toString()));
         }
         return true;
     }

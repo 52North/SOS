@@ -31,13 +31,6 @@ package org.n52.sos.web.admin.caps;
 import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -45,17 +38,23 @@ import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
 import org.n52.sos.web.admin.AbstractAdminController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminController {
-    private static final Logger log = LoggerFactory.getLogger(AbstractAdminCapabiltiesAjaxEndpoint.class);
     protected static final String OFFERING = "offeringId";
     protected static final String IDENTIFIER = "identifier";
     protected static final String DISABLED_PROPERTY = "disabled";
     protected static final String EXTENSION_PROPERTY = "extensionContent";
-    protected static final String IDENTIFIER_PROPERTY = "identifier";
+    protected static final String IDENTIFIER_PROPERTY = IDENTIFIER;
     protected static final String ERRORS_PROPERTY = "errors";
     protected static final String VALID_PROPERTY = "valid";
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractAdminCapabiltiesAjaxEndpoint.class);
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
 
@@ -114,20 +113,20 @@ public class AbstractAdminCapabiltiesAjaxEndpoint extends AbstractAdminControlle
                                                                    OwsExceptionReport,
                                                                    NoSuchExtensionException {
         final String current = getSelectedStaticCapabilities();
-        id = (id == null || id.trim().isEmpty()) ? null : id;
+        String identi = (id == null || id.trim().isEmpty()) ? null : id;
         boolean change = false;
         if (current == null) {
-            if (id == null) {
-                log.debug("Staying with dynamic capabilities.");
+            if (identi == null) {
+                LOG.debug("Staying with dynamic capabilities.");
             } else {
-                log.debug("Choosing static capabilities '{}'", id);
+                LOG.debug("Choosing static capabilities '{}'", identi);
                 change = true;
             }
-        } else if (id == null) {
-            log.debug("Reverting to dynamic capabilities.");
+        } else if (identi == null) {
+            LOG.debug("Reverting to dynamic capabilities.");
             change = true;
         } else {
-            log.debug("Switching static capabilities from '{}' to '{}'", current, id);
+            LOG.debug("Switching static capabilities from '{}' to '{}'", current, identi);
             change = true;
         }
 

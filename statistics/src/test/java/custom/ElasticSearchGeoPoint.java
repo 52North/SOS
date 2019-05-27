@@ -66,7 +66,8 @@ public class ElasticSearchGeoPoint extends SpringBaseTest {
 
     @Before
     public void init() throws URISyntaxException {
-        String absoluteFile = new File(ElasticSearchGeoPoint.class.getResource("/geolite/city.mmdb").toURI()).getAbsolutePath();
+        String absoluteFile =
+                new File(ElasticSearchGeoPoint.class.getResource("/geolite/city.mmdb").toURI()).getAbsolutePath();
         loc.setEnabled(true);
         loc.initDatabase(LocationDatabaseType.CITY, absoluteFile);
 
@@ -80,7 +81,8 @@ public class ElasticSearchGeoPoint extends SpringBaseTest {
 
     @Test
     public void addGeoPointToDatabase() throws Exception {
-        List<String> ips = Arrays.asList("173.244.177.114", "217.20.130.99", "121.78.127.249", "157.166.239.102", "130.63.127.20", "202.218.223.210");
+        List<String> ips = Arrays.asList("173.244.177.114", "217.20.130.99", "121.78.127.249", "157.166.239.102",
+                "130.63.127.20", "202.218.223.210");
         Random r = new Random();
         for (int i = 0; i < 367; i++) {
             insertIp(ips.get(r.nextInt(ips.size())));

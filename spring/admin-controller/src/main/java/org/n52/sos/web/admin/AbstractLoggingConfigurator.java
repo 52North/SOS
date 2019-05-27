@@ -81,7 +81,7 @@ public interface AbstractLoggingConfigurator {
         FILE("FILE"), CONSOLE("STDOUT");
         private final String name;
 
-        private Appender(String name) {
+        Appender(String name) {
             this.name = name;
         }
 

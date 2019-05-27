@@ -50,7 +50,7 @@ public class AbstractSosRequestHandlerTest extends HandlerBaseTest {
 
     // any handler would do
     @InjectMocks
-    GetCapabilitiesRequestHandler handler;
+    private GetCapabilitiesRequestHandler handler;
 
     @Before
     public void setUp() {

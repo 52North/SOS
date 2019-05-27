@@ -117,10 +117,16 @@ import com.google.common.collect.Lists;
  */
 public class InsertSensorHandler extends AbstractInsertSensorHandler {
 
-    private HibernateSessionHolder sessionHolder;
-    private DaoFactory daoFactory;
     public static final Predicate<SmlCapabilities> REFERENCE_VALUES_PREDICATE =
             SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_REFERENCE_VALUES);
+
+    private static final String REFERENCE_VALUE = "_referencevalue";
+
+    private static final String CATEGORY = "category";
+
+    private HibernateSessionHolder sessionHolder;
+
+    private DaoFactory daoFactory;
 
     public InsertSensorHandler() {
         super(SosConstants.SOS);
@@ -137,7 +143,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
     }
 
     @Override
-    public synchronized InsertSensorResponse insertSensor(final InsertSensorRequest request) throws OwsExceptionReport {
+    public synchronized InsertSensorResponse insertSensor(final InsertSensorRequest request)
+            throws OwsExceptionReport {
         final InsertSensorResponse response = new InsertSensorResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
@@ -152,28 +159,25 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             transaction = session.beginTransaction();
             FormatDAO formatDAO = new FormatDAO();
             final FormatEntity procedureDescriptionFormat =
-                    formatDAO.getOrInsertFormatEntity(
-                            request.getProcedureDescriptionFormat(), session);
-            if (procedureDescriptionFormat != null)  {
-                final ProcedureEntity hProcedure =
-                        new ProcedureDAO(daoFactory).getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
-                                request.getProcedureDescription(), request.isType(), session);
+                    formatDAO.getOrInsertFormatEntity(request.getProcedureDescriptionFormat(), session);
+            if (procedureDescriptionFormat != null) {
+                final ProcedureEntity hProcedure = new ProcedureDAO(daoFactory).getOrInsertProcedure(
+                        assignedProcedureID, procedureDescriptionFormat, request.getProcedureDescription(),
+                        request.isType(), session);
                 // TODO: set correct validTime,
-                new ValidProcedureTimeDAO(daoFactory).insertValidProcedureTime(
-                        hProcedure,
-                        procedureDescriptionFormat,
-                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription()), new DateTime(DateTimeZone.UTC), session);
+                new ValidProcedureTimeDAO(daoFactory).insertValidProcedureTime(hProcedure, procedureDescriptionFormat,
+                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription()),
+                        new DateTime(DateTimeZone.UTC), session);
                 if (!request.isType()) {
                     final List<FormatEntity> observationTypes =
-                            formatDAO.getOrInsertFormatEntitys(request.getMetadata().getObservationTypes(),
-                                    session);
-                    final List<FormatEntity> featureOfInterestTypes =
-                            formatDAO.getOrInsertFormatEntitys(request.getMetadata()
-                                    .getFeatureOfInterestTypes(), session);
+                            formatDAO.getOrInsertFormatEntitys(request.getMetadata().getObservationTypes(), session);
+                    final List<FormatEntity> featureOfInterestTypes = formatDAO
+                            .getOrInsertFormatEntitys(request.getMetadata().getFeatureOfInterestTypes(), session);
                     if (observationTypes != null && featureOfInterestTypes != null) {
-                        final List<PhenomenonEntity> hObservableProperties =
-                                getOrInsertNewObservableProperties(request.getObservableProperty(), request.getProcedureDescription(), session);
-                        Map<String, UnitEntity> hUnits = getOrInsertNewUnits(hObservableProperties, request.getProcedureDescription(), session);
+                        final List<PhenomenonEntity> hObservableProperties = getOrInsertNewObservableProperties(
+                                request.getObservableProperty(), request.getProcedureDescription(), session);
+                        Map<String, UnitEntity> hUnits =
+                                getOrInsertNewUnits(hObservableProperties, request.getProcedureDescription(), session);
                         final AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
                         final OfferingDAO offeringDAO = daoFactory.getOfferingDAO();
                         Set<String> allParentOfferings = getAllParentOfferings(hProcedure);
@@ -187,12 +191,13 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
                                             relatedFeature.getFeature(), relatedFeature.getRole(), session));
                                 }
                             }
-                            final OfferingEntity hOffering =
-                                    offeringDAO.getAndUpdateOrInsert(new SosOffering(assignedOffering.getIdentifier(),
-                                            assignedOffering.getOfferingName()), hRelatedFeatures, observationTypes,
-                                            featureOfInterestTypes, session);
+                            final OfferingEntity hOffering = offeringDAO.getAndUpdateOrInsert(
+                                    new SosOffering(assignedOffering.getIdentifier(),
+                                            assignedOffering.getOfferingName()),
+                                    hRelatedFeatures, observationTypes, featureOfInterestTypes, session);
 
-                            // add offering to parent offering if this procedure is a child/component
+                            // add offering to parent offering if this procedure
+                            // is a child/component
                             if (!parentOfferings.isEmpty() && !allParentOfferings.isEmpty() && hProcedure.hasParents()
                                     && !allParentOfferings.contains(assignedOffering.getIdentifier())
                                     && !parentOfferings.contains(assignedOffering.getIdentifier())) {
@@ -201,19 +206,23 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
 
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
                                 CategoryEntity hCategory = getCategory(hObservableProperty, request, session);
-                                ObservationContext ctx =
-                                        new ObservationContext().setCategory(hCategory).setOffering(hOffering)
-                                                .setPhenomenon(hObservableProperty).setProcedure(hProcedure)
-                                                .setPublish(false).setHiddenChild(!assignedOffering.isParentOffering());
-                                checkForMobileInsituFlags(ctx, request.getProcedureDescription().getProcedureDescription());
+                                ObservationContext ctx = new ObservationContext().setCategory(hCategory)
+                                        .setOffering(hOffering).setPhenomenon(hObservableProperty)
+                                        .setProcedure(hProcedure).setPublish(false)
+                                        .setHiddenChild(!assignedOffering.isParentOffering());
+                                checkForMobileInsituFlags(ctx,
+                                        request.getProcedureDescription().getProcedureDescription());
                                 if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
                                     ctx.setUnit(hUnits.get(hObservableProperty.getIdentifier()));
                                 }
                                 if (request.getProcedureDescription().isSetFeaturesOfInterestMap()) {
                                     boolean inserted = false;
-                                    for (AbstractFeature feature : request.getProcedureDescription().getFeaturesOfInterestMap().values()) {
-                                        if (feature instanceof FeatureWithGeometry && ((FeatureWithGeometry) feature).isSetGeometry()) {
-                                            ctx.setFeatureOfInterest(daoFactory.getFeatureOfInterestDAO().checkOrInsert(feature, session));
+                                    for (AbstractFeature feature : request.getProcedureDescription()
+                                            .getFeaturesOfInterestMap().values()) {
+                                        if (feature instanceof FeatureWithGeometry
+                                                && ((FeatureWithGeometry) feature).isSetGeometry()) {
+                                            ctx.setFeatureOfInterest(daoFactory.getFeatureOfInterestDAO()
+                                                    .checkOrInsert(feature, session));
                                             inserted = true;
                                             seriesDAO.getOrInsert(ctx, session);
                                         }
@@ -250,8 +259,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "Error while inserting sensor data into database!");
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while inserting sensor data into database!");
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -259,58 +268,52 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
     }
 
     private boolean checkPreconditionsOfStaticReferenceValues(final InsertSensorRequest request) {
-        return request.getProcedureDescription().getProcedureDescription() instanceof AbstractProcessV20 &&
-                ((AbstractProcessV20) request.getProcedureDescription().getProcedureDescription()).isSetSmlFeatureOfInterest() &&
-                ((AbstractSensorML) request.getProcedureDescription().getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE)
-                    .isPresent() &&
-                    !request.getProcedureDescription().getFeaturesOfInterestMap().isEmpty() &&
-                    request.getProcedureDescription().getFeaturesOfInterestMap().size() == 1;
+        return request.getProcedureDescription().getProcedureDescription() instanceof AbstractProcessV20
+                && ((AbstractProcessV20) request.getProcedureDescription().getProcedureDescription())
+                        .isSetSmlFeatureOfInterest()
+                && ((AbstractSensorML) request.getProcedureDescription().getProcedureDescription())
+                        .findCapabilities(REFERENCE_VALUES_PREDICATE).isPresent()
+                && !request.getProcedureDescription().getFeaturesOfInterestMap().isEmpty()
+                && request.getProcedureDescription().getFeaturesOfInterestMap().size() == 1;
     }
 
     private void addStaticReferenceValues(InsertSensorRequest request, Session session,
-            FormatEntity procedureDescriptionFormat, ProcedureEntity hProcedure,
-            List<FormatEntity> observationTypes, List<FormatEntity> featureOfInterestTypes,
-            List<RelatedFeatureEntity> hRelatedFeatures, OfferingEntity hOffering,
-            PhenomenonEntity hObservableProperty, AbstractSeriesDAO seriesDAO) throws OwsExceptionReport {
-        AbstractFeature sosFeatureOfInterest = request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
-        AbstractFeatureEntity hFeature = daoFactory.getFeatureDAO().insertFeature(
-                sosFeatureOfInterest, session);
-        for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription().getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
+            FormatEntity procedureDescriptionFormat, ProcedureEntity hProcedure, List<FormatEntity> observationTypes,
+            List<FormatEntity> featureOfInterestTypes, List<RelatedFeatureEntity> hRelatedFeatures,
+            OfferingEntity hOffering, PhenomenonEntity hObservableProperty, AbstractSeriesDAO seriesDAO)
+            throws OwsExceptionReport {
+        AbstractFeature sosFeatureOfInterest =
+                request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
+        AbstractFeatureEntity hFeature = daoFactory.getFeatureDAO().insertFeature(sosFeatureOfInterest, session);
+        for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription()
+                .getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
             if (!(referenceValue.getAbstractDataComponent() instanceof SweQuantity)) {
                 throw new NoApplicableCodeException().withMessage(
                         "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
                         referenceValue.getAbstractDataComponent().getDataComponentType());
             }
             SweQuantity referenceValueValue = (SweQuantity) referenceValue.getAbstractDataComponent();
-            String identifier = hProcedure.getIdentifier() + "_referencevalue";
-            SosProcedureDescription procedureReferenceSeries = new SosProcedureDescriptionUnknownType(identifier,
-                    procedureDescriptionFormat.getFormat(), "");
+            String identifier = hProcedure.getIdentifier() + REFERENCE_VALUE;
+            SosProcedureDescription procedureReferenceSeries =
+                    new SosProcedureDescriptionUnknownType(identifier, procedureDescriptionFormat.getFormat(), "");
             procedureReferenceSeries.setReference(true);
             procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
-            ProcedureEntity hProcedureReferenceSeries = daoFactory.getProcedureDAO().getOrInsertProcedure(
-                    identifier,
-                    procedureDescriptionFormat,
-                    procedureReferenceSeries,
-                    false,
-                    session);
+            ProcedureEntity hProcedureReferenceSeries = daoFactory.getProcedureDAO().getOrInsertProcedure(identifier,
+                    procedureDescriptionFormat, procedureReferenceSeries, false, session);
             OfferingEntity hOfferingReferenceSeries = daoFactory.getOfferingDAO().getAndUpdateOrInsert(
-                    new SosOffering(
-                            hOffering.getIdentifier() + "_referencevalue",
-                            hOffering.getName() + "_referencevalue"),
-                    hRelatedFeatures,
-                    observationTypes,
-                    featureOfInterestTypes,
-                    session);
+                    new SosOffering(hOffering.getIdentifier() + REFERENCE_VALUE,
+                            hOffering.getName() + REFERENCE_VALUE),
+                    hRelatedFeatures, observationTypes, featureOfInterestTypes, session);
             TimeInstant time = new TimeInstant(new DateTime(0));
-            SingleObservationValue<BigDecimal> sosValue = new SingleObservationValue<>(new QuantityValue(referenceValueValue.getValue(), referenceValueValue.getUom()));
+            SingleObservationValue<BigDecimal> sosValue = new SingleObservationValue<>(
+                    new QuantityValue(referenceValueValue.getValue(), referenceValueValue.getUom()));
 
             OmObservation sosObservation = new OmObservation();
             sosValue.setPhenomenonTime(time);
             sosObservation.setResultTime(time);
             sosObservation.setValue(sosValue);
             sosObservation.setObservationConstellation(new OmObservationConstellation(procedureReferenceSeries,
-                    new OmObservableProperty(hObservableProperty.getIdentifier()),
-                    sosFeatureOfInterest));
+                    new OmObservableProperty(hObservableProperty.getIdentifier()), sosFeatureOfInterest));
 
             DatasetEntity hObservationConstellationReferenceSeries = new DatasetEntity();
             hObservationConstellationReferenceSeries.setObservableProperty(hObservableProperty);
@@ -318,24 +321,14 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
             Map<String, CodespaceEntity> codespaceCache = CollectionHelper.synchronizedMap();
             Map<UoM, UnitEntity> unitCache = CollectionHelper.synchronizedMap();
-            ObservationPersister persister = new ObservationPersister(
-                    getGeometryHandler(),
-                    daoFactory.getObservationDAO(),
-                    daoFactory,
-                    sosObservation,
-                    hObservationConstellationReferenceSeries,
-                    hFeature,
-                    codespaceCache,
-                    unitCache,
-                    Collections.singleton(hOfferingReferenceSeries),
-                    session
-                    );
+            ObservationPersister persister =
+                    new ObservationPersister(getGeometryHandler(), daoFactory.getObservationDAO(), daoFactory,
+                            sosObservation, hObservationConstellationReferenceSeries, hFeature, codespaceCache,
+                            unitCache, Collections.singleton(hOfferingReferenceSeries), session);
             DataEntity<?> observation = sosValue.getValue().accept(persister);
             DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
-                    hObservableProperty.getIdentifier(),
-                    hOfferingReferenceSeries.getIdentifier(),
-                    Collections.singleton(hFeature.getIdentifier()),
-                    session).get(0);
+                    hObservableProperty.getIdentifier(), hOfferingReferenceSeries.getIdentifier(),
+                    Collections.singleton(hFeature.getIdentifier()), session).get(0);
             hReferenceSeries.setPublished(false);
             session.update(hReferenceSeries);
             ObservationContext ctxReferenced = new ObservationContext();
@@ -358,7 +351,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
      *
      * @param obsProps
      *            observableProperty identifiers
-     * @param sosProcedureDescription
+     * @param sosProcedureDescription procedure description
      * @param session
      *            Hibernate Session
      * @return ObservableProperty entities
@@ -367,7 +360,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             SosProcedureDescription sosProcedureDescription, final Session session) {
         final List<OmObservableProperty> observableProperties = new ArrayList<>(obsProps.size());
         if (sosProcedureDescription.getProcedureDescription() instanceof PhenomenonNameDescriptionProvider) {
-            PhenomenonNameDescriptionProvider process = (PhenomenonNameDescriptionProvider) sosProcedureDescription.getProcedureDescription();
+            PhenomenonNameDescriptionProvider process =
+                    (PhenomenonNameDescriptionProvider) sosProcedureDescription.getProcedureDescription();
             for (final String observableProperty : obsProps) {
                 OmObservableProperty omObservableProperty = new OmObservableProperty(observableProperty);
                 if (process.isSetObservablePropertyName(observableProperty)) {
@@ -387,7 +381,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
             SosProcedureDescription<?> procedureDescription, Session session) {
         Map<String, UnitEntity> map = new LinkedHashMap<>();
         if (procedureDescription.getProcedureDescription() instanceof PhenomenonNameDescriptionProvider) {
-            PhenomenonNameDescriptionProvider process = (PhenomenonNameDescriptionProvider) procedureDescription.getProcedureDescription();
+            PhenomenonNameDescriptionProvider process =
+                    (PhenomenonNameDescriptionProvider) procedureDescription.getProcedureDescription();
             for (PhenomenonEntity phenomenonEntity : hObservableProperties) {
                 UoM unit = process.getObservablePropertyUnit(phenomenonEntity.getIdentifier());
                 if (unit != null) {
@@ -408,15 +403,14 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
      *            Procedure description
      * @return SensorDescription String
      */
-    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription ) {
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription) {
         if (procedureDescription.getProcedureDescription() instanceof SensorML) {
             final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription();
             // if SensorML is not a wrapper
             if (!sensorML.isWrapper()) {
                 return sensorML.getXml();
-            }
-            // if SensorML is a wrapper and member size is 1
-            else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1) {
+            } else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1) {
+                // if SensorML is a wrapper and member size is 1
                 return sensorML.getMembers().get(0).getXml();
             } else {
                 // TODO: get sensor description for procedure identifier
@@ -453,8 +447,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
 
     private CategoryEntity getCategory(PhenomenonEntity hObservableProperty, InsertSensorRequest request,
             Session session) {
-        if (request.hasExtension("category")) {
-            Optional<Extension<?>> extension = request.getExtension("category");
+        if (request.hasExtension(CATEGORY)) {
+            Optional<Extension<?>> extension = request.getExtension(CATEGORY);
             if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
                 daoFactory.getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(), session);
             }
@@ -482,7 +476,6 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
         }
         return parentOfferings;
     }
-
 
     private GeometryHandler getGeometryHandler() {
         return daoFactory.getGeometryHandler();

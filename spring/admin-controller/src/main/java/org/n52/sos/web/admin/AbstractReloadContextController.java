@@ -50,7 +50,7 @@ public class AbstractReloadContextController
         SettingValue<Object> deregisterJdbcDriverSetting = getDeregisterJdbcDriverSetting();
         boolean changed = false;
         if (deregisterJdbcDriverSetting != null && deregisterJdbcDriverSetting.getType().equals(SettingType.BOOLEAN)
-                && ((Boolean) deregisterJdbcDriverSetting.getValue()) != false) {
+                && ((Boolean) deregisterJdbcDriverSetting.getValue())) {
             changed = true;
             switchDeregisterJdbcDriverSettingValue(deregisterJdbcDriverSetting);
         }
@@ -66,7 +66,7 @@ public class AbstractReloadContextController
     }
 
     private SettingValue<Object> getDeregisterJdbcDriverSetting() {
-       return settingsManager.getSetting(DriverCleanupListener.DEREGISTER_JDBC_DRIVER);
+        return settingsManager.getSetting(DriverCleanupListener.DEREGISTER_JDBC_DRIVER);
     }
 
 }

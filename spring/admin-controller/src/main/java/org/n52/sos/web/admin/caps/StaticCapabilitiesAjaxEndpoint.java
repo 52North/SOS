@@ -31,10 +31,15 @@ package org.n52.sos.web.admin.caps;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import net.opengis.sos.x20.CapabilitiesDocument;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchIdentifierException;
+import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -45,16 +50,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
-import org.n52.janmayen.Json;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchIdentifierException;
-import org.n52.sos.web.common.ControllerConstants;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import net.opengis.sos.x20.CapabilitiesDocument;
 
 
 @Controller
@@ -97,10 +96,9 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
-    public void saveStaticCapabilities(
-            @PathVariable("identifier") String identifier,
-            @RequestBody String document) throws XmlException, OwsExceptionReport {
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
+    public void saveStaticCapabilities(@PathVariable("identifier") String identifier, @RequestBody String document)
+            throws XmlException, OwsExceptionReport {
         XmlObject xo = XmlObject.Factory.parse(document);
         if (!(xo instanceof CapabilitiesDocument)) {
             throw new XmlException("Not a Capabilities document!");
@@ -109,10 +107,9 @@ public class StaticCapabilitiesAjaxEndpoint extends AbstractAdminCapabiltiesAjax
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/{identifier}", method = RequestMethod.DELETE)
-    public void deleteStaticCapabilities(
-            @PathVariable("identifier") String identifier) throws SQLException, ConfigurationError,
-                                                                  NoSuchIdentifierException, OwsExceptionReport {
+    @RequestMapping(value = "/{identifier}", method = RequestMethod.DELETE)
+    public void deleteStaticCapabilities(@PathVariable("identifier") String identifier)
+            throws SQLException, ConfigurationError,                   NoSuchIdentifierException, OwsExceptionReport {
         if (getSelectedStaticCapabilities() != null && getSelectedStaticCapabilities().equals(identifier)) {
             setSelectedStaticCapabilities(null);
         }

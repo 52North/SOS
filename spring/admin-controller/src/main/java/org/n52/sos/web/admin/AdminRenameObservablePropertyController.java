@@ -35,6 +35,13 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.RenameDAO;
+import org.n52.sos.exception.AlreadyUsedIdentifierException;
+import org.n52.sos.exception.NoSuchObservablePropertyException;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,14 +53,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.ds.RenameDAO;
-import org.n52.sos.exception.AlreadyUsedIdentifierException;
-import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.web.common.ControllerConstants;
 
 import com.google.common.collect.Lists;
 
@@ -100,8 +99,7 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
         }
         this.dao.get().renameObservableProperty(oldName, newName);
         updateCache();
-}
-
+    }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

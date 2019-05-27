@@ -63,9 +63,9 @@ public class InspireHelper {
 
     private String inspireId;
 
-    private boolean enabled = false;
+    private boolean enabled;
 
-    private boolean fullExtendedCapabilities = false;
+    private boolean fullExtendedCapabilities;
 
     private URI metadataUrlURL;
 
@@ -77,11 +77,11 @@ public class InspireHelper {
 
     private String metadataDate;
 
-    private InspireLanguageISO6392B defaultLanguage = null;
+    private InspireLanguageISO6392B defaultLanguage;
 
     private Set<InspireLanguageISO6392B> supportedLanguages = Sets.newHashSet();
 
-    private boolean useAuthority = false;
+    private boolean useAuthority;
 
     private String namespace;
 
@@ -108,9 +108,10 @@ public class InspireHelper {
      * Get the INSPIRE id
      *
      * @return the INSPIRE id
-     */    public String getInspireId() {
-         return inspireId;
-     }
+     */
+    public String getInspireId() {
+        return inspireId;
+    }
 
     /**
      * Set the default language
@@ -118,19 +119,19 @@ public class InspireHelper {
      * @param defaultLanguage
      *            the default language to set
      */
-     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-     public void setDefaultLanguage(final String defaultLanguage) {
-         Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
-         this.defaultLanguage = InspireLanguageISO6392B.fromValue(defaultLanguage);
-     }
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLanguage(final String defaultLanguage) {
+        Validation.notNullOrEmpty("Default language as three character string", defaultLanguage);
+        this.defaultLanguage = InspireLanguageISO6392B.fromValue(defaultLanguage);
+    }
 
     /**
      * Get the default language
      *
      * @return the default language
      */
-     public InspireLanguageISO6392B getDefaultLanguage() {
-         return defaultLanguage;
+    public InspireLanguageISO6392B getDefaultLanguage() {
+        return defaultLanguage;
     }
 
     /**
@@ -138,26 +139,26 @@ public class InspireHelper {
      *
      * @return the supporte languages
      */
-     public Set<InspireLanguageISO6392B> getSupportedLanguages() {
-         if (supportedLanguages.size() != getCache().getSupportedLanguages().size()) {
-             updateSupportedLanguages();
-         }
-         return supportedLanguages;
+    public Set<InspireLanguageISO6392B> getSupportedLanguages() {
+        if (supportedLanguages.size() != getCache().getSupportedLanguages().size()) {
+            updateSupportedLanguages();
+        }
+        return supportedLanguages;
     }
 
     /**
      * Update the local supported languages storage
      */
-     private void updateSupportedLanguages() {
-         supportedLanguages.clear();
-         supportedLanguages.add(getDefaultLanguage());
-         for (Locale language : getCache().getSupportedLanguages()) {
-             try {
-                 supportedLanguages.add(InspireLanguageISO6392B.fromValue(language));
-             } catch (IllegalArgumentException iae) {
-                 LOGGER.error(String.format("The supported language %s is not valid for INSPIRE", language), iae);
-             }
-         }
+    private void updateSupportedLanguages() {
+        supportedLanguages.clear();
+        supportedLanguages.add(getDefaultLanguage());
+        for (Locale language : getCache().getSupportedLanguages()) {
+            try {
+                supportedLanguages.add(InspireLanguageISO6392B.fromValue(language));
+            } catch (IllegalArgumentException iae) {
+                LOGGER.error(String.format("The supported language %s is not valid for INSPIRE", language), iae);
+            }
+        }
     }
 
     private SosContentCache getCache() {
@@ -170,9 +171,9 @@ public class InspireHelper {
      * @param enabled
      *            the indicator to set
      */
-     @Setting(InspireSettings.INSPIRE_ENABLED_KEY)
-     public void setEnabled(boolean enabled) {
-         this.enabled = enabled;
+    @Setting(InspireSettings.INSPIRE_ENABLED_KEY)
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
@@ -180,8 +181,8 @@ public class InspireHelper {
      *
      * @return <code>true</code>, if the INSPIRE ExtendedCapabilities enabled
      */
-     public boolean isEnabled() {
-         return enabled;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**
@@ -190,9 +191,9 @@ public class InspireHelper {
      * @param fullExtendedCapabilities
      *            indicator to set
      */
-     @Setting(InspireSettings.INSPIRE_FULL_EXTENDED_CAPABILITIES_KEY)
-     public void setFullExtendedCapabilities(boolean fullExtendedCapabilities) {
-         this.fullExtendedCapabilities = fullExtendedCapabilities;
+    @Setting(InspireSettings.INSPIRE_FULL_EXTENDED_CAPABILITIES_KEY)
+    public void setFullExtendedCapabilities(boolean fullExtendedCapabilities) {
+        this.fullExtendedCapabilities = fullExtendedCapabilities;
     }
 
     /**
@@ -201,66 +202,65 @@ public class InspireHelper {
      * @return <code>true</code>, if the full INSPIRE ExtendedCapabilities
      *         should be use
      */
-     public boolean isFullExtendedCapabilities() {
-         return fullExtendedCapabilities;
-     }
+    public boolean isFullExtendedCapabilities() {
+        return fullExtendedCapabilities;
+    }
 
-     @Setting(InspireSettings.INSPIRE_METADATA_URL_URL_KEY)
-     public void setMetadataUrlURL(URI url) {
+    @Setting(InspireSettings.INSPIRE_METADATA_URL_URL_KEY)
+    public void setMetadataUrlURL(URI url) {
         this.metadataUrlURL = url;
-     }
-
-
-     public URI getMetadataUrlURL() {
-         return metadataUrlURL;
-     }
-
-     public boolean isSetMetadataUrlURL() {
-         return getMetadataUrlURL() != null;
-     }
-
-     @Setting(InspireSettings.INSPIRE_METADATA_URL_MEDIA_TYPE_KEY)
-     public void setMetadataUrlMediaType(String mediaType) {
-         this.metadataUrlMediatType = mediaType;
-     }
-
-     public String getMetadataUrlMediaType() {
-         return metadataUrlMediatType;
-     }
-
-     public boolean isSetMetadataUrlMediaType() {
-         return !Strings.isNullOrEmpty(getMetadataUrlMediaType());
     }
 
-     @Setting(InspireSettings.INSPIRE_METADATA_DATE_KEY)
-     public void setMetadataDate(String time) {
-         this.metadataDate = time;
-     }
-
-     public String getMetadataDate() {
-         return metadataDate;
+    public URI getMetadataUrlURL() {
+        return metadataUrlURL;
     }
 
-     @Setting(InspireSettings.INSPIRE_CONFORMITY_TITLE_KEY)
-     public void setConformityTitle(String title) {
-         this.conformityTitle = title;
-     }
-
-     public String getConformityTitle() {
-         return conformityTitle;
+    public boolean isSetMetadataUrlURL() {
+        return getMetadataUrlURL() != null;
     }
 
-     @Setting(InspireSettings.INSPIRE_CONFORMITY_DATE_OF_CREATION_KEY)
-     public void setConformityDateOfCreation(String time) {
-         this.conformityDateOfCreation = time;
-     }
+    @Setting(InspireSettings.INSPIRE_METADATA_URL_MEDIA_TYPE_KEY)
+    public void setMetadataUrlMediaType(String mediaType) {
+        this.metadataUrlMediatType = mediaType;
+    }
 
-     public String getConformityDateOfCreation() {
-         return conformityDateOfCreation;
-     }
+    public String getMetadataUrlMediaType() {
+        return metadataUrlMediatType;
+    }
 
-     @Setting(InspireSettings.INSPIRE_USE_AUTHORITY_KEY)
-     public void setUseAuthority(boolean useAuthority) {
+    public boolean isSetMetadataUrlMediaType() {
+        return !Strings.isNullOrEmpty(getMetadataUrlMediaType());
+    }
+
+    @Setting(InspireSettings.INSPIRE_METADATA_DATE_KEY)
+    public void setMetadataDate(String time) {
+        this.metadataDate = time;
+    }
+
+    public String getMetadataDate() {
+        return metadataDate;
+    }
+
+    @Setting(InspireSettings.INSPIRE_CONFORMITY_TITLE_KEY)
+    public void setConformityTitle(String title) {
+        this.conformityTitle = title;
+    }
+
+    public String getConformityTitle() {
+        return conformityTitle;
+    }
+
+    @Setting(InspireSettings.INSPIRE_CONFORMITY_DATE_OF_CREATION_KEY)
+    public void setConformityDateOfCreation(String time) {
+        this.conformityDateOfCreation = time;
+    }
+
+    public String getConformityDateOfCreation() {
+        return conformityDateOfCreation;
+    }
+
+    @Setting(InspireSettings.INSPIRE_USE_AUTHORITY_KEY)
+    public void setUseAuthority(boolean useAuthority) {
         this.useAuthority = useAuthority;
     }
 
@@ -276,7 +276,8 @@ public class InspireHelper {
     }
 
     /**
-     * @param namespace the namespace to set
+     * @param namespace
+     *            the namespace to set
      */
     @Setting(InspireSettings.INSPIRE_NAMESPACE_KEY)
     public void setNamespace(String namespace) {

@@ -55,11 +55,13 @@ public class SosStatisticsServiceEventListener extends AbstractStatisticsService
     protected StatisticsServiceEventResolver<?> findResolver(Event serviceEvent) {
         StatisticsServiceEventResolver<?> evtResolver = null;
         if (serviceEvent instanceof RequestEvent) {
-            SosRequestEventResolver sosRequestEventResolver = resolverFactory.getPrototypeBean(SosRequestEventResolver.class);
+            SosRequestEventResolver sosRequestEventResolver =
+                    resolverFactory.getPrototypeBean(SosRequestEventResolver.class);
             sosRequestEventResolver.setEvent((RequestEvent) serviceEvent);
             evtResolver = sosRequestEventResolver;
         } else if (serviceEvent instanceof ResponseEvent) {
-            SosResponseEventResolver responseEventResolver = resolverFactory.getPrototypeBean(SosResponseEventResolver.class);
+            SosResponseEventResolver responseEventResolver =
+                    resolverFactory.getPrototypeBean(SosResponseEventResolver.class);
             responseEventResolver.setEvent((ResponseEvent) serviceEvent);
             evtResolver = responseEventResolver;
         }

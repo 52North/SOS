@@ -46,11 +46,11 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilitiesExtensionProvider {
 
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     private ContentCacheController contentCacheController;
 
     public InsertSensorCapabilitiesExtensionProvider() {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-              Sos2Constants.Operations.InsertSensor.name());
+        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, Sos2Constants.Operations.InsertSensor.name());
     }
 
     @Inject
@@ -59,7 +59,8 @@ public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilit
     }
 
     @Inject
-    public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
+    public void setProcedureDescriptionFormatRepository(
+            ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository) {
         this.procedureDescriptionFormatRepository = procedureDescriptionFormatRepository;
     }
 
@@ -77,8 +78,5 @@ public class InsertSensorCapabilitiesExtensionProvider extends AbstractCapabilit
     private SosContentCache getCache() {
         return (SosContentCache) this.contentCacheController.getCache();
     }
-
-
-
 
 }

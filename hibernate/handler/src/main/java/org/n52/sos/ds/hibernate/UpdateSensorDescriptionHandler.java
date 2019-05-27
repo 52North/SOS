@@ -51,19 +51,19 @@ import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
 import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
-import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler
+ *
  * @since 4.0.0
  *
  */
 public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler {
 
     private HibernateSessionHolder sessionHolder;
+
     private DaoFactory daoFactory;
 
     public UpdateSensorDescriptionHandler() {
@@ -97,22 +97,21 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
                 // identifier
                 // ITime validTime =
                 // getValidTimeForProcedure(procedureDescription);
-                ProcedureEntity procedure =
-                        daoFactory.getProcedureDAO().getProcedureForIdentifier(request.getProcedureIdentifier(), session);
-                    FormatEntity procedureDescriptionFormat =
-                            new DaoFactory().getProcedureDescriptionFormatDAO().getFormatEntityObject(
-                                    request.getProcedureDescriptionFormat(), session);
-                    Set<ProcedureHistoryEntity> procedureHistories = procedure.getProcedureHistory();
-                    ValidProcedureTimeDAO procedureHistroyDAO = daoFactory.getValidProcedureTimeDAO();
-                    for (ProcedureHistoryEntity procedureHistroy : procedureHistories) {
-                        if (procedureHistroy.getFormat().getFormat().equals(procedureDescriptionFormat.getFormat())
-                                && procedureHistroy.getEndTime() == null) {
-                            procedureHistroy.setEndTime(currentTime.toDate());
-                            procedureHistroyDAO.updateValidProcedureTime(procedureHistroy, session);
-                        }
+                ProcedureEntity procedure = daoFactory.getProcedureDAO()
+                        .getProcedureForIdentifier(request.getProcedureIdentifier(), session);
+                FormatEntity procedureDescriptionFormat = new DaoFactory().getProcedureDescriptionFormatDAO()
+                        .getFormatEntityObject(request.getProcedureDescriptionFormat(), session);
+                Set<ProcedureHistoryEntity> procedureHistories = procedure.getProcedureHistory();
+                ValidProcedureTimeDAO procedureHistroyDAO = daoFactory.getValidProcedureTimeDAO();
+                for (ProcedureHistoryEntity procedureHistroy : procedureHistories) {
+                    if (procedureHistroy.getFormat().getFormat().equals(procedureDescriptionFormat.getFormat())
+                            && procedureHistroy.getEndTime() == null) {
+                        procedureHistroy.setEndTime(currentTime.toDate());
+                        procedureHistroyDAO.updateValidProcedureTime(procedureHistroy, session);
                     }
-                    procedureHistroyDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
-                            getSensorDescriptionFromProcedureDescription(procedureDescription), currentTime, session);
+                }
+                procedureHistroyDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
+                        getSensorDescriptionFromProcedureDescription(procedureDescription), currentTime, session);
             }
             session.flush();
             transaction.commit();
@@ -122,8 +121,8 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "Error while processing data for UpdateSensorDescription document!");
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while processing data for UpdateSensorDescription document!");
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -141,22 +140,22 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
      *            Procedure description
      * @return SensorDescription String
      */
-    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription ) {
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription) {
         if (procedureDescription.getProcedureDescription() instanceof SensorML) {
-            final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription() ;
+            final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription();
             // if SensorML is not a wrapper
             if (!sensorML.isWrapper() && sensorML.isSetXml()) {
                 return sensorML.getXml();
-            }
-            // if SensorML is a wrapper and member size is 1
-            else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1 && sensorML.getMembers().get(0).isSetXml()) {
+            } else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1
+                    && sensorML.getMembers().get(0).isSetXml()) {
+                // if SensorML is a wrapper and member size is 1
                 return sensorML.getMembers().iterator().next().getXml();
             } else {
                 // TODO: get sensor description for procedure identifier
                 return "";
             }
         } else if (procedureDescription.getProcedureDescription() instanceof AbstractFeature
-                    && procedureDescription.getProcedureDescription().isSetXml()) {
+                && procedureDescription.getProcedureDescription().isSetXml()) {
             return procedureDescription.getProcedureDescription().getXml();
         } else if (procedureDescription.isSetXml()) {
             return procedureDescription.getXml();

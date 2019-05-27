@@ -28,12 +28,11 @@
  */
 package org.n52.sos.web.admin;
 
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import org.n52.sos.web.common.AbstractController;
-import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0

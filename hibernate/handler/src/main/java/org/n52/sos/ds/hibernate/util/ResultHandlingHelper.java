@@ -33,9 +33,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -85,11 +85,16 @@ import com.google.common.base.Strings;
  */
 public class ResultHandlingHelper {
 
+    public static final String OM_PROCEDURE = "om:procedure";
+
+    public static final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
+
     private final String RESULT_TIME = OmConstants.RESULT_TIME;
+
     private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
-    public final String OM_PROCEDURE = "om:procedure";
-    public final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
+
     private final SweHelper helper;
+
     private GeometryHandler geometryHandler;
 
     public ResultHandlingHelper(GeometryHandler geometryHandler, SweHelper sweHelper) {
@@ -113,10 +118,11 @@ public class ResultHandlingHelper {
      *             If creation fails
      */
     public String createResultValuesFromObservations(final Collection<DataEntity<?>> observations,
-            final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure, String noDataPlaceholder)
-            throws OwsExceptionReport {
+            final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure,
+            String noDataPlaceholder) throws OwsExceptionReport {
         final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.get().get());
-        return createResultValuesFromObservations(observations, sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, true);
+        return createResultValuesFromObservations(observations, sosResultEncoding, sosResultStructure,
+                noDataPlaceholder, valueOrder, true);
     }
 
     private String createResultValuesFromObservations(final Collection<DataEntity<?>> observations,
@@ -132,33 +138,39 @@ public class ResultHandlingHelper {
             for (final DataEntity<?> observation : observations) {
                 for (final Integer intger : valueOrder.keySet()) {
                     if (observation instanceof ProfileDataEntity) {
-                        builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(), sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false));
+                        builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(),
+                                sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false));
                     } else {
                         final String definition = valueOrder.get(intger);
                         switch (definition) {
                             case PHENOMENON_TIME:
                                 builder.append(getTimeStringForPhenomenonTime(observation.getSamplingTimeStart(),
-                                                                              observation.getSamplingTimeEnd(), noDataPlaceholder));
+                                        observation.getSamplingTimeEnd(), noDataPlaceholder));
                                 break;
                             case RESULT_TIME:
-                                builder.append(getTimeStringForResultTime(observation.getResultTime(), noDataPlaceholder));
+                                builder.append(getTimeStringForResultTime(observation.getResultTime(),
+                                    noDataPlaceholder));
                                 break;
                             case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
-                                builder.append(getSamplingGeometry(observation, tokenSeparator, sosResultStructure.get().get(), noDataPlaceholder));
+                                builder.append(getSamplingGeometry(observation, tokenSeparator,
+                                        sosResultStructure.get().get(), noDataPlaceholder));
                                 break;
                             case OmConstants.OM_PARAMETER:
                             case OmConstants.PARAMETER:
-                                builder.append(getParameters(observation, tokenSeparator, sosResultStructure.get().get()));
+                                builder.append(getParameters(observation, tokenSeparator,
+                                        sosResultStructure.get().get()));
                                 break;
                             case OM_PROCEDURE:
-                                if (observation.getDataset().getProcedure() != null && observation.getDataset().getProcedure().isSetIdentifier()) {
+                                if (observation.getDataset().getProcedure() != null
+                                        && observation.getDataset().getProcedure().isSetIdentifier()) {
                                     builder.append(observation.getDataset().getProcedure().getIdentifier());
                                 } else {
                                     builder.append("");
                                 }
                                 break;
                             case OM_FEATURE_OF_INTEREST:
-                                if (observation.getDataset().getFeature() != null && observation.getDataset().getFeature().isSetIdentifier()) {
+                                if (observation.getDataset().getFeature() != null
+                                        && observation.getDataset().getFeature().isSetIdentifier()) {
                                     builder.append(observation.getDataset().getFeature().getIdentifier());
                                 } else {
                                     builder.append("");
@@ -283,16 +295,19 @@ public class ResultHandlingHelper {
         return noDataPlaceholder;
     }
 
-    private Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd, String noDataPlaceholder) {
+    private Object getTimeStringForPhenomenonTime(final Date phenomenonTimeStart, final Date phenomenonTimeEnd,
+            String noDataPlaceholder) {
         if (phenomenonTimeStart == null) {
             return noDataPlaceholder;
         }
 
         final StringBuilder builder = new StringBuilder();
         if (phenomenonTimeEnd == null || phenomenonTimeStart.equals(phenomenonTimeEnd)) {
-            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
+            builder.append(
+                    DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
         } else {
-            builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
+            builder.append(
+                    DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeStart, DateTimeZone.UTC)));
             builder.append('/');
             builder.append(DateTimeHelper.formatDateTime2IsoString(new DateTime(phenomenonTimeEnd, DateTimeZone.UTC)));
         }
@@ -304,7 +319,8 @@ public class ResultHandlingHelper {
         if (sweDataElement instanceof SweDataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
             final SweDataArray dataArray = (SweDataArray) sweDataElement;
-            addOrderAndDefinitionToMap(((SweDataRecord) dataArray.getElementType()).getFields(), valueOrder, new IncDecInteger());
+            addOrderAndDefinitionToMap(((SweDataRecord) dataArray.getElementType()).getFields(), valueOrder,
+                    new IncDecInteger());
         } else if (sweDataElement instanceof SweDataRecord) {
             final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
             addOrderAndDefinitionToMap(dataRecord.getFields(), valueOrder, new IncDecInteger());
@@ -312,7 +328,8 @@ public class ResultHandlingHelper {
         return new TreeMap<>(valueOrder);
     }
 
-    private void addOrderAndDefinitionToMap(final List<SweField> fields, final Map<Integer, String> valueOrder, IncDecInteger tokenIndex) {
+    private void addOrderAndDefinitionToMap(final List<SweField> fields, final Map<Integer, String> valueOrder,
+            IncDecInteger tokenIndex) {
         for (SweField sweField : fields) {
             final SweAbstractDataComponent element = sweField.getElement();
             if (element instanceof SweAbstractSimpleType) {
@@ -333,12 +350,14 @@ public class ResultHandlingHelper {
                     addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
                     tokenIndex.increment();
                 }
-//                addOrderAndVectorDefinitionToMap(((SweVector) element).getCoordinates(), valueOrder, tokenIndex);
+                // addOrderAndVectorDefinitionToMap(((SweVector)
+                // element).getCoordinates(), valueOrder, tokenIndex);
             }
         }
     }
 
-    private void addOrderAndVectorDefinitionToMap(Collection<? extends SweCoordinate<? extends Number>> list, Map<Integer, String> valueOrder, IncDecInteger tokenIndex) {
+    private void addOrderAndVectorDefinitionToMap(Collection<? extends SweCoordinate<? extends Number>> list,
+            Map<Integer, String> valueOrder, IncDecInteger tokenIndex) {
         for (SweCoordinate<?> sweCoordinate : list) {
             final SweAbstractDataComponent element = sweCoordinate.getValue();
             if (element instanceof SweAbstractSimpleType) {
@@ -362,11 +381,10 @@ public class ResultHandlingHelper {
         }
     }
 
-    private String getValueAsStringForObservedProperty(final DataEntity<?> observation,
-            final String definition) {
+    private String getValueAsStringForObservedProperty(final DataEntity<?> observation, final String definition) {
         final String observedProperty = observation.getDataset().getObservableProperty().getIdentifier();
         if (observation instanceof ComplexDataEntity) {
-            for (DataEntity<?> contentObservation : ((ComplexDataEntity)observation).getValue()) {
+            for (DataEntity<?> contentObservation : ((ComplexDataEntity) observation).getValue()) {
                 String value = getValueAsStringForObservedProperty(contentObservation, definition);
                 if (!Strings.isNullOrEmpty(value)) {
                     return value;
@@ -394,8 +412,7 @@ public class ResultHandlingHelper {
     }
 
     private String getSamplingGeometry(DataEntity<?> observation, String tokenSeparator,
-            SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder)
-            throws OwsExceptionReport {
+            SweAbstractDataComponent sweAbstractDataComponent, String noDataPlaceholder) throws OwsExceptionReport {
         SweVector vector = getVector(sweAbstractDataComponent);
         if (vector != null && vector.isSetCoordinates()) {
             final Map<Integer, String> valueOrder = new HashMap<>(0);
@@ -403,8 +420,8 @@ public class ResultHandlingHelper {
             final StringBuilder builder = new StringBuilder();
             Geometry samplingGeometry = null;
             if (observation.isSetGeometryEntity()) {
-                samplingGeometry = getGeomtryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                        observation.getGeometryEntity().getGeometry());
+                samplingGeometry = getGeomtryHandler()
+                        .switchCoordinateAxisFromToDatasourceIfNeeded(observation.getGeometryEntity().getGeometry());
             }
             for (final Integer intger : valueOrder.keySet()) {
                 final String definition = valueOrder.get(intger);
@@ -450,7 +467,7 @@ public class ResultHandlingHelper {
             final SweDataRecord dataRecord = (SweDataRecord) sweAbstractDataComponent;
             return getVector(dataRecord.getFields());
         } else if (sweAbstractDataComponent instanceof SweVector) {
-            return (SweVector)sweAbstractDataComponent;
+            return (SweVector) sweAbstractDataComponent;
         }
         return null;
     }
@@ -458,7 +475,7 @@ public class ResultHandlingHelper {
     private SweVector getVector(List<SweField> fields) throws CodedException {
         for (SweField sweField : fields) {
             if (isVector(sweField) && checkVectorForSamplingGeometry(sweField)) {
-                return (SweVector)sweField.getElement();
+                return (SweVector) sweField.getElement();
             }
         }
         return null;
@@ -521,12 +538,15 @@ public class ResultHandlingHelper {
         return null;
     }
 
-    public boolean checkDataRecordForObservedProperty(SweField swefield, String observedProperty) throws CodedException {
-        if (isDataRecord(swefield) && !checkDefinition(swefield, observedProperty) && !checkDataRecordForParameter(swefield)) {
+    public boolean checkDataRecordForObservedProperty(SweField swefield, String observedProperty)
+            throws CodedException {
+        if (isDataRecord(swefield) && !checkDefinition(swefield, observedProperty)
+                && !checkDataRecordForParameter(swefield)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
-                            "The swe:DataRecord element is currently only supported for the definition of the observedProperty and om:parameter. "
-                            + "The definition should be '%s' or '%s'!",
+                            "The swe:DataRecord element is currently only supported for "
+                                    + "the definition of the observedProperty and om:parameter. "
+                                    + "The definition should be '%s' or '%s'!",
                             observedProperty, OmConstants.PARAMETER);
         }
         return true;
@@ -535,9 +555,10 @@ public class ResultHandlingHelper {
     public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
         if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-            .withMessage(
-                    "The featureOfInterest is not defined in the observationTemplate and the swe:DataRecord does not contain a featureOfInterest definition with '%s'!",
-                    OM_FEATURE_OF_INTEREST);
+                    .withMessage(
+                            "The featureOfInterest is not defined in the observationTemplate and the swe:DataRecord "
+                                    + "does not contain a featureOfInterest definition with '%s'!",
+                            OM_FEATURE_OF_INTEREST);
         }
         return true;
     }
@@ -545,9 +566,8 @@ public class ResultHandlingHelper {
     public boolean checkForProcedure(SweField swefield) throws CodedException {
         if (isText(swefield) && !checkDefinition(swefield, OM_PROCEDURE)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-            .withMessage(
-                    "The procedure is not defined in the observationTemplate and the swe:DataRecord does not contain a procedure definition with '%s'!",
-                    OM_PROCEDURE);
+                    .withMessage("The procedure is not defined in the observationTemplate and the swe:DataRecord"
+                            + " does not contain a procedure definition with '%s'!", OM_PROCEDURE);
         }
         return true;
     }
@@ -560,7 +580,8 @@ public class ResultHandlingHelper {
         if (isVector(swefield) && !checkDefinition(swefield, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
-                            "The swe:Vector element is currently only supported for the definition of the samplingGeometry with definition '%s'!",
+                            "The swe:Vector element is currently only supported for the definition "
+                                    + "of the samplingGeometry with definition '%s'!",
                             OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         }
         return true;

@@ -49,31 +49,47 @@ import basetest.HandlerBaseTest;
 
 public class InsertSensorRequestHandlerTest extends HandlerBaseTest {
 
+    private static final String OP_1 = "op1";
+    private static final String OP_2 = "op2";
+    private static final String OT_1 = "ot1";
+    private static final String OT_2 = "ot2";
+    private static final String FOI_1 = "foi1";
+    private static final String FOI_2 = "foi2";
+    private static final String FORMAT = "solo-format";
+    private static final String PROC = "proc";
+
     @InjectMocks
-    InsertSensorRequestHandler handler;
+    private InsertSensorRequestHandler handler;
 
     @SuppressWarnings("unchecked")
     @Test
     public void validateAllFields() {
         InsertSensorRequest request = new InsertSensorRequest();
         request.setAssignedOfferings(Arrays.asList(new SosOffering("p")));
-        request.setAssignedProcedureIdentifier("proc");
-        request.setObservableProperty(Arrays.asList("op1", "op2"));
+        request.setAssignedProcedureIdentifier(PROC);
+        request.setObservableProperty(Arrays.asList(OP_1, OP_2));
         request.setProcedureDescription(new SosProcedureDescriptionUnknownType("id", "format", "xml"));
-        request.setProcedureDescriptionFormat("solo-format");
+        request.setProcedureDescriptionFormat(FORMAT);
         request.setMetadata(new SosInsertionMetadata());
-        request.getMetadata().setFeatureOfInterestTypes(Arrays.asList("foi1", "foi2"));
-        request.getMetadata().setObservationTypes(Arrays.asList("ot1", "ot2"));
+        request.getMetadata().setFeatureOfInterestTypes(Arrays.asList(FOI_1, FOI_2));
+        request.getMetadata().setObservationTypes(Arrays.asList(OT_1, OT_2));
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_OFFERINGS.getName()), CoreMatchers.instanceOf(List.class));
-        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS.getName()), CoreMatchers.is("proc"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.IS_OBSERVABLE_PROPERTY.getName()), CoreMatchers.hasItems("op1", "op2"));
-        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION.getName()), CoreMatchers.instanceOf(SosProcedureDescription.class));
-        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT.getName()), CoreMatchers.is("solo-format"));
-        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES.getName()), CoreMatchers.hasItems("foi1", "foi2"));
-        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_OBSERVATION_TYPES.getName()), CoreMatchers.hasItems("ot1", "ot2"));
+        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_OFFERINGS.getName()),
+                CoreMatchers.instanceOf(List.class));
+        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS.getName()),
+                CoreMatchers.is(PROC));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.IS_OBSERVABLE_PROPERTY.getName()),
+                CoreMatchers.hasItems(OP_1, OP_2));
+        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION.getName()),
+                CoreMatchers.instanceOf(SosProcedureDescription.class));
+        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT.getName()),
+                CoreMatchers.is(FORMAT));
+        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES.getName()),
+                CoreMatchers.hasItems(FOI_1, FOI_2));
+        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_OBSERVATION_TYPES.getName()),
+                CoreMatchers.hasItems(OT_1, OT_2));
 
     }
 }

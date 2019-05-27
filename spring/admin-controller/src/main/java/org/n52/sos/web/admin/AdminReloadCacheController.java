@@ -30,6 +30,11 @@ package org.n52.sos.web.admin;
 
 import javax.servlet.UnavailableException;
 
+import org.n52.iceland.exception.JSONException;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,12 +44,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.iceland.exception.JSONException;
-import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.Json;
-import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @since 4.0.0
@@ -61,11 +60,15 @@ public class AdminReloadCacheController extends AbstractAdminController {
             LOG.debug("Reloading Capabilitities Cache");
             updateCache();
         }
-        // TODO display other message here because the WebUI is displaying information about successful cache update start but nothing is happening
+        // TODO display other message here because the WebUI is displaying
+        // information about successful cache update start but nothing is
+        // happening
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_LOADING, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_LOADING,
+                    method = RequestMethod.GET,
+                    produces = "application/json; charset=UTF-8")
     public String getCacheLoadingStatus() throws JSONException, UnavailableException {
         return Json.print(Json.nodeFactory().objectNode().put("loading", cacheIsLoading()));
     }

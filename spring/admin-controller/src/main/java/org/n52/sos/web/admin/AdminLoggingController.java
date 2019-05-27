@@ -81,8 +81,10 @@ public class AdminLoggingController extends AbstractController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
         Map<String, Object> model = new HashMap<>(5);
-        model.put(IS_FILE_ENABLED_MODEL_ATTRIBUTE, loggingConfigurator.isEnabled(AbstractLoggingConfigurator.Appender.FILE));
-        model.put(IS_CONSOLE_ENABLED_MODEL_ATTRIBUTE, loggingConfigurator.isEnabled(AbstractLoggingConfigurator.Appender.CONSOLE));
+        model.put(IS_FILE_ENABLED_MODEL_ATTRIBUTE,
+                loggingConfigurator.isEnabled(AbstractLoggingConfigurator.Appender.FILE));
+        model.put(IS_CONSOLE_ENABLED_MODEL_ATTRIBUTE,
+                loggingConfigurator.isEnabled(AbstractLoggingConfigurator.Appender.CONSOLE));
         model.put(ROOT_LOG_LEVEL_MODEL_ATTRIBUTE, loggingConfigurator.getRootLogLevel());
         model.put(DAYS_TO_KEEP_MDOEL_ATTRIBUTE, loggingConfigurator.getMaxHistory());
         model.put(LOGGER_LEVELS_MODEL_ATTRIBUTE, loggingConfigurator.getLoggerLevels());
@@ -109,8 +111,7 @@ public class AdminLoggingController extends AbstractController {
         String maxFileSize = req.getParameter(MAX_FILE_SIZE_MODEL_ATTRIBUTE);
         parameters.remove(MAX_FILE_SIZE_MODEL_ATTRIBUTE);
 
-        Map<String, AbstractLoggingConfigurator.Level> levels =
-                new HashMap<>(parameters.size());
+        Map<String, AbstractLoggingConfigurator.Level> levels = new HashMap<>(parameters.size());
 
         for (String logger : parameters) {
             levels.put(logger, AbstractLoggingConfigurator.Level.valueOf(req.getParameter(logger)));

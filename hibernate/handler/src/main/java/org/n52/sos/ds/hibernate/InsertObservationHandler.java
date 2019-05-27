@@ -33,13 +33,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 
-import org.hibernate.HibernateException;
-import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
@@ -84,14 +81,36 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
 @Configurable
-public class InsertObservationHandler extends AbstractInsertObservationHandler  {
+public class InsertObservationHandler extends AbstractInsertObservationHandler {
     private static final int FLUSH_THRESHOLD = 50;
+
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
+
     private static final String CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY = "obsIdentifierUK";
 
+    private static final String LOG_OBSERVATION_SAME_VALUES =
+            "Observation with same values already contained in database";
+
+    private static final String LOG_OBSERVATION_SAME_IDENTIFIER =
+            "Observation identifier already contained in database";
+
+    private static final String LOG_SAMPLING_GEOMETRY =
+            "The sampling geometry definition is missing in the observation because"
+                    + " the Spatial Filtering Profile is specification conformant. To use a less"
+                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!";
+
     private HibernateSessionHolder sessionHolder;
+
     private DaoFactory daoFactory;
+
     private boolean strictSpatialFilteringProfile;
+
+    /**
+     * constructor
+     */
+    public InsertObservationHandler() {
+        super(SosConstants.SOS);
+    }
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -108,11 +127,9 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         this.strictSpatialFilteringProfile = strictSpatialFilteringProfile;
     }
 
-    /**
-     * constructor
-     */
-    public InsertObservationHandler() {
-        super(SosConstants.SOS);
+    @Override
+    public boolean isSupported() {
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     @Override
@@ -124,7 +141,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         Session session = null;
         Transaction transaction = null;
 
-        // TODO: checkConstellation unit and set if available and not defined in DB
+        // TODO: checkConstellation unit and set if available and not defined in
+        // DB
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
@@ -139,12 +157,9 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
 
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check strict spatial filtering profile
-                if (strictSpatialFilteringProfile
-                        && !sosObservation.isSetSpatialFilteringProfileParameter()) {
+                if (strictSpatialFilteringProfile && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
-                            .withMessage("The sampling geometry definition is missing in the observation because"
-                                    + " the Spatial Filtering Profile is specification conformant. To use a less"
-                                    + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+                            .withMessage(LOG_SAMPLING_GEOMETRY);
                 }
 
                 insertObservation(sosObservation, cache, exceptions, session);
@@ -182,16 +197,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         return response;
     }
 
-    @Override
-    public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
-    }
-
-    private void insertObservation(OmObservation sosObservation,
-                                     InsertObservationCache cache,
-                                     CompositeOwsException exceptions,
-                                     Session session)
-            throws OwsExceptionReport, CodedException {
+    private void insertObservation(OmObservation sosObservation, InsertObservationCache cache,
+            CompositeOwsException exceptions, Session session) throws OwsExceptionReport, CodedException {
 
         checkSpatialFilteringProfile(sosObservation);
 
@@ -200,18 +207,17 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
 
         AbstractFeatureEntity hFeature = null;
 
-//        if (sosObsConst.getOfferings().size() > 1) {
-//
-//        }
+        // if (sosObsConst.getOfferings().size() > 1) {
+        //
+        // }
 
         String offeringID = sosObsConst.getOfferings().iterator().next();
         DatasetEntity hDataset = cache.get(sosObsConst, offeringID);
         if (hDataset == null) {
             if (!cache.isChecked(sosObsConst, offeringID)) {
                 try {
-                    hDataset =
-                            daoFactory.getSeriesDAO().checkSeries(
-                                    sosObsConst, offeringID, session, Sos2Constants.InsertObservationParams.observationType.name());
+                    hDataset = daoFactory.getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
+                            Sos2Constants.InsertObservationParams.observationType.name());
                     // add to cache table
                     cache.putConstellation(sosObsConst, offeringID, hDataset);
                 } catch (OwsExceptionReport owse) {
@@ -228,19 +234,17 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
             // only do feature checking once for each
             // AbstractFeature/offering combo
             if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                daoFactory.getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(
-                        hFeature, hDataset.getOffering(), session);
+                daoFactory.getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(hFeature,
+                        hDataset.getOffering(), session);
                 cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
             }
             AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
             DatasetEntity dataset = null;
             if (sosObservation.getValue() instanceof SingleObservationValue) {
-                dataset = observationDAO.insertObservationSingleValue(
-                        hDataset, hFeature, sosObservation,
+                dataset = observationDAO.insertObservationSingleValue(hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                dataset = observationDAO.insertObservationMultiValue(
-                        hDataset, hFeature, sosObservation,
+                dataset = observationDAO.insertObservationMultiValue(hDataset, hFeature, sosObservation,
                         cache.getCodespaceCache(), cache.getUnitCache(), session);
             }
             if (dataset != null && !cache.get(sosObsConst, offeringID).equals(dataset)) {
@@ -249,20 +253,15 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         }
     }
 
-    protected void checkSpatialFilteringProfile(OmObservation sosObservation)
-            throws CodedException {
+    protected void checkSpatialFilteringProfile(OmObservation sosObservation) throws CodedException {
         // checkConstellation
-        if (strictSpatialFilteringProfile
-            && !sosObservation.isSetSpatialFilteringProfileParameter()) {
+        if (strictSpatialFilteringProfile && !sosObservation.isSetSpatialFilteringProfileParameter()) {
             throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
-                    .withMessage("The sampling geometry definition is missing in the observation because"
-                            + " the Spatial Filtering Profile is specification conformant. To use a less"
-                            + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
+                    .withMessage(LOG_SAMPLING_GEOMETRY);
         }
     }
 
-    protected void handleHibernateException(PersistenceException pe)
-            throws OwsExceptionReport {
+    protected void handleHibernateException(PersistenceException pe) throws OwsExceptionReport {
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new observation!";
 
@@ -274,7 +273,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
             SQLException sqle = cve.getSQLException();
             checkContainsAndThrow(sqle.getMessage(), pe);
             // if this is a JDBCException, pass the underlying SQLException
-            // as the causedBy exception so that we can show the actual error in the
+            // as the causedBy exception so that we can show the actual error in
+            // the
             // OwsExceptionReport when batching
             for (Throwable next : sqle) {
                 checkContainsAndThrow(next.getMessage(), pe);
@@ -290,13 +290,13 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         if (!Strings.isNullOrEmpty(constraintName)) {
             String exceptionMsg = null;
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
-                exceptionMsg = "Observation with same values already contained in database";
+                exceptionMsg = LOG_OBSERVATION_SAME_VALUES;
             } else if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) {
-                exceptionMsg = "Observation identifier already contained in database";
+                exceptionMsg = LOG_OBSERVATION_SAME_IDENTIFIER;
             }
-            if(!Strings.isNullOrEmpty(exceptionMsg)) {
+            if (!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionMsg)
-                .setStatus(HTTPStatus.BAD_REQUEST);
+                        .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
     }
@@ -305,29 +305,33 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
         if (!Strings.isNullOrEmpty(message)) {
             String exceptionMsg = null;
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
-                exceptionMsg = "Observation with same values already contained in database";
+                exceptionMsg = LOG_OBSERVATION_SAME_VALUES;
             } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
-                exceptionMsg = "Observation identifier already contained in database";
+                exceptionMsg = LOG_OBSERVATION_SAME_IDENTIFIER;
             }
             if (!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionMsg)
-                .setStatus(HTTPStatus.BAD_REQUEST);
+                        .setStatus(HTTPStatus.BAD_REQUEST);
             }
         }
     }
 
     /**
-     * Get the hibernate AbstractFeatureOfInterest object for an AbstractFeature,
-     * returning it from the local cache if already requested
+     * Get the hibernate AbstractFeatureOfInterest object for an
+     * AbstractFeature, returning it from the local cache if already requested
      *
      * @param abstractFeature
+     *            the abstract features
      * @param cache
+     *            THe insertion cache
      * @param session
+     *            Hiberante session
      * @return hibernet AbstractFeatureOfInterest
      * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    private AbstractFeatureEntity getFeature(AbstractFeature abstractFeature,
-            InsertObservationCache cache, Session session) throws OwsExceptionReport {
+    private AbstractFeatureEntity getFeature(AbstractFeature abstractFeature, InsertObservationCache cache,
+            Session session) throws OwsExceptionReport {
         AbstractFeatureEntity hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
             hFeature = daoFactory.getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
@@ -338,23 +342,34 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
 
     private static class InsertObservationCache {
         private final Set<String> allOfferings = Sets.newHashSet();
-        private final Map<AbstractFeature, AbstractFeatureEntity> featureCache = Maps.newHashMap();
-        private final Table<OmObservationConstellation, String, DatasetEntity> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();
-        private final Map<String, CodespaceEntity> codespaceCache = Maps.newHashMap();
-        private final Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
-        private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
-        private final HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
 
+        private final Map<AbstractFeature, AbstractFeatureEntity> featureCache = Maps.newHashMap();
+
+        private final Table<OmObservationConstellation, String, DatasetEntity> obsConstOfferingHibernateObsConstTable =
+                HashBasedTable.create();
+
+        private final Map<String, CodespaceEntity> codespaceCache = Maps.newHashMap();
+
+        private final Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
+
+        private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap =
+                HashMultimap.create();
+
+        private final HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
 
         public DatasetEntity get(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingHibernateObsConstTable.get(oc, offering);
         }
+
         public void putConstellation(OmObservationConstellation soc, String offering, DatasetEntity hoc) {
             this.obsConstOfferingHibernateObsConstTable.put(soc, offering, hoc);
         }
+
         public void clearConstellation() {
             Set<Cell<OmObservationConstellation, String, DatasetEntity>> removable = new HashSet<>();
-            for (Cell<OmObservationConstellation, String, DatasetEntity> cell : this.obsConstOfferingHibernateObsConstTable.cellSet()) {
+            for (Cell<OmObservationConstellation, String, DatasetEntity> cell :
+                    this.obsConstOfferingHibernateObsConstTable
+                    .cellSet()) {
                 if (cell.getValue().getDatasetType().equals(DatasetType.not_initialized)) {
                     removable.add(cell);
                 }
@@ -363,36 +378,47 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler  
                 this.obsConstOfferingHibernateObsConstTable.remove(cell.getRowKey(), cell.getColumnKey());
             }
         }
+
         public boolean isChecked(OmObservationConstellation oc, String offering) {
             return this.obsConstOfferingCheckedMap.containsEntry(oc, offering);
         }
+
         public boolean isChecked(AbstractFeature feature, String offering) {
             return this.relatedFeatureCheckedMap.containsEntry(feature, offering);
         }
+
         public void checkConstellation(OmObservationConstellation oc, String offering) {
             this.obsConstOfferingCheckedMap.put(oc, offering);
         }
+
         public void checkFeature(AbstractFeature feature, String offering) {
             this.relatedFeatureCheckedMap.put(feature, offering);
         }
+
         public void putFeature(AbstractFeature sfeature, AbstractFeatureEntity hfeature) {
             getFeatureCache().put(sfeature, hfeature);
         }
+
         public AbstractFeatureEntity getFeature(AbstractFeature sfeature) {
             return getFeatureCache().get(sfeature);
         }
+
         public Map<AbstractFeature, AbstractFeatureEntity> getFeatureCache() {
             return featureCache;
         }
+
         public Map<String, CodespaceEntity> getCodespaceCache() {
             return codespaceCache;
         }
+
         public Map<UoM, UnitEntity> getUnitCache() {
             return unitCache;
         }
+
         public Set<String> getAllOfferings() {
             return allOfferings;
         }
+
         public void addOfferings(Collection<String> offerings) {
             this.allOfferings.addAll(offerings);
         }

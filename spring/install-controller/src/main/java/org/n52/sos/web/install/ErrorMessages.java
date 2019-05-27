@@ -52,8 +52,8 @@ public interface ErrorMessages {
 
     String PASSWORD_IS_INVALID = "Password is invalid.";
 
-    String COULD_NOT_READ_SPATIAL_REF_SYS_TABLE = "Could not read 'spatial_ref_sys' table of PostGIS. "
-            + "Please revise your database configuration.";
+    String COULD_NOT_READ_SPATIAL_REF_SYS_TABLE =
+            "Could not read 'spatial_ref_sys' table of PostGIS. " + "Please revise your database configuration.";
 
     String COULD_NOT_LOAD_DIALECT = "Could not load dialect: %s";
 
@@ -79,8 +79,8 @@ public interface ErrorMessages {
 
     String NO_DIALECT_SPECIFIED = "no dialect specified";
 
-    String TABLES_ALREADY_CREATED_BUT_SHOULD_NOT_OVERWRITE = "Tables already created, but should not overwrite. "
-            + "Please take a look at the 'Actions' section.";
+    String TABLES_ALREADY_CREATED_BUT_SHOULD_NOT_OVERWRITE =
+            "Tables already created, but should not overwrite. " + "Please take a look at the 'Actions' section.";
 
     String COULD_NOT_INSERT_SETTINGS = "Could not insert settings into the database: %s";
 
@@ -113,11 +113,19 @@ public interface ErrorMessages {
 
     String SCHEMA_DOES_NOT_EXIST = "Schema %s does not exist";
 
-    String EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA = "The installed schema does not accord to the schema which should be created! Please, check the checkbox 'Old observation concept' or delete existing schema manually with the according drop schema in /misc/db!";
+    String EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA =
+            "The installed schema does not accord to the schema which should be created! Please, check the checkbox "
+                    + "'Old observation concept' or delete existing schema manually with the according drop schema "
+                    + "in /misc/db!";
 
-    String EXISTING_SCHEMA_REQUIRES_UPDATE = "The installed schema is corrupt/invalid (%s).\nTry to delete the existing tables and check 'Create tables' or check 'Force update tables' (experimental).\nOr check for update scripts in /misc/db!";
+    String EXISTING_SCHEMA_REQUIRES_UPDATE =
+            "The installed schema is corrupt/invalid (%s).\nTry to delete the existing tables and check "
+                    + "'Create tables' or check 'Force update tables' (experimental).\nOr check for update"
+                    + " scripts in /misc/db!";
 
-    String EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA = "The installed schema does not accord to the update schema! Please, check the checkbox 'Old observation concept'!";
+    String EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA =
+            "The installed schema does not accord to the update schema! Please, check the checkbox "
+                    + "'Old observation concept'!";
 
     String TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB = "Missing column: featureOfInterestId in public.observation";
 

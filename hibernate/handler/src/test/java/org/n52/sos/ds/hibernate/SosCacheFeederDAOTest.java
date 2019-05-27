@@ -28,8 +28,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.junit.Assert.assertNotNull;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.iceland.coding.SupportedTypeRepository;
@@ -73,18 +72,18 @@ public class SosCacheFeederDAOTest extends HibernateTestCase {
 
     /* HELPER */
     private void testCacheResult(SosWritableContentCache cache) {
-        assertNotNull("cache is null", cache);
-        assertNotNull("envelope of features is null", cache.getGlobalEnvelope());
-        assertNotNull("feature types is null", cache.getFeatureOfInterestTypes());
-        assertNotNull("offerings is null", cache.getOfferings());
-        // assertNotNull("max phenomenon time is null",
+        Assert.assertNotNull("cache is null", cache);
+        Assert.assertNotNull("envelope of features is null", cache.getGlobalEnvelope());
+        Assert.assertNotNull("feature types is null", cache.getFeatureOfInterestTypes());
+        Assert.assertNotNull("offerings is null", cache.getOfferings());
+        // Assert.assertNotNull("max phenomenon time is null",
         // cache.getMaxPhenomenonTime());
-        // assertNotNull("min phenomenon time is null",
+        // Assert.assertNotNull("min phenomenon time is null",
         // cache.getMinPhenomenonTime());
-        // assertNotNull("max result time is null", cache.getMaxResultTime());
-        // assertNotNull("min result time is null", cache.getMinResultTime());
-        assertNotNull("observation types is null", cache.getObservationTypes());
-        assertNotNull("result templates is null", cache.getResultTemplates());
+        // Assert.assertNotNull("max result time is null", cache.getMaxResultTime());
+        // Assert.assertNotNull("min result time is null", cache.getMinResultTime());
+        Assert.assertNotNull("observation types is null", cache.getObservationTypes());
+        Assert.assertNotNull("result templates is null", cache.getResultTemplates());
     }
 
 }

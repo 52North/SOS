@@ -38,6 +38,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
+import org.n52.faroe.SettingsService;
+import org.n52.iceland.config.AdministratorUser;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.auth.DefaultAdministratorUser;
+import org.n52.sos.web.common.auth.SosAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,24 +64,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.SettingDefinition;
-import org.n52.faroe.SettingValue;
-import org.n52.faroe.SettingsService;
-import org.n52.iceland.config.AdministratorUser;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.faroe.ConfigurationError;
-import org.n52.iceland.exception.JSONException;
-import org.n52.janmayen.Json;
-import org.n52.sos.web.common.AbstractController;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.auth.DefaultAdministratorUser;
-import org.n52.sos.web.common.auth.SosAuthenticationProvider;
-
 import com.google.common.base.Strings;
-
-
-
 
 @Controller
 public class AdminSettingsController extends AbstractController {
@@ -97,23 +92,18 @@ public class AdminSettingsController extends AbstractController {
     }
 
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS, method = RequestMethod.GET)
-    public ModelAndView displaySettings(Principal user) throws ConfigurationError, JSONException, ConnectionProviderException {
+    public ModelAndView displaySettings(Principal user)
+            throws ConfigurationError, JSONException, ConnectionProviderException {
         Map<String, Object> model = new HashMap<>(2);
         model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, getSettingsJsonString());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, user.getName());
         return new ModelAndView(ControllerConstants.Views.ADMIN_SETTINGS, model);
     }
 
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_UPDATE, method = RequestMethod.POST)
-    public void updateSettings(HttpServletRequest request, HttpServletResponse response, Principal user)
-            throws AuthenticationException, ConfigurationError {
-        LOG.info("Updating Settings");
-        updateAdminUser(request, user);
-        updateSettings(request);
-    }
-
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_DUMP, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_DUMP,
+                    method = RequestMethod.GET,
+                    produces = "application/json; charset=UTF-8")
     public String dump() {
         try {
             return getSettingsJsonString();
@@ -123,18 +113,12 @@ public class AdminSettingsController extends AbstractController {
         }
     }
 
-    private String getSettingsJsonString()
-            throws ConfigurationError, JSONException,
-                   ConnectionProviderException {
-        return Json.print(encodeValues(settingsManager.getSettings()));
-    }
-
-    private void logSettings(Collection<SettingValue<?>> values) {
-        if (LOG.isDebugEnabled()) {
-            for (SettingValue<?> value : values) {
-                LOG.info("Saving Setting: ('{}'({}) => '{}')", value.getKey(), value.getType(), value.getValue());
-            }
-        }
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_SETTINGS_UPDATE, method = RequestMethod.POST)
+    public void updateSettings(HttpServletRequest request, HttpServletResponse response, Principal user)
+            throws AuthenticationException, ConfigurationError {
+        LOG.info("Updating Settings");
+        updateAdminUser(request, user);
+        updateSettings(request);
     }
 
     private void updateSettings(HttpServletRequest request) {
@@ -150,8 +134,20 @@ public class AdminSettingsController extends AbstractController {
         }
     }
 
-    private void updateAdminUser(HttpServletRequest request, Principal user) throws AuthenticationException,
-            ConfigurationError {
+    private String getSettingsJsonString() throws ConfigurationError, JSONException, ConnectionProviderException {
+        return Json.print(encodeValues(settingsManager.getSettings()));
+    }
+
+    private void logSettings(Collection<SettingValue<?>> values) {
+        if (LOG.isDebugEnabled()) {
+            for (SettingValue<?> value : values) {
+                LOG.info("Saving Setting: ('{}'({}) => '{}')", value.getKey(), value.getType(), value.getValue());
+            }
+        }
+    }
+
+    private void updateAdminUser(HttpServletRequest request, Principal user)
+            throws AuthenticationException, ConfigurationError {
         String password = request.getParameter(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER);
         String username = request.getParameter(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER);
         String currentPassword = request.getParameter(ControllerConstants.ADMIN_CURRENT_PASSWORD_REQUEST_PARAMETER);

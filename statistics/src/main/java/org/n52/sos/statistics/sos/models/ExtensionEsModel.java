@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.ows.extension.Extension;
 
-public class ExtensionEsModel extends AbstractElasticsearchModel {
+public final class ExtensionEsModel extends AbstractElasticsearchModel {
 
     // private static final Logger logger =
     // LoggerFactory.getLogger(ExtensionEsModel.class);

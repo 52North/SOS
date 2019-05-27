@@ -32,17 +32,16 @@ package org.n52.sos.web.admin;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -59,7 +58,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
  */
 @Controller
 public class AdminCacheController extends AbstractController {
-    private static final ObjectMapper objectMapper = buildObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = buildObjectMapper();
 
     @Inject
     private ContentCacheController cacheController;
@@ -70,15 +69,19 @@ public class AdminCacheController extends AbstractController {
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_SUMMARY, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_SUMMARY,
+                    method = RequestMethod.GET,
+                    produces = "application/json; charset=UTF-8")
     public String getCacheSummary() {
         return Json.print(Json.toJSON(CacheSummaryHandler.getCacheValues(cacheController)));
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_DUMP, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_DUMP,
+                    method = RequestMethod.GET,
+                    produces = "application/json; charset=UTF-8")
     public String getCacheDump() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(cacheController.getCache());
+        return OBJECT_MAPPER.writeValueAsString(cacheController.getCache());
     }
 
     private static ObjectMapper buildObjectMapper() {

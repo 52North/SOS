@@ -30,7 +30,6 @@ package basetest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -40,27 +39,25 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-import org.elasticsearch.plugins.Plugin;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.n52.iceland.statistics.api.ElasticsearchSettings;
+import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import org.n52.iceland.statistics.api.ElasticsearchSettings;
-import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
-
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {  "classpath:testContext.xml" })
+@ContextConfiguration(locations = { "classpath:testContext.xml" })
 public abstract class ElasticsearchAwareTest extends SpringBaseTest {
 
-    private static Node embeddedNode;
-
     @ClassRule
-    public static final TemporaryFolder tempFolder = new TemporaryFolder();
+    public static final TemporaryFolder TEMP_FOLDER = new TemporaryFolder();
+
+    private static Node embeddedNode;
 
     @Inject
     protected ElasticsearchSettings clientSettings;
@@ -71,24 +68,20 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
     @BeforeClass
     public static void init() throws IOException, InterruptedException {
         logger.debug("Starting embedded node");
-        Settings settings
-                = Settings.settingsBuilder().put("cluster.name", "elasiticsearch")
-//                = Settings.builder().put("cluster.name", "elasiticsearch")
-                        .put("discovery.zen.ping.multicast.enabled", "false")
-                        .put("http.cors.enabled", "false")
-                        .put("path.data", tempFolder.getRoot().toPath().resolve("data").toString())
-                        .put("path.home", "/")
-                        .put("node.data", "true")
-                        .put("node.master", "true")
-                        .put("node.name", "Embedded Elasticsearch")
-                        .build();
-//        Settings settings =
-//                Settings.settingsBuilder()
-//                        .loadFromStream("elasticsearch_embedded.yml",
-//                                ElasticsearchAwareTest.class.getResourceAsStream("/elasticsearch_embedded.yml"))
-//                        .build();
+        Settings settings = Settings.settingsBuilder().put("cluster.name", "elasiticsearch")
+                // = Settings.builder().put("cluster.name", "elasiticsearch")
+                .put("discovery.zen.ping.multicast.enabled", Boolean.FALSE.toString())
+                .put("http.cors.enabled", Boolean.FALSE.toString())
+                .put("path.data", TEMP_FOLDER.getRoot().toPath().resolve("data").toString()).put("path.home", "/")
+                .put("node.data", Boolean.TRUE.toString()).put("node.master", Boolean.TRUE.toString())
+                .put("node.name", "Embedded Elasticsearch").build();
+        // Settings settings =
+        // Settings.settingsBuilder()
+        // .loadFromStream("elasticsearch_embedded.yml",
+        // ElasticsearchAwareTest.class.getResourceAsStream("/elasticsearch_embedded.yml"))
+        // .build();
         embeddedNode = NodeBuilder.nodeBuilder().settings(settings).build();
-//        embeddedNode = new TestNode(settings);
+        // embeddedNode = new TestNode(settings);
         embeddedNode.start();
 
         logger.debug("Started embedded node");
@@ -104,6 +97,7 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
             embeddedNode.client().admin().indices().prepareDelete(clientSettings.getIndexId()).get().isAcknowledged();
             Thread.sleep(2000);
         } catch (ElasticsearchException e) {
+            logger.error("Error when setting up the test!", e);
         }
         setUpHook();
     }

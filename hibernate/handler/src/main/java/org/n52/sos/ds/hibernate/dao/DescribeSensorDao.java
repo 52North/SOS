@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +45,7 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
@@ -59,20 +59,25 @@ import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.springframework.context.annotation.Conditional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class DescribeSensorDao
-        implements org.n52.sos.ds.dao.DescribeSensorDao {
+public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao {
+
+    private static final String LOG_PARAMETER_PROCEDURE_NOT_NULL = "Parameter 'procedure' should not be null!";
 
     private HibernateSessionHolder sessionHolder;
+
     private HibernateProcedureConverter procedureConverter;
+
     private ConverterRepository converterRepository;
+
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
+
     private DaoFactory daoFactory;
+
     private Locale defaultLanguage;
 
     @Inject
@@ -148,8 +153,8 @@ public class DescribeSensorDao
                 new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(), session);
         if (procedure == null) {
             throw new NoApplicableCodeException()
-                    .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
-                    .setStatus(INTERNAL_SERVER_ERROR);
+                    .causedBy(new IllegalArgumentException(LOG_PARAMETER_PROCEDURE_NOT_NULL))
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
         return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
                 request.getVersion(), getRequestedLocale(request), session);
@@ -168,8 +173,8 @@ public class DescribeSensorDao
             throws OwsExceptionReport {
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
-        final ProcedureEntity procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(request.getProcedure(),
-                possibleProcedureDescriptionFormats, request.getValidTime(), session);
+        final ProcedureEntity procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(
+                request.getProcedure(), possibleProcedureDescriptionFormats, request.getValidTime(), session);
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
             if (procedure.hasProcedureHistory()) {
@@ -190,8 +195,8 @@ public class DescribeSensorDao
             } else {
                 if (!request.isSetValidTime()) {
                     throw new NoApplicableCodeException()
-                            .causedBy(new IllegalArgumentException("Parameter 'procedure' should not be null!"))
-                            .setStatus(INTERNAL_SERVER_ERROR);
+                            .causedBy(new IllegalArgumentException(LOG_PARAMETER_PROCEDURE_NOT_NULL))
+                            .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
                 }
             }
         }
@@ -242,12 +247,12 @@ public class DescribeSensorDao
     }
 
     private SosProcedureDescription<?> convertProcedureDescription(SosProcedureDescription<?> procedureDescription,
-            DescribeSensorRequest request)
-            throws CodedException {
+            DescribeSensorRequest request) throws CodedException {
         if (!checkForUrlVsMimeType(procedureDescription.getDescriptionFormat())
                 .contains(request.getProcedureDescriptionFormat())) {
-            Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter = converterRepository.getConverter(
-                    procedureDescription.getDescriptionFormat(), request.getProcedureDescriptionFormat());
+            Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter =
+                    converterRepository.getConverter(procedureDescription.getDescriptionFormat(),
+                            request.getProcedureDescriptionFormat());
             if (converter != null) {
                 try {
                     return converter.convert(procedureDescription);

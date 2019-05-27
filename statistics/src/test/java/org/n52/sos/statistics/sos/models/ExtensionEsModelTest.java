@@ -40,20 +40,25 @@ import org.n52.shetland.ogc.swes.SwesExtension;
 
 public class ExtensionEsModelTest {
 
+    private static final String IDENTIFIER = "identifier";
+
+    private static final String DEFINITION = "definition";
+
     @Test
     public void transformExtensionToEsModel() {
         SweBoolean bool = new SweBoolean();
         bool.setValue(true);
         Extension<SweBoolean> ext = new SwesExtension<>(bool);
-        ext.setDefinition("definition");
-        ext.setIdentifier("identifier");
+        ext.setDefinition(DEFINITION);
+        ext.setIdentifier(IDENTIFIER);
         ext.setNamespace("namespace");
 
         Map<String, Object> map = ExtensionEsModel.convert(ext);
 
-        Assert.assertEquals("SweBoolean [value=true; quality=null; simpleType=Boolean]", map.get(ObjectEsParameterFactory.EXTENSION_VALUE.getName()));
-        Assert.assertEquals("definition", map.get(ObjectEsParameterFactory.EXTENSION_DEFINITION.getName()));
-        Assert.assertEquals("identifier", map.get(ObjectEsParameterFactory.EXTENSION_IDENTIFIER.getName()));
+        Assert.assertEquals("SweBoolean [value=true; quality=null; simpleType=Boolean]",
+                map.get(ObjectEsParameterFactory.EXTENSION_VALUE.getName()));
+        Assert.assertEquals(DEFINITION, map.get(ObjectEsParameterFactory.EXTENSION_DEFINITION.getName()));
+        Assert.assertEquals(IDENTIFIER, map.get(ObjectEsParameterFactory.EXTENSION_IDENTIFIER.getName()));
     }
 
     @Test

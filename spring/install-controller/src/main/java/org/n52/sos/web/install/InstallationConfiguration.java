@@ -54,11 +54,11 @@ public class InstallationConfiguration {
 
     private Datasource datasource;
 
-    private boolean createSchema = false;
+    private boolean createSchema;
 
-    private boolean dropSchema = false;
+    private boolean dropSchema;
 
-    private boolean forceUpdateSchema = false;
+    private boolean forceUpdateSchema;
 
     public InstallationConfiguration() {
     }

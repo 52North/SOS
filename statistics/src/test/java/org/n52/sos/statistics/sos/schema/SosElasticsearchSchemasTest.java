@@ -47,6 +47,7 @@ public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
             getEmbeddedClient().admin().indices().prepareDelete(idx).get();
             Thread.sleep(3000);
         } catch (ElasticsearchException e) {
+            logger.error("Error while setting up the test!", e);
         }
     }
 

@@ -42,24 +42,28 @@ import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 
 public class OmObservationConstellationEsModelTest {
 
+    private static final String ID = "id";
+    private static final String FOI = "foi";
+    private static final String OBS_TYPE = "obstype";
+
     @Test
     public void validateAllFields() {
         OmObservationConstellation obs = new OmObservationConstellation();
-        obs.setProcedure(new SosProcedureDescriptionUnknownType("id", "format", "xml"));
-        obs.setObservableProperty(new OmObservableProperty("id", "desc", "unit", "value"));
+        obs.setProcedure(new SosProcedureDescriptionUnknownType(ID, "format", "xml"));
+        obs.setObservableProperty(new OmObservableProperty(ID, "desc", "unit", "value"));
         obs.setFeatureOfInterest(new OmObservation() {
             {
-                setIdentifier("foi");
+                setIdentifier(FOI);
             }
         });
-        obs.setObservationType("obstype");
+        obs.setObservationType(OBS_TYPE);
 
         Map<String, Object> map = OmObservationConstellationEsModel.convert(obs);
 
-        Assert.assertEquals("id", map.get(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE.getName()));
-        Assert.assertEquals("id", map.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY.getName()));
-        Assert.assertEquals("obstype", map.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE.getName()));
-        Assert.assertEquals("foi", map.get(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST.getName()));
+        Assert.assertEquals(ID, map.get(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE.getName()));
+        Assert.assertEquals(ID, map.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY.getName()));
+        Assert.assertEquals(OBS_TYPE, map.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE.getName()));
+        Assert.assertEquals(FOI, map.get(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST.getName()));
     }
 
     @Test

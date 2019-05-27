@@ -79,7 +79,7 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
     private JsonNode encode(InstallationConfiguration c, Map<String, Datasource> dialects) throws JSONException {
         ObjectNode node = Json.nodeFactory().objectNode();
         JsonSettingsEncoder enc = getSettingsEncoder();
-        getOrderedDialects(dialects.keySet()).forEach((dialect) -> {
+        getOrderedDialects(dialects.keySet()).forEach(dialect -> {
             boolean selected = false;
             if (c.getDatasource() != null && c.getDatasource().getDialectName().equals(dialect)) {
                 selected = true;

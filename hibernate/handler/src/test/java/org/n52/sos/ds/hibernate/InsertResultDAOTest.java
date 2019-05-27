@@ -47,6 +47,8 @@ public class InsertResultDAOTest
     private static final String OBS_PROP_1 = "obsProp_1";
     private static final String OBS_PROP_2 = "obsProp_2";
     private static final String OBS_PROP_3 = "obsProp_3";
+    private static final String TEST = "test";
+    private static final String COMPLEX_OBSERVATION = "complexObservation";
 
     private InsertResultHandler insertResultDAO = new InsertResultHandler();
 
@@ -83,28 +85,28 @@ public class InsertResultDAOTest
     private SweDataRecord createRecord() {
         SweDataRecord record = new SweDataRecord();
         record.addField(new SweField("phenomenonTime",
-                new SweTimeRange().setUom("test").setDefinition(OmConstants.PHENOMENON_TIME)));
+                new SweTimeRange().setUom(TEST).setDefinition(OmConstants.PHENOMENON_TIME)));
         return record;
     }
 
     private SweDataRecord createRecordWithSimpleObservation() {
         SweDataRecord record = createRecord();
-        record.addField(new SweField("obsProp_1", new SweQuantity().setUom("test").setDefinition(OBS_PROP_1)));
+        record.addField(new SweField(OBS_PROP_1, new SweQuantity().setUom(TEST).setDefinition(OBS_PROP_1)));
         return record;
     }
 
     private SweDataRecord createRecordWithComplexObservation() {
         SweDataRecord record = createRecord();
-        record.addField(new SweField("complexObservation", createComplexObservationRecord()));
+        record.addField(new SweField(COMPLEX_OBSERVATION, createComplexObservationRecord()));
         return record;
     }
 
     private SweDataRecord createComplexObservationRecord() {
         SweDataRecord record = new SweDataRecord();
-        record.setDefinition("complexObservation");
-        record.addField(new SweField(OBS_PROP_1, new SweQuantity().setUom("test").setDefinition(OBS_PROP_1)));
-        record.addField(new SweField(OBS_PROP_2, new SweQuantity().setUom("test").setDefinition(OBS_PROP_2)));
-        record.addField(new SweField(OBS_PROP_3, new SweQuantity().setUom("test").setDefinition(OBS_PROP_3)));
+        record.setDefinition(COMPLEX_OBSERVATION);
+        record.addField(new SweField(OBS_PROP_1, new SweQuantity().setUom(TEST).setDefinition(OBS_PROP_1)));
+        record.addField(new SweField(OBS_PROP_2, new SweQuantity().setUom(TEST).setDefinition(OBS_PROP_2)));
+        record.addField(new SweField(OBS_PROP_3, new SweQuantity().setUom(TEST).setDefinition(OBS_PROP_3)));
         return record;
     }
 }

@@ -32,7 +32,10 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.DeleteDeletedObservationDAO;
+import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,11 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.ds.DeleteDeletedObservationDAO;
-import org.n52.sos.web.common.ControllerConstants;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

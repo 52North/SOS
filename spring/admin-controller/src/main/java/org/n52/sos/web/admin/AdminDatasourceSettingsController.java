@@ -41,15 +41,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
-import org.n52.faroe.SettingType;
 import org.n52.faroe.SettingValue;
 import org.n52.faroe.SettingValueFactory;
-import org.n52.faroe.SettingsService;
 import org.n52.faroe.json.JsonSettingsEncoder;
 import org.n52.iceland.exception.JSONException;
 import org.n52.janmayen.Json;
-import org.n52.sos.context.ContextSwitcher;
-import org.n52.sos.service.DriverCleanupListener;
 import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,9 +65,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @Controller
 @RequestMapping(ControllerConstants.Paths.ADMIN_DATABASE_SETTINGS)
 public class AdminDatasourceSettingsController extends AbstractDatasourceController {
-    private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceSettingsController.class);
-
     public static final String SETTINGS = "settings";
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminDatasourceSettingsController.class);
 
     @Inject
     private SettingValueFactory settingValueFactory;
@@ -183,38 +179,38 @@ public class AdminDatasourceSettingsController extends AbstractDatasourceControl
     protected void setDefaultValue(SettingDefinition<?> def, Object val) {
         if (val != null) {
             switch (def.getType()) {
-            case BOOLEAN:
-                SettingDefinition<Boolean> bsd = (SettingDefinition<Boolean>) def;
-                bsd.setDefaultValue((Boolean) val);
-                break;
-            case FILE:
-                SettingDefinition<File> fsd = (SettingDefinition<File>) def;
-                fsd.setDefaultValue((File) val);
-                break;
-            case INTEGER:
-                SettingDefinition<Integer> isd = (SettingDefinition<Integer>) def;
-                isd.setDefaultValue((Integer) val);
-                break;
-            case NUMERIC:
-                SettingDefinition<Double> dsd = (SettingDefinition<Double>) def;
-                dsd.setDefaultValue((Double) val);
-                break;
-            case STRING:
-                SettingDefinition<String> ssd = (SettingDefinition<String>) def;
-                ssd.setDefaultValue((String) val);
-                break;
-            case URI:
-                SettingDefinition<URI> usd = (SettingDefinition<URI>) def;
-                usd.setDefaultValue((URI) val);
-                break;
-            case CHOICE:
-                break;
-            case MULTILINGUAL_STRING:
-                break;
-            case TIMEINSTANT:
-                break;
-            default:
-                break;
+                case BOOLEAN:
+                    SettingDefinition<Boolean> bsd = (SettingDefinition<Boolean>) def;
+                    bsd.setDefaultValue((Boolean) val);
+                    break;
+                case FILE:
+                    SettingDefinition<File> fsd = (SettingDefinition<File>) def;
+                    fsd.setDefaultValue((File) val);
+                    break;
+                case INTEGER:
+                    SettingDefinition<Integer> isd = (SettingDefinition<Integer>) def;
+                    isd.setDefaultValue((Integer) val);
+                    break;
+                case NUMERIC:
+                    SettingDefinition<Double> dsd = (SettingDefinition<Double>) def;
+                    dsd.setDefaultValue((Double) val);
+                    break;
+                case STRING:
+                    SettingDefinition<String> ssd = (SettingDefinition<String>) def;
+                    ssd.setDefaultValue((String) val);
+                    break;
+                case URI:
+                    SettingDefinition<URI> usd = (SettingDefinition<URI>) def;
+                    usd.setDefaultValue((URI) val);
+                    break;
+                case CHOICE:
+                    break;
+                case MULTILINGUAL_STRING:
+                    break;
+                case TIMEINSTANT:
+                    break;
+                default:
+                    break;
             }
         }
     }

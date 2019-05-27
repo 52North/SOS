@@ -111,7 +111,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     private static final int PORT = 2;
 
     private static final int HOST = 1;
-    
+
     private static final String ALTER_TABLE = "ALTER TABLE \"";
 
     public AbstractSqlServerDatasource() {

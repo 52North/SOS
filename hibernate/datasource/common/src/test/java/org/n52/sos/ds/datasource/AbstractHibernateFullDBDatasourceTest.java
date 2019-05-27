@@ -58,7 +58,7 @@ public class AbstractHibernateFullDBDatasourceTest
     private static int CHANGEABLE_COUNT = 10;
 
     private static int MAX_COUNT = 17;
-    
+
     private AbstractHibernateFullDBDatasource ds;
 
     @Override

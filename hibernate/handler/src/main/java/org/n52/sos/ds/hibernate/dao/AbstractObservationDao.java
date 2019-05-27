@@ -82,12 +82,19 @@ import com.google.common.base.Strings;
 @Configurable
 public abstract class AbstractObservationDao {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDao.class);
-    private EncoderRepository encoderRepository;
-    private Integer maxNumberOfReturnedTimeSeries = -1;
-    private Integer maxNumberOfReturnedValues = -1;
-    private int chunkSize;
+    private static final String LOG_BINARY_LOGIC_INVALID = "The requested binary logic filter operator is invalid!";
 
+    private static final String LOG_RESULT_FILTER_NOT_SUPPORTED = "The requested result filter is not supported!";
+
+    private final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDao.class);
+
+    private EncoderRepository encoderRepository;
+
+    private Integer maxNumberOfReturnedTimeSeries = -1;
+
+    private Integer maxNumberOfReturnedValues = -1;
+
+    private int chunkSize;
 
     @Inject
     public void setEncoderRepository(EncoderRepository encoderRepository) {
@@ -136,15 +143,16 @@ public abstract class AbstractObservationDao {
      * Get ObservationConstellations and check if size limit is exceeded
      *
      * @param request
-     *                GetObservation request
+     *            GetObservation request
      * @param session
-     *                Hibernate session
+     *            Hibernate session
      *
      * @return List of {@link ObservationConstellation}
      * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    public List<DatasetEntity> getAndCheckObservationConstellationSize(
-            GetObservationRequest request, DaoFactory daoFactory, Session session) throws OwsExceptionReport {
+    public List<DatasetEntity> getAndCheckObservationConstellationSize(GetObservationRequest request,
+            DaoFactory daoFactory, Session session) throws OwsExceptionReport {
         List<DatasetEntity> observationConstellations = getObservationConstellations(session, request, daoFactory);
         checkMaxNumberOfReturnedSeriesSize(observationConstellations.size());
         return observationConstellations;
@@ -154,18 +162,18 @@ public abstract class AbstractObservationDao {
      * Check if the max number of returned time series is exceeded
      *
      * @param seriesObservations
-     *                                  Observations to check
+     *            Observations to check
      * @param metadataObservationsCount
-     *                                  Count of metadata observations
+     *            Count of metadata observations
      *
      * @throws CodedException
-     *                        If the size limit is exceeded
+     *             If the size limit is exceeded
      */
     public void checkMaxNumberOfReturnedTimeSeries(Collection<? extends DataEntity<?>> seriesObservations,
-                                                          int metadataObservationsCount) throws CodedException {
+            int metadataObservationsCount) throws CodedException {
         if (getMaxNumberOfReturnedTimeSeries() > 0) {
-            Set<Long> seriesIds = seriesObservations.stream()
-                    .map(DataEntity::getDataset).map(DatasetEntity::getId).collect(Collectors.toSet());
+            Set<Long> seriesIds = seriesObservations.stream().map(DataEntity::getDataset).map(DatasetEntity::getId)
+                    .collect(Collectors.toSet());
             checkMaxNumberOfReturnedSeriesSize(seriesIds.size() + metadataObservationsCount);
         }
     }
@@ -174,10 +182,10 @@ public abstract class AbstractObservationDao {
      * Check if the size limit is exceeded
      *
      * @param size
-     *             The size limit to check
+     *            The size limit to check
      *
      * @throws CodedException
-     *                        If the size limit is exceeded
+     *             If the size limit is exceeded
      */
     public void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
@@ -190,10 +198,10 @@ public abstract class AbstractObservationDao {
      * Check if the max number of returned values is exceeded
      *
      * @param size
-     *             Max number count
+     *            Max number count
      *
      * @throws CodedException
-     *                        If the size limit is exceeded
+     *             If the size limit is exceeded
      */
     public void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
@@ -210,13 +218,9 @@ public abstract class AbstractObservationDao {
     }
 
     public List<String> getAndCheckFeatureOfInterest(DatasetEntity observationConstellation,
-                                                            Set<String> featureIdentifier,
-                                                            DaoFactory  daoFactory,
-                                                            Session session)
-            throws OwsExceptionReport {
+            Set<String> featureIdentifier, DaoFactory daoFactory, Session session) throws OwsExceptionReport {
         FeatureOfInterestDAO dao = daoFactory.getFeatureOfInterestDAO();
-        final List<String> featuresForConstellation = dao
-                .getIdentifiers(observationConstellation, session);
+        final List<String> featuresForConstellation = dao.getIdentifiers(observationConstellation, session);
         if (featureIdentifier == null) {
             return featuresForConstellation;
         } else {
@@ -225,11 +229,9 @@ public abstract class AbstractObservationDao {
     }
 
     public ObservationStream toSosObservation(Collection<DataEntity<?>> observations,
-                                                       AbstractObservationRequest request,
-                                                       Locale language,
-                                                       String pdf,
-                                                       OmObservationCreatorContext observationCreatorContext,
-                                                       Session session) throws OwsExceptionReport, ConverterException {
+            AbstractObservationRequest request, Locale language, String pdf,
+            OmObservationCreatorContext observationCreatorContext, Session session)
+            throws OwsExceptionReport, ConverterException {
         if (observations.isEmpty()) {
             return ObservationStream.empty();
         }
@@ -238,22 +240,18 @@ public abstract class AbstractObservationDao {
                 new HashSet<>(observations), request, language, pdf, observationCreatorContext, session);
 
         LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
-                                                                     (System.currentTimeMillis() - startProcess));
+                System.currentTimeMillis() - startProcess);
         return sosObservations;
     }
 
-    public OmObservation toSosObservation(DataEntity<?> observation,
-                                                 AbstractObservationRequest request,
-                                                 Locale language,
-                                                 String pdf,
-                                                 OmObservationCreatorContext observationCreatorContext,
-                                                 Session session)
+    public OmObservation toSosObservation(DataEntity<?> observation, AbstractObservationRequest request,
+            Locale language, String pdf, OmObservationCreatorContext observationCreatorContext, Session session)
             throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
-            OmObservation sosObservation = HibernateObservationUtilities
-                    .createSosObservationFromObservation(observation, request, language, pdf, observationCreatorContext, session);
-            LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
+            OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(
+                    observation, request, language, pdf, observationCreatorContext, session);
+            LOGGER.debug("Time to process one observation needs {} ms!", System.currentTimeMillis() - startProcess);
             return sosObservation;
         }
         return null;
@@ -263,12 +261,12 @@ public abstract class AbstractObservationDao {
      * Add a result filter to the Criteria
      *
      * @param c
-     *                     Hibernate criteria
+     *            Hibernate criteria
      * @param resultFilter
-     *                     Result filter to add
+     *            Result filter to add
      *
      * @throws CodedException
-     *                        If the requested filter is not supported!
+     *             If the requested filter is not supported!
      */
     @SuppressWarnings("rawtypes")
     public void addResultFilterToCriteria(Criteria c, Filter resultFilter) throws CodedException {
@@ -279,7 +277,7 @@ public abstract class AbstractObservationDao {
             Junction junction;
             if (null == binaryLogicFilter.getOperator()) {
                 throw new NoApplicableCodeException()
-                        .withMessage("The requested binary logic filter operator is invalid!");
+                        .withMessage(LOG_BINARY_LOGIC_INVALID);
             }
             switch (binaryLogicFilter.getOperator()) {
                 case And:
@@ -290,17 +288,17 @@ public abstract class AbstractObservationDao {
                     break;
                 default:
                     throw new NoApplicableCodeException()
-                            .withMessage("The requested binary logic filter operator is invalid!");
+                        .withMessage(LOG_BINARY_LOGIC_INVALID);
             }
             for (Filter<?> filterPredicate : binaryLogicFilter.getFilterPredicates()) {
                 if (!(filterPredicate instanceof ComparisonFilter)) {
-                    throw new NoApplicableCodeException().withMessage("The requested result filter is not supported!");
+                    throw new NoApplicableCodeException().withMessage(LOG_RESULT_FILTER_NOT_SUPPORTED);
                 }
                 junction.add(getCriterionForComparisonFilter((ComparisonFilter) filterPredicate));
             }
             c.add(junction);
         } else {
-            throw new NoApplicableCodeException().withMessage("The requested result filter is not supported!");
+            throw new NoApplicableCodeException().withMessage(LOG_RESULT_FILTER_NOT_SUPPORTED);
         }
     }
 
@@ -308,27 +306,27 @@ public abstract class AbstractObservationDao {
      * Get the Hibernate Criterion for the requested result filter
      *
      * @param resultFilter
-     *                     Requested result filter
+     *            Requested result filter
      *
      * @return Hibernate Criterion
      *
      * @throws CodedException
-     *                        If the requested result filter is not supported
+     *             If the requested result filter is not supported
      */
     public Criterion getCriterionForComparisonFilter(ComparisonFilter resultFilter) throws CodedException {
         if (FilterConstants.ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
                 return HibernateCriterionHelper.getLikeExpression(DatasetEntity.DESCRIPTION,
-                                                                  checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
+                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
             } else {
                 return Restrictions.like(DatasetEntity.DESCRIPTION,
-                                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
+                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
             }
         } else {
             throw new NoApplicableCodeException().withMessage(
-                    "The requested comparison filter {} is not supported! Only {} is supported!", resultFilter
-                            .getOperator().name(), FilterConstants.ComparisonOperator.PropertyIsLike.name());
+                    "The requested comparison filter {} is not supported! Only {} is supported!",
+                    resultFilter.getOperator().name(), FilterConstants.ComparisonOperator.PropertyIsLike.name());
         }
     }
 
@@ -338,7 +336,7 @@ public abstract class AbstractObservationDao {
      * default values.
      *
      * @param resultFilter
-     *                     Requested result filter
+     *            Requested result filter
      *
      * @return Modified request string with default character.
      */
@@ -360,18 +358,18 @@ public abstract class AbstractObservationDao {
      * Check if the requested value reference is supported.
      *
      * @param valueReference
-     *                       Requested value reference
+     *            Requested value reference
      *
      * @throws CodedException
-     *                        If the requested value reference is not supported.
+     *             If the requested value reference is not supported.
      */
     public void checkValueReferenceForResultFilter(String valueReference) throws CodedException {
         if (Strings.isNullOrEmpty(valueReference)) {
             throw new NoApplicableCodeException().withMessage(
                     "The requested valueReference is missing! The valueReference should be %s/%s!",
                     OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
-        } else if (!valueReference.startsWith(OmConstants.VALUE_REF_OM_OBSERVATION) &&
-                 !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION)) {
+        } else if (!valueReference.startsWith(OmConstants.VALUE_REF_OM_OBSERVATION)
+                && !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION)) {
             throw new NoApplicableCodeException().withMessage(
                     "The requested valueReference is not supported! Currently only %s/%s is supported",
                     OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
@@ -382,16 +380,16 @@ public abstract class AbstractObservationDao {
      * Get ObervationConstellation from requested parameters
      *
      * @param session
-     *                Hibernate session
+     *            Hibernate session
      * @param request
-     *                GetObservation request
+     *            GetObservation request
      *
      * @return Resulting ObservationConstellation entities
      * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    public List<DatasetEntity> getObservationConstellations(final Session session,
-                                                                              final GetObservationRequest request,
-                                                                              DaoFactory daoFactory) throws OwsExceptionReport {
+    public List<DatasetEntity> getObservationConstellations(final Session session, final GetObservationRequest request,
+            DaoFactory daoFactory) throws OwsExceptionReport {
         return daoFactory.getSeriesDAO().getSeries(request, request.getFeatureIdentifiers(), session);
     }
 
@@ -399,12 +397,12 @@ public abstract class AbstractObservationDao {
      * Get Hibernate Criterion from requested temporal filters
      *
      * @param request
-     *                GetObservation request
+     *            GetObservation request
      *
      * @return Hibernate Criterion from requested temporal filters
      *
      * @throws OwsExceptionReport
-     *                            If a temporal filter is not supported
+     *             If a temporal filter is not supported
      */
     public Criterion getTemporalFilterCriterion(final GetObservationRequest request) throws OwsExceptionReport {
 
@@ -421,7 +419,7 @@ public abstract class AbstractObservationDao {
      * observations with the same timeseries.
      *
      * @param responseFormat
-     *                       Response format
+     *            Response format
      *
      * @return <code>true</code>, if the {@link ObservationEncoder} demands for
      *         merging of observations with the same timeseries.

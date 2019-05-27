@@ -68,13 +68,15 @@ public abstract class AbstractSosRequestHandler<T extends OwsServiceRequest>
         put(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD, ip);
         put(ServiceEventDataMapping.SR_GEO_LOC_FIELD, locationUtil.ip2SpatialData(ip));
         if (request.getRequestContext() != null) {
-            put(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD, request.getRequestContext().getForwardedForChain().isPresent());
+            put(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD,
+                    request.getRequestContext().getForwardedForChain().isPresent());
             put(ServiceEventDataMapping.SR_CONTENT_TYPE, request.getRequestContext().getContentType().orElse(null));
             put(ServiceEventDataMapping.SR_ACCEPT_TYPES, request.getRequestContext().getAcceptType().orElse(null));
         }
         // extensions
         if (request.getExtensions() != null && request.getExtensions().getExtensions() != null) {
-            put(ServiceEventDataMapping.SR_EXTENSIONS, ExtensionEsModel.convert(request.getExtensions().getExtensions()));
+            put(ServiceEventDataMapping.SR_EXTENSIONS,
+                    ExtensionEsModel.convert(request.getExtensions().getExtensions()));
         }
         return this;
     }

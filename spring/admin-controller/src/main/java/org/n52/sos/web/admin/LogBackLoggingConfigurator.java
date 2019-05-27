@@ -57,6 +57,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.util.FileIOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -66,10 +68,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import org.n52.faroe.ConfigurationError;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.util.FileIOHelper;
 
 /**
  * @since 4.0.0
@@ -98,15 +96,17 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
     private static final String UNPARSABLE_ERROR_MESSAGE = "Can't parse configuration file.";
     private static final String UNWRITABLE_ERROR_MESSAGE = "Can't write configuration file.";
     private static final String LOG_FILE_NOT_FOUND_ERROR_MESSAGE = "Log file could not be found";
+    private static final String LOG_SETTING_LOG_LEVEL = "Setting logging level of {} to {}.";
+    private static final String LOG_COULD_NOT_READ_LOG_FILE = "Could not read log file";
     private static final int WRITE_DELAY = 4000;
     private static final Pattern PROPERTY_MATCHER = Pattern.compile("\\$\\{([^}]+)\\}");
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 
-    private Document cache = null;
+    private Document cache;
 
-    private File configuration = null;
+    private File configuration;
 
-    private DelayedWriteThread delayedWriteThread = null;
+    private DelayedWriteThread delayedWriteThread;
 
     public LogBackLoggingConfigurator() throws ConfigurationError {
         this(CONFIGURATION_FILE_NAME);
@@ -171,6 +171,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                     try {
                         before = Integer.parseInt(maxHistory.getTextContent());
                     } catch (NumberFormatException e) {
+                        LOG.error("Error while parsing max history!", e);
                     }
                     if (before != days) {
                         LOG.debug("Setting max logging history to {} days.", days);
@@ -327,7 +328,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 }
             }
             if (l == null) {
-                LOG.debug("Setting logging level of {} to {}.", id, level);
+                LOG.debug(LOG_SETTING_LOG_LEVEL, id, level);
                 l = doc.createElement(EN_LOGGER);
                 l.setAttribute(AN_NAME, id);
                 l.setAttribute(AN_LEVEL, level.name());
@@ -336,7 +337,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             } else {
                 String oldLevel = l.getAttribute(AN_LEVEL);
                 if (!oldLevel.equals(level.name())) {
-                    LOG.debug("Setting logging level of {} to {}.", id, level);
+                    LOG.debug(LOG_SETTING_LOG_LEVEL, id, level);
                     l.setAttribute(AN_LEVEL, level.name());
                     write();
                 }
@@ -378,7 +379,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 } else {
                     Element l = currentLoggers.get(logger);
                     if (l == null) {
-                        LOG.debug("Setting logging level of {} to {}.", logger, levels.get(logger));
+                        LOG.debug(LOG_SETTING_LOG_LEVEL, logger, levels.get(logger));
                         l = doc.createElement(EN_LOGGER);
                         l.setAttribute(AN_NAME, logger);
                         l.setAttribute(AN_LEVEL, levels.get(logger).name());
@@ -387,7 +388,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                     } else {
                         String oldLevel = l.getAttribute(AN_LEVEL);
                         if (!oldLevel.equals(levels.get(logger).name())) {
-                            LOG.debug("Setting logging level of {} to {}.", logger, levels.get(logger));
+                            LOG.debug(LOG_SETTING_LOG_LEVEL, logger, levels.get(logger));
                             l.setAttribute(AN_LEVEL, levels.get(logger).name());
                             write = true;
                         }
@@ -473,6 +474,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                                     Integer.parseInt(getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
                                                                        EN_MAX_HISTORY).getTextContent());
                         } catch (NumberFormatException e) {
+                            LOG.error("Error while parsing integer!", e);
                         }
                     }
                 }
@@ -498,8 +500,8 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                         maxFileSize =
                                 getSingleChildren(
                                         getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
-                                                          EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY), EN_MAX_FILE_SIZE)
-                                        .getTextContent();
+                                                EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY),
+                                        EN_MAX_FILE_SIZE).getTextContent();
                     }
                 }
             } catch (ConfigurationError e) {
@@ -550,7 +552,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             try {
                 return FileIOHelper.tail(f, maxSize);
             } catch (IOException ex) {
-                LOG.error("Could not read log file", ex);
+                LOG.error(LOG_COULD_NOT_READ_LOG_FILE, ex);
             }
         }
         return Collections.emptyList();
@@ -614,7 +616,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             try {
                 return new FileInputStream(f);
             } catch (FileNotFoundException ex) {
-                LOG.error("Could not read log file", ex);
+                LOG.error(LOG_COULD_NOT_READ_LOG_FILE, ex);
             }
         }
         return null;
@@ -636,7 +638,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
 
     private class DelayedWriteThread extends Thread {
         private final Document doc;
-        private boolean canceled = false;
+        private boolean canceled;
 
         DelayedWriteThread(Document doc) {
             this.doc = doc;
@@ -652,6 +654,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                     }
                 }
             } catch (InterruptedException e) {
+                LOG.error("Write delay thread was interrupted!", e);
             }
         }
 

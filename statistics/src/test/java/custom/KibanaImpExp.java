@@ -44,17 +44,16 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import basetest.TestNode;
-
 public class KibanaImpExp {
 
     @Test
     public void exportSettings() throws IOException {
         Builder settingsBuilder = Settings.settingsBuilder();
-//        Builder settingsBuilder = Settings.builder();
+        // Builder settingsBuilder = Settings.builder();
         settingsBuilder.put("discovery.zen.ping.unicast.hosts", "localhost");
-        Node node = NodeBuilder.nodeBuilder().client(true).settings(settingsBuilder).clusterName("ogc-statistics-cluster").node();
-//        Node node = new TestNode(settingsBuilder.build());
+        Node node = NodeBuilder.nodeBuilder().client(true).settings(settingsBuilder)
+                .clusterName("ogc-statistics-cluster").node();
+        // Node node = new TestNode(settingsBuilder.build());
         Client c = node.client();
 
         KibanaConfigHolder holder = new KibanaConfigHolder();
@@ -95,8 +94,11 @@ public class KibanaImpExp {
 
     public static class KibanaConfigEntry {
         private String index;
+
         private String type;
+
         private String id;
+
         private String source;
 
         public KibanaConfigEntry(String index, String type, String id, String source) {

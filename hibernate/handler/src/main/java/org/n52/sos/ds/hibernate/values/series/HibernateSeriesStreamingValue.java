@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
-import org.hibernate.Session;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -41,7 +40,6 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
-import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +54,13 @@ import org.slf4j.LoggerFactory;
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
+
     protected final AbstractSeriesValueDAO seriesValueDAO;
+
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
+
     protected final AbstractSeriesDAO seriesDAO;
+
     protected long series;
 
     /**
@@ -70,7 +72,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
             AbstractObservationRequest request, long series, BindingRepository bindingRepository)
@@ -88,10 +90,11 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
             if (session == null) {
                 session = sessionHolder.getSession();
             }
-            ObservationTimeExtrema timeExtrema =
-                    seriesValueTimeDAO.getTimeExtremaForSeries((GetObservationRequest)request, series, temporalFilterCriterion, session);
+            ObservationTimeExtrema timeExtrema = seriesValueTimeDAO.getTimeExtremaForSeries(
+                    (GetObservationRequest) request, series, temporalFilterCriterion, session);
             if (timeExtrema.isSetPhenomenonTimes()) {
-                setPhenomenonTime(GmlHelper.createTime(timeExtrema.getMinPhenomenonTime(), timeExtrema.getMaxPhenomenonTime()));
+                setPhenomenonTime(
+                        GmlHelper.createTime(timeExtrema.getMinPhenomenonTime(), timeExtrema.getMaxPhenomenonTime()));
             }
             if (timeExtrema.isSetResultTimes()) {
                 setResultTime(new TimeInstant(timeExtrema.getMaxResultTime()));

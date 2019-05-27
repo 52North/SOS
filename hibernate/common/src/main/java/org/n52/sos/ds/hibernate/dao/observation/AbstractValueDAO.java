@@ -71,6 +71,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
     public AbstractValueDAO(GeometryHandler geometryHandler) {
         this.geometryHandler = geometryHandler;
     }
+
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
      * criteria
@@ -81,7 +82,8 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            GetObservationRequest request
      * @param session
      *            Hiberante Session
-     * @param logArgs log arguments
+     * @param logArgs
+     *            log arguments
      * @throws OwsExceptionReport
      *             If Spatial Filteirng Profile is not supported or an error
      *             occurs.
@@ -206,8 +208,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Chunk size
      * @param currentRow
      *            Start row
-     * @param request the request
-     * @param logArgs log arguments
+     * @param request
+     *            the request
+     * @param logArgs
+     *            log arguments
      */
     protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow,
             AbstractObservationRequest request, StringBuilder logArgs) {

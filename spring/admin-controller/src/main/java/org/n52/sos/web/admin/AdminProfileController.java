@@ -56,8 +56,11 @@ import com.google.common.collect.Lists;
 public class AdminProfileController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminProfileController.class);
+
     private static final String ACTIVE = "active";
+
     private static final String PROFILES = "profiles";
+
     private ProfileHandler profileHandler;
 
     protected ProfileHandler getProfileHandler() {
@@ -68,7 +71,6 @@ public class AdminProfileController {
     public void setProfileHandler(ProfileHandler profileHandler) {
         this.profileHandler = profileHandler;
     }
-
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
@@ -93,14 +95,17 @@ public class AdminProfileController {
         getProfileHandler().activateProfile(identifier);
     }
 
-//    @ResponseStatus(HttpStatus.OK)
-//    @RequestMapping(value = "/description", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public String getProfileDefinition(@RequestParam("identifier") String identifier) throws OwsExceptionReport {
-//        ObjectNode response = JSONUtils.nodeFactory().objectNode();
-//        ObjectNode staticCapabilities = response.putObject("description");
-//        staticCapabilities.put(identifier, getProfileHandler().getAvailableProfiles().get(identifier).getDefinition());
-//        return response.toString();
-//    }
+    // @ResponseStatus(HttpStatus.OK)
+    // @RequestMapping(value = "/description", method = RequestMethod.GET,
+    // produces = MediaType.APPLICATION_JSON_VALUE)
+    // public String getProfileDefinition(@RequestParam("identifier") String
+    // identifier) throws OwsExceptionReport {
+    // ObjectNode response = JSONUtils.nodeFactory().objectNode();
+    // ObjectNode staticCapabilities = response.putObject("description");
+    // staticCapabilities.put(identifier,
+    // getProfileHandler().getAvailableProfiles().get(identifier).getDefinition());
+    // return response.toString();
+    // }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/reload", method = RequestMethod.GET)

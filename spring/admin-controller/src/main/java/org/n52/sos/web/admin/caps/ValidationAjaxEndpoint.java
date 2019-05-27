@@ -37,6 +37,10 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
+import org.n52.janmayen.Json;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.svalbard.util.XmlHelper;
+import org.n52.svalbard.util.XmlHelper.LaxValidationCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,11 +51,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import org.n52.janmayen.Json;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.svalbard.util.XmlHelper;
-import org.n52.svalbard.util.XmlHelper.LaxValidationCase;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -64,23 +63,28 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST,
+                    consumes = MediaType.APPLICATION_XML_VALUE,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     public String validate(@RequestBody String xml) {
         LOGGER.trace("Starting validation");
         ObjectNode result = Json.nodeFactory().objectNode();
         ArrayNode resultErrors = result.putArray(ERRORS_PROPERTY);
         LinkedList<XmlError> xmlErrors = new LinkedList<>();
-        XmlOptions options = new XmlOptions().setErrorListener(xmlErrors).setLoadLineNumbers(XmlOptions.LOAD_LINE_NUMBERS_END_ELEMENT);
+        XmlOptions options = new XmlOptions().setErrorListener(xmlErrors)
+                .setLoadLineNumbers(XmlOptions.LOAD_LINE_NUMBERS_END_ELEMENT);
         try {
             XmlObject x = XmlObject.Factory.parse(xml, options);
             result.put(VALID_PROPERTY, x.validate(options));
         } catch (XmlException ex) {
-            resultErrors.add("Could not parse XML document: "+ ex.getMessage());
+            resultErrors.add("Could not parse XML document: " + ex.getMessage());
         }
         /*
-         * TODO Re-do error handling in XMLHelper and remove the next block. Use XMLHelper.validate and not the xmlbeans version
-         * BLOCK taken from XMLHelper -> needs re-do because the current XMLHelper.validate()
-         * does not return errors and does not provide any means to access errors after validation
+         * TODO Re-do error handling in XMLHelper and remove the next block. Use
+         * XMLHelper.validate and not the xmlbeans version BLOCK taken from
+         * XMLHelper -> needs re-do because the current XMLHelper.validate()
+         * does not return errors and does not provide any means to access
+         * errors after validation
          */
         // START of BLOCK
         Iterator<XmlError> iter = xmlErrors.iterator();
@@ -108,9 +112,9 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
         }
         // END of BLOCK
         // uncomment next lines if BLOCK is removed
-//        for (XmlError e : xmlErrors) {
-//            resultErrors.put(e.toString());
-//        }
+        // for (XmlError e : xmlErrors) {
+        // resultErrors.put(e.toString());
+        // }
         LOGGER.trace("Finishing validation");
         return result.toString();
     }

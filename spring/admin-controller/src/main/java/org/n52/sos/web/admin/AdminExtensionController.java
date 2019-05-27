@@ -34,6 +34,17 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.exception.JSONException;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
+import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.JSONConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,31 +54,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.faroe.ConfigurationError;
-import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
-import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderRepository;
-import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
-import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
-import org.n52.shetland.ogc.ows.service.OwsServiceKey;
-import org.n52.janmayen.Json;
-import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.JSONConstants;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Admin controller for extensions
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
  */
 @Controller
 public class AdminExtensionController extends AbstractAdminController {
-
 
     @Inject
     private SosObservationOfferingExtensionRepository offeringExtensionRepository;
@@ -95,7 +94,9 @@ public class AdminExtensionController extends AbstractAdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_EXTENSIONS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_EXTENSIONS_JSON_ENDPOINT,
+                    method = RequestMethod.GET,
+                    produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String getAll() throws JSONException, ConnectionProviderException {
         ObjectNode node = Json.nodeFactory().objectNode();
         node.set(JSONConstants.EXTENDED_CAPABILITIES_EXTENSION_KEY, getExtendedCapabilitiesExtensions());
@@ -104,45 +105,47 @@ public class AdminExtensionController extends AbstractAdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = ControllerConstants.Paths.ADMIN_EXTENSIONS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_EXTENSIONS_JSON_ENDPOINT,
+                    method = RequestMethod.POST,
+                    consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public void change(@RequestBody String request) throws JSONException, ConnectionProviderException, IOException {
         JsonNode json = Json.loadString(request);
 
         if (json.has(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY)) {
-            OwsServiceKey sokt =
-                    new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
-                            json.path(JSONConstants.VERSION_KEY).asText());
-            OwsOperationMetadataExtensionProviderKey oeckt = new OwsOperationMetadataExtensionProviderKey(sokt, json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
+            OwsServiceKey sokt = new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+                    json.path(JSONConstants.VERSION_KEY).asText());
+            OwsOperationMetadataExtensionProviderKey oeckt = new OwsOperationMetadataExtensionProviderKey(sokt,
+                    json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
             if (json.path(JSONConstants.ACTIVE_KEY).asBoolean()) {
-                for (OwsOperationMetadataExtensionProviderKey key : owsExtendedCapabilitiesProviderRepository.getKeys()) {
+                for (OwsOperationMetadataExtensionProviderKey key : owsExtendedCapabilitiesProviderRepository
+                        .getKeys()) {
                     if (key.getServiceOperatorKey().equals(sokt)) {
                         owsExtendedCapabilitiesProviderRepository.deactivate(key);
                     }
                 }
             }
-            this.owsExtendedCapabilitiesProviderRepository.setActive(oeckt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
+            this.owsExtendedCapabilitiesProviderRepository.setActive(oeckt,
+                    json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY)) {
-            OwsServiceKey sokt =
-                    new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
-                            json.path(JSONConstants.VERSION_KEY).asText());
-            SosObservationOfferingExtensionKey oekt =
-                    new SosObservationOfferingExtensionKey(sokt,
-                            json.path(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY).asText());
+            OwsServiceKey sokt = new OwsServiceKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+                    json.path(JSONConstants.VERSION_KEY).asText());
+            SosObservationOfferingExtensionKey oekt = new SosObservationOfferingExtensionKey(sokt,
+                    json.path(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY).asText());
             this.offeringExtensionRepository.setActive(oekt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
     }
 
-    protected ArrayNode getExtendedCapabilitiesExtensions() throws ConnectionProviderException, ConfigurationError,
-            JSONException {
+    protected ArrayNode getExtendedCapabilitiesExtensions()
+            throws ConnectionProviderException, ConfigurationError, JSONException {
         ArrayNode jeces = Json.nodeFactory().arrayNode();
         Map<OwsServiceKey, Collection<String>> oes = this.owsExtendedCapabilitiesProviderRepository.getAllDomains();
         for (OwsServiceKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
-                OwsOperationMetadataExtensionProviderKey oeckt = new OwsOperationMetadataExtensionProviderKey(sokt, name);
-                jeces.addObject()
-                        .put(JSONConstants.SERVICE_KEY, oeckt.getService())
+                OwsOperationMetadataExtensionProviderKey oeckt =
+                        new OwsOperationMetadataExtensionProviderKey(sokt, name);
+                jeces.addObject().put(JSONConstants.SERVICE_KEY, oeckt.getService())
                         .put(JSONConstants.VERSION_KEY, oeckt.getVersion())
                         .put(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY, oeckt.getDomain())
                         .put(JSONConstants.ACTIVE_KEY, this.owsExtendedCapabilitiesProviderRepository.isActive(oeckt));
@@ -151,15 +154,14 @@ public class AdminExtensionController extends AbstractAdminController {
         return jeces;
     }
 
-    protected ArrayNode getOfferingExtensionExtensions() throws JSONException, ConnectionProviderException,
-            ConfigurationError {
+    protected ArrayNode getOfferingExtensionExtensions()
+            throws JSONException, ConnectionProviderException, ConfigurationError {
         ArrayNode joes = Json.nodeFactory().arrayNode();
         final Map<OwsServiceKey, Collection<String>> oes = this.offeringExtensionRepository.getAllDomains();
         for (OwsServiceKey sokt : oes.keySet()) {
             for (String name : oes.get(sokt)) {
                 SosObservationOfferingExtensionKey oekt = new SosObservationOfferingExtensionKey(sokt, name);
-                joes.addObject()
-                        .put(JSONConstants.SERVICE_KEY, oekt.getService())
+                joes.addObject().put(JSONConstants.SERVICE_KEY, oekt.getService())
                         .put(JSONConstants.VERSION_KEY, oekt.getVersion())
                         .put(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY, oekt.getDomain())
                         .put(JSONConstants.ACTIVE_KEY, this.offeringExtensionRepository.isActive(oekt));

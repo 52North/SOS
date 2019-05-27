@@ -43,8 +43,7 @@ public interface InspireSettings {
 
     String INSPIRE_NAMESPACE_KEY = "inspire.namespace";
 
-    String INSPIRE_FULL_EXTENDED_CAPABILITIES_KEY
-            = "inspire.fullExtendedCapabilities";
+    String INSPIRE_FULL_EXTENDED_CAPABILITIES_KEY = "inspire.fullExtendedCapabilities";
 
     String INSPIRE_METADATA_URL_URL_KEY = "inspire.metadataUrl.url";
 
@@ -52,14 +51,13 @@ public interface InspireSettings {
 
     String INSPIRE_CONFORMITY_TITLE_KEY = "inspire.conformity.title";
 
-    String INSPIRE_CONFORMITY_DATE_OF_CREATION_KEY
-            = "inspire.conformity.dateOfCreation";
+    String INSPIRE_CONFORMITY_DATE_OF_CREATION_KEY = "inspire.conformity.dateOfCreation";
 
     String INSPIRE_METADATA_DATE_KEY = "inspire.metadataDate";
 
     String INSPIRE_USE_AUTHORITY_KEY = "inspire.useAuthority";
 
-//     String INSPIRE_LANGUAGES_DEFAULT_KEY = "inspire.defaultLanguage";
-//
-//     String INSPIRE_CRS_DEFAULT_KEY = "inspire.defaultCrs";
+    // String INSPIRE_LANGUAGES_DEFAULT_KEY = "inspire.defaultLanguage";
+    //
+    // String INSPIRE_CRS_DEFAULT_KEY = "inspire.defaultCrs";
 }

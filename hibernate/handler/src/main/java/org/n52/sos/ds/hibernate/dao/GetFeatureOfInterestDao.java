@@ -82,13 +82,14 @@ public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfI
     }
 
     @Override
-    public Map<String, AbstractFeature> getFeatureOfInterest(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
+    public Map<String, AbstractFeature> getFeatureOfInterest(GetFeatureOfInterestRequest request)
+            throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(session)
-                    .setFeatures(request.getFeatureIdentifiers()).setVersion(request.getVersion())
-                    .setI18N(getRequestedLocale(request));
+            FeatureQueryHandlerQueryObject queryObject =
+                    new FeatureQueryHandlerQueryObject(session).setFeatures(request.getFeatureIdentifiers())
+                            .setVersion(request.getVersion()).setI18N(getRequestedLocale(request));
             return featureQueryHandler.getFeatures(queryObject);
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")

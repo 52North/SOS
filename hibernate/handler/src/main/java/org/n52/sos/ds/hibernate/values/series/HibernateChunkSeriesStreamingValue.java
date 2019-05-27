@@ -55,26 +55,31 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
  */
 public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreamingValue {
 
+    private static final String ERROR_LOG = "Error while querying observation data!";
+
     private Iterator<DataEntity<?>> seriesValuesResult;
 
     private int chunkSize;
 
     private int currentRow;
 
-    private boolean noChunk = false;
+    private boolean noChunk;
 
-    private int currentResultSize = 0;
+    private int currentResultSize;
 
     /**
      * constructor
      *
-     * @param connectionProvider the connection provider
-     * @param daoFactory the DAO factory
+     * @param connectionProvider
+     *            the connection provider
+     * @param daoFactory
+     *            the DAO factory
      * @param request
      *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
+     *             If an error occurs
      */
     public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
             AbstractObservationRequest request, long series, BindingRepository bindingRepository, int chunkSize)
@@ -101,7 +106,6 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             sessionHolder.returnSession(session);
         }
 
-
         return next;
     }
 
@@ -122,7 +126,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             return null;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -141,7 +145,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             return null;
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -158,28 +162,28 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         try {
             // query with temporal filter
-            Collection<DataEntity<?>> seriesValuesResult = new ArrayList<>();
+            Collection<DataEntity<?>> resutltValues = new ArrayList<>();
             if (temporalFilterCriterion != null) {
-                seriesValuesResult.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
-                                chunkSize, currentRow, session));
-            }
-            // query without temporal or indeterminate filters
-            else {
-                seriesValuesResult.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session));
+                resutltValues.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
+                        temporalFilterCriterion, chunkSize, currentRow, session));
+            } else {
+                // query without temporal or indeterminate filters
+                resutltValues.addAll(
+                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session));
             }
             currentRow += chunkSize;
-            checkMaxNumberOfReturnedValues(seriesValuesResult.size());
-            setSeriesValuesResult(seriesValuesResult);
+            checkMaxNumberOfReturnedValues(resutltValues.size());
+            setSeriesValuesResult(resutltValues);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Check the queried {@link AbstractValuedObservation}s for null and set them as
-     * iterator to local variable.
+     * Check the queried {@link AbstractValuedObservation}s for null and set
+     * them as iterator to local variable.
      *
      * @param seriesValuesResult
      *            Queried {@link AbstractValuedObservation}s

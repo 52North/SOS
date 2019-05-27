@@ -37,6 +37,12 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.janmayen.Json;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchOfferingException;
+import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -48,17 +54,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.janmayen.Json;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.extension.SosObservationOfferingExtension;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchOfferingException;
-import org.n52.sos.web.common.ControllerConstants;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
-
 
 @Controller
 @RequestMapping(ControllerConstants.Paths.OFFERING_EXTENSIONS_AJAX_ENDPOINT)
@@ -77,18 +75,18 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     }
 
     private ObjectNode toJson(final SosObservationOfferingExtension extensionForOffering) {
-        return Json.nodeFactory().objectNode()
-            .put(IDENTIFIER_PROPERTY, extensionForOffering.getIdentifier())
-            .put(DISABLED_PROPERTY, extensionForOffering.isDisabled())
-            .put(EXTENSION_PROPERTY, extensionForOffering.getExtension())
-            .put(OFFERING, extensionForOffering.getOfferingName());
+        return Json.nodeFactory().objectNode().put(IDENTIFIER_PROPERTY, extensionForOffering.getIdentifier())
+                .put(DISABLED_PROPERTY, extensionForOffering.isDisabled())
+                .put(EXTENSION_PROPERTY, extensionForOffering.getExtension())
+                .put(OFFERING, extensionForOffering.getOfferingName());
     }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getOfferingExtensions() throws OwsExceptionReport {
-        final Map<String, List<SosObservationOfferingExtension>> offeringExtensions = getCapabilitiesExtensionService().getOfferingExtensions();
+        final Map<String, List<SosObservationOfferingExtension>> offeringExtensions =
+                getCapabilitiesExtensionService().getOfferingExtensions();
         final List<String> offerings = Lists.newArrayList(getCache().getOfferings());
         Collections.sort(offerings);
         ObjectNode response = Json.nodeFactory().objectNode();
@@ -99,15 +97,15 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     }
 
     private void checkOffering(final String offering) throws NoSuchOfferingException {
-        LOGGER.trace("checkOffering('{}')",offering);
-        LOGGER.trace("Offerings im Cache: {}",Arrays.toString(getCache().getOfferings().toArray()));
+        LOGGER.trace("checkOffering('{}')", offering);
+        LOGGER.trace("Offerings im Cache: {}", Arrays.toString(getCache().getOfferings().toArray()));
         if (!getCache().getOfferings().contains(offering)) {
             throw new NoSuchOfferingException(offering);
         }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void saveOfferingExtension(@RequestBody final String extensionJson)
             throws XmlException, NoSuchOfferingException, OwsExceptionReport, IOException {
         JsonNode request = Json.loadString(extensionJson);
@@ -120,24 +118,23 @@ public class OfferingExtensionAjaxEndpoint extends AbstractAdminCapabiltiesAjaxE
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/edit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void setOfferingExtensionSettings(
-            @RequestBody final String settings) throws NoSuchExtensionException, NoSuchOfferingException,
-            OwsExceptionReport, IOException {
+    @RequestMapping(value = "/edit", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void setOfferingExtensionSettings(@RequestBody final String settings)
+            throws NoSuchExtensionException, NoSuchOfferingException, OwsExceptionReport, IOException {
         JsonNode request = Json.loadString(settings);
         final String offeringId = request.path(OFFERING).asText();
         final String extensionId = request.path(IDENTIFIER).asText();
 
         if (request.has(DISABLED_PROPERTY)) {
-            getCapabilitiesExtensionService().disableOfferingExtension(offeringId, extensionId, request.path(DISABLED_PROPERTY).asBoolean());
+            getCapabilitiesExtensionService().disableOfferingExtension(offeringId, extensionId,
+                    request.path(DISABLED_PROPERTY).asBoolean());
         }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/delete", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteOfferingExtension(
-            @RequestBody final String requestJson) throws NoSuchExtensionException, NoSuchOfferingException,
-            OwsExceptionReport, IOException {
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteOfferingExtension(@RequestBody final String requestJson)
+            throws NoSuchExtensionException, NoSuchOfferingException, OwsExceptionReport, IOException {
         JsonNode request = Json.loadString(requestJson);
         final String offeringId = request.path(OFFERING).asText();
         final String extensionId = request.path(IDENTIFIER).asText();

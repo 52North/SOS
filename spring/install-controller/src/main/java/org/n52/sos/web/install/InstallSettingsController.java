@@ -63,8 +63,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
     }
 
     @Override
-    protected void process(Map<String, String> parameters,
-                           InstallationConfiguration c)
+    protected void process(Map<String, String> parameters, InstallationConfiguration c)
             throws InstallationSettingsError {
         logSettings(parameters);
         for (SettingDefinition<?> def : this.settingsManager.getSettingDefinitions()) {
@@ -100,7 +99,8 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);
         } catch (Exception e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER, def.getTitle(), stringValue));
+            throw new InstallationSettingsError(c,
+                    String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER, def.getTitle(), stringValue));
         }
     }
 
@@ -111,8 +111,8 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
             SettingValue<File> fileSetting = (SettingValue<File>) val;
             File f = fileSetting.getValue();
             if (!f.exists() && !def.isOptional()) {
-                throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_FIND_FILE,
-                        f.getAbsolutePath()));
+                throw new InstallationSettingsError(c,
+                        String.format(ErrorMessages.COULD_NOT_FIND_FILE, f.getAbsolutePath()));
             }
         }
     }

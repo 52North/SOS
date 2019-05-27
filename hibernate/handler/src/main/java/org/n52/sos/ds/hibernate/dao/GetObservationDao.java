@@ -48,7 +48,6 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.service.MiscSettings;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
@@ -82,15 +81,21 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class GetObservationDao extends AbstractObservationDao
-        implements org.n52.sos.ds.dao.GetObservationDao {
+public class GetObservationDao extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDao.class);
 
+    private static final String LOG_TIME_TO_QUERY = "Time to query observations needs {} ms!";
+
     private HibernateSessionHolder sessionHolder;
+
     private ProfileHandler profileHandler;
+
     private DaoFactory daoFactory;
+
     private OmObservationCreatorContext observationCreatorContext;
+
     private boolean overallExtrema;
+
     private Locale defaultLanguage;
 
     @Inject
@@ -185,9 +190,8 @@ public class GetObservationDao extends AbstractObservationDao
         if (filterCriterion != null) {
             seriesObservations = checkObservationsForDuplicity(
                     observationDAO.getSeriesObservationsFor(request, features, filterCriterion, session), request);
-        }
-        // query with first/latest value filter
-        else if (CollectionHelper.isNotEmpty(extendedIndeterminateTimeFilters)) {
+        } else if (CollectionHelper.isNotEmpty(extendedIndeterminateTimeFilters)) {
+            // query with first/latest value filter
             for (IndeterminateValue sosIndeterminateTime : extendedIndeterminateTimeFilters) {
                 if (overallExtrema) {
                     seriesObservations =
@@ -202,9 +206,8 @@ public class GetObservationDao extends AbstractObservationDao
                             observationDAO.getSeriesObservationsFor(request, features, session), request);
                 }
             }
-        }
-        // query without temporal or indeterminate filters
-        else {
+        } else {
+            // query without temporal or indeterminate filters
             seriesObservations = checkObservationsForDuplicity(
                     observationDAO.getSeriesObservationsFor(request, features, session), request);
         }
@@ -239,15 +242,14 @@ public class GetObservationDao extends AbstractObservationDao
                         observationCreatorContext, session).forEachRemaining(result::add);
             }
         }
-        checkMaxNumberOfReturnedTimeSeries(seriesObservations,
-                metadataObservationsCount);
+        checkMaxNumberOfReturnedTimeSeries(seriesObservations, metadataObservationsCount);
         checkMaxNumberOfReturnedValues(seriesObservations.size());
 
-        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        LOGGER.debug(LOG_TIME_TO_QUERY, System.currentTimeMillis() - start);
         Collection<DataEntity<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        toSosObservation(new ArrayList<>(seriesObservations), request, requestedLocale,
-                pdf, observationCreatorContext, session).forEachRemaining(result::add);
+        toSosObservation(new ArrayList<>(seriesObservations), request, requestedLocale, pdf, observationCreatorContext,
+                session).forEachRemaining(result::add);
         return result;
     }
 
@@ -297,7 +299,7 @@ public class GetObservationDao extends AbstractObservationDao
             response.setGlobalObservationValues(
                     new GlobalObservationResponseValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
         }
-        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        LOGGER.debug(LOG_TIME_TO_QUERY, System.currentTimeMillis() - start);
         return result;
     }
 
@@ -316,8 +318,8 @@ public class GetObservationDao extends AbstractObservationDao
                 && toCheck.getObservableProperty().equals(s.getObservableProperty());
     }
 
-    private Collection<DataEntity<?>> checkObservationsForDuplicity(
-            Collection<DataEntity<?>> seriesObservations, GetObservationRequest request) {
+    private Collection<DataEntity<?>> checkObservationsForDuplicity(Collection<DataEntity<?>> seriesObservations,
+            GetObservationRequest request) {
         if (!request.isCheckForDuplicity()) {
             return seriesObservations;
         }
@@ -329,8 +331,9 @@ public class GetObservationDao extends AbstractObservationDao
                 serieses.add(seriesObservation.getDataset());
             }
 
-            if (serieses.contains(seriesObservation.getDataset()) || (duplicated.contains(seriesObservation.getDataset())
-                    && seriesObservation.getDataset().getOffering() != null)) {
+            if (serieses.contains(seriesObservation.getDataset())
+                    || (duplicated.contains(seriesObservation.getDataset())
+                            && seriesObservation.getDataset().getOffering() != null)) {
                 checked.add(seriesObservation);
             }
         }
@@ -338,8 +341,7 @@ public class GetObservationDao extends AbstractObservationDao
     }
 
     private String getProcedureDescriptionFormat(String responseFormat) {
-        Encoder<XmlObject, OmObservation> encoder =
-                getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
+        Encoder<XmlObject, OmObservation> encoder = getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
         if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder) encoder).getProcedureEncodingNamspace();
         }

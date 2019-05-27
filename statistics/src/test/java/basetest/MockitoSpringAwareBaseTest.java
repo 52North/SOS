@@ -34,8 +34,7 @@ import org.mockito.MockitoAnnotations;
 public abstract class MockitoSpringAwareBaseTest extends SpringBaseTest {
 
     @Before
-    public void before()
-    {
+    public void before() {
         MockitoAnnotations.initMocks(this);
     }
 }

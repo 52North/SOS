@@ -41,6 +41,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.jfree.data.general.Dataset;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
@@ -79,6 +80,12 @@ import com.google.common.base.Joiner;
 @Configurable
 public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
+    private static final String QUANTITY = "quantity";
+
+    private static final String EQUAL_PARAMETER = " = :";
+
+    private static final String ERROR_LOG = "Error while updating deleted observation flag data!";
+
     private HibernateSessionHolder sessionHolder;
 
     private DaoFactory daoFactory;
@@ -108,6 +115,11 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
     }
 
     @Override
+    public boolean isSupported() {
+        return true;
+    }
+
+    @Override
     public synchronized DeleteObservationResponse deleteObservation(DeleteObservationRequest request)
             throws OwsExceptionReport {
         DeleteObservationResponse response = new DeleteObservationResponse(request.getResponseFormat());
@@ -129,19 +141,51 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                 transaction.rollback();
             }
             throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage("Error while updating deleted observation flag data!");
+                    .withMessage(ERROR_LOG);
         } catch (ConverterException ce) {
             throw new NoApplicableCodeException().causedBy(ce)
-                    .withMessage("Error while updating deleted observation flag data!");
+                    .withMessage(ERROR_LOG);
         } finally {
             sessionHolder.returnSession(session);
         }
         return response;
     }
 
-    @Override
-    public boolean isSupported() {
-        return true;
+    private void deleteObservation(DeleteObservationRequest request, Collection<TemporalFilter> filters,
+            Session session) throws OwsExceptionReport {
+        deleteObservation(daoFactory.getSeriesDAO().getSeries(request.getProcedures(), request.getObservedProperties(),
+                request.getFeatureIdentifiers(), request.getOfferings(), session), filters, session);
+    }
+
+    private void deleteObservation(Collection<DatasetEntity> serieses, Collection<TemporalFilter> filters,
+            Session session) throws OwsExceptionReport {
+        boolean temporalFilters = filters != null && !filters.isEmpty();
+        Set<DatasetEntity> modifiedSeries = new HashSet<>();
+        StringBuilder builder = new StringBuilder();
+        builder.append("update ");
+        builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
+        builder.append(" set ").append(DataEntity.PROPERTY_DELETED).append(EQUAL_PARAMETER)
+                .append(DataEntity.PROPERTY_DELETED);
+        builder.append(" where ").append(DataEntity.PROPERTY_DATASET).append(EQUAL_PARAMETER)
+                .append(DataEntity.PROPERTY_DATASET);
+        if (temporalFilters) {
+            builder.append(" AND (" + SosTemporalRestrictions.filterHql(filters).toString()).append(")");
+        }
+        for (DatasetEntity s : serieses) {
+            Query<?> q = session.createQuery(builder.toString()).setParameter(DataEntity.PROPERTY_DELETED, true)
+                    .setParameter(DataEntity.PROPERTY_DATASET, s);
+            if (temporalFilters) {
+                checkForPlaceholder(q, filters);
+            }
+            int executeUpdate = q.executeUpdate();
+            session.flush();
+            if (executeUpdate > 0) {
+                modifiedSeries.add(s);
+            }
+        }
+        if (!modifiedSeries.isEmpty()) {
+            checkSeriesForFirstLatest(modifiedSeries, session);
+        }
     }
 
     private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
@@ -195,41 +239,6 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         }
     }
 
-    private void deleteObservation(DeleteObservationRequest request, Collection<TemporalFilter> filters,
-            Session session) throws OwsExceptionReport {
-        deleteObservation(daoFactory.getSeriesDAO().getSeries(request.getProcedures(), request.getObservedProperties(),
-                request.getFeatureIdentifiers(), request.getOfferings(), session), filters, session);
-    }
-
-    private void deleteObservation(Collection<DatasetEntity> serieses, Collection<TemporalFilter> filters,
-            Session session) throws OwsExceptionReport {
-        boolean temporalFilters = filters != null && !filters.isEmpty();
-        Set<DatasetEntity> modifiedSeries = new HashSet<>();
-        StringBuilder builder = new StringBuilder();
-        builder.append("update ");
-        builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(" set ").append(DataEntity.PROPERTY_DELETED).append(" = :").append(DataEntity.PROPERTY_DELETED);
-        builder.append(" where ").append(DataEntity.PROPERTY_DATASET).append(" = :").append(DataEntity.PROPERTY_DATASET);
-        if (temporalFilters) {
-            builder.append(" AND (" + SosTemporalRestrictions.filterHql(filters).toString()).append(")");
-        }
-        for (DatasetEntity s : serieses) {
-            Query<?> q = session.createQuery(builder.toString()).setParameter(DataEntity.PROPERTY_DELETED, true)
-                    .setParameter(DataEntity.PROPERTY_DATASET, s);
-            if (temporalFilters) {
-                checkForPlaceholder(q, filters);
-            }
-            int executeUpdate = q.executeUpdate();
-            session.flush();
-            if (executeUpdate > 0) {
-                modifiedSeries.add(s);
-            }
-        }
-        if (!modifiedSeries.isEmpty()) {
-            checkSeriesForFirstLatest(modifiedSeries, session);
-        }
-    }
-
     private void checkForPlaceholder(Query<?> q, Collection<TemporalFilter> filters)
             throws UnsupportedValueReferenceException {
 
@@ -238,7 +247,8 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
             if (filter.getTime() instanceof TimePeriod) {
                 TimePeriod tp = (TimePeriod) filter.getTime();
                 if (q.getComment().contains(":" + TemporalRestriction.START)) {
-                    q.setParameter(TemporalRestriction.START + count, tp.getStart().toDate(), UtcTimestampType.INSTANCE);
+                    q.setParameter(TemporalRestriction.START + count, tp.getStart().toDate(),
+                            UtcTimestampType.INSTANCE);
                 }
                 if (q.getComment().contains(":" + TemporalRestriction.END)) {
                     q.setParameter(TemporalRestriction.END + count, tp.getEnd().toDate(), UtcTimestampType.INSTANCE);
@@ -259,7 +269,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
      *            Deleted observation
      * @param session
      *            Hibernate session
-     * @throws OwsExceptionReport
+     * @throws OwsExceptionReport If an error occurs
      */
     private void checkSeriesForFirstLatest(Set<DatasetEntity> serieses, Session session) throws OwsExceptionReport {
         if (!serieses.isEmpty()) {
@@ -272,7 +282,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                     if (!series.isSetFirstValueAt() || (series.isSetFirstValueAt() && !DateTimeHelper
                             .makeDateTime(series.getFirstValueAt()).equals(extrema.getMinPhenomenonTime()))) {
                         series.setFirstValueAt(extrema.getMinPhenomenonTime().toDate());
-                        if (series.getValueType().equals("quantity")) {
+                        if (series.getValueType().equals(QUANTITY)) {
                             QuantityDataEntity o = (QuantityDataEntity) observationDAO.getMinObservation(series,
                                     extrema.getMinPhenomenonTime(), session);
                             series.setFirstQuantityValue(o.getValue());
@@ -283,7 +293,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                     if (!series.isSetLastValueAt() || (series.isSetLastValueAt() && !DateTimeHelper
                             .makeDateTime(series.getLastValueAt()).equals(extrema.getMaxPhenomenonTime()))) {
                         series.setLastValueAt(extrema.getMaxPhenomenonTime().toDate());
-                        if (series.getValueType().equals("quantity")) {
+                        if (series.getValueType().equals(QUANTITY)) {
                             QuantityDataEntity o = (QuantityDataEntity) observationDAO.getMaxObservation(series,
                                     extrema.getMaxPhenomenonTime(), session);
                             series.setLastQuantityValue(o.getValue());

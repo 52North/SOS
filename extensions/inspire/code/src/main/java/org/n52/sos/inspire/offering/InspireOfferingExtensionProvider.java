@@ -28,13 +28,18 @@
  */
 package org.n52.sos.inspire.offering;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.inspire.InspireConstants;
 import org.n52.shetland.inspire.InspireObject;
+import org.n52.shetland.inspire.InspireUniqueResourceIdentifier;
 import org.n52.shetland.ogc.ows.extension.CapabilitiesExtension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -43,6 +48,8 @@ import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.settings.InspireSettings;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionProvider;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of {@link SosObservationOfferingExtensionProvider} for INSPIRE
@@ -60,11 +67,34 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
 
     private boolean enabled;
 
+    private String namespace;
+
+    private String serviceURL;
+
     @Setting(InspireSettings.INSPIRE_ENABLED_KEY)
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    /**
+     * @param namespace
+     *            the namespace to set
+     */
+    @Setting(InspireSettings.INSPIRE_NAMESPACE_KEY)
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+    
+    @Setting(ServiceSettings.SERVICE_URL)
+    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
+        Validation.notNull("Service URL", serviceURL);
+        String url = serviceURL.toString();
+        if (url.contains("?")) {
+            url = url.split("[?]")[0];
+        }
+        this.serviceURL = url;
+    }
+    
     @Override
     public Set<SosObservationOfferingExtensionKey> getKeys() {
         return Collections.unmodifiableSet(KEYS);
@@ -72,17 +102,29 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
 
     @Override
     public Extensions getOfferingExtensions(String identifier) {
-        return Stream.of(getSupportedLanguages(), getSupportedCRS())
+        return Stream.of(getSupportedLanguages(), getSupportedCRS(), getSpatialDataSetIdentifier(identifier))
                 .map(o -> new CapabilitiesExtension<InspireObject>(o)
                         .setNamespace(InspireConstants.NS_INSPIRE_COMMON))
                 .collect(Extensions::new,
                          Extensions::addExtension,
                          Extensions::addExtension);
+//        extensions.addSwesExtension(new SwesExtensionImpl<InspireUniqueResourceIdentifier>()
+//                .setValue(getSpatialDataSetIdentifier(identifier)).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
     }
 
     @Override
     public boolean hasExtendedOfferingFor(String identifier) {
         return this.enabled && getCache().getOfferings().contains(identifier);
+    }
+
+    private InspireUniqueResourceIdentifier getSpatialDataSetIdentifier(String identifier) {
+        InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(identifier);
+        if (!Strings.isNullOrEmpty(namespace)) {
+            iuri.setNamespace(namespace);
+        } else {
+            iuri.setNamespace(serviceURL);
+        }
+        return iuri;
     }
 
 }

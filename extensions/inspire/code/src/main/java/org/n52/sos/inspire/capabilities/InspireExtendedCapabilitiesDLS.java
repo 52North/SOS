@@ -37,7 +37,6 @@ import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesSpatialDataSetIdentifier;
-import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesSupportedCRS;
 import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
@@ -51,13 +50,11 @@ import com.google.common.collect.Sets;
  * 
  */
 public abstract class InspireExtendedCapabilitiesDLS extends InspireExtendedCapabilities implements
-        InspireExtendedCapabilitiesSpatialDataSetIdentifier, InspireExtendedCapabilitiesSupportedCRS {
+        InspireExtendedCapabilitiesSpatialDataSetIdentifier {
 
     /* SpatialDataSetIdentifier 1..* */
     private Set<InspireUniqueResourceIdentifier> spatialDataSetIdentifier = Sets.newHashSet();
     
-    private InspireSupportedCRS supportedCRS;
-
     /**
      * constructor
      * @param supportedLanguages
@@ -70,10 +67,9 @@ public abstract class InspireExtendedCapabilitiesDLS extends InspireExtendedCapa
      *            Supported CRSes to set
      */
     public InspireExtendedCapabilitiesDLS(InspireSupportedLanguages supportedLanguages,
-            InspireLanguageISO6392B responseLanguage, InspireUniqueResourceIdentifier spatialDataSetIdentifier, InspireSupportedCRS supportedCRS) {
+            InspireLanguageISO6392B responseLanguage, InspireUniqueResourceIdentifier spatialDataSetIdentifier) {
         super(supportedLanguages, responseLanguage);
         addSpatialDataSetIdentifier(spatialDataSetIdentifier);
-        setSupportedCRS(supportedCRS);
     }
 
     /**
@@ -92,7 +88,6 @@ public abstract class InspireExtendedCapabilitiesDLS extends InspireExtendedCapa
             Collection<InspireUniqueResourceIdentifier> spatialDataSetIdentifiers, InspireSupportedCRS supportedCRS) {
         super(supportedLanguages, responseLanguage);
         setSpatialDataSetIdentifier(spatialDataSetIdentifiers);
-        setSupportedCRS(supportedCRS);
     }
 
     @Override
@@ -126,22 +121,6 @@ public abstract class InspireExtendedCapabilitiesDLS extends InspireExtendedCapa
     @Override
     public boolean isSetSpatialDataSetIdentifier() {
         return CollectionHelper.isNotEmpty(getSpatialDataSetIdentifier());
-    }
-
-    @Override
-    public InspireExtendedCapabilitiesSupportedCRS setSupportedCRS(InspireSupportedCRS supportedCRS) {
-        this.supportedCRS = supportedCRS;
-        return this;
-    }
-    
-    @Override
-    public InspireSupportedCRS getSupportedCRS() {
-        return supportedCRS;
-    }
-    
-    @Override
-    public boolean isSetSupportedCRS() {
-        return getSupportedCRS() != null;
     }
 
 }

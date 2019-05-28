@@ -218,7 +218,7 @@ public class InspireEncoderTest {
         iuri.setNamespace("http://test.org");
         // --------------------
         FullInspireExtendedCapabilities inspireExtendedCapabilities =
-                new FullInspireExtendedCapabilities(resourceLocator, inspireSupportedLanguages, responseLanguage, iuri, new InspireSupportedCRS("4326"));
+                new FullInspireExtendedCapabilities(resourceLocator, inspireSupportedLanguages, responseLanguage, iuri);
         inspireExtendedCapabilities.setResourceType(InspireServiceSpatialDataResourceType.service);
         inspireExtendedCapabilities.addKeyword(new InspireKeyword("test"));
         inspireExtendedCapabilities.addMandatoryKeyword(inspireMandatoryKeyword);

@@ -37,7 +37,7 @@ import org.n52.sos.util.StringHelper;
  * @since 4.1.0
  * 
  */
-public class InspireUniqueResourceIdentifier {
+public class InspireUniqueResourceIdentifier implements InspireObject {
 
     /* Element Code 1..1 */
     private String code;

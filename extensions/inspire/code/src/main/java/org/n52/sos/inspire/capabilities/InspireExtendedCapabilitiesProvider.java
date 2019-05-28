@@ -159,7 +159,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
             String version) {
         InspireLanguageISO6392B responseLanguage = getInspireHelper().checkRequestedLanguage(language);
         return new MinimalInspireExtendedCapabilities(getMetadataUrl(), getSupportedLanguages(), responseLanguage,
-                getSpatialDataSetIdentifier(version), getSupportedCRS());
+                getSpatialDataSetIdentifier(version));
     }
 
     /**
@@ -188,7 +188,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
         /* SpatialDataServiceType 1..1 */
         FullInspireExtendedCapabilities fullInspireExtendedCapabilities =
                 new FullInspireExtendedCapabilities(getResourceLocator(), getSupportedLanguages(), responseLanguage,
-                        getSpatialDataSetIdentifier(version), getSupportedCRS());
+                        getSpatialDataSetIdentifier(version));
         /* MetadataPointOfContact 1..* */
         fullInspireExtendedCapabilities.addMetadataPointOfContact(getMetadataPointOfContact());
 

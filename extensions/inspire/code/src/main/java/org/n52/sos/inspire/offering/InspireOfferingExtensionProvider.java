@@ -84,7 +84,7 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
-    
+
     @Setting(ServiceSettings.SERVICE_URL)
     public void setServiceURL(final URI serviceURL) throws ConfigurationError {
         Validation.notNull("Service URL", serviceURL);
@@ -94,7 +94,7 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
         }
         this.serviceURL = url;
     }
-    
+
     @Override
     public Set<SosObservationOfferingExtensionKey> getKeys() {
         return Collections.unmodifiableSet(KEYS);

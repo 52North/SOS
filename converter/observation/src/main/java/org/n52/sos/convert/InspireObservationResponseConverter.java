@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -85,11 +86,12 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class InspireObservationResponseConverter
-        extends AbstractRequestResponseModifier {
+public class InspireObservationResponseConverter extends AbstractRequestResponseModifier {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+
     private boolean includeResultTimeForMerging;
+
     private ContentCacheController contentCacheController;
 
     @Setting(SosSettings.INCLUDE_RESULT_TIME_FOR_MERGING)
@@ -115,10 +117,11 @@ public class InspireObservationResponseConverter
         Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (OwsServiceRequest request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKey(service, version, request));
-                    keys.add(new RequestResponseModifierKey(service, version, request,
-                            requestResponseMap.get(request)));
+                for (Entry<AbstractObservationRequest, AbstractObservationResponse> entry : requestResponseMap
+                        .entrySet()) {
+                    keys.add(new RequestResponseModifierKey(service, version, entry.getKey()));
+                    keys.add(new RequestResponseModifierKey(service, version, entry.getKey(),
+                            requestResponseMap.get(entry.getKey())));
                 }
             }
         }
@@ -209,26 +212,30 @@ public class InspireObservationResponseConverter
      * @param map
      *            {@link Map} with observationType key
      * @return Merged observations
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     private ObservationStream mergeObservations(Map<String, List<OmObservation>> map) throws OwsExceptionReport {
         List<OmObservation> mergedObservations = Lists.newArrayList();
-        for (String key : map.keySet()) {
-            switch (key) {
+        for (Entry<String, List<OmObservation>> entry : map.entrySet()) {
+            switch (entry.getKey()) {
                 case InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION:
-                    mergedObservations.addAll(mergeProfileObservation(ObservationStream.of(map.get(key))));
+                    mergedObservations.addAll(mergeProfileObservation(ObservationStream.of(map.get(entry.getKey()))));
                     break;
                 case InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION:
-                    mergedObservations.addAll(mergeTrajectoryObservation(ObservationStream.of(map.get(key))));
+                    mergedObservations.addAll(mergeTrajectoryObservation(
+                            ObservationStream.of(map.get(entry.getKey()))));
                     break;
                 case InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION:
-                    mergedObservations.addAll(mergeMultiPointObservation(ObservationStream.of(map.get(key))));
+                    mergedObservations.addAll(mergeMultiPointObservation(
+                            ObservationStream.of(map.get(entry.getKey()))));
                     break;
                 case InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION:
-                    mergedObservations.addAll(mergePointTimeSeriesObservation(ObservationStream.of(map.get(key))));
+                    mergedObservations
+                            .addAll(mergePointTimeSeriesObservation(ObservationStream.of(map.get(entry.getKey()))));
                     break;
                 default:
-                    mergedObservations.addAll(map.get(key));
+                    mergedObservations.addAll(map.get(entry.getKey()));
                     break;
             }
         }
@@ -275,7 +282,8 @@ public class InspireObservationResponseConverter
      * @param observations
      *            {@link OmObservation}s to merge
      * @return Merged observations
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     private Collection<? extends OmObservation> mergeProfileObservation(ObservationStream observations)
             throws OwsExceptionReport {
@@ -340,7 +348,8 @@ public class InspireObservationResponseConverter
      * @param observation
      *            {@link OmObservation} to convert
      * @return Converted observation
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     private List<OmObservation> convertToMultiPointObservations(OmObservation observation) throws CodedException {
         return Lists.<OmObservation> newArrayList(new MultiPointObservation(observation));
@@ -458,8 +467,7 @@ public class InspireObservationResponseConverter
      * @return <code>true</code>, if no observationType is requested or
      *         observationType is valid for offering of {@link OmObservation}
      */
-    private boolean checkRequestedObservationTypeForOffering(OmObservation observation,
-            OwsServiceRequest request) {
+    private boolean checkRequestedObservationTypeForOffering(OmObservation observation, OwsServiceRequest request) {
         if (request instanceof AbstractObservationRequest
                 && ((AbstractObservationRequest) request).isSetResultModel()) {
             String observationType = ((AbstractObservationRequest) request).getResultModel();

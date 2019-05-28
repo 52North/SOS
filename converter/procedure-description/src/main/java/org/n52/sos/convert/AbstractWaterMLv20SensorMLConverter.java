@@ -68,7 +68,7 @@ public abstract class AbstractWaterMLv20SensorMLConverter
             AbstractProcess abstractProcess) {
         abstractProcess.addIdentifier(createUniqueIDIdentifier(observationProcess.getIdentifier()));
         // duration is not valid for validTime element
-        observationProcess.getAggregationDuration();
+        // observationProcess.getAggregationDuration();
         if (observationProcess.isSetComments()) {
             abstractProcess.addDocumentation(convertCommentsToDocumentation(observationProcess.getComments()));
         }
@@ -76,13 +76,13 @@ public abstract class AbstractWaterMLv20SensorMLConverter
             abstractProcess.setInputs(convertObservationProcessInputsToSMLInputs(observationProcess.getInputs()));
         }
 
-        observationProcess.getOriginatingProcess();
-        observationProcess.getParameters();
+        // observationProcess.getOriginatingProcess();
+        // observationProcess.getParameters();
         if (observationProcess.isSetProcessReference()) {
             abstractProcess.addDocumentation(
                     convertProcessReferenceToDocumentation(observationProcess.getProcessReference()));
         }
-        observationProcess.getVerticalDatum();
+        // observationProcess.getVerticalDatum();
         abstractProcess.setClassifications(convertProcessTypeToClassification(observationProcess.getProcessType()));
         return abstractProcess;
     }
@@ -134,6 +134,7 @@ public abstract class AbstractWaterMLv20SensorMLConverter
             final SweObservableProperty ioValue = new SweObservableProperty();
             ioValue.setDefinition(referenceType.getHref());
             io.setIoValue(ioValue);
+            smlInputs.add(io);
         }
         return smlInputs;
     }

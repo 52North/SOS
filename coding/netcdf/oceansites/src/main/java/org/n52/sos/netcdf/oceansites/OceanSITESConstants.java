@@ -471,7 +471,7 @@ public interface OceanSITESConstants {
 
         public static QCIndicatorValues from(String v) {
             for (QCIndicatorValues c : QCIndicatorValues.values()) {
-                if (c.getCode() == Integer.valueOf(v) || c.getMeaning().equals(v)) {
+                if (c.getCode() == Integer.parseInt(v) || c.getMeaning().equals(v)) {
                     return c;
                 }
             }
@@ -489,7 +489,7 @@ public interface OceanSITESConstants {
 
         public static QCIndicatorValues fromCode(String v) {
             for (QCIndicatorValues c : QCIndicatorValues.values()) {
-                if (c.getCode() == Integer.valueOf(v)) {
+                if (c.getCode() == Integer.parseInt(v)) {
                     return c;
                 }
             }

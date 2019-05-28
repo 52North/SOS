@@ -206,10 +206,11 @@ public abstract class AbstractInspireOmpr30SensorMLConverter
             }
             if (relatedParty.isSetContact()) {
                 Contact contact = relatedParty.getContact().get();
-                if (contact.getAddress().isPresent()) {
-                    AddressRepresentation addressRepresentation = contact.getAddress().get();
-                    // TODO
-                }
+                // if (contact.getAddress().isPresent()) {
+                // AddressRepresentation addressRepresentation =
+                // contact.getAddress().get();
+                // TODO
+                // }
                 if (contact.getContactInstructions().isPresent()) {
                     smlResponsibleParty.setContactInstructions(
                             contact.getContactInstructions().get().getTextGroup().iterator().next().getValue());

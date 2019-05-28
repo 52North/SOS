@@ -43,8 +43,6 @@ public class EReportingPrefixedIdentifierHelper {
 
     private String procedurePrefix;
 
-    private String observablePropertyPrefix;
-
     private String featureOfInterestPrefix;
 
     private String samplingPointPrefix;
@@ -111,26 +109,6 @@ public class EReportingPrefixedIdentifierHelper {
 
     public boolean isSetProcedurePrefix() {
         return !Strings.isNullOrEmpty(getProcedurePrefix());
-    }
-
-    /**
-     * @return the observablePropertyPrefix
-     */
-    public String getObservablePropertyPrefix() {
-        return observablePropertyPrefix;
-    }
-
-    // /**
-    // * @param observablePropertyPrefix the observablePropertyPrefix to set
-    // */
-    // @Setting(EReportingSetting.EREPORTING_OBSERVABLE_PROPERTY_PREFIX_KEY)
-    // public void setObservablePropertyPrefix(String observablePropertyPrefix)
-    // {
-    // this.observablePropertyPrefix = observablePropertyPrefix;
-    // }
-
-    public boolean isSetObservablePropertyPrefix() {
-        return !Strings.isNullOrEmpty(getObservablePropertyPrefix());
     }
 
     /**
@@ -214,9 +192,9 @@ public class EReportingPrefixedIdentifierHelper {
     }
 
     public boolean isSetAnyPrefix() {
-        return isSetNamespacePrefix() || isSetFeatureOfInterestPrefix() || isSetObservablePropertyPrefix()
-                || isSetOfferingPrefix() || isSetProcedurePrefix() || isSetSamplingPointPrefix()
-                || isSetStationPrefix() || isSetNetworkPrefix();
+        return isSetNamespacePrefix() || isSetFeatureOfInterestPrefix() || isSetOfferingPrefix()
+                || isSetProcedurePrefix() || isSetSamplingPointPrefix() || isSetStationPrefix()
+                || isSetNetworkPrefix();
     }
 
 }

@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -76,10 +77,10 @@ public class GwmlObservationModifier extends AbstractRequestResponseModifier {
         Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (OwsServiceRequest request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKey(service, version, request));
-                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
-                            .get(request)));
+                for (Entry<OwsServiceRequest, OwsServiceResponse> entry : requestResponseMap.entrySet()) {
+                    keys.add(new RequestResponseModifierKey(service, version, entry.getKey()));
+                    keys.add(new RequestResponseModifierKey(service, version, entry.getKey(), requestResponseMap
+                            .get(entry.getKey())));
                 }
             }
         }

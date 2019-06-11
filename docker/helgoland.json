@@ -5,11 +5,11 @@
   "aggregateServices": true,
   "saveStatus": true,
   "restApiUrls": {
-        "http://localhost:8080/api/": "localhost"
+        "http://efas-sos-dev.ecmwf.int:8080/52n-sos-webapp/api/": "localhost"
     },
     "defaultProvider": {
         "serviceID": "1",
-        "apiUrl": "http://localhost:8080/api/"
+        "apiUrl": "http://efas-sos-dev.ecmwf.int:8080/52n-sos-webapp/api/"
     },
   "chartOptions": {
     "yaxis": {
@@ -90,5 +90,15 @@
       "group": "Raster"
     }
   },
-  "showScale": true
+  "showScale": true,
+  "solveLabels": false,
+  "proxyUrl": "https://cors-anywhere.herokuapp.com/",
+  "platformPresenter": {
+    "stationary_insitu": [
+      {
+        "service": "ecmwfPlatformPresenter",
+        "url": "http://localhost:8080/52n-sos-webapp/api/"
+      }
+    ]
+  }
 }

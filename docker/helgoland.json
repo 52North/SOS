@@ -97,7 +97,7 @@
     "stationary_insitu": [
       {
         "service": "ecmwfPlatformPresenter",
-        "url": "http://localhost:8080/52n-sos-webapp/api/"
+        "url": "http://efas-sos-dev.ecmwf.int:8080/52n-sos-webapp/api/"
       }
     ]
   }

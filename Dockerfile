@@ -1,18 +1,6 @@
-FROM maven:3-jdk-8-alpine AS BUILD
-
-RUN apk add --no-cache git
-
-WORKDIR /usr/src/app
-
-COPY . /usr/src/app
-
-RUN mvn --batch-mode --errors --fail-fast \
-  --define maven.javadoc.skip=true \
-  --define skipTests=true install
-
 FROM jetty:jre8
 
-COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
+COPY ./webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
 COPY ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
 COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json
 COPY ./docker/default-config /etc/sos

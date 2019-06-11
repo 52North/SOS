@@ -1,3 +1,4 @@
 **/target/
+!/webapp/target/
 Dockerfile
 docker-compose/

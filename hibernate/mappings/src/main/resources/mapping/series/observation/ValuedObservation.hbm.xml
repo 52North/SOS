@@ -162,7 +162,7 @@
                          table="blobvalue">
             <comment>Value table for blob observation</comment>
             <key foreign-key="observationBlobValueFk">
-                <column name="observationId" index="blobvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -179,14 +179,13 @@
                          check="value in ('T','F')">
             <comment>Value table for boolean observation</comment>
             <key foreign-key="observationBooleanValueFk">
-                <column name="observationId" index="booleanvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
             <property name="value" 
                       type="org.hibernate.type.TrueFalseType">
-                 <column name="value"
-                         index="booleanvalueidx">
+                 <column name="value">
                      <comment>Boolean observation value</comment>
                  </column>
              </property>
@@ -196,7 +195,7 @@
                          table="categoryvalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationCategoryValueFk">
-                <column name="observationId" index="categoryvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -231,7 +230,7 @@
                          table="countvalue">
             <comment>Value table for count observation</comment>
             <key foreign-key="observationCountValueFk">
-                <column name="observationId" index="countvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -248,7 +247,7 @@
                          table="geometryvalue">
             <comment>Value table for geometry observation</comment>
             <key foreign-key="observationGeometryValueFk">
-                <column name="observationId" index="geometryvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -265,7 +264,7 @@
                          table="numericvalue">
                     <comment>Value table for numeric/Measurment observation</comment>
             <key foreign-key="observationNumericValueFk">
-                 <column name="observationId" index="numericvalueobsididx">
+                 <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -282,7 +281,7 @@
                          table="textvalue">
             <comment>Value table for text observation</comment>
             <key foreign-key="observationTextValueFk">
-                <column name="observationId" index="textvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -317,7 +316,7 @@
                          table="swedataarrayvalue">
             <comment>Value table for SweDataArray observation</comment>
             <key foreign-key="observationSweDataArrayValueFk">
-                <column name="observationId" index="swedataarryvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -333,7 +332,7 @@
                          table="complexvalue">
             <comment>Value table for complex observation</comment>
             <key foreign-key="observationComplexValueFk">
-                <column name="observationId" index="complexvalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>
@@ -361,7 +360,7 @@
                          table="profilevalue">
            <comment>Value table for profile observation</comment>
         	<key foreign-key="observationProfileValueFk">
-	        	<column name="observationId" index="profvalueobsididx">
+	        	<column name="observationId">
 	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
 	        	</column>
         	</key>
@@ -413,7 +412,7 @@
                          table="referencevalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationRefValueFk">
-                <column name="observationId" index="referencevalueobsididx">
+                <column name="observationId">
                     <comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
                 </column>
             </key>

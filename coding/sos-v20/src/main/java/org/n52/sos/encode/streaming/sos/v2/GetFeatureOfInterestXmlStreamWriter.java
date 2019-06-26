@@ -29,18 +29,25 @@
 package org.n52.sos.encode.streaming.sos.v2;
 
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -53,6 +60,8 @@ import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.sos.w3c.W3CConstants;
@@ -137,13 +146,21 @@ public class GetFeatureOfInterestXmlStreamWriter extends AbstractSwesXmlStreamWr
     private void writeGetFeatureOfInterestResponseDoc(GetFeatureOfInterestResponse response, EncodingValues encodingValues)
             throws XMLStreamException, OwsExceptionReport {
         start(Sos2StreamingConstants.QN_GET_FEATURE_OF_INTEREST_RESPONSE);
-        namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
-        namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
-        namespace(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
+        Map<String, String> namespaces = new LinkedHashMap<>();
+        namespaces.put(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
+        namespaces.put(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
+        namespaces.put(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
+        namespaces.put(SfConstants.NS_SA_PREFIX, SfConstants.NS_SA);
+        namespaces.put(SfConstants.NS_SAMS_PREFIX, SfConstants.NS_SAMS);
+        namespaces.put(SfConstants.NS_SF_PREFIX, SfConstants.NS_SF);
+        namespaces.put(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
+        for (Entry<String, String> namespace : namespaces.entrySet()) {
+            namespace(namespace.getKey(), namespace.getValue());
+        }
         // get observation encoder
         encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
         // write schemaLocation
-        schemaLocation(getSchemaLocation(encodingValues));
+        schemaLocation(getSchemaLocation(encodingValues, namespaces.values()));
         writeNewLine();
         if (response.isSetExtensions()) {
             writeExtensions(response.getExtensions());
@@ -152,24 +169,40 @@ public class GetFeatureOfInterestXmlStreamWriter extends AbstractSwesXmlStreamWr
         AbstractFeature feature = response.getAbstractFeature();
         if (feature instanceof FeatureCollection) {
             for (AbstractFeature f : (FeatureCollection) feature) {
-                writeFeatureMember(f, encodingValues);
+                if (f instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) f).isSetGeometry()) {
+                    writeFeatureMember(f, encodingValues);
+                } else {
+                    writeReferencedFeatureMember(f);
+                }
                 writeNewLine();
             }
         } else if (feature instanceof AbstractSamplingFeature) {
-            writeFeatureMember(feature, encodingValues);
+            if (feature instanceof AbstractSamplingFeature && ((AbstractSamplingFeature) feature).isSetGeometry()) {
+                writeFeatureMember(feature, encodingValues);
+            } else {
+                writeReferencedFeatureMember(feature);
+            }
             writeNewLine();
         }
         indent--;
         end(Sos2StreamingConstants.QN_GET_FEATURE_OF_INTEREST_RESPONSE);
     }
 
-    private Set<SchemaLocation> getSchemaLocation(EncodingValues encodingValue) {
+    private Set<SchemaLocation> getSchemaLocation(EncodingValues encodingValue, Collection<String> namespaces) {
         Set<SchemaLocation> schemaLocations = Sets.newHashSet();
         if (encodingValue.isSetEncoder()
                 && CollectionHelper.isNotEmpty(encodingValue.getEncoder().getSchemaLocations())) {
             schemaLocations.addAll(encodingValue.getEncoder().getSchemaLocations());
         } else {
             schemaLocations.add(Sos2Constants.SOS_GET_FEATURE_OF_INTEREST_SCHEMA_LOCATION);
+        }
+        for (String namespace : namespaces) {
+            schemaLocations.addAll(CodingRepository.getInstance().getSchemaLocation(namespace));
+        }
+        Profile activeProfile = getActiveProfile();
+        if (activeProfile.isSetEncodeFeatureOfInterestNamespace()) {
+            schemaLocations.addAll(CodingRepository.getInstance()
+                    .getSchemaLocation(activeProfile.getEncodingNamespaceForFeatureOfInterest()));
         }
         return schemaLocations;
     }
@@ -191,6 +224,14 @@ public class GetFeatureOfInterestXmlStreamWriter extends AbstractSwesXmlStreamWr
         writeNewLine();
         end(Sos2StreamingConstants.QN_FEATURE_MEMBER);
         indent++;
+    }
+    
+    private void writeReferencedFeatureMember(AbstractFeature af) throws XMLStreamException {
+        empty(Sos2StreamingConstants.QN_FEATURE_MEMBER);
+        addXlinkHrefAttr(af.getIdentifier());
+        if (af.isSetName()) {
+            addXlinkTitleAttr(af.getFirstName().getValue());
+        }
     }
     
     protected Profile getActiveProfile() {

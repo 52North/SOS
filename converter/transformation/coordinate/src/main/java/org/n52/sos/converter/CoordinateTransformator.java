@@ -360,7 +360,7 @@ public class CoordinateTransformator extends
      */
     private AbstractServiceResponse modifyGetCapabilitiesResponse(GetCapabilitiesRequest request,
             GetCapabilitiesResponse response) throws OwsExceptionReport {
-        if (response.getCapabilities().isSetContents()) {
+        if (!response.isStatic() && response.getCapabilities().isSetContents()) {
             for (SosObservationOffering sosObservationOffering : response.getCapabilities().getContents()) {
                 if (sosObservationOffering.isSetObservedArea()) {
                     SosEnvelope observedArea = sosObservationOffering.getObservedArea();

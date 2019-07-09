@@ -346,17 +346,17 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     private DatasetEntity preCheckDataset(ObservationContext ctx, DataEntity<?> observation, DatasetEntity dataset,
             Session session) throws OwsExceptionReport {
-        DatasetEntity d = dataset;
-        if (d == null) {
+        DatasetEntity ds = dataset;
+        if (ds == null) {
             Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
             ctx.addIdentifierRestrictionsToCritera(criteria, false);
             LOGGER.debug("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
                     HibernateHelper.getSqlString(criteria));
-            d = (DatasetEntity) criteria.uniqueResult();
+            ds = (DatasetEntity) criteria.uniqueResult();
         }
-        if (d != null) {
+        if (ds != null) {
             DatasetEntity concrete = getDatasetFactory().visit(observation);
-            concrete.copy(dataset);
+            concrete.copy(ds);
             // StringBuilder builder = new StringBuilder();
             // builder.append("update ")
             // .append(getSeriesClass().getSimpleName())
@@ -367,12 +367,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             // getDatasetFactory().visit(observation).getValueType())
             // .setParameter( "id", dataset.getId())
             // .executeUpdate();
+            session.delete(ds);
             session.saveOrUpdate(concrete);
-            session.delete(dataset);
             session.flush();
             return (DatasetEntity) concrete;
         }
-        return d;
+        return ds;
     }
 
     /**

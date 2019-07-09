@@ -10,14 +10,14 @@
     <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
         <property name="key" value="netcdf.version" />
         <property name="title" value="NetCDF version" />
-        <property name="description" value="Set the NetCDF version for the encoding. Notice: NetCDF 4 requires the installation of the native netCDF4 c library. Inforamtion about the installation of the native netCDF4 c library can be found here: <a href='https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html' target='_blank'/>" />
+        <property name="description" value="Set the NetCDF version for the encoding. Notice: NetCDF 4 requires the installation of the native netCDF4 c library. Inforamtion about the installation of the native netCDF4 c library can be found here:  &lt;a href='https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html' target='_blank'/&gt;" />
         <property name="order" value="0.0" />
         <property name="group" ref="netcdfSettingDefintionGroup" />
         <property name="optional" value="false" />
         <property name="defaultValue" value="netcdf4" />
         <property name="options">
             <map>
-                <entry key="netcdf3" value="NetCDF 3 version" >
+                <entry key="netcdf3" value="NetCDF 3 version" />
                 <entry key="netcdf4" value="NetCDF 4 version" />
             </map>
         </property>
@@ -50,7 +50,7 @@
         <property name="defaultValue" value="height" />
         <property name="options">
             <map>
-                <entry key="height" value="height" >
+                <entry key="height" value="height" />
                 <entry key="depth" value="depth" />
             </map>
         </property>
@@ -65,7 +65,7 @@
         <property name="defaultValue" value="Double" />
         <property name="options">
             <map>
-                <entry key="Double" value="DOUBLE" >
+                <entry key="Double" value="DOUBLE" />
                 <entry key="Float" value="FLOAT" />
             </map>
         </property>
@@ -99,7 +99,7 @@
                 <entry key="CI_RoleCode_processor" value="processor" />
                 <entry key="CI_RoleCode_publisher" value="publisher" />
                 <entry key="CI_RoleCode_resourceProvider" value="resourceProvider" />
-                <entry key="CI_RoleCode_userv"user" />
+                <entry key="CI_RoleCode_user" value="user" />
             </map>
         </property>
     </bean>
@@ -123,7 +123,7 @@
                 <entry key="CI_RoleCode_processor" value="processor" />
                 <entry key="CI_RoleCode_publisher" value="publisher" />
                 <entry key="CI_RoleCode_resourceProvider" value="resourceProvider" />
-                <entry key="CI_RoleCode_userv"user" />
+                <entry key="CI_RoleCode_user" value="user" />
             </map>
         </property>
     </bean>

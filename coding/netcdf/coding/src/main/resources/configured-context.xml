@@ -8,6 +8,5 @@
     <bean class="org.n52.sos.encode.NetcdfZipEncoder"/>
 
     <bean class="org.n52.sos.netcdf.NetcdfHelper"/>
-    NetcdfHelper
 
 </beans>

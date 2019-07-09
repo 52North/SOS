@@ -197,12 +197,20 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                         featureEntityMap.put(feature.getIdentifier(), feature);
                     }
                 }
-                if (observation.getValue() instanceof SingleObservationValue) {
-                    observationDAO.insertObservationSingleValue(obsConst, feature,
-                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), checkForDuplicatedObservations(), session);
-                } else if (observation.getValue() instanceof MultiObservationValues) {
-                    observationDAO.insertObservationMultiValue(obsConst, feature,
-                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), checkForDuplicatedObservations(), session);
+                try {
+                    if (observation.getValue() instanceof SingleObservationValue) {
+                        observationDAO.insertObservationSingleValue(obsConst, feature,
+                                observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), checkForDuplicatedObservations(), session);
+                    } else if (observation.getValue() instanceof MultiObservationValues) {
+                        observationDAO.insertObservationMultiValue(obsConst, feature,
+                                observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), checkForDuplicatedObservations(), session);
+                    } 
+                } catch (NoApplicableCodeException nace) {
+                    if (abortInsertResultForExistingObservations()) {
+                        throw nace;
+                    } else {
+                        LOGGER.debug("Already existing observation would be ignored!", nace);
+                    }
                 }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {
                     session.flush();
@@ -601,6 +609,10 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     
     private boolean checkForDuplicatedObservations() {
         return ServiceConfiguration.getInstance().isCheckForDuplicatedObservations();
+    }
+    
+    private boolean abortInsertResultForExistingObservations() {
+        return ServiceConfiguration.getInstance().isAbortInsertResultForExistingObservations();
     }
 
 }

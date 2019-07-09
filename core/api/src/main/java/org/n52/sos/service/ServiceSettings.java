@@ -80,6 +80,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
     
     public static final String CHECK_FOR_REQUEST_DUPLICITY = "service.checkForRequestDuplicity";
     
+    public static final String ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS = "service.abortInsertResultForExistingObservations";
+
     public static final String REQUEST_TIMEOUT = "service.requestTimeout";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
@@ -218,7 +220,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setOrder(23)
                      .setKey(CHECK_FOR_DUPLICITY)
                      .setDefaultValue(false)
-                     .setTitle("Should this SOS check for duplicated observations in the response?")
+                     .setTitle("Should this SOS check for duplicated observations in the RESPONSE?")
                      .setDescription(
                             "Whether the SOS should if the response contains duplicated observations. Only necessary if you have inserted an observation for multiple offerings!");
       
@@ -229,9 +231,19 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setOrder(24)
                      .setKey(CHECK_FOR_REQUEST_DUPLICITY)
                      .setDefaultValue(true)
-                     .setTitle("Should this SOS check for duplicated observations in the request?")
+                     .setTitle("Should this SOS check for duplicated observations in the REQUEST?")
                      .setDescription(
                             "Whether the SOS should check if the request contains duplicated observations. Consider that this may lead to duplicated observation in the database!!!");
+      
+     public static final BooleanSettingDefinition ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(25)
+                     .setKey(ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS)
+                     .setDefaultValue(true)
+                     .setTitle("Should this SOS abort the InsertResult if an observation already exist but others not?")
+                     .setDescription(
+                            "Whether the SOS should abort the InsertResult if an observation already exist in the databse but others are new. Default is that the insertion would be stopped!");
       
      
      public static final IntegerSettingDefinition REQUEST_TIMEOUT_DEFINITION =
@@ -257,7 +269,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             INCLUDE_RESULT_TIME_FOR_MERGING_DEFINITION,
             CHECK_FOR_DUPLICITY_DEFINITION,
             REQUEST_TIMEOUT_DEFINITION,
-            CHECK_FOR_REQUEST_DUPLICITY_DEFINITION);
+            CHECK_FOR_REQUEST_DUPLICITY_DEFINITION,
+            ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

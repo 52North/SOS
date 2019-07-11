@@ -52,6 +52,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
@@ -124,7 +125,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *
      * @return Series that fit
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     public abstract List<DatasetEntity> getSeries(GetObservationRequest request, Collection<String> features,
             Session session) throws OwsExceptionReport;
@@ -137,7 +139,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @param session
      *            Hibernate session
      * @return Series that fit
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     public abstract List<DatasetEntity> getSeries(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport;
@@ -150,7 +153,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @param session
      *            Hibernate session
      * @return Series that fit
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     public abstract List<DatasetEntity> getSeries(Collection<String> identifiers, Session session)
             throws OwsExceptionReport;
@@ -163,7 +167,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @param session
      *            Hibernate session
      * @return Series that fit
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     public abstract List<DatasetEntity> getSeries(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport;
@@ -288,16 +293,18 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *
      * @param ctx
      *            identifiers object
-     * @param observation the observation
+     * @param observation
+     *            the observation
      * @param session
      *            Hibernate session
      *
      * @return Series object
      *
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    public abstract DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation,
-            Session session) throws OwsExceptionReport;
+    public abstract DatasetEntity getOrInsertSeries(ObservationContext ctx, DataEntity<?> observation, Session session)
+            throws OwsExceptionReport;
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request)
             throws OwsExceptionReport;
@@ -321,6 +328,9 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
         if (series == null || series.getDatasetType().equals(DatasetType.not_initialized)) {
             series = preCheckDataset(ctx, observation, series, session);
+            if (series != null && series.isMobile()) {
+                series.setDatasetType(DatasetType.trajectory);
+            }
         }
         if (series == null || (series.isSetFeature()
                 && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
@@ -415,7 +425,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
                     .withMessage(
                             "The requested observation constellation (procedure=%s, "
-                            + "observedProperty=%s and offering=%s) is invalid!",
+                                    + "observedProperty=%s and offering=%s) is invalid!",
                             sosOC.getProcedureIdentifier(), observablePropertyIdentifier, sosOC.getOfferings());
         }
         String observationType = sosOC.getObservationType();
@@ -423,11 +433,11 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         DatasetEntity hObsConst = null;
         for (DatasetEntity hoc : hocs) {
             if (!checkObservationType(hoc, observationType, session)) {
-                throw new InvalidParameterValueException().at(parameterName).withMessage(
-                        "The requested observationType (%s) is invalid for procedure = %s, "
-                        + "observedProperty = %s and offering = %s! The valid observationType is '%s'!",
-                        observationType, sosOC.getProcedureIdentifier(), observablePropertyIdentifier,
-                        sosOC.getOfferings(), hoc.getOmObservationType().getFormat());
+                throw new InvalidParameterValueException().at(parameterName)
+                        .withMessage("The requested observationType (%s) is invalid for procedure = %s, "
+                                + "observedProperty = %s and offering = %s! The valid observationType is '%s'!",
+                                observationType, sosOC.getProcedureIdentifier(), observablePropertyIdentifier,
+                                sosOC.getOfferings(), hoc.getOmObservationType().getFormat());
             }
             if (hObsConst == null) {
                 if (sosOC.isSetProcedure()) {
@@ -583,15 +593,13 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) {
         final Criteria c = createCriteriaFor(procedure, observableProperty, featureOfInterest, session);
-        LOGGER.debug(QUERY_SERIES,
-                HibernateHelper.getSqlString(c));
+        LOGGER.debug(QUERY_SERIES, HibernateHelper.getSqlString(c));
         return c;
     }
 
     public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, Session session) {
         final Criteria c = createCriteriaFor(procedure, observableProperty, session);
-        LOGGER.debug(QUERY_SERIES,
-                HibernateHelper.getSqlString(c));
+        LOGGER.debug(QUERY_SERIES, HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -720,7 +728,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *            Hibernate Criteria to add restriction
      * @param offerings
      *            Offering identifiers to add
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
         c.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));

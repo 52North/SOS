@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertyDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryDAO.class);
 
     public CategoryDAO(DaoFactory daoFactory) {
         super(daoFactory);

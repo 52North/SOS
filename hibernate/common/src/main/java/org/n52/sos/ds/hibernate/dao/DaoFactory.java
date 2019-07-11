@@ -214,6 +214,10 @@ public class DaoFactory {
         return new CategoryDAO(this);
     }
 
+    public PlatformDAO getPlatformDAO() {
+        return new PlatformDAO(this);
+    }
+
     public ObservablePropertyDAO getObservablePropertyDAO() {
         return new ObservablePropertyDAO(this);
     }

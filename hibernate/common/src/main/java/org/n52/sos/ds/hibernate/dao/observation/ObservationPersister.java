@@ -96,6 +96,7 @@ import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ParameterDAO;
+import org.n52.sos.ds.hibernate.dao.PlatformDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.util.GeometryHandler;
@@ -360,7 +361,7 @@ public class ObservationPersister
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty) throws OwsExceptionReport {
         return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(),
-                dataset.getCategory(), featureOfInterest, true, session);
+                dataset.getCategory(), featureOfInterest, dataset.getPlatform(), true, session);
     }
 
     private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
@@ -475,12 +476,16 @@ public class ObservationPersister
             observationContext.setProcedure(dataset.getProcedure());
             observationContext.setOffering(dataset.getOffering());
             observationContext.setCategory(dataset.getCategory());
+            observationContext.setPlatform(dataset.getPlatform());
         }
         // currently only profiles with one observedProperty are supported
         if (childObservation && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
         }
         observationContext.setFeatureOfInterest(featureOfInterest);
+        if (!observationContext.isSetPlatform()) {
+            observationContext.setPlatform(daos.platform().getOrInsertPlatform(featureOfInterest, session));
+        }
 
         daos.observation().fillObservationContext(observationContext, omObservation, session);
         DatasetEntity persitedDataset =
@@ -579,6 +584,8 @@ public class ObservationPersister
 
         private final FeatureOfInterestDAO feature;
 
+        private final PlatformDAO platform;
+
         private final AbstractSeriesDAO dataset;
 
         private final UnitDAO unit;
@@ -589,6 +596,7 @@ public class ObservationPersister
             this.observationType = daoFactory.getObservationTypeDAO();
             this.parameter = daoFactory.getParameterDAO();
             this.feature = daoFactory.getFeatureOfInterestDAO();
+            this.platform = daoFactory.getPlatformDAO();
             this.dataset = daoFactory.getSeriesDAO();
             this.unit = daoFactory.getUnitDAO();
         }
@@ -611,6 +619,10 @@ public class ObservationPersister
 
         public FeatureOfInterestDAO feature() {
             return this.feature;
+        }
+
+        public PlatformDAO platform() {
+            return this.platform;
         }
 
         public AbstractSeriesDAO dataset() {

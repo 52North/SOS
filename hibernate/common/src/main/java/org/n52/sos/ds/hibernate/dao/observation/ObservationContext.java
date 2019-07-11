@@ -42,6 +42,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.UnitEntity;
 
@@ -60,6 +61,7 @@ public class ObservationContext {
     private ProcedureEntity procedure;
     private OfferingEntity offering;
     private CategoryEntity category;
+    private PlatformEntity platform;
     private boolean hiddenChild;
     private boolean publish = true;
     private FormatEntity observationType;
@@ -110,6 +112,15 @@ public class ObservationContext {
      */
     public ObservationContext setCategory(CategoryEntity category) {
         this.category = category;
+        return this;
+    }
+
+    public PlatformEntity getPlatform() {
+        return platform;
+    }
+
+    public ObservationContext setPlatform(PlatformEntity platform) {
+        this.platform = platform;
         return this;
     }
 
@@ -180,6 +191,10 @@ public class ObservationContext {
         return getCategory() != null;
     }
 
+    public boolean isSetPlatform() {
+        return getPlatform() != null;
+    }
+
     public boolean isSetObservationType() {
         return getObservationType() != null;
     }
@@ -192,13 +207,18 @@ public class ObservationContext {
         addIdentifierRestrictionsToCritera(c, true);
     }
 
-    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeature) {
-        if (includeFeature) {
+    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeatureAndPlatform) {
+        if (includeFeatureAndPlatform) {
             if (isSetFeatureOfInterest()) {
                 c.add(Restrictions
                         .eqOrIsNull(DatasetEntity.PROPERTY_FEATURE,
                             getFeatureOfInterest()));
 
+            }
+            if (isSetPlatform()) {
+                c.add(Restrictions
+                        .eq(DatasetEntity.PROPERTY_PLATFORM,
+                            getPlatform()));
             }
         } else {
             c.add(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE));
@@ -241,6 +261,9 @@ public class ObservationContext {
         }
         if (contextual.getCategory() == null && isSetCategory()) {
             contextual.setCategory(getCategory());
+        }
+        if (contextual.getPlatform() == null && isSetCategory()) {
+            contextual.setPlatform(getPlatform());
         }
         if (!contextual.isSetOmObservationType() && isSetObservationType()) {
             contextual.setOmObservationType(getObservationType());

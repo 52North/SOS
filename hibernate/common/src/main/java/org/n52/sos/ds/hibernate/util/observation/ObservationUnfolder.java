@@ -760,6 +760,9 @@ public class ObservationUnfolder {
         }
 
         public Geometry getGeometry() throws ParseException, CodedException {
+            if (!isSetLatitude() && !isSetLatitude()) {
+                return null;
+            }
             List<Double> coordinates = Lists.newArrayListWithExpectedSize(2);
             if (getGeomtryHandler().isNorthingFirstEpsgCode(getSrid())) {
                 coordinates.add(getLatitude());

@@ -199,8 +199,7 @@ public class ObservationUnfolder {
                                  * FIXME what is the valid exception code if the
                                  * result is not correct?
                                  */
-                                throw new NoApplicableCodeException().causedBy(e)
-                                        .withMessage(ERROR_PARSING_TIME_LOG);
+                                throw new NoApplicableCodeException().causedBy(e).withMessage(ERROR_PARSING_TIME_LOG);
                             }
                         } else if (dataComponent instanceof SweTimeRange) {
                             try {
@@ -212,8 +211,7 @@ public class ObservationUnfolder {
                                  * FIXME what is the valid exception code if the
                                  * result is not correct?
                                  */
-                                throw new NoApplicableCodeException().causedBy(e)
-                                        .withMessage(ERROR_PARSING_TIME_LOG);
+                                throw new NoApplicableCodeException().causedBy(e).withMessage(ERROR_PARSING_TIME_LOG);
                             }
                         } else if (dataComponent instanceof SweAbstractSimpleType) {
                             if (dataComponent instanceof SweText
@@ -321,15 +319,13 @@ public class ObservationUnfolder {
                 if (complex) {
                     List<OmObservation> observations = new ArrayList<>();
                     for (ObservationStream stream : getProfileLists(observationCollection)) {
-                        observations.addAll(
-                                toList(stream.merge(ObservationMergeIndicator.sameObservationConstellation())));
+                        observations.addAll(toList(stream));
                     }
                     return observations;
                 } else {
                     List<OmObservation> observations = new ArrayList<>();
                     for (ObservationStream stream : getProfileLists(observationCollection, 1)) {
-                        observations.addAll(
-                                toList(stream.merge(ObservationMergeIndicator.sameObservationConstellation())));
+                        observations.addAll(toList(stream));
                     }
                     return observations;
                 }
@@ -346,24 +342,28 @@ public class ObservationUnfolder {
         return observations;
     }
 
-    private List<ObservationStream> getProfileLists(List<OmObservation> observationCollection) {
+    private List<ObservationStream> getProfileLists(List<OmObservation> observationCollection)
+            throws OwsExceptionReport {
         return getProfileLists(observationCollection, 5);
     }
 
-    private List<ObservationStream> getProfileLists(List<OmObservation> observationCollection, int time) {
+    private List<ObservationStream> getProfileLists(List<OmObservation> observationCollection, int time)
+            throws OwsExceptionReport {
         List<ObservationStream> list = new ArrayList<>();
         Map<DateTime, List<OmObservation>> map = getMap(observationCollection);
         DateTime currentTime = null;
         List<OmObservation> currentObservations = new ArrayList<>();
         for (Entry<DateTime, List<OmObservation>> entry : map.entrySet()) {
             if (currentTime != null && Minutes.minutesBetween(currentTime, entry.getKey()).getMinutes() > time) {
-                list.add(ObservationStream.of(currentObservations));
+                list.add(ObservationStream.of(currentObservations)
+                        .merge(ObservationMergeIndicator.sameObservationConstellation()));
                 currentObservations.clear();
             }
             currentObservations.addAll(entry.getValue());
             currentTime = entry.getKey();
         }
-        list.add(ObservationStream.of(currentObservations));
+        list.add(ObservationStream.of(currentObservations)
+                .merge(ObservationMergeIndicator.sameObservationConstellation()));
         return list;
     }
 
@@ -376,7 +376,7 @@ public class ObservationUnfolder {
             } else if (omObservation.getPhenomenonTime() instanceof TimePeriod) {
                 time = ((TimePeriod) omObservation.getPhenomenonTime()).getStart();
             }
-            List list = map.containsKey(time) ? map.get(time) : new LinkedList<>();
+            List<OmObservation> list = map.containsKey(time) ? map.get(time) : new LinkedList<>();
             list.add(omObservation);
             map.put(time, list);
         }

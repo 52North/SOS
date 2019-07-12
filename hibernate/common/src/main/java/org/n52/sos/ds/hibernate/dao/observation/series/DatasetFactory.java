@@ -119,7 +119,7 @@ public abstract class DatasetFactory {
     public DatasetEntity sweDataArray()
             throws OwsExceptionReport {
         return instantiate(sweDataArrayClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.not_initialized);
+                .setObservationType(ObservationType.simple).setValueType(ValueType.dataarray);
     }
 
     public abstract Class<? extends DatasetEntity> textClass();
@@ -135,7 +135,7 @@ public abstract class DatasetFactory {
     public DatasetEntity complex()
             throws OwsExceptionReport {
         return instantiate(complexClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.not_initialized);
+                .setObservationType(ObservationType.simple).setValueType(ValueType.complex);
     }
 
     public abstract Class<? extends DatasetEntity> profileClass();

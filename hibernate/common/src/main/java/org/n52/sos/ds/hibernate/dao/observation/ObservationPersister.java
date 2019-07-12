@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class ObservationPersister
 
     private final DatasetEntity dataset;
 
-    private final AbstractFeatureEntity featureOfInterest;
+    private final AbstractFeatureEntity<?> featureOfInterest;
 
     private final Caches caches;
 
@@ -120,24 +121,24 @@ public class ObservationPersister
 
     private final OmObservation omObservation;
 
-    private final boolean childObservation;
-
     private final Set<OfferingEntity> offerings;
 
     private GeometryHandler geometryHandler;
 
+    private Long parent;
+
     public ObservationPersister(GeometryHandler geometryHandler, AbstractObservationDAO observationDao,
             DaoFactory daoFactory, OmObservation sosObservation, DatasetEntity hDataset,
-            AbstractFeatureEntity hFeature, Map<String, CodespaceEntity> codespaceCache,
+            AbstractFeatureEntity<?> hFeature, Map<String, CodespaceEntity> codespaceCache,
             Map<UoM, UnitEntity> unitCache, Set<OfferingEntity> hOfferings, Session session)
             throws OwsExceptionReport {
         this(geometryHandler, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache),
-                sosObservation, hDataset, hFeature, null, hOfferings, session, false);
+                sosObservation, hDataset, hFeature, null, hOfferings, session, null);
     }
 
     private ObservationPersister(GeometryHandler geometryHandler, DAOs daos, Caches caches, OmObservation observation,
-            DatasetEntity hDataset, AbstractFeatureEntity hFeature, Geometry samplingGeometry,
-            Set<OfferingEntity> hOfferings, Session session, boolean childObservation) throws OwsExceptionReport {
+            DatasetEntity hDataset, AbstractFeatureEntity<?> hFeature, Geometry samplingGeometry,
+            Set<OfferingEntity> hOfferings, Session session, Long parentId) throws OwsExceptionReport {
         this.geometryHandler = geometryHandler;
         this.dataset = hDataset;
         this.featureOfInterest = hFeature;
@@ -148,7 +149,7 @@ public class ObservationPersister
         this.session = session;
         this.daos = daos;
         this.observationFactory = daos.observation().getObservationFactory();
-        this.childObservation = childObservation;
+        this.parent = parentId;
         this.offerings = hOfferings;
     }
 
@@ -203,7 +204,9 @@ public class ObservationPersister
     @Override
     public DataEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
         ComplexDataEntity complex = observationFactory.complex();
-        return persist((DataEntity) complex, persistChildren(value.getValue()));
+        DataEntity complexyDataEntity = persist((DataEntity) complex, new HashSet<DataEntity<?>>());
+        persistChildren(value.getValue(), complexyDataEntity.getId());
+        return complexyDataEntity;
     }
 
     @Override
@@ -266,7 +269,9 @@ public class ObservationPersister
             }
         }
         omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
-        return persist((DataEntity) profile, persistChildren(value.getValue()));
+        DataEntity profileDataEntity = persist((DataEntity) profile, new HashSet<DataEntity<?>>());
+        persistChildren(value.getValue(), profileDataEntity.getId());
+        return profileDataEntity;
     }
 
     @Override
@@ -298,19 +303,19 @@ public class ObservationPersister
         throw notSupported(value);
     }
 
-    private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord)
+    private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, Long parent)
             throws HibernateException, OwsExceptionReport {
         Set<DataEntity<?>> children = new TreeSet<>();
         for (SweField field : dataRecord.getFields()) {
             PhenomenonEntity observableProperty = getObservablePropertyForField(field);
-            ObservationPersister childPersister = createChildPersister(observableProperty);
+            ObservationPersister childPersister = createChildPersister(observableProperty, parent);
             children.add(field.accept(ValueCreatingSweDataComponentVisitor.getInstance()).accept(childPersister));
         }
         session.flush();
         return children;
     }
 
-    private Set<DataEntity<?>> persistChildren(List<ProfileLevel> values) throws OwsExceptionReport {
+    private Set<DataEntity<?>> persistChildren(List<ProfileLevel> values, Long parent) throws OwsExceptionReport {
         Set<DataEntity<?>> children = new TreeSet<>();
         for (ProfileLevel level : values) {
             if (level.isSetValue()) {
@@ -320,7 +325,7 @@ public class ObservationPersister
                 // children.add(v.accept(createChildPersister(level,
                 // ((SweAbstractDataComponent) v).getDefinition())));
                 // } else {
-                children.addAll(level.accept(createChildPersister(level)));
+                children.addAll(level.accept(createChildPersister(level, parent)));
                 // }
                 // }
             }
@@ -340,23 +345,24 @@ public class ObservationPersister
         return o;
     }
 
-    private ObservationPersister createChildPersister(ProfileLevel level, String observableProperty)
+    private ObservationPersister createChildPersister(ProfileLevel level, String observableProperty, Long parent)
             throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
                 getObservationConstellation(getObservableProperty(new OmObservableProperty(observableProperty))),
-                featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, true);
+                featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, parent);
     }
 
-    private ObservationPersister createChildPersister(ProfileLevel level) throws OwsExceptionReport {
+    private ObservationPersister createChildPersister(ProfileLevel level, Long parent) throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                dataset, featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, true);
+                dataset, featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, parent);
 
     }
 
-    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty) throws OwsExceptionReport {
+    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, Long parent)
+            throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, omObservation,
                 getObservationConstellation(observableProperty), featureOfInterest, samplingGeometry, offerings,
-                session, true);
+                session, parent);
     }
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty) throws OwsExceptionReport {
@@ -404,7 +410,8 @@ public class ObservationPersister
      *            Unit
      * @param localCache
      *            Cache (possibly null)
-     * @param session the session
+     * @param session
+     *            the session
      * @return Unit
      */
     protected UnitEntity getUnit(String unit, Map<UoM, UnitEntity> localCache, Session session) {
@@ -418,7 +425,8 @@ public class ObservationPersister
      *            Unit
      * @param localCache
      *            Cache (possibly null)
-     * @param session the session
+     * @param session
+     *            the session
      * @return Unit
      */
     protected UnitEntity getUnit(UoM unit, Map<UoM, UnitEntity> localCache, Session session) {
@@ -437,8 +445,10 @@ public class ObservationPersister
     private <V, T extends DataEntity<V>> T persist(T observation, V value) throws OwsExceptionReport {
         observation.setDeleted(false);
 
-        if (!childObservation) {
+        if (parent == null) {
             daos.observation().addIdentifier(omObservation, observation, session);
+        } else {
+            observation.setParent(parent);
         }
 
         daos.observation().addName(omObservation, observation, session);
@@ -460,12 +470,12 @@ public class ObservationPersister
                 .setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
 
         if (dataset != null) {
-            if (!isProfileObservation(dataset) || (isProfileObservation(dataset) && !childObservation)) {
+            if (!isProfileObservation(dataset) || (isProfileObservation(dataset) && parent == null)) {
                 offerings.add(dataset.getOffering());
                 if (!daos.dataset().checkObservationType(dataset, observationType, session)) {
                     throw new InvalidParameterValueException().withMessage(
                             "The requested observationType (%s) is invalid for procedure = "
-                            + "%s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
+                                    + "%s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
                             observationType, observation.getDataset().getProcedure().getIdentifier(),
                             dataset.getObservableProperty().getIdentifier(), dataset.getOffering().getIdentifier(),
                             dataset.getOmObservationType().getFormat());
@@ -479,7 +489,7 @@ public class ObservationPersister
             observationContext.setPlatform(dataset.getPlatform());
         }
         // currently only profiles with one observedProperty are supported
-        if (childObservation && !isProfileObservation(dataset)) {
+        if (parent != null && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
         }
         observationContext.setFeatureOfInterest(featureOfInterest);
@@ -543,7 +553,7 @@ public class ObservationPersister
     private void checkUpdateFeatureOfInterestGeometry() throws CodedException {
         // check if flag is set and if this observation is not a child
         // observation
-        if (samplingGeometry != null && isUpdateFeatureGeometry() && !childObservation) {
+        if (samplingGeometry != null && isUpdateFeatureGeometry() && parent != null) {
             daos.feature.updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
         }
     }

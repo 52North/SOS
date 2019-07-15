@@ -72,9 +72,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 @Configurable
-public class GetDataAvailabilityDao implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
+public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDaoImpl.class);
 
     private HibernateSessionHolder sessionHolder;
 

@@ -64,7 +64,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class DescribeSensorDao implements org.n52.sos.ds.dao.DescribeSensorDao {
+public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorDao {
 
     private static final String LOG_PARAMETER_PROCEDURE_NOT_NULL = "Parameter 'procedure' should not be null!";
 

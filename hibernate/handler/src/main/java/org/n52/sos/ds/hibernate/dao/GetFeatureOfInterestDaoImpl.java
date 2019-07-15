@@ -39,7 +39,6 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -51,20 +50,13 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 
 @Configurable
-public class GetFeatureOfInterestDao implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
+public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
 
     private HibernateSessionHolder sessionHolder;
-
-    private OwsServiceMetadataRepository serviceMetadataRepository;
 
     private FeatureQueryHandler featureQueryHandler;
 
     private Locale defaultLanguage;
-
-    @Inject
-    public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
-        this.serviceMetadataRepository = repo;
-    }
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {

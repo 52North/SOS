@@ -72,9 +72,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class GetObservationByIdDao extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationByIdDao {
+public class GetObservationByIdDaoImpl extends AbstractObservationDao
+        implements org.n52.sos.ds.dao.GetObservationByIdDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDaoImpl.class);
 
     private HibernateSessionHolder sessionHolder;
 

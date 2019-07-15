@@ -81,8 +81,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class GetObservationDao extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDao.class);
+public class GetObservationDaoImpl extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationDaoImpl.class);
 
     private static final String LOG_TIME_TO_QUERY = "Time to query observations needs {} ms!";
 

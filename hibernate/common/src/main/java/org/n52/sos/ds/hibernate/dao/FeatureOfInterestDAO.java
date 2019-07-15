@@ -102,9 +102,6 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
     private static final String SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING =
             "getFeatureOfInterestIdentifiersForOffering";
 
-    private static final String SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION =
-            "getFeatureOfInterestIdentifiersForObservationConstellation";
-
     public FeatureOfInterestDAO(DaoFactory daoFactory) {
         super(daoFactory);
     }
@@ -360,14 +357,14 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         if (featureOfInterest == null) {
             throw new NoApplicableCodeException().withMessage("The feature to check or insert is null.");
         }
-        AbstractFeatureEntity feature = getFeature(featureOfInterest.getIdentifier(), session);
+        AbstractFeatureEntity<?> feature = getFeature(featureOfInterest.getIdentifier(), session);
         if (feature != null) {
             return feature;
         }
         if (featureOfInterest instanceof AbstractSamplingFeature) {
             AbstractSamplingFeature sf = (AbstractSamplingFeature) featureOfInterest;
             String featureIdentifier = getFeatureQueryHandler().insertFeature(sf, session);
-            return getFeature(featureOfInterest.getIdentifier(), session);
+            return getFeature(featureIdentifier, session);
         } else {
             throw new NoApplicableCodeException().withMessage("The used feature type '%s' is not supported.",
                     featureOfInterest.getClass().getName()).setStatus(HTTPStatus.BAD_REQUEST);

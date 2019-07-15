@@ -169,20 +169,18 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (flow == null) {
-                throw new OptionNotSupportedException()
-                        .withMessage(LOG_TEMPLATE, flow);
+                throw new OptionNotSupportedException().withMessage(LOG_TEMPLATE, "null");
             } else {
                 switch (flow) {
-                    case E1A:
-                    case E2A:
-                        addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
-                        break;
-                    case E1B:
-                        addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
-                        break;
-                    default:
-                        throw new OptionNotSupportedException()
-                            .withMessage(LOG_TEMPLATE, flow.name());
+                case E1A:
+                case E2A:
+                    addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
+                    break;
+                case E1B:
+                    addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
+                    break;
+                default:
+                    throw new OptionNotSupportedException().withMessage(LOG_TEMPLATE, flow.name());
                 }
             }
             // add quality restrictions

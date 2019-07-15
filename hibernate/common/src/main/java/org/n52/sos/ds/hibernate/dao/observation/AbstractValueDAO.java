@@ -45,8 +45,8 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
-import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
@@ -66,10 +66,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
-    private GeometryHandler geometryHandler;
+    private DaoFactory daoFactory;
 
-    public AbstractValueDAO(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
+    public AbstractValueDAO(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     /**
@@ -90,18 +90,16 @@ public abstract class AbstractValueDAO extends TimeCreator {
      */
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session, StringBuilder logArgs) throws OwsExceptionReport {
-        if (request instanceof GetObservationRequest) {
-            if (((GetObservationRequest) request).hasSpatialFilteringProfileSpatialFilter()) {
-                if (getGeometryHandler().isSpatialDatasource()) {
-                    c.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY,
-                            ((GetObservationRequest) request).getSpatialFilter().getOperator(),
-                            getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                    ((GetObservationRequest) request).getSpatialFilter().getGeometry())));
-                    logArgs.append(", spatialFilter");
-                } else {
-                    // TODO add filter with lat/lon
-                    LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
-                }
+        if (request.hasSpatialFilteringProfileSpatialFilter()) {
+            if (getGeometryHandler().isSpatialDatasource()) {
+                c.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY,
+                        ((GetObservationRequest) request).getSpatialFilter().getOperator(),
+                        getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                ((GetObservationRequest) request).getSpatialFilter().getGeometry())));
+                logArgs.append(", spatialFilter");
+            } else {
+                // TODO add filter with lat/lon
+                LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
             }
         }
     }
@@ -238,7 +236,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
         Criteria criteria = session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
         // FIXME check if this works
-        if (!isIncludeChildObservableProperties()) {
+        if (!daoFactory.isIncludeChildObservableProperties()) {
             criteria.add(Restrictions.isNull(DataEntity.PROPERTY_PARENT));
         } else {
             criteria.add(Restrictions.or(Restrictions.isNotNull(DataEntity.PROPERTY_PARENT),
@@ -250,19 +248,12 @@ public abstract class AbstractValueDAO extends TimeCreator {
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
-    protected boolean isIncludeChildObservableProperties() {
-        if (ObservationSettingProvider.getInstance() != null) {
-            return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
-        }
-        return false;
-    }
-
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request, StringBuilder logArgs)
             throws OwsExceptionReport;
 
     protected abstract ValuedObservationFactory getValuedObservationFactory();
 
     public GeometryHandler getGeometryHandler() {
-        return geometryHandler;
+        return daoFactory.getGeometryHandler();
     }
 }

@@ -31,6 +31,7 @@ package org.n52.sos.web.admin;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -141,10 +142,10 @@ public class AdminExtensionController extends AbstractAdminController {
             throws ConnectionProviderException, ConfigurationError, JSONException {
         ArrayNode jeces = Json.nodeFactory().arrayNode();
         Map<OwsServiceKey, Collection<String>> oes = this.owsExtendedCapabilitiesProviderRepository.getAllDomains();
-        for (OwsServiceKey sokt : oes.keySet()) {
-            for (String name : oes.get(sokt)) {
+        for (Entry<OwsServiceKey, Collection<String>> entry : oes.entrySet()) {
+            for (String name : entry.getValue()) {
                 OwsOperationMetadataExtensionProviderKey oeckt =
-                        new OwsOperationMetadataExtensionProviderKey(sokt, name);
+                        new OwsOperationMetadataExtensionProviderKey(entry.getKey(), name);
                 jeces.addObject().put(JSONConstants.SERVICE_KEY, oeckt.getService())
                         .put(JSONConstants.VERSION_KEY, oeckt.getVersion())
                         .put(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY, oeckt.getDomain())
@@ -158,9 +159,9 @@ public class AdminExtensionController extends AbstractAdminController {
             throws JSONException, ConnectionProviderException, ConfigurationError {
         ArrayNode joes = Json.nodeFactory().arrayNode();
         final Map<OwsServiceKey, Collection<String>> oes = this.offeringExtensionRepository.getAllDomains();
-        for (OwsServiceKey sokt : oes.keySet()) {
-            for (String name : oes.get(sokt)) {
-                SosObservationOfferingExtensionKey oekt = new SosObservationOfferingExtensionKey(sokt, name);
+        for (Entry<OwsServiceKey, Collection<String>> entry : oes.entrySet()) {
+            for (String name : entry.getValue()) {
+                SosObservationOfferingExtensionKey oekt = new SosObservationOfferingExtensionKey(entry.getKey(), name);
                 joes.addObject().put(JSONConstants.SERVICE_KEY, oekt.getService())
                         .put(JSONConstants.VERSION_KEY, oekt.getVersion())
                         .put(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY, oekt.getDomain())

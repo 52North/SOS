@@ -46,7 +46,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.util.SosHelper;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 public class EnvironmentalMonitoringFacilityCreator
@@ -63,7 +62,7 @@ public class EnvironmentalMonitoringFacilityCreator
         // org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(
         // new SimpleAttrs().setHref(f.getUrl()));
         // }
-        if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+        if (f != null) {
             EnvironmentalMonitoringFacilityEntity emf = (EnvironmentalMonitoringFacilityEntity) f;
             final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(emf);
             if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), getContext().getVersion())) {
@@ -213,8 +212,8 @@ public class EnvironmentalMonitoringFacilityCreator
         return new StringBuilder(url).append('&').append(parameter).append('=').append(value).toString();
     }
 
-    private String addParameter(String url, String parameter, Set<String> offerings) {
-        return new StringBuilder(url).append('&').append(parameter).append('=').append(Joiner.on(',').join(offerings))
-                .toString();
-    }
+//    private String addParameter(String url, String parameter, Set<String> offerings) {
+//        return new StringBuilder(url).append('&').append(parameter).append('=').append(Joiner.on(',').join(offerings))
+//                .toString();
+//    }
 }

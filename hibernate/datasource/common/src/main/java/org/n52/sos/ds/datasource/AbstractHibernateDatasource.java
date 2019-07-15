@@ -73,7 +73,6 @@ import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.hibernate.type.SmallBooleanType;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.util.SQLConstants;
@@ -437,7 +436,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected File resource(String resource) {
         try {
-            return new File(getClass().getResource(resource).toURI());
+            return new File(AbstractHibernateDatasource.class.getResource(resource).toURI());
         } catch (URISyntaxException ex) {
             throw new ConfigurationError(ex);
         }
@@ -826,24 +825,24 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         StringBuilder builder = new StringBuilder();
         for (String path : getDatabaseConceptMappingDirectory(settings)) {
             if (builder.length() != 0) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR);
+                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
             }
             builder.append(path);
         }
         for (String path : getDatabaseExtensionMappingDirectory(settings)) {
             if (builder.length() != 0) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR);
+                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
             }
             builder.append(path);
         }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
             if (builder.length() != 0) {
-                builder.append(SessionFactoryProvider.PATH_SEPERATOR);
+                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
             }
             builder.append(featureConceptMappingDirectory);
         }
-        p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+        p.put(HibernateDatasourceConstants.HIBERNATE_DIRECTORY, builder.toString());
     }
 
     protected ChoiceSettingDefinition getFeatureConceptDefinition() {

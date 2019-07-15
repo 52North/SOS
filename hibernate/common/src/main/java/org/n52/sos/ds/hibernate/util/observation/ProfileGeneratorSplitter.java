@@ -205,8 +205,6 @@ public class ProfileGeneratorSplitter {
 
     private boolean checkParameterForStartLevel(String name) {
         return OmConstants.PARAMETER_NAME_DEPTH_URL.equalsIgnoreCase(name)
-                || OmConstants.PARAMETER_NAME_DEPTH_URL.equalsIgnoreCase(name)
-                || OmConstants.PARAMETER_NAME_DEPTH.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_DEPTH.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_ELEVATION.equalsIgnoreCase(name)
                 || OmConstants.PARAMETER_NAME_FROM.equalsIgnoreCase(name)

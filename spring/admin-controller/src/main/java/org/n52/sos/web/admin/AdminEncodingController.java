@@ -30,6 +30,7 @@ package org.n52.sos.web.admin;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -121,9 +122,9 @@ public class AdminEncodingController extends AbstractAdminController {
     protected ArrayNode getObservationEncodings() {
         ArrayNode joes = Json.nodeFactory().arrayNode();
         final Map<OwsServiceKey, Set<String>> oes = this.responseFormatRepository.getAllSupportedResponseFormats();
-        for (OwsServiceKey sokt : oes.keySet()) {
-            for (String responseFormat : oes.get(sokt)) {
-                ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
+        for (Entry<OwsServiceKey, Set<String>> entry : oes.entrySet()) {
+            for (String responseFormat : entry.getValue()) {
+                ResponseFormatKey rfkt = new ResponseFormatKey(entry.getKey(), responseFormat);
                 joes.addObject().put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.RESPONSE_FORMAT_KEY, rfkt.getResponseFormat())
@@ -137,10 +138,10 @@ public class AdminEncodingController extends AbstractAdminController {
         ArrayNode jpes = Json.nodeFactory().arrayNode();
         final Map<OwsServiceKey, Set<String>> oes =
                 this.procedureDescriptionFormatRepository.getAllProcedureDescriptionFormats();
-        for (OwsServiceKey sokt : oes.keySet()) {
-            for (String procedureDescriptionFormat : oes.get(sokt)) {
+        for (Entry<OwsServiceKey, Set<String>> entry : oes.entrySet()) {
+            for (String procedureDescriptionFormat : entry.getValue()) {
                 ProcedureDescriptionFormatKey rfkt =
-                        new ProcedureDescriptionFormatKey(sokt, procedureDescriptionFormat);
+                        new ProcedureDescriptionFormatKey(entry.getKey(), procedureDescriptionFormat);
                 jpes.addObject().put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY, rfkt.getProcedureDescriptionFormat())

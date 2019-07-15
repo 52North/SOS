@@ -783,19 +783,17 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             List<DataEntity<?>> list = new LinkedList<>();
             for (SubQueryIdentifier identifier : ResultFilterRestrictions
                     .getSubQueryIdentifier(getResultFilterClasses())) {
-                String logArgs = new String(identifier + ",");
                 Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion,
                         sosIndeterminateTime, session);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
-                LOGGER.debug(LOG_QUERY_OBSERVATIONS, logArgs, HibernateHelper.getSqlString(c));
+                LOGGER.debug(LOG_QUERY_OBSERVATIONS, identifier, HibernateHelper.getSqlString(c));
                 list.addAll(c.list());
             }
             return list;
         }
-        String logArgs = new String();
         Criteria c = getDefaultSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime,
                 session);
-        LOGGER.debug(LOG_QUERY_OBSERVATIONS, logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug(LOG_QUERY_OBSERVATIONS, "", HibernateHelper.getSqlString(c));
         return c.list();
     }
 
@@ -981,7 +979,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         return (DataEntity<?>) c.uniqueResult();
     }
 
-    private class SeriesTimeTransformer implements ResultTransformer {
+    private static class SeriesTimeTransformer implements ResultTransformer {
         private static final long serialVersionUID = -373512929481519459L;
 
         @Override

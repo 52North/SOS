@@ -53,15 +53,9 @@ class ProcedureDescriptionGeneratorWml20 extends AbstractProcedureDescriptionGen
     public static final Set<ProcedureDescriptionGeneratorKey> GENERATOR_KEY_TYPES =
             CollectionHelper.set(new ProcedureDescriptionGeneratorKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
 
-    private ProfileHandler profileHandler;
-
-    private GeometryHandler geometryHandler;
-
     ProcedureDescriptionGeneratorWml20(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController) {
         super(i18ndaoRepository, cacheController);
-        this.profileHandler = profileHandler;
-        this.geometryHandler = geometryHandler;
     }
 
     @Override

@@ -42,11 +42,11 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +65,8 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     private static final String S_PREFIX = "s.";
 
-    public AbstractSeriesValueDAO(GeometryHandler geometryHandler) {
-        super(geometryHandler);
+    public AbstractSeriesValueDAO(DaoFactory daoFactory) {
+        super(daoFactory);
     }
 
     protected Class<?> getSeriesValueClass() {

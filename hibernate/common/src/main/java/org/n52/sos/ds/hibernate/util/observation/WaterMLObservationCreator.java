@@ -45,9 +45,7 @@ import com.google.common.collect.Sets;
  *         J&uuml;rrens</a>
  *
  */
-public class WaterMLObservationCreator
-        extends
-        AbstractAdditionalObservationCreator {
+public class WaterMLObservationCreator implements AdditionalObservationCreator {
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = Sets.union(
             AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20, DataEntity.class,

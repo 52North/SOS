@@ -639,7 +639,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             }
         }
         Map<String, TimeExtrema> procedureTimeExtrema = Maps.newHashMap();
-        if (CollectionHelper.isNotEmpty(results)) {
+        if (results != null && !results.isEmpty()) {
             for (ProcedureTimeExtrema pte : results) {
                 if (pte != null && pte.isSetProcedure()) {
                     procedureTimeExtrema.put(pte.getProcedure(), pte);
@@ -780,14 +780,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             procedure = new ProcedureEntity();
             procedure.setFormat(procedureDescriptionFormat);
             procedure.setIdentifier(identifier);
-            if (procedureDescription.getProcedureDescription() instanceof AbstractFeature) {
-                AbstractFeature af = (AbstractFeature) procedureDescription.getProcedureDescription();
-                if (af.isSetName()) {
-                    procedure.setName(af.getFirstName().getValue());
-                }
-                if (af.isSetDescription()) {
-                    procedure.setDescription(af.getDescription());
-                }
+            AbstractFeature af = procedureDescription.getProcedureDescription();
+            if (af.isSetName()) {
+                procedure.setName(af.getFirstName().getValue());
+            }
+            if (af.isSetDescription()) {
+                procedure.setDescription(af.getDescription());
             }
             if (procedureDescription.isSetParentProcedure()) {
                 ProcedureEntity parent =
@@ -1007,21 +1005,19 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     public ProcedureEntity updateProcedure(ProcedureEntity procedure, SosProcedureDescription procedureDescription,
             Session session) {
-        if (procedureDescription.getProcedureDescription() instanceof AbstractFeature) {
-            AbstractFeature af = (AbstractFeature) procedureDescription.getProcedureDescription();
-            if (af.isSetName()) {
-                if (!procedure.isSetName()
-                        || (procedure.isSetName() && !checkForName(af.getName(), procedure.getName()))) {
-                    procedure.setName(af.getFirstName().getValue());
-                }
-                if (af.isSetDescription() && !af.getDescription().equals(procedure.getDescription())) {
-                    procedure.setDescription(af.getDescription());
-                }
+        AbstractFeature af = procedureDescription.getProcedureDescription();
+        if (af.isSetName()) {
+            if (!procedure.isSetName()
+                    || (procedure.isSetName() && !checkForName(af.getName(), procedure.getName()))) {
+                procedure.setName(af.getFirstName().getValue());
             }
-            session.saveOrUpdate(procedure);
-            session.flush();
-            session.refresh(procedure);
+            if (af.isSetDescription() && !af.getDescription().equals(procedure.getDescription())) {
+                procedure.setDescription(af.getDescription());
+            }
         }
+        session.saveOrUpdate(procedure);
+        session.flush();
+        session.refresh(procedure);
         return procedure;
     }
 
@@ -1036,7 +1032,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @since 4.4.0
      *
      */
-    private class ProcedureTimeTransformer implements ResultTransformer {
+    private static class ProcedureTimeTransformer implements ResultTransformer {
         private static final long serialVersionUID = -373512929481519459L;
 
         @Override

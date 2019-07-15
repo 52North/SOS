@@ -48,6 +48,7 @@ import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import com.google.common.collect.Sets;
 
@@ -72,6 +73,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
     private static final String DESCRIPTION = "Set this to the name/path of the database you want to use for SOS.";
 
     @Override
+    @SuppressFBWarnings("DMI_EMPTY_DB_PASSWORD")
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             String jdbc = toURL(settings);
@@ -148,7 +150,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
             try {
                 boolean created = f.createNewFile();
                 if (created) {
-                    f.delete();
+                    return f.delete();
                 }
                 return created;
             } catch (IOException ex) {

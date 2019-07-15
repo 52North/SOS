@@ -31,6 +31,7 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.n52.faroe.annotation.Configurable;
@@ -283,11 +284,12 @@ public class SosGetObservationOperatorV20 extends
                         oe.getSupportedResponseFormatObservationTypes();
                 if (supportedResponseFormatObservationTypes != null
                         && !supportedResponseFormatObservationTypes.isEmpty()) {
-                    for (final String responseFormat : supportedResponseFormatObservationTypes.keySet()) {
-                        for (SupportedType st : supportedResponseFormatObservationTypes.get(responseFormat)) {
+                    for (final Entry<String, Set<SupportedType>> entry : supportedResponseFormatObservationTypes
+                            .entrySet()) {
+                        for (SupportedType st : entry.getValue()) {
                             if (st instanceof ObservationType
                                     && observationType.equals(((ObservationType) st).getValue())) {
-                                responseFormats.add(responseFormat);
+                                responseFormats.add(entry.getKey());
                             }
                         }
                     }

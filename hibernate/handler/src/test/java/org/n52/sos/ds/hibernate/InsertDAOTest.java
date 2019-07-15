@@ -125,7 +125,7 @@ import org.n52.sos.cache.ctrl.DefaultContentModificationListener;
 import org.n52.sos.cache.ctrl.SosContentCacheControllerImpl;
 import org.n52.sos.ds.SosCacheFeederHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.GetObservationDao;
+import org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
@@ -279,7 +279,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     private final InsertResultHandler insertResultDAO = new InsertResultHandler();
 
-    private final GetObservationDao getObsDAO = new GetObservationDao();
+    private final GetObservationDaoImpl getObsDAO = new GetObservationDaoImpl();
 
     private final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
 
@@ -387,25 +387,19 @@ public class InsertDAOTest extends HibernateTestCase {
     }
 
     private void initDaos() {
-        insertSensorDAO.setConnectionProvider(this);
-        insertSensorDAO.setDaoFactory(daoFactory);
+        insertSensorDAO.initForTesting(daoFactory, this);
         insertSensorDAO.setCacheController(contentCacheController);
-        deleteSensorDAO.setConnectionProvider(this);
-        deleteSensorDAO.setDaoFactory(daoFactory);
+        deleteSensorDAO.initForTesting(daoFactory, this);
         deleteSensorDAO.setCacheController(contentCacheController);
-        insertObservationDAO.setConnectionProvider(this);
-        insertObservationDAO.setDaoFactory(daoFactory);
+        insertObservationDAO.initForTesting(daoFactory, this);
         insertObservationDAO.setCacheController(contentCacheController);
         insertResultTemplateDAO.setConnectionProvider(this);
         insertResultTemplateDAO.setDaoFactory(daoFactory);
         insertResultTemplateDAO.setCacheController(contentCacheController);
         insertResultTemplateDAO.init();
-        insertResultDAO.setConnectionProvider(this);
-        insertResultDAO.setDaoFactory(daoFactory);
+        insertResultDAO.initForTesting(daoFactory, this);
         insertResultDAO.setCacheController(contentCacheController);
         insertResultDAO.setDecoderRepository(decoderRepository);
-        insertResultDAO.setSweHelper(new SweHelper());
-        insertResultDAO.setGeometryHandler(daoFactory.getGeometryHandler());
         insertResultDAO.init();
         getObsDAO.setConnectionProvider(this);
         getObsDAO.setDaoFactory(daoFactory);

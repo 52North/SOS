@@ -45,11 +45,11 @@ import org.jfree.data.general.Dataset;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.CompositeDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
+import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -80,34 +80,20 @@ import com.google.common.base.Joiner;
 @Configurable
 public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
-    private static final String QUANTITY = "quantity";
-
     private static final String EQUAL_PARAMETER = " = :";
 
     private static final String ERROR_LOG = "Error while updating deleted observation flag data!";
 
+    @Inject
     private HibernateSessionHolder sessionHolder;
 
+    @Inject
     private DaoFactory daoFactory;
 
+    @Inject
     private OmObservationCreatorContext observationCreatorContext;
 
     private Boolean deletePhysically = false;
-
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
-    @Inject
-    public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
-        this.observationCreatorContext = observationCreatorContext;
-    }
 
     @Setting("service.transactional.DeletePhysically")
     public void setDeletePhysically(Boolean deletePhysically) {
@@ -140,11 +126,9 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new NoApplicableCodeException().causedBy(he)
-                    .withMessage(ERROR_LOG);
+            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG);
         } catch (ConverterException ce) {
-            throw new NoApplicableCodeException().causedBy(ce)
-                    .withMessage(ERROR_LOG);
+            throw new NoApplicableCodeException().causedBy(ce).withMessage(ERROR_LOG);
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -269,7 +253,8 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
      *            Deleted observation
      * @param session
      *            Hibernate session
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     private void checkSeriesForFirstLatest(Set<DatasetEntity> serieses, Session session) throws OwsExceptionReport {
         if (!serieses.isEmpty()) {
@@ -282,7 +267,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                     if (!series.isSetFirstValueAt() || (series.isSetFirstValueAt() && !DateTimeHelper
                             .makeDateTime(series.getFirstValueAt()).equals(extrema.getMinPhenomenonTime()))) {
                         series.setFirstValueAt(extrema.getMinPhenomenonTime().toDate());
-                        if (series.getValueType().equals(QUANTITY)) {
+                        if (series.getValueType().equals(ValueType.quantity)) {
                             QuantityDataEntity o = (QuantityDataEntity) observationDAO.getMinObservation(series,
                                     extrema.getMinPhenomenonTime(), session);
                             series.setFirstQuantityValue(o.getValue());
@@ -293,7 +278,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                     if (!series.isSetLastValueAt() || (series.isSetLastValueAt() && !DateTimeHelper
                             .makeDateTime(series.getLastValueAt()).equals(extrema.getMaxPhenomenonTime()))) {
                         series.setLastValueAt(extrema.getMaxPhenomenonTime().toDate());
-                        if (series.getValueType().equals(QUANTITY)) {
+                        if (series.getValueType().equals(ValueType.quantity)) {
                             QuantityDataEntity o = (QuantityDataEntity) observationDAO.getMaxObservation(series,
                                     extrema.getMaxPhenomenonTime(), session);
                             series.setLastQuantityValue(o.getValue());

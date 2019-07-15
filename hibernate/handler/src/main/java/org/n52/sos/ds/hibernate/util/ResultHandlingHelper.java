@@ -89,10 +89,6 @@ public class ResultHandlingHelper {
 
     public static final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
 
-    private final String RESULT_TIME = OmConstants.RESULT_TIME;
-
-    private final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
-
     private final SweHelper helper;
 
     private GeometryHandler geometryHandler;
@@ -136,18 +132,18 @@ public class ResultHandlingHelper {
                 addElementCount(builder, observations.size(), blockSeparator);
             }
             for (final DataEntity<?> observation : observations) {
-                for (final Integer intger : valueOrder.keySet()) {
+                for (final Entry<Integer, String> entry : valueOrder.entrySet()) {
                     if (observation instanceof ProfileDataEntity) {
                         builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(),
                                 sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false));
                     } else {
-                        final String definition = valueOrder.get(intger);
+                        final String definition = entry.getValue();
                         switch (definition) {
-                            case PHENOMENON_TIME:
+                            case OmConstants.PHENOMENON_TIME:
                                 builder.append(getTimeStringForPhenomenonTime(observation.getSamplingTimeStart(),
                                         observation.getSamplingTimeEnd(), noDataPlaceholder));
                                 break;
-                            case RESULT_TIME:
+                            case OmConstants.RESULT_TIME:
                                 builder.append(getTimeStringForResultTime(observation.getResultTime(),
                                     noDataPlaceholder));
                                 break;
@@ -232,10 +228,10 @@ public class ResultHandlingHelper {
         if (sweDataElement instanceof SweDataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
             final SweDataArray dataArray = (SweDataArray) sweDataElement;
-            return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), RESULT_TIME);
+            return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), OmConstants.RESULT_TIME);
         } else if (sweDataElement instanceof SweDataRecord) {
             final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
-            return checkFields(dataRecord.getFields(), RESULT_TIME);
+            return checkFields(dataRecord.getFields(), OmConstants.RESULT_TIME);
         }
         return -1;
     }
@@ -253,10 +249,10 @@ public class ResultHandlingHelper {
         if (sweDataElement instanceof SweDataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
             final SweDataArray dataArray = (SweDataArray) sweDataElement;
-            return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), PHENOMENON_TIME);
+            return checkFields(((SweDataRecord) dataArray.getElementType()).getFields(), OmConstants.PHENOMENON_TIME);
         } else if (sweDataElement instanceof SweDataRecord) {
             final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
-            return checkFields(dataRecord.getFields(), PHENOMENON_TIME);
+            return checkFields(dataRecord.getFields(), OmConstants.PHENOMENON_TIME);
         }
         return -1;
     }
@@ -359,18 +355,11 @@ public class ResultHandlingHelper {
     private void addOrderAndVectorDefinitionToMap(Collection<? extends SweCoordinate<? extends Number>> list,
             Map<Integer, String> valueOrder, IncDecInteger tokenIndex) {
         for (SweCoordinate<?> sweCoordinate : list) {
-            final SweAbstractDataComponent element = sweCoordinate.getValue();
-            if (element instanceof SweAbstractSimpleType) {
-                final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
-                if (simpleType.isSetDefinition()) {
-                    addValueToValueOrderMap(valueOrder, tokenIndex, simpleType.getDefinition());
-                }
-                tokenIndex.increment();
-            } else if (element instanceof SweDataRecord) {
-                addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
-            } else if (element instanceof SweVector) {
-                addOrderAndVectorDefinitionToMap(((SweVector) element).getCoordinates(), valueOrder, tokenIndex);
+            final SweAbstractSimpleType element = sweCoordinate.getValue();
+            if (element.isSetDefinition()) {
+                addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
             }
+            tokenIndex.increment();
         }
     }
 
@@ -423,8 +412,8 @@ public class ResultHandlingHelper {
                 samplingGeometry = getGeomtryHandler()
                         .switchCoordinateAxisFromToDatasourceIfNeeded(observation.getGeometryEntity().getGeometry());
             }
-            for (final Integer intger : valueOrder.keySet()) {
-                final String definition = valueOrder.get(intger);
+            for (final Entry<Integer, String> entry : valueOrder.entrySet()) {
+                final String definition = entry.getValue();
                 if (samplingGeometry != null && samplingGeometry instanceof Point) {
                     Coordinate coordinate = samplingGeometry.getCoordinate();
                     if (helper.hasAltitudeName(definition) && checkCoordinate(coordinate.getZ())) {

@@ -71,6 +71,7 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.service.SosSettings;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
@@ -99,8 +100,10 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
                     + " the Spatial Filtering Profile is specification conformant. To use a less"
                     + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!";
 
+    @Inject
     private HibernateSessionHolder sessionHolder;
 
+    @Inject
     private DaoFactory daoFactory;
 
     private boolean strictSpatialFilteringProfile;
@@ -112,19 +115,13 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
         super(SosConstants.SOS);
     }
 
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
     @Setting(SosSettings.STRICT_SPATIAL_FILTERING_PROFILE)
-    public void setStrictSpatialFilteringProfile(final boolean strictSpatialFilteringProfile) {
+    public synchronized void setStrictSpatialFilteringProfile(final boolean strictSpatialFilteringProfile) {
         this.strictSpatialFilteringProfile = strictSpatialFilteringProfile;
+    }
+
+    public synchronized boolean isStrictSpatialFilteringProfile() {
+        return strictSpatialFilteringProfile;
     }
 
     @Override
@@ -144,7 +141,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
         // TODO: checkConstellation unit and set if available and not defined in
         // DB
         try {
-            session = sessionHolder.getSession();
+            session = getHibernateSessionHolder().getSession();
             transaction = session.beginTransaction();
 
             CompositeOwsException exceptions = new CompositeOwsException();
@@ -157,7 +154,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
 
             for (final OmObservation sosObservation : request.getObservations()) {
                 // check strict spatial filtering profile
-                if (strictSpatialFilteringProfile && !sosObservation.isSetSpatialFilteringProfileParameter()) {
+                if (isStrictSpatialFilteringProfile() && !sosObservation.isSetSpatialFilteringProfileParameter()) {
                     throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                             .withMessage(LOG_SAMPLING_GEOMETRY);
                 }
@@ -187,7 +184,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
             }
             handleHibernateException(pe);
         } finally {
-            sessionHolder.returnSession(session);
+            getHibernateSessionHolder().returnSession(session);
         }
         /*
          * TODO: ... all the DS insertion stuff Requirement 68
@@ -216,7 +213,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
         if (hDataset == null) {
             if (!cache.isChecked(sosObsConst, offeringID)) {
                 try {
-                    hDataset = daoFactory.getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
+                    hDataset = getDaoFactory().getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
                             Sos2Constants.InsertObservationParams.observationType.name());
                     // add to cache table
                     cache.putConstellation(sosObsConst, offeringID, hDataset);
@@ -234,11 +231,11 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
             // only do feature checking once for each
             // AbstractFeature/offering combo
             if (!cache.isChecked(sosObsConst.getFeatureOfInterest(), offeringID)) {
-                daoFactory.getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(hFeature,
+                getDaoFactory().getFeatureOfInterestDAO().checkOrInsertRelatedFeatureRelation(hFeature,
                         hDataset.getOffering(), session);
                 cache.checkFeature(sosObsConst.getFeatureOfInterest(), offeringID);
             }
-            AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             DatasetEntity dataset = null;
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 dataset = observationDAO.insertObservationSingleValue(hDataset, hFeature, sosObservation,
@@ -255,7 +252,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
 
     protected void checkSpatialFilteringProfile(OmObservation sosObservation) throws CodedException {
         // checkConstellation
-        if (strictSpatialFilteringProfile && !sosObservation.isSetSpatialFilteringProfileParameter()) {
+        if (isStrictSpatialFilteringProfile() && !sosObservation.isSetSpatialFilteringProfileParameter()) {
             throw new MissingParameterValueException(Sos2Constants.InsertObservationParams.parameter)
                     .withMessage(LOG_SAMPLING_GEOMETRY);
         }
@@ -265,7 +262,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new observation!";
 
-        if (pe instanceof PersistenceException && pe.getCause() instanceof ConstraintViolationException) {
+        if (pe.getCause() instanceof ConstraintViolationException) {
             CompositeOwsException ce = new CompositeOwsException();
             final ConstraintViolationException cve = (ConstraintViolationException) pe.getCause();
             checkEqualsAndThrow(cve.getConstraintName(), pe);
@@ -288,7 +285,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
 
     private void checkEqualsAndThrow(String constraintName, PersistenceException e) throws OwsExceptionReport {
         if (!Strings.isNullOrEmpty(constraintName)) {
-            String exceptionMsg = null;
+            String exceptionMsg = "";
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
                 exceptionMsg = LOG_OBSERVATION_SAME_VALUES;
             } else if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) {
@@ -303,7 +300,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
 
     private void checkContainsAndThrow(String message, PersistenceException e) throws OwsExceptionReport {
         if (!Strings.isNullOrEmpty(message)) {
-            String exceptionMsg = null;
+            String exceptionMsg = "";
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
                 exceptionMsg = LOG_OBSERVATION_SAME_VALUES;
             } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
@@ -334,10 +331,24 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
             Session session) throws OwsExceptionReport {
         AbstractFeatureEntity hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
-            hFeature = daoFactory.getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
+            hFeature = getDaoFactory().getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
         return hFeature;
+    }
+
+    private synchronized DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    private synchronized HibernateSessionHolder getHibernateSessionHolder() {
+        return sessionHolder;
+    }
+
+    @VisibleForTesting
+    protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
+        this.daoFactory = daoFactory;
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     private static class InsertObservationCache {

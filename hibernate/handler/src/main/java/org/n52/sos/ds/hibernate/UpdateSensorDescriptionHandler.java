@@ -37,11 +37,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
-import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorML;
@@ -62,22 +60,14 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  */
 public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler {
 
+    @Inject
     private HibernateSessionHolder sessionHolder;
 
+    @Inject
     private DaoFactory daoFactory;
 
     public UpdateSensorDescriptionHandler() {
         super(SosConstants.SOS);
-    }
-
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -154,8 +144,7 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
                 // TODO: get sensor description for procedure identifier
                 return "";
             }
-        } else if (procedureDescription.getProcedureDescription() instanceof AbstractFeature
-                && procedureDescription.getProcedureDescription().isSetXml()) {
+        } else if (procedureDescription.getProcedureDescription().isSetXml()) {
             return procedureDescription.getProcedureDescription().getXml();
         } else if (procedureDescription.isSetXml()) {
             return procedureDescription.getXml();

@@ -117,23 +117,23 @@ public class AbstractHibernateFullDBDatasourceTest
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
 
-        assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
-        assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
-        assertTrue(keys.contains(AbstractHibernateDatasource.DATABASE_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.HOST_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.PORT_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.DATABASE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.USERNAME_KEY));
-        assertTrue(keys.contains(AbstractHibernateDatasource.PASSWORD_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.PASSWORD_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.SCHEMA_KEY));
-        assertTrue(keys.contains(AbstractHibernateDatasource.MIN_POOL_SIZE_KEY));
-        assertTrue(keys.contains(AbstractHibernateDatasource.MAX_POOL_SIZE_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.MIN_POOL_SIZE_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.MAX_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.BATCH_SIZE_KEY));
         assertTrue(
                 changeable || settingsDefinitions || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
-        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
-        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
-        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_Z_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIMEZONE_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIME_STRING_FORMAT_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIME_STRING_Z_KEY));
 
         if (changeable) {
             assertEquals(CHANGEABLE_COUNT, keys.size());
@@ -157,6 +157,7 @@ public class AbstractHibernateFullDBDatasourceTest
 
     private class MockDatasource
             extends AbstractHibernateFullDBDatasource {
+
         @Override
         protected Dialect createDialect() {
             return null;

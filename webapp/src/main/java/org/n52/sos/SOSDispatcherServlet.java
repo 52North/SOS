@@ -110,8 +110,12 @@ public class SOSDispatcherServlet
     @Override
     protected void postProcessWebApplicationContext(ConfigurableWebApplicationContext wac) {
         super.postProcessWebApplicationContext(wac);
-        ServletContext servletContext = wac.getServletContext();
-        wac.setConfigLocation(getConfigLocation(servletContext));
+        if (wac != null) {
+            ServletContext servletContext = wac.getServletContext();
+            if (servletContext != null) {
+                wac.setConfigLocation(getConfigLocation(servletContext));
+            }
+        }
     }
 
     @Override

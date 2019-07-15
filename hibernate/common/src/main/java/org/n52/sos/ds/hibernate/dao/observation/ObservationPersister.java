@@ -345,13 +345,6 @@ public class ObservationPersister
         return o;
     }
 
-    private ObservationPersister createChildPersister(ProfileLevel level, String observableProperty, Long parent)
-            throws OwsExceptionReport {
-        return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                getObservationConstellation(getObservableProperty(new OmObservableProperty(observableProperty))),
-                featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, parent);
-    }
-
     private ObservationPersister createChildPersister(ProfileLevel level, Long parent) throws OwsExceptionReport {
         return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
                 dataset, featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, parent);
@@ -527,10 +520,6 @@ public class ObservationPersister
             return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(level.getLocation());
         }
         return null;
-    }
-
-    private Geometry getSamplingGeometry(OmObservation sosObservation) throws OwsExceptionReport {
-        return getSamplingGeometry(sosObservation, geometryHandler);
     }
 
     private Geometry getSamplingGeometry(OmObservation sosObservation, GeometryHandler geometryHandler)

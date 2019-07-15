@@ -158,7 +158,7 @@ public class SqlServerDatasource extends AbstractSqlServerDatasource {
         return "";
     }
 
-    private class TableColumn {
+    private static class TableColumn {
 
         private String table;
 

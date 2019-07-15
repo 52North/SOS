@@ -41,12 +41,12 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +58,8 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
     private final Set<Integer> validityFlags;
 
     public EReportingValueTimeDAO(Set<Integer> verificationFlags, Set<Integer> validityFlags,
-            GeometryHandler geometryHandler) {
-        super(geometryHandler);
+            DaoFactory daoFactory) {
+        super(daoFactory);
         this.verificationFlags = verificationFlags;
         this.validityFlags = validityFlags;
     }

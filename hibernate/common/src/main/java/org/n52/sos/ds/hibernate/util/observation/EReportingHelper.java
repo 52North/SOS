@@ -60,7 +60,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.shetland.util.JavaHelper;
 import org.n52.svalbard.util.SweHelper;
 
 import com.google.common.collect.Lists;
@@ -92,7 +91,8 @@ public class EReportingHelper {
      * @param observation
      *            {@link DataEntity} to create {@link ObservationValue} from
      * @return Created {@link ObservationValue}.
-     * @throws CodedException If an error occurs
+     * @throws CodedException
+     *             If an error occurs
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation, DataEntity observation)
@@ -226,14 +226,6 @@ public class EReportingHelper {
             list.add(Integer.toString(value));
         } else {
             list.add("");
-        }
-    }
-
-    private void addValue(List<String> value, OmObservation omObservation) {
-        if (omObservation.getValue() instanceof SingleObservationValue<?>) {
-            value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
-        } else {
-            value.add("");
         }
     }
 

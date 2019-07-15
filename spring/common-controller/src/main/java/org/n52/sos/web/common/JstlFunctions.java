@@ -30,6 +30,7 @@ package org.n52.sos.web.common;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
@@ -129,10 +130,10 @@ public final class JstlFunctions {
         return new File(ctx.getRealPath(path)).exists();
     }
 
-    public static String mapToJson(@SuppressWarnings("rawtypes") Map map) {
+    public static String mapToJson(Map<?, ?> map) {
         ObjectNode node = Json.nodeFactory().objectNode();
-        for (Object key : map.keySet()) {
-            node.put(key.toString(), String.valueOf(map.get(key)));
+        for (Entry<?, ?> entry : map.entrySet()) {
+            node.put(entry.getKey().toString(), String.valueOf(entry.getValue()));
         }
         return Json.print(node);
     }

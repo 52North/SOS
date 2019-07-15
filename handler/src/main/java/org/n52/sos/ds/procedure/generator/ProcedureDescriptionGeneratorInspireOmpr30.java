@@ -54,15 +54,9 @@ public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedur
             CollectionHelper.set(new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.NS_OMPR_30),
                     new ProcedureDescriptionGeneratorKey(InspireOMPRConstants.FEATURE_CONCEPT_PROCESS));
 
-    private ProfileHandler profileHandler;
-
-    private GeometryHandler geometryHandler;
-
     public ProcedureDescriptionGeneratorInspireOmpr30(ProfileHandler profileHandler, GeometryHandler geometryHandler,
             I18NDAORepository i18ndaoRepository, ContentCacheController cacheController) {
         super(i18ndaoRepository, cacheController);
-        this.profileHandler = profileHandler;
-        this.geometryHandler = geometryHandler;
     }
 
     @Override
@@ -144,4 +138,9 @@ public class ProcedureDescriptionGeneratorInspireOmpr30 extends AbstractProcedur
 
         return contact;
     }
+
+    private static Set<ProcedureDescriptionGeneratorKey> getGeneratorKeyTypes() {
+        return GENERATOR_KEY_TYPES;
+    }
+
 }

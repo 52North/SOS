@@ -44,7 +44,7 @@ public class ProcedureDescriptionGeneratorKey implements Comparable<ProcedureDes
 
     @Override
     public int compareTo(ProcedureDescriptionGeneratorKey o) {
-        if (o instanceof ProcedureDescriptionGeneratorKey) {
+        if (o != null) {
             return Objects.equals(getDescriptionFormat(), o.getDescriptionFormat()) ? 0 : 1;
         } else {
             return -1;

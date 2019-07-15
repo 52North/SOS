@@ -160,6 +160,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         return p;
     }
 
+    @Override
     public Map<String, Object> parseDatasourceProperties(final Properties current) {
         final Map<String, Object> settings = new HashMap<String, Object>(current.size());
         if (supportsSchema) {

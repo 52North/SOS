@@ -79,7 +79,6 @@ import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
@@ -247,6 +246,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     public abstract List<DatasetEntity> getSeries(String procedure, String observableProperty, Session session);
 
+    @SuppressWarnings("unchecked")
     public List<DatasetEntity> getSeries(Session session) {
         return getDefaultSeriesCriteria(session).list();
     }
@@ -1092,10 +1092,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     protected boolean isIncludeChildObservableProperties() {
-        if (ObservationSettingProvider.getInstance() != null) {
-            return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
-        }
-        return false;
+        return getDaoFactory().isIncludeChildObservableProperties();
     }
 
     public DatasetEntity checkOrInsertSeries(ProcedureEntity procedure, PhenomenonEntity observableProperty,
@@ -1190,7 +1187,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *             If an error occurs when querying the unit
      */
     public String getUnit(long series, Session session) throws OwsExceptionReport {
-        StringBuilder logArgs = new StringBuilder();
         DatasetEntity dataset = (DatasetEntity) session.get(getSeriesClass(), series);
         if (dataset != null && dataset.hasUnit()) {
             return dataset.getUnit().getIdentifier();
@@ -1210,7 +1206,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *             If an error occurs when querying the unit
      */
     public String getUnit(Set<Long> series, Session session) throws OwsExceptionReport {
-        StringBuilder logArgs = new StringBuilder();
         for (Long s : series) {
             DatasetEntity dataset = (DatasetEntity) session.get(getSeriesClass(), s);
             if (dataset != null && dataset.hasUnit()) {

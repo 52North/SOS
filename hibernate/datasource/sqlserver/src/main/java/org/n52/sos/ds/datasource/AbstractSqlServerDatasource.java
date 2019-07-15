@@ -131,7 +131,6 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         setProvidedJdbcDefault(PROVIDED_JDBC_DEFAULT_VALUE);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
         Set<SettingDefinition<?>> settingDefinitions = super.getSettingDefinitions();
@@ -139,7 +138,6 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                 settingDefinitions);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Set<SettingDefinition<?>> getChangableSettingDefinitions(final Properties current) {
         final Map<String, Object> settings = parseDatasourceProperties(current);
@@ -263,7 +261,6 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
         Connection conn = null;
         Statement stmt = null;
         try {

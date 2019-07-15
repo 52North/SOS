@@ -162,7 +162,9 @@ public class ObservationUnfolder {
                     elementType = (SweDataRecord) arrayValue.getValue().getElementType();
                 } else {
                     throw new NoApplicableCodeException().withMessage("sweElementType type \"%s\" not supported",
-                            elementType != null ? elementType.getClass().getName() : NULL);
+                            arrayValue.getValue().getElementType() != null
+                                    ? arrayValue.getValue().getElementType().getClass().getName()
+                                    : NULL);
                 }
 
                 for (final List<String> block : values) {
@@ -760,7 +762,7 @@ public class ObservationUnfolder {
         }
 
         public Geometry getGeometry() throws ParseException, CodedException {
-            if (!isSetLatitude() && !isSetLatitude()) {
+            if (!isSetLatitude() && !isSetLongitude()) {
                 return null;
             }
             List<Double> coordinates = Lists.newArrayListWithExpectedSize(2);

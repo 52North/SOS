@@ -28,6 +28,7 @@
  */
 package org.n52.sos.web.install;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ import org.n52.iceland.ds.Datasource;
  *
  * @since 4.0.0
  */
-public class InstallationConfiguration {
+public class InstallationConfiguration implements Serializable {
 
     private Map<SettingDefinition<?>, SettingValue<?>> settings = new HashMap<>();
 

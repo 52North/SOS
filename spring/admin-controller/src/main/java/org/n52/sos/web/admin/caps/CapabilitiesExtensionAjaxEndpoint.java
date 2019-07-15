@@ -30,6 +30,7 @@ package org.n52.sos.web.admin.caps;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -66,8 +67,8 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
         ObjectNode response = Json.nodeFactory().objectNode();
         Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions =
                 getCapabilitiesExtensionService().getActiveCapabilitiesExtensions();
-        for (String id : capabilitiesExtensions.keySet()) {
-            response.set(id, toJson(capabilitiesExtensions.get(id)));
+        for (Entry<String, StringBasedCapabilitiesExtension> entry : capabilitiesExtensions.entrySet()) {
+            response.set(entry.getKey(), toJson(entry.getValue()));
         }
         return response.toString();
     }

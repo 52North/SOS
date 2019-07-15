@@ -37,16 +37,23 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 
 public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
 
-    OmObservation create(OmObservation omObservation, DatasetEntity series);
-
-    OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException;
-
     OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException;
 
-    OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
+    OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
+            throws CodedException;
 
-    OmObservation add(OmObservation omObservation, DataEntity<?> observation);
+    default OmObservation create(OmObservation omObservation, DatasetEntity series) throws CodedException {
+        return omObservation;
+    }
+
+    default OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException {
+        return omObservation;
+    }
 
     OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
+
+    default OmObservation add(OmObservation sosObservation, DataEntity<?> observation) throws CodedException {
+        return sosObservation;
+    }
 
 }

@@ -66,6 +66,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 @Controller
 public class AdminSettingsController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminSettingsController.class);
@@ -121,6 +123,7 @@ public class AdminSettingsController extends AbstractController {
         updateSettings(request);
     }
 
+    @SuppressFBWarnings("PT_ABSOLUTE_PATH_TRAVERSAL")
     private void updateSettings(HttpServletRequest request) {
         Map<SettingDefinition<?>, SettingValue<?>> changedSettings = new HashMap<>();
         for (SettingDefinition<?> def : settingsManager.getSettingDefinitions()) {

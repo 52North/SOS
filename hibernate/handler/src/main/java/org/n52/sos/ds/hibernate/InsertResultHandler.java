@@ -95,8 +95,6 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
-import org.n52.sos.util.GeometryHandler;
-import org.n52.svalbard.util.SweHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,45 +118,23 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
     private static final int FLUSH_THRESHOLD = 50;
 
+    @Inject
     private HibernateSessionHolder sessionHolder;
 
+    @Inject
     private DaoFactory daoFactory;
 
     private boolean convertComplexProfileToSingleProfiles;
 
-    private GeometryHandler geometryHandler;
-
     private ResultHandlingHelper helper;
-
-    private SweHelper sweHelper;
 
     public InsertResultHandler() {
         super(SosConstants.SOS);
     }
 
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
-    @Inject
-    public void setGeometryHandler(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
-    }
-
-    @Inject
-    public void setSweHelper(SweHelper sweHelper) {
-        this.sweHelper = sweHelper;
-    }
-
     @Override
     public void init() {
-        helper = new ResultHandlingHelper(geometryHandler, sweHelper);
+        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper());
     }
 
     @Override
@@ -174,8 +150,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
         Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
 
         try {
-            session = sessionHolder.getSession();
-            final ResultTemplateEntity resultTemplate = daoFactory.getResultTemplateDAO()
+            session = getHibernateSessionHolder().getSession();
+            final ResultTemplateEntity resultTemplate = getDaoFactory().getResultTemplateDAO()
                     .getResultTemplateObject(request.getTemplateIdentifier(), session);
             transaction = session.beginTransaction();
             final OmObservation o = getSingleObservationFromResultValues(response.getVersion(), resultTemplate,
@@ -188,13 +164,13 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                 response.setObservations(observations);
             }
 
-            final AbstractSeriesDAO obsConstDao = daoFactory.getSeriesDAO();
-            final FormatDAO obsTypeDao = daoFactory.getObservationTypeDAO();
+            final AbstractSeriesDAO obsConstDao = getDaoFactory().getSeriesDAO();
+            final FormatDAO obsTypeDao = getDaoFactory().getObservationTypeDAO();
             Map<OmObservationConstellation, DatasetEntity> obsConsts = new HashMap<>();
 
             int insertion = 0;
             final int size = observations.size();
-            final AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
+            final AbstractObservationDAO observationDAO = getDaoFactory().getObservationDAO();
             LOGGER.debug("Start saving {} observations.", size);
             Map<String, AbstractFeatureEntity> featureEntityMap = new HashMap<>();
             for (final OmObservation observation : observations) {
@@ -203,7 +179,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     DatasetEntity oc = obsConstDao.getSeries(omObsConst, session);
                     if (oc != null) {
                         obsConsts.put(omObsConst, oc);
-                    } else if (oc == null && isConvertComplexProfileToSingleProfiles() && observation.isSetValue()
+                    } else if (isConvertComplexProfileToSingleProfiles() && observation.isSetValue()
                             && observation.getValue().isSetValue()
                             && observation.getValue().getValue() instanceof ProfileValue) {
                         obsConsts.put(omObsConst, insertObservationConstellationForProfiles(obsConstDao, obsTypeDao,
@@ -223,7 +199,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     // featureEntityMap.get(omObsConst.getFeatureOfInterestIdentifier());
                     // } else {
                     // FeatureOfInterestDAO featureOfInterestDAO =
-                    // daoFactory.getFeatureOfInterestDAO();
+                    // getDaoFactory() .getFeatureOfInterestDAO();
                     // feature =
                     // featureOfInterestDAO.checkOrInsert(omObsConst.getFeatureOfInterest(),
                     // session);
@@ -254,7 +230,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             // XXX exception text
             throw new NoApplicableCodeException().causedBy(he);
         } finally {
-            sessionHolder.returnSession(session);
+            getHibernateSessionHolder().returnSession(session);
         }
         return response;
     }
@@ -282,7 +258,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             Session session) throws OwsExceptionReport {
         AbstractFeatureEntity hFeature = cache.get(abstractFeature.getIdentifier());
         if (hFeature == null) {
-            hFeature = daoFactory.getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
+            hFeature = getDaoFactory().getFeatureOfInterestDAO().checkOrInsert(abstractFeature, session);
             cache.put(abstractFeature.getIdentifier(), hFeature);
         }
         return hFeature;
@@ -332,8 +308,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             throws OwsExceptionReport {
         try {
 
-            return new ObservationUnfolder(observation, sweHelper, geometryHandler)
-                    .unfold(isConvertComplexProfileToSingleProfiles());
+            return new ObservationUnfolder(observation, getDaoFactory().getSweHelper(),
+                    getDaoFactory().getGeometryHandler()).unfold(isConvertComplexProfileToSingleProfiles());
         } catch (final Exception e) {
             throw new InvalidParameterValueException().causedBy(e).at(Sos2Constants.InsertResultParams.resultValues)
                     .withMessage(
@@ -355,7 +331,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     private OmObservationConstellation getSosObservationConstellation(final ResultTemplateEntity resultTemplate,
             final Session session) throws OwsExceptionReport {
 
-        final List<DatasetEntity> obsConsts = daoFactory.getSeriesDAO().getSeriesForOfferings(
+        final List<DatasetEntity> obsConsts = getDaoFactory().getSeriesDAO().getSeriesForOfferings(
                 resultTemplate.getPhenomenon(), Sets.newHashSet(resultTemplate.getOffering()), session);
         final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
@@ -586,13 +562,13 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
     private DatasetEntity insertObservationConstellationForProfiles(AbstractSeriesDAO obsConstDao,
             FormatDAO obsTypeDao, OmObservation o, Session session) throws OwsExceptionReport {
-        ProcedureEntity procedure = daoFactory.getProcedureDAO()
+        ProcedureEntity procedure = getDaoFactory().getProcedureDAO()
                 .getProcedureForIdentifier(o.getObservationConstellation().getProcedureIdentifier(), session);
-        PhenomenonEntity observableProperty = daoFactory.getObservablePropertyDAO()
+        PhenomenonEntity observableProperty = getDaoFactory().getObservablePropertyDAO()
                 .getOrInsertObservableProperty(o.getObservationConstellation().getObservableProperty(), session);
-        OfferingEntity offering = daoFactory.getOfferingDAO()
+        OfferingEntity offering = getDaoFactory().getOfferingDAO()
                 .getOfferingForIdentifier(o.getObservationConstellation().getOfferings().iterator().next(), session);
-        CategoryEntity category = daoFactory.getCategoryDAO().getOrInsertCategory(observableProperty, session);
+        CategoryEntity category = getDaoFactory().getCategoryDAO().getOrInsertCategory(observableProperty, session);
 
         DatasetEntity oc =
                 obsConstDao.checkOrInsertSeries(procedure, observableProperty, offering, category, false, session);
@@ -610,6 +586,20 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
     private boolean isConvertComplexProfileToSingleProfiles() {
         return this.convertComplexProfileToSingleProfiles;
+    }
+
+    private synchronized DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    private synchronized HibernateSessionHolder getHibernateSessionHolder() {
+        return sessionHolder;
+    }
+
+    @VisibleForTesting
+    protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
+        this.daoFactory = daoFactory;
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
 }

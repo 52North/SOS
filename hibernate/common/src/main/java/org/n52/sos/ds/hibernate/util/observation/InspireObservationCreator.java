@@ -49,7 +49,7 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 
 @Configurable
-public class InspireObservationCreator extends AbstractAdditionalObservationCreator {
+public class InspireObservationCreator implements AdditionalObservationCreator {
 
     private static final String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
 

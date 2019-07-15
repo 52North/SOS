@@ -52,10 +52,6 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
-import org.n52.shetland.ogc.swe.SweConstants;
-import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
-import org.n52.shetland.ogc.swe.SweCoordinate;
-import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
@@ -65,8 +61,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.request.ProcedureRequestSettingProvider;
-import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
@@ -87,6 +81,8 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         extends AbstractHibernateProcedureDescriptionGenerator {
+
+    public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
     public static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY = "getUnitForObservableProperty";
 
@@ -111,10 +107,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
 
     private boolean addOutputsToSensorML;
 
-    private String latLongUom;
-
-    private String altitudeUom;
-
     public AbstractHibernateProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
             GeometryHandler geometryHandler, DaoFactory daoFactory, I18NDAORepository i18NDAORepository,
             ContentCacheController cacheController) {
@@ -123,17 +115,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         this.geometryHandler = geometryHandler;
     }
 
-    @Setting(ProcedureDescriptionSettings.ALTITUDE_UOM)
-    public void setAltitudeUom(String altitudeUom) {
-        this.altitudeUom = altitudeUom;
-    }
-
-    @Setting(ProcedureDescriptionSettings.LAT_LONG_UOM)
-    public void setLatLongUom(String latLongUom) {
-        this.latLongUom = latLongUom;
-    }
-
-    @Setting(ProcedureRequestSettingProvider.ADD_OUTPUTS_TO_SENSOR_ML)
+    @Setting(ADD_OUTPUTS_TO_SENSOR_ML)
     public void setAddOutputsToSensorML(boolean addOutputsToSensorML) {
         this.addOutputsToSensorML = addOutputsToSensorML;
     }
@@ -306,16 +288,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
     /**
      * Logger method for class
      *
-     * @param clazz
-     *            Name of not supported class
-     */
-    private void logTypeNotSupported(Class<?> clazz) {
-        LOGGER.debug("Type '{}' is not supported by the current implementation", clazz.getName());
-    }
-
-    /**
-     * Logger method for class
-     *
      * @param observationType
      *            Name of not supported class
      */
@@ -336,47 +308,8 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
         position.setName(POSITION_NAME);
         position.setFixed(true);
         int srid = geometryHandler.getDefaultResponseEPSG();
-        // if (procedure.isSetLongLat()) {
-        // // 8.1 set latlong position
-        // position.setPosition(createCoordinatesForPosition(procedure.getLongitude(),
-        // procedure.getLatitude(),
-        // procedure.getAltitude()));
-        //
-        // } else if (procedure.isSetGeometry()) {
-        // // 8.2 set position from geometry
-        // if (procedure.getGeom().getSRID() > 0) {
-        // srid = procedure.getGeom().getSRID();
-        // }
-        // final Coordinate c = procedure.getGeom().getCoordinate();
-        // position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
-        // }
-        // if (procedure.isSetSrid()) {
-        // srid = procedure.getSrid();
-        // }
         position.setReferenceFrame(srsNamePrefixUrl + srid);
         return position;
-    }
-
-    /**
-     * Create SWE Coordinates for SensorML Position
-     *
-     * @param longitude
-     *            Longitude value
-     * @param latitude
-     *            Latitude value
-     * @param altitude
-     *            Altitude value
-     *
-     * @return List with SWE Coordinate
-     */
-    private List<SweCoordinate<BigDecimal>> createCoordinatesForPosition(Object longitude, Object latitude,
-            Object altitude) {
-        SweAbstractSimpleType<BigDecimal> yq = createSweQuantity(latitude, SweConstants.Y_AXIS, latLongUom);
-        SweAbstractSimpleType<BigDecimal> xq = createSweQuantity(longitude, SweConstants.X_AXIS, latLongUom);
-        SweAbstractSimpleType<BigDecimal> zq = createSweQuantity(altitude, SweConstants.Z_AXIS, altitudeUom);
-        return Lists.newArrayList(new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
-                new SweCoordinate<>(SweCoordinateNames.EASTING, xq),
-                new SweCoordinate<>(SweCoordinateNames.ALTITUDE, zq));
     }
 
     /**

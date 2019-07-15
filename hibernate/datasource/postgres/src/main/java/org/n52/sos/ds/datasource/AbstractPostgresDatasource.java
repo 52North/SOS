@@ -209,7 +209,6 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
         Connection conn = null;
         Statement stmt = null;
         try {

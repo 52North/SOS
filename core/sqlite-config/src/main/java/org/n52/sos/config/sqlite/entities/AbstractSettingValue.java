@@ -28,7 +28,6 @@
  */
 package org.n52.sos.config.sqlite.entities;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -47,7 +46,7 @@ import com.google.common.base.MoreObjects;
  */
 @Entity(name = "settings")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serializable {
+public abstract class AbstractSettingValue<T> implements SettingValue<T> {
     private static final long serialVersionUID = -6354179246534360077L;
 
     @Id

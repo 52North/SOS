@@ -29,7 +29,6 @@
 package org.n52.sos.ds.cache;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,10 +51,12 @@ public final class DatasourceCacheUpdateHelper {
     }
 
     public static Set<String> getAllOfferingIdentifiersFromDatasetEntitys(Collection<DatasetEntity> datasets) {
-        Set<String> offerings = new HashSet<String>(datasets.size());
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
-                offerings.add(dataset.getOffering().getIdentifier());
+        Set<String> offerings = Sets.newTreeSet();
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
+                    offerings.add(dataset.getOffering().getIdentifier());
+                }
             }
         }
         return offerings;
@@ -67,23 +68,25 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Set<String> getAllProcedureIdentifiersFromDatasetEntitys(Collection<DatasetEntity> datasets,
             ProcedureFlag procedureFlag) {
-        Set<String> procedures = new HashSet<String>(datasets.size());
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null) {
-                boolean addProcedure = false;
-                if (procedureFlag == null) {
-                    // add all procedures
-                    addProcedure = true;
-                } else {
-                    if (procedureFlag.equals(ProcedureFlag.PARENT) && !dataset.getProcedure().hasParents()) {
+        Set<String> procedures = Sets.newTreeSet();
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getProcedure() != null) {
+                    boolean addProcedure = false;
+                    if (procedureFlag == null) {
+                        // add all procedures
                         addProcedure = true;
-                    } else if (procedureFlag.equals(ProcedureFlag.HIDDEN_CHILD)
-                            && dataset.getProcedure().hasParents()) {
-                        addProcedure = true;
+                    } else {
+                        if (procedureFlag.equals(ProcedureFlag.PARENT) && !dataset.getProcedure().hasParents()) {
+                            addProcedure = true;
+                        } else if (procedureFlag.equals(ProcedureFlag.HIDDEN_CHILD)
+                                && dataset.getProcedure().hasParents()) {
+                            addProcedure = true;
+                        }
                     }
-                }
-                if (addProcedure) {
-                    procedures.add(dataset.getProcedure().getIdentifier());
+                    if (addProcedure) {
+                        procedures.add(dataset.getProcedure().getIdentifier());
+                    }
                 }
             }
         }
@@ -92,9 +95,11 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Collection<String> getAllOfferingIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> offerings = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
-                offerings.add(dataset.getOffering().getIdentifier());
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
+                    offerings.add(dataset.getOffering().getIdentifier());
+                }
             }
         }
         return offerings;
@@ -102,9 +107,11 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Collection<String> getAllProcedureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> procedures = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
-                procedures.add(dataset.getProcedure().getIdentifier());
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
+                    procedures.add(dataset.getProcedure().getIdentifier());
+                }
             }
         }
         return procedures;
@@ -113,12 +120,14 @@ public final class DatasourceCacheUpdateHelper {
     public static Collection<? extends String> getAllProcedureIdentifiersFromDatasets(
             Collection<DatasetEntity> datasets, ProcedureFlag parent) {
         Set<String> procedures = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
-                if (ProcedureFlag.HIDDEN_CHILD.equals(parent)) {
-                    addChilds(dataset.getProcedure(), procedures);
-                } else {
-                    procedures.add(dataset.getProcedure().getIdentifier());
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
+                    if (ProcedureFlag.HIDDEN_CHILD.equals(parent)) {
+                        addChilds(dataset.getProcedure(), procedures);
+                    } else {
+                        procedures.add(dataset.getProcedure().getIdentifier());
+                    }
                 }
             }
         }
@@ -127,9 +136,12 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Set<String> getAllObservablePropertyIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> observableProperties = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
-                observableProperties.add(dataset.getPhenomenon().getIdentifier());
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getPhenomenon() != null
+                        && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
+                    observableProperties.add(dataset.getPhenomenon().getIdentifier());
+                }
             }
         }
         return observableProperties;
@@ -137,27 +149,33 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Collection<String> getAllFeatureIdentifiersFromDatasets(Collection<DatasetEntity> datasets) {
         Set<String> features = Sets.newTreeSet();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getFeature() != null && !Strings.isNullOrEmpty(dataset.getFeature().getIdentifier())) {
-                features.add(dataset.getFeature().getIdentifier());
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getFeature() != null && !Strings.isNullOrEmpty(dataset.getFeature().getIdentifier())) {
+                    features.add(dataset.getFeature().getIdentifier());
+                }
             }
         }
         return features;
     }
 
     private static void addChilds(ProcedureEntity procedure, Collection<String> procedures) {
+        if (procedure != null && procedures != null) {
         if (procedure.hasChildren()) {
             for (ProcedureEntity child : procedure.getChildren()) {
                 procedures.add(child.getIdentifier());
             }
         }
+        }
     }
 
     public static Map<String, Collection<DatasetEntity>> mapByOffering(Collection<DatasetEntity> datasets) {
         Map<String, Collection<DatasetEntity>> map = Maps.newHashMap();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
-                CollectionHelper.addToCollectionMap(dataset.getOffering().getIdentifier(), dataset, map);
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getOffering() != null && !Strings.isNullOrEmpty(dataset.getOffering().getIdentifier())) {
+                    CollectionHelper.addToCollectionMap(dataset.getOffering().getIdentifier(), dataset, map);
+                }
             }
         }
         return map;
@@ -165,9 +183,11 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Map<String, Collection<DatasetEntity>> mapByProcedure(Collection<DatasetEntity> datasets) {
         Map<String, Collection<DatasetEntity>> map = Maps.newHashMap();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
-                CollectionHelper.addToCollectionMap(dataset.getProcedure().getIdentifier(), dataset, map);
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getProcedure() != null && !Strings.isNullOrEmpty(dataset.getProcedure().getIdentifier())) {
+                    CollectionHelper.addToCollectionMap(dataset.getProcedure().getIdentifier(), dataset, map);
+                }
             }
         }
         return map;
@@ -175,9 +195,12 @@ public final class DatasourceCacheUpdateHelper {
 
     public static Map<String, Collection<DatasetEntity>> mapByObservableProperty(Collection<DatasetEntity> datasets) {
         Map<String, Collection<DatasetEntity>> map = Maps.newHashMap();
-        for (DatasetEntity dataset : datasets) {
-            if (dataset.getPhenomenon() != null && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
-                CollectionHelper.addToCollectionMap(dataset.getPhenomenon().getIdentifier(), dataset, map);
+        if (datasets != null && !datasets.isEmpty()) {
+            for (DatasetEntity dataset : datasets) {
+                if (dataset.getPhenomenon() != null
+                        && !Strings.isNullOrEmpty(dataset.getPhenomenon().getIdentifier())) {
+                    CollectionHelper.addToCollectionMap(dataset.getPhenomenon().getIdentifier(), dataset, map);
+                }
             }
         }
         return map;

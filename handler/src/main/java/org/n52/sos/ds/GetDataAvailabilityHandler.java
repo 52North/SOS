@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
@@ -436,9 +437,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
             }
         }
         Set<ObservationFormatDescriptor> formatDescriptors = Sets.newHashSet();
-        for (String responsFormat : responsFormatObservationTypesMap.keySet()) {
-            formatDescriptors.add(new ObservationFormatDescriptor(responsFormat,
-                    responsFormatObservationTypesMap.get(responsFormat)));
+        for (Entry<String, Set<String>> entry : responsFormatObservationTypesMap.entrySet()) {
+            formatDescriptors.add(new ObservationFormatDescriptor(entry.getKey(), entry.getValue()));
         }
         return formatDescriptors;
     }
@@ -457,7 +457,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         return notContained;
     }
 
-    public class GDARequestContext {
+    public static class GDARequestContext {
         private GetDataAvailabilityRequest request;
 
         private List<DataAvailability> dataAvailabilityValues = Lists.newArrayList();

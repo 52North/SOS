@@ -92,7 +92,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
@@ -557,7 +556,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private Criteria getDefaultCriteria(Class clazz, Session session) {
         Criteria criteria = session.createCriteria(clazz).add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
 
-        if (!isIncludeChildObservableProperties()) {
+        if (!getDaoFactory().isIncludeChildObservableProperties()) {
             criteria.add(Restrictions.isNull(DataEntity.PROPERTY_PARENT));
         }
         criteria.setFetchMode(DataEntity.PROPERTY_PARAMETERS, FetchMode.JOIN);
@@ -1455,13 +1454,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return ParameterFactory.getInstance();
     }
 
-    protected boolean isIncludeChildObservableProperties() {
-        if (ObservationSettingProvider.getInstance() != null) {
-            return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
-        }
-        return false;
-    }
-
     private GeometryHandler getGeometryHandler() {
         return getDaoFactory().getGeometryHandler();
     }
@@ -1496,13 +1488,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
-    public class MinMaxLatLon {
+    public static class MinMaxLatLon {
         private Double minLat;
-
         private Double maxLat;
-
         private Double minLon;
-
         private Double maxLon;
 
         public MinMaxLatLon(Object[] result) {

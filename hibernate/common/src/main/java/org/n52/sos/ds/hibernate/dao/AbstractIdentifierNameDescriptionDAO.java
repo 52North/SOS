@@ -33,11 +33,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.series.db.beans.AbstractFeatureEntity;
-import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.IdentifierNameDescriptionEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -149,12 +146,12 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return null;
     }
 
-    public void insertNames(AbstractFeatureEntity feature, List<CodeType> name, I18NDAORepository i18nr,
+    public void insertNames(AbstractFeatureEntity<?> feature, List<CodeType> name, I18NDAORepository i18nr,
             Session session) {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
-        I18NDAO<I18NFeatureMetadata> dao = i18nr.getDAO(I18NFeatureMetadata.class);
+//        I18NDAO<I18NFeatureMetadata> dao = i18nr.getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
-            CodespaceEntity codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
+            codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
             // i18ndao.insertI18N(feature, new I18NInsertionObject(codespace,
             // codeType.getValue()), session);
         }

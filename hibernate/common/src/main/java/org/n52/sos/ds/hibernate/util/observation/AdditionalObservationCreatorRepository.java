@@ -53,9 +53,6 @@ public class AdditionalObservationCreatorRepository extends
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
 
-    @Deprecated
-    private static AdditionalObservationCreatorRepository instance;
-
     private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>>
                                         additionalObservationCreator = Maps.newHashMap();
 
@@ -68,7 +65,6 @@ public class AdditionalObservationCreatorRepository extends
 
     @Override
     public void init() {
-        AdditionalObservationCreatorRepository.instance = this;
         Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> implementations =
                 getUniqueProviders(this.components, this.componentFactories);
         this.additionalObservationCreator.clear();
@@ -90,11 +86,6 @@ public class AdditionalObservationCreatorRepository extends
 
     public boolean hasAdditionalObservationCreatorFor(AdditionalObservationCreatorKey key) {
         return additionalObservationCreator.containsKey(key);
-    }
-
-    @Deprecated
-    public static AdditionalObservationCreatorRepository getInstance() {
-        return AdditionalObservationCreatorRepository.instance;
     }
 
     public static Set<AdditionalObservationCreatorKey> encoderKeysForElements(String namespace, Class<?>... elements) {

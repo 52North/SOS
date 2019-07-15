@@ -31,9 +31,9 @@ package org.n52.sos.ds.hibernate.dao.observation.series;
 import org.hibernate.Criteria;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +48,8 @@ public class SeriesValueDAO extends AbstractSeriesValueDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueDAO.class);
 
-    public SeriesValueDAO(GeometryHandler geometryHandler) {
-        super(geometryHandler);
+    public SeriesValueDAO(DaoFactory daoFactory) {
+        super(daoFactory);
     }
 
     @Override

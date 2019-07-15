@@ -749,7 +749,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     public void updateAfterObservationDeletion(org.n52.series.db.beans.OfferingEntity offering,
             DataEntity<?> observation, Session session) {
         SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO(daoFactory);
-        if (offering.hasPhenomenonTimeStart()
+        if (offering.hasSamplingTimeStart()
                 && offering.getSamplingTimeStart().equals(observation.getSamplingTimeStart())) {
             DataEntity<?> firstDataEntity =
                     seriesObservationDAO.getFirstObservationFor(observation.getDataset(), session);
@@ -757,7 +757,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
                 offering.setSamplingTimeStart(firstDataEntity.getSamplingTimeStart());
             }
         }
-        if (offering.hasPhenomenonTimeEnd()
+        if (offering.hasSamplingTimeEnd()
                 && offering.getSamplingTimeEnd().equals(observation.getSamplingTimeEnd())) {
             DataEntity<?> latestDataEntity =
                     seriesObservationDAO.getLastObservationFor(observation.getDataset(), session);
@@ -774,7 +774,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @since 4.4.0
      *
      */
-    private class OfferingeTimeTransformer implements ResultTransformer {
+    private static class OfferingeTimeTransformer implements ResultTransformer {
         private static final long serialVersionUID = -373512929481519459L;
 
         @Override

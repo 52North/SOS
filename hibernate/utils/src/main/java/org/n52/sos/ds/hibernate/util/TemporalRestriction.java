@@ -316,8 +316,8 @@ public interface TemporalRestriction {
                             filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), count),
                             filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count), r)
                     : getPropertyCheckingCriterion(
-                            filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), count),
-                            filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count), r);
+                            filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), time.getValue().toDate()),
+                            filterInstantWithInstant(r.getPosition(), time.getValue().toDate()), r);
 
         } else {
             return count != null ? filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count)

@@ -119,8 +119,8 @@ public interface ErrorMessages {
                     + "in /misc/db!";
 
     String EXISTING_SCHEMA_REQUIRES_UPDATE =
-            "The installed schema is corrupt/invalid (%s).\nTry to delete the existing tables and check "
-                    + "'Create tables' or check 'Force update tables' (experimental).\nOr check for update"
+            "The installed schema is corrupt/invalid (%s).%nTry to delete the existing tables and check "
+                    + "'Create tables' or check 'Force update tables' (experimental).%nOr check for update"
                     + " scripts in /misc/db!";
 
     String EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA =

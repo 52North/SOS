@@ -279,7 +279,7 @@ public abstract class AbstractInspireOmpr30SensorMLConverter
     }
 
     private Nillable<AddressRepresentation> checkAddressRepresentation(SmlResponsibleParty smlResponsibleParty) {
-        AddressRepresentation addressRepresentation = new AddressRepresentation();
+//        AddressRepresentation addressRepresentation = new AddressRepresentation();
         // TODO
         return Nillable.<AddressRepresentation> nil();
     }

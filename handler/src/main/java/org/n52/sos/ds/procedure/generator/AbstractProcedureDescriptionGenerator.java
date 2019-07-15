@@ -172,9 +172,7 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
                     I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
                     Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                     if (name.isPresent()) {
-                        if (name.isPresent()) {
-                            feature.addName(new CodeType(name.get()));
-                        }
+                        feature.addName(new CodeType(name.get()));
                     }
                     Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
                     if (description.isPresent()) {

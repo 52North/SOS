@@ -328,14 +328,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler,
         this.showOnlyAggregatedProcedures = showOnlyAggregatedProcedures;
     }
 
-    /**
-     * @deprecated Use {@link #getOperationHandler()}
-     */
-    @Deprecated
-    protected D getDao() {
-        return getOperationHandler();
-    }
-
     @Override
     public boolean isSupported() {
         return getOptionalOperationHandler().isPresent() && getOptionalOperationHandler().get().isSupported();

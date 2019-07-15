@@ -31,6 +31,7 @@ package org.n52.sos.web.admin;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -106,7 +107,7 @@ public class SampleDataInserter implements Sos2Constants {
 
     private static final String SENSOR_XML_FILE_ENDING = "_sensor-desc.xml";
 
-    private static final String  UTF_8 = "UTF-8";
+    private static final String UTF_8 = "UTF-8";
 
     private static final int THREADPOOL_SLEEP_BETWEEN_CHECKS = 1000;
 
@@ -157,7 +158,9 @@ public class SampleDataInserter implements Sos2Constants {
                 .setValue((SweBoolean) new SweBoolean().setValue(true)
                         .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name()))
                 .setDefinition(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
-        sampleDataProperties.load(this.getClass().getResourceAsStream(PROPERTY_FILE));
+        try (InputStream is = this.getClass().getResourceAsStream(PROPERTY_FILE)) {
+            sampleDataProperties.load(is);
+        }
         exceptions = new CompositeOwsException();
         this.requestContext = owsServiceRequestContext;
         this.decoderRepository = decoderRepository;
@@ -170,7 +173,15 @@ public class SampleDataInserter implements Sos2Constants {
         insertSensors();
         insertFeatures();
         insertObservations();
+        return getInsertedData();
+    }
+
+    private synchronized boolean getInsertedData() {
         return insertedData;
+    }
+
+    private synchronized void setInsertedData(boolean insertedData) {
+        this.insertedData = insertedData;
     }
 
     private void checkRequestOperators() throws MissingServiceOperatorException {
@@ -346,10 +357,11 @@ public class SampleDataInserter implements Sos2Constants {
                 InsertSensorResponse response = (InsertSensorResponse) insertSensorOperator.receiveRequest(request);
                 insertedSensors.put(response.getAssignedProcedure(), response.getAssignedOffering());
             } catch (OwsExceptionReport e) {
-                if (e.getMessage().equals("The offering with the identifier '"
-                        + request.getProcedureDescription().getIdentifier()
-                        + "' still exists in this service and it is not allowed to "
-                        + "insert more than one procedure to an offering!")) {
+                if (e.getMessage()
+                        .equals("The offering with the identifier '"
+                                + request.getProcedureDescription().getIdentifier()
+                                + "' still exists in this service and it is not allowed to "
+                                + "insert more than one procedure to an offering!")) {
                     insertedSensors.put(request.getProcedureDescription().getIdentifier(),
                             request.getProcedureDescription().getIdentifier());
                 } else {
@@ -475,7 +487,7 @@ public class SampleDataInserter implements Sos2Constants {
                 InsertObservationResponse insertObservationResponse =
                         (InsertObservationResponse) insertObservationOperator.receiveRequest(request);
                 if (insertObservationResponse != null) {
-                    insertedData = true;
+                    setInsertedData(true);
                 }
             } catch (OwsExceptionReport e) {
                 exceptions.add(e);

@@ -6,19 +6,19 @@
     <!-- Querying database used by proxy Handlers -->
 
     <bean id="describeSensorDao"
-          class="org.n52.sos.ds.hibernate.dao.DescribeSensorDao"/>
+          class="org.n52.sos.ds.hibernate.dao.DescribeSensorDaoImpl"/>
 
     <bean id="getObservationDao"
-          class="org.n52.sos.ds.hibernate.dao.GetObservationDao"/>
+          class="org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl"/>
 
     <bean id="getFeatureOfInterestDao"
-          class="org.n52.sos.ds.hibernate.dao.GetFeatureOfInterestDao"/>
+          class="org.n52.sos.ds.hibernate.dao.GetFeatureOfInterestDaoImpl"/>
 
     <bean id="getObservationByIdDao"
-          class="org.n52.sos.ds.hibernate.dao.GetObservationByIdDao"/>
+          class="org.n52.sos.ds.hibernate.dao.GetObservationByIdDaoImpl"/>
 
     <bean id="getDataAvailabilityDao"
-          class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDao"/>
+          class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDaoImpl"/>
 
     <bean class="org.n52.series.db.dao.DefaultDbQueryFactory"/>
 

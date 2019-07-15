@@ -46,31 +46,26 @@ import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
+import com.google.common.annotations.VisibleForTesting;
+
 /**
  * Implementation of the abstract class AbstractDeleteSensorHandler
+ *
  * @since 4.0.0
  *
  */
 public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
+    @Inject
     private HibernateSessionHolder sessionHolder;
+
+    @Inject
     private DaoFactory daoFactory;
 
     public DeleteSensorHandler() {
         super(SosConstants.SOS);
-    }
-
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -81,21 +76,21 @@ public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
         Session session = null;
         Transaction transaction = null;
         try {
-            session = sessionHolder.getSession();
+            session = getHibernateSessionHolder().getSession();
             transaction = session.beginTransaction();
             setDeleteSensorFlag(request.getProcedureIdentifier(), true, session);
-            daoFactory.getValidProcedureTimeDAO().setValidProcedureDescriptionEndTime(request.getProcedureIdentifier(),
-                    session);
+            getDaoFactory().getValidProcedureTimeDAO()
+                    .setValidProcedureDescriptionEndTime(request.getProcedureIdentifier(), session);
             transaction.commit();
             response.setDeletedProcedure(request.getProcedureIdentifier());
         } catch (HibernateException he) {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "Error while updateing deleted sensor flag data!");
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while updateing deleted sensor flag data!");
         } finally {
-            sessionHolder.returnSession(session);
+            getHibernateSessionHolder().returnSession(session);
         }
         return response;
     }
@@ -118,16 +113,17 @@ public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
      * @throws OwsExceptionReport
      *             If the procedure is not contained in the database
      */
-    private void setDeleteSensorFlag(String identifier, boolean deleteFlag, Session session) throws OwsExceptionReport {
-        ProcedureEntity procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(identifier, session);
+    private void setDeleteSensorFlag(String identifier, boolean deleteFlag, Session session)
+            throws OwsExceptionReport {
+        ProcedureEntity procedure = getDaoFactory().getProcedureDAO().getProcedureForIdentifier(identifier, session);
         if (procedure != null) {
             procedure.setDeleted(deleteFlag);
             session.saveOrUpdate(procedure);
             session.flush();
-            // set deleted flag in Series and Observation table for series concept to true
-            List<DatasetEntity> series =
-                    daoFactory.getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
-                            session);
+            // set deleted flag in Series and Observation table for series
+            // concept to true
+            List<DatasetEntity> series = getDaoFactory().getSeriesDAO()
+                    .updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag, session);
             getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
@@ -135,13 +131,21 @@ public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
     }
 
     protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
-        if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            return (AbstractSeriesObservationDAO) observationDAO;
-        } else {
-            throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
-                    AbstractObservationDAO.class.getName());
-        }
+        return getDaoFactory().getObservationDAO();
+    }
+
+    private synchronized DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    private synchronized HibernateSessionHolder getHibernateSessionHolder() {
+        return sessionHolder;
+    }
+
+    @VisibleForTesting
+    protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
+        this.daoFactory = daoFactory;
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
 }

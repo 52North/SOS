@@ -30,6 +30,7 @@ package org.n52.sos.web.common;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @since 4.0.0
@@ -42,8 +43,8 @@ public final class ControllerUtils {
 
     public static <E extends Enum<E>, T> Map<String, T> toStringMap(Map<E, T> enumMap) {
         Map<String, T> map = new HashMap<>(enumMap.size(), 1f);
-        for (E e : enumMap.keySet()) {
-            map.put(e.name(), enumMap.get(e));
+        for (Entry<E, T> entry : enumMap.entrySet()) {
+            map.put(entry.getKey().name(), enumMap.get(entry));
         }
         return map;
     }

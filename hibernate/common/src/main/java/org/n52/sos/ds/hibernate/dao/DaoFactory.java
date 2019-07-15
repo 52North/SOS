@@ -51,6 +51,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
@@ -93,6 +94,7 @@ public class DaoFactory {
     private SweHelper sweHelper;
     private FeatureQueryHandler featureQueryHandler;
     private String serviceURL;
+    private boolean includeChildObservableProperties;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -146,6 +148,15 @@ public class DaoFactory {
         this.serviceURL = url;
     }
 
+    public boolean isIncludeChildObservableProperties() {
+        return includeChildObservableProperties;
+    }
+
+    @Setting(AbstractRequestOperator.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
+    public void setIncludeChildObservableProperties(boolean include) {
+        this.includeChildObservableProperties = include;
+    }
+
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
@@ -190,16 +201,16 @@ public class DaoFactory {
 
     public AbstractSeriesValueDAO getValueDAO() {
         if (HibernateHelper.isEntitySupported(EReportingProfileDataEntity.class)) {
-            return new EReportingValueDAO(this.verificationFlags, this.validityFlags, geometryHandler);
+            return new EReportingValueDAO(this.verificationFlags, this.validityFlags, this);
         }
-        return new SeriesValueDAO(geometryHandler);
+        return new SeriesValueDAO(this);
     }
 
     public AbstractSeriesValueTimeDAO getValueTimeDAO() {
         if (HibernateHelper.isEntitySupported(EReportingProfileDataEntity.class)) {
-            return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags, geometryHandler);
+            return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags, this);
         }
-        return new SeriesValueTimeDAO(geometryHandler);
+        return new SeriesValueTimeDAO(this);
     }
 
     public AbstractFeatureOfInterestDAO getFeatureDAO() throws CodedException {

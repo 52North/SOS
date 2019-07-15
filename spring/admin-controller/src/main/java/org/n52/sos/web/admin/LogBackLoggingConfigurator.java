@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -68,6 +69,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * @since 4.0.0
@@ -76,30 +78,54 @@ import org.xml.sax.SAXException;
 public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
 
     private static final Logger LOG = LoggerFactory.getLogger(LogBackLoggingConfigurator.class);
+
     private static final String CONFIGURATION_FILE_NAME = "/logback.xml";
+
     private static final String AN_LEVEL = "level";
+
     private static final String AN_NAME = "name";
+
     private static final String AN_REF = "ref";
+
     private static final String AN_VALUE = "value";
+
     private static final String EN_ROLLING_POLICY = "rollingPolicy";
+
     private static final String EN_MAX_HISTORY = "maxHistory";
+
     private static final String EN_APPENDER = "appender";
+
     private static final String EN_APPENDER_REF = "appender-ref";
+
     private static final String EN_ROOT = "root";
+
     private static final String EN_LOGGER = "logger";
+
     private static final String EN_FILE = "file";
+
     private static final String EN_PROPERTY = "property";
+
     private static final String EN_MAX_FILE_SIZE = "maxFileSize";
+
     private static final String EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY =
             "timeBasedFileNamingAndTriggeringPolicy";
+
     private static final String NOT_FOUND_ERROR_MESSAGE = "Can't find Logback configuration file.";
+
     private static final String UNPARSABLE_ERROR_MESSAGE = "Can't parse configuration file.";
+
     private static final String UNWRITABLE_ERROR_MESSAGE = "Can't write configuration file.";
+
     private static final String LOG_FILE_NOT_FOUND_ERROR_MESSAGE = "Log file could not be found";
+
     private static final String LOG_SETTING_LOG_LEVEL = "Setting logging level of {} to {}.";
+
     private static final String LOG_COULD_NOT_READ_LOG_FILE = "Could not read log file";
+
     private static final int WRITE_DELAY = 4000;
+
     private static final Pattern PROPERTY_MATCHER = Pattern.compile("\\$\\{([^}]+)\\}");
+
     private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 
     private Document cache;
@@ -108,6 +134,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
 
     private DelayedWriteThread delayedWriteThread;
 
+    @SuppressFBWarnings("DMI_HARDCODED_ABSOLUTE_FILENAME")
     public LogBackLoggingConfigurator() throws ConfigurationError {
         this(CONFIGURATION_FILE_NAME);
     }
@@ -365,7 +392,8 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             }
             boolean write = false;
             /* remove obsolete loggers */
-            for (String logger : currentLoggers.keySet()) {
+            for (Entry<String, Element> entry : currentLoggers.entrySet()) {
+                String logger = entry.getKey();
                 if (levels.get(logger) == null) {
                     LOG.debug("Removing logger {}", logger);
                     conf.removeChild(currentLoggers.get(logger));
@@ -373,7 +401,8 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 }
             }
 
-            for (String logger : levels.keySet()) {
+            for (Entry<String, Level> entry : levels.entrySet()) {
+                String logger = entry.getKey();
                 if (logger.equals(Logger.ROOT_LOGGER_NAME)) {
                     setRootLogLevel(levels.get(logger));
                 } else {
@@ -435,7 +464,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 List<Element> loggers = getChildren(read().getDocumentElement(), EN_LOGGER);
                 for (Element logger : loggers) {
                     levels.put(getAttribute(logger, AN_NAME).getValue(),
-                               Level.valueOf(getAttribute(logger, AN_LEVEL).getValue()));
+                            Level.valueOf(getAttribute(logger, AN_LEVEL).getValue()));
                 }
             } catch (ConfigurationError e) {
                 LOG.error(UNPARSABLE_ERROR_MESSAGE, e);
@@ -470,9 +499,9 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 for (Element a : appender) {
                     if (getAttribute(a, AN_NAME).getValue().equals(Appender.FILE.getName())) {
                         try {
-                            max =
-                                    Integer.parseInt(getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
-                                                                       EN_MAX_HISTORY).getTextContent());
+                            max = Integer.parseInt(
+                                    getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY), EN_MAX_HISTORY)
+                                            .getTextContent());
                         } catch (NumberFormatException e) {
                             LOG.error("Error while parsing integer!", e);
                         }
@@ -497,11 +526,8 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
                 List<Element> appender = getChildren(doc.getDocumentElement(), EN_APPENDER);
                 for (Element a : appender) {
                     if (getAttribute(a, AN_NAME).getValue().equals(Appender.FILE.getName())) {
-                        maxFileSize =
-                                getSingleChildren(
-                                        getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
-                                                EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY),
-                                        EN_MAX_FILE_SIZE).getTextContent();
+                        maxFileSize = getSingleChildren(getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
+                                EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY), EN_MAX_FILE_SIZE).getTextContent();
                     }
                 }
             } catch (ConfigurationError e) {
@@ -524,10 +550,8 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             List<Element> appender = getChildren(doc.getDocumentElement(), EN_APPENDER);
             for (Element a : appender) {
                 if (getAttribute(a, AN_NAME).getValue().equals(Appender.FILE.getName())) {
-                    Element maxFileSize =
-                            getSingleChildren(
-                                    getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
-                                                      EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY), EN_MAX_FILE_SIZE);
+                    Element maxFileSize = getSingleChildren(getSingleChildren(getSingleChildren(a, EN_ROLLING_POLICY),
+                            EN_TIME_BASED_FILE_NAME_AND_TRIGGERING_POLICY), EN_MAX_FILE_SIZE);
                     String before = maxFileSize.getTextContent().trim();
                     if (!before.equals(size.trim())) {
                         LOG.debug("Setting max logging file size to {}.", size);
@@ -638,6 +662,7 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
 
     private class DelayedWriteThread extends Thread {
         private final Document doc;
+
         private boolean canceled;
 
         DelayedWriteThread(Document doc) {
@@ -668,23 +693,13 @@ public class LogBackLoggingConfigurator implements AbstractLoggingConfigurator {
             LOCK.writeLock().lock();
             LOG.debug("Writing LogBack configuration file!");
             try {
-                FileOutputStream out = null;
-                try {
-                    out = new FileOutputStream(configuration);
+                try (FileOutputStream out = new FileOutputStream(configuration)) {
                     Transformer trans = TransformerFactory.newInstance().newTransformer();
                     trans.setOutputProperty(OutputKeys.INDENT, "yes");
-                    OutputStreamWriter writer = new OutputStreamWriter(out);
+                    OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
                     trans.transform(new DOMSource(doc), new StreamResult(writer));
                 } catch (TransformerException | IOException ex) {
                     LOG.error(UNWRITABLE_ERROR_MESSAGE, ex);
-                } finally {
-                    if (out != null) {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                            LOG.error(UNWRITABLE_ERROR_MESSAGE, e);
-                        }
-                    }
                 }
             } finally {
                 LOCK.writeLock().unlock();

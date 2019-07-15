@@ -38,9 +38,9 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.ValuedObservationFactory;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +56,8 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueTimeDAO.class);
 
-    public SeriesValueTimeDAO(GeometryHandler geometryHandler) {
-        super(geometryHandler);
+    public SeriesValueTimeDAO(DaoFactory daoFactory) {
+        super(daoFactory);
     }
 
     @Override

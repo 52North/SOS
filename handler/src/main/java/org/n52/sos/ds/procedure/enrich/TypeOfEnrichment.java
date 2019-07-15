@@ -116,31 +116,18 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
     }
 
     private String createKvpDescribeSensorOrReturnIdentifier(String identifier, String format) throws CodedException {
-        String href = identifier;
         if (getProcedureCreationContext().getBindingRepository().isBindingSupported(MediaTypes.APPLICATION_KVP)) {
-            final String version =
-                    getProcedureCreationContext().getServiceOperatorRepository().getSupportedVersions(SosConstants.SOS)
-                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                                    : Sos1Constants.SERVICEVERSION;
+            final String version = getProcedureCreationContext().getServiceOperatorRepository()
+                    .isVersionSupported(SosConstants.SOS, Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                            : Sos1Constants.SERVICEVERSION;
             try {
-                href = SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(),
+                return SosHelper.getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(),
                         identifier, format).toString();
             } catch (MalformedURLException murle) {
                 LOGGER.error(ERROR_URL_ENCODING, murle);
             }
         }
-        try {
-            String version = getProcedureCreationContext().getServiceOperatorRepository()
-                    .isVersionSupported(SosConstants.SOS, Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                            : Sos1Constants.SERVICEVERSION;
-
-            return SosHelper
-                    .getDescribeSensorUrl(version, getProcedureCreationContext().getServiceURL(), identifier, format)
-                    .toString();
-        } catch (MalformedURLException murle) {
-            LOGGER.error(ERROR_URL_ENCODING, murle);
-            return identifier;
-        }
+        return identifier;
     }
 
 }

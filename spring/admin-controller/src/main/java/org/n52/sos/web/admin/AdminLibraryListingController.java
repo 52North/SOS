@@ -55,16 +55,16 @@ public class AdminLibraryListingController extends AbstractController {
 
     @RequestMapping(ControllerConstants.Paths.ADMIN_LIBRARY_LIST)
     public ModelAndView view() {
-        List<String> libs;
+        List<String> libs = Collections.emptyList();
         File lib = new File(getContext().getRealPath("WEB-INF/lib"));
         if (lib.exists() && lib.isDirectory() && lib.canRead()) {
             final File[] listFiles = lib.listFiles(FILE_FILTER);
-            libs = new ArrayList<String>(listFiles.length);
-            for (File f : listFiles) {
-                libs.add(f.getName());
+            if (listFiles != null && listFiles.length > 0) {
+                libs = new ArrayList<String>(listFiles.length);
+                for (File f : listFiles) {
+                    libs.add(f.getName());
+                }
             }
-        } else {
-            libs = Collections.emptyList();
         }
         Collections.sort(libs);
         return new ModelAndView(ControllerConstants.Views.ADMIN_LIBRARY_LIST,

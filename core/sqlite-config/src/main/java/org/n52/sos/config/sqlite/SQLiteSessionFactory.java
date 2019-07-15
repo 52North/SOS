@@ -34,6 +34,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -136,11 +137,12 @@ public class SQLiteSessionFactory implements Constructable, Destroyable {
     }
 
     public void setAnnotatedClasses(Class<?>[] annotatedClasses) {
-        this.annotatedClasses = annotatedClasses;
+        this.annotatedClasses =
+                annotatedClasses != null ? Arrays.copyOf(annotatedClasses, annotatedClasses.length) : null;
     }
 
     public Class<?>[] getAnnotatedClasses() {
-        return annotatedClasses;
+        return annotatedClasses != null ? Arrays.copyOf(annotatedClasses, annotatedClasses.length) : null;
     }
 
     protected String getConnectionURL() {

@@ -43,10 +43,8 @@ import org.n52.faroe.annotation.Setting;
 @Configurable
 public class ProcedureRequestSettingProvider {
     public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
-    public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
     private boolean encodeFullChildrenInDescribeSensor;
-    private boolean addOutputsToSensorML;
 
 
 
@@ -57,15 +55,6 @@ public class ProcedureRequestSettingProvider {
     @Setting(ProcedureRequestSettingProvider.ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
     public void setEncodeFullChildrenInDescribeSensor(final boolean encodeFullChildrenInDescribeSensor) {
         this.encodeFullChildrenInDescribeSensor = encodeFullChildrenInDescribeSensor;
-    }
-
-    public boolean isAddOutputsToSensorML() {
-        return addOutputsToSensorML;
-    }
-
-    @Setting(ProcedureRequestSettingProvider.ADD_OUTPUTS_TO_SENSOR_ML)
-    public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
-        this.addOutputsToSensorML = addOutputsToSensorML;
     }
 
 }

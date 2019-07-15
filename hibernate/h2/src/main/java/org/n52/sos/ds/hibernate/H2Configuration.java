@@ -38,9 +38,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.hibernate.HibernateException;
@@ -68,7 +66,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import geodb.GeoDB;
 
@@ -90,12 +87,6 @@ public final class H2Configuration implements ConnectionProvider {
     private static final String H2_CONNECTION_URL = "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;MULTI_THREADED=true";
 
     private static final String DB_INITIALIZED = "Database is not initialized";
-
-    private static final String  ECEXUTING_TEMPLATE = "Executing {}";
-
-    // private List<String> createScript;
-    //
-    // private List<String> dropScript;
 
     private static SchemaExport schemaExport;
 
@@ -296,7 +287,7 @@ public final class H2Configuration implements ConnectionProvider {
 
     private void createTempDir() throws IOException {
         setTempDir(File.createTempFile("hibernate-test-case", ""));
-        getTempDir().delete();
+        FileUtils.deleteDirectory(getTempDir());
         FileUtils.forceMkdir(getTempDir());
     }
 
@@ -333,80 +324,12 @@ public final class H2Configuration implements ConnectionProvider {
                     }
                     metadata = metadataSources.getMetadataBuilder().build();
 
-                    // Metadata metadata = new
-                    // MetadataSources(configuration.getStandardServiceRegistryBuilder()
-                    // .applySettings(configuration.getProperties()).build()).buildMetadata();
                     schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
-                    // createScript = Files.readAllLines(createTempFile);
-                    // schemaExport.setOutputFile(dropTempFile.toString());
-                    // schemaExport.execute(EnumSet.of(TargetType.DATABASE),
-                    // Action.DROP, metadata);
-                    // dropScript = Files.readAllLines(dropTempFile);
-                    // for (final String s : createScript) {
-                    // LOG.debug("Executing {}", s);
-                    // stmt.execute(s);
-                    // }
-                } catch (Exception e) {
-                    new RuntimeException(e);
-                    // } finally {
-                    // try {
-                    // if (createTempFile != null) {
-                    // Files.deleteIfExists(createTempFile);
-                    // }
-                    //
-                    // } catch (IOException e) {
-                    // LOG.info("Unable to delete temp file {}",
-                    // createTempFile.toString());
-                    // }
-                    // try {
-                    // if (dropTempFile != null) {
-                    // Files.deleteIfExists(dropTempFile);
-                    // }
-                    //
-                    // } catch (IOException e) {
-                    // LOG.info("Unable to delete temp file {}",
-                    // dropTempFile.toString());
-                    // }
                 }
             }
         } catch (ClassNotFoundException | SQLException | MappingException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    private String[] getCreateSrcipt(String[] generateSchemaCreationScript) {
-        List<String> finalScript = Lists.newArrayList();
-        Set<String> nonDublicates = Sets.newHashSet();
-        Set<String> nonDuplicateCreate = Sets.newHashSet();
-        for (final String s : generateSchemaCreationScript) {
-            if (!nonDublicates.contains(s)) {
-                if (s.toLowerCase(Locale.ROOT).startsWith("create table")) {
-                    String substring = s.substring(0, s.indexOf('('));
-                    if (!nonDuplicateCreate.contains(substring)) {
-                        nonDuplicateCreate.add(substring);
-                        LOG.debug(ECEXUTING_TEMPLATE, s);
-                        finalScript.add(s);
-                    }
-                } else {
-                    LOG.debug(ECEXUTING_TEMPLATE, s);
-                    finalScript.add(s);
-                }
-                nonDublicates.add(s);
-            }
-        }
-        return finalScript.toArray(new String[finalScript.size()]);
-    }
-
-    private String[] getDropScript(String[] generateDropSchemaScript) {
-        Set<String> nonDuplicates = Sets.newHashSet();
-        List<String> finalScript = Lists.newArrayList();
-        for (String string : generateDropSchemaScript) {
-            if (!nonDuplicates.contains(string)) {
-                finalScript.add(string);
-                nonDuplicates.add(string);
-            }
-        }
-        return finalScript.toArray(new String[finalScript.size()]);
     }
 
     private void init() throws ConfigurationError, IOException {
@@ -432,12 +355,4 @@ public final class H2Configuration implements ConnectionProvider {
     public int getMaxConnections() {
         return 0;
     }
-
-    // public List<String> getCreateScript() {
-    // return createScript;
-    // }
-    //
-    // public List<String> getDropScript() {
-    // return dropScript;
-    // }
 }

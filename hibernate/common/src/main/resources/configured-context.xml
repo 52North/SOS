@@ -3,7 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <bean class="org.n52.sos.ds.hibernate.util.ObservationSettingProvider" />
     <bean class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
     <bean class="org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO"/>
     <bean class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>

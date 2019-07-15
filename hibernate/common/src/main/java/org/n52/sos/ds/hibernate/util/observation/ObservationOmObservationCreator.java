@@ -306,18 +306,16 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             obsConst.setObservationType(hObservation.getDataset().getOmObservationType().getFormat());
         }
         observationConstellations.put(hashCode, obsConst);
-        if (hObservation instanceof DataEntity<?>) {
-            DatasetEntity series = ((DataEntity<?>) hObservation).getDataset();
-            if (series.isSetIdentifier()) {
-                addIdentifier(obsConst, series);
-            }
-            obsConst.setObservationType(getResultModel());
-            if (series.isSetName()) {
-                addName(obsConst, series);
-            }
-            if (series.isSetDescription()) {
-                obsConst.setDescription(series.getDescription());
-            }
+        DatasetEntity series = hObservation.getDataset();
+        if (series.isSetIdentifier()) {
+            addIdentifier(obsConst, series);
+        }
+        obsConst.setObservationType(getResultModel());
+        if (series.isSetName()) {
+            addName(obsConst, series);
+        }
+        if (series.isSetDescription()) {
+            obsConst.setDescription(series.getDescription());
         }
         LOGGER.trace("Creating ObservationConstellation done in {} ms.", System.currentTimeMillis() - start);
         return obsConst;

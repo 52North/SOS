@@ -28,7 +28,6 @@
  */
 package org.n52.sos.web.common.auth;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.Set;
@@ -52,9 +51,7 @@ import org.n52.iceland.config.AdministratorUser;
  * @since 4.0.0
  *
  */
-public class SosAuthenticationProvider implements AuthenticationProvider, Serializable {
-    private static final long serialVersionUID = -3207103212342510378L;
-
+public class SosAuthenticationProvider implements AuthenticationProvider {
     private static final String BAD_CREDENTIALS = "Bad Credentials";
 
     private static final Logger LOG = LoggerFactory.getLogger(SosAuthenticationProvider.class);

@@ -39,6 +39,7 @@ import java.util.Set;
 import org.hibernate.boot.Metadata;
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -103,6 +104,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
+    @SuppressFBWarnings("DMI_EMPTY_DB_PASSWORD")
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             Class.forName(H2_DRIVER_CLASS);

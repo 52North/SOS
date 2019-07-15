@@ -94,8 +94,6 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
-
         Connection conn = null;
         Statement stmt = null;
         try {

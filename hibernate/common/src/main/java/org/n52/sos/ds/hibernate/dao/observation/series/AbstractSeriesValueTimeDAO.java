@@ -45,13 +45,13 @@ import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +75,8 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     private static final String LOG_QUERY_DATA_ENTITY = "QUERY getDataEntityFor({}): {}";
 
-    public AbstractSeriesValueTimeDAO(GeometryHandler geometryHandler) {
-        super(geometryHandler);
+    public AbstractSeriesValueTimeDAO(DaoFactory daoFactory) {
+        super(daoFactory);
     }
 
     /**
@@ -89,18 +89,18 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Get {@link ObservationTimeExtrema} for a {@link Series} with temporal
+     * Get {@link ObservationTimeExtrema} for a {@link DataEntity} with temporal
      * filter.
      *
      * @param request
      *            {@link AbstractObservationRequest} request
      * @param series
-     *            {@link Series} to get time extrema for
+     *            {@link DataEntity} to get time extrema for
      * @param temporalFilterCriterion
      *            Temporal filter
      * @param session
      *            Hibernate session
-     * @return Time extrema for {@link Series}
+     * @return Time extrema for {@link DataEntity}
      * @throws OwsExceptionReport
      *             If an error occurs
      */
@@ -127,18 +127,18 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Get {@link ObservationTimeExtrema} for a {@link Series} with temporal
+     * Get {@link ObservationTimeExtrema} for a dataset id with temporal
      * filter.
      *
      * @param request
      *            {@link AbstractObservationRequest} request
      * @param series
-     *            {@link Set} of {@link Series} to get time extrema for
+     *            {@link Set} of dataset ids to get time extrema for
      * @param temporalFilterCriterion
      *            Temporal filter
      * @param session
      *            Hibernate session
-     * @return Time extrema for {@link Series}
+     * @return Time extrema for dataset ids
      * @throws OwsExceptionReport
      *             If an error occurs
      */
@@ -165,15 +165,15 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     }
 
     /**
-     * Get {@link ObservationTimeExtrema} for a {@link Series}.
+     * Get {@link ObservationTimeExtrema} for a dataset.
      *
      * @param request
      *            {@link AbstractObservationRequest} request
      * @param series
-     *            {@link Series} to get time extrema for
+     *            Dataset id to get time extrema for
      * @param session
      *            Hibernate session
-     * @return Time extrema for {@link Series}
+     * @return Time extrema for dataset
      * @throws OwsExceptionReport
      *             If an error occurs
      */

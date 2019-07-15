@@ -52,7 +52,7 @@ public class HibernateProcedureDescriptionGeneratorKey
 
     @Override
     public int compareTo(HibernateProcedureDescriptionGeneratorKey o) {
-        if (o instanceof HibernateProcedureDescriptionGeneratorKey) {
+        if (o != null) {
             return Objects.equals(getDescriptionFormat(), o.getDescriptionFormat()) ? 0 : 1;
         } else {
             return -1;

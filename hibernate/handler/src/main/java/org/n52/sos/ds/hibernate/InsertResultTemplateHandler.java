@@ -60,7 +60,8 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.service.SosSettings;
-import org.n52.sos.util.GeometryHandler;
+
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
@@ -70,33 +71,20 @@ import org.n52.sos.util.GeometryHandler;
  */
 public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHandler implements Constructable {
 
-    private HibernateSessionHolder sessionHolder;
+    @Inject
+    private ConnectionProvider connectionProvider;
 
+    @Inject
     private DaoFactory daoFactory;
 
-    private ResultHandlingHelper helper;
+    private HibernateSessionHolder sessionHolder;
 
-    private GeometryHandler geometryHandler;
+    private ResultHandlingHelper helper;
 
     private boolean allowTemplateWithoutProcedureAndFeature;
 
     public InsertResultTemplateHandler() {
         super(SosConstants.SOS);
-    }
-
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
-    @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
-    @Inject
-    public void setGeometryHandler(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
     }
 
     @Setting(SosSettings.ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE)
@@ -106,11 +94,12 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
 
     @Override
     public void init() {
-        helper = new ResultHandlingHelper(geometryHandler, daoFactory.getSweHelper());
+        sessionHolder = new HibernateSessionHolder(connectionProvider);
+        helper = new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper());
     }
 
     @Override
-    public InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
+    public synchronized InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
             throws OwsExceptionReport {
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setService(request.getService());
@@ -161,7 +150,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
             }
             throw owse;
         } finally {
-            sessionHolder.returnSession(session);
+           sessionHolder.returnSession(session);
         }
         return response;
     }
@@ -255,6 +244,12 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
             }
         }
         return allowedSize + additionalValues;
+    }
+
+    @VisibleForTesting
+    protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
+        this.daoFactory = daoFactory;
+        this.connectionProvider = connectionProvider;
     }
 
 }

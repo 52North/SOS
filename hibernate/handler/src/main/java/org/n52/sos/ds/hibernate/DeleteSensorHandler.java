@@ -36,6 +36,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
@@ -57,15 +58,22 @@ import com.google.common.annotations.VisibleForTesting;
  * @since 4.0.0
  *
  */
-public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
+public class DeleteSensorHandler extends AbstractDeleteSensorHandler implements Constructable {
     @Inject
-    private HibernateSessionHolder sessionHolder;
+    private ConnectionProvider connectionProvider;
 
     @Inject
     private DaoFactory daoFactory;
 
+    private HibernateSessionHolder sessionHolder;
+
     public DeleteSensorHandler() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public void init() {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -145,7 +153,8 @@ public class DeleteSensorHandler extends AbstractDeleteSensorHandler {
     @VisibleForTesting
     protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
         this.daoFactory = daoFactory;
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.connectionProvider = connectionProvider;
     }
+
 
 }

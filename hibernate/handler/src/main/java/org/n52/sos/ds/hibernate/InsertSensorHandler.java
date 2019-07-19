@@ -49,6 +49,7 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
@@ -116,7 +117,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public class InsertSensorHandler extends AbstractInsertSensorHandler {
+public class InsertSensorHandler extends AbstractInsertSensorHandler implements Constructable {
 
     public static final Predicate<SmlCapabilities> REFERENCE_VALUES_PREDICATE =
             SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_REFERENCE_VALUES);
@@ -126,13 +127,20 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
     private static final String CATEGORY = "category";
 
     @Inject
-    private HibernateSessionHolder sessionHolder;
+    private ConnectionProvider connectionProvider;
 
     @Inject
     private DaoFactory daoFactory;
 
+    private HibernateSessionHolder sessionHolder;
+
     public InsertSensorHandler() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public void init() {
+        sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override
@@ -492,6 +500,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler {
     @VisibleForTesting
     protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
         this.daoFactory = daoFactory;
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.connectionProvider = connectionProvider;
     }
+
 }

@@ -44,6 +44,7 @@ import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -82,7 +83,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
 
 @Configurable
-public class InsertObservationHandler extends AbstractInsertObservationHandler {
+public class InsertObservationHandler extends AbstractInsertObservationHandler implements Constructable {
     private static final int FLUSH_THRESHOLD = 50;
 
     private static final String CONSTRAINT_OBSERVATION_IDENTITY = "observationIdentity";
@@ -101,10 +102,12 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
                     + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!";
 
     @Inject
-    private HibernateSessionHolder sessionHolder;
+    private ConnectionProvider connectionProvider;
 
     @Inject
     private DaoFactory daoFactory;
+
+    private HibernateSessionHolder sessionHolder;
 
     private boolean strictSpatialFilteringProfile;
 
@@ -113,6 +116,11 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
      */
     public InsertObservationHandler() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public void init() {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Setting(SosSettings.STRICT_SPATIAL_FILTERING_PROFILE)
@@ -348,7 +356,7 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler {
     @VisibleForTesting
     protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
         this.daoFactory = daoFactory;
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.connectionProvider = connectionProvider;
     }
 
     private static class InsertObservationCache {

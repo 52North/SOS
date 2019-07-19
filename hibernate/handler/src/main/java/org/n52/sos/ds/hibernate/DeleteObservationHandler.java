@@ -45,6 +45,7 @@ import org.jfree.data.general.Dataset;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.CompositeDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -84,7 +85,6 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
     private static final String ERROR_LOG = "Error while updating deleted observation flag data!";
 
-    @Inject
     private HibernateSessionHolder sessionHolder;
 
     @Inject
@@ -98,6 +98,11 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
     @Setting("service.transactional.DeletePhysically")
     public void setDeletePhysically(Boolean deletePhysically) {
         this.deletePhysically = deletePhysically;
+    }
+
+    @Inject
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        setSessionHolder(new HibernateSessionHolder(connectionProvider));
     }
 
     @Override
@@ -114,7 +119,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         Session session = null;
         Transaction transaction = null;
         try {
-            session = sessionHolder.getSession();
+            session = getSessionHolder().getSession();
             transaction = session.beginTransaction();
             if (request.isSetObservationIdentifiers()) {
                 deleteObservationsByIdentifier(request, response, session);
@@ -130,7 +135,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         } catch (ConverterException ce) {
             throw new NoApplicableCodeException().causedBy(ce).withMessage(ERROR_LOG);
         } finally {
-            sessionHolder.returnSession(session);
+            getSessionHolder().returnSession(session);
         }
         return response;
     }
@@ -301,6 +306,14 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                 }
             }
         }
+    }
+
+    private synchronized HibernateSessionHolder getSessionHolder() {
+        return sessionHolder;
+    }
+
+    private synchronized void setSessionHolder(HibernateSessionHolder sessionHolder) {
+        this.sessionHolder = sessionHolder;
     }
 
 }

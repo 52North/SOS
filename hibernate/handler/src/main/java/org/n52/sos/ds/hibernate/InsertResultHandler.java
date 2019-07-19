@@ -119,10 +119,12 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     private static final int FLUSH_THRESHOLD = 50;
 
     @Inject
-    private HibernateSessionHolder sessionHolder;
+    private ConnectionProvider connectionProvider;
 
     @Inject
     private DaoFactory daoFactory;
+
+    private HibernateSessionHolder sessionHolder;
 
     private boolean convertComplexProfileToSingleProfiles;
 
@@ -134,6 +136,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
     @Override
     public void init() {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
         helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper());
     }
 
@@ -599,7 +602,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     @VisibleForTesting
     protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
         this.daoFactory = daoFactory;
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.connectionProvider = connectionProvider;
     }
 
 }

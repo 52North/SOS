@@ -421,12 +421,14 @@ public class InsertDAOTest extends HibernateTestCase {
     private void initDaos() {
         insertSensorDAO.initForTesting(daoFactory, this);
         insertSensorDAO.setCacheController(contentCacheController);
+        insertSensorDAO.init();
         deleteSensorDAO.initForTesting(daoFactory, this);
         deleteSensorDAO.setCacheController(contentCacheController);
+        deleteSensorDAO.init();
         insertObservationDAO.initForTesting(daoFactory, this);
         insertObservationDAO.setCacheController(contentCacheController);
-        insertResultTemplateDAO.setConnectionProvider(this);
-        insertResultTemplateDAO.setDaoFactory(daoFactory);
+        insertObservationDAO.init();
+        insertResultTemplateDAO.initForTesting(daoFactory, this);
         insertResultTemplateDAO.setCacheController(contentCacheController);
         insertResultTemplateDAO.init();
         insertResultDAO.initForTesting(daoFactory, this);

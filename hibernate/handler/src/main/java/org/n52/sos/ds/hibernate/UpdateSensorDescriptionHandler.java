@@ -37,6 +37,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
@@ -58,16 +60,23 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  * @since 4.0.0
  *
  */
-public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler {
+public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescriptionHandler implements Constructable {
 
     @Inject
-    private HibernateSessionHolder sessionHolder;
+    private ConnectionProvider connectionProvider;
 
     @Inject
     private DaoFactory daoFactory;
 
+    private HibernateSessionHolder sessionHolder;
+
     public UpdateSensorDescriptionHandler() {
         super(SosConstants.SOS);
+    }
+
+   @Override
+    public void init() {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Override

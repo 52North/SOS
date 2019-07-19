@@ -1293,12 +1293,16 @@ public final class TemporalRestrictions {
      */
     private static Criterion filter(TemporalRestriction restriction, TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
-        return restriction.getCriterion(property, value);
+        return filter(restriction, property, value, null);
     }
 
     private static Criterion filter(TemporalRestriction restriction, TimePrimitiveFieldDescriptor property, Time value,
             Integer count) throws UnsupportedTimeException {
-        return restriction.getCriterion(property, value, count);
+        Criterion c = restriction.getCriterion(property, value, count);
+        if (c != null) {
+            return c;
+        }
+        throw new UnsupportedTimeException(value);
     }
 
     /**
@@ -1353,7 +1357,7 @@ public final class TemporalRestrictions {
      */
     public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedOperatorException, UnsupportedTimeException {
-        return filter(forOperator(operator), property, value);
+        return filter(forOperator(operator), property, value, null);
     }
 
     public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value,

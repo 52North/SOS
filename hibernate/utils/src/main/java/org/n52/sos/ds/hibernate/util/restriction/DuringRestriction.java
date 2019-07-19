@@ -58,20 +58,35 @@ import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 public class DuringRestriction implements TemporalRestriction {
     @Override
     public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return Restrictions.and(Restrictions.gt(selfBegin, otherBegin),
-                                Restrictions.lt(selfEnd, otherEnd));
+        return Restrictions.and(Restrictions.gt(selfBegin, otherBegin), Restrictions.lt(selfEnd, otherEnd));
     }
 
     @Override
     public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
         return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
-                                Restrictions.lt(selfEnd, getEndPlaceHolder(count)));
+                Restrictions.lt(selfEnd, getEndPlaceHolder(count)));
     }
 
     @Override
     public Criterion filterInstantWithPeriod(String selfBegin, String selfEnd, Integer count) {
         return Restrictions.and(Restrictions.gt(selfBegin, getStartPlaceHolder(count)),
-                                Restrictions.lt(selfBegin, getEndPlaceHolder(count)));
+                Restrictions.lt(selfBegin, getEndPlaceHolder(count)));
+    }
+
+    @Override
+    public Criterion filterInstantWithPeriod(String position, String endPosition, Date begin, Date end,
+            boolean periodFromReducedPrecisionInstant) {
+        return periodFromReducedPrecisionInstant
+                ? Restrictions.and(Restrictions.ge(position, begin), Restrictions.le(endPosition, end))
+                : Restrictions.and(Restrictions.gt(position, begin), Restrictions.lt(endPosition, end));
+    }
+
+    @Override
+    public Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
+            boolean isOtherPeriodFromReducedPrecisionInstant) {
+        return isOtherPeriodFromReducedPrecisionInstant
+                ? Restrictions.and(Restrictions.ge(selfPosition, otherBegin), Restrictions.le(selfPosition, otherEnd))
+                : Restrictions.and(Restrictions.gt(selfPosition, otherBegin), Restrictions.lt(selfPosition, otherEnd));
     }
 
 }

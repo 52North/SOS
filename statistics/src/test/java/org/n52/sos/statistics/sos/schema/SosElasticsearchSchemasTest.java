@@ -32,6 +32,7 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import basetest.ElasticsearchAwareTest;
@@ -52,6 +53,7 @@ public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
     }
 
     @Test
+    @Ignore
     public void createSchema() {
         SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
         getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getSchema()).get();
@@ -61,6 +63,7 @@ public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
     }
 
     @Test
+    @Ignore
     public void createMetaDataSchema() {
         SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
         getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getMetadataSchema()).get();

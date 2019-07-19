@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -53,15 +52,23 @@ public class AdditionalObservationCreatorRepository extends
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
 
-    private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>>
-                                        additionalObservationCreator = Maps.newHashMap();
+    private final Map<AdditionalObservationCreatorKey,
+                  Producer<AdditionalObservationCreator>> additionalObservationCreator =
+            Maps.newHashMap();
+
+    private Optional<Collection<AdditionalObservationCreator>> components;
+
+    private Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories;
 
     @Inject
-    private Optional<Collection<AdditionalObservationCreator>> components = Optional.of(Collections.emptyList());
+    public void setComponentFactories(Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories) {
+        this.componentFactories = componentFactories;
+    }
 
     @Inject
-    private Optional<Collection<AdditionalObservationCreatorFactory>> componentFactories =
-            Optional.of(Collections.emptyList());
+    public void setComponents(Optional<Collection<AdditionalObservationCreator>> components) {
+        this.components = components;
+    }
 
     @Override
     public void init() {

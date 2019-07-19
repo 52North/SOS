@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -46,6 +47,7 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
@@ -65,6 +67,7 @@ import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -100,8 +103,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     protected final HibernateSessionHolder sessionHolder;
 
-    protected Session session;
-
     protected final AbstractObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
@@ -109,6 +110,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     private final DaoFactory daoFactory;
 
     private final EReportingHelper helper;
+
+    private Session session;
 
     private BindingRepository bindingRepository;
 
@@ -129,6 +132,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         this.daoFactory = daoFactory;
         this.helper = new EReportingHelper(daoFactory.getSweHelper());
         this.bindingRepository = bindingRepository;
+    }
+
+    protected Session getSession() throws OwsExceptionReport {
+        if (session == null) {
+            session = sessionHolder.getSession();
+        }
+        return session;
     }
 
     @Override
@@ -349,8 +359,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(daoFactory.getGeometryHandler()
-                .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+        namedValue.setValue(new GeometryValue(
+                daoFactory.getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
 
@@ -409,11 +419,28 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (o.isSetGeometryEntity()) {
             observation.addParameter(createSpatialFilteringProfileParameter(o.getGeometryEntity().getGeometry()));
         }
+        if (o.getDataset().hasVerticalMetadata()) {
+            VerticalMetadataEntity verticalMetadata = o.getDataset().getVerticalMetadata();
+            if (o.hasVerticalInterval()) {
+                observation.addParameter(createParameter(verticalMetadata.getVerticalFromName(), o.getVerticalFrom()));
+                observation.addParameter(createParameter(verticalMetadata.getVerticalToName(), o.getVerticalTo()));
+            } else {
+                observation.addParameter(createParameter(verticalMetadata.getVerticalFromName(), o.getVerticalFrom()));
+            }
+        }
         addRelatedObservation(o, observation);
         addParameter(o, observation);
         addValueSpecificDataToObservation(o, observation, responseFormat);
         addObservationValueToObservation(o, observation, value, responseFormat);
         return observation;
+    }
+
+    private NamedValue<BigDecimal> createParameter(String name, BigDecimal value) {
+        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
+        final ReferenceType referenceType = new ReferenceType(name);
+        namedValue.setName(referenceType);
+        namedValue.setValue(new QuantityValue(value, "m"));
+        return namedValue;
     }
 
     public void addValueSpecificDataToObservation(DataEntity<?> o, OmObservation observation, Session session,

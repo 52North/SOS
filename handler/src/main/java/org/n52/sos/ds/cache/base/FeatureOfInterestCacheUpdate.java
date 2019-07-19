@@ -29,7 +29,6 @@
 package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,6 @@ import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -94,12 +92,6 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
     private Collection<String> getProcedures(Collection<DatasetEntity> datasets) {
         return datasets.stream().filter(d -> d.getProcedure() != null).map(d -> d.getProcedure().getIdentifier())
                 .collect(Collectors.toSet());
-    }
-
-    private DbQuery createProcedureDbQuery(FeatureEntity featureEntity) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.FEATURES, Long.toString(featureEntity.getId()));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Collection<String> getParents(FeatureEntity featureEntity) {

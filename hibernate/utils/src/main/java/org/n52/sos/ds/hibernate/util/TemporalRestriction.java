@@ -31,10 +31,8 @@ package org.n52.sos.ds.hibernate.util;
 import java.util.Date;
 
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.PropertyExpression;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
-
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -69,22 +67,13 @@ public interface TemporalRestriction {
      *            the descriptor holding the property name(s)
      * @param time
      *            the compared time
-     *
+     * @param count
+     *            the count for placeholder, can be null
      * @return a {@code Criterion} that describes this restriction
      *
      * @throws UnsupportedTimeException
      *             if the supplied time can not be used with this restriction
      */
-    default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time) throws UnsupportedTimeException {
-        if (time instanceof TimePeriod) {
-            return filterWithPeriod((TimePeriod) time, ref, false);
-        } else if (time instanceof TimeInstant) {
-            return filterWithInstant((TimeInstant) time, ref);
-        } else {
-            throw new UnsupportedTimeException(time);
-        }
-    }
-
     default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time, Integer count)
             throws UnsupportedTimeException {
         if (time instanceof TimePeriod) {
@@ -230,8 +219,7 @@ public interface TemporalRestriction {
         }
         if (r.isPeriod()) {
             return getPropertyCheckingCriterion(
-                    filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-                    filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant), r);
+                    filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end), null, r);
         } else {
             return filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
         }
@@ -251,12 +239,9 @@ public interface TemporalRestriction {
         if (r.isPeriod()) {
             return count != null
                     ? getPropertyCheckingCriterion(
-                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), count),
-                            filterInstantWithPeriod(r.getPosition(), r.getPosition(), count), r)
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), count), null, r)
                     : getPropertyCheckingCriterion(
-                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end),
-                            filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant),
-                            r);
+                            filterPeriodWithPeriod(r.getBeginPosition(), r.getEndPosition(), begin, end), null, r);
         } else {
             return count != null ? filterInstantWithPeriod(r.getBeginPosition(), r.getEndPosition(), count)
                     : filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
@@ -266,8 +251,7 @@ public interface TemporalRestriction {
     /**
      * Creates a filter for the specfied instant and fields. In case of a
      * instance with reduced precision a the method will call
-     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor)
-     * filterWithPeriod()}.
+     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor)}.
      *
      * @param time
      *            the time
@@ -290,8 +274,7 @@ public interface TemporalRestriction {
         }
         if (r.isPeriod()) {
             return getPropertyCheckingCriterion(
-                    filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), begin),
-                    filterInstantWithInstant(r.getPosition(), begin), r);
+                    filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), begin), null, r);
 
         } else {
             return filterInstantWithInstant(r.getPosition(), begin);
@@ -313,11 +296,9 @@ public interface TemporalRestriction {
         if (r.isPeriod()) {
             return count != null
                     ? getPropertyCheckingCriterion(
-                            filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), count),
-                            filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count), r)
-                    : getPropertyCheckingCriterion(
-                            filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), time.getValue().toDate()),
-                            filterInstantWithInstant(r.getPosition(), time.getValue().toDate()), r);
+                            filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), count), null, r)
+                    : getPropertyCheckingCriterion(filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(),
+                            time.getValue().toDate()), null, r);
 
         } else {
             return count != null ? filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count)
@@ -361,43 +342,51 @@ public interface TemporalRestriction {
      */
     static Criterion getPropertyCheckingCriterion(Criterion periods, Criterion instants,
             TimePrimitiveFieldDescriptor r) {
-        if (periods == null) {
-            if (instants == null) {
-                return null;
-            } else {
-                return Restrictions.and(isInstant(r), instants);
-            }
-        } else if (instants == null) {
-            return Restrictions.and(isPeriod(r), periods);
-        } else {
-            return Restrictions.or(Restrictions.and(isPeriod(r), periods), Restrictions.and(isInstant(r), instants));
+        if (periods != null && instants != null) {
+            return Restrictions.or(periods, instants);
+        } else if (periods != null && instants == null) {
+            return periods;
+        } else if (periods == null && instants != null) {
+            return periods;
         }
+        return null;
+//        if (periods == null) {
+//            if (instants == null) {
+//                return null;
+//            } else {
+//                return Restrictions.and(isInstant(r), instants);
+//            }
+//        } else if (instants == null) {
+//            return Restrictions.and(isPeriod(r), periods);
+//        } else {
+//            return Restrictions.or(Restrictions.and(isPeriod(r), periods), Restrictions.and(isInstant(r), instants));
+//        }
     }
 
-    /**
-     * Creates a {@code Criterion} that checks that the persisted period is a
-     * "real" period ({@code begin != end}).
-     *
-     * @param r
-     *            the property names
-     *
-     * @return the {@code Criterion}
-     */
-    static PropertyExpression isPeriod(TimePrimitiveFieldDescriptor r) {
-        return Restrictions.neProperty(r.getBeginPosition(), r.getEndPosition());
-    }
-
-    /**
-     * Creates a {@code Criterion} that checks that the persisted period is a
-     * instant period ({@code begin == end}).
-     *
-     * @param r
-     *            the property names
-     *
-     * @return the {@code Criterion}
-     */
-    static PropertyExpression isInstant(TimePrimitiveFieldDescriptor r) {
-        return Restrictions.eqProperty(r.getBeginPosition(), r.getEndPosition());
-    }
+//    /**
+//     * Creates a {@code Criterion} that checks that the persisted period is a
+//     * "real" period ({@code begin != end}).
+//     *
+//     * @param r
+//     *            the property names
+//     *
+//     * @return the {@code Criterion}
+//     */
+//    static PropertyExpression isPeriod(TimePrimitiveFieldDescriptor r) {
+//        return Restrictions.neProperty(r.getBeginPosition(), r.getEndPosition());
+//    }
+//
+//    /**
+//     * Creates a {@code Criterion} that checks that the persisted period is a
+//     * instant period ({@code begin == end}).
+//     *
+//     * @param r
+//     *            the property names
+//     *
+//     * @return the {@code Criterion}
+//     */
+//    static PropertyExpression isInstant(TimePrimitiveFieldDescriptor r) {
+//        return Restrictions.eqProperty(r.getBeginPosition(), r.getEndPosition());
+//    }
 
 }

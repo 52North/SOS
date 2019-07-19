@@ -36,6 +36,7 @@ import java.util.Set;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -65,8 +66,8 @@ public class ProfileGeneratorSplitter {
         ProfileValue profileValue = new ProfileValue("");
         profileValue.setGmlId("pv" + entity.getId());
         UoM uom = null;
-        if (entity.hasVerticalUnit()) {
-            UnitEntity levelunit = entity.getVerticalUnit();
+        if (entity.getDataset().hasVerticalMetadata() && entity.getDataset().getVerticalMetadata().hasVerticalUnit()) {
+            UnitEntity levelunit = entity.getDataset().getVerticalMetadata().getVerticalUnit();
             uom = new UoM(levelunit.getUnit());
             if (levelunit.isSetName()) {
                 uom.setName(levelunit.getName());
@@ -93,14 +94,15 @@ public class ProfileGeneratorSplitter {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
             for (DataEntity<?> observation : entity.getValue()) {
-                QuantityValue levelStart =
-                        observation.hasVerticalFrom() && observation.hasVerticalInterval() ? getLevelStart(
-                                observation.getVerticalFrom(), entity.getVerticalFromName(), entity.getVerticalUnit())
-                                : null;
+                VerticalMetadataEntity verticalMetadata = entity.getDataset().getVerticalMetadata();
+                QuantityValue levelStart = observation.hasVerticalFrom() && observation.hasVerticalInterval()
+                        ? getLevelStart(observation.getVerticalFrom(), verticalMetadata.getVerticalFromName(),
+                                verticalMetadata.getVerticalUnit())
+                        : null;
                 QuantityValue levelEnd =
                         observation.hasVerticalTo()
-                                ? getLevelEnd(observation.getVerticalTo(), entity.getVerticalToName(),
-                                        entity.getVerticalUnit())
+                                ? getLevelEnd(observation.getVerticalTo(), verticalMetadata.getVerticalToName(),
+                                        verticalMetadata.getVerticalUnit())
                                 : null;
                 if (levelStart == null && levelEnd == null && observation.hasParameters()) {
                     levelStart = getLevelStart(observation.getParameters());

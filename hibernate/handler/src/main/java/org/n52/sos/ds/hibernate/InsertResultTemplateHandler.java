@@ -201,18 +201,20 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
         }
         if (allowTemplateWithoutProcedureAndFeature) {
             if (sosObsConst.getNillableFeatureOfInterest().isNil()
-                    && helper.checkFields(record.getFields(), helper.OM_FEATURE_OF_INTEREST) == -1) {
+                    && helper.checkFields(record.getFields(), ResultHandlingHelper.OM_FEATURE_OF_INTEREST) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                         .withMessage(
                                 "Missing swe:field content with element definition '%s' because the "
                                         + "featureOfInterest is not defined in the observationTemplate!",
-                                helper.OM_FEATURE_OF_INTEREST);
+                                ResultHandlingHelper.OM_FEATURE_OF_INTEREST);
             }
             if (sosObsConst.getNillableProcedure().isNil()
-                    && helper.checkFields(record.getFields(), helper.OM_PROCEDURE) == -1) {
+                    && helper.checkFields(record.getFields(), ResultHandlingHelper.OM_PROCEDURE) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                        .withMessage("Missing swe:field content with element definition '%s' because the procdure "
-                                + "is not defined in the observationTemplate!", helper.OM_PROCEDURE);
+                        .withMessage(
+                                "Missing swe:field content with element definition '%s' because the procdure "
+                                        + "is not defined in the observationTemplate!",
+                                ResultHandlingHelper.OM_PROCEDURE);
             }
         }
         if (record.getFields().size() > getAllowedSize(record)) {
@@ -224,8 +226,8 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                                     + " '%s' or swe:Vector with element defintion '%s' or swe:Text with element"
                                     + " definitions '%s' and '%s' and swe:DataRecord with element definition '%s'!",
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty,
-                            OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, helper.OM_FEATURE_OF_INTEREST,
-                            helper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
+                            OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, ResultHandlingHelper.OM_FEATURE_OF_INTEREST,
+                            ResultHandlingHelper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
         }
     }
 
@@ -240,10 +242,11 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                 additionalValues++;
             }
             if (allowTemplateWithoutProcedureAndFeature) {
-                if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_FEATURE_OF_INTEREST)) {
+                if (helper.isText(swefield)
+                        && helper.checkDefinition(swefield, ResultHandlingHelper.OM_FEATURE_OF_INTEREST)) {
                     additionalValues++;
                 }
-                if (helper.isText(swefield) && helper.checkDefinition(swefield, helper.OM_PROCEDURE)) {
+                if (helper.isText(swefield) && helper.checkDefinition(swefield, ResultHandlingHelper.OM_PROCEDURE)) {
                     additionalValues++;
                 }
             }

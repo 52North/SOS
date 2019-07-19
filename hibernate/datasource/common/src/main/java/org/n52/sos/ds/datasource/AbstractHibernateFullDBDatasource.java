@@ -178,9 +178,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
-        if (current.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)) {
-            settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
-        }
+        settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
         if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT)) {
             settings.put(TIME_STRING_FORMAT_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT));
         }

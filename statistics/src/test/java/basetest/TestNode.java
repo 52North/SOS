@@ -29,11 +29,12 @@
 package basetest;
 
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
 
 public class TestNode extends Node {
     public TestNode(Settings settings) {
-        super(settings);
+        super(new Environment(settings, null));
     }
 //
 //    @Override

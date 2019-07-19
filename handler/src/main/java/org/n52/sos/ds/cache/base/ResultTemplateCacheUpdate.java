@@ -66,11 +66,9 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
                 String id = resultTemplate.getIdentifier();
                 getCache().addResultTemplate(id);
                 getCache().addResultTemplateForOffering(resultTemplate.getOffering().getIdentifier(), id);
-                getCache().addObservablePropertyForResultTemplate(id,
-                        resultTemplate.getPhenomenon().getIdentifier());
+                getCache().addObservablePropertyForResultTemplate(id, resultTemplate.getPhenomenon().getIdentifier());
                 if (resultTemplate.getFeature() != null) {
-                    getCache().addFeatureOfInterestForResultTemplate(id,
-                            resultTemplate.getFeature().getIdentifier());
+                    getCache().addFeatureOfInterestForResultTemplate(id, resultTemplate.getFeature().getIdentifier());
                 }
             }
         }
@@ -81,8 +79,7 @@ public class ResultTemplateCacheUpdate extends AbstractThreadableDatasourceCache
         return session.createCriteria(ResultTemplateEntity.class)
                 .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
                 .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN)
-                .list();
+                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
     }
 
 }

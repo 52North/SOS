@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
@@ -91,7 +92,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     @Override
     public boolean hasNext() throws OwsExceptionReport {
         boolean next = false;
-        if ((seriesValuesResult == null || !seriesValuesResult.hasNext()) && session.isOpen()) {
+        if ((seriesValuesResult == null || !seriesValuesResult.hasNext()) && getSession().isOpen()) {
             if (!noChunk) {
                 getNextResults();
                 if (chunkSize <= 0 || currentResultSize < chunkSize) {
@@ -103,7 +104,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             next = seriesValuesResult.hasNext();
         }
         if (!next) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
         }
 
         return next;
@@ -120,12 +121,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             if (hasNext()) {
                 DataEntity<?> resultObject = seriesValuesResult.next();
                 TimeValuePair value = createTimeValuePairFrom(resultObject);
-                session.evict(resultObject);
+                getSession().evict(resultObject);
                 return value;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -139,12 +140,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                 DataEntity<?> resultObject = seriesValuesResult.next();
                 addValuesToObservation(resultObject, observation, getResponseFormat());
                 checkForModifications(observation);
-                session.evict(resultObject);
+                getSession().evict(resultObject);
                 return observation;
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            sessionHolder.returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -157,10 +158,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *             If an error occurs when querying the next results
      */
     private void getNextResults() throws OwsExceptionReport {
-        if (session == null) {
-            session = sessionHolder.getSession();
-        }
+        Session session = null;
         try {
+            session = getSession();
             // query with temporal filter
             Collection<DataEntity<?>> resutltValues = new ArrayList<>();
             if (temporalFilterCriterion != null) {
@@ -168,8 +168,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                         temporalFilterCriterion, chunkSize, currentRow, session));
             } else {
                 // query without temporal or indeterminate filters
-                resutltValues.addAll(
-                        seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow, session));
+                resutltValues.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow,
+                        getSession()));
             }
             currentRow += chunkSize;
             checkMaxNumberOfReturnedValues(resutltValues.size());

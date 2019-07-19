@@ -28,6 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+/**
+ * Test with instant as temporal filter
+ *
+ * @author <a href="mailto:c.hollman@52north.org">Carsten Hollmann</a>
+ *
+ * @since 4.4.0
+ */
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -36,6 +43,7 @@ import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
@@ -45,7 +53,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
 
     private static final String STE_LT_INSTANT = "samplingTimeEnd<:instant1";
 
-    private static final String STS_GT_INSTANTAND_STE_LT_INSTANT =
+    private static final String STS_GT_INSTANT_AND_STE_LT_INSTANT =
             "samplingTimeStart>:instant1 and samplingTimeEnd<:instant1";
 
     private static final String RT_GT_INSTANT_AND_RT_LT_INSTANT = "resultTime>:instant1 and resultTime<:instant1";
@@ -55,7 +63,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_After, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("samplingTimeEnd>:instant1"));
+        assertThat(filterHql.toString(), equalTo("samplingTimeStart>:instant1"));
     }
 
     @Test
@@ -71,7 +79,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Before, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("samplingTimeStart<:instant1"));
+        assertThat(filterHql.toString(), equalTo("samplingTimeEnd<:instant1"));
     }
 
     @Test
@@ -118,7 +126,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_During, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANTAND_STE_LT_INSTANT));
+        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANT_AND_STE_LT_INSTANT));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -132,15 +140,13 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
     @Test(expected = UnsupportedTimeException.class)
     public void testBeginsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Begins, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("samplingTimeStart>:instant1"));
+        SosTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testBeginsResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Begins, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("resultTime>:resultTime1 and resultTime<:instant1"));
+        SosTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test
@@ -159,15 +165,13 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
     @Test(expected = UnsupportedTimeException.class)
     public void testEndsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Ends, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo(STE_LT_INSTANT));
+        SosTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testEndsResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Ends, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo(RT_GT_INSTANT_AND_RT_LT_INSTANT));
+        SosTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test
@@ -175,6 +179,8 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_EndedBy, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeEnd=:instant1"));
+
+
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -186,8 +192,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
     @Test(expected = UnsupportedTimeException.class)
     public void testOverlapsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Overlaps, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANTAND_STE_LT_INSTANT));
+        SosTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -213,7 +218,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
     public void testMeetsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Meets, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANTAND_STE_LT_INSTANT));
+        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANT_AND_STE_LT_INSTANT));
     }
 
     @Test(expected = UnsupportedTimeException.class)
@@ -226,7 +231,7 @@ public class TemporalRestrictionHqlInstantInstantTest extends ExtendedHibernateT
     public void testMetByPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_MetBy, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANTAND_STE_LT_INSTANT));
+        assertThat(filterHql.toString(), equalTo(STS_GT_INSTANT_AND_STE_LT_INSTANT));
     }
 
     @Test(expected = UnsupportedTimeException.class)

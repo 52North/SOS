@@ -36,10 +36,18 @@ import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 
+/**
+ * Test with instant as temporal filter
+ *
+ * @author <a href="mailto:c.hollman@52north.org">Carsten Hollmann</a>
+ *
+ * @since 4.4.0
+ */
 public class TemporalRestrictionHqlPeriodInstantTest extends ExtendedHibernateTestCase
         implements TemporalRestrictionTestConstants {
 
@@ -48,7 +56,7 @@ public class TemporalRestrictionHqlPeriodInstantTest extends ExtendedHibernateTe
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_After, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("samplingTimeEnd>:instant1"));
+        assertThat(filterHql.toString(), equalTo("samplingTimeStart>:instant1"));
     }
 
     @Test
@@ -64,7 +72,7 @@ public class TemporalRestrictionHqlPeriodInstantTest extends ExtendedHibernateTe
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Before, PHENOMENON_TIME);
         Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("samplingTimeStart<:instant1"));
+        assertThat(filterHql.toString(), equalTo("samplingTimeEnd<:instant1"));
     }
 
     @Test

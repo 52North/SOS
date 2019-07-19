@@ -134,7 +134,7 @@ public class AbstractObservationDAOTest {
     public void add_resultTime_value_from_phenomenonTime() throws CodedException {
         DataEntity<?> observation = new QuantityDataEntity();
         TimeInstant resultTime = new TimeInstant();
-        resultTime.setGmlId(RESULT_TIME);
+        resultTime.setGmlId(PHENOMENON_TIME);
         TimeInstant phenomeonTime = new TimeInstant(new DateTime());
         dao.addResultTimeToObservation(observation, resultTime, phenomeonTime);
         Assert.assertTrue(observation.getResultTime() != null);

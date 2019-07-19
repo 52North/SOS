@@ -63,7 +63,7 @@ public class BeforeRestriction implements TemporalRestriction {
 
     @Override
     public Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return Restrictions.lt(selfEnd, getEndPlaceHolder(count));
+        return Restrictions.lt(selfEnd, getStartPlaceHolder(count));
     }
 
     @Override

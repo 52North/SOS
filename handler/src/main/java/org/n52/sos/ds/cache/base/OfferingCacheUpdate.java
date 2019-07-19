@@ -30,19 +30,14 @@ package org.n52.sos.ds.cache.base;
 
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Map;
 
-import org.hibernate.HibernateException;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.HibernateSessionStore;
-import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.OfferingDao;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
@@ -51,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  *
@@ -60,7 +54,7 @@ import com.google.common.collect.Maps;
  * @since 4.0.0
  */
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask>
-        implements ApiQueryHelper {
+        implements ApiQueryHelper, DatasourceCacheUpdateHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferingCacheUpdate.class);
 
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
@@ -70,8 +64,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
 
     private Collection<OfferingEntity> offeringsToUpdate;
-
-    private Map<String, Collection<DatasetEntity>> offDatasetMap;
 
     private final Locale defaultLanguage;
 
@@ -100,8 +92,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             if (offeringsToUpdate == null) {
                 if (offeringsIdToUpdate == null || offeringsIdToUpdate.isEmpty()) {
                     return offeringDAO.get(new DbQuery(IoParameters.createDefaults()));
-                } else {
-                    return offeringDAO.get(createDatasetDbQuery(offeringsIdToUpdate));
                 }
             }
         } catch (Exception e) {
@@ -109,26 +99,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                     .withMessage("Error while processing procedure cache update task!"));
         }
         return offeringsToUpdate;
-    }
-
-    private DbQuery createDatasetDbQuery(Collection<String> ids) {
-        Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.OFFERINGS, listToString(ids));
-        return new DbQuery(IoParameters.createFromSingleValueMap(map));
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<String, Collection<DatasetEntity>> getOfferingDatasets() throws OwsExceptionReport {
-        if (offDatasetMap == null) {
-            try {
-                offDatasetMap = DatasourceCacheUpdateHelper
-                        .mapByOffering(new DatasetDao(getSession()).get(new DbQuery(IoParameters.createDefaults())));
-            } catch (HibernateException dae) {
-                throw new NoApplicableCodeException().causedBy(dae)
-                        .withMessage("Error while querying datasets for offerings");
-            }
-        }
-        return offDatasetMap;
     }
 
     @Override
@@ -149,9 +119,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         for (OfferingEntity offering : getOfferingsToUpdate()) {
-            Collection<DatasetEntity> datasets = getOfferingDatasets().get(offering.getIdentifier());
             offeringUpdateTasks.add(
-                    new OfferingCacheUpdateTask(offering, datasets, this.defaultLanguage, this.i18NDAORepository));
+                    new OfferingCacheUpdateTask(offering.getId(), this.defaultLanguage, this.i18NDAORepository));
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }

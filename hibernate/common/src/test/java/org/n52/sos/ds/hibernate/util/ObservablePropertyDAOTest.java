@@ -31,13 +31,17 @@ package org.n52.sos.ds.hibernate.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,10 +72,8 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-
-            ScrollableIterable<PhenomenonEntity> iter
-                    = ScrollableIterable.fromCriteria(session
-                            .createCriteria(PhenomenonEntity.class));
+            ScrollableIterable<PhenomenonEntity> iter =
+                    ScrollableIterable.fromCriteria(session.createCriteria(PhenomenonEntity.class));
             for (PhenomenonEntity observableProperty : iter) {
                 session.delete(observableProperty);
             }

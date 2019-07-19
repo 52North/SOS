@@ -32,6 +32,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.ereporting.EReportingStationEntity;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -82,7 +83,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
     }
 
     /**
-     * Get the {@link EReportingStation} for the identifier
+     * Get the {@link EReportingStationEntity} for the identifier
      *
      * @param identifier
      *            Identifier to get {@link EReportingSamplingPointEntity} for

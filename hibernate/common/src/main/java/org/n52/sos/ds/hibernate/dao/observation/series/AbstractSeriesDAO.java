@@ -332,7 +332,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 series.setDatasetType(DatasetType.trajectory);
             }
         }
-        if (series == null || (series.isSetFeature()
+        if (series == null || (series.isSetFeature() && ctx.isSetFeatureOfInterest()
                 && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
             series = (DatasetEntity) getDatasetFactory().visit(observation);
             ctx.addValuesToSeries(series);

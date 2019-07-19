@@ -63,19 +63,18 @@ public class EnvironmentalMonitoringFacilityCreator
         // new SimpleAttrs().setHref(f.getUrl()));
         // }
         if (f != null) {
-            EnvironmentalMonitoringFacilityEntity emf = (EnvironmentalMonitoringFacilityEntity) f;
-            final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(emf);
-            if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), getContext().getVersion())) {
+            final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(f);
+            if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(f.getIdentifier(), getContext().getVersion())) {
                 identifier.setValue(null);
             }
             final org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature =
                     new org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
-                            getMediaMonitored(emf.getMediaMonitored()));
-            addNameAndDescription(getContext().getRequestedLanguage(), emf, emFeature);
-            emFeature.setGeometry(createGeometry(emf));
+                            getMediaMonitored(f.getMediaMonitored()));
+            addNameAndDescription(getContext().getRequestedLanguage(), f, emFeature);
+            emFeature.setGeometry(createGeometry(f));
             // add measurementRegime, mobile, operationalActivityPeriod(Set)
-            emFeature.setMeasurementRegime(new ReferenceType(emf.getMeasurementRegime()));
-            emFeature.setMobile(emf.isMobile());
+            emFeature.setMeasurementRegime(new ReferenceType(f.getMeasurementRegime()));
+            emFeature.setMobile(f.isMobile());
 
             // in table or from Data
             // emFeature.setOperationalActivityPeriod(operationalActivityPeriod);

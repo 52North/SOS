@@ -36,12 +36,13 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
+import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
- * TODO JavaDoc
+ * Test with period as temporal filter
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
@@ -83,10 +84,10 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void afterPeriodPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.after());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_After);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_AFTER_ID));
-            assertThat(filtered, hasSize(5));
+            assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
         }
@@ -96,7 +97,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testAfterResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.after());
+            Set<Identifier> filtered = filterResultTime(session, FilterConstants.TimeOperator.TM_After);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_AFTER_ID));
             assertThat(filtered, hasSize(1));
@@ -109,10 +110,10 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testBeforePhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.before());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Before);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_BEFORE_ID));
-            assertThat(filtered, hasSize(5));
+            assertThat(filtered, hasSize(1));
         } finally {
             returnSession(session);
         }
@@ -122,7 +123,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testBeforeResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.before());
+            Set<Identifier> filtered = filterResultTime(session, FilterConstants.TimeOperator.TM_Before);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItems(TemporalRestrictionTest.Identifier.PP_BEFORE_ID,
                     TemporalRestrictionTest.Identifier.PP_MEETS_ID, TemporalRestrictionTest.Identifier.PP_CONTAINS_ID,
@@ -138,7 +139,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testEqualsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.equals());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Equals);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_EQUALS_ID));
             assertThat(filtered, hasSize(1));
@@ -151,7 +152,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testEqualsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.equals());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_Equals);
         } finally {
             returnSession(session);
         }
@@ -161,7 +162,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testContainsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.contains());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Contains);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_CONTAINS_ID));
             assertThat(filtered, hasSize(1));
@@ -174,7 +175,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testContainsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.contains());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_Contains);
         } finally {
             returnSession(session);
         }
@@ -184,7 +185,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testDuringPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.during());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_During);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_DURING_ID));
             assertThat(filtered, hasSize(1));
@@ -197,7 +198,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testDuringResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.during());
+            Set<Identifier> filtered = filterResultTime(session, FilterConstants.TimeOperator.TM_During);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItems(TemporalRestrictionTest.Identifier.PP_OVERLAPPED_BY_ID,
                     TemporalRestrictionTest.Identifier.PP_ENDS_ID, TemporalRestrictionTest.Identifier.PP_DURING_ID));
@@ -211,7 +212,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testBeginsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begins());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Begins);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_BEGINS_ID));
             assertThat(filtered, hasSize(1));
@@ -224,7 +225,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testBeginsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.begins());
+            Set<Identifier> filtered = filterResultTime(session, FilterConstants.TimeOperator.TM_Begins);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered,
                     hasItems(TemporalRestrictionTest.Identifier.PP_BEGINS_ID,
@@ -240,7 +241,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testBegunByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.begunBy());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_BegunBy);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_BEGUN_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -253,7 +254,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testBegunByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.begunBy());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_BegunBy);
         } finally {
             returnSession(session);
         }
@@ -263,7 +264,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testEndsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.ends());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Ends);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_ENDS_ID));
             assertThat(filtered, hasSize(1));
@@ -276,7 +277,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testEndsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterResultTime(session, TemporalRestrictions.ends());
+            Set<Identifier> filtered = filterResultTime(session, FilterConstants.TimeOperator.TM_Ends);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_MET_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -289,7 +290,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testEndedByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.endedBy());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_EndedBy);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_ENDED_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -302,7 +303,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testEndedByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.endedBy());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_EndedBy);
         } finally {
             returnSession(session);
         }
@@ -312,7 +313,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testOverlapsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.overlaps());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Overlaps);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_OVERLAPS_ID));
             assertThat(filtered, hasSize(1));
@@ -325,7 +326,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testOverlapsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.overlaps());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_Overlaps);
         } finally {
             returnSession(session);
         }
@@ -335,7 +336,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testOverlappedByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.overlappedBy());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_OverlappedBy);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_OVERLAPPED_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -348,7 +349,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testOverlappedByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.overlappedBy());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_OverlappedBy);
         } finally {
             returnSession(session);
         }
@@ -358,7 +359,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testMeetsPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.meets());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_Meets);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_MEETS_ID));
             assertThat(filtered, hasSize(1));
@@ -371,7 +372,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testMeetsResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.meets());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_Meets);
         } finally {
             returnSession(session);
         }
@@ -381,7 +382,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testMetByPhenomenonTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            Set<Identifier> filtered = filterPhenomenonTime(session, TemporalRestrictions.metBy());
+            Set<Identifier> filtered = filterPhenomenonTime(session, FilterConstants.TimeOperator.TM_MetBy);
             assertThat(filtered, is(notNullValue()));
             assertThat(filtered, hasItem(TemporalRestrictionTest.Identifier.PP_MET_BY_ID));
             assertThat(filtered, hasSize(1));
@@ -394,7 +395,7 @@ public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest
     public void testMetByResultTime() throws OwsExceptionReport {
         Session session = getSession();
         try {
-            filterResultTime(session, TemporalRestrictions.metBy());
+            filterResultTime(session, FilterConstants.TimeOperator.TM_MetBy);
         } finally {
             returnSession(session);
         }

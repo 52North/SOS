@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.common.geo.builders.CoordinatesBuilder;
 import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
@@ -115,7 +116,6 @@ public final class SpatialFilterEsModel extends AbstractElasticsearchModel {
                     "Invalid number of coordinates in geometry. It should be a point. Got " + points.length);
         }
         PointBuilder point = PointBuilder.newPoint(points[0].x, points[0].y);
-        // PointBuilder point = new PointBuilder(points[0].x, points[0].y);
         createSpatialFilter(filter, point);
     }
 
@@ -127,14 +127,11 @@ public final class SpatialFilterEsModel extends AbstractElasticsearchModel {
      *            the spatial filter
      */
     private void createBbox(SpatialFilter filter) {
-        PolygonBuilder polygon = PolygonBuilder.newPolygon();
+        CoordinatesBuilder coordinates = new CoordinatesBuilder();
         for (Coordinate coord : filter.getGeometry().getCoordinates()) {
-            polygon.point(coord.getX(), coord.getY());
+            coordinates.coordinate(coord.getX(), coord.getY());
         }
-        // PolygonBuilder polygon =
-        // new PolygonBuilder(new
-        // CoordinatesBuilder().coordinates(filter.getGeometry().getCoordinates()));
-        createSpatialFilter(filter, polygon);
+        createSpatialFilter(filter, new PolygonBuilder(coordinates));
 
     }
 

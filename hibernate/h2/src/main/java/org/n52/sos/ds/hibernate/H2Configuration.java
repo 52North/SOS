@@ -196,17 +196,6 @@ public final class H2Configuration implements ConnectionProvider {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                // session.doWork(connection -> {
-                // try (Statement stmt = connection.createStatement()) {
-                // for (String cmd : instance.getDropScript()) {
-                // stmt.addBatch(cmd);
-                // }
-                // for (String cmd : instance.getCreateScript()) {
-                // stmt.addBatch(cmd);
-                // }
-                // stmt.executeBatch();
-                // }
-                // });
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.DROP, metadata);
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
                 transaction.commit();
@@ -226,9 +215,7 @@ public final class H2Configuration implements ConnectionProvider {
             if (instance == null) {
                 throw new IllegalStateException(DB_INITIALIZED);
             }
-            Metadata m = new MetadataSources()
-                    .buildMetadata(instance.getConfiguration().getStandardServiceRegistryBuilder().build());
-            final Collection<Table> tableMappings = m.collectTableMappings();
+            final Collection<Table> tableMappings = metadata.collectTableMappings();
             final List<String> tableNames = new LinkedList<>();
             GeoDBDialect dialect = new GeoDBDialect();
             for (Table table : tableMappings) {
@@ -287,7 +274,7 @@ public final class H2Configuration implements ConnectionProvider {
 
     private void createTempDir() throws IOException {
         setTempDir(File.createTempFile("hibernate-test-case", ""));
-        FileUtils.deleteDirectory(getTempDir());
+        FileUtils.deleteQuietly(getTempDir());
         FileUtils.forceMkdir(getTempDir());
     }
 
@@ -296,8 +283,6 @@ public final class H2Configuration implements ConnectionProvider {
             Class.forName(H2_DRIVER);
             try (Connection conn = DriverManager.getConnection(H2_CONNECTION_URL)) {
                 GeoDB.InitGeoDB(conn);
-                // Path createTempFile = null;
-                // Path dropTempFile = null;
                 try (Statement stmt = conn.createStatement()) {
                     configuration = new Configuration().configure("/hibernate.cfg.xml");
                     configuration.setProperty(HibernateConstants.CONNECTION_URL, H2_CONNECTION_URL);
@@ -308,9 +293,6 @@ public final class H2Configuration implements ConnectionProvider {
                     for (String resource : resources) {
                         configuration.addInputStream(getClass().getResourceAsStream(resource));
                     }
-                    // final GeoDBDialect dialect = new GeoDBDialect();
-                    // createTempFile = Files.createTempFile("create", ".tmp");
-                    // dropTempFile = Files.createTempFile("drop", ".tmp");
                     schemaExport = new SchemaExport();
                     schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true);
 

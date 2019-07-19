@@ -36,16 +36,25 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.CriteriaQuery;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
+import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
+import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
@@ -53,7 +62,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
  *
  * @since 4.0.0
  */
-public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase {
+public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase
+        implements TemporalRestrictionTestConstants {
     private Time filter;
 
     @After
@@ -92,6 +102,11 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
         }
     }
 
+    @AfterClass
+    public static void cleanUp() {
+        H2Configuration.recreate();
+    }
+
     protected abstract Time createScenario(Session session) throws OwsExceptionReport;
 
     protected HibernateObservationBuilder getBuilder(Session session) throws OwsExceptionReport {
@@ -102,11 +117,11 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     }
 
     @SuppressWarnings("unchecked")
-    private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
+    private Set<Identifier> filter(TemporalFilter tf, Session session)
             throws OwsExceptionReport {
-        Criterion c = r.getCriterion(d, time);
+        Criterion c = SosTemporalRestrictions.filter(tf);
         if (c == null) {
-            throw new UnsupportedTimeException(time);
+            throw new UnsupportedTimeException(tf.getTime());
         }
         List<String> list =
                 session.createCriteria(getObservationClass()).add(c)
@@ -122,12 +137,12 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
         return s;
     }
 
-    protected Set<Identifier> filterPhenomenonTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(SosTemporalRestrictions.PHENOMENON_TIME_FIELDS, r, filter, session);
+    protected Set<Identifier> filterPhenomenonTime(Session session, FilterConstants.TimeOperator r) throws OwsExceptionReport {
+        return filter(new TemporalFilter(r, filter, Sos2Constants.PHENOMENON_TIME_VALUE_REFERENCE), session);
     }
 
-    protected Set<Identifier> filterResultTime(Session session, TemporalRestriction r) throws OwsExceptionReport {
-        return filter(SosTemporalRestrictions.RESULT_TIME_FIELDS, r, filter, session);
+    protected Set<Identifier> filterResultTime(Session session, FilterConstants.TimeOperator r) throws OwsExceptionReport {
+        return filter(new TemporalFilter(r, filter, Sos2Constants.RESULT_TIME_VALUE_REFERENCE), session);
     }
 
     public enum Identifier {

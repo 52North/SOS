@@ -35,6 +35,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.iceland.ds.ConnectionProviderException;
@@ -43,6 +44,7 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
+import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -117,6 +119,11 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         } finally {
             returnSession(session);
         }
+    }
+
+    @AfterClass
+    public static void cleanUp() {
+        H2Configuration.recreate();
     }
 
     @Test

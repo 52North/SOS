@@ -45,6 +45,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.VerticalMetadataEntity;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -66,6 +67,7 @@ public class ObservationContext {
     private boolean publish = true;
     private FormatEntity observationType;
     private UnitEntity unit;
+    private VerticalMetadataEntity vertical;
     private boolean mobile;
     private boolean insitu = true;
 
@@ -222,6 +224,7 @@ public class ObservationContext {
             }
         } else {
             c.add(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE));
+            c.add(Restrictions.isNull(DatasetEntity.PROPERTY_PLATFORM));
         }
         if (isSetPhenomenon()) {
             c.add(Restrictions
@@ -271,9 +274,16 @@ public class ObservationContext {
         if (!contextual.hasUnit() && isSetUnit()) {
             contextual.setUnit(getUnit());
         }
+        if (!contextual.hasVerticalMetadata() && isSetVerticalMetadata()) {
+            contextual.setVerticalMetadata(getVertical());
+        }
         contextual.setHidden(isHiddenChild());
         contextual.setMobile(isMobile());
         contextual.setInsitu(isInsitu());
+    }
+
+    private boolean isSetVerticalMetadata() {
+        return getVertical() != null;
     }
 
     public ObservationContext setHiddenChild(boolean hiddenChild) {
@@ -303,4 +313,15 @@ public class ObservationContext {
         return this;
     }
 
+    public VerticalMetadataEntity getVertical() {
+        return vertical;
+    }
+
+    public void setVertical(VerticalMetadataEntity vertical) {
+        this.vertical = vertical;
+    }
+
+    public boolean isSetVertical() {
+        return getVertical() != null;
+    }
 }

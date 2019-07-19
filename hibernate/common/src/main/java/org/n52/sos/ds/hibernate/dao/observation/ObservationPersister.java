@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +52,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gwml.GWMLConstants;
@@ -60,6 +62,7 @@ import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.ParameterHolder;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -254,19 +257,25 @@ public class ObservationPersister
     @Override
     public DataEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
         ProfileDataEntity profile = observationFactory.profile();
-        if (value.isSetFromLevel()) {
-            profile.setVerticalFrom(value.getFromLevel().getValue());
-            profile.setVerticalFromName(value.getFromLevel().getDefinition());
-            if (value.getFromLevel().isSetUom()) {
-                profile.setVerticalUnit(getUnit(value.getFromLevel().getUomObject(), caches.units, session));
+        if (value.isSetFromLevel() || value.isSetToLevel()) {
+            VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
+            if (value.isSetFromLevel()) {
+                profile.setVerticalFrom(value.getFromLevel().getValue());
+                verticalMetadata.setVerticalFromName(value.getFromLevel().getDefinition());
+                if (value.getFromLevel().isSetUom()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(value.getFromLevel().getUomObject(), caches.units, session));
+                }
             }
-        }
-        if (value.isSetToLevel()) {
-            profile.setVerticalTo(value.getToLevel().getValue());
-            profile.setVerticalToName(value.getToLevel().getDefinition());
-            if (!profile.hasVerticalUnit() && value.getToLevel().isSetUom()) {
-                profile.setVerticalUnit(getUnit(value.getToLevel().getUomObject(), caches.units, session));
+            if (value.isSetToLevel()) {
+                profile.setVerticalTo(value.getToLevel().getValue());
+                verticalMetadata.setVerticalToName(value.getToLevel().getDefinition());
+                if (value.getToLevel().isSetUom()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(value.getToLevel().getUomObject(), caches.units, session));
+                }
             }
+            dataset.setVerticalMetadata(verticalMetadata);
         }
         omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
         DataEntity profileDataEntity = persist((DataEntity) profile, new HashSet<DataEntity<?>>());
@@ -489,20 +498,71 @@ public class ObservationPersister
         if (!observationContext.isSetPlatform()) {
             observationContext.setPlatform(daos.platform().getOrInsertPlatform(featureOfInterest, session));
         }
-
         daos.observation().fillObservationContext(observationContext, omObservation, session);
+        if (dataset != null && dataset.hasVerticalMetadata()) {
+            observationContext.setVertical(dataset.getVerticalMetadata());
+        }
+        checkForParameter(observation, omObservation.getParameterHolder(), observationContext, session);
         DatasetEntity persitedDataset =
                 daos.observation().addObservationContextToObservation(observationContext, observation, session);
-        if (omObservation.isSetParameter()) {
-            Set<ParameterEntity<?>> insertParameter =
-                    daos.parameter().insertParameter(omObservation.getParameter(), caches.units, session);
-            observation.setParameters(insertParameter);
-        }
-        session.saveOrUpdate(observation);
+        session.save(observation);
         session.flush();
         session.refresh(observation);
         daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, (DataEntity<?>) observation, session);
 
+        return observation;
+    }
+
+    private <T extends DataEntity<?>> T checkForParameter(T observation, ParameterHolder parameterHolder,
+            ObservationContext ctx, Session session) throws OwsExceptionReport {
+
+        if (parameterHolder.isSetParameter()) {
+            if (parameterHolder.isSetHeightDepthParameter()) {
+                NamedValue<BigDecimal> parameter = parameterHolder.getHeightDepthParameter();
+                VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
+                if (parameterHolder.isSetDepthParameter()) {
+                    observation.setVerticalFrom(parameter.getValue().getValue());
+                    observation.setVerticalTo(parameter.getValue().getValue());
+                    verticalMetadata.setOrientation(Short.valueOf("-1"));
+                } else {
+                    observation.setVerticalFrom(parameter.getValue().getValue());
+                    observation.setVerticalTo(parameter.getValue().getValue());
+                    verticalMetadata.setOrientation(Short.valueOf("1"));
+                }
+                // set vertical metadata
+                verticalMetadata.setVerticalFromName(parameter.getName().getHref());
+                verticalMetadata.setVerticalToName(parameter.getName().getHref());
+                if (parameter.getValue().isSetUnit()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(parameter.getValue().getUnitObject(), caches.units, session));
+                }
+                ctx.setVertical(verticalMetadata);
+
+                parameterHolder.removeParameter(parameter);
+            } else if (parameterHolder.isSetFromToParameter()) {
+                NamedValue<BigDecimal> fromParameter = parameterHolder.getFromParameter();
+                NamedValue<BigDecimal> toParameter = parameterHolder.getToParameter();
+                observation.setVerticalFrom(fromParameter.getValue().getValue());
+                observation.setVerticalTo(toParameter.getValue().getValue());
+                // set vertical metadata
+                VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
+                verticalMetadata.setVerticalFromName(fromParameter.getName().getHref());
+                verticalMetadata.setVerticalToName(toParameter.getName().getHref());
+                if (fromParameter.getValue().isSetUnit()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(fromParameter.getValue().getUnitObject(), caches.units, session));
+                }
+                ctx.setVertical(verticalMetadata);
+
+                parameterHolder.removeParameter(fromParameter);
+                parameterHolder.removeParameter(toParameter);
+            }
+            if (parameterHolder.isSetParameter()) {
+                Set<ParameterEntity<?>> insertParameter =
+                        daos.parameter().insertParameter(parameterHolder.getParameter(), caches.units, session);
+                observation.setParameters(insertParameter);
+            }
+        }
         return observation;
     }
 

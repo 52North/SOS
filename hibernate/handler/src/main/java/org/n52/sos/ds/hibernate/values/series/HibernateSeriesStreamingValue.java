@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import org.hibernate.Session;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -86,10 +87,9 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
 
     @Override
     protected void queryTimes() {
+        Session session = null;
         try {
-            if (session == null) {
-                session = sessionHolder.getSession();
-            }
+            session = getSession();
             ObservationTimeExtrema timeExtrema = seriesValueTimeDAO.getTimeExtremaForSeries(
                     (GetObservationRequest) request, series, temporalFilterCriterion, session);
             if (timeExtrema.isSetPhenomenonTimes()) {
@@ -104,18 +104,21 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
             }
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
+        } finally {
+            sessionHolder.returnSession(session);
         }
     }
 
     @Override
     protected void queryUnit() {
+        Session session = null;
         try {
-            if (session == null) {
-                session = sessionHolder.getSession();
-            }
+            session = getSession();
             setUnit(seriesDAO.getUnit(series, session));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
+        } finally {
+            sessionHolder.returnSession(session);
         }
     }
 

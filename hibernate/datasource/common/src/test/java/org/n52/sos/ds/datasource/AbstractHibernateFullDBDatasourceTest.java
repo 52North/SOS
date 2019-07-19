@@ -131,7 +131,7 @@ public class AbstractHibernateFullDBDatasourceTest
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
-        assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIMEZONE_KEY));
+        assertTrue(keys.contains(AbstractHibernateCoreDatasource.TIMEZONE_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIME_STRING_FORMAT_KEY));
         assertTrue(!timeFormat || keys.contains(AbstractHibernateCoreDatasource.TIME_STRING_Z_KEY));
 

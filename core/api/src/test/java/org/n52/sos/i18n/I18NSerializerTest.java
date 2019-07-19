@@ -32,7 +32,6 @@ import org.hamcrest.Matchers;
 
 import java.util.Locale;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -55,7 +54,6 @@ public class I18NSerializerTest {
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
-    @Ignore
     public void testSingle() {
         test(new MultilingualString().addLocalization(Locale.ENGLISH, "text"));
         test(new MultilingualString()
@@ -63,7 +61,6 @@ public class I18NSerializerTest {
     }
 
     @Test
-    @Ignore
     public void testMultiple() {
         test(new MultilingualString()
                 .addLocalization(Locale.ENGLISH, TEXT)

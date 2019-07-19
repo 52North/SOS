@@ -42,12 +42,15 @@ import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
+import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.dao.DatasetDao;
+import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
@@ -68,41 +71,48 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate
-        implements ApiQueryHelper, DatabaseQueryHelper {
+        implements ApiQueryHelper, DatabaseQueryHelper, DatasourceCacheUpdateHelper {
 
-    private final String identifier;
-
-    private final Collection<DatasetEntity> datasets;
-
-    private final OfferingEntity offering;
+    private final Long offeringId;
 
     private final Locale defaultLanguage;
 
     private final I18NDAORepository i18NDAORepository;
 
+    private String identifier;
+
+    private OfferingEntity offering;
+
+    private Collection<DatasetEntity> datasets = new HashSet<>();
+
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread
      *
-     * @param offering
+     * @param offeringId
      *            Offering entity
-     * @param datasets
-     *            metadtat of the related entities
      * @param defaultLanguage
      *            the default language
      * @param i18NDAORepository
      *            the i18n repository
      */
-    public OfferingCacheUpdateTask(OfferingEntity offering, Collection<DatasetEntity> datasets, Locale defaultLanguage,
-            I18NDAORepository i18NDAORepository) {
-        this.offering = offering;
-        this.identifier = offering.getIdentifier();
-        this.datasets = datasets;
+    public OfferingCacheUpdateTask(Long offeringId, Locale defaultLanguage, I18NDAORepository i18NDAORepository) {
+        this.offeringId = offeringId;
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
+        this.datasets.clear();
+    }
+
+    private void init(Session session) {
+        this.offering = session.load(OfferingEntity.class, offeringId);
+        this.identifier = offering.getIdentifier();
+        if (datasets != null) {
+            this.datasets.addAll(new DatasetDao(session).get(createDatasetDbQuery(offeringId)));
+        }
     }
 
     protected void getOfferingInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
+        init(session);
         // process all offering updates here (in multiple threads) which have
         // the potential to perform large
         // queries that aren't able to be loaded all at once. many (but not all)
@@ -114,14 +124,13 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
         getCache().addOffering(identifier);
         if (datasets != null && !datasets.isEmpty() && datasets.stream().anyMatch(
-            d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
+                d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
             getCache().addPublishedOffering(identifier);
         }
         addOfferingNamesAndDescriptionsToCache(identifier, session);
 
-        Set<String> parents = new HashSet<>();
         if (offering.hasParents()) {
-            getParents(parents, offering);
+            Collection<String> parents = getParents(offering);
             getCache().addParentOfferings(identifier, parents);
             getCache().addPublishedOfferings(parents);
         }
@@ -151,8 +160,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
 
         // Features of Interest
-        getCache().setFeaturesOfInterestForOffering(identifier,
-                DatasourceCacheUpdateHelper.getAllFeatureIdentifiersFromDatasets(datasets));
+        getCache().setFeaturesOfInterestForOffering(identifier, getAllFeatureIdentifiersFromDatasets(datasets));
         getCache().setFeatureOfInterestTypesForOffering(identifier, getFeatureTypes(datasets));
         if (offering.hasFeatureTypes()) {
             getCache().setAllowedFeatureOfInterestTypeForOffering(identifier, toStringSet(offering.getFeatureTypes()));
@@ -226,21 +234,23 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
     }
 
-    private void getParents(Set<String> parents, OfferingEntity offering) {
-        for (OfferingEntity parent : offering.getParents()) {
-            parents.add(parent.getIdentifier());
-            getParents(parents, parent);
+    private Set<String> getParents(OfferingEntity offering) {
+        Set<String> parentOfferings = Sets.newTreeSet();
+        if (offering.hasParents()) {
+            for (OfferingEntity parentEntity : offering.getParents()) {
+                parentOfferings.add(parentEntity.getIdentifier());
+                parentOfferings.addAll(getParents(parentEntity));
+            }
         }
+        return parentOfferings;
     }
 
     protected Map<ProcedureFlag, Set<String>> getProcedureIdentifier() throws OwsExceptionReport {
         Set<String> procedures = new HashSet<>(0);
         Set<String> hiddenChilds = new HashSet<>(0);
         if (CollectionHelper.isNotEmpty(datasets)) {
-            procedures.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromDatasets(datasets,
-                    ProcedureFlag.PARENT));
-            hiddenChilds.addAll(DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromDatasets(datasets,
-                    ProcedureFlag.HIDDEN_CHILD));
+            procedures.addAll(getAllProcedureIdentifiersFromDatasets(datasets, ProcedureFlag.PARENT));
+            hiddenChilds.addAll(getAllProcedureIdentifiersFromDatasets(datasets, ProcedureFlag.HIDDEN_CHILD));
         }
         Map<ProcedureFlag, Set<String>> allProcedures = Maps.newEnumMap(ProcedureFlag.class);
         allProcedures.put(ProcedureFlag.PARENT, procedures);
@@ -258,7 +268,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected Set<String> getObservablePropertyIdentifier() throws OwsExceptionReport {
         if (CollectionHelper.isNotEmpty(datasets)) {
-            return DatasourceCacheUpdateHelper.getAllObservablePropertyIdentifiersFromDatasets(datasets);
+            return getAllObservablePropertyIdentifiersFromDatasets(datasets);
         } else {
             return Sets.newHashSet();
         }
@@ -289,30 +299,11 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         return relatedFeatures.stream().map(rf -> rf.getFeature().getIdentifier()).collect(Collectors.toSet());
     }
 
-    // private Collection<String> getObservationTypes() {
-    // Set<String> observationTypes = datasets.stream().filter(d ->
-    // d.isSetOmObservationtype()).map(d ->
-    // d.getOmObservationType().getFormat())
-    // .collect(Collectors.toSet());
-    // if (!datasets.isEmpty() && observationTypes.isEmpty()) {
-    // datasets.stream().filter(d ->
-    // !d.getValueType().equals(ValueType.not_initialized)).map(d ->
-    // d.getOmObservationType().getFormat())
-    // .collect(Collectors.toSet());
-    // }
-    // return getObservationTypes();
-    // }
-    //
-    // private Collection<String> getFeatureTypes() {
-    // Set<String> featureTypes = datasets.stream().filter(d ->
-    // d.isSetFeature()).filter(d -> d.getFeature().isSetFeatureType())
-    // .map(d ->
-    // d.getFeature().getFeatureType().getFormat()).collect(Collectors.toSet());
-    // if (!datasets.isEmpty() && featureTypes.isEmpty()) {
-    //
-    // }
-    // return featureTypes;
-    // }
+    private DbQuery createDatasetDbQuery(Long offering) {
+        Map<String, String> map = Maps.newHashMap();
+        map.put(IoParameters.OFFERINGS, Long.toString(offering));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
+    }
 
     @Override
     public void execute() {

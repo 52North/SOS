@@ -33,14 +33,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Session;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.slf4j.Logger;
@@ -53,9 +56,11 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
+class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate implements DatasourceCacheUpdateHelper {
     @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureCacheUpdateTask.class);
+
+    private final Long procedureId;
 
     private ProcedureEntity procedure;
 
@@ -65,20 +70,23 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread *
      *
-     * @param procedure
-     *            Procedure entity
-     * @param datasets
-     *            metadata of the related entities
+     * @param procedureId
+     *            Procedure id
      */
-    ProcedureCacheUpdateTask(ProcedureEntity procedure, Collection<DatasetEntity> datasets) {
-        this.procedure = procedure;
+    ProcedureCacheUpdateTask(Long procedureId) {
+        this.procedureId = procedureId;
         this.datasets.clear();
+    }
+
+    private void init(Session session) {
+        this.procedure = session.load(ProcedureEntity.class, procedureId);
         if (datasets != null) {
-            this.datasets.addAll(datasets);
+            this.datasets.addAll(new DatasetDao(session).get(createDatasetDbQuery(procedureId)));
         }
     }
 
-    protected void getProcedureInformationFromDbAndAddItToCacheMaps() throws OwsExceptionReport {
+    protected void getProcedureInformationFromDbAndAddItToCacheMaps(Session session) throws OwsExceptionReport {
+        init(session);
         if (datasets != null) {
             String identifier = procedure.getIdentifier();
             getCache().addProcedure(identifier);
@@ -89,16 +97,21 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
             if (procedure.isSetName()) {
                 getCache().addProcedureIdentifierHumanReadableName(identifier, procedure.getName());
             }
-            getCache().setOfferingsForProcedure(identifier,
-                    DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromDatasets(datasets));
+            getCache().setOfferingsForProcedure(identifier, getAllOfferingIdentifiersFromDatasets(datasets));
             getCache().setObservablePropertiesForProcedure(identifier,
-                    DatasourceCacheUpdateHelper.getAllObservablePropertyIdentifiersFromDatasets(datasets));
+                    getAllObservablePropertyIdentifiersFromDatasets(datasets));
 
             if (procedure.hasParents()) {
                 Collection<String> parents = getParents(procedure);
                 getCache().addParentProcedures(identifier, parents);
                 getCache().addPublishedProcedures(parents);
             }
+
+            setTypeProcedure(procedure);
+            setAggregatedProcedure(procedure);
+            setTypeInstanceProcedure(procedure);
+
+
 
             TimePeriod phenomenonTime = new TimePeriod();
             for (DatasetEntity dataset : datasets) {
@@ -126,16 +139,40 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
         return parentProcedures;
     }
 
-    private DbQuery createDatasetDbQuery(ProcedureEntity procedure) {
+    private void setTypeProcedure(ProcedureEntity procedure) {
+        if (procedure.isType()) {
+            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.TYPE, procedure.getIdentifier());
+        } else {
+            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.INSTANCE, procedure.getIdentifier());
+        }
+    }
+
+    private void setAggregatedProcedure(ProcedureEntity procedure) {
+        if (procedure.isAggregation()) {
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION,
+                    procedure.getIdentifier());
+        } else {
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT,
+                    procedure.getIdentifier());
+        }
+    }
+
+    private void setTypeInstanceProcedure(ProcedureEntity procedure) {
+        if (procedure.isSetTypeOf()) {
+            getCache().addTypeOfProcedure(procedure.getTypeOf().getIdentifier(), procedure.getIdentifier());
+        }
+    }
+
+    private DbQuery createDatasetDbQuery(Long procedure) {
         Map<String, String> map = Maps.newHashMap();
-        map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
+        map.put(IoParameters.PROCEDURES, Long.toString(procedure));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     @Override
     public void execute() {
         try {
-            getProcedureInformationFromDbAndAddItToCacheMaps();
+            getProcedureInformationFromDbAndAddItToCacheMaps(getSession());
         } catch (OwsExceptionReport owse) {
             getErrors().add(owse);
         } catch (Exception e) {

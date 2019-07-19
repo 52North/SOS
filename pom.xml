@@ -109,7 +109,7 @@
         <org.springframework.version>5.1.6.RELEASE</org.springframework.version>
         <aspectj.version>1.8.9</aspectj.version>
         <saxon.version>9.8.0-3</saxon.version>
-        <elasticsearch.version>2.4.6</elasticsearch.version>
+        <elasticsearch.version>7.2.0</elasticsearch.version>
         <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
     </properties>
 
@@ -222,6 +222,19 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>shetland</artifactId>
+                <version>${arctic-sea.version}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>shetland</artifactId>
+                <version>${arctic-sea.version}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>iceland-statistics</artifactId>
                 <version>${arctic-sea.version}</version>
             </dependency>
@@ -240,6 +253,11 @@
                         <artifactId>jackson-dataformat-cbor</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.locationtech.spatial4j</groupId>
+                <artifactId>spatial4j</artifactId>
+                <version>0.7</version>
             </dependency>
             <!-- <dependency> <groupId>org.n52.series-api</groupId> <artifactId>proxy-dao</artifactId> 
                 <version>${dataset.proxy.version}</version> <exclusions> <exclusion> <groupId>org.springframework</groupId> 
@@ -696,10 +714,6 @@
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
                         <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.bytebuddy</groupId>
-                        <artifactId>byte-buddy</artifactId>
                     </exclusion>
                 </exclusions>
                 <scope>test</scope>
@@ -1913,8 +1927,6 @@
                     <configuration>
                       <!-- see: https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class -->
                         <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
-                         <!-- FIXME remove this once all problems are resolved -->
-                        <testFailureIgnore>true</testFailureIgnore>
                     </configuration>
                 </plugin>
                 <plugin>

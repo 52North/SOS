@@ -37,8 +37,9 @@ import org.apache.commons.io.FileUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.node.NodeValidationException;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -66,11 +67,10 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
     protected ElasticsearchAdminHandler adminHandler;
 
     @BeforeClass
-    public static void init() throws IOException, InterruptedException {
+    public static void init() throws IOException, InterruptedException, NodeValidationException {
         logger.debug("Starting embedded node");
-        Settings settings = Settings.settingsBuilder().put("cluster.name", "elasiticsearch")
+        Settings settings = Settings.builder().put("cluster.name", "elasticsearch")
                 // = Settings.builder().put("cluster.name", "elasiticsearch")
-                .put("discovery.zen.ping.multicast.enabled", Boolean.FALSE.toString())
                 .put("http.cors.enabled", Boolean.FALSE.toString())
                 .put("path.data", TEMP_FOLDER.getRoot().toPath().resolve("data").toString()).put("path.home", "/")
                 .put("node.data", Boolean.TRUE.toString()).put("node.master", Boolean.TRUE.toString())
@@ -80,8 +80,8 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
         // .loadFromStream("elasticsearch_embedded.yml",
         // ElasticsearchAwareTest.class.getResourceAsStream("/elasticsearch_embedded.yml"))
         // .build();
-        embeddedNode = NodeBuilder.nodeBuilder().settings(settings).build();
-        // embeddedNode = new TestNode(settings);
+//        embeddedNode = new Node(new Environment(settings, TEMP_FOLDER.getRoot().toPath()));
+        embeddedNode = new TestNode(settings);
         embeddedNode.start();
 
         logger.debug("Started embedded node");

@@ -50,7 +50,8 @@ import org.slf4j.LoggerFactory;
  *
  * @since 4.0.0
  */
-public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
+public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate
+        implements DatasourceCacheUpdateHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservablePropertiesCacheUpdate.class);
 
     @Override
@@ -82,9 +83,9 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                         getCache().addPublishedObservableProperty(identifier);
                     }
                     getCache().setOfferingsForObservableProperty(identifier,
-                            DatasourceCacheUpdateHelper.getAllOfferingIdentifiersFromDatasets(datasets));
+                            getAllOfferingIdentifiersFromDatasets(datasets));
                     getCache().setProceduresForObservableProperty(identifier,
-                            DatasourceCacheUpdateHelper.getAllProcedureIdentifiersFromDatasets(datasets));
+                            getAllProcedureIdentifiersFromDatasets(datasets));
                 }
             }
         } catch (HibernateException he) {

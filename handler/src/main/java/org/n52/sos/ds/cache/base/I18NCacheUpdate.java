@@ -57,10 +57,11 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final Logger LOGGER = LoggerFactory.getLogger(I18NCacheUpdate.class);
 
     private final OwsServiceMetadataRepository serviceMetadataRepository;
+
     private final I18NDAORepository i18NDAORepository;
 
     public I18NCacheUpdate(OwsServiceMetadataRepository serviceMetadataRepository,
-                           I18NDAORepository i18NDAORepository) {
+            I18NDAORepository i18NDAORepository) {
         this.serviceMetadataRepository = serviceMetadataRepository;
         this.i18NDAORepository = i18NDAORepository;
     }
@@ -83,8 +84,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         LOGGER.debug("Finished executing I18NCacheUpdate ({})", getStopwatchResult());
     }
 
-    private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type)
-            throws OwsExceptionReport {
+    private Collection<Locale> getEntityLocales(Class<? extends AbstractI18NMetadata> type) throws OwsExceptionReport {
         I18NDAO<? extends AbstractI18NMetadata> dao = this.i18NDAORepository.getDAO(type);
         if (dao != null) {
             return dao.getAvailableLocales();

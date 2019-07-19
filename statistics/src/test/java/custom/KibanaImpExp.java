@@ -37,8 +37,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.settings.Settings.Builder;
+import org.elasticsearch.env.Environment;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,11 +48,11 @@ public class KibanaImpExp {
 
     @Test
     public void exportSettings() throws IOException {
-        Builder settingsBuilder = Settings.settingsBuilder();
+        Builder settingsBuilder = Settings.builder();
         // Builder settingsBuilder = Settings.builder();
-        settingsBuilder.put("discovery.zen.ping.unicast.hosts", "localhost");
-        Node node = NodeBuilder.nodeBuilder().client(true).settings(settingsBuilder)
-                .clusterName("ogc-statistics-cluster").node();
+        settingsBuilder.put("discovery.zen.ping.unicast.hosts", "localhost").put("cluster.name", "ogc-statistics-cluster");
+
+        Node node = new Node(new Environment(settingsBuilder.build(), null));
         // Node node = new TestNode(settingsBuilder.build());
         Client c = node.client();
 

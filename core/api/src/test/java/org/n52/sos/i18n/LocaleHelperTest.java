@@ -32,7 +32,6 @@ import org.hamcrest.Matchers;
 
 import java.util.Locale;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -52,14 +51,12 @@ public class LocaleHelperTest {
     public final ExpectedException thrown = ExpectedException.none();
 
     @Test
-    @Ignore
     public void testSerialization() {
         String string = LocaleHelper.encode(Locale.GERMAN);
         errors.checkThat(LocaleHelper.decode(string, null), Matchers.is(Locale.GERMAN));
     }
 
     @Test
-    @Ignore
     public void test() {
 
         //IETF BCP 47
@@ -71,6 +68,6 @@ public class LocaleHelperTest {
         errors.checkThat(LocaleHelper.decode("de DE", null), Matchers.is(Locale.GERMANY));
         errors.checkThat(LocaleHelper.decode("de-de", null), Matchers.is(Locale.GERMANY));
         errors.checkThat(LocaleHelper.decode("de-DE", null), Matchers.is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("deu", null), Matchers.is(Locale.GERMANY));
+        errors.checkThat(LocaleHelper.decode("deu", null), Matchers.is(Locale.GERMAN));
     }
 }

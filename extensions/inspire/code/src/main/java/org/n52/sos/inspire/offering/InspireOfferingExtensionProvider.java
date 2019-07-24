@@ -35,12 +35,14 @@ import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireHelper;
 import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
+import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.ogc.swes.OfferingExtensionProvider;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.collect.Sets;
 
@@ -66,19 +68,31 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider im
     @Override
     public SwesExtensions getOfferingExtensions(String identifier) {
         SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedLanguages>().setValue(
-                getSupportedLanguages()).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
+        extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedLanguages>()
+                .setValue(getSupportedLanguages()).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
         extensions.addSwesExtension(new SwesExtensionImpl<InspireSupportedCRS>().setValue(getSupportedCRS())
                 .setNamespace(InspireConstants.NS_INSPIRE_COMMON));
+        extensions.addSwesExtension(new SwesExtensionImpl<InspireUniqueResourceIdentifier>()
+                .setValue(getSpatialDataSetIdentifier(identifier)).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
         return extensions;
     }
 
     @Override
     public boolean hasExtendedOfferingFor(String identifier) {
-    	if (InspireHelper.getInstance().isEnabled()) {
-    		 return getCache().getOfferings().contains(identifier);
-    	}
+        if (InspireHelper.getInstance().isEnabled()) {
+            return getCache().getOfferings().contains(identifier);
+        }
         return false;
+    }
+
+    private InspireUniqueResourceIdentifier getSpatialDataSetIdentifier(String identifier) {
+        InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(identifier);
+        if (InspireHelper.getInstance().isSetNamespace()) {
+            iuri.setNamespace(InspireHelper.getInstance().getNamespace());
+        } else {
+            iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
+        }
+        return iuri;
     }
 
 }

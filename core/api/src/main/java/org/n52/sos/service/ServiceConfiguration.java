@@ -170,6 +170,8 @@ public class ServiceConfiguration {
 
     private boolean mergeForEprtr = false;
 
+    private Boolean abortInsertResultForExistingObservations = true;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -562,6 +564,17 @@ public class ServiceConfiguration {
 
     public boolean isCheckForDuplicatedObservations() {
         return checkForDuplicatedObservations;
+    }
+    
+    @Setting(ServiceSettings.ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS)
+    public void setAbortInsertResultForExistingObservations(Boolean abortInsertResultForExistingObservations) {
+        if (abortInsertResultForExistingObservations != null) {
+            this.abortInsertResultForExistingObservations  = abortInsertResultForExistingObservations;
+        }
+    }
+
+    public boolean isAbortInsertResultForExistingObservations() {
+        return abortInsertResultForExistingObservations;
     }
 
     /*

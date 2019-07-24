@@ -46,6 +46,7 @@ import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireObject;
 import org.n52.sos.inspire.InspireSupportedCRS;
 import org.n52.sos.inspire.InspireSupportedLanguages;
+import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
@@ -138,6 +139,7 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
     private void checkIfSupported(InspireObject objectToEncode) throws UnsupportedEncoderInputException {
         if (!(objectToEncode instanceof InspireSupportedLanguages) 
          && !(objectToEncode instanceof InspireSupportedCRS)
+         && !(objectToEncode instanceof InspireUniqueResourceIdentifier)
          && !(objectToEncode instanceof FullInspireExtendedCapabilities)
          && !(objectToEncode instanceof MinimalInspireExtendedCapabilities)) {
             throw new UnsupportedEncoderInputException(this, objectToEncode);

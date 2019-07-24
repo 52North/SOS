@@ -6,6 +6,23 @@
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+## Release 52n-sensorweb-sos-4.4.8
+ 
+### New features
+
+  - Add feature to not abort the insertion of observations via InsertResult whether some observations already exist in the database.
+  
+### Changes
+  
+  - 
+  
+### Fixed issues
+
+  - Issue #653: Capabilities SettingsBETA
+  - Issue #655: Request GetFeatureOfInterest is not validated with streaming options
+  - Encoding of INSPIRE download service eextension
+  
+  
 ## Release 52n-sensorweb-sos-4.4.7
  
 ### New features
@@ -18,7 +35,7 @@
   
 ### Fixed issues
 
-  - Cache update of result templates with dynamic feattureOfInterest definition
+  - Cache update of result templates with dynamic featureOfInterest definition
   - NPE when a series with no observations exist, the next values check fails because the session is closed
  
 ## Release 52n-sensorweb-sos-4.4.6

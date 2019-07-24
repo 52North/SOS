@@ -130,6 +130,8 @@ public class SQLScriptGenerator {
         case 2:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation")
                     .toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/default")
+                    .toURI()));
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/metadata").toURI()));
             break;
         case 3:

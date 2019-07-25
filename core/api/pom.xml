@@ -90,10 +90,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
+         -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -120,7 +122,7 @@
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
-            <artifactId>gt-api</artifactId>
+            <artifactId>gt-main</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>

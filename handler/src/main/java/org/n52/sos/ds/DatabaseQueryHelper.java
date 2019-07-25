@@ -60,7 +60,10 @@ public interface DatabaseQueryHelper {
 
     default Set<String> getObservationTypes(Collection<DatasetEntity> datasets) {
         if (datasets != null) {
-            return datasets.stream().map(d -> getObservationType(d)).collect(Collectors.toSet());
+            return datasets.stream()
+                    .filter(d -> !d.isHidden() && !d.isDeleted() && d.isPublished()
+                            && !d.getDatasetType().equals(DatasetType.not_initialized))
+                    .map(d -> getObservationType(d)).collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }
@@ -101,7 +104,10 @@ public interface DatabaseQueryHelper {
 
     default Set<String> getFeatureTypes(Collection<DatasetEntity> datasets) {
         if (datasets != null) {
-            return datasets.stream().map(d -> getFeatureType(d)).collect(Collectors.toSet());
+            return datasets.stream()
+                    .filter(d -> !d.isHidden() && !d.isDeleted() && d.isPublished()
+                            && !d.getDatasetType().equals(DatasetType.not_initialized))
+                    .map(d -> getFeatureType(d)).collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }

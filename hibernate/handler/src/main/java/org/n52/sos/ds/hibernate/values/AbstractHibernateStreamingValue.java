@@ -202,7 +202,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      * Create a {@link TimeValuePair} from {@link DataEntity}
      *
      * @param abstractValue
-     *            {@link AbstractValueObservation} to create
+     *            {@link DataEntity} to create
      *            {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
      * @throws OwsExceptionReport
@@ -249,12 +249,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     /**
      * Create phenomenon time from min and max
-     * {@link AbstractTemporalReferencedObservation}s
+     * {@link DataEntity}s
      *
      * @param minTime
-     *            minimum {@link AbstractTemporalReferencedObservation}
+     *            minimum {@link DataEntity}
      * @param maxTime
-     *            maximum {@link AbstractTemporalReferencedObservation}
+     *            maximum {@link DataEntity}
      * @return phenomenon time
      */
     protected Time createPhenomenonTime(DataEntity<?> minTime, DataEntity<?> maxTime) {
@@ -271,10 +271,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     /**
-     * Create result time from {@link AbstractTemporalReferencedObservation}
+     * Create result time from {@link DataEntity}
      *
      * @param maxTime
-     *            {@link AbstractTemporalReferencedObservation} to create result
+     *            {@link DataEntity} to create result
      *            time from
      * @return result time
      */
@@ -297,12 +297,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     /**
      * Create valid time from min and max
-     * {@link AbstractTemporalReferencedObservation}s
+     * {@link DataEntity}s
      *
      * @param minTime
-     *            minimum {@link AbstractTemporalReferencedObservation}
+     *            minimum {@link DataEntity}
      * @param maxTime
-     *            maximum {@link AbstractTemporalReferencedObservation}
+     *            maximum {@link DataEntity}
      * @return valid time or null if valid time is not set in datasource
      */
     protected Time createValidTime(DataEntity<?> minTime, DataEntity<?> maxTime) {
@@ -369,7 +369,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     /**
-     * Add {@code AbstractValue} data to {@code OmObservation}
+     * Add {@code DataEntity} data to {@code OmObservation}
      *
      * @param observation
      *            {@link OmObservation} to add data

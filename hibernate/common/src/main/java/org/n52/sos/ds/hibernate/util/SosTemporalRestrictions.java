@@ -83,8 +83,8 @@ public final class SosTemporalRestrictions {
     /**
      * Fields describing the phenomenon time of a {@code Observation}.
      *
-     * @see Observation#PHENOMENON_TIME_START
-     * @see Observation#PHENOMENON_TIME_END
+     * @see DataEntity#PROPERTY_SAMPLING_TIME_START
+     * @see DataEntity#PROPERTY_SAMPLING_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
             DataEntity.PROPERTY_SAMPLING_TIME_START, DataEntity.PROPERTY_SAMPLING_TIME_END);
@@ -92,7 +92,7 @@ public final class SosTemporalRestrictions {
     /**
      * Fields describing the result time of a {@code Observation}.
      *
-     * @see Observation#RESULT_TIME
+     * @see DataEntity#PROPERTY_RESULT_TIME
      */
     public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS =
             new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_RESULT_TIME);
@@ -100,8 +100,8 @@ public final class SosTemporalRestrictions {
     /**
      * Fields describing the valid time of a {@code Observation}.
      *
-     * @see Observation#VALID_TIME_START
-     * @see Observation#VALID_TIME_END
+     * @see DataEntity#PROPERTY_VALID_TIME_START
+     * @see DataEntity#PROPERTY_VALID_TIME_END
      */
     public static final TimePrimitiveFieldDescriptor VALID_TIME_FIELDS =
             new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_VALID_TIME_START, DataEntity.PROPERTY_VALID_TIME_END);
@@ -109,8 +109,8 @@ public final class SosTemporalRestrictions {
     /**
      * Fields describing the valid time of a {@code ValidProcedureTime}.
      *
-     * @see ValidProcedureTime#START_TIME
-     * @see ValidProcedureTime#END_TIME
+     * @see ProcedureHistoryEntity#START_TIME
+     * @see ProcedureHistoryEntity#END_TIME
      */
     public static final TimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS =
             new TimePrimitiveFieldDescriptor(ProcedureHistoryEntity.START_TIME, ProcedureHistoryEntity.END_TIME);
@@ -253,9 +253,9 @@ public final class SosTemporalRestrictions {
      *
      * @return the property descriptor
      *
-     * @see #PHENOMENON_TIME_VALUE_REFERENCE
-     * @see #RESULT_TIME_VALUE_REFERENCE
-     * @see #VALID_TIME_VALUE_REFERENCE
+     * @see TemporalRestrictions#PHENOMENON_TIME_VALUE_REFERENCE
+     * @see TemporalRestrictions #RESULT_TIME_VALUE_REFERENCE
+     * @see TemporalRestrictions#VALID_TIME_VALUE_REFERENCE
      * @see #PHENOMENON_TIME_FIELDS
      * @see #RESULT_TIME_FIELDS
      * @see #VALID_TIME_FIELDS

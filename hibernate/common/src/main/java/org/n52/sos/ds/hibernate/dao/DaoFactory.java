@@ -251,7 +251,7 @@ public class DaoFactory {
     }
 
     public ResultTemplateDAO getResultTemplateDAO() {
-        return new ResultTemplateDAO(encoderRepository, xmlOptionsHelper, decoderRepository);
+        return new ResultTemplateDAO(getEncoderRepository(), getXmlOptionsHelper(), getDecoderRepository());
     }
 
     public CodespaceDAO getCodespaceDAO() {
@@ -278,6 +278,10 @@ public class DaoFactory {
         return new FormatDAO();
     }
 
+    public VerticalMetadataDAO getVerticalMetadataDAO() {
+        return new VerticalMetadataDAO(this);
+    }
+
     public I18NDAORepository getI18NDAORepository() {
         return i18NDAORepository;
     }
@@ -298,8 +302,16 @@ public class DaoFactory {
         return serviceURL;
     }
 
+    public XmlOptionsHelper getXmlOptionsHelper() {
+        return xmlOptionsHelper;
+    }
+
     public DecoderRepository getDecoderRepository() {
         return decoderRepository;
+    }
+
+    public EncoderRepository getEncoderRepository() {
+        return encoderRepository;
     }
 
 }

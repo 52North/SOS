@@ -50,6 +50,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
@@ -167,7 +168,14 @@ public final class H2Configuration implements ConnectionProvider {
             if (sessionFactory == null) {
                 return null;
             }
-            return sessionFactory.openSession();
+            Session session = sessionFactory.openSession();
+            session.doWork(new Work() {
+                @Override
+                public void execute(Connection connection) throws SQLException {
+                    GeoDB.InitGeoDB(connection);
+                }
+            });
+            return session;
         } catch (final HibernateException ex) {
             throw new RuntimeException(ex);
         }

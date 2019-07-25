@@ -588,13 +588,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- BINDINGS -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>seriestype</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
         <!-- INSERT FEATUREOFINTEREST -->
         <dependency>
             <groupId>org.n52.sensorweb</groupId>

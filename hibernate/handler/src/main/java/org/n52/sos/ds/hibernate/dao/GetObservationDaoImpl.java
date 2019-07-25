@@ -134,7 +134,29 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            List<OmObservation> observations = new ArrayList<>();
+            return getObservations(request, response, session);
+        } catch (HibernateException he) {
+            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+
+    }
+
+    @Override
+    public GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response,
+            Object connection) throws OwsExceptionReport {
+        if (checkConnection(connection)) {
+            return getObservations(request, response, HibernateSessionHolder.getSession(connection));
+        }
+        return queryObservationData(request, response);
+    }
+
+    private GetObservationResponse getObservations(GetObservationRequest request, GetObservationResponse response,
+            Session session) throws OwsExceptionReport {
+        List<OmObservation> observations = new ArrayList<>();
+        try {
             if (!request.hasFirstLatestTemporalFilter()) {
                 observations.addAll(querySeriesObservationForStreaming(request, response, session));
             } else {
@@ -142,16 +164,10 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
             }
             response.setObservationCollection(ObservationStream.of(observations));
             return response;
-        } catch (HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
-                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } catch (ConverterException ce) {
             throw new NoApplicableCodeException().causedBy(ce).withMessage("Error while processing observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            sessionHolder.returnSession(session);
         }
-
     }
 
     /**

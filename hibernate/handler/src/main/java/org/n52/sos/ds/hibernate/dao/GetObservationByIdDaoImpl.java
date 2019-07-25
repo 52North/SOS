@@ -46,6 +46,7 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -125,19 +126,35 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
         Session session = null;
         try {
             session = sessionHolder.getSession();
+            return getObservations(request, session);
+        } catch (HibernateException he) {
+            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!");
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+    }
+
+    @Override
+    public Collection<OmObservation> queryObservationsById(GetObservationByIdRequest request, Object connection)
+            throws OwsExceptionReport {
+        if (checkConnection(connection)) {
+            return getObservations(request, HibernateSessionHolder.getSession(connection));
+        }
+        return queryObservationsById(request);
+    }
+
+    public List<OmObservation> getObservations(GetObservationByIdRequest request, Session session)
+            throws OwsExceptionReport {
+        try {
             List<OmObservation> omObservations = querySeriesObservation(request, session);
             HibernateObservationUtilities.createSosObservationsFromObservations(
                     checkObservations(queryObservation(request, session), request), request,
                     getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext, session)
                     .forEachRemaining(omObservations::add);
             return omObservations;
-
-        } catch (HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!");
         } catch (ConverterException ce) {
-            throw new NoApplicableCodeException().causedBy(ce).withMessage("Error while processing observation data!");
-        } finally {
-            sessionHolder.returnSession(session);
+            throw new NoApplicableCodeException().causedBy(ce).withMessage("Error while processing observation data!")
+                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

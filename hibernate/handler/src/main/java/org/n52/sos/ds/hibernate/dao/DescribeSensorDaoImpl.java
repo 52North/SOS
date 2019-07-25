@@ -64,7 +64,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorDao {
+public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorDao, HibernateDao {
 
     private static final String LOG_PARAMETER_PROCEDURE_NOT_NULL = "Parameter 'procedure' should not be null!";
 
@@ -123,6 +123,15 @@ public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorD
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request, Object connection)
+            throws OwsExceptionReport {
+            if (checkConnection(connection)) {
+                return queryDescriptions(request, HibernateSessionHolder.getSession(connection));
+            }
+            return querySensorDescriptions(request);
     }
 
     private List<SosProcedureDescription<?>> queryDescriptions(DescribeSensorRequest request, Session session)

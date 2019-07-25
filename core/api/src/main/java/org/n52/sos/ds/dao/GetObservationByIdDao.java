@@ -43,4 +43,6 @@ public interface GetObservationByIdDao extends DefaultDao {
 
     Collection<OmObservation> queryObservationsById(GetObservationByIdRequest request) throws OwsExceptionReport;
 
+    Collection<OmObservation> queryObservationsById(GetObservationByIdRequest request, Object connection)
+            throws OwsExceptionReport;
 }

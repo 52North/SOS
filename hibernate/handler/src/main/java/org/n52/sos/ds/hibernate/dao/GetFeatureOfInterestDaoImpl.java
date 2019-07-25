@@ -50,7 +50,7 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 
 @Configurable
-public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
+public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao, HibernateDao {
 
     private HibernateSessionHolder sessionHolder;
 
@@ -79,16 +79,30 @@ public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatur
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            FeatureQueryHandlerQueryObject queryObject =
-                    new FeatureQueryHandlerQueryObject(session).setFeatures(request.getFeatureIdentifiers())
-                            .setVersion(request.getVersion()).setI18N(getRequestedLocale(request));
-            return featureQueryHandler.getFeatures(queryObject);
+            return queryFeaturesOfInterest(request, session);
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    @Override
+    public Map<String, AbstractFeature> getFeatureOfInterest(GetFeatureOfInterestRequest request, Object connection)
+            throws OwsExceptionReport {
+        if (checkConnection(connection)) {
+            return queryFeaturesOfInterest(request, HibernateSessionHolder.getSession(connection));
+        }
+        return getFeatureOfInterest(request);
+    }
+
+    private Map<String, AbstractFeature> queryFeaturesOfInterest(GetFeatureOfInterestRequest request, Session session)
+            throws OwsExceptionReport {
+        FeatureQueryHandlerQueryObject queryObject =
+                new FeatureQueryHandlerQueryObject(session).setFeatures(request.getFeatureIdentifiers())
+                        .setVersion(request.getVersion()).setI18N(getRequestedLocale(request));
+        return featureQueryHandler.getFeatures(queryObject);
     }
 
     @Override

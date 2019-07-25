@@ -47,6 +47,12 @@ public interface GetDataAvailabilityDao extends DefaultDao {
     List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request)
             throws OwsExceptionReport;
 
+    List<TimeInstant> getResultTimes(DataAvailability dataAvailability, GetDataAvailabilityRequest request,
+    Object connection) throws OwsExceptionReport;
+
     Map<String, NamedValue<?>> getMetadata(DataAvailability dataAvailability) throws OwsExceptionReport;
+
+    Map<String, NamedValue<?>> getMetadata(DataAvailability dataAvailability, Object connection)
+            throws OwsExceptionReport;
 
 }

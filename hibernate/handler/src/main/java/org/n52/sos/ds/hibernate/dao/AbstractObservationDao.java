@@ -80,7 +80,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 @Configurable
-public abstract class AbstractObservationDao {
+public abstract class AbstractObservationDao implements HibernateDao {
 
     private static final String LOG_BINARY_LOGIC_INVALID = "The requested binary logic filter operator is invalid!";
 

@@ -42,7 +42,9 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
  */
 public interface DescribeSensorDao extends DefaultDao {
 
-    List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request)
+    List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request) throws OwsExceptionReport;
+
+    List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request, Object connection)
             throws OwsExceptionReport;
 
 }

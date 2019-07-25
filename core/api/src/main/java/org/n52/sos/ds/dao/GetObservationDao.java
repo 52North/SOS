@@ -42,4 +42,7 @@ public interface GetObservationDao extends DefaultDao {
     GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response)
             throws OwsExceptionReport;
 
+    GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response,
+            Object connection) throws OwsExceptionReport;
+
 }

@@ -164,7 +164,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         if (dao != null) {
             request.setFeatureIdentifiers(
                     featureEntities.stream().map(f -> f.getIdentifier()).collect(Collectors.toSet()));
-            return new FeatureCollection(dao.getFeatureOfInterest(request));
+            return new FeatureCollection(dao.getFeatureOfInterest(request, session));
         }
         return new FeatureCollection(createFeatures(featureEntities));
     }

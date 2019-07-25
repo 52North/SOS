@@ -113,7 +113,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
                         .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
             }
             if (dao != null) {
-                response.setSensorDescriptions(dao.querySensorDescriptions(request));
+                response.setSensorDescriptions(dao.querySensorDescriptions(request, session));
             } else {
                 response.addSensorDescription(createSensorDescription(entities.iterator().next(), request, session));
             }

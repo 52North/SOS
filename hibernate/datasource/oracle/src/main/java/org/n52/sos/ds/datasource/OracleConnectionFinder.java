@@ -36,6 +36,7 @@ import java.sql.Connection;
 import org.geolatte.geom.codec.db.oracle.ConnectionFinder;
 
 import com.mchange.v2.c3p0.C3P0ProxyConnection;
+import com.zaxxer.hikari.pool.HikariProxyConnection;
 
 import oracle.jdbc.OracleConnection;
 
@@ -43,7 +44,7 @@ import oracle.jdbc.OracleConnection;
  * @since 4.0.0
  *
  */
-public class OracleC3P0ConnectionFinder implements ConnectionFinder {
+public class OracleConnectionFinder implements ConnectionFinder {
     private static final long serialVersionUID = 1L;
 
     public static Connection getRawConnection(Connection con) {
@@ -72,9 +73,25 @@ public class OracleC3P0ConnectionFinder implements ConnectionFinder {
             try {
                 Method rawConnectionMethod =
                         getClass().getMethod("getRawConnection", new Class[] { Connection.class });
-                unwrappedCon =
-                        (Connection) cpCon.rawConnectionOperation(rawConnectionMethod, null,
-                                new Object[] { C3P0ProxyConnection.RAW_CONNECTION });
+                unwrappedCon = (Connection) cpCon.rawConnectionOperation(rawConnectionMethod, null,
+                        new Object[] { C3P0ProxyConnection.RAW_CONNECTION });
+            } catch (Throwable ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+            if (unwrappedCon != null && unwrappedCon instanceof OracleConnection) {
+                return (OracleConnection) unwrappedCon;
+            }
+        }
+
+        if (conn instanceof HikariProxyConnection) {
+            HikariProxyConnection cpCon = (HikariProxyConnection) conn;
+            Connection unwrappedCon = null;
+            try {
+                unwrappedCon = cpCon.unwrap(OracleConnection.class);
+                // Field delegate = ((HikariProxyConnection)
+                // con).getClass().getSuperclass().getDeclaredField("delegate");
+                // delegate.setAccessible(true);
+                // return (Connection) delegate.get(con);
             } catch (Throwable ex) {
                 throw new RuntimeException(ex.getMessage());
             }

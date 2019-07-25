@@ -76,8 +76,30 @@ public class SweAbstractDataComponentCreator
         this.decoderRepository = decoderRepository;
     }
 
-    public SweAbstractDataComponent visit(DataEntity sub) {
-        // TODO Auto-generated method stub
+    public SweAbstractDataComponent visit(DataEntity o) throws OwsExceptionReport {
+        if (o instanceof QuantityDataEntity) {
+            return visit((QuantityDataEntity) o);
+        } else if (o instanceof BlobDataEntity) {
+            return visit((BlobDataEntity) o);
+        } else if (o instanceof BooleanDataEntity) {
+            return visit((BooleanDataEntity) o);
+        } else if (o instanceof CategoryDataEntity) {
+            return visit((CategoryDataEntity) o);
+        } else if (o instanceof ComplexDataEntity) {
+            return visit((ComplexDataEntity) o);
+        } else if (o instanceof CountDataEntity) {
+            return visit((CountDataEntity) o);
+        } else if (o instanceof GeometryDataEntity) {
+            return visit((GeometryDataEntity) o);
+        } else if (o instanceof TextDataEntity) {
+            return visit((TextDataEntity) o);
+        } else if (o instanceof DataArrayDataEntity) {
+            return visit((DataArrayDataEntity) o);
+        } else if (o instanceof ProfileDataEntity) {
+            return visit((ProfileDataEntity) o);
+        } else if (o instanceof ReferencedDataEntity) {
+            return visit((ReferencedDataEntity) o);
+        }
         return null;
     }
 

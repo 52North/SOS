@@ -55,6 +55,7 @@ import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gwml.GWMLConstants;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -102,6 +103,7 @@ import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.PlatformDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
+import org.n52.sos.ds.hibernate.dao.VerticalMetadataDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.util.GeometryHandler;
 
@@ -202,9 +204,16 @@ public class ObservationPersister
 
     @Override
     public DataEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
-        // return persist(observationFactory.sweDataArray(), value.getValue());
-        // TODO
-        return null;
+        throw new NoApplicableCodeException().withMessage("The insertion of %s is not yet supported",
+                value.getClass().getSimpleName());
+        // DataArrayDataEntity dataArray =
+        // observationFactory.sweDataEntityArray();
+        // dataArray.setEncoding(value.getValue().getEncoding().getXml());
+        // dataArray.setStructure(value.getValue().getEncoding().getXml());
+        // DataEntity dataArrayDataEntity = persist((DataEntity) dataArray, new
+        // HashSet<DataEntity<?>>());
+        // persistChildren(value.getValue(), dataArrayDataEntity.getId());
+        // return dataArrayDataEntity;
     }
 
     @Override
@@ -278,9 +287,15 @@ public class ObservationPersister
                             .setVerticalUnit(getUnit(value.getToLevel().getUomObject(), caches.units, session));
                 }
             }
-            dataset.setVerticalMetadata(verticalMetadata);
+            if (!dataset.hasVerticalMetadata()) {
+                dataset.setVerticalMetadata(
+                        daos.verticalMetadata().getOrInsertVerticalMetadata(verticalMetadata, session));
+            }
+
         }
-        omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
+        if (value.isSetPhenomenonTime()) {
+            omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
+        }
         DataEntity profileDataEntity = persist((DataEntity) profile, new HashSet<DataEntity<?>>());
         persistChildren(value.getValue(), profileDataEntity.getId());
         return profileDataEntity;
@@ -292,13 +307,6 @@ public class ObservationPersister
         if (value.isSetValue()) {
             for (Value<?> v : value.getValue()) {
                 DataEntity<?> d = v.accept(this);
-                if (value.isSetLevelStart()) {
-                    d.setVerticalFrom(value.getLevelStart().getValue());
-                }
-                if (value.isSetLevelEnd()) {
-                    d.setVerticalTo(value.getLevelEnd().getValue());
-                }
-                session.saveOrUpdate(d);
                 childObservations.add(d);
             }
         }
@@ -346,29 +354,85 @@ public class ObservationPersister
         return children;
     }
 
+    // private Set<DataEntity<?>> persistChildren(SweDataArray value, Long
+    // parent) throws OwsExceptionReport {
+    // Set<DataEntity<?>> children = new TreeSet<>();
+    // if (value.getElementType() instanceof SweAbstractSimpleType<?>) {
+    // SweAbstractSimpleType<?> type = (SweAbstractSimpleType<?>)
+    // value.getElementType();
+    // for (List<String> block : value.getValues()) {
+    // for (String token : block) {
+    // type.setStringValue(token);
+    // ObservationPersister childPersister = createChildPersister(parent);
+    // children.add(
+    // type.accept(ValueCreatingSweDataComponentVisitor.getInstance()).accept(childPersister));
+    // }
+    // }
+    // } else if (value.getElementType() instanceof SweAbstractDataRecord) {
+    // SweAbstractDataRecord dataRecord = (SweAbstractDataRecord)
+    // value.getElementType();
+    // for (List<String> block : value.getValues()) {
+    // for (int i = 0; i < block.size(); i++) {
+    // SweAbstractDataComponent element =
+    // dataRecord.getFields().get(i).getElement();
+    // if (element instanceof SweAbstractSimpleType<?>) {
+    // ((SweAbstractSimpleType<?>) element).setStringValue(block.get(i));
+    // }
+    // }
+    // children.addAll(persistChildren(dataRecord, parent));
+    // }
+    // } else {
+    // throw new NoApplicableCodeException().withMessage("Type '%s' is not yet
+    // supported!",
+    // value.getElementType().getClass().getSimpleName());
+    // }
+    // session.flush();
+    // return children;
+    // }
+
     private OmObservation getObservationWithLevelParameter(ProfileLevel level) {
         OmObservation o = new OmObservation();
         omObservation.copyTo(o);
-        // o.setParameter(level.getLevelStartEndAsParameter());
         if (level.isSetPhenomenonTime()) {
             o.setValue(new SingleObservationValue<>());
             o.getValue().setPhenomenonTime(level.getPhenomenonTime());
         }
+        if (level.isSetLevelStart() && level.isSetLevelEnd()) {
+            o.addParameter(createParameter(level.getLevelStart()));
+            o.addParameter(createParameter(level.getLevelEnd()));
+        } else {
+            o.addParameter(createParameter(level.getLevelEnd()));
+        }
         return o;
     }
 
+    private NamedValue<?> createParameter(QuantityValue value) {
+        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
+        final ReferenceType referenceType = new ReferenceType(value.getDefinition());
+        namedValue.setName(referenceType);
+        namedValue.setValue(new QuantityValue(value.getValue(), value.getUnitObject()));
+        return namedValue;
+    }
+
     private ObservationPersister createChildPersister(ProfileLevel level, Long parent) throws OwsExceptionReport {
-        return new ObservationPersister(geometryHandler, daos, caches, getObservationWithLevelParameter(level),
-                dataset, featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, parent);
+        return new ObservationPersister(daoFactory, daos, caches, getObservationWithLevelParameter(level), dataset,
+                featureOfInterest, getSamplingGeometryFromLevel(level), offerings, session, parent);
 
     }
 
     private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, Long parent)
             throws OwsExceptionReport {
-        return new ObservationPersister(geometryHandler, daos, caches, omObservation,
+        return new ObservationPersister(daoFactory, daos, caches, omObservation,
                 getObservationConstellation(observableProperty), featureOfInterest, samplingGeometry, offerings,
                 session, parent);
     }
+
+    // private ObservationPersister createChildPersister(Long parent) throws
+    // OwsExceptionReport {
+    // return new ObservationPersister(daoFactory, daos, caches, omObservation,
+    // dataset, featureOfInterest,
+    // samplingGeometry, offerings, session, parent);
+    // }
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty) throws OwsExceptionReport {
         return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(),
@@ -439,7 +503,7 @@ public class ObservationPersister
             return localCache.get(unit);
         } else {
             // query unit and set cache
-            UnitEntity hUnit = daos.unit.getOrInsertUnit(unit, session);
+            UnitEntity hUnit = daos.unit().getOrInsertUnit(unit, session);
             if (localCache != null) {
                 localCache.put(unit, hUnit);
             }
@@ -469,13 +533,15 @@ public class ObservationPersister
         }
         ObservationContext observationContext = daos.observation().createObservationContext();
 
-        String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity) observation);
+        String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity<?>) observation);
 
         observationContext
                 .setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
 
         if (dataset != null) {
-            if (!isProfileObservation(dataset) || (isProfileObservation(dataset) && parent == null)) {
+            if ((!isProfileObservation(dataset) && !isDataArrayObservation(dataset))
+                    || (isProfileObservation(dataset) && parent == null)
+                    || (isDataArrayObservation(dataset) && parent == null)) {
                 offerings.add(dataset.getOffering());
                 if (!daos.dataset().checkObservationType(dataset, observationType, session)) {
                     throw new InvalidParameterValueException().withMessage(
@@ -492,6 +558,7 @@ public class ObservationPersister
             observationContext.setOffering(dataset.getOffering());
             observationContext.setCategory(dataset.getCategory());
             observationContext.setPlatform(dataset.getPlatform());
+            observationContext.setUnit(dataset.getUnit());
         }
         // currently only profiles with one observedProperty are supported
         if (parent != null && !isProfileObservation(dataset)) {
@@ -502,10 +569,15 @@ public class ObservationPersister
             observationContext.setPlatform(daos.platform().getOrInsertPlatform(featureOfInterest, session));
         }
         daos.observation().fillObservationContext(observationContext, omObservation, session);
+        checkForParameter(observation, omObservation.getParameterHolder(), observationContext, session);
+        if (observationContext.isSetVertical()) {
+            observationContext.setVertical(
+                    daos.verticalMetadata().getOrInsertVerticalMetadata(observationContext.getVertical(), session));
+        }
         if (dataset != null && dataset.hasVerticalMetadata()) {
             observationContext.setVertical(dataset.getVerticalMetadata());
         }
-        checkForParameter(observation, omObservation.getParameterHolder(), observationContext, session);
+
         DatasetEntity persitedDataset =
                 daos.observation().addObservationContextToObservation(observationContext, observation, session);
         session.save(observation);
@@ -578,9 +650,14 @@ public class ObservationPersister
                         .equals(observationConstellation.getOmObservationType().getFormat()));
     }
 
+    private boolean isDataArrayObservation(DatasetEntity observationConstellation) {
+        return observationConstellation.isSetOmObservationType() && (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
+                .equals(observationConstellation.getOmObservationType().getFormat()));
+    }
+
     private Geometry getSamplingGeometryFromLevel(ProfileLevel level) throws OwsExceptionReport {
         if (level.isSetLocation()) {
-            return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(level.getLocation());
+            return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(level.getLocation());
         }
         return null;
     }
@@ -606,7 +683,7 @@ public class ObservationPersister
         // check if flag is set and if this observation is not a child
         // observation
         if (samplingGeometry != null && isUpdateFeatureGeometry() && parent != null) {
-            daos.feature.updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
+            daos.feature().updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
         }
     }
 
@@ -652,6 +729,8 @@ public class ObservationPersister
 
         private final UnitDAO unit;
 
+        private final VerticalMetadataDAO verticalMetadata;
+
         DAOs(AbstractObservationDAO observationDao, DaoFactory daoFactory) {
             this.observation = observationDao;
             this.observableProperty = daoFactory.getObservablePropertyDAO();
@@ -661,6 +740,7 @@ public class ObservationPersister
             this.platform = daoFactory.getPlatformDAO();
             this.dataset = daoFactory.getSeriesDAO();
             this.unit = daoFactory.getUnitDAO();
+            this.verticalMetadata = daoFactory.getVerticalMetadataDAO();
         }
 
         public ObservablePropertyDAO observableProperty() {
@@ -693,6 +773,10 @@ public class ObservationPersister
 
         public UnitDAO unit() {
             return this.unit;
+        }
+
+        public VerticalMetadataDAO verticalMetadata() {
+            return this.verticalMetadata;
         }
     }
 

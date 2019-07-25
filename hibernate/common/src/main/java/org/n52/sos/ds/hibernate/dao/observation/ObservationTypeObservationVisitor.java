@@ -66,6 +66,8 @@ public final class ObservationTypeObservationVisitor implements ObservationVisit
             return visit((ComplexDataEntity) o);
         } else if (o instanceof CountDataEntity) {
             return visit((CountDataEntity) o);
+        } else if (o instanceof DataArrayDataEntity) {
+            return visit((DataArrayDataEntity) o);
         } else if (o instanceof GeometryDataEntity) {
             return visit((GeometryDataEntity) o);
         } else if (o instanceof TextDataEntity) {

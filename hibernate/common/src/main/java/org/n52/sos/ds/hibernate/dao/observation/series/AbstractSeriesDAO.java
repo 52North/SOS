@@ -342,6 +342,10 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             ctx.addValuesToSeries(series);
             series.setDeleted(false);
             series.setPublished(ctx.isPublish());
+        } else if (!series.hasUnit() && ctx.isSetUnit()) {
+            series.setUnit(ctx.getUnit());
+            series.setDeleted(false);
+            series.setPublished(ctx.isPublish());
         } else if (ctx.isPublish() && !series.isPublished()) {
             series.setPublished(ctx.isPublish());
         } else if (series.isDeleted()) {

@@ -270,25 +270,31 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
         HTTPStatus status = HTTPStatus.INTERNAL_SERVER_ERROR;
         String exceptionMsg = "Error while inserting new observation!";
 
-        if (pe.getCause() instanceof ConstraintViolationException) {
-            CompositeOwsException ce = new CompositeOwsException();
-            final ConstraintViolationException cve = (ConstraintViolationException) pe.getCause();
-            checkEqualsAndThrow(cve.getConstraintName(), pe);
-            checkContainsAndThrow(cve.getMessage(), pe);
-            SQLException sqle = cve.getSQLException();
-            checkContainsAndThrow(sqle.getMessage(), pe);
-            // if this is a JDBCException, pass the underlying SQLException
-            // as the causedBy exception so that we can show the actual error in
-            // the
-            // OwsExceptionReport when batching
-            for (Throwable next : sqle) {
-                checkContainsAndThrow(next.getMessage(), pe);
-                ce.add(new NoApplicableCodeException().causedBy(next));
-            }
-            throw ce.setStatus(status);
+        if (pe instanceof ConstraintViolationException) {
+            handleConstraintViolationException((ConstraintViolationException) pe, pe, status);
+        } else if (pe.getCause() instanceof ConstraintViolationException) {
+            handleConstraintViolationException((ConstraintViolationException) pe.getCause(), pe, status);
         } else {
             throw new NoApplicableCodeException().causedBy(pe).withMessage(exceptionMsg).setStatus(status);
         }
+    }
+
+    private void handleConstraintViolationException(ConstraintViolationException cve, PersistenceException pe,
+            HTTPStatus status) throws OwsExceptionReport {
+        CompositeOwsException ce = new CompositeOwsException();
+        checkEqualsAndThrow(cve.getConstraintName(), pe);
+        checkContainsAndThrow(cve.getMessage(), pe);
+        SQLException sqle = cve.getSQLException();
+        checkContainsAndThrow(sqle.getMessage(), pe);
+        // if this is a JDBCException, pass the underlying SQLException
+        // as the causedBy exception so that we can show the actual error in
+        // the
+        // OwsExceptionReport when batching
+        for (Throwable next : sqle) {
+            checkContainsAndThrow(next.getMessage(), pe);
+            ce.add(new NoApplicableCodeException().causedBy(next));
+        }
+        throw ce.setStatus(status);
     }
 
     private void checkEqualsAndThrow(String constraintName, PersistenceException e) throws OwsExceptionReport {

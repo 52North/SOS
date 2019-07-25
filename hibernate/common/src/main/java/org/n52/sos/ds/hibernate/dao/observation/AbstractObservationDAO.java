@@ -650,7 +650,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             AbstractFeatureEntity hFeature, OmObservation sosObservation, Map<String, CodespaceEntity> codespaceCache,
             Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
-        ObservationPersister persister = new ObservationPersister(getGeometryHandler(), this, getDaoFactory(),
+        ObservationPersister persister = new ObservationPersister(getDaoFactory(), this,
                 sosObservation, hObservationConstellation, hFeature, codespaceCache, unitCache,
                 getOfferings(hObservationConstellation), session);
         return value.getValue().accept(persister).getDataset();

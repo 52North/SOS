@@ -126,34 +126,37 @@ public class ObservationPersister
 
     private final Set<OfferingEntity> offerings;
 
-    private GeometryHandler geometryHandler;
+    private final DaoFactory daoFactory;
 
     private Long parent;
 
-    public ObservationPersister(GeometryHandler geometryHandler, AbstractObservationDAO observationDao,
-            DaoFactory daoFactory, OmObservation sosObservation, DatasetEntity hDataset,
-            AbstractFeatureEntity<?> hFeature, Map<String, CodespaceEntity> codespaceCache,
-            Map<UoM, UnitEntity> unitCache, Set<OfferingEntity> hOfferings, Session session)
-            throws OwsExceptionReport {
-        this(geometryHandler, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache),
-                sosObservation, hDataset, hFeature, null, hOfferings, session, null);
+    public ObservationPersister(DaoFactory daoFactory, AbstractObservationDAO observationDao,
+            OmObservation sosObservation, DatasetEntity hDataset, AbstractFeatureEntity<?> hFeature,
+            Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
+            Set<OfferingEntity> hOfferings, Session session) throws OwsExceptionReport {
+        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache), sosObservation,
+                hDataset, hFeature, null, hOfferings, session, null);
     }
 
-    private ObservationPersister(GeometryHandler geometryHandler, DAOs daos, Caches caches, OmObservation observation,
+    private ObservationPersister(DaoFactory daoFactory, DAOs daos, Caches caches, OmObservation observation,
             DatasetEntity hDataset, AbstractFeatureEntity<?> hFeature, Geometry samplingGeometry,
             Set<OfferingEntity> hOfferings, Session session, Long parentId) throws OwsExceptionReport {
-        this.geometryHandler = geometryHandler;
+        this.daoFactory = daoFactory;
         this.dataset = hDataset;
         this.featureOfInterest = hFeature;
         this.caches = caches;
         this.omObservation = observation;
         this.samplingGeometry =
-                samplingGeometry != null ? samplingGeometry : getSamplingGeometry(omObservation, geometryHandler);
+                samplingGeometry != null ? samplingGeometry : getSamplingGeometry(omObservation, getGeometryHandler());
         this.session = session;
         this.daos = daos;
         this.observationFactory = daos.observation().getObservationFactory();
         this.parent = parentId;
         this.offerings = hOfferings;
+    }
+
+    private GeometryHandler getGeometryHandler() {
+        return daoFactory.getGeometryHandler();
     }
 
     @Override

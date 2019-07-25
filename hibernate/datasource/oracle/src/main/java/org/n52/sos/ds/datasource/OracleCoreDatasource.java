@@ -43,6 +43,7 @@ import com.google.common.collect.ImmutableSet;
  */
 public class OracleCoreDatasource extends AbstractOracleDatasource {
 
+    private static final long serialVersionUID = 443131684917856047L;
     private static final String DIALECT_NAME = "Oracle Spatial Core";
 
     public OracleCoreDatasource() {

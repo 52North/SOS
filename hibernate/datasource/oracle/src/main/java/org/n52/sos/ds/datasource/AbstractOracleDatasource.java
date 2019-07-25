@@ -92,6 +92,8 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
 
     protected static final String SCHEMA_DEFAULT_VALUE = USERNAME_DEFAULT_VALUE;
 
+    private static final long serialVersionUID = -5154331781405709114L;
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
 
     private static final String CANNOT_CLEAR = "Cannot clear!";
@@ -127,7 +129,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
         Properties p = super.getDatasourceProperties(settings);
-        p.put(HibernateSpatialConfigurationSettings.CONNECTION_FINDER, OracleC3P0ConnectionFinder.class.getName());
+        p.put(HibernateSpatialConfigurationSettings.CONNECTION_FINDER, OracleConnectionFinder.class.getName());
         return p;
     }
 

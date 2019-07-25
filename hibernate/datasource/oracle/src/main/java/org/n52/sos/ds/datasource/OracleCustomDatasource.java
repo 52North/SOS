@@ -36,6 +36,7 @@ package org.n52.sos.ds.datasource;
  */
 public class OracleCustomDatasource extends OracleCoreDatasource {
 
+    private static final long serialVersionUID = -7359398930412826037L;
     private static final String DIALECT_NAME = "Oracle Spatial Custom Core";
 
     public OracleCustomDatasource() {

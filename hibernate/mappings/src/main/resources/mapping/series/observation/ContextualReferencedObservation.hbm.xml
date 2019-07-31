@@ -17,7 +17,7 @@
         <many-to-one name="series"
                      class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      foreign-key="observationSeriesFk">
-            <column index="obsSeriesIdx"
+            <column
                     name="seriesId"
                     not-null="true">
                    <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
@@ -144,7 +144,7 @@
         </set>
         <set name="relatedObservations" table="relatedobservations" fetch="join" access="field" cascade="all">
 	        <key>
-	            <column name="observationId" not-null="true" index="relatedObsObsIdx" />
+	            <column name="observationId" not-null="true" />
 	        </key>
 	        <one-to-many class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation" />
     	</set>

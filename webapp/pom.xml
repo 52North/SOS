@@ -75,6 +75,28 @@
 					</execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>truezip-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>remove-a-file-in-sub-archive</id>
+                        <goals>
+                            <goal>remove</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <fileset>
+                                <directory>target/${conf.sos.name}.war/WEB-INF/lib/hibernate-spatial-4.3.2-52N.jar/META-INF/services</directory>
+                                <includes>
+                                    <include>org.hibernate.integrator.spi.Integrator</include>
+                                </includes>
+                            </fileset>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- 
             <plugin>
               <groupId>com.googlecode.maven-download-plugin</groupId>

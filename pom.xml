@@ -88,7 +88,7 @@
         <postgis.version>2.3.0</postgis.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.26</slf4j.version>
-        <hibernate.version>5.4.3.Final</hibernate.version>
+        <hibernate.version>5.4.4.Final</hibernate.version>
         <sqlite.version>3.28.0</sqlite.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <hikaricp.version>3.3.1</hikaricp.version>
@@ -99,15 +99,15 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.0.0</arctic-sea.version>
+        <arctic-sea.version>7.1.0</arctic-sea.version>
 
-        <dataset.api.version>2.0.1-alpha.5</dataset.api.version>
-        <dataset.dao.version>3.0.0-alpha.6</dataset.dao.version>
+        <dataset.api.version>2.0.1-SNAPSHOT</dataset.api.version>
+        <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-        <dataset.hibernate.version>1.0.0-alpha.5</dataset.hibernate.version>
+        <dataset.hibernate.version>1.0.0-SNAPSHOT</dataset.hibernate.version>
 
-        <org.springframework.security.version>5.1.5.RELEASE</org.springframework.security.version>
-        <org.springframework.version>5.1.8.RELEASE</org.springframework.version>
+        <org.springframework.security.version>5.1.6.RELEASE</org.springframework.security.version>
+        <org.springframework.version>5.1.9.RELEASE</org.springframework.version>
         <aspectj.version>1.9.4</aspectj.version>
         <saxon.version>9.9.1-4</saxon.version>
         <elasticsearch.version>7.2.0</elasticsearch.version>
@@ -710,11 +710,15 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>2.26.0</version>
+                <version>2.28.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
                         <artifactId>hamcrest-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy</artifactId>
                     </exclusion>
                 </exclusions>
                 <scope>test</scope>

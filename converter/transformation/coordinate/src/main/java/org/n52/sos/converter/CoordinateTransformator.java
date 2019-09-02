@@ -433,7 +433,8 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      */
     private OwsServiceResponse modifyGetCapabilitiesResponse(GetCapabilitiesRequest request,
             GetCapabilitiesResponse response) throws OwsExceptionReport {
-        if (response.getCapabilities() instanceof SosCapabilities) {
+        if (!response.isStatic() && response.getCapabilities() instanceof SosCapabilities
+                && ((SosCapabilities) response.getCapabilities()).getContents().isPresent()) {
             SosCapabilities sosCapabilities = (SosCapabilities) response.getCapabilities();
             if (sosCapabilities.getContents().isPresent()) {
                 for (SosObservationOffering sosObservationOffering : sosCapabilities.getContents().get()) {

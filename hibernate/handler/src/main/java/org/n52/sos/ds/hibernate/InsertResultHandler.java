@@ -128,6 +128,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
     private boolean convertComplexProfileToSingleProfiles;
 
+    private boolean abortInsertResultForExistingObservations;
+
     private ResultHandlingHelper helper;
 
     public InsertResultHandler() {
@@ -211,12 +213,20 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     // featureEntityMap.put(feature.getIdentifier(), feature);
                     // }
                 }
-                if (observation.getValue() instanceof SingleObservationValue) {
-                    observationDAO.insertObservationSingleValue(obsConst, feature, observation, codespaceCache,
-                            unitCache, session);
-                } else if (observation.getValue() instanceof MultiObservationValues) {
-                    observationDAO.insertObservationMultiValue(obsConst, feature, observation, codespaceCache,
-                            unitCache, session);
+                try {
+                    if (observation.getValue() instanceof SingleObservationValue) {
+                        observationDAO.insertObservationSingleValue(obsConst, feature, observation, codespaceCache,
+                                unitCache, session);
+                    } else if (observation.getValue() instanceof MultiObservationValues) {
+                        observationDAO.insertObservationMultiValue(obsConst, feature, observation, codespaceCache,
+                                unitCache, session);
+                    }
+                } catch (NoApplicableCodeException nace) {
+                    if (abortInsertResultForExistingObservations()) {
+                        throw nace;
+                    } else {
+                        LOGGER.debug("Already existing observation would be ignored!", nace);
+                    }
                 }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {
                     session.flush();
@@ -597,6 +607,15 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
     private synchronized HibernateSessionHolder getHibernateSessionHolder() {
         return sessionHolder;
+    }
+
+    @Setting(CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+    public void setabortInsertResultForExistingObservations(boolean abortInsertResultForExistingObservations) {
+        this.abortInsertResultForExistingObservations = abortInsertResultForExistingObservations;
+    }
+
+    private boolean abortInsertResultForExistingObservations() {
+        return abortInsertResultForExistingObservations;
     }
 
     @VisibleForTesting

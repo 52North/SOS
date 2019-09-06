@@ -36,6 +36,8 @@ import org.hibernate.internal.util.StringHelper;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
+import org.hibernate.spatial.GeometryType;
+import org.hibernate.spatial.HibernateSpatialConfiguration;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.n52.sos.ds.datasource.SpatialIndexDialect;
 
@@ -44,10 +46,48 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
     private static final long serialVersionUID = -1294060043623083068L;
 
     public OracleSpatial10gDoubleFloatDialect() {
-        super();
+        this(new HibernateSpatialConfiguration());
+    }
+    
+    public OracleSpatial10gDoubleFloatDialect(HibernateSpatialConfiguration config) {
+        super(config);
         registerColumnType(Types.DOUBLE, "float");
     }
     
+    /**
+     * Returns the SQL fragment when parsing a
+     * <code>GeometryTypeFilterExpression</code> expression
+     *
+     * @param columnName The geometry column
+     *
+     * @return The SQL fragment for the geometrytype function
+     */
+    @Override
+    public String getGeometryTypeSQL(String columnName) {
+            return String.format( " (%s.Get_GType() = ?)", columnName );
+    }
+
+    @Override
+    public String getGeometryQueryType(org.hibernate.spatial.GeometryType.Type geometryType) {
+        switch (geometryType) {
+        case Point:
+            return "1";
+        case LineString:
+            return "2";
+        case Polygon:
+            return "3";
+        case GeometryCollection:
+            return "4";
+        case MultiPoint:
+            return "5";
+        case MultiLineString:
+            return "6";
+        case MultiPolygon:
+            return "6";
+        default:
+            return "0";
+        }
+    }
 
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
 

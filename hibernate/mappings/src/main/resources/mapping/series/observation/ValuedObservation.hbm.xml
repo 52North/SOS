@@ -18,7 +18,7 @@
         <many-to-one name="series"
                      class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      foreign-key="observationSeriesFk">
-            <column index="obsSeriesIdx"
+            <column
                     name="seriesId"
                     not-null="true">
                    <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
@@ -153,7 +153,7 @@
         </set>
         <set name="relatedObservations" table="relatedobservations" fetch="join" access="field" cascade="all">
 	        <key>
-	            <column name="observationId" not-null="true" index="relatedObsObsIdx" />
+	            <column name="observationId" not-null="true"/>
 	        </key>
 	        <one-to-many class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation" />
     	</set>
@@ -286,8 +286,7 @@
                 </column>
             </key>
             <property name="value" 
-                      type="text"
-                      index="textvalueidx">
+                      type="text">
                  <column name="value">
                      <comment>Text observation value</comment>
                  </column>
@@ -343,13 +342,13 @@
                  cascade="delete-orphan">
                 <comment>Relation table for complex parent/child observations</comment>
                 <key foreign-key="observationParentFK" >
-                     <column name="observationId" not-null="true" index="complexobsididx">
+                     <column name="observationId" not-null="true">
                          <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
                     </column>
                 </key>
                 <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
                               foreign-key="observationChildFk">
-                    <column name="childObservationId" not-null="true" index="complexchildobsididx">
+                    <column name="childObservationId" not-null="true">
                         <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
                     </column>
                 </many-to-many>
@@ -395,13 +394,13 @@
                  cascade="delete-orphan">
                 <comment>Relation table for complex parent/child observations</comment>
                 <key foreign-key="profileObsParentFK" >
-                     <column name="observationId" not-null="true" index="profileobsididx">
+                     <column name="observationId" not-null="true">
                          <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
                     </column>
                 </key>
                 <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
                               foreign-key="profileObsChildFk" >
-                    <column name="childObservationId" not-null="true" index="profileobsididx">
+                    <column name="childObservationId" not-null="true">
                         <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
                     </column>
                 </many-to-many>

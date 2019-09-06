@@ -5,7 +5,22 @@
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+
+## Release 52n-sensorweb-sos-4.4.9
  
+### New features
+
+  - Added Oracle support for querying the geometry type in the database.
+  
+### Changes
+  
+  - 
+  
+### Fixed issues
+
+  - 
+  
+  
 ## Release 52n-sensorweb-sos-4.4.8
  
 ### New features

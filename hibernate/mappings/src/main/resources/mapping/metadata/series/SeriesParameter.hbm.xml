@@ -28,7 +28,7 @@
                          check="value in ('T','F')">
             <comment>Value table for boolean parameter</comment>
             <key foreign-key="seriesParamBooleanValueFk">
-                <column name="parameterId" index="booleanseriesparamididx">
+                <column name="parameterId">
                     <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
                 </column>
             </key>
@@ -44,7 +44,7 @@
                          table="categoryseriesparamvalue">
             <comment>Value table for category parameter</comment>
             <key foreign-key="seriesParamCategoryValueFk">
-                <column name="parameterId" index="categoryseriesparamididx">
+                <column name="parameterId">
                     <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
                 </column>
             </key>
@@ -67,7 +67,7 @@
                          table="countseriesparamvalue">
             <comment>Value table for count parameter</comment>
             <key foreign-key="seriesParamCountValueFk">
-                <column name="parameterId" index="countseriesparamididx">
+                <column name="parameterId">
                     <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
                 </column>
             </key>
@@ -83,7 +83,7 @@
                          table="numericseriesparamvalue">
             <comment>Value table for numeric/Measurment parameter</comment>
             <key foreign-key="seriesParamNumericValueFk">
-                <column name="parameterId" index="numericseriesparamididx">
+                <column name="parameterId">
                     <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
                 </column>
             </key>
@@ -107,7 +107,7 @@
                          table="textseriesparamvalue">
             <comment>Value table for text parameter</comment>
             <key foreign-key="seriesParamTextValueFk">
-                <column name="parameterId" index="textseriesparamididx">
+                <column name="parameterId">
                     <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
                 </column>
             </key>
@@ -123,7 +123,7 @@
                          table="xmlseriesparamvalue">
             <comment>Value table for XML parameter</comment>
             <key foreign-key="seriesParamXmlValueFk">
-                <column name="parameterId" index="xmlseriesparamididx">
+                <column name="parameterId">
                     <comment>Foreign Key (FK) to the related parameter from the series parameter table. Contains seriesparameter.parameterid</comment>
                 </column>
             </key>

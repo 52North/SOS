@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -42,9 +43,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.i18n.I18nEntity;
+import org.n52.series.db.beans.i18n.I18nPhenomenonEntity;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -233,12 +237,37 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         return obsProp;
     }
 
+    public PhenomenonEntity getOrInsertObservableProperty(PhenomenonEntity phenomenon, Session session) {
+        PhenomenonEntity result = getObservablePropertyForIdentifier(phenomenon.getIdentifier(), session);
+        if (result == null) {
+            result = phenomenon;
+            session.save(result);
+            session.flush();
+            session.refresh(result);
+            if (phenomenon.hasTranslations()) {
+                insertTranslations(result, phenomenon.getTranslations(), session);
+            }
+        }
+        return result;
+    }
+
     public Map<String, PhenomenonEntity> getOrInsertObservablePropertyAsMap(
             List<? extends AbstractPhenomenon> observableProperties, Session session) {
         Map<String, PhenomenonEntity> existing = getExistingObservableProperties(observableProperties, session);
         insertNonExisting(observableProperties, existing, session);
         insertHierachy(observableProperties, existing, session);
         return existing;
+    }
+
+
+    private void insertTranslations(PhenomenonEntity result, Set<I18nEntity<? extends Describable>> translations,
+            Session session) {
+        for (I18nEntity<? extends Describable> i18nEntity : translations) {
+            ((I18nPhenomenonEntity) i18nEntity).setEntity(result);
+            session.save(i18nEntity);
+            session.flush();
+            session.refresh(i18nEntity);
+        }
     }
 
     protected void insertNonExisting(List<? extends AbstractPhenomenon> observableProperties,

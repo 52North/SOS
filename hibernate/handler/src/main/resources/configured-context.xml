@@ -90,6 +90,9 @@
     <bean id="renameHandler"
           class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
 
+    <bean id="predefinedInsertionHandler"
+          class="org.n52.sos.ds.hibernate.admin.HibernatePredefinedInsertionHandler" />
+
     <bean id="insertSensorCapabilitiesExtensionProvider"
           class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
 

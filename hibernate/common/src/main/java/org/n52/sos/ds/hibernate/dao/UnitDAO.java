@@ -29,11 +29,15 @@
 package org.n52.sos.ds.hibernate.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.i18n.I18nEntity;
+import org.n52.series.db.beans.i18n.I18nUnitEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
@@ -127,5 +131,29 @@ public class UnitDAO {
             session.refresh(result);
         }
         return result;
+    }
+
+    public UnitEntity getOrInsertUnit(UnitEntity unit, Session session) {
+        UnitEntity result = getUnit(unit.getIdentifier(), session);
+        if (result == null) {
+            result = unit;
+            session.save(result);
+            session.flush();
+            session.refresh(result);
+            if (unit.hasTranslations()) {
+                insertTranslations(result, unit.getTranslations(), session);
+            }
+        }
+        return result;
+    }
+
+    private void insertTranslations(UnitEntity result, Set<I18nEntity<? extends Describable>> translations,
+            Session session) {
+        for (I18nEntity<? extends Describable> i18nEntity : translations) {
+            ((I18nUnitEntity) i18nEntity).setEntity(result);
+            session.save(i18nEntity);
+            session.flush();
+            session.refresh(i18nEntity);
+        }
     }
 }

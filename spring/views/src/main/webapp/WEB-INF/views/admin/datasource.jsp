@@ -55,6 +55,40 @@
     </div>
 </div>
 
+<div>
+    <h3>Enhancement</h3>
+    <p>In this section you can select and insert pre-defined sets of observableProperties or units of measurement into the database.</p>
+    <h4>ObservableProperty - Phenomena - Parameter</h4>
+    <p>Here</p>
+    <div id="obsprop-container">
+	  <div class="row">
+	   <div class="span12 form-inline" style="margin-bottom: 5px;">
+        <select id="input-phenomena" class="span6">
+            <option value="" disabled selected style="display: none;">Select a predefined phenomena vocabulary &hellip;</option>
+        </select>
+	      <div class="btn-group">
+	        <button id="loadObsProps" title="Load ObservableProperties into the database!" type="button" name="" class="btn btn-icon stcaps-edit-button">Load</button>
+	      </div>
+	    </div>
+	   </div>
+    </div>
+
+    <h4>UnitsOfMeasure</h4>
+    <p>there</p>
+    <div id="units-container">
+    <div class="row">
+      <div class="span12 form-inline" style="margin-bottom: 5px;">
+        <select id="input-units" class="span6">
+            <option value="" disabled selected style="display: none;">Select a predefined units vocabulary &hellip;</option>
+        </select>
+        <div class="btn-group">
+          <button id="loadUnits" title="Load Units into the database!" type="button" name="" class="btn btn-icon stcaps-edit-button">Load</button>
+        </div>
+      </div>
+     </div>
+    </div>
+</div>
+
 <form id="form" action="" method="POST">
     <h3>Query Examples</h3>
     <p>Here are some raw SQL query examples which can be copied and executed in the appropriate database tool, e.g. pgAdmin.</p>
@@ -213,6 +247,66 @@
         }
     });
 </script>
+
+
+<script type="text/javascript">
+$(function() {
+    var $select = $("#input-phenomena");
+
+    <c:forEach items="${predefinedPhenomena}" var="p">
+        $("<option>").text("${p}").appendTo($select);
+    </c:forEach>
+    $("#loadObsProps").click(function() {
+        var value = $("#input-phenomena :selected").text()
+        if (value === "" || value.startsWith("Select a predefined")) {
+            showError("No vocabulary specified.");
+        } else {
+            $.ajax({
+                "url": "<c:url value="/admin/datasource/loadPredefinedPhenomena" />",
+                "type": "GET",
+                "data": {
+                	"name": value
+                }
+            }).fail(function(error){
+                showError("Request failed: " + error.status + " " + error.statusText);
+            }).done(function(response){
+            	 showSuccess("Predefined phenomena successfully reloaded!");
+            });
+        }
+    });
+});
+</script>
+
+
+<script type="text/javascript">
+$(function() {
+    var $select = $("#input-units");
+
+    <c:forEach items="${predefinedUnits}" var="p">
+        $("<option>").text("${p}").appendTo($select);
+    </c:forEach>
+    $("#loadUnits").click(function() {
+        var value = $("#input-units :selected").text()
+        if (value === "" || value.startsWith("Select a predefined")) {
+            showError("No vocabulary specified.");
+        } else {
+            $.ajax({
+                "url": "<c:url value="/admin/datasource/loadPredefinedUnits" />",
+                "type": "GET",
+                "data": {
+                  "name": value
+                }
+            }).fail(function(error){
+                showError("Request failed: " + error.status + " " + error.statusText);
+            }).done(function(response){
+            	showSuccess("Predefined units successfully reloaded!");
+            });
+        }
+    });
+});
+</script>
+
+
 
 <script type="text/javascript">
 $(function() {

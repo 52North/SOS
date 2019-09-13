@@ -1,0 +1,167 @@
+{
+	"type": "UNIT",
+	"name": "ereporting",
+	"description": "Predefined data for AQD e-Reporting",
+	"values": [
+		{
+			"symbol": "m-1",
+			"name": "Per meter",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/m-1"
+		},
+		{
+			"symbol": "mg.l-1",
+			"name": "Micrograms per litre.",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mg.l-1"
+		},
+		{
+			"symbol": "mg.m-3",
+			"name": "Miligrams per cubic metre of ambient air",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mg.m-3"
+		},
+		{
+			"symbol": "mg.m-3.day",
+			"name": "Micrograms per cubic meter times day",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mg.m-3.day"
+		},
+		{
+			"symbol": "mg.m-3.h",
+			"name": "Micrograms per cubic meter times hour",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mg.m-3.h"
+		},
+		{
+			"symbol": "mgN.l-1",
+			"name": "Milligrams nitrogen per litre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mgN.l-1"
+		},
+		{
+			"symbol": "mgN.m-2.m-1",
+			"name": "Milligrams nitrogen per square meter per month",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mgN.m-2.m-1"
+		},
+		{
+			"symbol": "mgS.l-1",
+			"name": "Milligrams sulphur per litre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mgS.l-1"
+		},
+		{
+			"symbol": "mgS.m-2.m-1",
+			"name": "Milligrams sulphur per square meter per month",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mgS.m-2.m-1"
+		},
+		{
+			"symbol": "mm",
+			"name": "Millimeter",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mm"
+		},
+		{
+			"symbol": "ng.l-1",
+			"name": "Nanograms per litre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ng.l-1"
+		},
+		{
+			"symbol": "ng.m-2",
+			"name": "Nanograms per square meter",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ng.m-2"
+		},
+		{
+			"symbol": "ng.m-2.day-1",
+			"name": "Nanograms per square metre per day",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ng.m-2.day-1"
+		},
+		{
+			"symbol": "ng.m-3",
+			"name": "Nanograms per cubic metre of ambient air",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ng.m-3"
+		},
+		{
+			"symbol": "pHunits",
+			"name": "pH",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/pHunits"
+		},
+		{
+			"symbol": "pg.m-3",
+			"name": "Picograms per cubic metre of ambient air",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/pg.m-3"
+		},
+		{
+			"symbol": "ppbv",
+			"name": "Parts per billion per volume",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ppbv"
+		},
+		{
+			"symbol": "ppmv",
+			"name": "Parts per million by volume",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ppmv"
+		},
+		{
+			"symbol": "pptv",
+			"name": "Parts per trillion per volume",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/pptv"
+		},
+		{
+			"symbol": "uS.cm-1",
+			"name": "Micro Siemens per centimeter",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/uS.cm-1"
+		},
+		{
+			"symbol": "ueH.l-1",
+			"name": "micromoles per litre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ueH.l-1"
+		},
+		{
+			"symbol": "ug.l-1",
+			"name": "Micrograms per litre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ug.l-1"
+		},
+		{
+			"symbol": "ug.m-2.day-1",
+			"name": "Micrograms per square metre per day",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ug.m-2.day-1"
+		},
+		{
+			"symbol": "ug.m-3",
+			"name": "Micrograms per cubic meter",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ug.m-3"
+		},
+		{
+			"symbol": "ug.m-3.day",
+			"name": "Micrograms per cubic metre per day",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ug.m-3.day"
+		},
+		{
+			"symbol": "ug.m-3.h",
+			"name": "Micrograms per cubic metre per hour",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ug.m-3.h"
+		},
+		{
+			"symbol": "ugC.m-3",
+			"name": "Micrograms of carbon per cubic metre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ugC.m-3"
+		},
+		{
+			"symbol": "ugN.m-3",
+			"name": "Micrograms of nitrogen per cubic metre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ugN.m-3"
+		},
+		{
+			"symbol": "ugNO2.m-3",
+			"name": "Units of mass concentration of nitrogen dioxide (μg/m3)",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ugNO2.m-3"
+		},
+		{
+			"symbol": "ugS.m-3",
+			"name": "Micrograms of sulphur per cubic metre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ugS.m-3"
+		},
+		{
+			"symbol": "ugSO2.m-3",
+			"name": "Micrograms of sulphur dioxide per cubic metre",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/ugSO2.m-3"
+		},
+		{
+			"symbol": "mgS.m-1",
+			"name": "Milligrams nitrogen per meter",
+			"link": "http://dd.eionet.europa.eu/vocabulary/uom/concentration/mgS.m-1"
+		}
+	]
+}

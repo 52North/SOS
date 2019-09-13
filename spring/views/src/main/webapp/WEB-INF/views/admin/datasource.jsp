@@ -59,7 +59,7 @@
     <h3>Enhancement</h3>
     <p>In this section you can select and insert pre-defined sets of observableProperties or units of measurement into the database.</p>
     <h4>ObservableProperty - Phenomena - Parameter</h4>
-    <p>Here</p>
+    <p>Select one of the predefined observableProperty vocabularies from the drop-down list and the press the 'Load' button to load the predefined data into the SOS.</p>
     <div id="obsprop-container">
 	  <div class="row">
 	   <div class="span12 form-inline" style="margin-bottom: 5px;">
@@ -74,7 +74,7 @@
     </div>
 
     <h4>UnitsOfMeasure</h4>
-    <p>there</p>
+    <p>Select one of the predefined units vocabularies from the drop-down list and the press the 'Load' button to load the predefined data into the SOS.</p>
     <div id="units-container">
     <div class="row">
       <div class="span12 form-inline" style="margin-bottom: 5px;">
@@ -259,7 +259,7 @@ $(function() {
     $("#loadObsProps").click(function() {
         var value = $("#input-phenomena :selected").text()
         if (value === "" || value.startsWith("Select a predefined")) {
-            showError("No vocabulary specified.");
+            showError("No vocabulary selected!");
         } else {
             $.ajax({
                 "url": "<c:url value="/admin/datasource/loadPredefinedPhenomena" />",
@@ -288,7 +288,7 @@ $(function() {
     $("#loadUnits").click(function() {
         var value = $("#input-units :selected").text()
         if (value === "" || value.startsWith("Select a predefined")) {
-            showError("No vocabulary specified.");
+            showError("No vocabulary selected!");
         } else {
             $.ajax({
                 "url": "<c:url value="/admin/datasource/loadPredefinedUnits" />",

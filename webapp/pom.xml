@@ -429,11 +429,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sqlite-config</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>cache</artifactId>
             <scope>runtime</scope>
         </dependency>
@@ -650,12 +645,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sqlite-config</artifactId>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>

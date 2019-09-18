@@ -14,7 +14,6 @@
         <module>api</module>
         <module>cache</module>
         <module>profile</module>
-        <module>sqlite-config</module>
         <module>test</module>
     </modules>
 </project>

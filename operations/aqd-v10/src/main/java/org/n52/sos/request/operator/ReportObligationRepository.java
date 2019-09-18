@@ -44,7 +44,7 @@ import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.inspire.base2.RelatedParty;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.config.sqlite.ReportingHeaderSQLiteManager;
+import org.n52.sos.config.json.JsonReportingHeaderDao;
 
 public final class ReportObligationRepository implements EReportObligationRepository {
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
@@ -56,7 +56,7 @@ public final class ReportObligationRepository implements EReportObligationReposi
     private final Map<ReportObligationType, ReportObligation> obligations;
 
     @Inject
-    private ReportingHeaderSQLiteManager sqlite;
+    private JsonReportingHeaderDao jsonDao;
 
     private ReportObligationRepository() {
         this.obligations = new EnumMap<>(ReportObligationType.class);
@@ -147,18 +147,18 @@ public final class ReportObligationRepository implements EReportObligationReposi
     }
 
     private void _saveReportingAuthority(RelatedParty relatedParty) {
-        sqlite.save(relatedParty);
+        jsonDao.save(relatedParty);
     }
 
     private RelatedParty _getReportingAuthority() {
-        return Optional.ofNullable(sqlite.loadRelatedParty()).orElseGet(RelatedParty::new);
+        return Optional.ofNullable(jsonDao.loadRelatedParty()).orElseGet(RelatedParty::new);
     }
 
     private void _saveReportObligation(ReportObligationType type, ReportObligation obligation) {
-        sqlite.save(type, obligation);
+        jsonDao.save(type, obligation);
     }
 
     private ReportObligation _getReportObligation(ReportObligationType type) {
-        return Optional.ofNullable(sqlite.loadReportObligation(type)).orElseGet(ReportObligation::new);
+        return Optional.ofNullable(jsonDao.loadReportObligation(type)).orElseGet(ReportObligation::new);
     }
 }

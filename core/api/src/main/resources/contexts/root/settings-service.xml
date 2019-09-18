@@ -130,7 +130,7 @@
      </bean>
      <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.updateFeatureGeometry" />
-        <property name="title" value="Should this SOS create the featureOfInterest geometry from samplingGeometries?" />
+        <property name="title" value="Should this SOS update the featureOfInterest geometry with samplingGeometries geometry?" />
         <property name="description" value="Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation. Note: The geometries are added to the end of the LineString! Also if the new observation is between existing observations!" />
         <property name="order" value="22.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />

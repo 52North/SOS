@@ -26,24 +26,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite.entities;
+package org.n52.sos.config.json;
 
-import java.io.Serializable;
+import org.n52.shetland.aqd.ReportObligation;
+import org.n52.shetland.aqd.ReportObligationType;
+import org.n52.shetland.inspire.base2.RelatedParty;
 
-import javax.persistence.Entity;
+public interface ReportingHeaderDao {
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- */
-@Entity(name = "bindings")
-public class Binding extends Activatable<String, Binding> implements Serializable {
-    private static final long serialVersionUID = 157418894131180377L;
+    String REPORTING_HEADERS = "reportingHeaders";
 
-    public Binding() {
-        super(null);
-    }
+    String REPORTING_AUTHORITY_KEY = "reportingAuthority";
 
-    public Binding(String key) {
-        super(key);
-    }
+    String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
+
+    void save(RelatedParty relatedParty);
+
+    void save(ReportObligationType type, ReportObligation reportObligation);
+
+    RelatedParty loadRelatedParty();
+
+    ReportObligation loadReportObligation(ReportObligationType type);
+
 }

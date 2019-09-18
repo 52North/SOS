@@ -26,19 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.config.json;
 
 import javax.inject.Inject;
 
-import org.hibernate.Session;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.janmayen.Json;
-import org.n52.janmayen.function.ThrowingFunction;
+import org.n52.faroe.json.AbstractJsonDao;
 import org.n52.shetland.aqd.ReportObligation;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.inspire.base2.RelatedParty;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.config.sqlite.entities.JSONFragment;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.JsonDecoderKey;
@@ -50,10 +45,7 @@ import org.n52.svalbard.encode.json.JSONEncoderKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
-    protected static final String REPORTING_AUTHORITY_KEY = "reportingAuthority";
-
-    protected static final String REPORT_OBLIGATION_KEY_PREFIX = "reportObligation_";
+public class JsonReportingHeaderDao extends AbstractJsonDao implements ReportingHeaderDao {
 
     @Inject
     private DecoderRepository decoderRepository;
@@ -61,23 +53,29 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
     @Inject
     private EncoderRepository encoderRepository;
 
+    @Override
     public void save(RelatedParty relatedParty) {
+        configuration().writeLock().lock();
         try {
             save(REPORTING_AUTHORITY_KEY, relatedParty);
-        } catch (ConnectionProviderException ex) {
-            throw new RuntimeException(ex);
+        } finally {
+            configuration().writeLock().unlock();
         }
+        configuration().scheduleWrite();
     }
 
+    @Override
     public void save(ReportObligationType type, ReportObligation reportObligation) {
+        configuration().writeLock().lock();
         try {
             save(REPORT_OBLIGATION_KEY_PREFIX + type, reportObligation);
-        } catch (ConnectionProviderException ex) {
-            throw new RuntimeException(ex);
+        } finally {
+            configuration().writeLock().unlock();
         }
+        configuration().scheduleWrite();
     }
 
-    private void save(String key, Object o) throws ConnectionProviderException {
+    private void save(String key, Object o) {
         Encoder<JsonNode, Object> encoder = encoderRepository.getEncoder(new JSONEncoderKey(o.getClass()));
         JsonNode node;
         try {
@@ -86,59 +84,42 @@ public class ReportingHeaderSQLiteManager extends AbstractSQLiteDao {
             throw new RuntimeException(ex);
 
         }
-        String json = Json.print(node);
-        execute(session -> {
-            session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
-        });
+        getConfiguration().with(REPORTING_HEADERS).set(key, node);
+        configuration().writeNow();
     }
 
+    @Override
     public RelatedParty loadRelatedParty() {
+        configuration().readLock().lock();
         try {
-            return throwingExecute(new LoadReportingAuthorityAction());
-        } catch (Exception ex) {
+            Decoder<RelatedParty, JsonNode> decoder =
+                    decoderRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
+            JsonNode node = load(REPORTING_AUTHORITY_KEY);
+            return node == null || node.isMissingNode()  ? null :  decoder.decode(node);
+        } catch (DecodingException ex) {
             throw new RuntimeException(ex);
+        } finally {
+            configuration().readLock().unlock();
         }
     }
 
+    @Override
     public ReportObligation loadReportObligation(ReportObligationType type) {
+        configuration().readLock().lock();
         try {
-            return throwingExecute(
-                    new LoadJSONFragmentAction<>(REPORT_OBLIGATION_KEY_PREFIX + type, ReportObligation.class));
-        } catch (Exception ex) {
+            Decoder<ReportObligation, JsonNode> decoder =
+                    decoderRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
+            JsonNode node = load(REPORT_OBLIGATION_KEY_PREFIX + type);
+            return node == null || node.isMissingNode() ? null : decoder.decode(node);
+        } catch (DecodingException ex) {
             throw new RuntimeException(ex);
+        } finally {
+            configuration().readLock().unlock();
         }
     }
 
-    private class LoadReportingAuthorityAction extends LoadJSONFragmentAction<RelatedParty> {
-
-        LoadReportingAuthorityAction() {
-            super(REPORTING_AUTHORITY_KEY, RelatedParty.class);
-        }
-
+    private JsonNode load(String key) {
+        return getConfiguration().path(key);
     }
 
-    private class LoadJSONFragmentAction<T> implements ThrowingFunction<Session, T, Exception> {
-
-        private final String key;
-
-        private final Class<T> type;
-
-        LoadJSONFragmentAction(String key, Class<T> type) {
-            this.key = key;
-            this.type = type;
-        }
-
-        @Override
-        public T apply(Session session) throws OwsExceptionReport, DecodingException {
-            JSONFragment entity = (JSONFragment) session.get(JSONFragment.class, this.key);
-            return entity == null ? null : decode(entity);
-        }
-
-        protected T decode(JSONFragment entity) throws OwsExceptionReport, DecodingException {
-            Decoder<T, JsonNode> decoder = decoderRepository.getDecoder(new JsonDecoderKey(type));
-            JsonNode node = Json.loadString(entity.getJSON());
-            return decoder.decode(node);
-        }
-
-    }
 }

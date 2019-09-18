@@ -49,11 +49,19 @@ public abstract class AbstractProcedureDescriptionGeneratorFactoryRepository<K, 
 
     private final Map<K, Producer<C>> factories = Maps.newHashMap();
 
-    @Inject
     private Optional<Collection<C>> components = Optional.of(Collections.emptyList());
 
-    @Inject
     private Optional<Collection<F>> componentFactories = Optional.of(Collections.emptyList());
+
+    @Inject
+    public void setComponentFactories(Optional<Collection<F>> componentFactories) {
+        this.componentFactories = componentFactories;
+    }
+
+    @Inject
+    public void setComponents(Optional<Collection<C>> components) {
+        this.components = components;
+    }
 
     @Override
     public void init() {

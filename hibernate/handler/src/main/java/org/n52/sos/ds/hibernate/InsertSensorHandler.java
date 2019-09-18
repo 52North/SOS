@@ -59,6 +59,7 @@ import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.dataset.ValueType;
@@ -486,7 +487,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ProcedureEntity.class);
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     private synchronized DaoFactory getDaoFactory() {

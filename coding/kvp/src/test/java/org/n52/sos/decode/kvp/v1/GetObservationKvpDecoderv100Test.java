@@ -36,7 +36,11 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
@@ -74,11 +78,16 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
 
     private static final String EMPTY_STRING = "";
 
+    private static final int EPSG_WGS84 = 4326;
+
     private GetObservationKvpDecoderv100 decoder;
 
     @Before
     public void setUp() {
         this.decoder = new GetObservationKvpDecoderv100();
+        this.decoder.setSrsUrlNamePrefix(OGCConstants.URN_DEF_CRS_EPSG);
+        this.decoder.setSrsUrnNamePrefix(OGCConstants.URL_DEF_CRS_EPSG);
+        this.decoder.setStorageEPSG(EPSG_WGS84);
     }
 
     @Test
@@ -117,30 +126,25 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         Assert.assertThat(timePeriod.getEndIndet(), CoreMatchers.nullValue());
     }
 
-    // TODO: This fails without a Configurator loaded. Research how to set this
-    // up for a test.
-    // @Test
-    // public void spatialFilter() throws DecodingException {
-    // Map<String, String> map = createMap(SosConstants.SOS,
-    // Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
-    // OBSERVED_PROPERTY, RESPONSE_FORMAT);
-    // map.put(SosConstants.GetObservationParams.featureOfInterest.name(),
-    // SPATIAL_FILTER);
-    // GetObservationRequest req = decoder.decode(map);
-    // Assert.assertThat(req.getSpatialFilter().getSrid(), CoreMatchers.is(Constants.EPSG_WGS84));
-    // Assert.assertThat(req.getSpatialFilter().getOperator(),
-    // CoreMatchers.is(SpatialOperator.BBOX));
-    // Assert.assertThat(req.getSpatialFilter().getValueReference(),
-    // CoreMatchers.is(SPATIAL_FILTER_VALUE_REFERENCE));
-    // Assert.assertThat(req.getSpatialFilter().getGeometry().getSRID(), CoreMatchers.is(Constants.EPSG_WGS84));
-    // Assert.assertThat(req.getSpatialFilter().getGeometry(),
-    // CoreMatchers.instanceOf(Polygon.class));
-    // Polygon polygon = (Polygon) req.getSpatialFilter().getGeometry();
-    // Assert.assertThat(polygon.getExteriorRing().getPointN(0).getX(), CoreMatchers.is(0.0));
-    // Assert.assertThat(polygon.getExteriorRing().getPointN(0).getY(), CoreMatchers.is(0.0));
-    // Assert.assertThat(polygon.getExteriorRing().getPointN(2).getX(), CoreMatchers.is(60.0));
-    // Assert.assertThat(polygon.getExteriorRing().getPointN(2).getY(), CoreMatchers.is(60.0));
-    // }
+    @Test
+    public void spatialFilter() throws DecodingException {
+        Map<String, String> map = createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
+                OBSERVED_PROPERTY, RESPONSE_FORMAT);
+        map.put(SosConstants.GetObservationParams.featureOfInterest.name(), SPATIAL_FILTER);
+        GetObservationRequest req = decoder.decode(map);
+        Assert.assertThat(req.getSpatialFilter().getSrid(), CoreMatchers.is(EPSG_WGS84));
+        Assert.assertThat(req.getSpatialFilter().getOperator(), CoreMatchers.is(SpatialOperator.BBOX));
+        Assert.assertThat(req.getSpatialFilter().getValueReference(), CoreMatchers.is(SPATIAL_FILTER_VALUE_REFERENCE));
+        Assert.assertThat(req.getSpatialFilter().getGeometry().getSRID(), CoreMatchers.is(EPSG_WGS84));
+        Assert.assertThat(req.getSpatialFilter().getGeometry().isGeometry(), CoreMatchers.is(true));
+        Geometry geometry = req.getSpatialFilter().getGeometry().getGeometry().get();
+        Assert.assertThat(geometry, CoreMatchers.instanceOf(Polygon.class));
+        Polygon polygon = (Polygon) geometry;
+        Assert.assertThat(polygon.getExteriorRing().getPointN(0).getX(), CoreMatchers.is(0.0));
+        Assert.assertThat(polygon.getExteriorRing().getPointN(0).getY(), CoreMatchers.is(0.0));
+        Assert.assertThat(polygon.getExteriorRing().getPointN(2).getX(), CoreMatchers.is(60.0));
+        Assert.assertThat(polygon.getExteriorRing().getPointN(2).getY(), CoreMatchers.is(60.0));
+    }
 
     @Test(expected = DecodingException.class)
     public void missingResponse() throws DecodingException {

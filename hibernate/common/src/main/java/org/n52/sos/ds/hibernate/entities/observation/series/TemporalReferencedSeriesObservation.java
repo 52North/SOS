@@ -45,6 +45,18 @@ public class TemporalReferencedSeriesObservation
     private static final long serialVersionUID = -6266104149753313552L;
 
     private Series series;
+    
+    private long seriesid;
+    
+    @Override
+    public long getSeriesId() {
+        return seriesid;
+    }
+    
+    @Override
+    public void setSeriesId(long seriesid) {
+        this.seriesid =  seriesid;
+    }
 
     @Override
     public Series getSeries() {

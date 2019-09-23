@@ -42,7 +42,18 @@ public abstract class AbstractValuedSeriesObservation<T>
 
     private static final long serialVersionUID = -2757686338936995366L;
     private Series series;
-
+    private long seriesid;
+    
+    @Override
+    public long getSeriesId() {
+        return seriesid;
+    }
+    
+    @Override
+    public void setSeriesId(long seriesid) {
+        this.seriesid =  seriesid;
+    }
+    
     @Override
     public Series getSeries() {
         return series;

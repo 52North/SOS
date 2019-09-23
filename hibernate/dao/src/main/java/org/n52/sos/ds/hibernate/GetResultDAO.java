@@ -35,6 +35,7 @@ import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -233,11 +234,13 @@ public class GetResultDAO extends AbstractGetResultDAO {
         addSpatialFilteringProfileRestrictions(c, request, session);
         addParentChildRestriction(c);
 
-        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(procedure, request.getObservedProperty(), request.getOffering(), featureIdentifiers, session);
+        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(procedure,
+                request.getObservedProperty(), request.getOffering(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(AbstractSeriesObservation.SERIES, series));
+            c.add(Restrictions.in(AbstractSeriesObservation.SERIES_ID,
+                    series.stream().map(Series::getSeriesId).collect(Collectors.toSet())));
         }
         
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {

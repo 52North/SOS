@@ -45,8 +45,8 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
@@ -295,7 +295,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session, logArgs);
-        c.add(Restrictions.eq("s." + Series.ID, series));
+        c.add(Restrictions.eq(AbstractSeriesObservation.SERIES_ID, series));
         return c.setReadOnly(true);
     }
     
@@ -319,7 +319,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session, logArgs);
-        c.add(Restrictions.in("s." + Series.ID, series));
+        c.add(Restrictions.in(AbstractSeriesObservation.SERIES_ID, series));
         return c.setReadOnly(true);
     }
     
@@ -342,7 +342,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getScrollableSeriesValueCriteriaFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session, logArgs);
-        c.add(Restrictions.eq("s." + Series.ID, series));
+        c.add(Restrictions.eq(AbstractSeriesObservation.SERIES_ID, series));
         if (request instanceof GetObservationRequest) {
             checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, null, session, logArgs);
         }
@@ -368,7 +368,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getScrollableSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session, logArgs);
-        c.add(Restrictions.in("s." + Series.ID, series));
+        c.add(Restrictions.in(AbstractSeriesObservation.SERIES_ID, series));
         if (request instanceof GetObservationRequest) {
             checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, null, session, logArgs);
         }
@@ -377,7 +377,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     
     private Criteria getDefaultSeriesValueCriteriaFor(AbstractObservationRequest request,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
+        final Criteria c = getDefaultObservationCriteria(session);
         c.addOrder(Order.asc(getOrderColumn(request)));
         logArgs.append("request, series");
         if (request instanceof GetObservationRequest) {

@@ -53,6 +53,18 @@ public class ContextualReferencedSeriesObservation
 
     private static final long serialVersionUID = -1173799550126124321L;
     private Series series;
+    private long seriesid;
+    
+    @Override
+    public long getSeriesId() {
+        return seriesid;
+    }
+    
+    @Override
+    public void setSeriesId(long seriesid) {
+        this.seriesid =  seriesid;
+    }
+    
 
     @Override
     public AbstractFeatureOfInterest getFeatureOfInterest() {

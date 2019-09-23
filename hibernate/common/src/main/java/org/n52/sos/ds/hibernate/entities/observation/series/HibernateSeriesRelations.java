@@ -47,6 +47,12 @@ public interface HibernateSeriesRelations extends HibernateRelations {
     interface HasSeries {
 
         String SERIES = "series";
+        
+        String SERIES_ID = "seriesId";
+        
+        long getSeriesId();
+
+        void setSeriesId(long seriesId);
 
         /**
          * Get the series

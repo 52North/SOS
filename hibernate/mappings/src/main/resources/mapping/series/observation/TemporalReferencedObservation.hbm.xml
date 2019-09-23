@@ -23,6 +23,14 @@
                    <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
                </column>
         </many-to-one>
+        <property name="seriesId"
+                  type="long" 
+                  insert="false"
+                  update="false">
+            <column name="seriesId"
+                    not-null="true" >
+            </column>
+        </property>
         <property name="phenomenonTimeStart"
                   type="timestamp"
                   insert="false"

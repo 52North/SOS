@@ -63,6 +63,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -340,38 +341,72 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         }
         return null;
     }
+    
 
     /**
      * Create SensorML Position from Hibernate procedure entity
      *
      * @param procedure
      *            Hibernate procedure entity
+     * @param b 
      *
      * @return SensorML Position
      */
     protected SmlPosition createPosition(Procedure procedure) {
+        return createPosition(procedure, false);
+    }
+
+    /**
+     * Create SensorML Position from Hibernate procedure entity
+     *
+     * @param procedure
+     *            Hibernate procedure entity
+     * @param b 
+     *
+     * @return SensorML Position
+     */
+    protected SmlPosition createPosition(Procedure procedure, boolean vector) {
         SmlPosition position = new SmlPosition();
         position.setName(POSITION_NAME);
         position.setFixed(true);
         int srid = GeometryHandler.getInstance().getDefaultResponseEPSG();
         if (procedure.isSetLongLat()) {
             // 8.1 set latlong position
-            position.setPosition(createCoordinatesForPosition(procedure.getLongitude(), procedure.getLatitude(),
-                    procedure.getAltitude()));
-
+            if (vector) {
+                position.setVector(
+                        createVectorForPosition(
+                                createCoordinatesForPosition(procedure.getLongitude(), procedure.getLatitude(),
+                                        procedure.getAltitude()),
+                                (getServiceConfig().getSrsNamePrefixSosV2() + srid)));
+            } else {
+                position.setPosition(createCoordinatesForPosition(procedure.getLongitude(), procedure.getLatitude(),
+                        procedure.getAltitude()));
+            }
         } else if (procedure.isSetGeometry()) {
             // 8.2 set position from geometry
             if (procedure.getGeom().getSRID() > 0) {
                 srid = procedure.getGeom().getSRID();
             }
             final Coordinate c = procedure.getGeom().getCoordinate();
-            position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
+            if (vector) {
+                position.setVector(createVectorForPosition(createCoordinatesForPosition(c.y, c.x, c.z),
+                        (getServiceConfig().getSrsNamePrefixSosV2() + srid)));
+            } else {
+                position.setPosition(createCoordinatesForPosition(c.y, c.x, c.z));
+            }
         }
         if (procedure.isSetSrid()) {
             srid = procedure.getSrid();
         }
         position.setReferenceFrame(getServiceConfig().getSrsNamePrefixSosV2() + srid);
         return position;
+    }
+
+    private SweVector createVectorForPosition(List<SweCoordinate<?>> coordinates, String referenceFrame) {
+        SweVector vector = new SweVector(coordinates);
+        vector.setDefinition(POSITION_NAME);
+        vector.setReferenceFrame(referenceFrame);
+        return vector;
     }
 
     /**

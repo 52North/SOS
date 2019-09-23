@@ -109,18 +109,18 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
                 return longName.get().getText();
             }
         }
-        return getIdentifier();
+        return getName() != null && !getName().isEmpty() ? getName() : getIdentifier();
     }
 
     private String getShortName() {
         if (isSetI18NProcedure()) {
-            Optional<LocalizedString> longName = i18n.getShortName()
+            Optional<LocalizedString> shortName = i18n.getShortName()
                     .getLocalizationOrDefault(getLocale());
-            if (longName.isPresent()) {
-                return longName.get().getText();
+            if (shortName.isPresent()) {
+                return shortName.get().getText();
             }
         }
-        return getIdentifier();
+        return getName() != null && !getName().isEmpty() ? getName() : getIdentifier();
     }
 
     private SmlIdentifier createUniqueId() {

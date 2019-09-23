@@ -49,6 +49,7 @@ import com.google.common.collect.Lists;
  */
 public class ProcedureDescriptionEnrichments {
     private String identifier;
+    private String name;
     private SosProcedureDescription description;
     private String version;
     private String procedureDescriptionFormat;
@@ -59,12 +60,16 @@ public class ProcedureDescriptionEnrichments {
     private Locale language = ServiceConfiguration.getInstance().getDefaultLanguage();
     private String typeOfIdentifier;
     private String typeOfFormat;
-
     private ProcedureDescriptionEnrichments() {
     }
 
     public ProcedureDescriptionEnrichments setIdentifier(String identifier) {
         this.identifier = identifier;
+        return this;
+    }
+
+    public ProcedureDescriptionEnrichments setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -199,6 +204,7 @@ public class ProcedureDescriptionEnrichments {
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)
+                .setName(name)
                 .setVersion(version)
                 .setLocale(language)
                 .setSession(session);

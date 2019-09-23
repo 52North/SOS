@@ -100,6 +100,7 @@ public class HibernateProcedureDescriptionGeneratorFactorySml20 implements Hiber
             PhysicalComponent physicalComponent = new PhysicalComponent();
             setIdentifier(physicalComponent, procedure);
             setCommonValues(procedure, physicalComponent, session);
+            physicalComponent.setPosition(createPosition(procedure, true));
             return physicalComponent;
         }
 

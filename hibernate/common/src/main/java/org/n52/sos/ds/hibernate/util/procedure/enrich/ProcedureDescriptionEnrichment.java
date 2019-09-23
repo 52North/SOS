@@ -56,9 +56,9 @@ public abstract class ProcedureDescriptionEnrichment {
     private SosProcedureDescription description;
     private String version;
     private String identifier;
+    private String name;
     private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
     private Session session;
-
     protected ProcedureDescriptionSettings procedureSettings() {
         return ProcedureDescriptionSettings.getInstance();
     }
@@ -110,6 +110,15 @@ public abstract class ProcedureDescriptionEnrichment {
 
     public ProcedureDescriptionEnrichment setIdentifier(String identifier) {
         this.identifier = checkNotNull(identifier);
+        return this;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public ProcedureDescriptionEnrichment setName(String name) {
+        this.name = name;
         return this;
     }
 

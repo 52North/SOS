@@ -95,6 +95,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
@@ -1034,6 +1035,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             } else if (abstractDataComponent instanceof SweDataArray) {
                 pupt.addNewDataArray1().set(encodeObjectToXmlSwe20(abstractDataComponent));
             }
+        } else if (position.isSetPosition()) {
+            SweVector vector = new SweVector(position.getPosition());
+            vector.setReferenceFrame(position.isSetReferenceFrame() ? position.getReferenceFrame() : OGCConstants.URL_DEF_CRS_EPSG + 4326);
+            pupt.addNewVector().set(encodeObjectToXmlSwe20(vector));
         }
     }
 

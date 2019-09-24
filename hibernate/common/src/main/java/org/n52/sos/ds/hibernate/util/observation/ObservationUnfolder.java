@@ -546,7 +546,9 @@ public class ObservationUnfolder {
     private Value<?> convertToProfileValue(Value<?> value, GeometryHolder samplingGeometry, Time phenomenonTime,
             ParameterHolder parameterHolder) throws OwsExceptionReport {
         ProfileLevel profileLevel = new ProfileLevel();
-        profileLevel.setLocation(samplingGeometry.getGeometry());
+        if (samplingGeometry.hasGeometry()) {
+            profileLevel.setLocation(samplingGeometry.getGeometry());
+        }
         profileLevel.setPhenomenonTime(phenomenonTime);
         if (value instanceof ComplexValue) {
             for (SweField field : ((ComplexValue) value).getValue().getFields()) {

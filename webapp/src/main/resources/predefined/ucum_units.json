@@ -1,0 +1,1557 @@
+{
+	"type": "UNIT",
+	"name": "ucum",
+	"description": "Predefined unit data for UCUM!",
+	"values": [
+		{
+			"symbol": "m",
+			"name": "meter",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "s",
+			"name": "second",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "g",
+			"name": "gram",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "rad",
+			"name": "radian",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "K",
+			"name": "kelvin",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "C",
+			"name": "coulomb",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cd",
+			"name": "candela",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "10*",
+			"name": "the number ten for arbitrary powers",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "10^",
+			"name": "the number ten for arbitrary powers",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pi",
+			"name": "the number pi",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "%",
+			"name": "percent",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ppth",
+			"name": "parts per thousand",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ppm",
+			"name": "parts per million",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ppb",
+			"name": "parts per billion",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pptr",
+			"name": "parts per trillion",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mol",
+			"name": "mole",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sr",
+			"name": "steradian",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Hz",
+			"name": "hertz",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "N",
+			"name": "newton",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Pa",
+			"name": "pascal",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "J",
+			"name": "joule",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "W",
+			"name": "watt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "A",
+			"name": "ampère",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "V",
+			"name": "volt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "F",
+			"name": "farad",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Ohm",
+			"name": "ohm",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "S",
+			"name": "siemens",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Wb",
+			"name": "weber",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Cel",
+			"name": "degree Celsius",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "T",
+			"name": "tesla",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "H",
+			"name": "henry",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lm",
+			"name": "lumen",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lx",
+			"name": "lux",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Bq",
+			"name": "becquerel",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Gy",
+			"name": "gray",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Sv",
+			"name": "sievert",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gon",
+			"name": "gon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "deg",
+			"name": "degree",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "'",
+			"name": "minute",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "''",
+			"name": "second",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "l",
+			"name": "liter",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "L",
+			"name": "liter",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ar",
+			"name": "are",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "min",
+			"name": "minute",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "h",
+			"name": "hour",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "d",
+			"name": "day",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "a_t",
+			"name": "tropical year",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "a_j",
+			"name": "mean Julian year",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "a_g",
+			"name": "mean Gregorian year",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "a",
+			"name": "year",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "wk",
+			"name": "week",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mo_s",
+			"name": "synodal month",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mo_j",
+			"name": "mean Julian month",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mo_g",
+			"name": "mean Gregorian month",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mo",
+			"name": "month",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "t",
+			"name": "tonne",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bar",
+			"name": "bar",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "u",
+			"name": "unified atomic mass unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "eV",
+			"name": "electronvolt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "AU",
+			"name": "astronomic unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pc",
+			"name": "parsec",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "c",
+			"name": "velocity of light",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "h",
+			"name": "Planck constant",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "k",
+			"name": "Boltzmann constant",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "eps_0",
+			"name": "permittivity of vacuum",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mu_0",
+			"name": "permeability of vacuum",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "e",
+			"name": "elementary charge",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "m_e",
+			"name": "electron mass",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "m_p",
+			"name": "proton mass",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "G",
+			"name": "Newtonian constant of gravitation",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "g",
+			"name": "standard acceleration of free fall",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "atm",
+			"name": "standard atmosphere",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ly",
+			"name": "light-year",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gf",
+			"name": "gram-force",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lbf_av",
+			"name": "pound force",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Ky",
+			"name": "Kayser",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Gal",
+			"name": "Gal",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "dyn",
+			"name": "dyne",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "erg",
+			"name": "erg",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "P",
+			"name": "Poise",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Bi",
+			"name": "Biot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "St",
+			"name": "Stokes",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Mx",
+			"name": "Maxwell",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "G",
+			"name": "Gauss",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Oe",
+			"name": "Oersted",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Gb",
+			"name": "Gilbert",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sb",
+			"name": "stilb",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Lmb",
+			"name": "Lambert",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ph",
+			"name": "phot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Ci",
+			"name": "Curie",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "R",
+			"name": "Roentgen",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "RAD",
+			"name": "radiation absorbed dose",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "REM",
+			"name": "radiation equivalent man",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "in_i",
+			"name": "inch",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ft_i",
+			"name": "foot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "yd_i",
+			"name": "yard",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mi_i",
+			"name": "mile",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "fth_i",
+			"name": "fathom",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "nmi_i",
+			"name": "nautical mile",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kn_i",
+			"name": "knot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sin_i",
+			"name": "square inch",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sft_i",
+			"name": "square foot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "syd_i",
+			"name": "square yard",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cin_i",
+			"name": "cubic inch",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cft_i",
+			"name": "cubic foot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cyd_i",
+			"name": "cubic yard",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bf_i",
+			"name": "board foot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cr_i",
+			"name": "cord",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mil_i",
+			"name": "mil",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cml_i",
+			"name": "circular mil",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hd_i",
+			"name": "hand",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ft_us",
+			"name": "foot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "yd_us",
+			"name": "yard",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "in_us",
+			"name": "inch",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "rd_us",
+			"name": "rod",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ch_us",
+			"name": "Gunter's chain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lk_us",
+			"name": "link for Gunter's chain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "rch_us",
+			"name": "Ramden's chain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "rlk_us",
+			"name": "link for Ramden's chain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "fth_us",
+			"name": "fathom",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "fur_us",
+			"name": "furlong",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mi_us",
+			"name": "mile",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "acr_us",
+			"name": "acre",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "srd_us",
+			"name": "square rod",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "smi_us",
+			"name": "square mile",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sct",
+			"name": "section",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "twp",
+			"name": "township",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mil_us",
+			"name": "mil",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "in_br",
+			"name": "inch",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ft_br",
+			"name": "foot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "rd_br",
+			"name": "rod",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ch_br",
+			"name": "Gunter's chain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lk_br",
+			"name": "link for Gunter's chain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "fth_br",
+			"name": "fathom",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pc_br",
+			"name": "pace",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "yd_br",
+			"name": "yard",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mi_br",
+			"name": "mile",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "nmi_br",
+			"name": "nautical mile",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kn_br",
+			"name": "knot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "acr_br",
+			"name": "acre",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gal_us",
+			"name": "Queen Anne's wine gallon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bbl_us",
+			"name": "barrel",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "qt_us",
+			"name": "quart",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pt_us",
+			"name": "pint",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gil_us",
+			"name": "gill",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "foz_us",
+			"name": "fluid ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "fdr_us",
+			"name": "fluid dram",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "min_us",
+			"name": "minim",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "crd_us",
+			"name": "cord",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bu_us",
+			"name": "bushel",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gal_wi",
+			"name": "historical winchester gallon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pk_us",
+			"name": "peck",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "dqt_us",
+			"name": "dry quart",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "dpt_us",
+			"name": "dry pint",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "tbs_us",
+			"name": "tablespoon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "tsp_us",
+			"name": "teaspoon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cup_us",
+			"name": "cup",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "foz_m",
+			"name": "metric fluid ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cup_m",
+			"name": "metric cup",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "tsp_m",
+			"name": "metric teaspoon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "tbs_m",
+			"name": "metric tablespoon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gal_br",
+			"name": "gallon",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pk_br",
+			"name": "peck",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bu_br",
+			"name": "bushel",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "qt_br",
+			"name": "quart",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pt_br",
+			"name": "pint",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gil_br",
+			"name": "gill",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "foz_br",
+			"name": "fluid ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "fdr_br",
+			"name": "fluid dram",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "min_br",
+			"name": "minim",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "gr",
+			"name": "grain",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lb_av",
+			"name": "pound",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "oz_av",
+			"name": "ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "dr_av",
+			"name": "dram",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "scwt_av",
+			"name": "short hundredweight",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lcwt_av",
+			"name": "long hunderdweight",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ston_av",
+			"name": "short ton",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lton_av",
+			"name": "long ton",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "stone_av",
+			"name": "stone",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pwt_tr",
+			"name": "pennyweight",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "oz_tr",
+			"name": "ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lb_tr",
+			"name": "pound",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sc_ap",
+			"name": "scruple",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "dr_ap",
+			"name": "dram",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "oz_ap",
+			"name": "ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lb_ap",
+			"name": "pound",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "oz_m",
+			"name": "metric ounce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "lne",
+			"name": "line",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pnt",
+			"name": "point",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pca",
+			"name": "pica",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pnt_pr",
+			"name": "Printer's point",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pca_pr",
+			"name": "Printer's pica",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pied",
+			"name": "pied",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pouce",
+			"name": "pouce",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ligne",
+			"name": "ligne",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "didot",
+			"name": "didot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cicero",
+			"name": "cicero",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "degF",
+			"name": "degree Fahrenheit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "degR",
+			"name": "degree Rankine",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "degRe",
+			"name": "degree Réaumur",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cal_15",
+			"name": "calorie at 15 °C",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cal_20",
+			"name": "calorie at 20 °C",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cal_m",
+			"name": "mean calorie",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cal_IT",
+			"name": "international table calorie",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cal_th",
+			"name": "thermochemical calorie",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "cal",
+			"name": "calorie",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Cal",
+			"name": "nutrition label Calories",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu_39",
+			"name": "British thermal unit at 39 °F",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu_59",
+			"name": "British thermal unit at 59 °F",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu_60",
+			"name": "British thermal unit at 60 °F",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu_m",
+			"name": "mean British thermal unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu_IT",
+			"name": "international table British thermal unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu_th",
+			"name": "thermochemical British thermal unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Btu",
+			"name": "British thermal unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "HP",
+			"name": "horsepower",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "tex",
+			"name": "tex",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "den",
+			"name": "Denier",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mH2O",
+			"name": "meter of water column",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mHg",
+			"name": "meter of mercury column",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "in_i'H2O",
+			"name": "inch of water column",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "in_i'Hg",
+			"name": "inch of mercury column",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "PRU",
+			"name": "peripheral vascular resistance unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "wood'U",
+			"name": "Wood unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "diop",
+			"name": "diopter",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "p'diop",
+			"name": "prism diopter",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "%slope",
+			"name": "percent of slope",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mesh_i",
+			"name": "mesh",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Ch",
+			"name": "Charrière",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "drp",
+			"name": "drop",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hnsf'U",
+			"name": "Hounsfield unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "MET",
+			"name": "metabolic equivalent",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp'_X",
+			"name": "homeopathic potency of decimal series (retired)",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp'_C",
+			"name": "homeopathic potency of centesimal series (retired)",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp'_M",
+			"name": "homeopathic potency of millesimal series (retired)",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp'_Q",
+			"name": "homeopathic potency of quintamillesimal series (retired)",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp_X",
+			"name": "homeopathic potency of decimal hahnemannian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp_C",
+			"name": "homeopathic potency of centesimal hahnemannian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp_M",
+			"name": "homeopathic potency of millesimal hahnemannian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "hp_Q",
+			"name": "homeopathic potency of quintamillesimal hahnemannian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kp_X",
+			"name": "homeopathic potency of decimal korsakovian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kp_C",
+			"name": "homeopathic potency of centesimal korsakovian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kp_M",
+			"name": "homeopathic potency of millesimal korsakovian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kp_Q",
+			"name": "homeopathic potency of quintamillesimal korsakovian series",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "eq",
+			"name": "equivalents",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "osm",
+			"name": "osmole",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "pH",
+			"name": "pH",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "g%",
+			"name": "gram percent",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "S",
+			"name": "Svedberg unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "HPF",
+			"name": "high power field",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "LPF",
+			"name": "low power field",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "kat",
+			"name": "katal",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "U",
+			"name": "Unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "iU",
+			"name": "international unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "IU",
+			"name": "international unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "arb'U",
+			"name": "arbitary unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "USP'U",
+			"name": "United States Pharmacopeia unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "GPL'U",
+			"name": "GPL unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "MPL'U",
+			"name": "MPL unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "APL'U",
+			"name": "APL unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "beth'U",
+			"name": "Bethesda unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "anti'Xa'U",
+			"name": "anti factor Xa unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "todd'U",
+			"name": "Todd unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "dye'U",
+			"name": "Dye unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "smgy'U",
+			"name": "Somogyi unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bdsk'U",
+			"name": "Bodansky unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ka'U",
+			"name": "King-Armstrong unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "knk'U",
+			"name": "Kunkel unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mclg'U",
+			"name": "Mac Lagan unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "tb'U",
+			"name": "tuberculin unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "CCID_50",
+			"name": "50% cell culture infectious dose",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "TCID_50",
+			"name": "50% tissue culture infectious dose",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "EID_50",
+			"name": "50% embryo infectious dose",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "PFU",
+			"name": "plaque forming units",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "FFU",
+			"name": "focus forming units",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "CFU",
+			"name": "colony forming units",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "IR",
+			"name": "index of reactivity",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BAU",
+			"name": "bioequivalent allergen unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "AU",
+			"name": "allergen unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Amb'a'1'U",
+			"name": "allergen unit for Ambrosia artemisiifolia",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "PNU",
+			"name": "protein nitrogen unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Lf",
+			"name": "Limit of flocculation",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "D'ag'U",
+			"name": "D-antigen unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "FEU",
+			"name": "fibrinogen equivalent unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "ELU",
+			"name": "ELISA unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "EU",
+			"name": "Ehrlich unit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Np",
+			"name": "neper",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "B",
+			"name": "bel",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BSPL",
+			"name": "bel sound pressure",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BV",
+			"name": "bel volt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BmV",
+			"name": "bel millivolt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BuV",
+			"name": "bel microvolt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "B10.nV",
+			"name": "bel 10 nanovolt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BW",
+			"name": "bel watt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "BkW",
+			"name": "bel kilowatt",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "st",
+			"name": "stere",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Ao",
+			"name": "Ångström",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "b",
+			"name": "barn",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "att",
+			"name": "technical atmosphere",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "mho",
+			"name": "mho",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "psi",
+			"name": "pound per sqare inch",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "circ",
+			"name": "circle",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "sph",
+			"name": "spere",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "car_m",
+			"name": "metric carat",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "car_Au",
+			"name": "carat of gold alloys",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "smoot",
+			"name": "Smoot",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "m/s2/Hz^(1/2)",
+			"name": "meter per square seconds per square root of hertz",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bit_s",
+			"name": "bit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "bit",
+			"name": "bit",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "By",
+			"name": "byte",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		},
+		{
+			"symbol": "Bd",
+			"name": "baud",
+			"link": "http://unitsofmeasure.org/ucum-essence.xml"
+		}
+	]
+}

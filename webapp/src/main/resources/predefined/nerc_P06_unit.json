@@ -1,0 +1,1822 @@
+{
+	"type": "UNIT",
+	"name": "nerc_P06",
+	"description": "Predefined unit data for vocab.nerc.ac.uk P06 collection",
+	"values": [
+		{
+			"symbol": "degC.kg/m^2",
+			"name": "Degrees Celsius kilogram per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DKM2/"
+		},
+		{
+			"symbol": "us",
+			"name": "Microseconds",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/USEC/"
+		},
+		{
+			"symbol": "%/wk",
+			"name": "Percent per week",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPCW/"
+		},
+		{
+			"symbol": "/m",
+			"name": "per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPRM/"
+		},
+		{
+			"symbol": "ml",
+			"name": "Millilitres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/VVML/"
+		},
+		{
+			"symbol": "TU",
+			"name": "Tritium units (10**18H/Tr)",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUTU/"
+		},
+		{
+			"symbol": "mg/m^3/h",
+			"name": "Milligrams per cubic metre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGLH/"
+		},
+		{
+			"symbol": "ppt/h",
+			"name": "Parts per thousand per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPTH/"
+		},
+		{
+			"symbol": "Sv",
+			"name": "Sverdrup",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/USVD/"
+		},
+		{
+			"symbol": "ppb",
+			"name": "Parts per billion",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPPB/"
+		},
+		{
+			"symbol": "m/yr",
+			"name": "Metres per year",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MPYR/"
+		},
+		{
+			"symbol": "kg/km^2",
+			"name": "Kilograms per square kilometre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGAK/"
+		},
+		{
+			"symbol": "ml/min",
+			"name": "Millilitres per minute",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/CCPM/"
+		},
+		{
+			"symbol": "mg/m^2/inc",
+			"name": "Milligrams per square metre per incubation duration",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UM2D/"
+		},
+		{
+			"symbol": "ng/d",
+			"name": "Nanograms per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNID/"
+		},
+		{
+			"symbol": "cm^2",
+			"name": "Square centimetres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SQCM/"
+		},
+		{
+			"symbol": "#/ind/h",
+			"name": "Number per individual per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNAH/"
+		},
+		{
+			"symbol": "A^2/Q",
+			"name": "Angstrom squared per quantum",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UAQU/"
+		},
+		{
+			"symbol": "counts",
+			"name": "Counts",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCNT/"
+		},
+		{
+			"symbol": "/ms",
+			"name": "per millisecond",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PMSC/"
+		},
+		{
+			"symbol": "ug/kg",
+			"name": "Micrograms per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUKG/"
+		},
+		{
+			"symbol": "eV",
+			"name": "Electronvolts",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/EVLT/"
+		},
+		{
+			"symbol": "N/m^3",
+			"name": "Newtons per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NCUM/"
+		},
+		{
+			"symbol": "mol/m^2/s",
+			"name": "Moles per square metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2MS/"
+		},
+		{
+			"symbol": "um^3",
+			"name": "Cubic micrometres (microns)",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMCU/"
+		},
+		{
+			"symbol": "#/m^3",
+			"name": "Number per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPMM/"
+		},
+		{
+			"symbol": "%/m",
+			"name": "Percent per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPOP/"
+		},
+		{
+			"symbol": "min",
+			"name": "Minutes",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMIN/"
+		},
+		{
+			"symbol": "Myr",
+			"name": "Millions of years before present",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYMA/"
+		},
+		{
+			"symbol": "#/g",
+			"name": "Number per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNPG/"
+		},
+		{
+			"symbol": "uEquiv/l",
+			"name": "MicroEquivalents per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UEQL/"
+		},
+		{
+			"symbol": "h",
+			"name": "Hours",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UHOR/"
+		},
+		{
+			"symbol": "degC^2/s",
+			"name": "Degrees Celsius squared per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCSS/"
+		},
+		{
+			"symbol": "J",
+			"name": "Joule",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/JOUL/"
+		},
+		{
+			"symbol": "mmol/l",
+			"name": "Millimoles per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMPL/"
+		},
+		{
+			"symbol": "umol/l",
+			"name": "Micromoles per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPOX/"
+		},
+		{
+			"symbol": "mm/d",
+			"name": "Millimetres per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMPD/"
+		},
+		{
+			"symbol": "umol/l/d",
+			"name": "Micromoles per litre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMMD/"
+		},
+		{
+			"symbol": "uE/cm^2/h",
+			"name": "MicroEinsteins per square centimetre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UECH/"
+		},
+		{
+			"symbol": "mg/m^3/d",
+			"name": "Milligrams per cubic metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGDC/"
+		},
+		{
+			"symbol": "pH units",
+			"name": "pH units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUPH/"
+		},
+		{
+			"symbol": "K.m/s",
+			"name": "Kelvin metres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KMTS/"
+		},
+		{
+			"symbol": "mmol/m^2/d",
+			"name": "Millimoles per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMDX/"
+		},
+		{
+			"symbol": "uGal/m",
+			"name": "MicroGals per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGPM/"
+		},
+		{
+			"symbol": "nmol/m^2/d",
+			"name": "Nanomoles per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NSQD/"
+		},
+		{
+			"symbol": "mmol/m^3/d",
+			"name": "Millimoles per cubic metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MCMD/"
+		},
+		{
+			"symbol": "/m^2/s",
+			"name": "per square metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2S2/"
+		},
+		{
+			"symbol": "um^3/ind/h",
+			"name": "Cubic microns per individual per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNVH/"
+		},
+		{
+			"symbol": "mm",
+			"name": "Millimetres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UXMM/"
+		},
+		{
+			"symbol": "W/m^2/m/sr",
+			"name": "Watts per square metre per metre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WM2S/"
+		},
+		{
+			"symbol": "mol/m^2/s/sr",
+			"name": "Moles per square metre per second per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M3SR/"
+		},
+		{
+			"symbol": "arc_min",
+			"name": "Arc minutes",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UAMN/"
+		},
+		{
+			"symbol": "ml/l",
+			"name": "Millilitres per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMLL/"
+		},
+		{
+			"symbol": "ng/ind/min",
+			"name": "Nanograms per individual per minute",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNIM/"
+		},
+		{
+			"symbol": "mS/m",
+			"name": "MilliSiemens per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MSPM/"
+		},
+		{
+			"symbol": "m^2/s",
+			"name": "Square metres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SQMS/"
+		},
+		{
+			"symbol": "Bq/kg",
+			"name": "Becquerels per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UBQK/"
+		},
+		{
+			"symbol": "umol/m^3",
+			"name": "Micromoles per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/CMUM/"
+		},
+		{
+			"symbol": "nmol/umol/d",
+			"name": "Nanomoles per micromole per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NMMD/"
+		},
+		{
+			"symbol": "K",
+			"name": "Degrees Kelvin",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPKA/"
+		},
+		{
+			"symbol": "V*10^5",
+			"name": "Volts multiplied by 100000",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UVP5/"
+		},
+		{
+			"symbol": "Bytes",
+			"name": "Bytes",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/BYTE/"
+		},
+		{
+			"symbol": "pmol/l",
+			"name": "Picomoles per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPML/"
+		},
+		{
+			"symbol": "mW/m^2/nm/sr",
+			"name": "Milliwatts per square metre per nanometre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MWNS/"
+		},
+		{
+			"symbol": "mgC/mgChl/hr",
+			"name": "Milligrams of carbon per milligram of chlorophyll per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCCL/"
+		},
+		{
+			"symbol": "Pa.m",
+			"name": "Pascal metres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PAMT/"
+		},
+		{
+			"symbol": "BP",
+			"name": "Years before present",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYBP/"
+		},
+		{
+			"symbol": "kg/s",
+			"name": "Kilogram per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGPS/"
+		},
+		{
+			"symbol": "mol/gram/h",
+			"name": "Moles per gram per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MPGH/"
+		},
+		{
+			"symbol": "degC/yr",
+			"name": "Degrees Celsius per year",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DCPY/"
+		},
+		{
+			"symbol": "mg/l",
+			"name": "Milligrams per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMGL/"
+		},
+		{
+			"symbol": "pmol/m^2/d",
+			"name": "Picomoles per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPMD/"
+		},
+		{
+			"symbol": "#/nl",
+			"name": "Number per nanolitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCNL/"
+		},
+		{
+			"symbol": "Pa^2/s^2",
+			"name": "Pascal squared per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PPS2/"
+		},
+		{
+			"symbol": "cSt",
+			"name": "Centistokes",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCST/"
+		},
+		{
+			"symbol": "W.s/m^2",
+			"name": "Watt seconds per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WSMM/"
+		},
+		{
+			"symbol": "cm^2/s",
+			"name": "Square centimetres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCMS/"
+		},
+		{
+			"symbol": "m/s^2",
+			"name": "Metres per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MPS2/"
+		},
+		{
+			"symbol": "mm/min",
+			"name": "Millimetres per minute",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMMM/"
+		},
+		{
+			"symbol": "Unspec.",
+			"name": "Not specified",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/USPC/"
+		},
+		{
+			"symbol": "mW/cm^2/um/sr",
+			"name": "Milliwatts per square centimetre per micrometre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MWSR/"
+		},
+		{
+			"symbol": "/cm",
+			"name": "per centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPCM/"
+		},
+		{
+			"symbol": "g/cm^2/yr",
+			"name": "Grams per square centimetre per year",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/GQCY/"
+		},
+		{
+			"symbol": "ug/m^3/h",
+			"name": "Micrograms per cubic metre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGM3/"
+		},
+		{
+			"symbol": "msS/cm",
+			"name": "MilliSiemens per centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MSCM/"
+		},
+		{
+			"symbol": "nmol/l",
+			"name": "Nanomoles per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPNM/"
+		},
+		{
+			"symbol": "nmol/l/d",
+			"name": "Nanomoles per litre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNMD/"
+		},
+		{
+			"symbol": "d",
+			"name": "Days",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UTAA/"
+		},
+		{
+			"symbol": "N/m^2",
+			"name": "Newtons per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNSM/"
+		},
+		{
+			"symbol": "Pa/s",
+			"name": "Pascals per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PAPS/"
+		},
+		{
+			"symbol": "/m/nm",
+			"name": "per metre per nanometre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMNX/"
+		},
+		{
+			"symbol": "Bq.s/m^3",
+			"name": "Becquerels second per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/BSM3/"
+		},
+		{
+			"symbol": "#/ul",
+			"name": "Number per microlitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCUL/"
+		},
+		{
+			"symbol": "Knots",
+			"name": "Knots (nautical miles per hour)",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UKNT/"
+		},
+		{
+			"symbol": "px",
+			"name": "Pixels",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PIXY/"
+		},
+		{
+			"symbol": "yr",
+			"name": "Years",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYRS/"
+		},
+		{
+			"symbol": "g/m^3",
+			"name": "Grams per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGMC/"
+		},
+		{
+			"symbol": "/m^2",
+			"name": "per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PMSQ/"
+		},
+		{
+			"symbol": "l/min",
+			"name": "Litres per minute",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULPM/"
+		},
+		{
+			"symbol": "m2.s/rad",
+			"name": "Square metre seconds per radian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2RD/"
+		},
+		{
+			"symbol": "ml/kg",
+			"name": "Millilitres per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MIKG/"
+		},
+		{
+			"symbol": "W/m^3",
+			"name": "Watts per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UWCM/"
+		},
+		{
+			"symbol": "BC",
+			"name": "Gregorian calendar years before Christ",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYBC/"
+		},
+		{
+			"symbol": "ug",
+			"name": "Micrograms",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGUG/"
+		},
+		{
+			"symbol": "ng/kg",
+			"name": "Nanograms per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NGKG/"
+		},
+		{
+			"symbol": "cm^3",
+			"name": "Cubic centimetres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/VVCC/"
+		},
+		{
+			"symbol": "km",
+			"name": "Kilometres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULKM/"
+		},
+		{
+			"symbol": "mEquiv/kg",
+			"name": "MilliEquivalents per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MEKG/"
+		},
+		{
+			"symbol": "mol/m^2/s/m",
+			"name": "Moles per square metre per second per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2MM/"
+		},
+		{
+			"symbol": "g/m^2",
+			"name": "Grams per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGMS/"
+		},
+		{
+			"symbol": "K/s",
+			"name": "Kelvin per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KPRS/"
+		},
+		{
+			"symbol": "mGal",
+			"name": "MilliGals",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MGAL/"
+		},
+		{
+			"symbol": "#/h",
+			"name": "Number per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NOPH/"
+		},
+		{
+			"symbol": "Pa",
+			"name": "Pascals",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PASX/"
+		},
+		{
+			"symbol": "N/m",
+			"name": "Newtons per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NTPM/"
+		},
+		{
+			"symbol": "ng",
+			"name": "Nanograms",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNPI/"
+		},
+		{
+			"symbol": "degC",
+			"name": "Degrees Celsius",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPAA/"
+		},
+		{
+			"symbol": "%/d",
+			"name": "Percent per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPCD/"
+		},
+		{
+			"symbol": "10^-8m^3kg^-1",
+			"name": "10^-8 * Cubic metres per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMKS/"
+		},
+		{
+			"symbol": "Mscgs/g",
+			"name": "Magnetic susceptibility cgs units per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCGG/"
+		},
+		{
+			"symbol": "#/l",
+			"name": "Number per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCPL/"
+		},
+		{
+			"symbol": "umol/m^2/d",
+			"name": "Micromoles per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUUD/"
+		},
+		{
+			"symbol": "/m^3",
+			"name": "per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PCUM/"
+		},
+		{
+			"symbol": "degree_east",
+			"name": "Degrees east",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DEGE/"
+		},
+		{
+			"symbol": "ug/g",
+			"name": "Micrograms per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGGR/"
+		},
+		{
+			"symbol": "pg",
+			"name": "Picograms",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGPG/"
+		},
+		{
+			"symbol": "nmol/kg",
+			"name": "Nanomoles per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGNM/"
+		},
+		{
+			"symbol": "um/um/d",
+			"name": "Micromole per micromole of biomass per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMUB/"
+		},
+		{
+			"symbol": "#/m^2",
+			"name": "Number per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPMS/"
+		},
+		{
+			"symbol": "%",
+			"name": "Percent",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPCT/"
+		},
+		{
+			"symbol": "kg/h",
+			"name": "Kilograms per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGPH/"
+		},
+		{
+			"symbol": "nmol/umol",
+			"name": "Nanomoles per micromole",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NMMM/"
+		},
+		{
+			"symbol": "m^2/g dry",
+			"name": "Square metres per gram of dry sediment",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMSG/"
+		},
+		{
+			"symbol": "mBq/m^2/d",
+			"name": "Millibecquerels per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MBQF/"
+		},
+		{
+			"symbol": "ppmv",
+			"name": "Parts per million by volume",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMLV/"
+		},
+		{
+			"symbol": "K/m",
+			"name": "Kelvin per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KPMT/"
+		},
+		{
+			"symbol": "#/m^2/d",
+			"name": "Number per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNDX/"
+		},
+		{
+			"symbol": "m^2/Hz/deg",
+			"name": "Square metres per Hertz per degree",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2HD/"
+		},
+		{
+			"symbol": "mBar",
+			"name": "Millibars",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPBB/"
+		},
+		{
+			"symbol": "um^3/ml",
+			"name": "Cubic microns per millilitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCUM/"
+		},
+		{
+			"symbol": "mmol/m^3",
+			"name": "Millimoles per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMCM/"
+		},
+		{
+			"symbol": "W/m^2",
+			"name": "Watts per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UFAA/"
+		},
+		{
+			"symbol": "mmol/m^2",
+			"name": "Millimoles per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMSM/"
+		},
+		{
+			"symbol": "/m/sr",
+			"name": "per metre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PMSR/"
+		},
+		{
+			"symbol": "mW/m^2/nm",
+			"name": "Milliwatts per square metre per nanometre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MWNM/"
+		},
+		{
+			"symbol": "ng/l",
+			"name": "Nanograms per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNGL/"
+		},
+		{
+			"symbol": "kg/m^3/s",
+			"name": "Kilograms per cubic metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KSP3/"
+		},
+		{
+			"symbol": "kg/m^3",
+			"name": "Kilograms per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UKMC/"
+		},
+		{
+			"symbol": "mol/mol",
+			"name": "Moles per mole",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MPMX/"
+		},
+		{
+			"symbol": "Dmnless",
+			"name": "Dimensionless",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUUU/"
+		},
+		{
+			"symbol": "J/kg/K",
+			"name": "Joules per kilogram per Kelvin",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/JKGK/"
+		},
+		{
+			"symbol": "g/cm^3",
+			"name": "Grams per cubic centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGCC/"
+		},
+		{
+			"symbol": "m^4/s",
+			"name": "Metres to the power four per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M4S1/"
+		},
+		{
+			"symbol": "uE/m^2/s",
+			"name": "MicroEinsteins per square metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMES/"
+		},
+		{
+			"symbol": "W/m^2/sr",
+			"name": "Watts per square metre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WMSS/"
+		},
+		{
+			"symbol": "mm/y",
+			"name": "Millimetres per year",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMPY/"
+		},
+		{
+			"symbol": "/s^2",
+			"name": "per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPSS/"
+		},
+		{
+			"symbol": "K.m^2/kg/s",
+			"name": "Kelvin square metres per kilogram per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KMSS/"
+		},
+		{
+			"symbol": "W/m/K",
+			"name": "Watts per metre per Kelvin",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WAPK/"
+		},
+		{
+			"symbol": "g/kg",
+			"name": "Grams per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGKG/"
+		},
+		{
+			"symbol": "s",
+			"name": "Seconds",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UTBB/"
+		},
+		{
+			"symbol": "ml/ind/h",
+			"name": "Millilitres cleared per individual per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMCH/"
+		},
+		{
+			"symbol": "uBq/l",
+			"name": "Microbecquerels per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUBQ/"
+		},
+		{
+			"symbol": "nm",
+			"name": "Nanometres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UXNM/"
+		},
+		{
+			"symbol": "rad",
+			"name": "Radians",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/URAD/"
+		},
+		{
+			"symbol": "degC/m",
+			"name": "Degrees Celsius per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPCC/"
+		},
+		{
+			"symbol": "10^6at/kg",
+			"name": "Million atoms per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MAKG/"
+		},
+		{
+			"symbol": "NA",
+			"name": "Not applicable",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/XXXX/"
+		},
+		{
+			"symbol": "mA",
+			"name": "Milliamps",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMAM/"
+		},
+		{
+			"symbol": "FNU",
+			"name": "Formazin Nephelometric Units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UFNU/"
+		},
+		{
+			"symbol": "degree_north",
+			"name": "Degrees north",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DEGN/"
+		},
+		{
+			"symbol": "uE/m^3/s",
+			"name": "MicroEinsteins per cubic metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMEC/"
+		},
+		{
+			"symbol": "degF",
+			"name": "Degrees Fahrenheit",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DEGF/"
+		},
+		{
+			"symbol": "Gyr",
+			"name": "Billions of years before present",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYGA/"
+		},
+		{
+			"symbol": "g/g",
+			"name": "Grams per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/GPRG/"
+		},
+		{
+			"symbol": "K.Pa/s",
+			"name": "Kelvin Pascals per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KPAS/"
+		},
+		{
+			"symbol": "dbar/yr",
+			"name": "Decibars per year",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DBPY/"
+		},
+		{
+			"symbol": "m^3",
+			"name": "Cubic metres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MCUB/"
+		},
+		{
+			"symbol": "K.s",
+			"name": "Kelvin second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KSXX/"
+		},
+		{
+			"symbol": "mol/s",
+			"name": "Moles per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MLPS/"
+		},
+		{
+			"symbol": "uatm",
+			"name": "Microatmospheres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UATM/"
+		},
+		{
+			"symbol": "#/km^2",
+			"name": "Number per square kilometre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NPKM/"
+		},
+		{
+			"symbol": "pmol/m/W/s",
+			"name": "Picomoles per metre per watt per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPVW/"
+		},
+		{
+			"symbol": "#/fem/d",
+			"name": "per female per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UFPD/"
+		},
+		{
+			"symbol": "m^3/s",
+			"name": "Cubic metres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/CMPS/"
+		},
+		{
+			"symbol": "m^2",
+			"name": "Square metres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMSQ/"
+		},
+		{
+			"symbol": "g",
+			"name": "Grams",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGRM/"
+		},
+		{
+			"symbol": "Pa/m",
+			"name": "Pascals per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PAPM/"
+		},
+		{
+			"symbol": "mg/m^2/h",
+			"name": "Milligrams per square metre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MGSQ/"
+		},
+		{
+			"symbol": "J/m^2",
+			"name": "Joules per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/JMSQ/"
+		},
+		{
+			"symbol": "deg T",
+			"name": "Degrees True",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UABB/"
+		},
+		{
+			"symbol": "/umol/l",
+			"name": "per micromole per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PUML/"
+		},
+		{
+			"symbol": "#/mg",
+			"name": "Number per milligram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NBMG/"
+		},
+		{
+			"symbol": "kPa",
+			"name": "Kilopascals",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KIPA/"
+		},
+		{
+			"symbol": "dB",
+			"name": "Decibels",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UDBL/"
+		},
+		{
+			"symbol": "counts/s",
+			"name": "Counts per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCPS/"
+		},
+		{
+			"symbol": "umol/mol",
+			"name": "Micromoles per mole",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMPM/"
+		},
+		{
+			"symbol": "km^2",
+			"name": "Square kilometres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SQKM/"
+		},
+		{
+			"symbol": "dm",
+			"name": "Decimetres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULDM/"
+		},
+		{
+			"symbol": "m^2.Hz",
+			"name": "Square metres.Hertz",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMTB/"
+		},
+		{
+			"symbol": "Hz",
+			"name": "Hertz",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UTHZ/"
+		},
+		{
+			"symbol": "umol/kg",
+			"name": "Micromoles per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGUM/"
+		},
+		{
+			"symbol": "mg/m^2/d",
+			"name": "Milligrams per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGDX/"
+		},
+		{
+			"symbol": "mol",
+			"name": "Moles",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MOLE/"
+		},
+		{
+			"symbol": "W",
+			"name": "Watts",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WATT/"
+		},
+		{
+			"symbol": "kg/m^2/s",
+			"name": "Kilograms per square metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KSP2/"
+		},
+		{
+			"symbol": "mol/E",
+			"name": "Moles per Einstein",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMPE/"
+		},
+		{
+			"symbol": "m^2.s",
+			"name": "Square metre seconds",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2SX/"
+		},
+		{
+			"symbol": "hPa",
+			"name": "Hectopascals",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/HPAX/"
+		},
+		{
+			"symbol": "mBq/g",
+			"name": "Millibecquerels per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MBPG/"
+		},
+		{
+			"symbol": "t",
+			"name": "Tonnes",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MTON/"
+		},
+		{
+			"symbol": "pg/g",
+			"name": "Picograms per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PGPG/"
+		},
+		{
+			"symbol": "m^3/s^2",
+			"name": "Cubic metres per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MCS2/"
+		},
+		{
+			"symbol": "ohm",
+			"name": "Ohms",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UOHM/"
+		},
+		{
+			"symbol": "l/kg",
+			"name": "Litres per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULKG/"
+		},
+		{
+			"symbol": "#/100g",
+			"name": "Number per 100 grams",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NBHG/"
+		},
+		{
+			"symbol": "mGal/mon",
+			"name": "MilliGals per month",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MGPM/"
+		},
+		{
+			"symbol": "pmol/m^3",
+			"name": "Picomoles per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPMA/"
+		},
+		{
+			"symbol": "nmol/cm^3/h",
+			"name": "Nanomoles per cubic centimetre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NMCH/"
+		},
+		{
+			"symbol": "deg",
+			"name": "Degrees",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UAAA/"
+		},
+		{
+			"symbol": "deg/s",
+			"name": "Degrees per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DGPS/"
+		},
+		{
+			"symbol": "hPa/h",
+			"name": "Hectopascals per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/HPAH/"
+		},
+		{
+			"symbol": "pW/cm^2/l",
+			"name": "Picowatts per square centimetre per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PWAV/"
+		},
+		{
+			"symbol": "mV",
+			"name": "Millivolts",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUMV/"
+		},
+		{
+			"symbol": "mm/h",
+			"name": "Millimetres per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMPH/"
+		},
+		{
+			"symbol": "kg^2/s^2",
+			"name": "Kilograms squared per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGS2/"
+		},
+		{
+			"symbol": "ohm.m",
+			"name": "Ohm metres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/OHMM/"
+		},
+		{
+			"symbol": "ISO8601",
+			"name": "ISO8601",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/TISO/"
+		},
+		{
+			"symbol": "/Pa/s",
+			"name": "per Pascal per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PPPS/"
+		},
+		{
+			"symbol": "l",
+			"name": "Litres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULIT/"
+		},
+		{
+			"symbol": "umol/l/h",
+			"name": "Micromoles per litre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMMH/"
+		},
+		{
+			"symbol": "hh24miss",
+			"name": "Hours Minutes Seconds",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UHMS/"
+		},
+		{
+			"symbol": "uE/cm^2/s",
+			"name": "MicroEinsteins per square centimetre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UESC/"
+		},
+		{
+			"symbol": "pmol/l/d",
+			"name": "Picomoles per litre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PMLD/"
+		},
+		{
+			"symbol": "l/umol",
+			"name": "Litres per micromole",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/LPUM/"
+		},
+		{
+			"symbol": "V",
+			"name": "Volts",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UVLT/"
+		},
+		{
+			"symbol": "fg/l",
+			"name": "Femtograms per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/FGPL/"
+		},
+		{
+			"symbol": "ppm",
+			"name": "Parts per million",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPPM/"
+		},
+		{
+			"symbol": "mBq/l",
+			"name": "Millibecquerels per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMBQ/"
+		},
+		{
+			"symbol": "MByte",
+			"name": "Megabytes",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MBYT/"
+		},
+		{
+			"symbol": "pg/kg",
+			"name": "Picograms per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PGKG/"
+		},
+		{
+			"symbol": "m^2/Hz",
+			"name": "Square metres per Hertz",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMHZ/"
+		},
+		{
+			"symbol": "mmol/mol",
+			"name": "Millimoles per mole",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMOM/"
+		},
+		{
+			"symbol": "phi units",
+			"name": "phi units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPHI/"
+		},
+		{
+			"symbol": "pptt",
+			"name": "Parts per ten thousand",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPPE/"
+		},
+		{
+			"symbol": "/m/nm/sr",
+			"name": "per metre per nanometre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMNS/"
+		},
+		{
+			"symbol": "fmol/kg",
+			"name": "Femtomoles per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/FMKG/"
+		},
+		{
+			"symbol": "J/kg",
+			"name": "Joules per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/JPKG/"
+		},
+		{
+			"symbol": "/g",
+			"name": "per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PG01/"
+		},
+		{
+			"symbol": "W/kg",
+			"name": "Watts per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WPKG/"
+		},
+		{
+			"symbol": "% dry sed",
+			"name": "Percentage of dry sediment",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPDS/"
+		},
+		{
+			"symbol": "mmol/kg",
+			"name": "Millimoles per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MMKG/"
+		},
+		{
+			"symbol": "/sr",
+			"name": "per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PSTR/"
+		},
+		{
+			"symbol": "m^2.Hz^2",
+			"name": "Square Metres.Hertz squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMTC/"
+		},
+		{
+			"symbol": "/s",
+			"name": "per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PRSC/"
+		},
+		{
+			"symbol": "m",
+			"name": "Metres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULAA/"
+		},
+		{
+			"symbol": "pmol/l/h",
+			"name": "Picomoles per litre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPMH/"
+		},
+		{
+			"symbol": "/m/s",
+			"name": "per metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PMPS/"
+		},
+		{
+			"symbol": "W/m",
+			"name": "Watts per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WAPM/"
+		},
+		{
+			"symbol": "NTU",
+			"name": "Nephelometric Turbidity Units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/USTU/"
+		},
+		{
+			"symbol": "kyr",
+			"name": "Kiloyears before present",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYKA/"
+		},
+		{
+			"symbol": "yyyymmdd",
+			"name": "Gregorian date (yyyymmdd)",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYMD/"
+		},
+		{
+			"symbol": "s/m",
+			"name": "Seconds per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SCPM/"
+		},
+		{
+			"symbol": "ug/l/h",
+			"name": "Micrograms per litre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MGLH/"
+		},
+		{
+			"symbol": "m^2/g",
+			"name": "Square metres per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SMPG/"
+		},
+		{
+			"symbol": "rad/s",
+			"name": "Radians per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/RAPS/"
+		},
+		{
+			"symbol": "#/m",
+			"name": "Number per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NOPM/"
+		},
+		{
+			"symbol": "ng/g",
+			"name": "Nanograms per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NGPG/"
+		},
+		{
+			"symbol": "ml/m^2/d",
+			"name": "Millilitres per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MSMD/"
+		},
+		{
+			"symbol": "um",
+			"name": "Micrometres (microns)",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMIC/"
+		},
+		{
+			"symbol": "mol/l",
+			"name": "Moles per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MPLT/"
+		},
+		{
+			"symbol": "W/m^2/nm",
+			"name": "Watts per square metre per nanometre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UWNM/"
+		},
+		{
+			"symbol": "dBZ",
+			"name": "Decibels of Z",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UDBZ/"
+		},
+		{
+			"symbol": "mRad/hr",
+			"name": "Millirads per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MRAD/"
+		},
+		{
+			"symbol": "cm/s",
+			"name": "Centimetres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UVBB/"
+		},
+		{
+			"symbol": "Pa.m/s^2",
+			"name": "Pascal metres per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PAM2/"
+		},
+		{
+			"symbol": "umol/m^2/h",
+			"name": "Micromoles per square metre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMFX/"
+		},
+		{
+			"symbol": "S/m",
+			"name": "Siemens per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UECA/"
+		},
+		{
+			"symbol": "K.m",
+			"name": "Kelvin metres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KMTX/"
+		},
+		{
+			"symbol": "ug/l",
+			"name": "Micrograms per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UGPL/"
+		},
+		{
+			"symbol": "MSSI",
+			"name": "Magnetic susceptibility SI units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/USIS/"
+		},
+		{
+			"symbol": "J/cm^2/d",
+			"name": "Joules per square centimetre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/JCMH/"
+		},
+		{
+			"symbol": "ng/ul",
+			"name": "Nanograms per microlitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNUL/"
+		},
+		{
+			"symbol": "nmol/l/h",
+			"name": "Nanomoles per litre per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNMH/"
+		},
+		{
+			"symbol": "dbar",
+			"name": "Decibars",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPDB/"
+		},
+		{
+			"symbol": "mon",
+			"name": "Months",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMNT/"
+		},
+		{
+			"symbol": "fmol/l",
+			"name": "Femtomoles per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPFM/"
+		},
+		{
+			"symbol": "pptrv",
+			"name": "Parts per trillion by volume",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UTRV/"
+		},
+		{
+			"symbol": "cm^2/cm^3",
+			"name": "Square centimetres per cubic centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SQCC/"
+		},
+		{
+			"symbol": "cm/kyr",
+			"name": "Centimetres per thousand years",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCKA/"
+		},
+		{
+			"symbol": "#/cm^2/ka",
+			"name": "Number per square centimetre per thousand years",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UVAY/"
+		},
+		{
+			"symbol": "ppt",
+			"name": "Parts per thousand",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPPT/"
+		},
+		{
+			"symbol": "m^2.Hz^3",
+			"name": "Square metres.cubic Hertz",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMTD/"
+		},
+		{
+			"symbol": "um^2/ml",
+			"name": "Square microns per millilitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/USUM/"
+		},
+		{
+			"symbol": "Bq/l",
+			"name": "Becquerels per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UBQL/"
+		},
+		{
+			"symbol": "MScgs",
+			"name": "Magnetic susceptibility cgs units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCGS/"
+		},
+		{
+			"symbol": "/yr",
+			"name": "per year",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/XXPY/"
+		},
+		{
+			"symbol": "Pa.m/s",
+			"name": "Pascal metres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PAMS/"
+		},
+		{
+			"symbol": "mg/g",
+			"name": "Milligrams per gram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MGPG/"
+		},
+		{
+			"symbol": "um^3/m^3",
+			"name": "Cubic microns per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCCM/"
+		},
+		{
+			"symbol": "mol/m^2/s/m/sr",
+			"name": "Moles per square metre per second per metre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M2SR/"
+		},
+		{
+			"symbol": "mm/s",
+			"name": "Millimetres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UVCC/"
+		},
+		{
+			"symbol": "mEquiv/l",
+			"name": "MilliEquivalents per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MEQL/"
+		},
+		{
+			"symbol": "%/h",
+			"name": "Percent per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPCH/"
+		},
+		{
+			"symbol": "Bq/m^2",
+			"name": "Becquerels per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/BQSM/"
+		},
+		{
+			"symbol": "mol/m^3",
+			"name": "Moles per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MLM3/"
+		},
+		{
+			"symbol": "#/ml",
+			"name": "Number per millilitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCML/"
+		},
+		{
+			"symbol": "kg",
+			"name": "Kilograms",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGXX/"
+		},
+		{
+			"symbol": "ug/ml",
+			"name": "Micrograms per millilitre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUGS/"
+		},
+		{
+			"symbol": "ug/m^3",
+			"name": "Micrograms per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MCUG/"
+		},
+		{
+			"symbol": "pA/umol/l",
+			"name": "Picoamps per micromole per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPAM/"
+		},
+		{
+			"symbol": "mol/m^3/s",
+			"name": "Moles per cubic metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MM3S/"
+		},
+		{
+			"symbol": "nmol/ug/h",
+			"name": "Nanomoles per microgram per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NMGH/"
+		},
+		{
+			"symbol": "m^2/s^2",
+			"name": "Square metres per second squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/SQM2/"
+		},
+		{
+			"symbol": "ms",
+			"name": "Milliseconds",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMSC/"
+		},
+		{
+			"symbol": "mg/kg",
+			"name": "Milligrams per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMKG/"
+		},
+		{
+			"symbol": "ul/l",
+			"name": "Microlitres per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUML/"
+		},
+		{
+			"symbol": "cm",
+			"name": "Centimetres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/ULCM/"
+		},
+		{
+			"symbol": "mBq/kg",
+			"name": "Millibecquerels per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MBQK/"
+		},
+		{
+			"symbol": "pmol/m^3/s",
+			"name": "Picomoles per cubic metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPVT/"
+		},
+		{
+			"symbol": "uBq/kg",
+			"name": "Microbecquerels per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UWBQ/"
+		},
+		{
+			"symbol": "mol/kg",
+			"name": "Moles per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MLKG/"
+		},
+		{
+			"symbol": "ppbv",
+			"name": "Parts per billion by volume",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UBLV/"
+		},
+		{
+			"symbol": "Equiv/l",
+			"name": "Equivalents per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/EQPL/"
+		},
+		{
+			"symbol": "10^-3s",
+			"name": "thousandths of a second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/THSC/"
+		},
+		{
+			"symbol": "kg/m/s",
+			"name": "Kilograms per metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KMPS/"
+		},
+		{
+			"symbol": "Date+Time",
+			"name": "yyyymmddhh24miss.dd",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UDTM/"
+		},
+		{
+			"symbol": "m^2*Hz^4",
+			"name": "Square metres.Hertz^4",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMTE/"
+		},
+		{
+			"symbol": "W/m^2/m",
+			"name": "Watts per square metre per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WM2M/"
+		},
+		{
+			"symbol": "Bq/m^3",
+			"name": "Becquerels per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/BQM3/"
+		},
+		{
+			"symbol": "ug/cm^3",
+			"name": "Micrograms per cubic centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/XGCC/"
+		},
+		{
+			"symbol": "m/s",
+			"name": "Metres per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UVAA/"
+		},
+		{
+			"symbol": "km/d",
+			"name": "Kilometres per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KMDY/"
+		},
+		{
+			"symbol": "pg/l",
+			"name": "Picograms per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PGPL/"
+		},
+		{
+			"symbol": "m^2/Hz^2",
+			"name": "Square metres per squared Hertz",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMTN/"
+		},
+		{
+			"symbol": "mm^3/m^3",
+			"name": "Cubic millimetres per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/CMCM/"
+		},
+		{
+			"symbol": "Unknown",
+			"name": "Not known",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UKWN/"
+		},
+		{
+			"symbol": "W/m^2/m^-1/sr",
+			"name": "Watts per square metre per inverse metre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WMSW/"
+		},
+		{
+			"symbol": "/d",
+			"name": "per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UPDY/"
+		},
+		{
+			"symbol": "mgC/(uE/m^2/s)/mgChl/h",
+			"name": "Milligrams of carbon per (microEinstein per square metre per second) per milligram of chlorophyll per hour",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UCLC/"
+		},
+		{
+			"symbol": "ug/5cm^3",
+			"name": "Micrograms per five cubic centimetres",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/WXCC/"
+		},
+		{
+			"symbol": "Pa.s",
+			"name": "Pascal seconds",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PASS/"
+		},
+		{
+			"symbol": "FFU",
+			"name": "Fluorescein Fluorescence Units",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UFFU/"
+		},
+		{
+			"symbol": "ug/m^2/d",
+			"name": "Micrograms per square metre per day",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UUDX/"
+		},
+		{
+			"symbol": "mg/m^2",
+			"name": "Milligrams per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMMS/"
+		},
+		{
+			"symbol": "K^2",
+			"name": "Kelvin squared",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KLSQ/"
+		},
+		{
+			"symbol": "#/cm^3",
+			"name": "Number per cubic centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/NCM3/"
+		},
+		{
+			"symbol": "W/m^2/nm/sr",
+			"name": "Watts per square metre per nanometre per steradian",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UWNS/"
+		},
+		{
+			"symbol": "pptr",
+			"name": "Parts per trillion",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/PPTR/"
+		},
+		{
+			"symbol": "nT",
+			"name": "Nanoteslas",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMAA/"
+		},
+		{
+			"symbol": "/m^3/s",
+			"name": "per cubic metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/M3PS/"
+		},
+		{
+			"symbol": "pmol/kg",
+			"name": "Picomoles per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KGPM/"
+		},
+		{
+			"symbol": "degK/m",
+			"name": "Degrees Kelvin per metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/DKPM/"
+		},
+		{
+			"symbol": "g/cm^2",
+			"name": "Grams per square centimetre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/GCM2/"
+		},
+		{
+			"symbol": "kg/m^2",
+			"name": "Kilograms per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/KMP2/"
+		},
+		{
+			"symbol": "AD",
+			"name": "Gregorian calendar years anno Domini",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UYAD/"
+		},
+		{
+			"symbol": "nBq/l",
+			"name": "Nanobecquerels per litre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UNBQ/"
+		},
+		{
+			"symbol": "mg/m^3",
+			"name": "Milligrams per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UMMC/"
+		},
+		{
+			"symbol": "umol/m^2/s",
+			"name": "Micromoles per square metre per second",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/UM2S/"
+		},
+		{
+			"symbol": "ml/m^3",
+			"name": "Millilitres per cubic metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MPM3/"
+		},
+		{
+			"symbol": "Bq",
+			"name": "Becquerels",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/BQ11/"
+		},
+		{
+			"symbol": "fg/kg",
+			"name": "Femtograms per kilogram",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/FGKG/"
+		},
+		{
+			"symbol": "mol/m^2",
+			"name": "Moles per square metre",
+			"link": "http://vocab.nerc.ac.uk/collection/P06/current/MLM2/"
+		}
+	]
+}

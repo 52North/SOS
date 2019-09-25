@@ -1,0 +1,2317 @@
+{
+	"type": "PHENOMENA",
+	"name": "nerc_P02",
+	"description": "Predefined phenomenon data for vocab.nerc.ac.uk P02 collection",
+	"values": [
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BEPP/",
+			"name": "Benthic primary production",
+			"description": "Parameters associated with the quantification of primary production by plants living on (e.g. corals, seaweed and seagrass) or in (e.g. benthic diatoms) the seabed.  Primary production is defined as the fixation of carbon dioxide into either organic or inorganic carbon by living entities and so includes photosynthesis and calcification."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BCOS/",
+			"name": "Concentration of other substances in biota",
+			"description": "'Other'  (than metals or organic contaminants) substance concentrations in either whole organisms or their constituent parts.  This is a 'bucket' grouping that may be reclassified as the dictionary developes."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/VATX/",
+			"name": "Phytoplankton taxonomic volume in water bodies",
+			"description": "Any parameterisation of cell volume of free-floating autotrophic biological entities designated by taxonomic names (e.g. species, genus, family) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GOXP/",
+			"name": "Oxygen production and respiration in the water column",
+			"description": "Parameters related to the rates of oxygen production and consumption"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ATPC/",
+			"name": "Atmospheric particulates",
+			"description": "Parameters quantifying and categorising the particulate phases (solids and aerosols) of the atmosphere, excluding chemical composition"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ADUN/",
+			"name": "Administrative units",
+			"description": "Parameters (including geometries, labels and categorizations) relating to areas where authorities have and-or excercise specific rights or obligations."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP088/",
+			"name": "Bird behaviour",
+			"description": "Parameters describing the actions or reactions of birds (Class Aves), usually in response to the environment. Includes both parameters mapped to taxa and those mapped to non-taxonomic groupings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BCOC/",
+			"name": "Concentration of other organic contaminants in biota",
+			"description": "Concentration parameters for carbon compounds regarded as environmentally harmful in either whole organisms or their constituent parts that are not included in other categories"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NOYS/",
+			"name": "Acoustic noise in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WCWT/",
+			"name": "Sediment water content, porosity and surface area",
+			"description": "Sediment porosity (water content by volume) and water content by weight parameters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AYMD/",
+			"name": "Date and time",
+			"description": "All date and time parameters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IWDX/",
+			"name": "Insect and earthworm taxonomy-related ash-free dry weight biomass per unit area of the bed",
+			"description": "Insect (Class Insecta) and earthworm (Subclass Oligochaeta) ash-free dry weight biomass per unit area of bed (sea, river, lake etc.) parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  Includes animals normally considered as planktonic if they have been returned from sediment samples. This parameter group has been implemented to separate predominantly freshwater taxa from predominantly marine taxa."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SECC/",
+			"name": "Secchi disk depth",
+			"description": "Measurements of optical visibility in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GPIG/",
+			"name": "Zooplankton gut pigments",
+			"description": "Parameters identifying or quantifying zooplankton gut pigments"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPOL/",
+			"name": "Sediment pollen content",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GWAM/",
+			"name": "Groundwater amount",
+			"description": "Parameters quantifying the amount of groundwater in a given system such as aquifer water level and rate of flow of water through rock formations."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPAG/",
+			"name": "Speleothem age",
+			"description": "Measured or stratigraphically estimated ages of secondary mineral deposits in caves. This includes stalactites, stalagmites, flowstone, and crystal growths."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FVLT/",
+			"name": "Raw fluorometer output",
+			"description": "Output as logged from any type fluorometer."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/STMP/",
+			"name": "Temperature of geological units",
+			"description": "Parameters that describe the distribution of the degree of hotness within a body of rock or unlithified sediment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/COCC/",
+			"name": "Colloidal organic carbon concentration in the water column",
+			"description": "Colloidal organic carbon per unit volume of the water column."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FPFX/",
+			"name": "Sedimentation flux of biological detritus in the water column",
+			"description": "Flux of biological detritus (material derived from the water column such as exuvia and faecal pellets) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CLXX/",
+			"name": "Concentration of inorganic halogens in sediment pore waters",
+			"description": "Concentrations of halogens as elements or their inorganic compounds in all phases of sediment pore water"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RPER/",
+			"name": "Rock porosity and permeability",
+			"description": "Parmeters describing the space for fluids or gases within a geologic unit comprising lithified sediments, igneous rock or metamorphic rock."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FATM/",
+			"name": "Fish morphology, age and physiology",
+			"description": "Parameters that quantify the size, shape, age and life processes (including mortality) of fish (Osteichthyes, Agnatha and Chrondrichthyes)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TRAN/",
+			"name": "Transport activity",
+			"description": "Parameters quantifying the level of activity moving people or cargo from one place to another."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OMPW/",
+			"name": "Organometallic and organometalloid species concentration parameters in sediments",
+			"description": "All organometallic and orgamometalloid compound concentration parameters (including saturations for gaseous species) \nin all phases of sediments (including pore waters)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MMST/",
+			"name": "Man-made structures",
+			"description": "Parameters relating to human built structures on the coast or offshore and their impact on the environment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP087/",
+			"name": "Fishery characterisation",
+			"description": "Parameters describing the extent, intensity, timing and method of fisheries"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SCOX/",
+			"name": "Dissolved concentration parameters for other gases in the water column",
+			"description": "All concentration parameters for inorganic dissolved gases other than oxygen and the noble gases in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/KRTS/",
+			"name": "Other wave statistics",
+			"description": "Statistical parameters derived from wave data expressing wave properties other than height, period and direction"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SRAD/",
+			"name": "Geological sample radioactivity",
+			"description": "Any parameters quantifying ionising radiation emitted by cores or samples comprising rock, sediment (including surface sediment such as fluff)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DALK/",
+			"name": "Concentration of alkanes in the water column",
+			"description": "Alkane concentration parameters (including saturation of gaseous species) in all phases of the water column.  Does not include parameters expressed per unit weight of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZATX/",
+			"name": "Zooplankton taxonomy-related abundance per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) abundance parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DENS/",
+			"name": "Other physical and chemical properties of suspended particulate material",
+			"description": "Parameters that do not easily fit into any of the other SPM data categories."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PASR/",
+			"name": "Passive seismic refraction",
+			"description": "Parameters quantifying the magnitude of naturally occurring low frequency earth movements such as used for earthquake seismology and natural noise studies."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MFWW/",
+			"name": "Zoobenthos non taxonomy-related wet weight biomass per unit area of the bed",
+			"description": "Any zoobenthos wet weight biomass per unit area of the seabed parameters that are not included in parameter group ZWTX."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WPRO/",
+			"name": "Concentration of proteins in the water column",
+			"description": "Concentrations of proteins in all phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HEXC/",
+			"name": "Dissolved noble gas concentration parameters in the water column",
+			"description": "All concentration parameters including saturations and statistics such as standard deviations"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CD10/",
+			"name": "Sediment lipid concentrations",
+			"description": "Lipids are defined as small water-insoluble biomolecules including fats, fatty acids, esters, sterols, isoprenoid compounds, etc..  Sediment is defined as material collected by a corer (including fluff)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BEST/",
+			"name": "Sediment resuspension",
+			"description": "Parameters quantifying the critera for and extent of sediment resuspension"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/UREA/",
+			"name": "Urea concentration parameters in the water column",
+			"description": "Urea concentration parameters (including statistical parameters such as standard deviation) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HLDE/",
+			"name": "Other halocarbon dynamics in water bodies",
+			"description": "Parameters relating to the rates of creation and consumption of volatile halocarbons (compounds comprising carbon atoms covalently bonded to fluorine, chlorine, bromine or iodine atoms) other than tracers (i.e. freons/chlorofluorocarbons) and contaminants in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TCFX/",
+			"name": "Sedimentation flux of carbon, nitrogen or organic matter in the water column",
+			"description": "Fluxes of particulate total, organic and inorganic carbon (including as CaCO3) and nitrogen (often measured as 'total' but assumed to be 'organic'). Organic matter is defined as matter lost on ignition."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BNUC/",
+			"name": "Bacteria generic abundance in sediment",
+			"description": "Any enumeration of bacteria (Kingdom Monera so includes cyanobacteria) designated by terms other than taxonomic names (e.g. total) in any soil or sediment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SRFL/",
+			"name": "Seismic reflection",
+			"description": "Parameters relating to the elucidation of geological structure by quantifying the proportion of waves from a high energy source reflected by sub-surface layers."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MDBO/",
+			"name": "Trace metalloid concentrations in biota",
+			"description": "Concentration parameters for trace metalloid elements in either whole organisms or their constituent parts. Trace metalloids are considered as B, Ge, As, Sb, Te and Po (but not Si which is classed separately because of its major role in environmental chemistry)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/R410/",
+			"name": "Ocean colour and earth-leaving visible waveband spectral radiation",
+			"description": "Parameters associated with the measurement of ocean colour, including visible waveband satellite spectral radiometer measurements, their calibration measurements (spectral water-leaving radiance and reflectance) and chart colour estimates."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CEBH/",
+			"name": "Cetacean behaviour",
+			"description": "Parameters describing the actions or reactions of cetaceans (Order Cetacea), usually in response to the environment. Includes both parameters mapped to taxa and those mapped to non-taxonomic groupings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TCNT/",
+			"name": "Raw temperature and/or salinity instrument output",
+			"description": "Direct output parameters from TS instruments such as thermosalinograph or CTD"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTSD/",
+			"name": "Metal concentrations in sediment",
+			"description": "Concentrations of metal elements per unit weight of sediment.  Sediment is understood to be the solid phase of the bed, including the recently settled material sometimes known as fluff collected from the bed surface."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CMFL/",
+			"name": "Variable fluorescence parameters",
+			"description": "Parameters measured by variable fluorescence instruments such as pump and probe and fast repetition rate fluorometers"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OPCN/",
+			"name": "Concentration of silicon species in suspended particulate material",
+			"description": "Concentration parameters for silicon species (including opal) in SPM (material gathered by filtration or sediment trapping). Only includes parameters expressed per unit mass of SPM and not per unit volume of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FCRT/",
+			"name": "Zooplankton feeding",
+			"description": "Parameters quantifying the ingestion of food by zooplankton (mesozooplankton and larger but excluding fish) in terms of identified biota or chemical species and the effects of nutrition on life processes such as physiology and reproduction."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LIBI/",
+			"name": "Biota lipid concentrations",
+			"description": "Lipids are defined as small water-insoluble biomolecules including fats, fatty acids, esters, sterols, isoprenoid compounds, etc..  Biota includes any type of sample originating from a living organism."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SALK/",
+			"name": "Concentration of aliphatic hydrocarbons in sediment samples",
+			"description": "Aliphatic hydrocarbon (alkane, alkene, alkyne, polycyclic aliphatics like hopane, terpenes etc.)  concentrations in sediment, which is considered to be anything from the bed sampled by a grab or corer, including 'fluff'"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPRO/",
+			"name": "Concentration of proteins in sediment",
+			"description": "Concentrations of proteins per unit mass or unit volume of sediment (material collected by a corer including fluff)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CPCN/",
+			"name": "Unclassified pigment concentrations in sediment",
+			"description": "Includes all pigments that cannot be explicitly classified as chlorophylls, phaeopigments or carotenoids (usually groups of pigments). Sediment includes anything collected by a grab or corer, including the fluff layer from the top of the consolidated sediment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MFAZ/",
+			"name": "Zoobenthos taxonomy-related ash-free dry weight biomass per unit area of the littoral zone",
+			"description": "Any zoobenthos ash-free dry weight biomass per unit area of the littoral zone (between spring tide high and low water) parameters that are not fish or terrestrial animals (insecta/oligochaeta)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OMET/",
+			"name": "Other meteorological measurements",
+			"description": "Bucket group for parameters that cannot be classified elsewhere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTUP/",
+			"name": "New production in water bodies",
+			"description": "Parameters quantifying the uptake rate of nitrate or gaseous nitrogen by flora and fauna living in any body of salt or fresh water"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MFLZ/",
+			"name": "Zoobenthos taxonomy-related abundance per unit area of the littoral zone",
+			"description": "Any zoobenthos abundance per unit area of the littoral zone (between spring tide high and low water) parameters that are not fish or terrestrial animals (insecta/oligochaeta)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZWTX/",
+			"name": "Zoobenthos taxonomy-related wet weight biomass per unit area of the bed",
+			"description": "Zoobenthos wet weight biomass per unit area parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  Includes animals considered as planktonic if they have been returned from sediment samples."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MLES/",
+			"name": "Marine environment leisure usage",
+			"description": "Parameters quantifying the extent and nature of recreational activities in coastal waters, estuaries and their margins such as beaches."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ENGP/",
+			"name": "Engineering parameters",
+			"description": "Technical parameters that provide information on how well an instrument or data acquisition system is working"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZNTX/",
+			"name": "Zooplankton non taxonomy-related abundance per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) abundance per unit volume parameters not included in group ZATX.  Usually used for generic names such as 'mesozooplankton'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CBSD/",
+			"name": "Carbon concentrations in sediment",
+			"description": "Concentrations of total, organic and inorganic carbon per unit weight of sediment.  Sediment is understood to be the solid phase of the bed, including the recently settled material sometimes known as fluff collected from the bed surface."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RSIS/",
+			"name": "Field resistivity,  electromagnetics  and polarisation",
+			"description": "Parameters quantifying the electrical properties of geological units in the field. Includes parameters used to determine resistivity structure for shallow sediment properties, porosities and presence of hydrocarbon (CSEM), deeper crust and mantle studies (Magnetotellurics) and ore body location (polarisation)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GRZO/",
+			"name": "Zooplankton growth rates",
+			"description": "Parameters pertaining to zooplankton growth rates including biochemical proxies such as AARS activity"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZZZZ/",
+			"name": "Unspecified",
+			"description": "The identity of the parameter is not declared.  Covers cases such as internal working parameters and dummy channels."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PXSP/",
+			"name": "Phosphorus concentrations in suspended particulate material",
+			"description": "Concentrations of total, organic and inorganic phosphorus per unit weight of suspended particulate material collected by water column filtration, centrifugation or sediment trapping."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BLEN/",
+			"name": "Zooplankton and zoobenthos morphological parameters",
+			"description": "Morphological parameters of zooplankton and zoobenthos (essentially any animal except for insects, earthworms or fish), such as size, shape and weight.  Benthic and planktonic animals have not been seggregated because there is a degree of overlap (eg shrimps)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHBI/",
+			"name": "Pharmaceutical concentrations in biota",
+			"description": "Concentration parameters for substances synthesised by man to modify bodily function or diagnose, cure, mitigate, treat, or prevent disease in either whole organisms or their constituent parts."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BLIT/",
+			"name": "Beach litter abundance",
+			"description": "Parameters describing the abundance and nature of debris released on coastlines."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MBAN/",
+			"name": "Bathymetry and Elevation",
+			"description": "Depth of the water column or elevation of land surface relative to sea surface, geoid or other datum"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SLCA/",
+			"name": "Silicate concentration parameters in the water column",
+			"description": "Silicate concentration parameters (including statistical parameters such as standard deviation) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PSAL/",
+			"name": "Salinity of the water column",
+			"description": "Parameters quantifying the concentration of sodium chloride in any body of water at any point between the bed and the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ACFL/",
+			"name": "Quality control flags",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TCO2/",
+			"name": "Total dissolved inorganic carbon (TCO2) concentration in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ARAD/",
+			"name": "Radioactivity in the atmosphere",
+			"description": "All parameters associated with radioactivity in the atmosphere, including radiation counts, isotope activities and activity ratios."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TMES/",
+			"name": "Metadata parameters",
+			"description": "Data parameters that carry information relating to a measured parameter such as measurement temperatures, integration depths, quantities sampled and incubation durations"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PCFX/",
+			"name": "Sedimentation flux of identified biota expressed as carbon in the water column",
+			"description": "Fluxes of any biota or remains thereof (excluding faecal pellets which are classed as SPM) downwards through the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SDAC/",
+			"name": "Sediment acoustics",
+			"description": "Parameters relating to the elucidation of sediment structure by quantifying the proportion of waves from a low energy source reflected by sub-surface layers."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MDSV/",
+			"name": "Suspended particulate material setting velocity parameters",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MSEP/",
+			"name": "Zooplankton reproduction rate parameters",
+			"description": "All parameters related to zooplankton reproduction rates"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHSD/",
+			"name": "Phaeopigment concentrations in sediment",
+			"description": "Includes all variants of phaeopigment (chlorophyll degradation products). Sediment is defined as any solids collected by a corer, including fluff.."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/UMLW/",
+			"name": "Micro-litter in water bodies",
+			"description": "Parameters describing the abundance and nature of microscopic particles of man-made materials and in particular microplastics present in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RACC/",
+			"name": "Sediment accumulation rate",
+			"description": "Parameters quantifying the volume, mass or thickness of particulate material that gathers on the seabed per unit time."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WCPH/",
+			"name": "Water column photography",
+			"description": "Digital images of the water column obtained using either still or video cameras"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BDRV/",
+			"name": "Biodiversity indices",
+			"description": "Parameters describing the variety of entity types encountered in a population of living organisms"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MZBN/",
+			"name": "Microzooplankton generic abundance in water bodies",
+			"description": "Any enumeration (e.g. count, number per litre) of microzooplankton (free swimming heterotrophic organisms smaller than 200um) designated by terms other than taxonomic names (e.g. total) in any fresh or salt water body."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP085/",
+			"name": "Fish behaviour",
+			"description": "Parameters describing the actions or reactions of fish (Osteichthyes, Agnatha and Chondrichthyes), usually in response to the environment. Includes both parameters mapped to taxa and those mapped to non-taxonomic groupings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CLAY/",
+			"name": "Mineralogical composition",
+			"description": "Parameters describing or quantifying the mineralogical composition of rocks and unlithified sediments."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FR11/",
+			"name": "Chlorofluorocarbon concentrations in the water column",
+			"description": "Concentrations of chlorofluorocarbons (also known as freons or CFCs) in sny body of water"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZCTC/",
+			"name": "Zooplankton taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) carbon biomass parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TBGZ/",
+			"name": "Bacterial consumption in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/A01X/",
+			"name": "Sedimentation flux of alkenones and alkenoates in the water column",
+			"description": "Parameters quantifying the rate of alkenones (unsaturated aliphatic ketones) and alkenoates (carboxylic acid esters) sinking as particles through any body of water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/EWSB/",
+			"name": "Wind strength and direction",
+			"description": "Parameters quantifying the extent or direction of atmospheric movement. Obvious examples are wind velocity, windspeed and wind direction, but can also include derived parameters such as force, energy, power and power density."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CATX/",
+			"name": "Phytoplankton taxonomic biomass in water bodies",
+			"description": "Any parameterisation of biomass (e.g. wet weight, dry weight, carbon, nitrogen etc.) of free-floating autotrophic biological entities identified by their taxonomic names (e.g. family, genus, species) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RMIN/",
+			"name": "Inorganic chemical composition of sediment or rocks",
+			"description": "Parameters specifying the proportions of inorganic components (major/minor/trace elements, trace metals etc.) in sediment or rock samples.  Major elements includes the H2O+ and H2O- parameters reported by convention in oxide weight per cent geochemical major element analyses."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/COAS/",
+			"name": "Terrestrial mapping",
+			"description": "Parameters relating to the mapping of terrestrial features, including coastlines"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/INVD/",
+			"name": "Invasive species monitoring parameters",
+			"description": "Parameters used to characterize and monitor biological invasion by non-native organisms."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AASD/",
+			"name": "Concentration of alkenones and alkenoates in sediment",
+			"description": "Parameters quantifying the amount of alkenones (unsaturated aliphatic ketones) and alkenoates (carboxylic acid esters) in any unconsolidated sediment including fluff."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTIC/",
+			"name": "Metal concentrations in the cryosphere",
+			"description": "Concentration parameters for metallic elements in ice and snow"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BRDA/",
+			"name": "Bird counts",
+			"description": "Parameters quantifying the number of birds (Class Aves) in a survey but not expressed per unit area. Includes presence/absence indicators."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CHUM/",
+			"name": "Atmospheric humidity",
+			"description": "Parameters that either quantify the water content of moist air or are specifically used in its determination (eg wet bulb air temperature)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PPAB/",
+			"name": "Light absorption in the water column",
+			"description": "Water column spectral absorption parameters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ABAG/",
+			"name": "Suspended particulate material aggregates",
+			"description": "Parameters relating to the abundance, size and morphology of particle aggregates in the SPM"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/XMGS/",
+			"name": "Geological sample magnetic, electrical and acoustic properties",
+			"description": "Any parameters quantifying the magnetic (e.g. magnetic susceptibility), electrical (e.g. resistivity) or acoustic (e.g. P-wave propogation speed) of sediment or rock cores and samples"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FREP/",
+			"name": "Fish reproduction",
+			"description": "Parameters that quantify the fecundity, reproductive rates or nature of reproduction in fish (Osteichthyes, Agnatha and Chrondrichthyes)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IRBO/",
+			"name": "Stable isotopes in biota",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) from measurements on living (at the time of sampling) organisms or parts thereof."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP050/",
+			"name": "Concentration of polycyclic aromatic hydrocarbons (PAHs) in the atmosphere",
+			"description": "Parameters quantifying polycyclic aromatic hydrocarbon (PAH) concentrations in all phases of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WVST/",
+			"name": "Wave height and period statistics",
+			"description": "Statistical parameters derived from wave records to express wave height and period."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CETA/",
+			"name": "Cetacean abundance",
+			"description": "Parameters that specify the number of specified members of Order Cetacea present at a particular time and location, including presence/absence indicators."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FNTM/",
+			"name": "Fish non taxonomy-related morphology",
+			"description": "Fish (Osteichthyes, Agnatha and Chrondrichthyes) size and shape parameters not included under FATM.  Most commonly used for the generic term 'fish' that maps to multiple taxa."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CPSD/",
+			"name": "Chlorophyll pigment concentrations in sediment",
+			"description": "Includes all variants of chlorophyll.  Sediment includes anything collected by a grab or corer, including the fluff layer from the top of the consolidated sediment"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AEYN/",
+			"name": "Concentration of alkenes and alkynes in the atmosphere",
+			"description": "Alkene and alkyne concentrations in all phases of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MNGS/",
+			"name": "Sediment grain size parameters",
+			"description": "Parameters specifying the physical dimensions of the particles comprising unlithified sediment (including expressions of shape such as aspect ratio) and statistics derived from their variation in a sample (e.g. mean, mode, sorting, skewness)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PPWC/",
+			"name": "Concentration of polychlorobiphenyls (PCBs) in the water column",
+			"description": "PCB concentrations in all phases of the water column. This group excludes SPM composition measurements (concentration per unit weight)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHUP/",
+			"name": "Uptake of other nutrients in the water column",
+			"description": "Uptake of nutrients other than nitrogen species (ie phosphate and silicate) by the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/VSRA/",
+			"name": "Visible waveband radiance and irradiance measurements in the atmosphere",
+			"description": "Includes visible waveband measurements at discrete wavelengths and PAR integrated values as photon and energy fluxes. Does not include satellite radiometer and associated calibration parameters (e.g. water-leaving radiance and reflectance)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/EXCR/",
+			"name": "Excretion rate parameters in the water column",
+			"description": "Includes all parameters relating to all mechanisms of waste release except respiration."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GERA/",
+			"name": "Radiation geophysics",
+			"description": "Parameters quantifying the level of radioactive emissions from in-situ geologic units"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TDPX/",
+			"name": "Dissolved total or organic phosphorus concentration in the water column",
+			"description": "Concentration of total (organic plus inorganic) or organic dissolved phosphorus per unit volume of the water column. Grouped together as organic phosphorus frequently determined as total phosphorus."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FCNT/",
+			"name": "Fish taxonomy-related counts",
+			"description": "Fish (Osteichthyes, Agnatha and Chrondrichthyes) count parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards. Count includes presence/absence indicators."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FOCA/",
+			"name": "Seal abundance",
+			"description": "Parameters related to the distribution of true seals (Phocidae), eared seals (Otariidae) and walruses (Odobenidae)\nat a particular time and location, including presence/absence indicators."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SIGT/",
+			"name": "Density of the water column",
+			"description": "Absolute determinations of water column density plus parameters (generally expressed as density anomaly) derived from temperature and salinity"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTPW/",
+			"name": "Nutrient concentrations in sediment pore waters",
+			"description": "Nutrient (nitrate, nitrite, ammonium, phosphate, silicate and urea) concentrations in sediment pore waters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTRZ/",
+			"name": "Nitrate+nitrite concentration parameters in the water column",
+			"description": "Deprecated term from a misguided attempt to distinguish between NO3 and NO3+NO2 for discovery. Use parameter group NTRA instead"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AXFX/",
+			"name": "Sedimentation flux of pigments in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OGPW/",
+			"name": "Dissolved concentration parameters for other gases in sediment pore waters",
+			"description": "All concentration parameters for inorganic dissolved gases other than oxygen and the noble gases in sediment pore water samples"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SICN/",
+			"name": "Concentration of silicon species in sediment",
+			"description": "Concentration parameters for silicon species (including opal) in sediment (anything collected by a corer including fluff)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DVLP/",
+			"name": "Zooplankton and zoobenthos development stage parameters",
+			"description": "Development stage parameters (such as proportion but excluding abundance or biomass) of zooplankton and zoobenthos. Benthic and planktonic animals have not been seggregated because there is a degree of overlap (eg shrimps)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RBHY/",
+			"name": "Molecular biology parameters",
+			"description": "Any parameters relating to molecular biology or genetics"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SAGE/",
+			"name": "Sediment age",
+			"description": "Measured or stratigraphically estimated ages of marine sediments"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZBTX/",
+			"name": "Zoobenthos taxonomic abundance",
+			"description": "Any enumeration (e.g. count, number per square metre) of animals living on or near the seabed designated by taxonomic names (e.g. species, genus)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MDPW/",
+			"name": "Trace metalloid concentrations in sediment pore water",
+			"description": "Concentration parameters for trace metalloid elements in water occupying the space between sediment grains. Trace metalloids are considered as B, Ge, As, Sb, Te and Po (but not Si which is classed separately because of its major role in environmental chemistry)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PCLM/",
+			"name": "Palaeoclimatic indicators and parameters",
+			"description": "Parameterisations that describe climatic conditions in the past.  Includes climate indices, climate indicators and indirect measurements of climate-related phenomena such as sea level and water table depth."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TDIN/",
+			"name": "Dissolved inorganic nitrogen concentration in the water column",
+			"description": "Total concentration of all dissolved inorganic nitrogen species in the water column, usually derived by summation of individual nutrient concentrations (NO3+NO2+NH4). Some workers may also include urea."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HBEX/",
+			"name": "Habitat extent",
+			"description": "Parameters specifying the vertical and horizontal spatial extent of the ecological character of a place where an organism is found"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OCAA/",
+			"name": "Concentration of other organic contaminants in the atmosphere",
+			"description": "Parameters quantifying concentrations of organic contaminants (substances regarded as harmful) other than PCBs and PAHs in all phases of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IACT/",
+			"name": "Industrial activity",
+			"description": "Parameters that quantify the level of industrial activity or industrial output"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ROGS/",
+			"name": "Rock grain size",
+			"description": "Parameters specifying the physical dimensions of the particles comprising lithified sedimentary rocks (including expressions of shape such as aspect ratio) and statistics derived from their variation in a sample (e.g. mean, mode, sorting, skewness)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AAWC/",
+			"name": "Concentration of alkanamines (amines) in the water column",
+			"description": "Alkanamine concentrations in all phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SCAH/",
+			"name": "Concentration of polycyclic aromatic hydrocarbons (PAHs) in sediment samples",
+			"description": "PAH concentrations in sediment, which is considered to be anything from the bed sampled by a grab or corer, including 'fluff'"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHWB/",
+			"name": "Pharmaceutical concentrations in water bodies",
+			"description": "Concentration parameters for substances synthesised by man to modify bodily function or diagnose, cure, mitigate, treat, or prevent disease in either solution or suspension (i.e.includes measurements in both the dissolved and particulate phases) in any body of salt or fresh water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/STGC/",
+			"name": "Stomach and gut contents",
+			"description": "Parameters that characterize or quantify the contents of the stomach and gut of an animal or group of animals."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/COGE/",
+			"name": "Coastal geomorphology",
+			"description": "All parameters associated with coastal landforms such as beaches and dunes including morphology, evolution and associated transport phenomena"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HLAT/",
+			"name": "Concentration of inorganic halogens in the atmosphere",
+			"description": "Concentrations of halogens as elements or their inorganic compounds in all phases of the atmosphere."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTRI/",
+			"name": "Nitrite concentration parameters in the water column",
+			"description": "Nitrite concentration parameters (including statistical parameters such as standard deviation) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LGCR/",
+			"name": "Lagrangian currents and transport rates in the water column",
+			"description": "Parameters expressing the mean nett transport rates within the water column like Lagrangian currents. Note this is an unintentional duplicate of VDFC."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CNDC/",
+			"name": "Electrical conductivity of the water column",
+			"description": "Parameters quantifying the flow of electrical current through or the electrical resistance of a body of water at any point between the bed and the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ACYC/",
+			"name": "Reference numbers",
+			"description": "Data record, event, sample or measurement reference numbers"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BPRP/",
+			"name": "SeaDataNet biological format biotic parameters",
+			"description": "Parameters that quantify any attribute of a biological entity specified elsewhere in the data model and therefore do not map to the existing biologically classified P02 categories. This concept is used as a temporary grouping of parameter codes created for the SeaDataNet biological standard format."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SICO/",
+			"name": "Other fluxes between the bed and the water column",
+			"description": "Fluxes of species other than metals and nutrients between the bed (ie the sediment) and the water column sometimes termed benthic fluxes or sediment demand"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CA11/",
+			"name": "Concentration of alkanols (alcohols), phenols and ethers in sediment",
+			"description": "Concentration of alkanols, phenols and ethers per unit mass or unit volume of sediment (material collected by a corer including fluff)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CASD/",
+			"name": "Concentration of carbohydrates, phenols, alkanols (alcohols), ethers, aldehydes and ketones in sediment",
+			"description": "Concentrations of carbohydrates, phenols, alkanols (alcohols), ethers,aldehydes and simple (non-alkenone) ketones in unlithified sediment (material collected by a corer including fluff)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TVLT/",
+			"name": "Raw suspended particulate material concentration sensor output",
+			"description": "Raw parameters (voltages and counts) from in-situ suspended particulate material sensors including transmissometers, nephelometers,in-situ particle sizers and ABS (including ADCP echo intensity)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MPMN/",
+			"name": "Moored instrument depth",
+			"description": "Parameters expressing depth (possibly as pressure) of an instrument on a suspended underwater mooring.  These are primarily collected to monitor mooring performance by quantifying knock-down and should not be regarded as instrument z co-ordinates (accurate calibration is rare) or as sea level measurements."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP018/",
+			"name": "Cetacean reproduction",
+			"description": "Parameters related to the reproduction of cetaceans (Order Cetacea)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LRZA/",
+			"name": "Vertical velocity of the water column (currents)",
+			"description": "Vertical water movement parameters including non-directional speeds"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CDTA/",
+			"name": "Air temperature",
+			"description": "Parameters quantifying the degree of hotness of the atmosphere.  Specifically excludes indirect measurements of other parameters such as wet bulb temperatures."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SVEL/",
+			"name": "Sound velocity and travel time in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PNTX/",
+			"name": "Phytoplankton generic abundance in water bodies",
+			"description": "Any enumeration (e.g. count, abundance) of free-floating autotrophic biological entities designated by terms other than taxonomic names (e.g. microphytoplankton, ciliate, flagellate) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AHGT/",
+			"name": "Vertical spatial coordinates",
+			"description": "All vertical spatial parameters including depth, height and pressure when used as an independent variable."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/REFF/",
+			"name": "Sediment resistivity",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTOT/",
+			"name": "Particulate total and organic nitrogen concentrations in the water column",
+			"description": "Concentrations of total and organic nitrogen in the particulate phase of the water column, which is a function of both the SPM concentration in the water column and the concentration of nitrogen per unit weight of SPM. Note that it is commonly assumed that all particulate nitrogen is organic."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ATPX/",
+			"name": "Concentration of adenylates in the water column",
+			"description": "Concentrations of adenylates (ADP, ATP etc) in all phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PEBI/",
+			"name": "Pesticide concentrations in biota",
+			"description": "Concentration parameters for substances synthesised by man to kill other life forms in either whole organisms or their constituent parts."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WQBI/",
+			"name": "Water quality bioindicators",
+			"description": "Parameters quantifying fauna and flora that indicate physical or chemical conditions in the water column such as colonisation depths and abundance of indicator species."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CFTM/",
+			"name": "Contaminant fluxes between the terrestrial and marine environment",
+			"description": "Parameters quanitifying the transfer of substances considered harmful from land to sea, including river discharge rates of contaminant species (but not freshwater discharge rates)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MMAN/",
+			"name": "Magnetics",
+			"description": "Parameterisations of the intensity and inclination of Earth's magnetic field"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTSP/",
+			"name": "Metal concentrations in suspended particulate material",
+			"description": "Concentrations of metal elements in suspended particulate material collected by water column filtration, centrifugation or sediment trapping. Deprecated as semantic overlap with MTWP."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CARS/",
+			"name": "Carotenoid pigment concentrations in sediment",
+			"description": "Sediment includes anything collected by a grab or corer, including the fluff layer from the top of the consolidated sediment"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MATC/",
+			"name": "Microzooplankton taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Microzooplankton carbon biomass parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards., but exclude morphological classifications such as 'heterotrophic flagellate'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MSIC/",
+			"name": "Zooplankton carbon biomass per unit area of the water column",
+			"description": "Integrated zooplankton (mesozooplankton and larger, exclusing fish, mammals, reptiles and insects) carbon biomass parameters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DOXY/",
+			"name": "Dissolved oxygen parameters in the water column",
+			"description": "All dissolved oxygen parameters (including saturation and utilisation) for the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ALAT/",
+			"name": "Horizontal spatial co-ordinates",
+			"description": "All forms of horizontal spatial coordinates such as lat/lon and grid references"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHWC/",
+			"name": "Phaeopigment concentrations in the water column",
+			"description": "Includes all variants of phaeopigment (chlorophyll degradation products) expressed in terms of per unit volume or unit area of the water column.  Does not include data expressed per unit mass of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CXAA/",
+			"name": "Concentrations of carboxylic acids and carboxylates in the atmosphere",
+			"description": "Parameters quantifying the concentration of acids containing a carboxyl (-C(=O)OH) group, their anions or their salts in any phase of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RFVL/",
+			"name": "Horizontal velocity of the water column (currents)",
+			"description": "Parameters expressing the velocity (including scalar speeds and directions) of water column horizontal movement, commonly termed Eulerian currents"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/A999/",
+			"name": "Microzooplankton taxonomy-related biosurface area per unit volume of the water column",
+			"description": "Microzooplankton surface area per unit volume of the water column parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ATTN/",
+			"name": "Transmittance and attenuance of the water column",
+			"description": "Parameters relating to the rate of electromagnetic radiation intensity decrease as it travels through the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/INLZ/",
+			"name": "Insect and earthworm taxonomy-related abundance per unit area of the littoral zone",
+			"description": "Insect (Class Insecta) and earthworm (Subclass Oligochaeta) abundance per unit area of the littoral zone (between spring tide high and low water) parameters."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AORG/",
+			"name": "Concentration of organic matter in the atmosphere",
+			"description": "Parameters quantifying uncategorised organic substance concentrations in atmospheric, generally aerosol, samples such as organic matter and DOC."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SCDO/",
+			"name": "Metal fluxes between the bed and the water column",
+			"description": "Parameters quantifying the exchange of metalsbetween the bed (ie the sediment) and the water column sometimes termed benthic fluxes"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/EPSI/",
+			"name": "Turbulence in the water column",
+			"description": "Measured parameters expressing turbulence in the water column plus parameters derived from these measurements"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PU02/",
+			"name": "Macroalgae generic abundance in water bodies",
+			"description": "Any enumeration (e.g. count, number per litre) of macroalgae (seaweeds) designated by terms other than taxonomic names (e.g. total) in any fresh or salt water body."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/XRFC/",
+			"name": "Raw X-Ray fluorometer (XRF) output from sediment samples",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CYEU/",
+			"name": "Plankton biomass expressed as carbon per unit volume of the water column",
+			"description": "Used for plankton carbon biomass parameters where no differentiation between phytoplankton, microzooplankton or zooplankton is possible"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HLWC/",
+			"name": "Concentration of inorganic halogens in water bodies",
+			"description": "Concentrations of halogens as elements or their inorganic compounds in all phases of any body of fresh or salt water"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHAT/",
+			"name": "Inorganic phosphorus species concentrations in the atmosphere",
+			"description": "Concentration of inorganic phosphorus species (element or compounds) in any phase of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CORG/",
+			"name": "Particulate total and organic carbon concentrations in the water column",
+			"description": "Concentrations of total and organic carbon in the particulate phase of the water column as extracted by a filtration technique. This is the particle-bound concentration per unit volume of the water column and is both a function of the SPM concentration in the water column and the concentration of carbon per unit weight of SPM.  Total and organic carbon are classed together to circumvent confusion caused by total carbon data sets labelled 'POC' on the assumption that the inorganic carbon fraction is negligible"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/APZA/",
+			"name": "Vertical platform movement",
+			"description": "Parameters quantifying the upward and downward motion of objects mounting sensors or collecting samples."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FPRT/",
+			"name": "Zooplankton defecation rates in the water column",
+			"description": "Faecal pellet production and gut evacuation rates"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BRDD/",
+			"name": "Bird taxonomy-related abundance per unit area of surface",
+			"description": "Bird (Class Aves) abundance per unit area (of land or sea) presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SAMP/",
+			"name": "Sampling parameters",
+			"description": "Qualitative and quantitative parameters related to the sampling activity; includes terms related to sampling effort, sampling gears, sample processing."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHYG/",
+			"name": "Phytoplankton growth",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHLT/",
+			"name": "Raw pH sensor output",
+			"description": "Raw pH parameter output from any type of pH sensor."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BCPB/",
+			"name": "Concentration of polychlorobiphenyls (PCBs) in biota",
+			"description": "PCB concentrations in either whole organisms or their constituent parts"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CBSP/",
+			"name": "Carbon concentrations in suspended particulate material",
+			"description": "Concentrations of total, organic and inorganic carbon per unit weight of suspended particulate material collected by water column filtration, centrifugation or sediment trapping."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WDNA/",
+			"name": "Concentrations of biopolymers in water bodies",
+			"description": "Parameters quantifying the amount of naturally-produced organic (molecules containing carbon) compounds that are built from multiple instances of structural units (monomers) that are covalently-bonded to produce larger structures in any body of salt or fresh water. Includes polynucleotides (RNA and DNA), polypeptides and polysaccharides (e.g. cellulose)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ACNT/",
+			"name": "Macroalgae and seagrass taxonomy-related counts",
+			"description": "Macroalgae (Rhodophycota, Chromphycota, Chlorophycota) and seagrass (Charophyta, Anthophyta) count parameters presented at the level of taxa at any level from sub-species upwards. Count includes presence/absence indicators."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MLFX/",
+			"name": "Sedimentation flux of metallic and metalloid elements and isotopes in water bodies",
+			"description": "Parameters quantifying metal and metalloid fluxes as element concentration or isotope activities per unit area per unit time"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/VIRU/",
+			"name": "Virus abundance in water bodies",
+			"description": "Any enumeration (e.g. count, number per square metre) of viruses in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SEBH/",
+			"name": "Seal behaviour",
+			"description": "Parameters describing the actions or reactions, usually in response to the environment, of true seals (Phocidae), eared seals (Otariidae) and walruses (Odobenidae)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PYTT/",
+			"name": "Plankton abundance per unit volume of the water column",
+			"description": "Used for plankton abundance parameters where no differentiation between phytoplankton, microzooplankton or zooplankton is possible"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PXSD/",
+			"name": "Phosphorus concentrations in sediment",
+			"description": "Concentrations of total, organic and inorganic phosphorus per unit weight of sediment.  Sediment is understood to be the solid phase of the bed, including the recently settled material sometimes known as fluff collected from the bed surface."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TEMP/",
+			"name": "Temperature of the water column",
+			"description": "Temperature parameters in any body of water at any point between the bed and the atmosphere excluding the top few microns sampled by radiometers known as the skin"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FABD/",
+			"name": "Fauna abundance per unit area of the bed",
+			"description": "Any fauna (class Animalia) abundance per unit are of sea, river or lake bed.  Broad group overlapping a number of more specific groups that should be used preferentially, but this group is provided as an alternative to one-to-many mappings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTWC/",
+			"name": "Colloidal metal concentrations in the water column",
+			"description": "Concentrations of metal elements in the colloidal phase of the water column. Usually the dissolved concentration difference between conventionally filtered water and ultra-filtered water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PCOC/",
+			"name": "Concentration of other organic contaminants in suspended particulate material",
+			"description": "'Other' organic contaminant (substances regarded as harmful other than PCBs and PAHs) concentrations in suspended particulate material, regarded as anything sampled by a water bottle, SAP, sediment trap etc.  This group is for SPM composition measurements (concentration per unit weight) and NOT concentrations per unit volume of the water column in the particulate phase."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZV00/",
+			"name": "Zooplankton biovolume",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PREX/",
+			"name": "Sea level expressed as pressure",
+			"description": "Measurements of the displacement of the water column surface from a fixed, stable reference expressed as either total pressure or sea pressure"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PCHW/",
+			"name": "Concentration of polycyclic aromatic hydrocarbons (PAHs) in the water column",
+			"description": "PAH concentrations in all phases of the water column. This group includes concentrations per unit volume of the water column in the particulate phase, but not concentrations per unit wieght of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FBAB/",
+			"name": "Fish taxonomy-related abundance per unit area of the bed",
+			"description": "Fish (Osteichthyes, Agnatha and Chondrichthyes) abundance per unit area of bed (sea, river, lake etc.) parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  Includes animals normally considered as planktonic if they have been returned from sediment samples."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BNTC/",
+			"name": "Bacteria non taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Basically any bacteria carbon biomass parameters that aren't included in parameter group BATC because they cannot be mapped to specific taxa in a standard taxonomy registry such as WoRMS or ITIS.  Bacteria are defined as Kingdom Monera, which includes cyanobacteria."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZNLG/",
+			"name": "Metal ligand parameters in the water column",
+			"description": "Parameters concerned with the complexation of metals as ligands in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP005/",
+			"name": "Fish disease and parasites",
+			"description": "Parameters related to the infection of Fish (Osteichthyes, Agnatha and Chrondrichthyes) by parasites and disease. Includes visual assesements and analytical data."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/STCO/",
+			"name": "Sediment thermal conductivity",
+			"description": "Parameters that describe the degree to which unlithified sediment is able to conduct heat"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TDNT/",
+			"name": "Dissolved total and organic nitrogen concentrations in the water column",
+			"description": "Concentration of total (organic plus inorganic) or organic dissolved nitrogen per unit volume of the water column.  Grouped together as organic nitrogen frequently determined as total nitrogen."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HBCH/",
+			"name": "Habitat characterisation",
+			"description": "Parameters specifying the physical or chemical environment of a place where an organism is found."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MDWP/",
+			"name": "Particulate trace metalloid and inorganic selenium concentrations in water bodies",
+			"description": "Concentration parameters for trace metalloid elements and inorganic selenium species in the particulate phase of any body of fresh or salt water collected by fitration, centrifugation or sediment trapping. Trace metalloids are considered as B, Ge, As, Sb, Te and Po (but not Si which is classed separately because of its major role in environmental chemistry)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTAT/",
+			"name": "Metal concentrations in the atmosphere",
+			"description": "Concentration of metal elements in any phase of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/UVRD/",
+			"name": "Ultra-violet (UV) radiation",
+			"description": "Parameters relating to the intensity of ultra-violet radiation in either the atmosphere or the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PESD/",
+			"name": "Pesticide concentrations in sediment",
+			"description": "Concentration parameters for substances synthesised by man to kill other life forms in sediment, which is considered to be anything from the bed sampled by a grab or corer, including 'fluff'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OSIC/",
+			"name": "Concentration of organic sulphur species in ice",
+			"description": "Concentration parameters for organic sulphur species in ice"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RALT/",
+			"name": "Rock alteration",
+			"description": "Parameters decribing aspects of a geologic unit that are the result of bulk chemical, mineralogical or physical changes related to change in the physical or chemical environment.  Includes weathering, supergene alteration, hydrothermal alteration and metasomatic effects not considered metamorphic."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WCOC/",
+			"name": "Concentration of other organic contaminants in the water column",
+			"description": "Concentration parameters for carbon compounds regarded as environmentally harmful in solution or suspension (i.e.includes measurements in both the dissolved and particulate phases) in any body of salt or fresh water that are not included in other specific categories"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SAMO/",
+			"name": "Nutrient fluxes between the bed and the water column",
+			"description": "Parameters quantifying the exchange of nutrients between the bed (ie the sediment) and the water column sometimes termed benthic fluxes"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MXLM/",
+			"name": "Structure and stability of the water column",
+			"description": "Parameters describing or predicting water column structure plus parameters quantifying the dynamic stability of that structure"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PCO2/",
+			"name": "Partial pressure (pCO2) and fugacity (fCO2) of carbon dioxide in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTWT/",
+			"name": "Total metal concentrations in water bodies",
+			"description": "Concentration parameters for metal elements in the combined dissolved and particulate phases of any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WRAD/",
+			"name": "Radioactivity in water bodies",
+			"description": "All parameters associated with radioactivity in any body of fresh or salt water, including radiation counts, isotope activities and activity ratios. Activities per unit mass of SPM are included."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZNTC/",
+			"name": "Zooplankton non taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) carbon biomass per unit volume parameters not included in group ZCTC.  Usually used for generic names such as 'mesozooplankton'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RVDS/",
+			"name": "River flow and discharge",
+			"description": "Parameters related to the volume of water passing through a point in a river system per unit time, including the rates of freshwater, dissolved material and particulate load discharge from a river into the sea."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ASLV/",
+			"name": "Sea level",
+			"description": "Measurements and predictions of the displacement of the water column surface from a fixed, stable reference"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ATVS/",
+			"name": "Atmospheric visibility and transparency",
+			"description": "Parameters relating to atmospheric clarity, such as optical transmittance/attenuance, and resultant visibility"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPWC/",
+			"name": "Concentration of inorganic sulphur species in the water column",
+			"description": "Concentration parameters (including saturation if gaseous) for inorganic sulphur species in all phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OMWC/",
+			"name": "Organometallic and organometalloid species concentration parameters in water bodies",
+			"description": "All organometallic and organometalloid compound concentration parameters \n(including saturations for gaseous species) in all phases of any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTWD/",
+			"name": "Dissolved metal concentrations in the water column",
+			"description": "Concentrations of metal elements in the dissolved phase of the water column.  This may include a contribution from the particulate phase if this has not been totally removed by filtration and the metal in question is reactive (ie detected as if it were dissolved) to the analytical technique used."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MEPH/",
+			"name": "Zooplankton egg hatch proportion",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OMBI/",
+			"name": "Organometallic species concentration parameters in biota",
+			"description": "All measurements of the quantity or mass of any organometallic compound in any living organisms or their component parts"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SACT/",
+			"name": "Surfactant concentrations in water bodies",
+			"description": "Parameters quantifying the amount of compounds that lower the surface tension of a liquid, the interfacial tension between two liquids, or that between a liquid and a solid in any body of salt or fresh water. The term surfactants includes detergents, wetting agents, emulsifiers, foaming agents and dispersants."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OHWC/",
+			"name": "Concentration of other hydrocarbons in the water column",
+			"description": "'Other' (not alkanes, alkenes, alkynes or PAHs) hydrocarbon concentration parameters (including saturation of gaseous species) in all phases of the water column.  Does not include parameters expressed per unit weight of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP004/",
+			"name": "Bird reproduction",
+			"description": "Parameters related to the reproduction of birds (Class Aves)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZCMP/",
+			"name": "Zooplankton chemical composition",
+			"description": "Chemical composition of zooplankton expressed in terms of mass (or molar quantity) per specimen or per unit tissue mass"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/V999/",
+			"name": "Microzooplankton taxonomy-related biovolume per unit volume of the water column",
+			"description": "Microzooplankton biovolume parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS. These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OXYC/",
+			"name": "Raw oxygen sensor output",
+			"description": "Raw parameters (usually membrane current and temperature) from dissolved oxygen sensors"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CEMO/",
+			"name": "Cetacean mortality",
+			"description": "Parameters describing the causes and rate of mortality in cetaceans (Order Cetacea). Includes both parameters mapped to taxa and those mapped to non-taxonomic groupings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LVEG/",
+			"name": "Land vegetation",
+			"description": "Parameters relating to land (including marshes and the intertidal zone) vegetation"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OPBS/",
+			"name": "Optical backscatter",
+			"description": "Includes all parameters covering the strength of electromagnetic radiation signal return, including absolute measurements of returning signal strength as well as parameters expressed as backscatter (the proportion of transmitted signal returned)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP080/",
+			"name": "Fishing by-catch",
+			"description": "Parameters quantifying the capture of non-target species during commercial and non-commercial fishing trips"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHOS/",
+			"name": "Phosphate concentration parameters in the water column",
+			"description": "Phosphate  concentration parameters (including statistical parameters such as standard deviation) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IAGE/",
+			"name": "Ice age",
+			"description": "Measured or stratigraphically estimated age of ice"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPCB/",
+			"name": "Concentration of polychlorobiphenyls (PCBs) in sediment samples",
+			"description": "PCB concentrations in sediment, which is considered to be anything from the bed sampled by a grab or corer, including 'fluff'"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/QDMD/",
+			"name": "Quantity of material dumped",
+			"description": "Parameters quantifying the amount of liquids (e.g. ship's ballast) or solids (e.g. dredge spoil) deposited into the water column as a result of man's activities"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SLIT/",
+			"name": "Sea-floor litter abundance",
+			"description": "Parameters describing the abundance and nature of litter data collected on the seabed."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OPFX/",
+			"name": "Sedimentation flux of non-metallic inorganic species in the water column",
+			"description": "Quantity of any inorganic species such as silicon (opal) and phosphorus passing through unit area of the water column in unit time. Carbon and nitrogen are regarded as organic and explicitly excluded"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/EXSV/",
+			"name": "Experiment state variables",
+			"description": "Measurements made at a given time of any state variable in a sample that is the subject of an experiment that will change the composition over time, such as the water sample in an incubation experiment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/INAP/",
+			"name": "inapplicable",
+			"description": "There is no appropriate value."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FCMW/",
+			"name": "Flow cytometry parameters in water bodies",
+			"description": "Parameters derived from flow cytometry data analysis of water samples using in situ or bench-top flow cytometers."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ICEM/",
+			"name": "Ice motion and related parameters",
+			"description": "Parameters specifying the speed and direction of sea or land ice and the stresses associated with this motion."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MARC/",
+			"name": "Marine archaeology",
+			"description": "Parameters related to the study of human interaction with the sea through the investigation of associated physical remains, be they vessels, shore side facilities, port-related structures, cargoes, human remains or submerged landscapes"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZFIT/",
+			"name": "Zooplankton and zoobenthos physiological condition parameters",
+			"description": "Parameters indicating the health of zooplankton and zoobenthos taxa, such as fecundity, egg condition, presence of parasites/diseases etc."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LWET/",
+			"name": "Terrestrial water content",
+			"description": "Parameters relating to the water held by land masses such as soil and vegetation moisture content"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GWCH/",
+			"name": "Groundwater chemistry",
+			"description": "Parameters quantifying the chemistry of terrestrial groundwater bodies such as aquifers and waters percolating through rock formations."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTPW/",
+			"name": "Metal concentrations in sediment pore waters",
+			"description": "Concentrations of metal elements in sediment pore waters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GREF/",
+			"name": "Bacterial growth",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TRIS/",
+			"name": "Concentration of inorganic sulphur species in sediment",
+			"description": "Concentration parameters for inorganic sulphur species in sediment (anything collected by a corer including fluff)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZADX/",
+			"name": "Zoobenthos dry weight biomass",
+			"description": "Any quantification of the dry mass of zoobenthos (animals living on, in or near the bed of any water body). Includes animals normally considered planktonic if collected in sediment and data expressed ash-free and in terms of carbon, nitrogen etc.."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MATX/",
+			"name": "Microzooplankton taxonomic abundance in water bodies",
+			"description": "Any enumeration (e.g. count, number per litre) of microzooplankton (free swimming heterotrophic organisms smaller than 200um) designated by taxonomic names (e.g. species, genus or family) in any fresh or salt water body."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/EXCO/",
+			"name": "Light extinction and diffusion coefficients",
+			"description": "Parameters relating to the extent of light penetration into the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FNTX/",
+			"name": "Fish non taxonomy-related abundance per unit volume of the water column",
+			"description": "Fish (Osteichthyes, Agnatha and Chrondrichthyes) abundance per unit volume parameters not included under FATX.  Most commonly used for the generic term 'fish' that maps to multiple taxa."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DPEV/",
+			"name": "Depositional environment",
+			"description": "Parameters characterising the environment in which sediments were deposited either by observation or interpretation of sedimentary rocks and unlithified sediments."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AQYN/",
+			"name": "Concentration of alkenes and alkynes in the water column",
+			"description": "Alkene and alkyne concentrations in all phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CEMP/",
+			"name": "Cetacean morphology and physiology",
+			"description": "Parameters describing the size, shape or physiological activity including disease and parasite infection status of cetaceans (Order Cetacea). Includes both parameters mapped to taxa and those mapped to non-taxonomic groupings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SUAT/",
+			"name": "Sulphur species concentrations in the atmosphere",
+			"description": "Concentration of sulphur species (element or compounds) in any phase of the atmosphere. Includes sulphur dioxide."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NUTV/",
+			"name": "Raw in-situ nutrient analyser output",
+			"description": "Direct output parameters from spectophotometric or chemical in-situ nutrient analysers"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IRIC/",
+			"name": "Stable isotopes in ice and snow",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) in frozen precipitation (snow, hail, ice and slush), its accumulations (e.g. glaciers), sea ice and frozen fresh water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IS4R/",
+			"name": "Reduction rates in bed sediments",
+			"description": "Reduction rates of any species in sediment cores"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PNFX/",
+			"name": "Sedimentation flux of identified biota in the water column",
+			"description": "Fluxes expressed as number per unit area per unit time of any biota or remains thereof (excluding faecal pellets which are classed as SPM) downwards through the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DOCU/",
+			"name": "Dissolved organic carbon uptake and production in the water column",
+			"description": "Any parameter relating to the rate of DOC concentration change in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MSBD/",
+			"name": "Zooplankton dry weight biomass per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton and larger, exclusing fish, mammals, reptiles and insects) biomass determined by drying to constant weight."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SIPW/",
+			"name": "Stable isotopes in sediment pore waters",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) in either the solute or solvent phase of sediment pore waters."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HMSB/",
+			"name": "Concentration of organic matter in water bodies",
+			"description": "Concentration (not 380nm light absorption) parameters for dissolved or total organic matter (includes humics, yellow matter, Gelbstoff) in any body of salt or fresh water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZATP/",
+			"name": "Zooplankton taxonomy-related biomass expressed as protein per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) protein biomass per unit volume for entities that have been identified by taxonomic name"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CARO/",
+			"name": "Carotenoid and flavenoid pigment concentrations in water bodies",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LITH/",
+			"name": "Lithology",
+			"description": "Parameters describing rocks on the basis of physical characteristics such as colour, structure, mineralogy and grain size"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WBRX/",
+			"name": "Water body redox potential",
+			"description": "A measure of the tendency of any body of fresh or salt water to either gain or lose electrons when it is subject to change by introduction of a new species."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CING/",
+			"name": "Particulate inorganic carbon concentrations in the water column",
+			"description": "Concentrations of inorganic carbon in the particulate phase of the water column as extracted by a fitration technique.  This is the particle-bound concentration per unit volume of the water column. Consequently, it is both a function of the SPM concentration in the water column and the concentration of inorganic carbon per unit weight of the SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RTCO/",
+			"name": "Rock thermal conductivity",
+			"description": "Parameters that describe the degree to which sedimentary, igneous or metamorphic rocks are able to conduct heat"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/APDA/",
+			"name": "Horizontal platform movement",
+			"description": "All parameters relating to horizontal platform travel, including distance run"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PTDZ/",
+			"name": "Temperature variation in the water column",
+			"description": "Parameters expressing the variation of temperature in the water column either as a function of space or of time"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SSCN/",
+			"name": "Side-scan sonar",
+			"description": "A technique for mapping the morphology of the seafloor using a sonar swath projected sideways from a towed underwater vehicle."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FEFF/",
+			"name": "Fishing effort",
+			"description": "Parameters that quantify or classify the physical or financial resources used in fishing activities"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PATX/",
+			"name": "Phytoplankton taxonomic abundance in water bodies",
+			"description": "Any enumeration (e.g. count, abundance) of free-floating autotrophic biological entities designated by taxonomic names (e.g. species, genus, family) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GHDX/",
+			"name": "Sediment microfossil morphology parameters",
+			"description": "Parameters relating to the size, shape and form of microfossils in sediment samples"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WSTR/",
+			"name": "Wind stress and shear",
+			"description": "Parameters related to forces due to interactions between atmosphere and the surface of the earth or between atmospheric air masses"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ATEM/",
+			"name": "Atmospheric emissions",
+			"description": "Parameters quantifying and describing the release of substances into the atmosphere as a result of human activity"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AMUP/",
+			"name": "Regenerated production in water bodies",
+			"description": "Parameters quantifying the uptake rate of nitrogen from excretion products (ammonium and urea) by flora and fauna living in any body of salt or fresh water"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BCAH/",
+			"name": "Concentration of polycyclic aromatic hydrocarbons (PAHs) in biota",
+			"description": "PAH concentrations in either whole organisms or their constituent parts"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LSST/",
+			"name": "Land surface temperature",
+			"description": "Parameters relating to land surface temperature including fire and other hot spot location"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP048/",
+			"name": "Concentration of polychlorobiphenyls (PCBs) in the atmosphere",
+			"description": "Parameters quantifying polychlorobiphenyl (PCB) concentrations in all phases of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/D000/",
+			"name": "Microphytobenthos abundance",
+			"description": "Any quantification of the number (e.g. count, abundance) of microalgae present on hard substrate or soft sediment at the bottom of any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP025/",
+			"name": "Seal reproduction",
+			"description": "Parameters related to the reproduction of true seals (Phocidae), eared seals (Otariidae) and walruses (Odobenidae)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OZON/",
+			"name": "Ozone and oxygen concentrations in the atmosphere",
+			"description": "Ozone and oxygen concentration parameters in any phase of the atmosphere (but usually the gaseous phase)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PPRD/",
+			"name": "Primary production in the water column",
+			"description": "Parameters associated with the quantification of primary production.  This is defined as the fixation of carbon dioxide into either organic or inorganic carbon by living entities and so includes photosynthesis and calcification."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DSCO/",
+			"name": "Distribution coefficients in the water column",
+			"description": "Distribution coefficients of species between the dissolved and particulate phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CNTX/",
+			"name": "Phytoplankton generic biomass in water bodies",
+			"description": "Any parameterisation of biomass (e.g. wet weight, dry weight, carbon, nitrogen etc.) of free-floating autotrophic biological entities designated by terms other than taxonomic names (e.g. microphytoplankton, ciliate, flagellate) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WSTB/",
+			"name": "Stable isotopes in water bodies",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) in both the dissolved and particulate phases of any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZNTP/",
+			"name": "Zooplankton non taxonomy-related biomass expressed as protein per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) protein biomass per unit volume for entities that have not been identified by taxonomic name"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/VSRW/",
+			"name": "Visible waveband radiance and irradiance measurements in the water column",
+			"description": "Includes measurements at discrete wavelengths and PAR integrated values, measurements as photon and energy fluxes."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AAFX/",
+			"name": "Sedimentation flux of amino acids and associated compounds in water bodies",
+			"description": "Parameters quantifying the amount of organic compounds containing both a carboxyl group and an amino group (including compounds such as salts and esters) sinking vertically as particles through a unit area of a water body in units time."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FDMS/",
+			"name": "Gas fluxes between the water column and the atmosphere",
+			"description": "Fluxes of any gaseous species from water column to atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/STOM/",
+			"name": "Concentration of organic matter in sediments",
+			"description": "Parameters quantifying the proportion of organic material in a soil or sediment sample"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IDIS/",
+			"name": "Industrial discharges",
+			"description": "Parameters that quantify and specify material output into the environment as a result of industrial activity"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PCAH/",
+			"name": "Concentration of polycyclic aromatic hydrocarbons (PAHs) in suspended particulate material",
+			"description": "PAH concentrations in suspended particulate material, regarded as anything sampled by a water bottle, SAP, sediment trap etc.  This group is for SPM composition measurements (concentration per unit weight) and NOT concentrations per unit volume of the water column in the particulate phase."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HAAC/",
+			"name": "Amino acids in sediment",
+			"description": "Parameters quantifying the amount of organic compounds containing both a carboxyl group and an amino group in unlithified seabed material."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CRYS/",
+			"name": "Snow and ice mass, thickness and extent",
+			"description": "Measurements of quantity (mass), thickness and spatial extent of snow and ice"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OPWC/",
+			"name": "Unclassified pigment concentrations in the water column",
+			"description": "Includes all pigments that cannot be explicitly classified as chlorophylls, phaeopigments or carotenoids.  Generally, these are parameters where different pigments have been grouped together. Concentrations are expressed in terms of per unit volume or unit area of the water column.  Does not include data expressed per unit mass of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SREP/",
+			"name": "Shellfish reproduction",
+			"description": "Parameters that quantify the fecundity, reproductive rates or nature of reproduction in shellfish (molluscs - including cephalopods - and crustaceans of interest to fisheries research and commercial fisheries)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MSFX/",
+			"name": "Sedimentation flux quantification in the water column",
+			"description": "Parameters expressing the total sedimentation flux in terms of particle mass, volume or counts"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LVLT/",
+			"name": "Raw light meter output",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHYC/",
+			"name": "Phycobolin pigment concentrations in the water column",
+			"description": "Concentration of phycobolin group pigments such as phycocyanin and phycoerythrin in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TPHS/",
+			"name": "Particulate total and organic phosphorus concentrations in the water column",
+			"description": "Concentrations of total and organic phosphorus in the particulate phase of the water column, which is a function of both the SPM concentration in the water column and the concentration of phosphorus per unit weight of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DMST/",
+			"name": "Organosulphur and organoselenium species concentration parameters in water bodies",
+			"description": "All organosulphur and organoselenium compound concentration parameters (including saturations for gaseous species) \nin all phases of any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LIFX/",
+			"name": "Sedimentation flux of terrestrially derived material in the water column",
+			"description": "Fluxes of terrestrial biological or lithological material"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AMOX/",
+			"name": "Nitrification rate in the water column",
+			"description": "Parameters relating to the rate of nitrification (oxidation of reduced nitrogen such as ammonium) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SCOC/",
+			"name": "Concentration of other organic contaminants in sediment samples",
+			"description": "Concentration parameters for carbon compounds regarded as environmentally harmful in sediment, which is considered to be anything from the bed sampled by a grab or corer, including 'fluff' that are not included in other specific categories"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CPWC/",
+			"name": "Chlorophyll pigment concentrations in water bodies",
+			"description": "Includes all variants of chlorophyll expressed in terms of per unit volume, \nper unit area of any body of fresh or salt water, or as a relative colour index (e.g. PCI). \nDoes not include data expressed per unit mass of SPM."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BATX/",
+			"name": "Bacteria taxonomic abundance in water bodies",
+			"description": "Any enumeration of bacteria (Kingdom Monera so includes cyanobacteria) designated by taxonomic names (e.g. species, genus, family) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BRAD/",
+			"name": "Radioactivity in biota",
+			"description": "All parameters associated with radioactivity in either whole organisms or their constituent parts"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HLIC/",
+			"name": "Concentration of inorganic halogens in ice",
+			"description": "Concentrations of halogens as elements or their inorganic compounds in ice"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FBAF/",
+			"name": "Fish taxonomy-related ash-free dry weight biomass per unit area of the bed",
+			"description": "Fish (Osteichthyes, Agnatha and Chondrichthyes) ash-free dry weight biomass per unit area of bed (sea, river, lake etc.) parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  Includes animals normally considered as planktonic if they have been returned from sediment samples."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RTMP/",
+			"name": "Rock temperature",
+			"description": "Parameters that describe the distribution of the degree of hotness within geologic units of lithified sedimentary, igneous of metamorphic rock."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BLUM/",
+			"name": "Bioluminescence parameters",
+			"description": "Parameters describing the nature and intensity of light generated by biological activity in the water column."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTSD/",
+			"name": "Nitrogen concentrations in sediment",
+			"description": "Concentrations of total, organic and inorganic nitrogen per unit weight of sediment.  Sediment is understood to be the solid phase of the bed, including the recently settled material sometimes known as fluff collected from the bed surface."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP001/",
+			"name": "Pollution events",
+			"description": "Parameters quantifying the accidental spillage of liquid or dry pollutants from vessels or marine industries. Parameters may include quantities of pollutant, areas affected and event duration."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/D001/",
+			"name": "Microphytobenthos biomass",
+			"description": "Any quantification of the mass (e.g. carbon, nitrogen, weight) of microalgae present on hard substrate or soft sediment at the bottom of any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CCPW/",
+			"name": "Carbonate chemistry in sediment pore waters",
+			"description": "Carbonate system parameters (DIC/TCO2, pH, alkalinity, pCO2) in sediment pore waters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SR2D/",
+			"name": "Two-dimensional seismic reflection",
+			"description": "Parameters relating to structure beneath sea-bed determined by the reflection of seismic energy along a single track."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SRFR/",
+			"name": "Seismic refraction",
+			"description": "Parameters relating to the elucidation of geological structure by quantifying the refration of waves from a high energy source by sub-surface layers."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PTOX/",
+			"name": "Concentration of phycotoxins in biota",
+			"description": "Parameters associated with the concentration of algae-generated toxins in either whole organisms or their constituent parts"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IRSP/",
+			"name": "Stable isotopes in speleothems",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) in secondary mineral deposits in caves. This includes stalactites, stalagmites, flowstone, and crystal growths."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TADN/",
+			"name": "Concentration of adenylates in sediment",
+			"description": "Concentrations of adenylates (ADP, ATP etc) per unit mass or unit volume of sediment (material collected by a corer including fluff)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OCPW/",
+			"name": "Dissolved organic carbon concentrations in sediment pore waters",
+			"description": "Concentrations of dissolved organic carbon in sediment pore waters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MTWP/",
+			"name": "Particulate metal concentrations in the water column",
+			"description": "Concentration parameters for metallic elements in the particulate phase of the water column collected by fitration, centrifugation or sediment trapping"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IATX/",
+			"name": "Insecta taxonomy-related abundance per unit volume of the water column",
+			"description": "Insecta abundance parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RMAJ/",
+			"name": "Geological sample major element chemistry",
+			"description": "Concentrations of the elements classically regarded as major (>1% by weight as oxide: namely: Si, Ti, Al, Fe3+, Fe2+, Mg, Mn, Ca, Na, and K) plus affiliated parameters such as H2O- (adsorbed water) and H2O+ (or loss on ignition) in rocks or sediments."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP012/",
+			"name": "Macroalgae and seagrass infection and damage",
+			"description": "Parameters relating to diseases and parasites of macroalgae (Rhodophycota, Chromphycota, Chlorophycota)  and seagrass (Charophyta, Anthophyta) and damage to seagrass beds"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MDWD/",
+			"name": "Dissolved trace metalloid and inorganic selenium concentrations in water bodies",
+			"description": "Concentration parameters for trace metalloid elements and non-organic selenium species in the dissolved phase of any body of fresh or salt water. This may include a contribution from the particulate phase if this has not been totally removed by filtration and the metalloid in question is reactive (ie detected as if it were dissolved) to the analytical technique used. Trace metalloids are considered as B, Ge, As, Sb, Te, and Po (but not Si which is classed separately because of its major role in environmental chemistry)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TFAA/",
+			"name": "Dissolved amino acid concentrations in the water column",
+			"description": "Parameters quantifying the amount of organic compounds containing both a carboxyl group and an amino group dissolved in a body of water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ACO2/",
+			"name": "Carbon monoxide and dioxide concentrations in the atmosphere",
+			"description": "CO and CO2 concentration parameters in any phase of the atmosphere (but usuall the gaseous phase). Includes pCO2."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SATM/",
+			"name": "Shellfish morphology, age and physiology",
+			"description": "Parameters that quantify the size, shape, age and life processes (including mortality) of shellfish (molluscs - including cephalopods - and crustaceans of interest to fisheries research and commercial fisheries)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SABB/",
+			"name": "Shellfish abundance and biomass in water bodies",
+			"description": "Parameters that quantify the numbers or amount of living material of shellfish (molluscs - including cephalopods - and crustaceans of interest to fisheries research and commercial fisheries) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BNTX/",
+			"name": "Bacteria generic abundance in water bodies",
+			"description": "Any enumeration of bacteria (Kingdom Monera so includes cyanobacteria) designated by terms other than taxonomic names (e.g. total) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DBDX/",
+			"name": "Geological sample density",
+			"description": "Parameters that describe the the mass per unit volume of any samples of rock or unlithified sediment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LERR/",
+			"name": "Raw current meter output parameters",
+			"description": "Parameters as logged by measuring devices, including raw counts/voltages and ADCP relative velocities"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ISAT/",
+			"name": "Stable isotopes in the atmosphere",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) in both the gaseous and aerosol phases of the atmosphere."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DGPW/",
+			"name": "Dissolved oxygen parameters for sediments",
+			"description": "All parameters (including concentration, saturation, turnover and fluxes) for dissolved oxygen in sediment and sediment pore waters."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BCMT/",
+			"name": "Metal concentrations in biota",
+			"description": "Metal concentrations in either whole organisms or their constituent parts."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FIBM/",
+			"name": "Fish biomass in water bodies",
+			"description": "Parameters quantifying the mass of fish (Osteichthyes, Agnatha and Chrondrichthyes)in total or by species per unit area or per unit volume in any body of fresh or salt water expressed in any form (e.g. wet weight, dry weight, carbon, nitrogen, etc.)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP069/",
+			"name": "Reptile reproduction",
+			"description": "Parameters related to the reproduction of reptiles (Class Reptilia)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CBCC/",
+			"name": "Bacteria morphology and physiology",
+			"description": "Parameters describing the size, shape or physiological activity of bacteria, defined as Kingdom Monera (includes cyanobacteria).  Includes parameters both parameters mapped to taxa and those mapped to non-taxonomic groupings."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZNTN/",
+			"name": "Zooplankton non taxonomy-related biomass expressed as nitrogen per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) nitrogen biomass per unit volume parameters not included in group ZCTC.  Usually used for generic names such as 'mesozooplankton'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PHSE/",
+			"name": "Pharmaceutical concentrations in sediments",
+			"description": "Concentration parameters for substances synthesised by man to modify bodily function or diagnose, cure, mitigate, treat, or prevent disease in sediment, which is considered to be anything from the bed sampled by a grab or corer, including 'fluff'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZCTN/",
+			"name": "Zooplankton taxonomy-related biomass expressed as nitrogen per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton plus larger pelagic animals excluding fish, reptiles and mammals) nitrogen biomass parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SHTA/",
+			"name": "Hydrolytic activity in sediment",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SDNA/",
+			"name": "Concentrations of biopolymers in sediment",
+			"description": "Parameters quantifying the amount of naturally-produced organic (molecules containing carbon) compounds that are built from multiple instances of structural units (monomers) that are covalently-bonded to produce larger structures in any sediment (material collected by a corer including fluff). Includes polynucleotides (RNA and DNA), polypeptides and polysaccharides (e.g. cellulose)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AALK/",
+			"name": "Concentration of alkanes in the atmosphere",
+			"description": "Alkane concentrations in all phases of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTRA/",
+			"name": "Nitrate concentration parameters in the water column",
+			"description": "Nitrate concentration parameters (including statistical parameters such as standard deviation) in the water column. Includes nitrate+nitrite, which is often loosely referred to as nitrate."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FCST/",
+			"name": "Fish and shellfish catch statistics",
+			"description": "Parameters quantifying and describing biota take by fishing activities"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HEAD/",
+			"name": "Platform or instrument orientation",
+			"description": "Parameters that describe the displacement of platforms or instruments in space relative to various origins"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IPHY/",
+			"name": "Snow and ice physical properties and characteristics",
+			"description": "Parameters related to physical properties (e.g. colour, density, in-situ temperature) or characteristics (e.g. sea ice type) of any kind of water sample that was in its solid state at the time of sampling or measurement"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IPRX/",
+			"name": "Inorganic peroxides in water bodies",
+			"description": "Parameters related to compounds containing two oxygen atoms joined by a single bond but no carbon atoms in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SBPH/",
+			"name": "Seabed photography",
+			"description": "Digital images of the seabed obtained using either still or video cameras"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SIAT/",
+			"name": "Inorganic silicon species concentrations in the atmosphere",
+			"description": "Concentration of inorganic silicon species (element or compounds) in any phase of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TD00/",
+			"name": "Terrestrial detritus in the water column suspended particulate material",
+			"description": "Parameters quantifying and categorising terrestrially-derived detritus (eg dust and pollen) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AMON/",
+			"name": "Ammonium and ammonia concentration parameters in water bodies",
+			"description": "Ammonium and ammonia concentration parameters \n(including statistical parameters such as standard deviation) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/F001/",
+			"name": "Water body lipid concentrations",
+			"description": "Lipids are defined as small water-insoluble biomolecules including fats, fatty acids, esters, sterols, isoprenoid compounds, etc..  Water body includes any body of fresh or salt water. As lipids are insoluble in water the concencentrations are associated with the particulate phase."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CDRU/",
+			"name": "Metal uptake rates in the water column",
+			"description": "Parameters relating to the uptake rates of metals from the dissolved phase into the particulate phase"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BAUC/",
+			"name": "Bacteria taxonomic abundance in sediment",
+			"description": "Any enumeration of bacteria (Kingdom Monera so includes cyanobacteria) designated by taxonomic names (e.g. species, genus, family) in any soil or sediment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RGAS/",
+			"name": "Raw gas analyser output",
+			"description": "Raw concentration parameters from a gas analyser such as a LiCor"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BABI/",
+			"name": "Bacteria in biota",
+			"description": "Parameters relating to the abundance and nature of bacteria (Kingdom Monera) infecting other biota."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SXCN/",
+			"name": "Concentration of inorganic sulphur species in suspended particulate material",
+			"description": "Concentration parameters for inorganic sulphur species in suspended particulate material (anything collected by filtration or sediment trapping).  Group does not include parameters expressing data per unit volume of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/UPTH/",
+			"name": "Bacterial production in the water column",
+			"description": "Parameters related to bacterial production determination by measurement of dissolved organic molecule (e.g. leucine, thymidine) uptake rates"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CLCN/",
+			"name": "Concentration of inorganic halogens in sediment",
+			"description": "Concentrations of halogens as elements or simple inorganic compounds (eg iodate) in sediments (anything collected by a corer including fluff"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP068/",
+			"name": "Reptile abundance",
+			"description": "Parameters related to the abundance of reptiles (Class Reptilia)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DAAW/",
+			"name": "Particulate amino acid concentrations in the water column",
+			"description": "Parameters quantifying the amount of organic compounds containing both a carboxyl group and an amino group in solids suspended in a body of water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FADS/",
+			"name": "Fish aggregating device usage statistics",
+			"description": "Parameters describing usage of Fish Aggregating Devices (FAD) in fisheries (particularly purse seine tuna fisheries)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTIC/",
+			"name": "Concentration of nitrates in ice",
+			"description": "Nitrate concentration parameters in ice. Includes nitrate+nitrite, which is often loosely referred to as nitrate."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ACSR/",
+			"name": "Active seismic refraction",
+			"description": "Parameters quantifying the magnitude of earth movements resulting from artificial sources (such as explosions) far away from the measurement site."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AATX/",
+			"name": "Phytoplankton taxonomic surface area in water bodies",
+			"description": "Any parameterisation of cell surface area of free-floating autotrophic biological entities designated by taxonomic names (e.g. species, genus, family) in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CHEX/",
+			"name": "Cloud cover height and extent",
+			"description": "Parameters describing the horizontal and vertical extent of cloud cover"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ICHM/",
+			"name": "Snow and ice chemistry",
+			"description": "Parameters related to the chemical composition of any kind of water sample that was frozen solid at the time of sampling or measurement"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BPBP/",
+			"name": "Bacteria non taxonomy-related biomass expressed as protein per unit volume of the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CSLR/",
+			"name": "Solar Radiation",
+			"description": "Parameters quantifying the irradiance of the sun impinging on the Earth's surface in the visible and infra-red waveband, generally accepted as wavelengths between 300 and 3000 nm"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SR3D/",
+			"name": "Three-dimensional seismic reflection",
+			"description": "Parameters relating to structure beneath sea-bed determined by the reflection of seismic energy along multiple parallel tracks."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP079/",
+			"name": "Zooplankton wet weight biomass",
+			"description": "Zooplankton (mesozooplankton and larger, exclusing fish, mammals, reptiles and insects) biomass determined by weighing unprocessed catch samples."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CBFX/",
+			"name": "Sedimentation flux of carbohydates in the water column",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP010/",
+			"name": "Bioassay and contaminant biological impact",
+			"description": "Parameters describing the effects of substances on living organisms."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MDSD/",
+			"name": "Trace metalloid concentrations in sediment",
+			"description": "Concentration parameters for metalloid elements in sediment.  Sediment is understood to be the solid phase of the bed, including the recently settled material sometimes known as fluff collected from the bed surface. Metalloids are considered as B, Ge, As, Sb, Te and Po (but not Si which is classed separately because of its major role in environmental chemistry)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/EXUV/",
+			"name": "Biological detritus in the water column suspended particulate material",
+			"description": "Parameters quantifying and categorising biological detritus (eg exuvia and faecal pellets) in the water column that have been derived from the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IALZ/",
+			"name": "Insect and earthworm taxonomy-related ash-free dry weight biomass per unit area of the littoral zone",
+			"description": "Insect (Class Insecta) and earthworm (Subclass Oligochaeta) ash-free dry weight biomass per unit area of the littoral zone (between spring tide high and low water) parameters."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LITT/",
+			"name": "Litter abundance and type",
+			"description": "Parameters describing the abundance and nature of material classed as refuse introduced to the environment by activities of man that are not covered by the more specific P02 terms for micro-litter (UMLS and UMLW), beach litter (BLIT) or seafloor litter (SLIT)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MFAB/",
+			"name": "Zoobenthos generic abundance",
+			"description": "Any enumeration (e.g. count, number per square metre) of animals living on or near the seabed designated by terms other than taxonomic names (e.g. total)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RPOT/",
+			"name": "Redox potential in sediment",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CAPH/",
+			"name": "Air pressure",
+			"description": "Measurements of air pressure as the dependent variable (ie excluding air pressure measured to specify the z co-ordinate of a balloon or sonde), including derived parameters such as tendency (rate of change) and related parameters such as air density."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/LWRD/",
+			"name": "Long-wave radiation",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MZBC/",
+			"name": "Microzooplankton non taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Basically, any microzooplankton carbon biomass measurement that isn't included in parameter group MATC.  May include data integrations such as 'total microzooplankton'."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ZOOB/",
+			"name": "Zoobenthos taxonomy-related counts",
+			"description": "Zoobenthos count parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards. Count includes presence/absence indicators."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HFLX/",
+			"name": "Heat fluxes between the water column and the atmosphere",
+			"description": "Parameters quantifying heat exchange between any body of water and the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CSDE/",
+			"name": "Organic sulphur compound dynamics in the water column",
+			"description": "Parameters relating to the rates of creation and consumption of organic sulphur compounds (such as DMS and carbonyl sulphide) in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/XKEY/",
+			"name": "Security tags and keys",
+			"description": "Parameters used to encode information specifying access rights to data, usually in terms of authorised roles"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GP067/",
+			"name": "Reptile disease and parasites",
+			"description": "Parameters relating to diseases and parasites of reptiles (Class Reptilia)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SEMP/",
+			"name": "Seal morphology and physiology",
+			"description": "Parameters describing the size, shape or physiological activity including disease and parasite infection status of true seals (Phocidae), eared seals (Otariidae) and walruses (Odobenidae)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ASAM/",
+			"name": "Acoustic backscatter in the water column",
+			"description": "Includes all parameters covering the strength of acoustic signal return, including absolute measurements of returning signal strength as well as parameters expressed as backscatter (the proportion of transmitted signal returned)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPGS/",
+			"name": "Suspended particulate material grain size parameters",
+			"description": "Includes all SPM grain size measurements and derived statistics"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MSBO/",
+			"name": "Zooplankton ash-free dry weight biomass per unit volume of the water column",
+			"description": "Zooplankton (mesozooplankton and larger, exclusing fish, mammals, reptiles and insects) biomass determined by gravimetric measurement of loss on ignition"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HEAV/",
+			"name": "Wave height estimates",
+			"description": "Measurements of wave height that are not based on the statistical analysis of wave records, such as heave, surface roughness and visual height estimates"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GTCH/",
+			"name": "Geotechnics",
+			"description": "Parameters quantifying the properties of rocks and sediments that are relevance to engineering such as physical strength and load-bearing capacity.  Includes the disciplines of rock mechanics and soil mechanics."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GRAV/",
+			"name": "Gravity",
+			"description": "Parameters relating to the measurement of the Earth's gravity field"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PPCB/",
+			"name": "Concentration of polychlorobiphenyls (PCBs) in suspended particulate material",
+			"description": "PCB concentrations in suspended particulate material, regarded as anything sampled by a water bottle, SAP, sediment trap etc.  This group is for SPM composition measurements (concentration per unit weight) and NOT concentrations per unit volume of the water column in the particulate phase."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IWAB/",
+			"name": "Insect and earthworm taxonomy-related abundance per unit area of the bed",
+			"description": "Insect (Class Insecta) and earthworm (Subclass Oligochaeta) abundance per unit area of bed (sea, river, lake etc.) parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  Includes animals normally considered as planktonic if they have been returned from sediment samples. This parameter group has been implemented to separate predominantly freshwater taxa from predominantly marine taxa."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RBSC/",
+			"name": "Radar backscatter",
+			"description": "Includes all parameters covering the strength of emitted microwave radiation return, including absolute measurements of returning signal strength as well as parameters expressed as backscatter (the proportion of transmitted signal returned)"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CPRP/",
+			"name": "Precipitation and evaporation",
+			"description": "Parameters relating to all kinds of precipitation (rain, snow, etc.) and water loss from the surface of the Earth"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BDWC/",
+			"name": "Bacteria taxonomy-related ash-free dry weight biomass in sediment",
+			"description": "Bacteria ash-free dry weight biomass in sediment parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  The taxa may be at any taxonomic level from sub-species upwards.  Bacteria are defined as all taxa that fall into Kingdom Monera in the ITIS taxonomy, which includes cyanobacteria."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BATT/",
+			"name": "Bacteria environmental parameters",
+			"description": ""
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SPHT/",
+			"name": "Concentration of inorganic sulphur species in sediment pore water",
+			"description": "Concentration parameters (including saturation if gaseous) for inorganic sulphur species in all phases of sediment pore waters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SIXX/",
+			"name": "Concentration of silicon species in the water column",
+			"description": "Concentration parameters for silicon species (including opal) in all phases of the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/AAMN/",
+			"name": "Concentration of nitrogen species in the atmosphere",
+			"description": "Concentrations of both organic (eg amines) and inorganic (eg ammonia and oxides of nitrogen) nitrogen species in all phases of the atmosphere"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WCTR/",
+			"name": "Water body released tracers",
+			"description": "Parameters describing the amount in a sample of a tracer (rhodamine, SF6, 3He, etc.) that has been purposely released into  a water body to track water mass movements or quantify exchanges with the atmosphere."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MINC/",
+			"name": "Mineral chemistry",
+			"description": "Chemical analyses of minerals extracted from rocks or sediment or analysed in-situ using techniques like the electron microprobe."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/UMLS/",
+			"name": "Micro-litter in sediments",
+			"description": "Parameters describing the abundance and nature of microscopic particles of man-made materials and in particular microplastics present in the sediment."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SSTB/",
+			"name": "Stable isotopes in sediment",
+			"description": "Stable isotope parameters (concentrations, ratios and enrichments) in sediment, including biota-associated parameters such as isotope enrichment in foraminifera tests."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HFLW/",
+			"name": "Geothermal heat flow",
+			"description": "Parameters quantifying the  flux of thermal energy within the solid Earth or between the solid Earth and water bodies or atmosphere."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/IATC/",
+			"name": "Insecta taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Insecta carbon biomass parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DOCC/",
+			"name": "Dissolved organic carbon concentration in the water column",
+			"description": "DOC per unit volume of the water column.  Note that this includes some parameters that are strictly defined as total carbon, because the water was unfiltered on the assumption that POC was negligible."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CAKN/",
+			"name": "Concentration of alkenones and alkenoates in the water column",
+			"description": "Concentrations of alkenones (unsaturated aliphatic ketones) and alkenoates (carboxylic acid esters) in all phases of the water column."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/HZNV/",
+			"name": "Hazards to navigation",
+			"description": "Parameters describing the location, nature and extent of objects that pose a threat to travel on the water column such as wrecks and obstructions"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/OHAT/",
+			"name": "Concentration of other hydrocarbons in the atmosphere",
+			"description": "'Other' (not alkanes, alkenes, alkynes or PAHs) hydrocarbon concentration parameters (including saturation of gaseous species) in all phases of the atmosphere."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/GWDR/",
+			"name": "Wave direction",
+			"description": "Direct measurements (including visual estimates) plus statistically derived parameters"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RAGE/",
+			"name": "Rock age",
+			"description": "Measured or stratigraphically estimated ages of lithified sediments, igneous rock or metamorphic rock."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SSTR/",
+			"name": "Sedimentary structure",
+			"description": "Parameters characterising structure in sedimentary rocks and unlithified sediment such as bedding, lamination and bioturbation."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/NTSP/",
+			"name": "Nitrogen concentrations in suspended particulate material",
+			"description": "Concentrations of total, organic and inorganic nitrogen per unit weight of suspended particulate material collected by water column filtration, centrifugation or sediment trapping.  Note that it is common practice to assume all nitrogen in SPM is organic."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ISIC/",
+			"name": "Concentration of inorganic sulphur species in ice",
+			"description": "Concentration parameters for inorganic sulphur species in ice"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PEWB/",
+			"name": "Pesticide concentrations in water bodies",
+			"description": "Concentration parameters for substances synthesised by man to kill other life forms in either solution or suspension (i.e.includes measurements in both the dissolved and particulate phases) in any body of salt or fresh water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/SEMO/",
+			"name": "Seal mortality",
+			"description": "Parameters describing the causes and rate of mortality of true seals (Phocidae), eared seals (Otariidae) and walruses (Odobenidae)."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TNRP/",
+			"name": "Dissolved inorganic carbon production and respiration in the water column",
+			"description": "Parameters related to the rates of TCO2 production and consumption based on light/dark bottle incubations"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/RWCH/",
+			"name": "Precipitation chemistry",
+			"description": "Concentration of any chemical species in water collected from the atmosphere.  Includes rain, snow, hail and fog but excludes cloud samples or snow accumulations on the ground."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/BATC/",
+			"name": "Bacteria taxonomy-related biomass expressed as carbon per unit volume of the water column",
+			"description": "Bacteria carbon biomass parameters presented at the level of taxa that may be mapped to entities in a standard taxonomy registry such as WoRMS or ITIS.  These may be at any taxonomic level from sub-species upwards.  Bacteria are defined as all taxa that fall into Kingdom Monera in the ITIS taxonomy, which includes cyanobacteria."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ATDP/",
+			"name": "Atmospheric deposition rates",
+			"description": "Fluxes of chemical species from the atmosphere to sea or land surface including precipitation and aerosol deposition but excluding fluxes due to exchange of gases"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/DCMX/",
+			"name": "Other halocarbon concentrations in water bodies",
+			"description": "Concentrations of volatile halocarbons (compounds comprising carbon atoms covalently bonded to fluorine, chlorine, bromine or iodine atoms) other than tracers (i.e. freons/chlorofluorocarbons) and contaminants in any body of fresh or salt water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TSED/",
+			"name": "Concentration of suspended particulate material in the water column",
+			"description": "Parameters quantifying SPM concentration in the water column by weight, by volume or in terms of turbidity"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/VDFC/",
+			"name": "Transport in the water column",
+			"description": "Parameters describing the transport of material, heat or energy in the water column"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/FATX/",
+			"name": "Fish abundance in water bodies",
+			"description": "Parameters that quantify the numbers of fish (Osteichthyes, Agnatha and Chrondrichthyes) at a given location in any body of salt or fresh water."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/TOCH/",
+			"name": "Concentration of carbohydrates, phenols, alkanols (alcohols), aldehydes and ketones in water bodies",
+			"description": "Concentrations of carbohydrates, phenols, alkanols (alcohols), aldehydes and simple (non-alkenone) ketones in all phases of any body of fresh or salt water"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/CLTY/",
+			"name": "Cloud type",
+			"description": "Parameters that classify cloud cover into types such as cumulus and cirrus."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/WVSP/",
+			"name": "Spectral wave data parameters",
+			"description": "Parameters for directional and non-directional spectral wave data, excluding wave directions derived from spectral data."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/ALKY/",
+			"name": "Alkalinity, acidity and pH of the water column",
+			"description": "Parameters quantifying the hydrogen ion concentration in water bodies"
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/MZCT/",
+			"name": "Microzooplankton grazing",
+			"description": "Parameters that express the consumption of the phytoplankton population by the microzooplankton.  Generally the results of dilution experiments on water samples screened through a 200-micron mesh."
+		},
+		{
+			"identifier": "http://vocab.nerc.ac.uk/collection/P02/current/PSST/",
+			"name": "Skin temperature of the water column",
+			"description": "Temperature of the water column surface as measured by a radiometer.  It does NOT include temperature measurements in the upper few metres of the water column such as thermosalinograph data"
+		}
+	]
+}

@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
@@ -57,6 +58,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
+import org.n52.series.db.beans.sta.DatastreamEntity;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -355,7 +357,54 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
         session.saveOrUpdate(series);
         session.flush();
+        session.refresh(series);
+        processSta(series, session);
         return series;
+    }
+
+    private void processSta(DatasetEntity dataset, Session session) {
+        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
+            if (dataset.getPlatform() != null) {
+                DatastreamEntity datastream = existsDatastream(dataset, session);
+                if (datastream == null) {
+                    datastream = new DatastreamEntity();
+                    datastream.setIdentifier(UUID.randomUUID().toString());
+                    datastream.setName(createDatastreamName(dataset));
+                    datastream.setDescription(createDatastreamDescription(dataset));
+                    datastream.setProcedure(dataset.getProcedure());
+                    datastream.setObservableProperty(dataset.getObservableProperty());
+                    datastream.setThing(dataset.getPlatform());
+                    datastream.setUnit(dataset.getUnit());
+                    datastream.setObservationType(dataset.getOmObservationType());
+                }
+                datastream.addDataset(dataset);
+                session.saveOrUpdate(datastream);
+                session.flush();
+            }
+        }
+    }
+
+    private DatastreamEntity existsDatastream(DatasetEntity dataset, Session session) {
+        Criteria c = session.createCriteria(DatastreamEntity.class)
+                .add(Restrictions.eq(DatastreamEntity.PROPERTY_OBSERVABLE_PROPERTY, dataset.getPhenomenon()))
+                .add(Restrictions.eq(DatastreamEntity.PROPERTY_THING, dataset.getPlatform()))
+                .add(Restrictions.eq(DatastreamEntity.PROPERTY_SENSOR, dataset.getProcedure()));
+        return (DatastreamEntity) c.uniqueResult();
+    }
+
+    private String createDatastreamName(DatasetEntity dataset) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(dataset.getPlatform().getName()).append("_").append(dataset.getProcedure().getName()).append("_")
+                .append(dataset.getPhenomenon().getName());
+        return buffer.toString();
+    }
+
+    private String createDatastreamDescription(DatasetEntity dataset) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("Datastream for Thing '").append(dataset.getPlatform().getName()).append("' and Sensor '")
+                .append(dataset.getProcedure().getName()).append("' and ObservedProperty '")
+                .append(dataset.getPhenomenon().getName()).append("'.");
+        return buffer.toString();
     }
 
     private DatasetEntity preCheckDataset(ObservationContext ctx, DataEntity<?> observation, DatasetEntity dataset,

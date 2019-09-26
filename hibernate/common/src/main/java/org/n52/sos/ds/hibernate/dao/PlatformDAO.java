@@ -28,11 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.UUID;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.PlatformEntity;
+import org.n52.series.db.beans.sta.DatastreamEntity;
+import org.n52.series.db.beans.sta.HistoricalLocationEntity;
+import org.n52.series.db.beans.sta.LocationEntity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
@@ -41,6 +47,7 @@ import org.slf4j.LoggerFactory;
 public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PlatformDAO.class);
+    private static final String ENCODINGTYPE_GEOJSON = "application/vnd.geo+json";
 
     public PlatformDAO(DaoFactory daoFactory) {
         super(daoFactory);
@@ -93,7 +100,54 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
             session.save(platform);
             session.flush();
             session.refresh(platform);
+            processSta(platform, feature, session);
         }
         return platform;
+    }
+
+    private void processSta(PlatformEntity platform, AbstractFeatureEntity<?> feature, Session session) {
+        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
+            LocationEntity location = getOrInsertLocation(feature, session);
+            platform.addLocationEntity(location);
+            HistoricalLocationEntity historicalLocation = getOrInsertHistoricalLocation(platform, location, session);
+            platform.addHistoricalLocation(historicalLocation);
+
+            session.save(platform);
+            session.flush();
+            session.refresh(platform);
+        }
+    }
+
+    private LocationEntity getOrInsertLocation(AbstractFeatureEntity<?> feature, Session session) {
+        LocationEntity location = new LocationEntity();
+        location.setIdentifier(feature.isSetIdentifier() ? feature.getIdentifier() : UUID.randomUUID().toString());
+        location.setIdentifierCodespace(feature.getIdentifierCodespace());
+        location.setName(feature.isSetName() ? feature.getName() : location.getName());
+        location.setNameCodespace(feature.getNameCodespace());
+        location.setDescription(feature.isSetDescription() ? feature.getDescription() : location.getName());
+        location.setLocationEncoding(
+                getDaoFactory().getFeatureTypeDAO().getOrInsertFormatEntity(ENCODINGTYPE_GEOJSON, session));
+
+        session.save(location);
+        session.flush();
+        session.refresh(location);
+        return location;
+    }
+
+    private HistoricalLocationEntity getOrInsertHistoricalLocation(PlatformEntity platform, LocationEntity location,
+            Session session) {
+        HistoricalLocationEntity historicalLocation = new HistoricalLocationEntity();
+        historicalLocation.setIdentifier(UUID.randomUUID().toString());
+        historicalLocation.setThing(platform);
+        historicalLocation.setTime(DateTime.now().toDate());
+
+        session.save(historicalLocation);
+        session.flush();
+        session.refresh(historicalLocation);
+
+        location.addHistoricalLocation(historicalLocation);
+        session.saveOrUpdate(location);
+        session.flush();
+        return historicalLocation;
     }
 }

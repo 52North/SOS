@@ -67,7 +67,6 @@ This project includes:
   52°North SOS - SOS 2.0.0 Extension Operators under GPLv2
   52°North SOS - SOS API Module under GPLv2
   52°North SOS - Split and Merge observations module under GPLv2
-  52°North SOS - SQLite Configuration under GPLv2
   52°North SOS - Web Admin Controller under GPLv2
   52°North SOS - Web Client Controller under GPLv2
   52°North SOS - Web Common Controller under GPLv2
@@ -119,7 +118,6 @@ This project includes:
   Batik SVG transcoder classes under The Apache Software License, Version 2.0
   Batik utility library under The Apache Software License, Version 2.0
   Batik XML utility library under The Apache Software License, Version 2.0
-  Byte Buddy (without dependencies) under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
@@ -159,6 +157,7 @@ This project includes:
   Hibernate Commons Annotations under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-c3p0 under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-core under GNU Library General Public License v2.1 or later
+  Hibernate ORM - hibernate-spatial under GNU Library General Public License v2.1 or later
   HikariCP under The Apache Software License, Version 2.0
   HPPC Collections under The Apache Software License, Version 2.0
   httpservices under (MIT-style) netCDF C library license
@@ -319,7 +318,6 @@ This project includes:
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  SQLite JDBC under The Apache Software License, Version 2.0
   StAX API under The Apache Software License, Version 2.0
   T-Digest under The Apache Software License, Version 2.0
   TXW2 Runtime under CDDL+GPL License

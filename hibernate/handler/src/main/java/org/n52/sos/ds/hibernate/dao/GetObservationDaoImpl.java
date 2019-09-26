@@ -34,7 +34,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -57,13 +56,12 @@ import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GlobalObservationResponseValues;
-import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
@@ -78,7 +76,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @Configurable
 public class GetObservationDaoImpl extends AbstractObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
@@ -183,57 +180,41 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
      * @throws ConverterException
      *             If an error occurs during sensor description creation.
      */
-    protected List<OmObservation> querySeriesObservation(GetObservationRequest request, Session session)
+    private List<OmObservation> querySeriesObservation(GetObservationRequest request, Session session)
             throws OwsExceptionReport, ConverterException {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
         }
-        AbstractSeriesObservationDAO observationDAO = daoFactory.getObservationDAO();
         Locale requestedLocale = getRequestedLocale(request);
         String pdf = getProcedureDescriptionFormat(request.getResponseFormat());
         final long start = System.currentTimeMillis();
         List<String> features = request.getFeatureIdentifiers();
-        // temporal filters
-        final List<IndeterminateValue> extendedIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
-        final Criterion filterCriterion = getTemporalFilterCriterion(request);
-
-        final List<OmObservation> result = new LinkedList<>();
+        
         Collection<DataEntity<?>> seriesObservations = Lists.newArrayList();
-
         AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
-
-        // query with temporal filter
-        if (filterCriterion != null) {
-            seriesObservations = checkObservationsForDuplicity(
-                    observationDAO.getSeriesObservationsFor(request, features, filterCriterion, session), request);
-        } else if (CollectionHelper.isNotEmpty(extendedIndeterminateTimeFilters)) {
-            // query with first/latest value filter
-            for (IndeterminateValue sosIndeterminateTime : extendedIndeterminateTimeFilters) {
+        DataEntity<?> first = null;
+        DataEntity<?> last = null;
+        for (IndeterminateValue sosIndeterminateTime : request.getFirstLatestTemporalFilter()) {
+            for (DatasetEntity series : seriesDAO.getSeries(request, features, session)) {
                 if (overallExtrema) {
-                    seriesObservations =
-                            observationDAO.getSeriesObservationsFor(request, features, sosIndeterminateTime, session);
-                } else {
-                    for (DatasetEntity series : seriesDAO.getSeries(request, features, session)) {
-                        seriesObservations.addAll(observationDAO.getSeriesObservationsFor(series, request,
-                                sosIndeterminateTime, session));
-
+                    if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)
+                            && (first == null || series.getFirstValueAt().before(first.getSamplingTimeStart()))) {
+                        seriesObservations.add(series.getFirstObservation());
+                    } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)
+                            && (last == null || series.getLastValueAt().after(last.getSamplingTimeEnd()))) {
+                        seriesObservations.add(series.getLastObservation());
                     }
-                    seriesObservations = checkObservationsForDuplicity(
-                            observationDAO.getSeriesObservationsFor(request, features, session), request);
+                } else {
+                    if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)) {
+                        seriesObservations.add(series.getFirstObservation());
+                    } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)) {
+                        seriesObservations.add(series.getLastObservation());
+                    }
                 }
             }
-        } else {
-            // query without temporal or indeterminate filters
-            seriesObservations = checkObservationsForDuplicity(
-                    observationDAO.getSeriesObservationsFor(request, features, session), request);
         }
 
-        // if active profile demands observation metadata for series without
-        // matching observations,
-        // a "result" observation without values is created.
-        // TODO does this apply for indeterminate time first/latest filters?
-        // Yes.
-        int metadataObservationsCount = 0;
+        final List<OmObservation> result = new LinkedList<>();
         if (profileHandler.getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
@@ -252,14 +233,11 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
             // now we're left with the series without matching observations in
             // the check map,
             // add "result" observations for them
-            metadataObservationsCount = seriesToCheckMap.size();
             for (DatasetEntity series : seriesToCheckMap.values()) {
                 HibernateObservationUtilities.createSosObservationFromSeries(series, request, requestedLocale, pdf,
                         observationCreatorContext, session).forEachRemaining(result::add);
             }
         }
-        checkMaxNumberOfReturnedTimeSeries(seriesObservations, metadataObservationsCount);
-        checkMaxNumberOfReturnedValues(seriesObservations.size());
 
         LOGGER.debug(LOG_TIME_TO_QUERY, System.currentTimeMillis() - start);
         Collection<DataEntity<?>> abstractObservations = Lists.newArrayList();
@@ -282,7 +260,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
      * @throws ConverterException
      *             If an error occurs during sensor description creation.
      */
-    protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request,
+    private List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request,
             GetObservationResponse response, Session session) throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
@@ -291,7 +269,6 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, features, session);
         checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = getMaxNumberOfValuesPerSeries(serieses.size());
-        checkSeriesOfferings(serieses, request);
         for (DatasetEntity series : serieses) {
             ObservationStream createSosObservationFromSeries =
                     HibernateObservationUtilities.createSosObservationFromSeries(series, request,
@@ -317,43 +294,6 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         }
         LOGGER.debug(LOG_TIME_TO_QUERY, System.currentTimeMillis() - start);
         return result;
-    }
-
-    private void checkSeriesOfferings(List<DatasetEntity> serieses, GetObservationRequest request) {
-        boolean allSeriesWithOfferings = true;
-        for (DatasetEntity series : serieses) {
-            allSeriesWithOfferings = !series.isSetOffering() ? false : allSeriesWithOfferings;
-        }
-        if (allSeriesWithOfferings) {
-            request.setOfferings(Lists.<String> newArrayList());
-        }
-    }
-
-    public boolean hasSameObservationIdentifier(DatasetEntity toCheck, DatasetEntity s) {
-        return toCheck.getFeature().equals(s.getFeature()) && toCheck.getProcedure().equals(s.getProcedure())
-                && toCheck.getObservableProperty().equals(s.getObservableProperty());
-    }
-
-    private Collection<DataEntity<?>> checkObservationsForDuplicity(Collection<DataEntity<?>> seriesObservations,
-            GetObservationRequest request) {
-        if (!request.isCheckForDuplicity()) {
-            return seriesObservations;
-        }
-        Collection<DataEntity<?>> checked = Lists.newArrayList();
-        Set<DatasetEntity> serieses = Sets.newHashSet();
-        Set<DatasetEntity> duplicated = Sets.newHashSet();
-        for (DataEntity<?> seriesObservation : seriesObservations) {
-            if (serieses.isEmpty()) {
-                serieses.add(seriesObservation.getDataset());
-            }
-
-            if (serieses.contains(seriesObservation.getDataset())
-                    || (duplicated.contains(seriesObservation.getDataset())
-                            && seriesObservation.getDataset().getOffering() != null)) {
-                checked.add(seriesObservation);
-            }
-        }
-        return checked;
     }
 
     private String getProcedureDescriptionFormat(String responseFormat) {

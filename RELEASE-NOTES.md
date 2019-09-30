@@ -6,6 +6,21 @@
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
+## Release 52n-sensorweb-sos-4.4.11
+ 
+### New features
+
+  - 
+  
+### Changes
+  
+  - Remove obsolete restulTime set mapping from datasource because the resultTimes are queried separately via the extras.
+  
+### Fixed issues
+
+  - 
+  
+  
 ## Release 52n-sensorweb-sos-4.4.10
  
 ### New features

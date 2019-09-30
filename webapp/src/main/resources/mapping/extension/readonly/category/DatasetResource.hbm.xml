@@ -26,11 +26,6 @@
         <property column="firsttimestamp" name="firstValueAt" type="timestamp" />
         <property column="lasttimestamp" name="lastValueAt" type="timestamp" />
 
-        <set inverse="true" name="resultTimes" table="observation">
-            <key column="seriesid" />
-            <element column="resulttime" type="timestamp" />
-        </set>
-
         <subclass discriminator-value="quantity" name="QuantityDatasetEntity">
             <property formula="3" name="numberOfDecimals" type="int" />
             <!-- first value for backwards compatibility -->

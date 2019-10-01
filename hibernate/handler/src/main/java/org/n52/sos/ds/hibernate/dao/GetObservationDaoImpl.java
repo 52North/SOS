@@ -189,7 +189,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         String pdf = getProcedureDescriptionFormat(request.getResponseFormat());
         final long start = System.currentTimeMillis();
         List<String> features = request.getFeatureIdentifiers();
-        
+
         Collection<DataEntity<?>> seriesObservations = Lists.newArrayList();
         AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
         DataEntity<?> first = null;
@@ -197,12 +197,18 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         for (IndeterminateValue sosIndeterminateTime : request.getFirstLatestTemporalFilter()) {
             for (DatasetEntity series : seriesDAO.getSeries(request, features, session)) {
                 if (overallExtrema) {
-                    if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)
-                            && (first == null || series.getFirstValueAt().before(first.getSamplingTimeStart()))) {
-                        seriesObservations.add(series.getFirstObservation());
+                    if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST) && (first == null
+                            || series.getFirstValueAt().before(first.getSamplingTimeStart()))) {
+                        first = series.getFirstObservation();
                     } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)
                             && (last == null || series.getLastValueAt().after(last.getSamplingTimeEnd()))) {
-                        seriesObservations.add(series.getLastObservation());
+                        last = series.getLastObservation();
+                    }
+                    if (first != null) {
+                        seriesObservations.add(first);
+                    }
+                    if (last != null) {
+                        seriesObservations.add(last);
                     }
                 } else {
                     if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)) {

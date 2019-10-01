@@ -122,7 +122,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
         LocationEntity location = new LocationEntity();
         location.setIdentifier(feature.isSetIdentifier() ? feature.getIdentifier() : UUID.randomUUID().toString());
         location.setIdentifierCodespace(feature.getIdentifierCodespace());
-        location.setName(feature.isSetName() ? feature.getName() : location.getName());
+        location.setName(feature.isSetName() ? feature.getName() : location.getIdentifier());
         location.setNameCodespace(feature.getNameCodespace());
         location.setDescription(feature.isSetDescription() ? feature.getDescription() : location.getName());
         location.setLocationEncoding(

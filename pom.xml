@@ -92,7 +92,7 @@
         <c3p0.version>0.9.5.4</c3p0.version>
         <hikaricp.version>3.3.1</hikaricp.version>
         <geotools.version>21.2</geotools.version>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.9.10</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.2.1.jre8</sqljdbc.version>
 

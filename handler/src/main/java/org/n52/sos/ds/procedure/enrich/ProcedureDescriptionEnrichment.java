@@ -56,6 +56,7 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
     private static final IsApplicable IS_APPLICABLE = new IsApplicable();
     private SosProcedureDescription<?> description;
     private String identifier;
+    private String name;
     private Locale locale;
     private Session session;
     private final AbstractProcedureCreationContext ctx;
@@ -117,6 +118,15 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
 
     public ProcedureDescriptionEnrichment setIdentifier(String identifier) {
         this.identifier = Preconditions.checkNotNull(identifier);
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ProcedureDescriptionEnrichment setName(String name) {
+        this.name = name;
         return this;
     }
 

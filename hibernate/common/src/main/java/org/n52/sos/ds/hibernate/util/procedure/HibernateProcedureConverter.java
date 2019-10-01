@@ -315,6 +315,9 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
         enrichments.setIdentifier(procedure.getIdentifier()).setProcedure(procedure).setVersion(version)
                 .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session).setValidTime(validTime)
                 .setConverter(this);
+        if (procedure.isSetName()) {
+            enrichments.setName(procedure.getName());
+        }
         if (procedure.isSetTypeOf() && desc.getProcedureDescription() instanceof AbstractProcessV20) {
             ProcedureEntity typeOf = procedure.getTypeOf();
             enrichments.setTypeOfIdentifier(typeOf.getIdentifier()).setTypeOfFormat(format);

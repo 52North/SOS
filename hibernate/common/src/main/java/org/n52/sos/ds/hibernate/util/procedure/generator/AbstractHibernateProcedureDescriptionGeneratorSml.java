@@ -37,6 +37,7 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.locationtech.jts.geom.Coordinate;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -52,6 +53,9 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweCoordinate;
+import org.n52.shetland.ogc.swe.SweVector;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
@@ -61,6 +65,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.CodingSettings;
@@ -107,6 +112,10 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
 
     private boolean addOutputsToSensorML;
 
+    private String latLongUom;
+
+    private String altitudeUom;
+
     public AbstractHibernateProcedureDescriptionGeneratorSml(ProfileHandler profileHandler,
             GeometryHandler geometryHandler, DaoFactory daoFactory, I18NDAORepository i18NDAORepository,
             ContentCacheController cacheController) {
@@ -123,6 +132,16 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
     @Setting(CodingSettings.SRS_NAME_PREFIX_URL)
     public void setSrsNamePrefixUrl(String srsNamePrefixUrl) {
         this.srsNamePrefixUrl = srsNamePrefixUrl;
+    }
+
+    @Setting(ProcedureDescriptionSettings.LAT_LONG_UOM)
+    public void setLatitudeUom(final String latLongUom) {
+        this.latLongUom = latLongUom;
+    }
+
+    @Setting(ProcedureDescriptionSettings.ALTITUDE_UOM)
+    public void setAltitudeUom(final String altitudeUom) {
+        this.altitudeUom = altitudeUom;
     }
 
     /**
@@ -300,17 +319,77 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
      *
      * @param procedure
      *            Hibernate procedure entity
+     * @param b
      *
      * @return SensorML Position
      */
     protected SmlPosition createPosition(ProcedureEntity procedure) {
+        return createPosition(procedure, false);
+    }
+
+    /**
+     * Create SensorML Position from Hibernate procedure entity
+     *
+     * @param procedure
+     *            Hibernate procedure entity
+     * @param b
+     *
+     * @return SensorML Position
+     */
+    protected SmlPosition createPosition(ProcedureEntity procedure, boolean vector) {
         SmlPosition position = new SmlPosition();
         position.setName(POSITION_NAME);
         position.setFixed(true);
         int srid = geometryHandler.getDefaultResponseEPSG();
+        if (procedure.isSetGeometry()) {
+            if (procedure.getGeometry().getSRID() > 0) {
+                srid = procedure.getGeometry().getSRID();
+            }
+            final Coordinate c = procedure.getGeometry().getCoordinate();
+            if (vector) {
+                position.setVector(createVectorForPosition(createCoordinatesForPosition(c.getY(), c.getX(), c.getZ()),
+                        srsNamePrefixUrl + srid));
+            } else {
+                position.setPosition(createCoordinatesForPosition(c.getY(), c.getX(), c.getZ()));
+            }
+        }
+        if (procedure.getGeometry().getSRID() > 0) {
+            srid = procedure.getGeometry().getSRID();
+        }
         position.setReferenceFrame(srsNamePrefixUrl + srid);
         return position;
     }
+
+    private SweVector createVectorForPosition(List<SweCoordinate<?>> coordinates, String referenceFrame) {
+        SweVector vector = new SweVector(coordinates);
+        vector.setDefinition(POSITION_NAME);
+        vector.setReferenceFrame(referenceFrame);
+        return vector;
+    }
+
+    /**
+     * Create SWE Coordinates for SensorML Position
+     *
+     * @param longitude
+     *            Longitude value
+     * @param latitude
+     *            Latitude value
+     * @param altitude
+     *            Altitude value
+     *
+     * @return List with SWE Coordinate
+     */
+    private List<SweCoordinate<?>> createCoordinatesForPosition(Object longitude, Object latitude, Object altitude) {
+        SweQuantity yq = createSweQuantity(latitude, SweConstants.Y_AXIS, latLongUom);
+        SweQuantity xq = createSweQuantity(longitude, SweConstants.X_AXIS, latLongUom);
+        SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, altitudeUom);
+        // TODO add Integer: Which SweSimpleType to use?
+        return Lists.<SweCoordinate<?>> newArrayList(
+                new SweCoordinate<BigDecimal>(SweConstants.SweCoordinateNames.NORTHING, yq),
+                new SweCoordinate<BigDecimal>(SweConstants.SweCoordinateNames.EASTING, xq),
+                new SweCoordinate<BigDecimal>(SweConstants.SweCoordinateNames.ALTITUDE, zq));
+    }
+
 
     /**
      * Create SWE Quantity for SWE coordinate

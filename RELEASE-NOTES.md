@@ -1,4 +1,4 @@
-# 52°North SOS RELEASE NOTES
+# 52Â°North SOS RELEASE NOTES
 
  The Sensor Observation Service (SOS) aggregates readings from live sensors as well as 
  sensor archives. The service provides an interface to get the pure data (encoded 
@@ -6,6 +6,37 @@
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
+## Release 52n-sensorweb-sos-4.4.11
+ 
+### New features
+
+  - 
+  
+### Changes
+  
+  - Remove obsolete restulTime set mapping from datasource because the resultTimes are queried separately via the extras.
+  
+### Fixed issues
+
+  - 
+  
+  
+## Release 52n-sensorweb-sos-4.4.10
+ 
+### New features
+
+  - 
+  
+### Changes
+  
+  - Add proceudre name to sml:identifications short- and longName.
+  - Add seriesid property (with insert/update = false) to observation mappings to avoid a join to the series table when querying observations by seriesid.
+  
+### Fixed issues
+
+  - Add missing position to SensorML 2.0 when generating the procedure description
+  
+  
 ## Release 52n-sensorweb-sos-4.4.9
  
 ### New features

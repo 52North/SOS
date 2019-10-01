@@ -113,7 +113,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
                 return longName.get().getText();
             }
         }
-        return getIdentifier();
+        return getName() != null && !getName().isEmpty() ? getName() : getIdentifier();
     }
 
     private String getShortName() {
@@ -124,7 +124,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
                 return longName.get().getText();
             }
         }
-        return getIdentifier();
+        return getName() != null && !getName().isEmpty() ? getName() : getIdentifier();
     }
 
     private SmlIdentifier createUniqueId() {

@@ -44,7 +44,6 @@ import org.n52.sos.ds.procedure.enrich.AbstractRelatedProceduresEnrichment;
  */
 public class ProcedureDescriptionEnrichments
         extends AbstractProcedureDescriptionEnrichments<ProcedureEntity> {
-
     public ProcedureDescriptionEnrichments(
             Locale locale,
             LocalizedProducer<OwsServiceProvider> serviceProvider,

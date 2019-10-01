@@ -99,6 +99,7 @@ public class HibernateProcedureDescriptionGeneratorSml20 extends AbstractHiberna
         PhysicalComponent physicalComponent = new PhysicalComponent();
         setIdentifier(physicalComponent, procedure);
         setCommonValues(procedure, physicalComponent, session);
+        physicalComponent.setPosition(createPosition(procedure, true));
         return physicalComponent;
     }
 

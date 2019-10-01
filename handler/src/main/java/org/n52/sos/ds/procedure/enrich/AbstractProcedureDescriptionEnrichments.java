@@ -49,6 +49,8 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     private String identifier;
 
+    private String name;
+
     private SosProcedureDescription<?> description;
 
     private String version;
@@ -87,6 +89,12 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     public AbstractProcedureDescriptionEnrichments<T> setIdentifier(String identifier) {
         this.identifier = identifier;
+        return this;
+    }
+
+
+    public AbstractProcedureDescriptionEnrichments<T> setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -160,6 +168,10 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public LocalizedProducer<OwsServiceProvider> getServiceProvider() {
@@ -240,8 +252,8 @@ public abstract class AbstractProcedureDescriptionEnrichments<T> {
     }
 
     protected <S extends ProcedureDescriptionEnrichment> S setValues(S enrichment) {
-        enrichment.setDescription(description).setIdentifier(identifier).setVersion(version).setLocale(locale)
-                .setSession(session);
+        enrichment.setDescription(description).setIdentifier(identifier).setName(name).setVersion(version)
+                .setLocale(locale).setSession(session);
         return enrichment;
     }
 }

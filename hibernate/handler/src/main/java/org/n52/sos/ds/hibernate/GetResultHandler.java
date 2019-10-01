@@ -32,6 +32,7 @@ package org.n52.sos.ds.hibernate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -204,7 +205,8 @@ public class GetResultHandler extends AbstractGetResultHandler {
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
-            c.add(Restrictions.in(DataEntity.PROPERTY_DATASET, series));
+            c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID,
+                    series.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
         }
 
         if (request.getTemporalFilter() != null && !request.getTemporalFilter().isEmpty()) {

@@ -35,6 +35,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -574,7 +575,8 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             Session session) {
         if (CollectionHelper.isNotEmpty(series)) {
             Criteria criteria = getDefaultObservationCriteria(session);
-            criteria.add(Restrictions.in(DataEntity.PROPERTY_DATASET, series));
+            criteria.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID,
+                    series.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
             ScrollableIterable<DataEntity<?>> scroll = ScrollableIterable.fromCriteria(criteria);
             updateObservation(scroll, deleteFlag, session);
         }
@@ -886,7 +888,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     public DataEntity<?> getFirstObservationFor(DatasetEntity series, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
-        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, series.getId()));
         c.addOrder(Order.asc(DataEntity.PROPERTY_SAMPLING_TIME_START));
         c.setMaxResults(1);
         LOGGER.debug("QUERY getFirstObservationFor(series): {}", HibernateHelper.getSqlString(c));
@@ -904,7 +906,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      */
     public DataEntity<?> getLastObservationFor(DatasetEntity series, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
-        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, series.getId()));
         c.addOrder(Order.desc(DataEntity.PROPERTY_SAMPLING_TIME_END));
         c.setMaxResults(1);
         LOGGER.debug("QUERY getLastObservationFor(series): {}", HibernateHelper.getSqlString(c));
@@ -950,8 +952,9 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimes(Set<DatasetEntity> serieses, Session session) {
         Criteria c = getDefaultObservationTimeCriteria(session);
-        c.add(Restrictions.in(DataEntity.PROPERTY_DATASET, serieses));
-        c.setProjection(Projections.projectionList().add(Projections.groupProperty(DataEntity.PROPERTY_DATASET))
+        c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID,
+                serieses.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
+        c.setProjection(Projections.projectionList().add(Projections.groupProperty(DataEntity.PROPERTY_DATASET_ID))
                 .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
         c.setResultTransformer(transformer);
@@ -974,7 +977,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     public Object getMaxObservation(DatasetEntity series, DateTime time, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
-        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, series.getId()));
         c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, time.toDate()));
         return (DataEntity<?>) c.uniqueResult();
     }

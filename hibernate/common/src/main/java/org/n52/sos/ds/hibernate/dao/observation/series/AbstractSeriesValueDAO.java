@@ -38,7 +38,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -62,8 +61,6 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesValueDAO.class);
 
     private static final String QUERY_STREAMING_SERIES_VALUE = "QUERY getStreamingSeriesValuesFor({}): {}";
-
-    private static final String S_PREFIX = "s.";
 
     public AbstractSeriesValueDAO(DaoFactory daoFactory) {
         super(daoFactory);
@@ -255,7 +252,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session, logArgs);
-        c.add(Restrictions.eq(S_PREFIX + DatasetEntity.PROPERTY_ID, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, series));
         return c.setReadOnly(true);
     }
 
@@ -279,13 +276,13 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getSeriesValueCriteriaFor(AbstractObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
         final Criteria c = getDefaultSeriesValueCriteriaFor(request, temporalFilterCriterion, session, logArgs);
-        c.add(Restrictions.in(S_PREFIX + DatasetEntity.PROPERTY_ID, series));
+        c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID, series));
         return c.setReadOnly(true);
     }
 
     private Criteria getDefaultSeriesValueCriteriaFor(AbstractObservationRequest request,
             Criterion temporalFilterCriterion, Session session, StringBuilder logArgs) throws OwsExceptionReport {
-        final Criteria c = getDefaultObservationCriteria(session).createAlias(DataEntity.PROPERTY_DATASET, "s");
+        final Criteria c = getDefaultObservationCriteria(session);
         c.addOrder(Order.asc(getOrderColumn(request)));
         logArgs.append("request, series");
         if (request instanceof GetObservationRequest) {

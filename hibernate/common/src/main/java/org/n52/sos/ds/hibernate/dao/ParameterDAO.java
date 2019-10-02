@@ -35,6 +35,7 @@ import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.UoM;
@@ -203,7 +204,6 @@ public class ParameterDAO {
                 parameter.setName(namedValue.getName().getHref());
                 parameter.setValue(value);
                 session.saveOrUpdate(parameter);
-                session.flush();
             }
             return null;
         }

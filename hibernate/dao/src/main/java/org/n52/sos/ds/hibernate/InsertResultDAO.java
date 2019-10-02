@@ -477,9 +477,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         dataArrayValue.setValue(dataArray);
 
         for (final String block : blockValues) {
-            final String[] singleValues = getSingleValues(block, encoding);
-            if (singleValues != null && singleValues.length > 0) {
-                dataArrayValue.addBlock(Arrays.asList(singleValues));
+            if (block != null && !block.isEmpty()) {
+                final String[] singleValues = getSingleValues(block, encoding);
+                if (singleValues != null && singleValues.length > 0) {
+                    dataArrayValue.addBlock(Arrays.asList(singleValues));
+                }
             }
         }
         final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<SweDataArray>();
@@ -555,7 +557,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
      * @return Separated values as array
      */
     private String[] separateValues(final String values, final String separator) {
-        return values.split(separator);
+        return values.split(separator, Integer.MAX_VALUE);
     }
 
     private ObservationConstellation insertObservationConstellationForProfiles(ObservationConstellationDAO obsConstDao,

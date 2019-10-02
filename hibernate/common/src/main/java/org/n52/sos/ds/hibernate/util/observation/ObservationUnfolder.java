@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ValueCreatingSweDataComponentVis
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -152,6 +153,9 @@ public class ObservationUnfolder {
                     ParameterHolder parameterHolder = getParameterHolder(multiObservation.getParameterHolder());
                     String featureOfInterest = null;
                     String procedure = null;
+                    String identifier = null;
+                    String name = null;
+                    String description = null;
                     for (SweField field : elementType.getFields()) {
                         final SweAbstractDataComponent dataComponent = field.getElement();
                         String token = block.get(tokenIndex.get());
@@ -205,6 +209,15 @@ public class ObservationUnfolder {
                             } else if (dataComponent instanceof SweText
                                     && dataComponent.getDefinition().contains("om:procedure")) {
                                 procedure = token;
+                            } else if (dataComponent instanceof SweText
+                                    && dataComponent.getDefinition().contains("gml:identifier")) {
+                                identifier = token;
+                            } else if (dataComponent instanceof SweText
+                                    && dataComponent.getDefinition().contains("gml:name")) {
+                                name = token;
+                            } else if (dataComponent instanceof SweText
+                                    && dataComponent.getDefinition().contains("gml:description")) {
+                                description = token;
                             } else if (dataComponent instanceof SweQuantity && checkDefinitionForDephtHeight(field)) {
                                 parseFieldAsParameter(field, token, parameterHolder);
                             } else {
@@ -295,6 +308,15 @@ public class ObservationUnfolder {
                                     procedures.put(procedure, new SensorML().setIdentifier(procedure));
                                 }
                                 newObservation.getObservationConstellation().setProcedure(procedures.get(procedure));
+                            }
+                            if (!Strings.isNullOrEmpty(identifier)) {
+                                newObservation.setIdentifier(identifier);
+                            }
+                            if (!Strings.isNullOrEmpty(name)) {
+                                newObservation.setName(new CodeType(name));
+                            }
+                            if (!Strings.isNullOrEmpty(description)) {
+                                newObservation.setDescription(description);
                             }
                             if (parameterHolder.isSetParameter()) {
                                 newObservation.setParameter(parameterHolder.getParameter());
@@ -523,6 +545,9 @@ public class ObservationUnfolder {
 
     private boolean parseFieldAsParameter(SweField field, String token, ParameterHolder parameterHolder)
             throws CodedException {
+        if (Strings.isNullOrEmpty(token)) {
+            return true;
+        }
         Value<?> value = null;
         ReferenceType name = new ReferenceType(field.getElement().getDefinition());
         if (field.getElement() instanceof SweQuantity) {

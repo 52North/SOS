@@ -10,15 +10,18 @@
  
 ### New features
 
-  - 
+  - Support insertion of gml:identifier/name/description of observations via InsertResult
   
 ### Changes
   
-  - Remove obsolete restulTime set mapping from datasource because the resultTimes are queried separately via the extras.
+  - Remove obsolete restulTime set mapping from datasource because the resultTimes are queried separately via the /extras path.
+  - Update REST-API with performance improvements (only add and join parameter if required, query concrete data entities for dataset)
   
 ### Fixed issues
 
-  - 
+  - Fix insertion of om:parameter values via InsertResult operation
+  - Fix insertion of null/empty values via InsertResult operation
+  - Fix insertion of profile observations via InsertResult without a geometry
   
   
 ## Release 52n-sensorweb-sos-4.4.10

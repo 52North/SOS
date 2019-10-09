@@ -29,6 +29,7 @@
 package org.n52.sos.cache.ctrl.action;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.iceland.convert.ConverterRepository;
@@ -115,9 +116,12 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         if (!request.isType()) {
             // TODO child procedures
             // offerings
+            Set<String> childs = new HashSet<>();
+            Set<String> parents = new HashSet<>();
             for (SosOffering sosOffering : request.getAssignedOfferings()) {
                 if (sosOffering.isParentOffering()) {
                     cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
+                    parents.add(sosOffering.getIdentifier());
                 } else {
                     cache.addOffering(sosOffering.getIdentifier());
                     cache.addPublishedOffering(sosOffering.getIdentifier());
@@ -127,8 +131,13 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                         cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(),
                                 sosOffering.getOfferingName());
                     }
+                    childs.add(sosOffering.getIdentifier());
                 }
-
+                if (!parents.isEmpty() && !childs.isEmpty()) {
+                    for (String child : childs) {
+                        cache.addParentOfferings(child, parents);
+                    }
+                }
                 // add offering for procedure whether it's a normal offering or
                 // hidden child
                 cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());

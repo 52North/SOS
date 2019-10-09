@@ -518,10 +518,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-		    <groupId>${project.groupId}</groupId>
-		    <artifactId>hibernate-datasource-h2</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-h2</artifactId>
             <scope>runtime</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-sqlserver</artifactId>
@@ -919,7 +919,7 @@
             <artifactId>gt-main</artifactId>
             <scope>runtime</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 
     <profiles>
         <profile>

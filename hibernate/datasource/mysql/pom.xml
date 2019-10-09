@@ -8,8 +8,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource-mysql</artifactId>
     <packaging>jar</packaging>
-	<name>52°North SOS - Hibernate MySQL Datasource</name>
-	<description>52°North Sensor Observation Service Hibernate MySQL module</description>
+    <name>52°North SOS - Hibernate MySQL Datasource</name>
+    <description>52°North Sensor Observation Service Hibernate MySQL module</description>
     <dependencies>
          <dependency>
             <groupId>org.n52.arctic-sea</groupId>

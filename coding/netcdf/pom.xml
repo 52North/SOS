@@ -11,8 +11,8 @@
     <name>52°North SOS - netCDF</name>
     <description>52°North Sensor Observation Service netCDF</description>
     <modules>
-    	<module>api</module>
-    	<module>coding</module>
-    	<module>oceansites</module>
+        <module>api</module>
+        <module>coding</module>
+        <module>oceansites</module>
     </modules>
 </project>

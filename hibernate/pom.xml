@@ -15,8 +15,8 @@
         <module>common</module>
         <module>handler</module>
         <module>feature</module>
-		    <module>h2</module>
-		    <module>datasource</module>
+            <module>h2</module>
+            <module>datasource</module>
         <module>utils</module>
         <module>c3p0</module>
     </modules>

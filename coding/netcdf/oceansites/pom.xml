@@ -55,11 +55,11 @@
             <groupId>com.axiomalaska</groupId>
             <artifactId>cf4j</artifactId>
             <scope>provided</scope>
-      	</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>cdm</artifactId>
-		</dependency>   
+          </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm</artifactId>
+        </dependency>   
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

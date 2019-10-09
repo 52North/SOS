@@ -11,6 +11,6 @@
     <name>52°North SOS - Profile Module</name>
     <description>52°North SOS profile module</description>
     <modules>
-    	<module>coding</module>
+        <module>coding</module>
     </modules>
 </project>

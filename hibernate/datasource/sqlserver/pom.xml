@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.n52.sensorweb.sos</groupId>
-		<artifactId>hibernate-datasource</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>hibernate-datasource-sqlserver</artifactId>
-	<packaging>jar</packaging>
-	<name>52°North SOS - Hibernate SQL Server Datasource</name>
-	<description>52°North Sensor Observation Service Hibernate SQL Server module</description>
-	<dependencies>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>hibernate-datasource</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>hibernate-datasource-sqlserver</artifactId>
+    <packaging>jar</packaging>
+    <name>52°North SOS - Hibernate SQL Server Datasource</name>
+    <description>52°North Sensor Observation Service Hibernate SQL Server module</description>
+    <dependencies>
          <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe</artifactId>
@@ -32,19 +32,19 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>hibernate-datasource-common</artifactId>
-		</dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-datasource-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
         </dependency>
-		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
@@ -58,20 +58,20 @@
             <artifactId>hibernate-c3p0</artifactId>
             <scope>runtime</scope>
         </dependency>
-		<!-- Hibernate Core Dependencies -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-spatial</artifactId>
+        <!-- Hibernate Core Dependencies -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-spatial</artifactId>
             <scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
@@ -80,20 +80,20 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
         </dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.15</version><!--$NO-MVN-MAN-VER$-->
-				<configuration>
-					<additionalClasspathElements>
-						<additionalClasspathElement>${project.basedir}/lib</additionalClasspathElement>
-					</additionalClasspathElements>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.15</version><!--$NO-MVN-MAN-VER$-->
+                <configuration>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.basedir}/lib</additionalClasspathElement>
+                    </additionalClasspathElements>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -104,28 +104,28 @@
                     </usedDependencies>
                 </configuration>
             </plugin>
-		</plugins>
-	</build>
-	<profiles>
-		<profile>
-			<id>sqlserver-testing</id>
-			<activation>
-				<property>
-					<name>env.SOS_TEST_CONF</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.15</version>
-						<configuration>
-							<skipTests>false</skipTests>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>sqlserver-testing</id>
+            <activation>
+                <property>
+                    <name>env.SOS_TEST_CONF</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.15</version>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

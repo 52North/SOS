@@ -11,7 +11,7 @@
     <name>52°North SOS - Identifier Modifier Modules</name>
     <description>52°North SOS - Identifier Modifier Modules</description>
     <modules>
-    	<module>abstract-identifier</module>
+        <module>abstract-identifier</module>
         <module>flexible-identifier</module>
         <module>prefixed-identifier</module>
         <module>ereporting-identifier</module>

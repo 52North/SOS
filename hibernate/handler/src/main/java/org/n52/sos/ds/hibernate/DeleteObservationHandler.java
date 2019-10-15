@@ -49,6 +49,7 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.series.db.beans.CompositeDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -70,6 +71,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesTimeExtrema;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -107,7 +109,7 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
     @Override
     public boolean isSupported() {
-        return true;
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     @Override

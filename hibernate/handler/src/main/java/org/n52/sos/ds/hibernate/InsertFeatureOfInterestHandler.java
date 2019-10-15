@@ -35,6 +35,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -43,6 +44,7 @@ import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInterestHandler {
 
@@ -92,7 +94,7 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
 
     @Override
     public boolean isSupported() {
-        return true;
+        return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {

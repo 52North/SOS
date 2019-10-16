@@ -123,6 +123,8 @@ public class AdminDatasourceController extends AbstractDatasourceController {
 
     private Map<PredefinedType, List<AbstractPredefined<?>>> predefinedMap;
 
+    private SampleDataInserter sampleDataInserter;
+
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE)
     public ModelAndView index() throws SQLException, OwsExceptionReport {
         Map<String, Object> model = Maps.newHashMap();
@@ -196,13 +198,20 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_ADD_SAMPLEDATA, method = RequestMethod.POST)
     public String addSampledata(HttpServletRequest request) throws OwsExceptionReport, ConnectionProviderException,
             IOException, URISyntaxException, XmlException, MissingServiceOperatorException, DecodingException {
-
-        boolean sampledataAdded = new SampleDataInserter(OwsServiceRequestContext.fromRequest(request),
-                decoderRepository, requestOperatorRepository).insertSampleData();
-        if (sampledataAdded) {
-            updateCache();
+        if (sampleDataInserter == null) {
+            try {
+                sampleDataInserter = new SampleDataInserter(OwsServiceRequestContext.fromRequest(request),
+                        decoderRepository, requestOperatorRepository);
+                boolean sampledataAdded = sampleDataInserter.insertSampleData();
+                if (sampledataAdded) {
+                    updateCache();
+                }
+                return "OK";
+            } finally {
+                sampleDataInserter = null;
+            }
         }
-        return "OK";
+        return "Insert is still in progress!";
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

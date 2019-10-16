@@ -98,7 +98,7 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.1.0</arctic-sea.version>
+        <arctic-sea.version>7.2.0-SNAPSHOT</arctic-sea.version>
 
         <dataset.api.version>2.0.1-SNAPSHOT</dataset.api.version>
         <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
@@ -138,6 +138,10 @@
                     <exclusion>
                         <groupId>com.fasterxml</groupId>
                         <artifactId>aalto-xml</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

@@ -50,6 +50,7 @@ import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
@@ -384,6 +385,35 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
     }
 
+    private void updateSta(DatasetEntity dataset, DataEntity<?> observation, Session session) {
+        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
+            if (dataset.getPlatform() != null) {
+                DatastreamEntity datastream = existsDatastream(dataset, session);
+                if (datastream != null) {
+                    if (datastream.getSamplingTimeStart() == null || (datastream.getSamplingTimeStart() != null
+                            && datastream.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {
+                        datastream.setSamplingTimeStart(observation.getSamplingTimeStart());
+                    }
+                    if (datastream.getSamplingTimeEnd() == null || (datastream.getSamplingTimeEnd() != null
+                            && datastream.getSamplingTimeEnd().before(observation.getSamplingTimeEnd()))) {
+                        datastream.setSamplingTimeEnd(observation.getSamplingTimeEnd());
+                    }
+                    if (datastream.getResultTimeStart() == null || (datastream.getResultTimeStart() != null
+                            && datastream.getResultTimeStart().after(observation.getResultTime()))) {
+                        datastream.setResultTimeStart(observation.getResultTime());
+                    }
+                    if (datastream.getResultTimeEnd() == null || (datastream.getResultTimeEnd() != null
+                            && datastream.getResultTimeEnd().before(observation.getResultTime()))) {
+                        datastream.setResultTimeEnd(observation.getResultTime());
+                    }
+                    datastream.addDataset(dataset);
+                    session.saveOrUpdate(datastream);
+                    session.flush();
+                }
+            }
+        }
+    }
+
     private DatastreamEntity existsDatastream(DatasetEntity dataset, Session session) {
         Criteria c = session.createCriteria(DatastreamEntity.class)
                 .add(Restrictions.eq(DatastreamEntity.PROPERTY_OBSERVABLE_PROPERTY, dataset.getPhenomenon()))
@@ -394,17 +424,22 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     private String createDatastreamName(DatasetEntity dataset) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append(dataset.getPlatform().getName()).append("_").append(dataset.getProcedure().getName()).append("_")
-                .append(dataset.getPhenomenon().getName());
+        buffer.append(getNameOrIdentifier(dataset.getPlatform())).append("_")
+                .append(getNameOrIdentifier(dataset.getProcedure())).append("_")
+                .append(getNameOrIdentifier(dataset.getPhenomenon()));
         return buffer.toString();
     }
 
     private String createDatastreamDescription(DatasetEntity dataset) {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("Datastream for Thing '").append(dataset.getPlatform().getName()).append("' and Sensor '")
-                .append(dataset.getProcedure().getName()).append("' and ObservedProperty '")
-                .append(dataset.getPhenomenon().getName()).append("'.");
+        buffer.append("Datastream for Thing '").append(getNameOrIdentifier(dataset.getPlatform()))
+                .append("' and Sensor '").append(getNameOrIdentifier(dataset.getProcedure()))
+                .append("' and ObservedProperty '").append(getNameOrIdentifier(dataset.getPhenomenon())).append("'.");
         return buffer.toString();
+    }
+
+    private String getNameOrIdentifier(DescribableEntity entity) {
+        return entity.isSetName() ? entity.getName() : entity.getIdentifier();
     }
 
     private DatasetEntity preCheckDataset(ObservationContext ctx, DataEntity<?> observation, DatasetEntity dataset,
@@ -874,38 +909,40 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * Update series values which will be used by the Timeseries API. Can be
      * later used by the SOS.
      *
-     * @param series
+     * @param dataset
      *            Series object
      * @param hObservation
      *            Observation object
      * @param session
      *            Hibernate session
      */
-    public void updateSeriesWithFirstLatestValues(DatasetEntity series, DataEntity<?> hObservation, Session session) {
+    public void updateSeriesWithFirstLatestValues(DatasetEntity dataset, DataEntity<?> hObservation, Session session) {
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!series.isSetFirstValueAt() || (series.isSetFirstValueAt()
-                && series.getFirstValueAt().after(hObservation.getSamplingTimeStart()))) {
+        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
+                && dataset.getFirstValueAt().after(hObservation.getSamplingTimeStart()))) {
             minChanged = true;
-            series.setFirstValueAt(hObservation.getSamplingTimeStart());
-            series.setFirstObservation(hObservation);
+            dataset.setFirstValueAt(hObservation.getSamplingTimeStart());
+            dataset.setFirstObservation(hObservation);
         }
-        if (!series.isSetLastValueAt()
-                || (series.isSetLastValueAt() && series.getLastValueAt().before(hObservation.getSamplingTimeEnd()))) {
+        if (!dataset.isSetLastValueAt()
+                || (dataset.isSetLastValueAt() && dataset.getLastValueAt().before(hObservation.getSamplingTimeEnd()))) {
             maxChanged = true;
-            series.setLastValueAt(hObservation.getSamplingTimeEnd());
-            series.setLastObservation(hObservation);
+            dataset.setLastValueAt(hObservation.getSamplingTimeEnd());
+            dataset.setLastObservation(hObservation);
         }
         if (hObservation instanceof QuantityDataEntity) {
             if (minChanged) {
-                series.setFirstQuantityValue(((QuantityDataEntity) hObservation).getValue());
+                dataset.setFirstQuantityValue(((QuantityDataEntity) hObservation).getValue());
             }
             if (maxChanged) {
-                series.setLastQuantityValue(((QuantityDataEntity) hObservation).getValue());
+                dataset.setLastQuantityValue(((QuantityDataEntity) hObservation).getValue());
             }
         }
-        session.saveOrUpdate(series);
+        session.saveOrUpdate(dataset);
+        session.refresh(dataset);
         session.flush();
+        updateSta(dataset, hObservation, session);
     }
 
     /**

@@ -31,12 +31,13 @@ package org.n52.sos.ds.hibernate.dao;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.IdentifierNameDescriptionEntity;
-import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.AbstractGML;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -54,47 +55,89 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
 
     public void addIdentifierNameDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
             Session session) {
-        addIdentifier(abstractFeature, entity, session);
-        addName(abstractFeature, entity, session);
+        addIdentifierNameDescription(abstractFeature, entity, session, null);
+    }
+
+    public void addIdentifierNameDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity,
+            Session session, Map<String, CodespaceEntity> localCache) {
+        addIdentifier(abstractFeature, entity, session, localCache);
+        addName(abstractFeature, entity, session, localCache);
         addDescription(abstractFeature, entity);
     }
 
     public void addIdentifier(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity, Session session) {
-        addIdentifier(entity, abstractFeature.getIdentifierCodeWithAuthority(), session);
+        addIdentifier(entity, abstractFeature.getIdentifierCodeWithAuthority(), session, null);
+    }
+
+    public void addIdentifier(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity, Session session,
+            Map<String, CodespaceEntity> localCache) {
+        addIdentifier(entity, abstractFeature.getIdentifierCodeWithAuthority(), session, localCache);
     }
 
     public void addIdentifier(IdentifierNameDescriptionEntity entity, CodeWithAuthority identifier, Session session) {
-        String value = identifier != null && identifier.isSetValue() ? identifier.getValue() : null;
-        String codespace =
-                identifier != null && identifier.isSetCodeSpace() ? identifier.getCodeSpace() : OGCConstants.UNKNOWN;
-        entity.setIdentifier(value);
-        entity.setIdentifierCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
+        addIdentifier(entity, identifier, session, null);
     }
 
     public void addIdentifier(IdentifierNameDescriptionEntity entity, String identifier, Session session) {
-        String value = identifier != null && !identifier.isEmpty() ? identifier : null;
-        String codespace = OGCConstants.UNKNOWN;
-        entity.setIdentifier(value);
-        entity.setIdentifierCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
+        addIdentifier(entity, identifier, session, null);
+    }
+
+    public void addIdentifier(IdentifierNameDescriptionEntity entity, String identifier, Session session,
+            Map<String, CodespaceEntity> localCache) {
+        addIdentifier(entity, new CodeWithAuthority(identifier), session, localCache);
+    }
+
+    public void addIdentifier(IdentifierNameDescriptionEntity entity, CodeWithAuthority identifier, Session session,
+            Map<String, CodespaceEntity> localCache) {
+        if (identifier != null && identifier.isSetValue()) {
+            entity.setIdentifier(identifier.getValue());
+            if (identifier.isSetCodeSpace()) {
+                if (localCache != null && localCache.containsKey(identifier.getCodeSpace())) {
+                    entity.setIdentifierCodespace(localCache.get(identifier.getCodeSpace()));
+                } else {
+                    entity.setIdentifierCodespace(
+                            new CodespaceDAO().getOrInsertCodespace(identifier.getCodeSpace(), session));
+                }
+            }
+        }
     }
 
     public void addName(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity, Session session) {
-        addName(entity, abstractFeature.getFirstName(), session);
+        addName(entity, abstractFeature.getFirstName(), session, null);
+    }
+
+    public void addName(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity, Session session,
+            Map<String, CodespaceEntity> localCache) {
+        addName(entity, abstractFeature.getFirstName(), session, localCache);
+    }
+
+    public void addName(IdentifierNameDescriptionEntity entity, String name, Session session,
+            Map<String, CodespaceEntity> localCache) {
+        addName(entity, new CodeType(name), session, localCache);
     }
 
     public void addName(IdentifierNameDescriptionEntity entity, String name, Session session) {
-        String value = name != null && !name.isEmpty() ? name : null;
-        String codespace = OGCConstants.UNKNOWN;
-        entity.setName(value);
-        entity.setNameCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
+        addName(entity, new CodeType(name), session, null);
     }
 
     public void addName(IdentifierNameDescriptionEntity entity, CodeType name, Session session) {
-        String value = name != null && name.isSetValue() ? name.getValue() : null;
-        String codespace =
-                name != null && name.isSetCodeSpace() ? name.getCodeSpace().toString() : OGCConstants.UNKNOWN;
-        entity.setName(value);
-        entity.setNameCodespace(new CodespaceDAO().getOrInsertCodespace(codespace, session));
+        addName(entity, name, session, null);
+    }
+
+    public void addName(IdentifierNameDescriptionEntity entity, CodeType name, Session session,
+            Map<String, CodespaceEntity> localCache) {
+        if (name != null && name.isSetValue()) {
+            entity.setName(name.getValue());
+            if (name.isSetCodeSpace()) {
+                String codespace = name.getCodeSpace().toString();
+                if (localCache != null && localCache.containsKey(codespace)) {
+                    entity.setIdentifierCodespace(localCache.get(codespace));
+                } else {
+                    entity.setIdentifierCodespace(
+                            new CodespaceDAO().getOrInsertCodespace(codespace, session));
+                }
+            }
+        }
     }
 
     public void addDescription(AbstractGML abstractFeature, IdentifierNameDescriptionEntity entity) {
@@ -149,7 +192,8 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     public void insertNames(AbstractFeatureEntity<?> feature, List<CodeType> name, I18NDAORepository i18nr,
             Session session) {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
-//        I18NDAO<I18NFeatureMetadata> dao = i18nr.getDAO(I18NFeatureMetadata.class);
+        // I18NDAO<I18NFeatureMetadata> dao =
+        // i18nr.getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
             codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
             // i18ndao.insertI18N(feature, new I18NInsertionObject(codespace,

@@ -515,12 +515,12 @@ public class ObservationPersister
         observation.setDeleted(false);
 
         if (parent == null) {
-            daos.observation().addIdentifier(omObservation, observation, session);
+            daos.observation().addIdentifier(omObservation, observation, session, caches.codespaces);
         } else {
             observation.setParent(parent);
         }
 
-        daos.observation().addName(omObservation, observation, session);
+        daos.observation().addName(omObservation, observation, session, caches.codespaces);
         daos.observation().addDescription(omObservation, observation);
         daos.observation().addTime(omObservation, observation);
         observation.setValue(value);

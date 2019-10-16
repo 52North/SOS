@@ -940,8 +940,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             }
         }
         session.saveOrUpdate(dataset);
-        session.refresh(dataset);
         session.flush();
+        session.refresh(dataset);
         updateSta(dataset, hObservation, session);
     }
 

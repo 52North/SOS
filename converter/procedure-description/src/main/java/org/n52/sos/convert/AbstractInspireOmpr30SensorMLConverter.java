@@ -99,22 +99,20 @@ public abstract class AbstractInspireOmpr30SensorMLConverter
         List<AbstractSmlDocumentation> smlDocumentations = Lists.newArrayList();
         for (DocumentCitation documentationCitation : documentationCitations) {
             SmlDocumentation smlDocumentation = new SmlDocumentation();
-            if (!documentationCitation.isSetSimpleAttrs()) {
-                if (documentationCitation.isSetName()) {
-                    smlDocumentation.setDescription(documentationCitation.getFirstName().getValue());
-                }
-                if (documentationCitation.isSetDate()) {
-                    smlDocumentation.setDate(new TimeInstant(documentationCitation.getDate().get()));
-                }
-                if (documentationCitation.isSetLinks()) {
-                    for (Nillable<String> link : documentationCitation.getLinks()) {
-                        if (link.isPresent()) {
-                            smlDocumentation.setOnlineResource(link.get());
-                        }
+            if (documentationCitation.isSetName()) {
+                smlDocumentation.setDescription(documentationCitation.getFirstName().getValue());
+            }
+            if (documentationCitation.isSetDate()) {
+                smlDocumentation.setDate(new TimeInstant(documentationCitation.getDate().get()));
+            }
+            if (documentationCitation.isSetLinks()) {
+                for (Nillable<String> link : documentationCitation.getLinks()) {
+                    if (link.isPresent()) {
+                        smlDocumentation.setOnlineResource(link.get());
                     }
                 }
-                smlDocumentations.add(smlDocumentation);
             }
+            smlDocumentations.add(smlDocumentation);
         }
         return smlDocumentations;
     }

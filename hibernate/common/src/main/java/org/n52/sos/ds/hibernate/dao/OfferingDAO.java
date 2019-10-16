@@ -730,7 +730,8 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         }
         if (observation.isSetGeometryEntity()) {
             if (offering.isSetGeometry()) {
-                offering.getGeometryEntity().getGeometry().union(observation.getGeometryEntity().getGeometry());
+                offering.getGeometryEntity().setGeometry(offering.getGeometryEntity().getGeometry()
+                        .union(observation.getGeometryEntity().getGeometry()));
             } else {
                 offering.setGeometryEntity(observation.getGeometryEntity());
             }

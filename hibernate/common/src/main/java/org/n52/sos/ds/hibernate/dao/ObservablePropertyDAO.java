@@ -79,7 +79,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     public List<PhenomenonEntity> getObservableProperties(final List<String> identifiers, final Session session) {
         Criteria criteria = session.createCriteria(PhenomenonEntity.class)
                 .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
-        LOGGER.debug("QUERY getObservableProperties(identifiers): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getObservableProperties(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -101,7 +101,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
                 getDetachedCriteriaObservablePropertiesForOfferingFromDatasetEntity(offeringIdentifier, session)));
         c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
-        LOGGER.debug("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
+        LOGGER.trace("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -122,7 +122,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         c.setProjection(Projections.distinct(Projections.property(PhenomenonEntity.IDENTIFIER)));
         c.add(Subqueries.propertyIn(PhenomenonEntity.PROPERTY_ID,
                 getDetachedCriteriaObservablePropertyForProcedureFromDatasetEntity(procedureIdentifier)));
-        LOGGER.debug("QUERY getObservablePropertyIdentifiersForProcedure(observablePropertyIdentifier): {}",
+        LOGGER.trace("QUERY getObservablePropertyIdentifiersForProcedure(observablePropertyIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -172,7 +172,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     public PhenomenonEntity getObservablePropertyForIdentifier(final String identifier, final Session session) {
         Criteria criteria = session.createCriteria(PhenomenonEntity.class)
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getObservablePropertyForIdentifier(identifier): {}",
+        LOGGER.trace("QUERY getObservablePropertyForIdentifier(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return (PhenomenonEntity) criteria.uniqueResult();
     }
@@ -191,7 +191,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
             final Session session) {
         Criteria criteria = session.createCriteria(PhenomenonEntity.class)
                 .add(Restrictions.in(PhenomenonEntity.IDENTIFIER, identifiers));
-        LOGGER.debug("QUERY getObservablePropertiesForIdentifiers(identifiers): {}",
+        LOGGER.trace("QUERY getObservablePropertiesForIdentifiers(identifiers): {}",
                 HibernateHelper.getSqlString(criteria));
         return (List<PhenomenonEntity>) criteria.list();
     }
@@ -206,7 +206,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
     @SuppressWarnings("unchecked")
     public List<PhenomenonEntity> getObservablePropertyObjects(final Session session) {
         Criteria criteria = session.createCriteria(PhenomenonEntity.class);
-        LOGGER.debug("QUERY getObservablePropertyObjects(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getObservablePropertyObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 

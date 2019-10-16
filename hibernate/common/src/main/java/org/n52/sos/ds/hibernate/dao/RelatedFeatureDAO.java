@@ -74,7 +74,7 @@ public class RelatedFeatureDAO {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
         criteria.createCriteria(RelatedFeatureEntity.OFFERINGS)
                 .add(Restrictions.eq(OfferingEntity.PROPERTY_IDENTIFIER, offering));
-        LOGGER.debug("QUERY getRelatedFeatureForOffering(offering): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getRelatedFeatureForOffering(offering): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -88,7 +88,7 @@ public class RelatedFeatureDAO {
     @SuppressWarnings("unchecked")
     public List<RelatedFeatureEntity> getRelatedFeatureObjects(final Session session) {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
-        LOGGER.debug("QUERY getRelatedFeatureObjects(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getRelatedFeatureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -106,7 +106,7 @@ public class RelatedFeatureDAO {
         final Criteria criteria = session.createCriteria(RelatedFeatureEntity.class);
         criteria.createCriteria(RelatedFeatureEntity.FEATURE_OF_INTEREST)
                 .add(Restrictions.eq(AbstractFeatureEntity.PROPERTY_IDENTIFIER, targetIdentifier));
-        LOGGER.debug("QUERY getRelatedFeatures(targetIdentifier): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getRelatedFeatures(targetIdentifier): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 

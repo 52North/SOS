@@ -49,7 +49,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
     public CategoryEntity getCategoryForIdentifier(String identifier, Session session) {
         Criteria criteria = session.createCriteria(CategoryEntity.class)
                 .add(Restrictions.eq(CategoryEntity.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getCategoryForIdentifier(identifier): {}",
+        LOGGER.trace("QUERY getCategoryForIdentifier(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return (CategoryEntity) criteria.uniqueResult();
     }

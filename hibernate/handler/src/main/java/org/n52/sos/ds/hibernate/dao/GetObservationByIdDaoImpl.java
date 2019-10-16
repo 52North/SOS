@@ -191,7 +191,7 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
         Criteria c = daoFactory.getObservationDAO().getObservationClassCriteriaForResultModel(request.getResultModel(),
                 session);
         c.add(Restrictions.in(DataEntity.IDENTIFIER, request.getObservationIdentifier()));
-        LOGGER.debug("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY queryObservation(request): {}", HibernateHelper.getSqlString(c));
         return c.list();
     }
 

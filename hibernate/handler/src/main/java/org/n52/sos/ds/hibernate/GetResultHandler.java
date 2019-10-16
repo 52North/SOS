@@ -213,7 +213,7 @@ public class GetResultHandler extends AbstractGetResultHandler {
             addTemporalFilter(c, request.getTemporalFilter());
         }
 
-        LOGGER.debug("QUERY queryObservation(request, featureIdentifiers): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY queryObservation(request, featureIdentifiers): {}", HibernateHelper.getSqlString(c));
         return c.list();
 
     }

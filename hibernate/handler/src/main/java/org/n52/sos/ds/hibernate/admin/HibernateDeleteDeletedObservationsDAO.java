@@ -98,7 +98,7 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
     private Criteria getCriteria(Session session) {
         final Criteria criteria = session.createCriteria(DataEntity.class);
         criteria.add(Restrictions.eq(DataEntity.PROPERTY_DELETED, true));
-        LOG.debug("QUERY getCriteria(): {}", HibernateHelper.getSqlString(criteria));
+        LOG.trace("QUERY getCriteria(): {}", HibernateHelper.getSqlString(criteria));
         return criteria;
     }
 }

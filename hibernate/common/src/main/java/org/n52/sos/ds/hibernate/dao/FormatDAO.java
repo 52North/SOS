@@ -76,7 +76,7 @@ public class FormatDAO {
                 session.createCriteria(FormatEntity.class).add(
                         Restrictions.eq(FormatEntity.FORMAT,
                                 format));
-        LOGGER.debug("QUERY getFormatEntityObject(format): {}",
+        LOGGER.trace("QUERY getFormatEntityObject(format): {}",
                 HibernateHelper.getSqlString(criteria));
         return (FormatEntity) criteria.uniqueResult();
     }
@@ -95,7 +95,7 @@ public class FormatDAO {
         Criteria criteria =
                 session.createCriteria(FormatEntity.class).add(
                         Restrictions.in(FormatEntity.FORMAT, observationTypes));
-        LOGGER.debug("QUERY getFormatEntityObjects(observationTypes): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getFormatEntityObjects(observationTypes): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -155,7 +155,7 @@ public class FormatDAO {
                         Restrictions.in(AbstractFeatureEntity.IDENTIFIER, featureOfInterestIdentifiers));
         criteria.createCriteria(AbstractFeatureEntity.PROPERTY_FEATURE_TYPE).setProjection(
                 Projections.distinct(Projections.property(FormatEntity.FORMAT)));
-        LOGGER.debug("QUERY getFeatureOfInterestTypesForFeatureOfInterest(featureOfInterestIdentifiers): {}",
+        LOGGER.trace("QUERY getFeatureOfInterestTypesForFeatureOfInterest(featureOfInterestIdentifiers): {}",
                 HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }

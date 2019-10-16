@@ -46,7 +46,7 @@ public class EReportingQualityDAO {
         c.add(Restrictions.eq(EReportingQualityEntity.DATASET, series));
         c.add(Restrictions.eq(EReportingQualityEntity.YEAR, year));
         c.add(Restrictions.ilike(EReportingQualityEntity.PRIMARY_OBSERVATION, primaryObservation));
-        LOGGER.debug("QUERY getEReportingQuality(series, year, primaryObservation): {}",
+        LOGGER.trace("QUERY getEReportingQuality(series, year, primaryObservation): {}",
                 HibernateHelper.getSqlString(c));
         return (EReportingQualityEntity) c.uniqueResult();
     }

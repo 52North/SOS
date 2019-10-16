@@ -56,7 +56,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
     public PlatformEntity getPlatformForIdentifier(String identifier, Session session) {
         Criteria criteria = session.createCriteria(PlatformEntity.class)
                 .add(Restrictions.eq(PlatformEntity.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getPlatformForIdentifier(identifier): {}",
+        LOGGER.trace("QUERY getPlatformForIdentifier(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return (PlatformEntity) criteria.uniqueResult();
     }

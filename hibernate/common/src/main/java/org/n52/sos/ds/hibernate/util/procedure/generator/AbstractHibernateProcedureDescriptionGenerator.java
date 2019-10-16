@@ -248,7 +248,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator
         AbstractObservationDAO observationDAO = daoFactory.getObservationDAO();
         final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
         c.setMaxResults(1);
-        LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
+        LOGGER.trace("QUERY getExampleObservation(identifier, observableProperty): {}",
                 HibernateHelper.getSqlString(c));
         final DataEntity<?> example = (DataEntity) c.uniqueResult();
         if (example == null) {

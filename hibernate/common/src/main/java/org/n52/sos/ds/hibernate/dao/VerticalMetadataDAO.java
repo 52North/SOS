@@ -75,7 +75,7 @@ public class VerticalMetadataDAO {
             criteria.add(Restrictions.eq(VerticalMetadataEntity.PROPERTY_VERTICAL_TO_NAME,
                     verticalMetadata.getVerticalToName()));
         }
-        LOG.debug("QUERY getCategoryForIdentifier(identifier): {}",
+        LOG.trace("QUERY getCategoryForIdentifier(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return (VerticalMetadataEntity) criteria.uniqueResult();
     }

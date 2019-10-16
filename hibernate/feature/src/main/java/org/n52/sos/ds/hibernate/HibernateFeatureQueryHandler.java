@@ -251,7 +251,7 @@ public class HibernateFeatureQueryHandler
                     // .add(Restrictions.in(FeatureEntity.IDENTIFIER,
                     // featureIDs))
                     // .setProjection(SpatialProjections.extent(FeatureEntity.GEOMETRY));
-                    // LOGGER.debug("QUERY getEnvelopeForFeatureIDs(featureIDs):
+                    // LOGGER.trace("QUERY getEnvelopeForFeatureIDs(featureIDs):
                     // {}",
                     // HibernateHelper.getSqlString(featureExtentCriteria));
                     // Geometry geom = (Geometry)

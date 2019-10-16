@@ -57,7 +57,7 @@ public class UnitDAO {
 
     public List<UnitEntity> getUnits(Session session) {
         Criteria criteria = session.createCriteria(UnitEntity.class);
-        LOGGER.debug(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -73,7 +73,7 @@ public class UnitDAO {
     public UnitEntity getUnit(String unit, Session session) {
         Criteria criteria =
                 session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit));
-        LOGGER.debug(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (UnitEntity) criteria.uniqueResult();
     }
 
@@ -89,7 +89,7 @@ public class UnitDAO {
     public UnitEntity getUnit(UoM unit, Session session) {
         Criteria criteria =
                 session.createCriteria(UnitEntity.class).add(Restrictions.eq(UnitEntity.PROPERTY_UNIT, unit.getUom()));
-        LOGGER.debug(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_UNIT_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (UnitEntity) criteria.uniqueResult();
     }
 

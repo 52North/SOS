@@ -68,7 +68,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     public AbstractFeatureEntity getFeature(String identifier, Session session) {
         Criteria criteria =
                 getDefaultCriteria(session).add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getFeature(identifier): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getFeature(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (AbstractFeatureEntity) criteria.uniqueResult();
     }
 
@@ -93,13 +93,13 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
                 Criteria c = getDefaultCriteria(session);
                 addIdentifierRestriction(c, ids);
                 c.setProjection(SpatialProjections.extent(AbstractFeatureEntity.GEOMETRY));
-                LOGGER.debug("QUERY getFeatureExtent(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
+                LOGGER.trace("QUERY getFeatureExtent(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
                 geom = mergeGeometries(geom, c.list());
             }
         } else {
             Criteria c = getDefaultCriteria(session);
             c.setProjection(SpatialProjections.extent(AbstractFeatureEntity.GEOMETRY));
-            LOGGER.debug("QUERY getFeatureExtent(identifiers): {}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getFeatureExtent(identifiers): {}", HibernateHelper.getSqlString(c));
             geom = mergeGeometries(geom, c.list());
         }
         return geom;
@@ -123,14 +123,14 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             for (List<String> ids : QueryHelper.getListsForIdentifiers(identifiers)) {
                 Criteria c = getDefaultCriteria(session);
                 addIdentifierRestriction(c, ids);
-                LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers)({}): {}", count++,
+                LOGGER.trace("QUERY getFeatureOfInterestObjects(identifiers)({}): {}", count++,
                         HibernateHelper.getSqlString(c));
                 features.addAll(c.list());
             }
             return features;
         } else {
             Criteria c = getDefaultCriteria(session);
-            LOGGER.debug(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
+            LOGGER.trace(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
             return c.list();
         }
     }
@@ -140,12 +140,12 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         Criteria c = getDefaultCriteria(session);
         if (!identifier.startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
             c.add(Restrictions.eq(AbstractFeatureEntity.IDENTIFIER, identifier));
-            LOGGER.debug(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
+            LOGGER.trace(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
             return (AbstractFeatureEntity) c.uniqueResult();
         } else {
             c.add(SpatialRestrictions.eq(AbstractFeatureEntity.GEOMETRY,
                     getDaoFactory().getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
-            LOGGER.debug(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
+            LOGGER.trace(QUERY_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
             return (AbstractFeatureEntity) c.uniqueResult();
         }
     }
@@ -163,7 +163,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         } else {
             final Criteria c = getDefaultCriteria(session);
             addSpatialFilters(c, filters);
-            LOGGER.debug("QUERY getFeatures(identifiers)): {}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getFeatures(identifiers)): {}", HibernateHelper.getSqlString(c));
             return c.list();
         }
     }
@@ -177,7 +177,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             Criteria c = getDefaultCriteria(session);
             addIdentifierRestriction(c, ids);
             addSpatialFilters(c, filters);
-            LOGGER.debug("QUERY getFeatures(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getFeatures(identifiers)({}): {}", count++, HibernateHelper.getSqlString(c));
             features.addAll(c.list());
         }
         return features;

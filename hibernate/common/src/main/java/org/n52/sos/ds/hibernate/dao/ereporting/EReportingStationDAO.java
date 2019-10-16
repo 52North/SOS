@@ -78,7 +78,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
     public EReportingSamplingPointEntity getEReportingStationt(long stationId, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_ID, stationId));
-        LOGGER.debug("QUERY getEReportingStationt(stationId): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getEReportingStationt(stationId): {}", HibernateHelper.getSqlString(c));
         return (EReportingSamplingPointEntity) c.uniqueResult();
     }
 
@@ -94,7 +94,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
     public EReportingSamplingPointEntity getEReportingStationt(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getEReportingStationt(identifier): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getEReportingStationt(identifier): {}", HibernateHelper.getSqlString(c));
         return (EReportingSamplingPointEntity) c.uniqueResult();
     }
 }

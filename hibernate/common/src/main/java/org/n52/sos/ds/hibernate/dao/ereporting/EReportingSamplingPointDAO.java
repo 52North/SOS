@@ -79,7 +79,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
     public EReportingSamplingPointEntity getEReportingSamplingPoint(long samplingPointId, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_ID, samplingPointId));
-        LOGGER.debug("QUERY getEReportingSamplingPoint(samplingPointId): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getEReportingSamplingPoint(samplingPointId): {}", HibernateHelper.getSqlString(c));
         return (EReportingSamplingPointEntity) c.uniqueResult();
     }
 
@@ -95,7 +95,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
     public EReportingSamplingPointEntity getEReportingSamplingPoint(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getEReportingSamplingPoint(identifier): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getEReportingSamplingPoint(identifier): {}", HibernateHelper.getSqlString(c));
         return (EReportingSamplingPointEntity) c.uniqueResult();
     }
 
@@ -111,7 +111,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
     public EReportingSamplingPointEntity getOrInsert(AqdSamplingPoint samplingPoint, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingSamplingPointEntity.PROPERTY_IDENTIFIER, samplingPoint.getIdentifier()));
-        LOGGER.debug("QUERY getOrIntert(samplingPoint): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getOrIntert(samplingPoint): {}", HibernateHelper.getSqlString(c));
         EReportingSamplingPointEntity eReportingSamplingPoint = (EReportingSamplingPointEntity) c.uniqueResult();
         if (eReportingSamplingPoint == null) {
             eReportingSamplingPoint = new EReportingSamplingPointEntity();

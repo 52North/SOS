@@ -190,7 +190,7 @@ public class ValidProcedureTimeDAO {
         } else {
             criteria.add(validTimeCriterion);
         }
-        LOGGER.debug("QUERY getValidProcedureTimes(procedure,procedureDescriptionFormat, validTime): {}",
+        LOGGER.trace("QUERY getValidProcedureTimes(procedure,procedureDescriptionFormat, validTime): {}",
                 HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -212,7 +212,7 @@ public class ValidProcedureTimeDAO {
         } else {
             criteria.add(validTimeCriterion);
         }
-        LOGGER.debug("QUERY getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats, validTime): {}",
+        LOGGER.trace("QUERY getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats, validTime): {}",
                 HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -225,7 +225,7 @@ public class ValidProcedureTimeDAO {
         criteria.setProjection(Projections.projectionList().add(Projections.property(ProcedureEntity.IDENTIFIER))
                 .add(Projections.property("pdf." + FormatEntity.FORMAT)));
         criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
-        LOGGER.debug("QUERY getTProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getTProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
         @SuppressWarnings("unchecked")
         List<Object[]> results = criteria.list();
         Map<String, String> tProcedureFormatMap = Maps.newTreeMap();

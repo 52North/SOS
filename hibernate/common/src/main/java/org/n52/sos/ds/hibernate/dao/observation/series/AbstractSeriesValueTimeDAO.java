@@ -119,7 +119,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         } else {
             Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
             addMinMaxTimeProjection(c);
-            LOGGER.debug(LOG_QUERY_TIME_EXTREMA,
+            LOGGER.trace(LOG_QUERY_TIME_EXTREMA,
                     HibernateHelper.getSqlString(c));
             return parseMinMaxTime((Object[]) c.uniqueResult());
         }
@@ -157,7 +157,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         } else {
             Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
             addMinMaxTimeProjection(c);
-            LOGGER.debug(LOG_QUERY_TIME_EXTREMA,
+            LOGGER.trace(LOG_QUERY_TIME_EXTREMA,
                     HibernateHelper.getSqlString(c));
             return parseMinMaxTime((Object[]) c.uniqueResult());
         }
@@ -186,7 +186,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeries(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getTimeExtremaForSeries(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
 
@@ -275,7 +275,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaForSeriesIds(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
 
@@ -369,7 +369,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        LOGGER.debug(LOG_QUERY_DATA_ENTITY, logArgs.toString(), HibernateHelper.getSqlString(c));
+        LOGGER.trace(LOG_QUERY_DATA_ENTITY, logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -387,7 +387,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
             addSpecificRestrictions(c, getObsReq, logArgs);
         }
-        LOGGER.debug("QUERY getSeriesValueCriteriaFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getSeriesValueCriteriaFor({}): {}", logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -407,7 +407,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         StringBuilder logArgs = new StringBuilder(LOG_ARGS_REQUEST_SERIES);
         addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
         addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
-        LOGGER.debug(LOG_QUERY_DATA_ENTITY, logArgs.toString(), HibernateHelper.getSqlString(c));
+        LOGGER.trace(LOG_QUERY_DATA_ENTITY, logArgs.toString(), HibernateHelper.getSqlString(c));
         return c;
     }
 

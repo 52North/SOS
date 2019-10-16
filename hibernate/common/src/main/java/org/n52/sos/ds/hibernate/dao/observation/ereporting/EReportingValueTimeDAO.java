@@ -76,7 +76,7 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeries(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getTimeExtremaForSeries(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
 
@@ -85,7 +85,7 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO implement
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaForSeriesIds(series, temporalFilterCriterion, null, session);
         addPhenomenonTimeProjection(c);
-        LOGGER.debug("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}", HibernateHelper.getSqlString(c));
         return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
     }
 

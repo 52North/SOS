@@ -267,7 +267,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         // Restrictions
         // .eq("f." + AbstractFeatureEntity.IDENTIFIER,
         // omObsConst.getFeatureOfInterestIdentifier())));
-        LOGGER.debug("QUERY getObservationConstellation(omObservationConstellation): {}",
+        LOGGER.trace("QUERY getObservationConstellation(omObservationConstellation): {}",
                 HibernateHelper.getSqlString(criteria));
         return (DatasetEntity) criteria.uniqueResult();
     }
@@ -325,7 +325,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         ctx.addIdentifierRestrictionsToCritera(criteria);
         criteria.setMaxResults(1);
         // TODO: check for Unit if available!!!
-        LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure, offering): {}",
+        LOGGER.trace("QUERY getOrInsertSeries(feature, observableProperty, procedure, offering): {}",
                 HibernateHelper.getSqlString(criteria));
         DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
         if (series == null || series.getDatasetType().equals(DatasetType.not_initialized)) {
@@ -413,7 +413,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (ds == null) {
             Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
             ctx.addIdentifierRestrictionsToCritera(criteria, false);
-            LOGGER.debug("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
+            LOGGER.trace("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
                     HibernateHelper.getSqlString(criteria));
             ds = (DatasetEntity) criteria.uniqueResult();
         }
@@ -470,7 +470,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                     .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, sosOC.getProcedureIdentifier()));
         }
 
-        LOGGER.debug("QUERY checkObservationConstellation(sosObservationConstellation, offering): {}",
+        LOGGER.trace("QUERY checkObservationConstellation(sosObservationConstellation, offering): {}",
                 HibernateHelper.getSqlString(c));
         List<DatasetEntity> hocs = c.list();
 
@@ -542,7 +542,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 addSpecificRestrictions(c, request);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
                 checkAndAddSpatialFilterCriterion(c, request, session);
-                LOGGER.debug("QUERY getSeries(request, features) and result filter sub query '{}': {}",
+                LOGGER.trace("QUERY getSeries(request, features) and result filter sub query '{}': {}",
                         identifier.name(), HibernateHelper.getSqlString(c));
                 set.addAll(c.list());
             }
@@ -551,7 +551,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                     request.getOfferings(), session);
             addSpecificRestrictions(c, request);
             checkAndAddSpatialFilterCriterion(c, request, session);
-            LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
             set.addAll(c.list());
         }
         return set;
@@ -568,7 +568,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                         request.getFeaturesOfInterest(), request.getOfferings(), session);
                 checkAndAddResultFilterCriterion(c, request, identifier, session);
                 checkAndAddSpatialFilterCriterion(c, request, session);
-                LOGGER.debug("QUERY getSeriesCriteria(request) and result filter sub query '{}': {}",
+                LOGGER.trace("QUERY getSeriesCriteria(request) and result filter sub query '{}': {}",
                         identifier.name(), HibernateHelper.getSqlString(c));
                 set.addAll(c.list());
             }
@@ -576,7 +576,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             Criteria c = getSeriesCriteria(request.getProcedures(), request.getObservedProperties(),
                     request.getFeaturesOfInterest(), request.getOfferings(), session);
             checkAndAddSpatialFilterCriterion(c, request, session);
-            LOGGER.debug(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
+            LOGGER.trace(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
             set.addAll(c.list());
         }
         return set;
@@ -585,7 +585,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public Criteria getSeriesCriteria(Collection<String> identifiers, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         c.add(Restrictions.in(DatasetEntity.IDENTIFIER, identifiers));
-        LOGGER.debug(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
+        LOGGER.trace(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -594,14 +594,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         final Criteria c = createCriteriaFor(request.getObservedProperty(), request.getOffering(), features, session);
         // checkAndAddResultFilterCriterion(c, request, session);
         // checkAndAddSpatialFilterCriterion(c, request, session);
-        LOGGER.debug(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
+        LOGGER.trace(QUERY_SERIES_CRITERIA, HibernateHelper.getSqlString(c));
         return c;
     }
 
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
-        LOGGER.debug("QUERY getSeries(procedures, observableProperteies, features): {}",
+        LOGGER.trace("QUERY getSeries(procedures, observableProperteies, features): {}",
                 HibernateHelper.getSqlString(c));
         return c;
     }
@@ -609,7 +609,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Collection<String> offerings, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, offerings, session);
-        LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features, offerings): {}",
+        LOGGER.trace("QUERY getSeries(proceedures, observableProperteies, features, offerings): {}",
                 HibernateHelper.getSqlString(c));
         return c;
     }
@@ -646,13 +646,13 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) {
         final Criteria c = createCriteriaFor(procedure, observableProperty, featureOfInterest, session);
-        LOGGER.debug(QUERY_SERIES, HibernateHelper.getSqlString(c));
+        LOGGER.trace(QUERY_SERIES, HibernateHelper.getSqlString(c));
         return c;
     }
 
     public Criteria getSeriesCriteriaFor(String procedure, String observableProperty, Session session) {
         final Criteria c = createCriteriaFor(procedure, observableProperty, session);
-        LOGGER.debug(QUERY_SERIES, HibernateHelper.getSqlString(c));
+        LOGGER.trace(QUERY_SERIES, HibernateHelper.getSqlString(c));
         return c;
     }
 
@@ -967,7 +967,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         projectionList.add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT));
         projectionList.add(Projections.max(DatasetEntity.PROPERTY_LAST_VALUE_AT));
         c.setProjection(projectionList);
-        LOGGER.debug("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getProcedureTimeExtrema(procedureIdentifier): {}", HibernateHelper.getSqlString(c));
         Object[] result = (Object[]) c.uniqueResult();
 
         TimeExtrema pte = new TimeExtrema();
@@ -1207,7 +1207,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                     .add(Restrictions.eq(DatasetEntity.HIDDEN_CHILD, true));
             c.createCriteria(DatasetEntity.PROPERTY_OFFERING)
                     .add(Restrictions.in(OfferingEntity.IDENTIFIER, offerings));
-            LOGGER.debug("QUERY updateSeries(observationConstellation, observationType): {}",
+            LOGGER.trace("QUERY updateSeries(observationConstellation, observationType): {}",
                     HibernateHelper.getSqlString(c));
             List<DatasetEntity> hiddenChildObsConsts = c.list();
             for (DatasetEntity hiddenChildObsConst : hiddenChildObsConsts) {

@@ -77,7 +77,7 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
     public EReportingNetworkEntity getEReportingNetwork(long networkId, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingNetworkEntity.ID, networkId));
-        LOGGER.debug("QUERY getEReportingNetwork(networkId): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getEReportingNetwork(networkId): {}", HibernateHelper.getSqlString(c));
         return (EReportingNetworkEntity) c.uniqueResult();
     }
 
@@ -93,7 +93,7 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
     public EReportingNetworkEntity getEReportingNetwork(String identifier, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingNetworkEntity.PROPERTY_IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getEReportingNetwork(identifier): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getEReportingNetwork(identifier): {}", HibernateHelper.getSqlString(c));
         return (EReportingNetworkEntity) c.uniqueResult();
     }
 }

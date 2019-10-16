@@ -96,7 +96,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
         StringBuilder logArgs = new StringBuilder();
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session, logArgs);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
-        LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(), HibernateHelper.getSqlString(c));
+        LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(), HibernateHelper.getSqlString(c));
         return (List<DataEntity<?>>) c.list();
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
                 Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session, logArgs);
                 addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, logArgs);
-                LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
+                LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
                         HibernateHelper.getSqlString(c));
                 list.addAll(c.list());
             }
@@ -140,7 +140,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             StringBuilder logArgs = new StringBuilder();
             Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session, logArgs);
             addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
-            LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
+            LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
                     HibernateHelper.getSqlString(c));
             return (List<DataEntity<?>>) c.list();
         }
@@ -174,7 +174,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
                 Criteria c = getSeriesValueCriteriaFor(request, series, null, session, logArgs);
                 addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, logArgs);
-                LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
+                LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
                         HibernateHelper.getSqlString(c));
                 list.addAll(c.list());
             }
@@ -183,7 +183,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             StringBuilder logArgs = new StringBuilder();
             Criteria c = getSeriesValueCriteriaFor(request, series, null, session, logArgs);
             addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
-            LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
+            LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
                     HibernateHelper.getSqlString(c));
             return (List<DataEntity<?>>) c.list();
         }
@@ -217,7 +217,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
                 Criteria c = getSeriesValueCriteriaFor(request, series, null, session, logArgs);
                 addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
                 checkAndAddResultFilterCriterion(c, (GetObservationRequest) request, identifier, session, logArgs);
-                LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
+                LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
                         HibernateHelper.getSqlString(c));
                 list.addAll(c.list());
             }
@@ -226,7 +226,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             StringBuilder logArgs = new StringBuilder();
             Criteria c = getSeriesValueCriteriaFor(request, series, null, session, logArgs);
             addChunkValuesToCriteria(c, chunkSize, currentRow, request, logArgs);
-            LOGGER.debug(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
+            LOGGER.trace(QUERY_STREAMING_SERIES_VALUE, logArgs.toString(),
                     HibernateHelper.getSqlString(c));
             return (List<DataEntity<?>>) c.list();
         }

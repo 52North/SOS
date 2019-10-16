@@ -179,7 +179,7 @@ public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAva
         }
         c.setProjection(Projections.distinct(Projections.property(DataEntity.PROPERTY_RESULT_TIME)));
         c.addOrder(Order.asc(DataEntity.PROPERTY_RESULT_TIME));
-        LOGGER.debug("QUERY getResultTimesFromObservation(): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY getResultTimesFromObservation(): {}", HibernateHelper.getSqlString(c));
         List<TimeInstant> resultTimes = Lists.newArrayList();
         for (Date date : (List<Date>) c.list()) {
             resultTimes.add(new TimeInstant(date));

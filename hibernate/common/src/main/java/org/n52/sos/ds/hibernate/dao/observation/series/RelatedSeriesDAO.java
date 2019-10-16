@@ -53,7 +53,7 @@ public class RelatedSeriesDAO {
         if (HibernateHelper.isEntitySupported(RelatedDatasetEntity.class)) {
             Criteria c = getDefaultCriteria(session);
             c.add(Restrictions.eq(RelatedDatasetEntity.PROPERTY_ITEM, series));
-            LOGGER.debug("QUERY getRelatedSeries(): {}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getRelatedSeries(): {}", HibernateHelper.getSqlString(c));
             return c.list();
         }
         return Collections.EMPTY_LIST;

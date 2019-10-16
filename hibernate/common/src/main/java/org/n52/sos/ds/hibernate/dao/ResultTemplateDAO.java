@@ -120,7 +120,7 @@ public class ResultTemplateDAO {
         Criteria criteria = session.createCriteria(ResultTemplateEntity.class)
                 .add(Restrictions.eq(ResultTemplateEntity.PROPERTY_IDENTIFIER, identifier))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        LOGGER.debug("QUERY getResultTemplateObject(identifier): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getResultTemplateObject(identifier): {}", HibernateHelper.getSqlString(criteria));
         return (ResultTemplateEntity) criteria.uniqueResult();
     }
 
@@ -154,7 +154,7 @@ public class ResultTemplateDAO {
             // Restrictions.in(FeatureOfInterest.IDENTIFIER,
             // featureOfInterest));
         }
-        LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
+        LOGGER.trace("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
                 HibernateHelper.getSqlString(rtc));
         return rtc.list();
     }
@@ -179,7 +179,7 @@ public class ResultTemplateDAO {
         rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
         /* there can be multiple but equal result templates... */
-        LOGGER.debug("QUERY getResultTemplateObject(offering, observedProperty): {}",
+        LOGGER.trace("QUERY getResultTemplateObject(offering, observedProperty): {}",
                 HibernateHelper.getSqlString(rtc));
         final List<ResultTemplateEntity> templates = rtc.list();
         return templates.isEmpty() ? null : templates.iterator().next();

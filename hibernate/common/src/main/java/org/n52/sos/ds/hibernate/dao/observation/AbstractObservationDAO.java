@@ -821,7 +821,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         c.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_OFFERING)
                 .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringIdentifier));
         c.setMaxResults(1);
-        LOGGER.debug("QUERY checkObservationFor(clazz, offeringIdentifier): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY checkObservationFor(clazz, offeringIdentifier): {}", HibernateHelper.getSqlString(c));
         return CollectionHelper.isNotEmpty(c.list());
     }
 
@@ -837,7 +837,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = session.createCriteria(getObservationFactory().temporalReferencedClass())
                 .setProjection(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        LOGGER.debug("QUERY getMinPhenomenonTime(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getMinPhenomenonTime(): {}", HibernateHelper.getSqlString(criteria));
         Object min = criteria.uniqueResult();
         if (min != null) {
             return new DateTime(min, DateTimeZone.UTC);
@@ -858,13 +858,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteriaStart = session.createCriteria(getObservationFactory().temporalReferencedClass())
                 .setProjection(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        LOGGER.debug("QUERY getMaxPhenomenonTime() start: {}", HibernateHelper.getSqlString(criteriaStart));
+        LOGGER.trace("QUERY getMaxPhenomenonTime() start: {}", HibernateHelper.getSqlString(criteriaStart));
         Object maxStart = criteriaStart.uniqueResult();
 
         Criteria criteriaEnd = session.createCriteria(getObservationFactory().temporalReferencedClass())
                 .setProjection(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        LOGGER.debug("QUERY getMaxPhenomenonTime() end: {}", HibernateHelper.getSqlString(criteriaEnd));
+        LOGGER.trace("QUERY getMaxPhenomenonTime() end: {}", HibernateHelper.getSqlString(criteriaEnd));
         Object maxEnd = criteriaEnd.uniqueResult();
         if (maxStart == null && maxEnd == null) {
             return null;
@@ -893,7 +893,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = session.createCriteria(getObservationFactory().temporalReferencedClass())
                 .setProjection(Projections.min(DataEntity.PROPERTY_RESULT_TIME))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        LOGGER.debug("QUERY getMinResultTime(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getMinResultTime(): {}", HibernateHelper.getSqlString(criteria));
         Object min = criteria.uniqueResult();
         return (min == null) ? null : new DateTime(min, DateTimeZone.UTC);
     }
@@ -911,7 +911,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = session.createCriteria(getObservationFactory().temporalReferencedClass())
                 .setProjection(Projections.max(DataEntity.PROPERTY_RESULT_TIME))
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false));
-        LOGGER.debug("QUERY getMaxResultTime(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getMaxResultTime(): {}", HibernateHelper.getSqlString(criteria));
         Object max = criteria.uniqueResult();
         return (max == null) ? null : new DateTime(max, DateTimeZone.UTC);
     }
@@ -933,7 +933,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     Projections.projectionList().add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                             .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
                             .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
-            LOGGER.debug("QUERY getGlobalTemporalBoundingBox(): {}", HibernateHelper.getSqlString(criteria));
+            LOGGER.trace("QUERY getGlobalTemporalBoundingBox(): {}", HibernateHelper.getSqlString(criteria));
             Object temporalBoundingBox = criteria.uniqueResult();
             if (temporalBoundingBox instanceof Object[]) {
                 Object[] record = (Object[]) temporalBoundingBox;
@@ -1287,7 +1287,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 .add(Restrictions.eq(DataEntity.PROPERTY_DELETED, false))
                 .add(Restrictions.isNotNull(DataEntity.IDENTIFIER))
                 .setProjection(Projections.distinct(Projections.property(DataEntity.IDENTIFIER)));
-        LOGGER.debug("QUERY getObservationIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getObservationIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -1304,7 +1304,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 criteria.setProjection(SpatialProjections.extent(DataEntity.PROPERTY_GEOMETRY_ENTITY));
                 criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_OFFERING)
                         .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
-                LOGGER.debug(QUERY_ENVELOPE_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+                LOGGER.trace(QUERY_ENVELOPE_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
                 Geometry geom = (Geometry) criteria.uniqueResult();
                 geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
                 if (geom != null) {
@@ -1315,7 +1315,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.createCriteria(DataEntity.PROPERTY_DATASET).createCriteria(DatasetEntity.PROPERTY_OFFERING)
                         .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offeringID));
-                LOGGER.debug(QUERY_ENVELOPE_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+                LOGGER.trace(QUERY_ENVELOPE_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
                 @SuppressWarnings("unchecked")
                 final List<DataEntity> observationTimes = criteria.list();
                 if (CollectionHelper.isNotEmpty(observationTimes)) {
@@ -1376,7 +1376,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             addParameterRestriction(c, hdp);
         }
         c.setMaxResults(1);
-        LOGGER.debug("QUERY checkForDuplicatedObservations(): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY checkForDuplicatedObservations(): {}", HibernateHelper.getSqlString(c));
         if (!c.list().isEmpty()) {
             StringBuilder builder = new StringBuilder();
             builder.append("procedure=").append(sosObservation.getObservationConstellation().getProcedureIdentifier());
@@ -1446,7 +1446,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     public boolean isIdentifierContained(String identifier, Session session) {
         Criteria c = getDefaultObservationCriteria(session).add(Restrictions.eq(DataEntity.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY isIdentifierContained(identifier): {}", HibernateHelper.getSqlString(c));
+        LOGGER.trace("QUERY isIdentifierContained(identifier): {}", HibernateHelper.getSqlString(c));
         return c.list().size() > 0;
     }
 

@@ -138,7 +138,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     @SuppressWarnings("unchecked")
     public List<ProcedureEntity> getProcedureObjects(final Session session) {
         Criteria criteria = getDefaultCriteria(session);
-        LOGGER.debug("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -162,7 +162,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         // consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
 
-        LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
         @SuppressWarnings("unchecked")
         List<Object[]> results = criteria.list();
         Map<String, Collection<String>> map = Maps.newHashMap();
@@ -190,12 +190,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     public ProcedureEntity getProcedureForIdentifier(final String identifier, final Session session) {
         Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
-        LOGGER.debug(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
         ProcedureEntity procedure = (ProcedureEntity) criteria.uniqueResult();
         if (HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class)) {
             criteria.createCriteria(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME)
                     .add(Restrictions.isNull(ProcedureHistoryEntity.END_TIME));
-            LOGGER.debug(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+            LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
             ProcedureEntity proc = (ProcedureEntity) criteria.uniqueResult();
             if (proc != null) {
                 return proc;
@@ -212,7 +212,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     // criteria.add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
     // criteria.createCriteria(TProcedureEntity.VALID_PROCEDURE_TIME).add(
     // Restrictions.isNull(ValidProcedureTime.END_TIME));
-    // LOGGER.debug(QUERY_IDENTIFIER_LOG_TEMPLATE,
+    // LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE,
     // HibernateHelper.getSqlString(criteria));
     // return (ProcedureEntity) criteria.uniqueResult();
     // }
@@ -228,7 +228,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     public ProcedureEntity getProcedureForIdentifier(final String identifier, Time time, final Session session) {
         Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
-        LOGGER.debug(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (ProcedureEntity) criteria.uniqueResult();
     }
 
@@ -263,7 +263,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
         createValidProcedureTime.createCriteria(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT)
                 .add(Restrictions.eq(FormatEntity.FORMAT, procedureDescriptionFormat));
-        LOGGER.debug(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (ProcedureEntity) criteria.uniqueResult();
     }
 
@@ -284,7 +284,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         Criteria criteria = getDefaultCriteria(session).add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
         criteria.createCriteria(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME).add(
                 Restrictions.in(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormats));
-        LOGGER.debug(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_IDENTIFIER_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
         return (ProcedureEntity) criteria.uniqueResult();
     }
 
@@ -321,7 +321,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         }
         createValidProcedureTime.createCriteria(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT)
                 .add(Restrictions.in(FormatEntity.FORMAT, possibleProcedureDescriptionFormats));
-        LOGGER.debug("QUERY getProcedureForIdentifier(identifier, possibleProcedureDescriptionFormats, validTime): {}",
+        LOGGER.trace("QUERY getProcedureForIdentifier(identifier, possibleProcedureDescriptionFormats, validTime): {}",
                 HibernateHelper.getSqlString(criteria));
         return (ProcedureEntity) criteria.uniqueResult();
     }
@@ -339,7 +339,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public ProcedureEntity getProcedureForIdentifierIncludeDeleted(final String identifier, final Session session) {
         Criteria criteria = session.createCriteria(ProcedureEntity.class)
                 .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, identifier));
-        LOGGER.debug("QUERY getProcedureForIdentifierIncludeDeleted(identifier): {}",
+        LOGGER.trace("QUERY getProcedureForIdentifierIncludeDeleted(identifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return (ProcedureEntity) criteria.uniqueResult();
     }
@@ -360,7 +360,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             return Collections.EMPTY_LIST;
         }
         Criteria criteria = getDefaultCriteria(session).add(Restrictions.in(ProcedureEntity.IDENTIFIER, identifiers));
-        LOGGER.debug("QUERY getProceduresForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
+        LOGGER.trace("QUERY getProceduresForIdentifiers(identifiers): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
 
@@ -423,7 +423,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         List<Object[]> results;
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST);
-            LOGGER.debug("QUERY getProceduresForAllFeaturesOfInterest(feature) with NamedQuery: {}",
+            LOGGER.trace("QUERY getProceduresForAllFeaturesOfInterest(feature) with NamedQuery: {}",
                     SQL_QUERY_GET_PROCEDURES_FOR_ALL_FEATURES_OF_INTEREST);
             results = namedQuery.list();
         } else {
@@ -435,7 +435,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                     .setProjection(Projections.distinct(Projections.projectionList()
                             .add(Projections.property("f." + AbstractFeatureEntity.IDENTIFIER))
                             .add(Projections.property(P_PREFIX + ProcedureEntity.IDENTIFIER))));
-            LOGGER.debug("QUERY getProceduresForAllFeaturesOfInterest(feature): {}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getProceduresForAllFeaturesOfInterest(feature): {}", HibernateHelper.getSqlString(c));
             results = c.list();
         }
         return results;
@@ -459,7 +459,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
             namedQuery.setParameter(FEATURE, feature.getIdentifier());
-            LOGGER.debug("QUERY getProceduresForAbstractFeatureEntity(feature) with NamedQuery: {}",
+            LOGGER.trace("QUERY getProceduresForAbstractFeatureEntity(feature) with NamedQuery: {}",
                     SQL_QUERY_GET_PROCEDURES_FOR_FEATURE_OF_INTEREST);
             return namedQuery.list();
         } else {
@@ -468,7 +468,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
                     getDetachedCriteriaProceduresForAbstractFeatureEntityFromSeries(feature, session)));
             c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
-            LOGGER.debug("QUERY getProceduresForAbstractFeatureEntity(feature): {}", HibernateHelper.getSqlString(c));
+            LOGGER.trace("QUERY getProceduresForAbstractFeatureEntity(feature): {}", HibernateHelper.getSqlString(c));
             return c.list();
         }
     }
@@ -491,7 +491,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
                 getDetachedCriteriaProceduresForOfferingFromObservationConstellation(offeringIdentifier, session)));
         c.setProjection(Projections.distinct(Projections.property(ProcedureEntity.IDENTIFIER)));
-        LOGGER.debug("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
+        LOGGER.trace("QUERY getProcedureIdentifiersForOffering(offeringIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -530,7 +530,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         c.add(Subqueries.propertyIn(ProcedureEntity.PROPERTY_ID,
                 getDetachedCriteriaProceduresForObservablePropertyFromObservationConstellation(
                         observablePropertyIdentifier, session)));
-        LOGGER.debug("QUERY getProcedureIdentifiersForObservableProperty(observablePropertyIdentifier): {}",
+        LOGGER.trace("QUERY getProcedureIdentifiersForObservableProperty(observablePropertyIdentifier): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
     }
@@ -544,7 +544,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
             namedQuery.setParameter(PROCEDURE, procedureIdentifier);
-            LOGGER.debug("QUERY getProcedureTimeExtrema({}) with NamedQuery '{}': {}", procedureIdentifier,
+            LOGGER.trace("QUERY getProcedureTimeExtrema({}) with NamedQuery '{}': {}", procedureIdentifier,
                     SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, namedQuery.getQueryString());
             result = (Object[]) namedQuery.uniqueResult();
         }
@@ -595,7 +595,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         projectionList.add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END));
         criteria.setProjection(projectionList);
 
-        LOGGER.debug(QUERY_TIME_EXTREMA_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+        LOGGER.trace(QUERY_TIME_EXTREMA_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
         result = (Object[]) criteria.uniqueResult();
 
         return parseProcedureTimeExtremaResult(result);
@@ -606,7 +606,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         List<ProcedureTimeExtrema> results = null;
         if (isAllProcedureTimeExtremaNamedQuerySupported(session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_ALL_PROCEDURE_TIME_EXTREMA);
-            LOGGER.debug("QUERY getProcedureTimeExtrema() with NamedQuery '{}': {}",
+            LOGGER.trace("QUERY getProcedureTimeExtrema() with NamedQuery '{}': {}",
                     SQL_QUERY_GET_ALL_PROCEDURE_TIME_EXTREMA, namedQuery.getQueryString());
             namedQuery.setResultTransformer(transformer);
             results = namedQuery.list();
@@ -619,7 +619,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                         .add(Projections.groupProperty(P_PREFIX + ProcedureEntity.IDENTIFIER))
                         .add(Projections.min(DatasetEntity.PROPERTY_FIRST_VALUE_AT))
                         .add(Projections.max(DatasetEntity.PROPERTY_LAST_VALUE_AT)));
-                LOGGER.debug(QUERY_TIME_EXTREMA_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
+                LOGGER.trace(QUERY_TIME_EXTREMA_LOG_TEMPLATE, HibernateHelper.getSqlString(c));
                 c.setResultTransformer(transformer);
                 results = c.list();
             }
@@ -633,7 +633,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                                 .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START))
                                 .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_START)));
 
-                LOGGER.debug(QUERY_TIME_EXTREMA_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+                LOGGER.trace(QUERY_TIME_EXTREMA_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
                 criteria.setResultTransformer(transformer);
                 results = criteria.list();
             }
@@ -678,7 +678,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE);
             namedQuery.setParameter(PROCEDURE, procedure);
-            LOGGER.debug("QUERY getMinDate4Procedure(procedure) with NamedQuery: {}",
+            LOGGER.trace("QUERY getMinDate4Procedure(procedure) with NamedQuery: {}",
                     SQL_QUERY_GET_MIN_DATE_FOR_PROCEDURE);
             min = namedQuery.uniqueResult();
         } else {
@@ -690,7 +690,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 addProcedureRestrictionForObservation(criteria, procedure);
             }
             addMinMaxProjection(criteria, MinMax.MIN, DataEntity.PROPERTY_SAMPLING_TIME_START);
-            LOGGER.debug("QUERY getMinDate4Procedure(procedure): {}", HibernateHelper.getSqlString(criteria));
+            LOGGER.trace("QUERY getMinDate4Procedure(procedure): {}", HibernateHelper.getSqlString(criteria));
             min = criteria.uniqueResult();
         }
         if (min != null) {
@@ -716,7 +716,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE);
             namedQuery.setParameter(PROCEDURE, procedure);
-            LOGGER.debug("QUERY getMaxDate4Procedure(procedure) with NamedQuery: {}",
+            LOGGER.trace("QUERY getMaxDate4Procedure(procedure) with NamedQuery: {}",
                     SQL_QUERY_GET_MAX_DATE_FOR_PROCEDURE);
             maxStart = namedQuery.uniqueResult();
             maxEnd = maxStart;
@@ -733,12 +733,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             }
             addMinMaxProjection(cstart, MinMax.MAX, DataEntity.PROPERTY_SAMPLING_TIME_START);
             addMinMaxProjection(cend, MinMax.MAX, DataEntity.PROPERTY_SAMPLING_TIME_END);
-            LOGGER.debug("QUERY getMaxDate4Procedure(procedure) start: {}", HibernateHelper.getSqlString(cstart));
-            LOGGER.debug("QUERY getMaxDate4Procedure(procedure) end: {}", HibernateHelper.getSqlString(cend));
+            LOGGER.trace("QUERY getMaxDate4Procedure(procedure) start: {}", HibernateHelper.getSqlString(cstart));
+            LOGGER.trace("QUERY getMaxDate4Procedure(procedure) end: {}", HibernateHelper.getSqlString(cend));
             if (HibernateHelper.getSqlString(cstart).endsWith(HibernateHelper.getSqlString(cend))) {
                 maxStart = cstart.uniqueResult();
                 maxEnd = maxStart;
-                LOGGER.debug("Max time start and end query are identically, only one query is executed!");
+                LOGGER.trace("Max time start and end query are identically, only one query is executed!");
             } else {
                 maxStart = cstart.uniqueResult();
                 maxEnd = cend.uniqueResult();
@@ -941,7 +941,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         Criteria seriesCriteria = criteria.createCriteria(DataEntity.PROPERTY_DATASET);
         seriesCriteria.createCriteria(DatasetEntity.PROPERTY_PROCEDURE)
                 .add(Restrictions.eq(ProcedureEntity.IDENTIFIER, procedureIdentifier));
-        LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
+        LOGGER.trace("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                 HibernateHelper.getSqlString(criteria));
         return Sets.newHashSet(criteria.list());
     }
@@ -955,7 +955,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             criteria.setProjection(Projections.projectionList().add(Projections.property(ProcedureEntity.IDENTIFIER))
                     .add(Projections.property(PDF_PREFIX + FormatEntity.FORMAT)));
             criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
-            LOGGER.debug(QUERY_FORMAT_MAP_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+            LOGGER.trace(QUERY_FORMAT_MAP_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
             @SuppressWarnings("unchecked")
             List<Object[]> results = criteria.list();
             Map<String, String> tProcedureFormatMap = Maps.newTreeMap();
@@ -971,7 +971,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             criteria.setProjection(Projections.projectionList().add(Projections.property(ProcedureEntity.IDENTIFIER))
                     .add(Projections.property(PDF_PREFIX + FormatEntity.FORMAT)));
             criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
-            LOGGER.debug(QUERY_FORMAT_MAP_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
+            LOGGER.trace(QUERY_FORMAT_MAP_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
             @SuppressWarnings("unchecked")
             List<Object[]> results = criteria.list();
             Map<String, String> procedureFormatMap = Maps.newTreeMap();

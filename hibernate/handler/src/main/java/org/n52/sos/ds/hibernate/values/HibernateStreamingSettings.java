@@ -37,11 +37,6 @@ package org.n52.sos.ds.hibernate.values;
  */
 public interface HibernateStreamingSettings {
 
-    String FORCE_DATASOURCE_STREAMING = "service.streaming.datasource";
-
-    String DATASOURCE_STREAMING_APPROACH
-            = "service.streaming.datasource.approach";
-
     String CHUNK_SIZE = "service.streaming.datasource.chunkSize";
 
 }

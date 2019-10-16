@@ -42,53 +42,7 @@ import org.n52.faroe.annotation.Setting;
 public class HibernateStreamingConfiguration {
 
     private static int DEFAULT_CHUNK_SIZE = 10000;
-    private static boolean DEFAULT_STREAMING_DATASOURCE = true;
-    private static boolean DEFAULT_CHUNK_STREAMING_DATASOURCE = true;
-
-    private boolean streamingDatasource = DEFAULT_STREAMING_DATASOURCE;
-    private boolean chunkDatasourceStreaming = DEFAULT_CHUNK_STREAMING_DATASOURCE;
     private int chunkSize = DEFAULT_CHUNK_SIZE;
-
-    /**
-     * Set the indicator to force streaming datasource
-     *
-     * @param streamingDatasource
-     *            Value to set
-     */
-    @Setting(HibernateStreamingSettings.FORCE_DATASOURCE_STREAMING)
-    public void setForceDatasourceStreaming(boolean streamingDatasource) {
-        this.streamingDatasource = streamingDatasource;
-    }
-
-    /**
-     * Check if streaming values should be used
-     *
-     * @return <code>true</code>, if datasource streaming is activated
-     */
-    public boolean isForceDatasourceStreaming() {
-        return streamingDatasource;
-    }
-
-    /**
-     * Set the indicator to use chunk or scrollable streaming
-     *
-     * @param chunkDatasourceStreaming
-     *            Value to set
-     */
-    @Setting(HibernateStreamingSettings.DATASOURCE_STREAMING_APPROACH)
-    public void setChunkDatasourceStreaming(boolean chunkDatasourceStreaming) {
-        this.chunkDatasourceStreaming = chunkDatasourceStreaming;
-    }
-
-    /**
-     * Check for streaming mode to use
-     *
-     * @return <code>true</code>, if chunk streaming should be used
-     *         <code>false</code>, if scrollable should be used
-     */
-    public boolean isChunkDatasourceStreaming() {
-        return chunkDatasourceStreaming;
-    }
 
     /**
      * Set the chunk size for chunk streaming

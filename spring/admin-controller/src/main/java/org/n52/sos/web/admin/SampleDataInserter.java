@@ -169,19 +169,22 @@ public class SampleDataInserter implements Sos2Constants {
 
     public synchronized boolean insertSampleData() throws UnsupportedEncodingException, IOException,
             MissingServiceOperatorException, URISyntaxException, OwsExceptionReport, XmlException, DecodingException {
+        LOG.debug("Start sample data insertion!");
+        long start = System.currentTimeMillis();
         checkRequestOperators();
         insertSensors();
         insertFeatures();
         insertObservations();
+        LOG.debug("Finished sample data insertion in " + (System.currentTimeMillis() - start) / 1000 + "s!");
         return getInsertedData();
     }
 
-    private synchronized boolean getInsertedData() {
+    private boolean getInsertedData() {
         return insertedData;
     }
 
-    private synchronized void setInsertedData(boolean insertedData) {
-        this.insertedData = insertedData;
+    private void setInsertedData() {
+        this.insertedData = true;
     }
 
     private void checkRequestOperators() throws MissingServiceOperatorException {
@@ -487,7 +490,7 @@ public class SampleDataInserter implements Sos2Constants {
                 InsertObservationResponse insertObservationResponse =
                         (InsertObservationResponse) insertObservationOperator.receiveRequest(request);
                 if (insertObservationResponse != null) {
-                    setInsertedData(true);
+                    setInsertedData();
                 }
             } catch (OwsExceptionReport e) {
                 exceptions.add(e);

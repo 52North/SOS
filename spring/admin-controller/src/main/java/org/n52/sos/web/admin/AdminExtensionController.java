@@ -117,14 +117,6 @@ public class AdminExtensionController extends AbstractAdminController {
                     json.path(JSONConstants.VERSION_KEY).asText());
             OwsOperationMetadataExtensionProviderKey oeckt = new OwsOperationMetadataExtensionProviderKey(sokt,
                     json.path(JSONConstants.EXTENDED_CAPABILITIES_DOMAIN_KEY).asText());
-            if (json.path(JSONConstants.ACTIVE_KEY).asBoolean()) {
-                for (OwsOperationMetadataExtensionProviderKey key : owsExtendedCapabilitiesProviderRepository
-                        .getKeys()) {
-                    if (key.getServiceOperatorKey().equals(sokt)) {
-                        owsExtendedCapabilitiesProviderRepository.deactivate(key);
-                    }
-                }
-            }
             this.owsExtendedCapabilitiesProviderRepository.setActive(oeckt,
                     json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.OFFERING_EXTENSION_DOMAIN_KEY)) {

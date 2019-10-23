@@ -37,6 +37,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.SosCacheFeederHandler;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -54,6 +55,13 @@ public class SosCacheFeederDAOTest extends HibernateTestCase {
         SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
         holder.setConnectionProvider(this);
         instance.setConnectionProvider(holder);
+
+        GeometryHandler geometryHandler = new GeometryHandler();
+        geometryHandler.setAuthority("EPSG");
+        geometryHandler.setStorageEpsg(4326);
+        geometryHandler.setSpatialDatasource(true);
+        geometryHandler.init();
+        instance.setGeometryHandler(geometryHandler);
     }
 
     @Test

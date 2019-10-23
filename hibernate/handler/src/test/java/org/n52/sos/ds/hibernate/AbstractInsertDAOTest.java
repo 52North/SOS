@@ -339,6 +339,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
         cacheFeeder.setConnectionProvider(holder);
         cacheFeeder.setI18NDAORepository(i18NDAORepository);
+        cacheFeeder.setGeometryHandler(geometryHandler);
         initEncoder();
         initDecoder();
         bindingRepository.setComponentFactories(Optional.empty());

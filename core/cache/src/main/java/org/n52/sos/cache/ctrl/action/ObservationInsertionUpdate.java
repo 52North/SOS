@@ -108,7 +108,6 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                     sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 
             final Envelope envelope = createEnvelopeFrom(observedFeatures);
-            cache.updateGlobalEnvelope(envelope);
 
             for (AbstractSamplingFeature sosSamplingFeature : observedFeatures) {
                 String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
@@ -167,6 +166,7 @@ public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
                 cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
                 cache.updateResultTimeForOffering(offering, resultTime);
                 cache.updateEnvelopeForOffering(offering, envelope);
+                cache.updateGlobalEnvelope(envelope);
                 if (!envelope.isNull()) {
                     cache.updateSpatialFilteringProfileEnvelopeForOffering(offering, spatialFitleringProfileEnvelope);
                 }

@@ -244,6 +244,9 @@ public class SosObservationOfferingExtensionRepository extends
         Activatables.activatedKeys(this.offeringExtensionProviders, this.activation).stream().forEach(key -> {
             domains.computeIfAbsent(key.getServiceOperatorKey(), sok -> new LinkedList<>()).add(key.getDomain());
         });
+        Activatables.deactivatedKeys(this.offeringExtensionProviders, this.activation).stream().forEach(key -> {
+            domains.computeIfAbsent(key.getServiceOperatorKey(), sok -> new LinkedList<>()).add(key.getDomain());
+        });
         return domains;
     }
 

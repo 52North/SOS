@@ -35,6 +35,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -46,24 +47,30 @@ import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
-public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInterestHandler {
+import com.google.common.annotations.VisibleForTesting;
+
+public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInterestHandler implements Constructable {
+
+    @Inject
+    private ConnectionProvider connectionProvider;
+
+    @Inject
+    private DaoFactory daoFactory;
 
     private HibernateSessionHolder sessionHolder;
-
-    private DaoFactory daoFactory;
 
     public InsertFeatureOfInterestHandler() {
         super(SosConstants.SOS);
     }
 
-    @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    @Override
+    public void init() {
+        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.connectionProvider = connectionProvider;
     }
 
     @Override
@@ -72,10 +79,10 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
         Session session = null;
         Transaction transaction = null;
         try {
-            session = sessionHolder.getSession();
+            session = getHibernateSessionHolder().getSession();
             transaction = session.beginTransaction();
             for (AbstractFeature abstractFeature : request.getFeatureMembers()) {
-                daoFactory.getFeatureDAO().insertFeature(abstractFeature, session);
+                getDaoFactory().getFeatureDAO().insertFeature(abstractFeature, session);
             }
             session.flush();
             transaction.commit();
@@ -85,7 +92,7 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
             }
             handleHibernateException(he);
         } finally {
-            sessionHolder.returnSession(session);
+            getHibernateSessionHolder().returnSession(session);
         }
         InsertFeatureOfInterestResponse response = new InsertFeatureOfInterestResponse();
         response.set(request);
@@ -95,6 +102,20 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
     @Override
     public boolean isSupported() {
         return HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class);
+    }
+
+    private synchronized DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    private synchronized HibernateSessionHolder getHibernateSessionHolder() {
+        return sessionHolder;
+    }
+
+    @VisibleForTesting
+    protected synchronized void initForTesting(DaoFactory daoFactory, ConnectionProvider connectionProvider) {
+        this.daoFactory = daoFactory;
+        this.connectionProvider = connectionProvider;
     }
 
     protected void handleHibernateException(HibernateException he) throws OwsExceptionReport {

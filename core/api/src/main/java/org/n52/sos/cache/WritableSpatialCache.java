@@ -28,8 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import java.util.Collection;
-
 import org.locationtech.jts.geom.Envelope;
 
 import org.n52.shetland.util.ReferencedEnvelope;
@@ -96,23 +94,6 @@ public interface WritableSpatialCache extends CacheConstants {
     void removeSpatialFilteringProfileEnvelopeForOffering(String offering);
 
     /**
-     * Remove the specified epsg code.
-     *
-     * @param epsgCode the epsg code
-     */
-    void removeEpsgCode(Integer epsgCode);
-
-    /**
-     * Remove the specified epsg codes.
-     *
-     * @param epsgCodes the epsg codes
-     */
-    default void removeEpsgCodes(Collection<Integer> epsgCodes) {
-        CacheValidation.noNullValues(EPSG_CODES, epsgCodes);
-        epsgCodes.forEach(this::removeEpsgCode);
-    }
-
-    /**
      * Sets the global spatial envelope.
      *
      * @param globalEnvelope the new spatial envelope
@@ -141,20 +122,4 @@ public interface WritableSpatialCache extends CacheConstants {
      */
     void clearSpatialFilteringProfileEnvelopeForOfferings();
 
-    /**
-     * Add the specified epsg code.
-     *
-     * @param epsgCode the new epsg code
-     */
-    void addEpsgCode(Integer epsgCode);
-
-    /**
-     * Add the specified epsg codes.
-     *
-     * @param epsgCodes the new epsg codes
-     */
-    default void addEpsgCodes(Collection<Integer> epsgCodes) {
-        CacheValidation.noNullValues(EPSG_CODES, epsgCodes);
-        epsgCodes.forEach(this::addEpsgCode);
-    }
 }

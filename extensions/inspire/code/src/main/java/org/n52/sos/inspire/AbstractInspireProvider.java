@@ -54,7 +54,9 @@ import com.google.common.collect.Sets;
 public abstract class AbstractInspireProvider {
 
     private InspireHelper inspireHelper;
+
     private ContentCacheController contentCacheController;
+
     private GeometryHandler geometryHandler;
 
     @Inject
@@ -92,17 +94,17 @@ public abstract class AbstractInspireProvider {
     protected InspireSupportedCRS getSupportedCRS() {
         InspireSupportedCRS inspireSupportedCRS = null;
         if (getInspireHelper().isUseAuthority()) {
-            inspireSupportedCRS =
-                    new InspireSupportedCRS(getGeometryHandler().addAuthorityCrsPrefix(
-                            getGeometryHandler().getDefaultResponseEPSG()));
-            inspireSupportedCRS.setOtherCRS(getGeometryHandler().addAuthorityCrsPrefix(
-                    removeDefaultCRS(getGeometryHandler().getDefaultResponseEPSG(), getCache().getEpsgCodes())));
+            inspireSupportedCRS = new InspireSupportedCRS(
+                    getGeometryHandler().addAuthorityCrsPrefix(getGeometryHandler().getDefaultResponseEPSG()));
+            inspireSupportedCRS.setOtherCRS(getGeometryHandler()
+                    .addAuthorityCrsPrefix(removeDefaultCRS(getGeometryHandler().getDefaultResponseEPSG(),
+                            getGeometryHandler().getSupportedCRS())));
         } else {
-            inspireSupportedCRS =
-                    new InspireSupportedCRS(getGeometryHandler().addOgcCrsPrefix(
-                            getGeometryHandler().getDefaultResponseEPSG()));
-            inspireSupportedCRS.setOtherCRS(getGeometryHandler().addOgcCrsPrefix(
-                    removeDefaultCRS(getGeometryHandler().getDefaultResponseEPSG(), getCache().getEpsgCodes())));
+            inspireSupportedCRS = new InspireSupportedCRS(
+                    getGeometryHandler().addOgcCrsPrefix(getGeometryHandler().getDefaultResponseEPSG()));
+            inspireSupportedCRS.setOtherCRS(getGeometryHandler()
+                    .addOgcCrsPrefix(removeDefaultCRS(getGeometryHandler().getDefaultResponseEPSG(),
+                            getGeometryHandler().getSupportedCRS())));
         }
         return inspireSupportedCRS;
     }
@@ -116,13 +118,12 @@ public abstract class AbstractInspireProvider {
      *            Other CRSes
      * @return Set without default CRS
      */
-    protected Set<Integer> removeDefaultCRS(int defaultCRS, Set<Integer> otherCRS) {
-        Set<Integer> checkSet = Sets.newHashSetWithExpectedSize(otherCRS.size());
-        for (Integer integer : otherCRS) {
-            if (integer != defaultCRS) {
-                checkSet.add(integer);
+    protected Set<String> removeDefaultCRS(int defaultCRS, Set<String> otherCRS) {
+        Set<String> checkSet = Sets.newHashSetWithExpectedSize(otherCRS.size());
+        for (String string : otherCRS) {
+            if (!string.equals(Integer.toString(defaultCRS))) {
+                checkSet.add(string);
             }
-
         }
         return checkSet;
     }

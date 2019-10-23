@@ -934,7 +934,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     }
 
     private OwsDomain getCrsParameter(String service, String version) {
-        Set<String> crs = this.geometryHandler.addOgcCrsPrefix(getCache().getEpsgCodes());
+        Set<String> crs = this.geometryHandler.addOgcCrsPrefix(getGeometryHandler().getSupportedCRS());
         Stream<OwsValue> allowedValues = crs.stream().map(OwsValue::new);
         return new OwsDomain(OWSConstants.AdditionalRequestParams.crs, new OwsAllowedValues(allowedValues));
     }

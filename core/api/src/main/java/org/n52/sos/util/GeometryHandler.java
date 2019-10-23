@@ -778,19 +778,27 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         crsCache.clear();
     }
 
-    public Set<String> addAuthorityCrsPrefix(Collection<Integer> crses) {
+    public Set<String> addAuthorityCrsPrefix(Collection<String> crses) {
         return crses.stream().map(this::addAuthorityCrsPrefix).collect(Collectors.toSet());
     }
 
     public String addAuthorityCrsPrefix(int crs) {
+        return addAuthorityCrsPrefix(Integer.toString(crs));
+    }
+
+    public String addAuthorityCrsPrefix(String crs) {
         return new StringBuilder(getAuthority()).append("::").append(crs).toString();
     }
 
-    public Set<String> addOgcCrsPrefix(Collection<Integer> crses) {
+    public Set<String> addOgcCrsPrefix(Collection<String> crses) {
         return crses.stream().map(this::addOgcCrsPrefix).collect(Collectors.toSet());
     }
 
     public String addOgcCrsPrefix(int crs) {
+        return this.srsNamePrefixUrl + crs;
+    }
+
+    public String addOgcCrsPrefix(String crs) {
         return this.srsNamePrefixUrl + crs;
     }
 

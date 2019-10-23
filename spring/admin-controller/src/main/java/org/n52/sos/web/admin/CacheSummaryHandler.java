@@ -32,8 +32,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.util.GeometryHandler;
+import org.springframework.stereotype.Component;
 
 /**
  * Class to get a summary of the cache objects.
@@ -41,6 +46,8 @@ import org.n52.sos.cache.SosContentCache;
  * @since 4.0.0
  *
  */
+@Component
+@Singleton
 public final class CacheSummaryHandler {
 
     public static final String LAST_UPDATE_TIME = "last_update";
@@ -60,13 +67,15 @@ public final class CacheSummaryHandler {
     public static final String DEFAULT_EPSG = "default_epsg";
     public static final String NUM_EPSGS = "num_epsgs";
 
+    @Inject
+    private GeometryHandler geometryHandler;
 
 
     private CacheSummaryHandler() {
 
     }
 
-    public static Map<String, String> getCacheValues(ContentCacheController cacheController) {
+    public Map<String, String> getCacheValues(ContentCacheController cacheController) {
         SosContentCache cache = (SosContentCache) cacheController.getCache();
         Map<String, String> values = new TreeMap<>();
         values.put(LAST_UPDATE_TIME, nullSafeToString(cache.getLastUpdateTime()));
@@ -84,11 +93,11 @@ public final class CacheSummaryHandler {
         values.put(NUM_RELATED_FEATURES, nullSafeToString(cache.getRelatedFeatures()));
         values.put(NUM_RESULT_TEMPLATES, nullSafeToString(cache.getResultTemplates()));
         values.put(DEFAULT_EPSG, Integer.toString(cache.getDefaultEPSGCode()));
-        values.put(NUM_EPSGS, nullSafeToString(cache.getEpsgCodes()));
+        values.put(NUM_EPSGS, nullSafeToString(geometryHandler.getSupportedCRS()));
         return values;
     }
 
-    private static String nullSafeToString(Object obj) {
+    private String nullSafeToString(Object obj) {
         if (obj == null) {
             return "null";
         } else if (obj instanceof Collection) {

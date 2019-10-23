@@ -29,7 +29,6 @@
 package org.n52.sos.cache;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.n52.shetland.util.ReferencedEnvelope;
 
@@ -97,21 +96,5 @@ public interface SpatialCache {
     default boolean hasGlobalEnvelope() {
         return Optional.ofNullable(getGlobalEnvelope())
                 .filter(ReferencedEnvelope::isSetEnvelope).isPresent();
-    }
-
-    /**
-     * @return all EPSG codes
-     */
-    Set<Integer> getEpsgCodes();
-
-    /**
-     * Checks whether the specified EPSG code exists.
-     *
-     * @param epsgCode the EPSG code
-     *
-     * @return {@code true} if it exists
-     */
-    default boolean hasEpsgCode(Integer epsgCode) {
-        return getEpsgCodes().contains(epsgCode);
     }
 }

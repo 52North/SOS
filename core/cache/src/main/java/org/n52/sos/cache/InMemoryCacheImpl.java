@@ -285,11 +285,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
     }
 
     @Override
-    public Set<Integer> getEpsgCodes() {
-        return copyOf(this.epsgCodes);
-    }
-
-    @Override
     public Set<String> getFeaturesOfInterest() {
         return copyOf(this.featuresOfInterest);
     }
@@ -744,13 +739,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
     }
 
     @Override
-    public void addEpsgCode(Integer epsgCode) {
-        CacheValidation.greaterZero(EPSG_CODE, epsgCode);
-        LOG.trace("Adding EpsgCode {}", epsgCode);
-        this.epsgCodes.add(epsgCode);
-    }
-
-    @Override
     public void addFeatureOfInterest(String featureOfInterest) {
         CacheValidation.notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Adding FeatureOfInterest {}", featureOfInterest);
@@ -1142,13 +1130,6 @@ public class InMemoryCacheImpl extends AbstractStaticSosContentCache
         CacheValidation.notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing envelope for offering {}", offering);
         this.envelopeForOfferings.remove(offering);
-    }
-
-    @Override
-    public void removeEpsgCode(Integer epsgCode) {
-        Objects.requireNonNull(epsgCode, EPSG_CODE);
-        LOG.trace("Removing epsgCode {}", epsgCode);
-        this.epsgCodes.remove(epsgCode);
     }
 
     @Override

@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.inspire.InspireConstants;
@@ -58,6 +59,7 @@ import com.google.common.base.Strings;
  * @since 4.1.0
  *
  */
+@Configurable
 public class InspireOfferingExtensionProvider extends AbstractInspireProvider
         implements SosObservationOfferingExtensionProvider {
     private static final Set<SosObservationOfferingExtensionKey> KEYS = Collections
@@ -108,8 +110,6 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
                 .collect(Extensions::new,
                          Extensions::addExtension,
                          Extensions::addExtension);
-//        extensions.addSwesExtension(new SwesExtensionImpl<InspireUniqueResourceIdentifier>()
-//                .setValue(getSpatialDataSetIdentifier(identifier)).setNamespace(InspireConstants.NS_INSPIRE_COMMON));
     }
 
     @Override

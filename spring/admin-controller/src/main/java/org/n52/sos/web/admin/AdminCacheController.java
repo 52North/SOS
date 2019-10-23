@@ -63,6 +63,9 @@ public class AdminCacheController extends AbstractController {
     @Inject
     private ContentCacheController cacheController;
 
+    @Inject
+    private CacheSummaryHandler cacheSummaryHandler;
+
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE, method = RequestMethod.GET)
     public String view() {
         return ControllerConstants.Views.ADMIN_CACHE;
@@ -73,7 +76,7 @@ public class AdminCacheController extends AbstractController {
                     method = RequestMethod.GET,
                     produces = "application/json; charset=UTF-8")
     public String getCacheSummary() {
-        return Json.print(Json.toJSON(CacheSummaryHandler.getCacheValues(cacheController)));
+        return Json.print(Json.toJSON(cacheSummaryHandler.getCacheValues(cacheController)));
     }
 
     @ResponseBody

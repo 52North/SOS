@@ -67,7 +67,7 @@ public class InsertFeatureOfInterestHandler extends AbstractInsertFeatureOfInter
     }
 
     @Override
-    public InsertFeatureOfInterestResponse insertFeatureOfInterest(InsertFeatureOfInterestRequest request)
+    public synchronized InsertFeatureOfInterestResponse insertFeatureOfInterest(InsertFeatureOfInterestRequest request)
             throws OwsExceptionReport {
         Session session = null;
         Transaction transaction = null;

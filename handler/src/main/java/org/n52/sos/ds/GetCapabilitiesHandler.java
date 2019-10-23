@@ -207,8 +207,10 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         }
     }
 
-    private ReferencedEnvelope processObservedArea(Geometry geometry) throws CodedException {
-        return new ReferencedEnvelope(geometry.getEnvelopeInternal(), geometry.getSRID());
+    private ReferencedEnvelope processObservedArea(Geometry geometry) throws OwsExceptionReport {
+        return new ReferencedEnvelope(
+                getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getEnvelopeInternal(),
+                geometry.getSRID());
     }
 
     /**

@@ -42,6 +42,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,19 +70,23 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     private final I18NDAORepository i18NDAORepository;
 
+    private GeometryHandler geometryHandler;
+
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
-            HibernateSessionStore sessionStore) {
-        this(threads, defaultLanguage, i18NDAORepository, sessionStore, null);
+            GeometryHandler geometryHandler, HibernateSessionStore sessionStore) {
+        this(threads, defaultLanguage, i18NDAORepository, geometryHandler, sessionStore, null);
     }
 
     public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
-            HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate) {
+            GeometryHandler geometryHandler, HibernateSessionStore sessionStore,
+            Collection<String> offeringIdsToUpdate) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
         if (offeringIdsToUpdate != null) {
             this.offeringsIdToUpdate.addAll(offeringIdsToUpdate);
         }
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
+        this.geometryHandler = geometryHandler;
     }
 
     private Collection<OfferingEntity> getOfferingsToUpdate() {
@@ -119,8 +124,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         for (OfferingEntity offering : getOfferingsToUpdate()) {
-            offeringUpdateTasks.add(
-                    new OfferingCacheUpdateTask(offering.getId(), this.defaultLanguage, this.i18NDAORepository));
+            offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering.getId(), this.defaultLanguage,
+                    this.i18NDAORepository, geometryHandler));
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }

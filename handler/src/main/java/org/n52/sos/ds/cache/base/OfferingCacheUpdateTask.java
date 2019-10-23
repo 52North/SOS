@@ -60,6 +60,7 @@ import org.n52.sos.ds.DatabaseQueryHelper;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.cache.ProcedureFlag;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -85,6 +86,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     private Collection<DatasetEntity> datasets = new HashSet<>();
 
+    private GeometryHandler geometryHandler;
+
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread
@@ -96,10 +99,12 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      * @param i18NDAORepository
      *            the i18n repository
      */
-    public OfferingCacheUpdateTask(Long offeringId, Locale defaultLanguage, I18NDAORepository i18NDAORepository) {
+    public OfferingCacheUpdateTask(Long offeringId, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
+            GeometryHandler geometryHandler) {
         this.offeringId = offeringId;
         this.defaultLanguage = defaultLanguage;
         this.i18NDAORepository = i18NDAORepository;
+        this.geometryHandler = geometryHandler;
         this.datasets.clear();
     }
 
@@ -167,7 +172,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         }
 
         // Spatial Envelope
-        getCache().setEnvelopeForOffering(identifier, getEnvelopeForOffering(offering));
+        ReferencedEnvelope envelop = getEnvelopeForOffering(offering);
+        getCache().setEnvelopeForOffering(identifier, envelop);
+        getCache().updateGlobalEnvelope(envelop.getEnvelope());
 
         // Temporal extent
         // TODO get from datasets
@@ -276,8 +283,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     protected ReferencedEnvelope getEnvelopeForOffering(OfferingEntity offering) throws OwsExceptionReport {
         if (offering.isSetGeometry()) {
-            return new ReferencedEnvelope(offering.getGeometry().getEnvelopeInternal(),
-                    offering.getGeometry().getSRID());
+            return new ReferencedEnvelope(
+                    geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(offering.getGeometry()));
         } else if (datasets != null && !datasets.isEmpty()) {
             Envelope e = new Envelope();
             int srid = -1;
@@ -287,7 +294,8 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                     if (srid < 0) {
                         srid = de.getFeature().getGeometryEntity().getGeometry().getSRID();
                     }
-                    e.expandToInclude(de.getFeature().getGeometryEntity().getGeometry().getEnvelopeInternal());
+                    e.expandToInclude(geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                            de.getFeature().getGeometryEntity().getGeometry()).getEnvelopeInternal());
                 }
             }
             return new ReferencedEnvelope(e, srid);

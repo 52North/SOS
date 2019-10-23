@@ -55,6 +55,7 @@ import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.cache.CacheFeederSettingDefinitionProvider;
 import org.n52.sos.ds.cache.InitialCacheUpdate;
 import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
     private I18NDAORepository i18NDAORepository;
     private OwsServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionStore sessionStore;
+    private GeometryHandler geometryHandler;
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
@@ -103,6 +105,11 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         this.i18NDAORepository = i18NDAORepository;
     }
 
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
     @Setting(CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT)
     public void setCacheThreadCount(int threads) throws ConfigurationError {
         Validation.greaterZero("Cache Thread Count", threads);
@@ -120,7 +127,8 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                     this.defaultLocale,
                     this.i18NDAORepository,
                     this.sessionStore,
-                    this.serviceMetadataRepository);
+                    this.serviceMetadataRepository,
+                    geometryHandler);
             session = this.sessionStore.getSession();
             update.setCache(cache);
             update.setErrors(errors);
@@ -162,6 +170,7 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
                 this.cacheThreadCount,
                 this.defaultLocale,
                 this.i18NDAORepository,
+                this.geometryHandler,
                 this.sessionStore);
         update.setCache(cache);
         update.setErrors(errors);

@@ -41,6 +41,7 @@ import org.n52.sos.ds.cache.base.OfferingCacheUpdate;
 import org.n52.sos.ds.cache.base.ProcedureCacheUpdate;
 import org.n52.sos.ds.cache.base.RelatedFeaturesCacheUpdate;
 import org.n52.sos.ds.cache.base.ResultTemplateCacheUpdate;
+import org.n52.sos.util.GeometryHandler;
 
 /**
  *
@@ -66,7 +67,8 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                               Locale defaultLocale,
                               I18NDAORepository i18NDAORepository,
                               HibernateSessionStore sessionStore,
-                              OwsServiceMetadataRepository serviceMetadataRepository) {
+                              OwsServiceMetadataRepository serviceMetadataRepository,
+                              GeometryHandler geometryHandler) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount,
@@ -81,6 +83,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
               new OfferingCacheUpdate(threadCount,
                                       defaultLocale,
                                       i18NDAORepository,
+                                      geometryHandler,
                                       sessionStore),
               new ProcedureCacheUpdate(threadCount, sessionStore));
     }

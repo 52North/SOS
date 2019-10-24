@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
@@ -121,144 +122,15 @@ public interface NetCDFUtil {
 
         while (omObservations.hasNext()) {
             OmObservation sosObs = omObservations.next();
-
-            OmObservationConstellation obsConst = sosObs.getObservationConstellation();
-
-            // first, resolve the procId to an asset type
-            String sensor = obsConst.getProcedure().getIdentifier();
-            if (!sensorProcedure.containsKey(sensor)) {
-                sensorProcedure.put(sensor, obsConst.getProcedure());
-            }
-
-            AbstractPhenomenon absPhen = obsConst.getObservableProperty();
-            Map<String, OmObservableProperty> phenomenaMap = new HashMap<>();
-            if (absPhen instanceof OmCompositePhenomenon) {
-                for (OmObservableProperty phen : ((OmCompositePhenomenon) absPhen).getPhenomenonComponents()) {
-                    // TODO should the unit be set like this? seems sketchy
-                    if (phen.getUnit() == null && sosObs.getValue() != null && sosObs.getValue().getValue() != null
-                            && sosObs.getValue().getValue().getUnit() != null) {
-                        phen.setUnit(sosObs.getValue().getValue().getUnit());
-                    }
-                    phenomenaMap.put(phen.getIdentifier(), phen);
+            if (sosObs.getValue() instanceof StreamingValue<?>) {
+                StreamingValue<?> streaming = (StreamingValue<?>) sosObs.getValue();
+                while (streaming.hasNext()) {
+                    processObservation(streaming.next(), sensorPhens, sensorProcedure, sensorLngs, sensorLats,
+                            sensorHeights, obsValuesMap);
                 }
             } else {
-                OmObservableProperty phen = (OmObservableProperty) absPhen;
-                // TODO should the unit be set like this? seems sketchy
-                if (phen.getUnit() == null && sosObs.getValue() != null && sosObs.getValue().getValue() != null
-                        && sosObs.getValue().getValue().getUnit() != null) {
-                    phen.setUnit(sosObs.getValue().getValue().getUnit());
-                }
-                phenomenaMap.put(phen.getIdentifier(), phen);
-            }
-            List<OmObservableProperty> phenomena = new ArrayList<>(phenomenaMap.values());
-            sensorPhens.putAll(sensor, phenomena);
-
-            // get foi
-            AbstractFeature aFoi = obsConst.getFeatureOfInterest();
-            if (!(aFoi instanceof AbstractSamplingFeature)) {
-                throw new EncodingException("Encountered a feature which isn't a SamplingFeature");
-            }
-            AbstractSamplingFeature foi = (AbstractSamplingFeature) aFoi;
-
-            for (Point point : FeatureUtil.getFeaturePoints(foi)) {
-                try {
-                    // TODO is this correct?
-                    Point p = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
-                    sensorLngs.put(sensor, p.getX());
-                    sensorLats.put(sensor, p.getY());
-                } catch (OwsExceptionReport e) {
-                    throw new EncodingException("Exception while normalizing feature coordinate axis order.", e);
-                }
-            }
-            Set<Double> featureHeights = FeatureUtil.getFeatureHeights(foi);
-            sensorHeights.putAll(sensor, featureHeights);
-
-            String phenId = obsConst.getObservableProperty().getIdentifier();
-            ObservationValue<?> iObsValue = sosObs.getValue();
-            if (!(iObsValue instanceof SingleObservationValue)) {
-                throw new EncodingException("Only SingleObservationValues are supported.");
-            }
-            SingleObservationValue<?> singleObsValue = (SingleObservationValue<?>) iObsValue;
-            Time obsTime = singleObsValue.getPhenomenonTime();
-
-            // TODO Quality
-
-            Value<?> obsValue = singleObsValue.getValue();
-            if (!(obsValue instanceof QuantityValue)) {
-                throw new EncodingException("Only QuantityValues are supported.");
-            }
-            QuantityValue quantityValue = (QuantityValue) obsValue;
-
-            // axes shouldn't be composite phenomena
-            if (phenomena.size() == 1) {
-                OmObservableProperty phenomenon = phenomena.get(0);
-                // add dimensional values to procedure dimension tracking maps
-                if (isLng(phenomenon.getIdentifier())) {
-                    sensorLngs.get(sensor).add(quantityValue.getValue().doubleValue());
-                }
-
-                if (isLat(phenomenon.getIdentifier())) {
-                    sensorLats.get(sensor).add(quantityValue.getValue().doubleValue());
-                }
-
-                if (isZ(phenomenon.getIdentifier())) {
-                    Double zValue = quantityValue.getValue().doubleValue();
-                    sensorHeights.get(sensor).add(zValue);
-                }
-            }
-
-            // check for samplingGeometry in observation
-            if (sosObs.isSetParameter()) {
-                if (sosObs.isSetHeightDepthParameter()) {
-                    if (sosObs.isSetHeightParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue().doubleValue());
-                    } else if (sosObs.isSetDepthParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue().doubleValue());
-                    }
-                }
-                if (hasSamplingGeometry(sosObs)) {
-                    Geometry geometry = getSamplingGeometryGeometry(sosObs);
-                    Set<Point> points = FeatureUtil.getPoints(geometry);
-                    for (Point point : points) {
-                        try {
-                            Point p = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
-                            sensorLngs.put(sensor, p.getX());
-                            sensorLats.put(sensor, p.getY());
-                        } catch (OwsExceptionReport e) {
-                            throw new EncodingException(
-                                    "Exception while normalizing sampling geometry coordinate axis order.");
-                        }
-                    }
-                    sensorHeights.putAll(sensor, FeatureUtil.getHeights(points));
-                }
-            }
-
-            // get the sensor's data map
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> sensorObsMap = obsValuesMap.get(sensor);
-            if (sensorObsMap == null) {
-                sensorObsMap = new HashMap<>();
-                obsValuesMap.put(sensor, sensorObsMap);
-            }
-
-            // get the map of the asset's phenomena by time
-            Map<OmObservableProperty, Map<SubSensor, Value<?>>> obsPropMap = sensorObsMap.get(obsTime);
-            if (obsPropMap == null) {
-                obsPropMap = new HashMap<>();
-                sensorObsMap.put(obsTime, obsPropMap);
-            }
-
-            OmObservableProperty phen = phenomenaMap.get(phenId);
-            Map<SubSensor, Value<?>> subSensorMap = obsPropMap.get(phen);
-            if (subSensorMap == null) {
-                subSensorMap = new HashMap<>();
-                obsPropMap.put(phen, subSensorMap);
-            }
-
-            // add obs value to subsensor map (null subsensors are ok)
-            if (sosObs.isSetParameter() && hasSamplingGeometry(sosObs)) {
-                subSensorMap.put(createSubSensor(sensor, getSamplingGeometryGeometry(sosObs)), obsValue);
-            } else {
-                subSensorMap.put(createSubSensor(sensor, foi), obsValue);
+                processObservation(sosObs, sensorPhens, sensorProcedure, sensorLngs, sensorLats, sensorHeights,
+                        obsValuesMap);
             }
         }
 
@@ -426,13 +298,151 @@ public interface NetCDFUtil {
         return iSosObsList;
     }
 
-    // default void checkSrid( int srid, Logger logger ) throws
-    // InvalidParameterValueException{
-    // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
-    // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
-    // );
-    // }
-    // }
+    default void processObservation(OmObservation sosObs, SetMultimap<String, OmObservableProperty> sensorPhens,
+            Map<String, AbstractFeature> sensorProcedure, SetMultimap<String, Double> sensorLngs,
+            SetMultimap<String, Double> sensorLats, SetMultimap<String, Double> sensorHeights,
+            Map<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesMap)
+            throws EncodingException {
+
+        OmObservationConstellation obsConst = sosObs.getObservationConstellation();
+
+        // first, resolve the procId to an asset type
+        String sensor = obsConst.getProcedure().getIdentifier();
+        if (!sensorProcedure.containsKey(sensor)) {
+            sensorProcedure.put(sensor, obsConst.getProcedure());
+        }
+
+        AbstractPhenomenon absPhen = obsConst.getObservableProperty();
+        Map<String, OmObservableProperty> phenomenaMap = new HashMap<>();
+        if (absPhen instanceof OmCompositePhenomenon) {
+            for (OmObservableProperty phen : ((OmCompositePhenomenon) absPhen).getPhenomenonComponents()) {
+                // TODO should the unit be set like this? seems sketchy
+                if (phen.getUnit() == null && sosObs.getValue() != null && sosObs.getValue().getValue() != null
+                        && sosObs.getValue().getValue().getUnit() != null) {
+                    phen.setUnit(sosObs.getValue().getValue().getUnit());
+                }
+                phenomenaMap.put(phen.getIdentifier(), phen);
+            }
+        } else {
+            OmObservableProperty phen = (OmObservableProperty) absPhen;
+            // TODO should the unit be set like this? seems sketchy
+            if (phen.getUnit() == null && sosObs.getValue() != null && sosObs.getValue().getValue() != null
+                    && sosObs.getValue().getValue().getUnit() != null) {
+                phen.setUnit(sosObs.getValue().getValue().getUnit());
+            }
+            phenomenaMap.put(phen.getIdentifier(), phen);
+        }
+        List<OmObservableProperty> phenomena = new ArrayList<>(phenomenaMap.values());
+        sensorPhens.putAll(sensor, phenomena);
+
+        // get foi
+        AbstractFeature aFoi = obsConst.getFeatureOfInterest();
+        if (!(aFoi instanceof AbstractSamplingFeature)) {
+            throw new EncodingException("Encountered a feature which isn't a SamplingFeature");
+        }
+        AbstractSamplingFeature foi = (AbstractSamplingFeature) aFoi;
+
+        for (Point point : FeatureUtil.getFeaturePoints(foi)) {
+            try {
+                // TODO is this correct?
+                Point p = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
+                sensorLngs.put(sensor, p.getX());
+                sensorLats.put(sensor, p.getY());
+            } catch (OwsExceptionReport e) {
+                throw new EncodingException("Exception while normalizing feature coordinate axis order.", e);
+            }
+        }
+        Set<Double> featureHeights = FeatureUtil.getFeatureHeights(foi);
+        sensorHeights.putAll(sensor, featureHeights);
+
+        String phenId = obsConst.getObservableProperty().getIdentifier();
+        ObservationValue<?> iObsValue = sosObs.getValue();
+        if (!(iObsValue instanceof SingleObservationValue)) {
+            throw new EncodingException("Only SingleObservationValues are supported.");
+        }
+        SingleObservationValue<?> singleObsValue = (SingleObservationValue<?>) iObsValue;
+        Time obsTime = singleObsValue.getPhenomenonTime();
+
+        // TODO Quality
+
+        Value<?> obsValue = singleObsValue.getValue();
+        if (!(obsValue instanceof QuantityValue)) {
+            throw new EncodingException("Only QuantityValues are supported.");
+        }
+        QuantityValue quantityValue = (QuantityValue) obsValue;
+
+        // axes shouldn't be composite phenomena
+        if (phenomena.size() == 1) {
+            OmObservableProperty phenomenon = phenomena.get(0);
+            // add dimensional values to procedure dimension tracking maps
+            if (isLng(phenomenon.getIdentifier())) {
+                sensorLngs.get(sensor).add(quantityValue.getValue().doubleValue());
+            }
+
+            if (isLat(phenomenon.getIdentifier())) {
+                sensorLats.get(sensor).add(quantityValue.getValue().doubleValue());
+            }
+
+            if (isZ(phenomenon.getIdentifier())) {
+                Double zValue = quantityValue.getValue().doubleValue();
+                sensorHeights.get(sensor).add(zValue);
+            }
+        }
+
+        // check for samplingGeometry in observation
+        if (sosObs.isSetParameter()) {
+            if (sosObs.isSetHeightDepthParameter()) {
+                if (sosObs.isSetHeightParameter()) {
+                    sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue().doubleValue());
+                } else if (sosObs.isSetDepthParameter()) {
+                    sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue().doubleValue());
+                }
+            }
+            if (hasSamplingGeometry(sosObs)) {
+                Geometry geometry = getSamplingGeometryGeometry(sosObs);
+                Set<Point> points = FeatureUtil.getPoints(geometry);
+                for (Point point : points) {
+                    try {
+                        Point p = (Point) getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(point);
+                        sensorLngs.put(sensor, p.getX());
+                        sensorLats.put(sensor, p.getY());
+                    } catch (OwsExceptionReport e) {
+                        throw new EncodingException(
+                                "Exception while normalizing sampling geometry coordinate axis order.");
+                    }
+                }
+                sensorHeights.putAll(sensor, FeatureUtil.getHeights(points));
+            }
+        }
+
+        // get the sensor's data map
+        Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> sensorObsMap = obsValuesMap.get(sensor);
+        if (sensorObsMap == null) {
+            sensorObsMap = new HashMap<>();
+            obsValuesMap.put(sensor, sensorObsMap);
+        }
+
+        // get the map of the asset's phenomena by time
+        Map<OmObservableProperty, Map<SubSensor, Value<?>>> obsPropMap = sensorObsMap.get(obsTime);
+        if (obsPropMap == null) {
+            obsPropMap = new HashMap<>();
+            sensorObsMap.put(obsTime, obsPropMap);
+        }
+
+        OmObservableProperty phen = phenomenaMap.get(phenId);
+        Map<SubSensor, Value<?>> subSensorMap = obsPropMap.get(phen);
+        if (subSensorMap == null) {
+            subSensorMap = new HashMap<>();
+            obsPropMap.put(phen, subSensorMap);
+        }
+
+        // add obs value to subsensor map (null subsensors are ok)
+        if (sosObs.isSetParameter() && hasSamplingGeometry(sosObs)) {
+            subSensorMap.put(createSubSensor(sensor, getSamplingGeometryGeometry(sosObs)), obsValue);
+        } else {
+            subSensorMap.put(createSubSensor(sensor, foi), obsValue);
+        }
+    }
 
     default void expandEnvelopeToInclude(Envelope env, Set<Double> lngs, Set<Double> lats) {
         lngs.stream().forEach(lng -> env.expandToInclude(lng, env.getMinY()));

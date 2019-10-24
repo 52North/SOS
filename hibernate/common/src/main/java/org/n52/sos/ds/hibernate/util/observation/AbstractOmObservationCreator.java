@@ -344,7 +344,8 @@ public abstract class AbstractOmObservationCreator {
                 .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
             feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
         }
-        if (!getActiveProfile().isEncodeFeatureOfInterestInObservations() && feature instanceof AbstractSamplingFeature) {
+        if (!getActiveProfile().isEncodeFeatureOfInterestInObservations()
+                && feature instanceof AbstractSamplingFeature) {
             ((AbstractSamplingFeature) feature).setEncode(false);
         }
         return feature;

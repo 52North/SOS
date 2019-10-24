@@ -501,7 +501,7 @@ public abstract class AbstractNetcdfEncoder
                     SubSensor subSensor = subSensorEntry.getKey();
                     Value<?> value = subSensorEntry.getValue();
                     Object valObj = value.getValue();
-                    if (!(valObj instanceof Double)) {
+                    if (!(valObj instanceof Number)) {
                         throw new EncodingException("Value class %s not supported",
                                 valObj.getClass().getCanonicalName());
                     }
@@ -521,10 +521,9 @@ public abstract class AbstractNetcdfEncoder
                         }
                     }
                     if (array instanceof ArrayFloat) {
-                        ((ArrayFloat) array).set(index,
-                                Float.parseFloat(Double.toString((Double) valObj)));
+                        ((ArrayFloat) array).set(index, ((Number) valObj).floatValue());
                     } else {
-                        ((ArrayDouble) array).set(index, (Double) valObj);
+                        ((ArrayDouble) array).set(index, ((Number) valObj).doubleValue());
                     }
                 }
             }

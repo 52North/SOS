@@ -50,7 +50,6 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.iso.gmd.CiOnlineResource;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GenericMetaData;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -59,7 +58,7 @@ import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -338,35 +337,17 @@ public abstract class AbstractOmObservationCreator {
      *             If an error occurs
      */
     protected AbstractFeature createFeatureOfInterest(AbstractFeatureEntity foi) throws OwsExceptionReport {
-        if (getActiveProfile().isEncodeFeatureOfInterestInObservations()) {
-            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
-            queryObject.setFeatureObject(foi).addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
-            final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
-            if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null
-                    && !feature.getDefaultElementEncoding()
-                            .equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
-                feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
-            }
-            return feature;
-        } else {
-            SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(foi.getIdentifier()));
-            if (foi.isSetIdentifierCodespace()) {
-                samplingFeature.getIdentifierCodeWithAuthority().setCodeSpace(foi.getIdentifierCodespace().getName());
-            }
-            if (foi.isSetName()) {
-                CodeType codeType = new CodeType(foi.getName());
-                if (foi.isSetNameCodespace()) {
-                    try {
-                        codeType.setCodeSpace(new URI(foi.getNameCodespace().getName()));
-                    } catch (URISyntaxException e) {
-                        throw new NoApplicableCodeException().causedBy(e).withMessage(
-                                "The codespace '{}' of the name is not an URI!", foi.getNameCodespace().getName());
-                    }
-                }
-                samplingFeature.setName(codeType);
-            }
-            return samplingFeature;
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
+        queryObject.setFeatureObject(foi).addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
+        final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
+        if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null && !feature
+                .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
+            feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
         }
+        if (!getActiveProfile().isEncodeFeatureOfInterestInObservations() && feature instanceof AbstractSamplingFeature) {
+            ((AbstractSamplingFeature) feature).setEncode(false);
+        }
+        return feature;
     }
 
     /**

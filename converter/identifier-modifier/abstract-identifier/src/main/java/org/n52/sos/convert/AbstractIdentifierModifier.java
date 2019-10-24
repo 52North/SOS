@@ -339,8 +339,8 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         if (parameter.isAllowedValues()) {
             OwsAllowedValues allowedValues = parameter.asAllowedValues();
             getIdentifierCheckerForName(name)
-                    .ifPresent(c -> allowedValues.setRestrictions(allowedValues.getRestrictions().stream()
-                    .map(r -> !r.isValue() ? r : new OwsValue(c.apply(r.asValue().getValue())))));
+                    .ifPresent(c -> allowedValues.setRestrictions(new TreeSet<>(allowedValues.getRestrictions())
+                            .stream().map(r -> !r.isValue() ? r : new OwsValue(c.apply(r.asValue().getValue())))));
         }
         return parameter;
     }

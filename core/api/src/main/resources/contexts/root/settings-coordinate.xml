@@ -6,7 +6,7 @@
         <property name="key" value="swe.coordinate.northing" />
         <property name="title" value="SweCoordinate names for northing/latitude" />
         <property name="description" value="Comma separated definitions for northing/latitude. By default, support northing, latitude, southing" />
-        <property name="order" value="17.0" />
+        <property name="order" value="20.0" />
         <property name="optional" value="true" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="northing,latitude,southing" />
@@ -15,7 +15,7 @@
         <property name="key" value="swe.coordinate.easting" />
         <property name="title" value="SweCoordinate names for easting/longitude" />
         <property name="description" value="Comma separated definitions for easting/longitude. By default, support easting, longitude, westing" />
-        <property name="order" value="18.0" />
+        <property name="order" value="20.1" />
         <property name="optional" value="true" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="easting,longitude,westing" />
@@ -24,7 +24,7 @@
         <property name="key" value="swe.coordinate.altitude" />
         <property name="title" value="SweCoordinate names for altitude" />
         <property name="description" value="Comma separated definitions for altitude. By default, support altitude, height, depth" />
-        <property name="order" value="19.0" />
+        <property name="order" value="20.2" />
         <property name="optional" value="true" />
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="altitude,height,depth" />

@@ -14,6 +14,56 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="http://localhost:8080/52n-sos-webapp/service" />
     </bean>
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="service.capabilitiesCacheUpdateInterval" />
+        <property name="title" value="Content cache update interval" />
+        <property name="description" value="The update interval of the content cache in minutes. Set this to lower value if your database is externally modified frequently. Set to 0 to disable scheduled cache updates." />
+        <property name="order" value="1.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="120" />
+        <property name="minimum" value="0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="service.capabilitiesCacheUpdate" />
+        <property name="title" value="Content cache update interval" />
+        <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html" />
+        <property name="order" value="1.1" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="0 0/120 * * * ?" />
+    </bean>
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="service.cachePersistenceDelay" />
+        <property name="title" value="Content cache persistence delay" />
+        <property name="description" value="The time in seconds, for which writing of an updated cache is delayed. Incremental cache updates that are executed during transactional operations are not immediately persistet, but are delayed to reduce write operations and to improve performance. The delay is the maximum time the persisted and in memory cache can diverge." />
+        <property name="order" value="1.2" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="30" />
+        <property name="minimum" value="1" />
+    </bean>
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="service.cacheThreadCount" />
+        <property name="title" value="Cache Feeder Threads" />
+        <property name="description" value="The number of threads used to fill the capabilities cache." />
+        <property name="order" value="1.3" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="5" />
+    </bean>
+    <bean class="org.n52.faroe.settings.FileSettingDefinition">
+        <property name="key" value="service.cacheFileFolder" />
+        <property name="title" value="Cache file folder" />
+        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. &lt;span class='text-warning'&gt;If you define a path, then grant the necessary rights (&lt;code&gt;write and read permission&lt;/code&gt;) to the &lt;code&gt;application server user&lt;/code&gt;!" />
+        <property name="order" value="1.4" />
+        <property name="optional" value="true" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+    </bean>
+        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="service.sensorDirectory" />
+        <property name="title" value="Sensor Directory" />
+        <property name="description" value="The path to a directory with the sensor descriptions in SensorML format. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/sensors&lt;/code&gt;) or a path relative to the web application classes directory (e.g. &lt;code&gt;WEB-INF/classes/sensors&lt;/code&gt;)." />
+        <property name="order" value="2.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="/sensors" />
+    </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.strictSpatialFilteringProfile" />
         <property name="title" value="Should this SOS support strict Spatial Filtering Profile?" />
@@ -21,14 +71,6 @@
         <property name="order" value="15.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="service.sensorDirectory" />
-        <property name="title" value="Sensor Directory" />
-        <property name="description" value="The path to a directory with the sensor descriptions in SensorML format. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/sensors&lt;/code&gt;) or a path relative to the web application classes directory (e.g. &lt;code&gt;WEB-INF/classes/sensors&lt;/code&gt;)." />
-        <property name="order" value="7.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="/sensors" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.useDefaultPrefixes" />
@@ -46,15 +88,6 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
-        <property name="key" value="service.cachePersistenceDelay" />
-        <property name="title" value="Content cache persistence delay" />
-        <property name="description" value="The time in seconds, for which writing of an updated cache is delayed. Incremental cache updates that are executed during transactional operations are not immediately persistet, but are delayed to reduce write operations and to improve performance. The delay is the maximum time the persisted and in memory cache can diverge." />
-        <property name="order" value="6.1" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="30" />
-        <property name="minimum" value="1" />
-    </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.response.validate" />
         <property name="title" value="Should this SOS validate the XML response in non debug mode?" />
@@ -70,31 +103,6 @@
         <property name="order" value="12.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
-        <property name="key" value="service.cacheThreadCount" />
-        <property name="title" value="Cache Feeder Threads" />
-        <property name="description" value="The number of threads used to fill the capabilities cache." />
-        <property name="order" value="8.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="5" />
-    </bean>
-    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
-        <property name="key" value="service.capabilitiesCacheUpdateInterval" />
-        <property name="title" value="Content cache update interval" />
-        <property name="description" value="The update interval of the content cache in minutes. Set this to lower value if your database is externally modified frequently. Set to 0 to disable scheduled cache updates." />
-        <property name="order" value="6.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="120" />
-        <property name="minimum" value="0" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="service.capabilitiesCacheUpdate" />
-        <property name="title" value="Content cache update interval" />
-        <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html" />
-        <property name="order" value="7.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="0 0/120 * * * ?" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.exposeChildObservableProperties" />
@@ -120,14 +128,6 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    <bean class="org.n52.faroe.settings.FileSettingDefinition">
-        <property name="key" value="service.cacheFileFolder" />
-        <property name="title" value="Cache file folder" />
-        <property name="description" value="The path to a folder where the cache file should be stored. Default is the webapp folder. &lt;span class='text-warning'&gt;If you define a path, then grant the necessary rights (lt;code&gt;write and read permission&lt;/code&gt;) to the &lt;code&gt;application server user&lt;/code&gt;!" />
-        <property name="order" value="21.0" />
-        <property name="optional" value="true" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-     </bean>
      <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.updateFeatureGeometry" />
         <property name="title" value="Should this SOS update the featureOfInterest geometry with samplingGeometries geometry?" />
@@ -136,7 +136,6 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.includeResultTimeForMerging" />
         <property name="title" value="Should this SOS include the resultTime for merging?" />
@@ -145,7 +144,7 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+	   <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="misc.convertComplexProfileToSingleProfiles" />
         <property name="title" value="Should the SOS convert complex profiles to single profiles?" />
         <property name="description" value="Should the SOS convert complex profiles to single profiles?" />
@@ -153,22 +152,22 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.allowTemplateWithoutProcedureAndFeature" />
-        <property name="title" value="Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?" />
-        <property name="description" value="Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!" />
-        <property name="order" value="24.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="service.request.timeout" />
         <property name="title" value="Request timeout value in seconds" />
         <property name="description" value="Set the request timeout value in seconds. Set to &lt;code&gt;0&lt;/code&gt; (zero) for no timeout." />
-        <property name="order" value="25.0" />
+        <property name="order" value="24.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="0" />
         <property name="minimum" value="0" />
+    </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.allowTemplateWithoutProcedureAndFeature" />
+        <property name="title" value="Should this SOS allow the insertion of procedure and featureOfInterest via InsertResult values?" />
+        <property name="description" value="Whether the SOS should allow to reference the procedure and featureOfInterest in the values of the InsertResult operation instead in the observationTemplate!" />
+        <property name="order" value="25.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS" />

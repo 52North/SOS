@@ -1061,11 +1061,15 @@ public abstract class AbstractNetcdfEncoder
             return getProcedureDescription(procedure, queryProcedureDescription(procedure));
         }
         AbstractSensorML abstractSensor = null;
-        if (procedureDescription instanceof AbstractSensorML) {
-            abstractSensor = (AbstractSensorML) procedureDescription;
+        if (procedureDescription instanceof SosProcedureDescription
+                && ((SosProcedureDescription) procedureDescription).getProcedureDescription() != null
+                && ((SosProcedureDescription) procedureDescription)
+                        .getProcedureDescription() instanceof AbstractSensorML) {
+            abstractSensor =
+                    (AbstractSensorML) ((SosProcedureDescription) procedureDescription).getProcedureDescription();
             // check for SensorML to get members
-            if (procedureDescription instanceof SensorML) {
-                SensorML sml = (SensorML) procedureDescription;
+            if (abstractSensor instanceof SensorML) {
+                SensorML sml = (SensorML) abstractSensor;
                 if (sml.isWrapper()) {
                     abstractSensor = (AbstractSensorML) sml.getMembers().get(0);
                 }

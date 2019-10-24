@@ -54,7 +54,6 @@ public class PrefixedIdentifierHelper {
 
     private String featureOfInterestPrefix;
 
-
     /**
      * @return the globalPrefix
      */

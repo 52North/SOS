@@ -173,12 +173,18 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
 
     @Override
+    protected String checkObservablePropertyParameterValue(String parameterValue) {
+        String globalModified = checkGlobalPrefixForParameterValue(parameterValue);
+        return helper.isSetObservablePropertyPrefix()
+                ? globalModified.replace(helper.getObservablePropertyPrefix(), "")
+                : globalModified;
+    }
+
+    @Override
     protected String checkProcedureParameterValue(String parameterValue) {
         String globalModified = checkGlobalPrefixForParameterValue(parameterValue);
-        if (helper.isSetProcedurePrefix()) {
-            return globalModified.replace(helper.getProcedurePrefix(), "");
-        }
-        return globalModified;
+        return helper.isSetProcedurePrefix() ? globalModified.replace(helper.getProcedurePrefix(), "")
+                : globalModified;
     }
 
     @Override
@@ -188,19 +194,28 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     @Override
     protected String checkProcedureIdentifier(String identifier) {
-        if (helper.isSetProcedurePrefix()) {
-            checkGlobalPrefix(helper.getProcedurePrefix() + identifier);
-        }
-        return checkGlobalPrefix(identifier);
+        return helper.isSetProcedurePrefix() ? checkGlobalPrefix(helper.getProcedurePrefix() + identifier)
+                : checkGlobalPrefix(identifier);
     }
 
     @Override
-    protected String checkObservablePropertyParameterValue(String parameterValue) {
-        String globalModified = checkGlobalPrefixForParameterValue(parameterValue);
-        if (helper.isSetObservablePropertyPrefix()) {
-            return globalModified.replace(helper.getObservablePropertyPrefix(), "");
-        }
-        return globalModified;
+    protected String checkFeatureOfInterestIdentifier(String identifier) {
+        return helper.isSetFeatureOfInterestPrefix()
+                ? checkGlobalPrefix(helper.getFeatureOfInterestPrefix() + identifier)
+                : checkGlobalPrefix(identifier);
+    }
+
+    @Override
+    protected String checkObservablePropertyIdentifier(String identifier) {
+        return helper.isSetObservablePropertyPrefix()
+                ? checkGlobalPrefix(helper.getObservablePropertyPrefix() + identifier)
+                : checkGlobalPrefix(identifier);
+    }
+
+    @Override
+    protected String checkOfferingIdentifier(String identifier) {
+        return helper.isSetOfferingPrefix() ? checkGlobalPrefix(helper.getOfferingPrefix() + identifier)
+                : checkGlobalPrefix(identifier);
     }
 
     private String checkGlobalPrefix(String identifier) {
@@ -210,30 +225,6 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
             return builder.toString();
         }
         return identifier;
-    }
-
-    @Override
-    protected String checkFeatureOfInterestIdentifier(String identifier) {
-        if (helper.isSetFeatureOfInterestPrefix()) {
-            checkGlobalPrefix(helper.getFeatureOfInterestPrefix() + identifier);
-        }
-        return checkGlobalPrefix(identifier);
-    }
-
-    @Override
-    protected String checkObservablePropertyIdentifier(String identifier) {
-        if (helper.isSetObservablePropertyPrefix()) {
-            checkGlobalPrefix(helper.getObservablePropertyPrefix() + identifier);
-        }
-        return checkGlobalPrefix(identifier);
-    }
-
-    @Override
-    protected String checkOfferingIdentifier(String identifier) {
-        if (helper.isSetOfferingPrefix()) {
-            checkGlobalPrefix(helper.getOfferingPrefix() + identifier);
-        }
-        return checkGlobalPrefix(identifier);
     }
 
     @Override

@@ -72,9 +72,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
         boolean next = false;
         if (scrollableResult == null) {
             getNextResults();
-            if (scrollableResult != null) {
-                next = scrollableResult.next();
-            }
+            next = scrollableResult != null;
         } else {
             next = scrollableResult.next();
         }

@@ -313,17 +313,16 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         Matcher matcher = JDBC_OCI_URL_PATTERN.matcher(url);
         if (matcher.find() && matcher.groupCount() == 3) {
             return new String[] { matcher.group(1), matcher.group(2), matcher.group(3) };
-        } else {
-            // If OCI fails, use THIN
-            // check for SID URL
-            matcher = JDBC_THIN_SID_URL_PATTERN.matcher(url);
-            if (matcher.find() && matcher.groupCount() != 3) {
-                // use SERVICE URL
-                matcher = JDBC_THIN_URL_PATTERN.matcher(url);
-                matcher.find();
-            }
+        } 
+        // check for SID URL
+        matcher = JDBC_THIN_SID_URL_PATTERN.matcher(url);
+        if (matcher.find() && matcher.groupCount() == 3) {
             return new String[] { matcher.group(1), matcher.group(2), matcher.group(3) };
         }
+        // If OCI fails, use THIN
+        matcher = JDBC_THIN_URL_PATTERN.matcher(url);
+        matcher.find();
+        return new String[] { matcher.group(1), matcher.group(2), matcher.group(3) };
     }
 
     @Override

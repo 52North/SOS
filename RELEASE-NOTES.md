@@ -5,6 +5,22 @@
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+
+## Release 52n-sensorweb-sos-4.4.13
+ 
+### New features
+
+  - 
+  
+### Changes
+  
+  - Remove obsolete Oracle notes in Streaming settings.
+  
+### Fixed issues
+
+  - Fix Admin -> Settings -> Datasource call in combination with Oracle datasource
+  - Fix missing of first observation value when using scrollable result streaming.
+  
  
 ## Release 52n-sensorweb-sos-4.4.12
 ## Release 52n-sensorweb-sos-4.4.11

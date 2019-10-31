@@ -35,7 +35,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxy;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.convert.ConverterException;
@@ -156,8 +158,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
         Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
-        final Value<?> value =
-                new ObservationValueCreator(getCreatorContext().getDecoderRepository()).visit(hObservation);
+        final Value<?> value = new ObservationValueCreator(getCreatorContext().getDecoderRepository())
+                .visit(hObservation instanceof HibernateProxy ? unproxy(hObservation) : hObservation);
         OmObservation sosObservation = null;
         if (value != null) {
             value.setUnit(queryUnit(hObservation.getDataset()));
@@ -180,6 +182,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done in {} ms.", System.currentTimeMillis() - start);
         return sosObservation;
+    }
+
+    private DataEntity<?> unproxy(DataEntity<?> dataEntity) {
+        if (dataEntity instanceof HibernateProxy
+                && ((HibernateProxy) dataEntity).getHibernateLazyInitializer().getSession() == null) {
+            return unproxy(getSession().load(DataEntity.class, dataEntity.getId()));
+        }
+        return (DataEntity<?>) Hibernate.unproxy(dataEntity);
     }
 
     private void addRelatedObservations(OmObservation sosObservation, DataEntity<?> hObservation)
@@ -212,7 +222,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private OmObservation createNewObservation(OmObservationConstellation oc, DataEntity<?> ho, Value<?> value) {
+    private OmObservation createNewObservation(OmObservationConstellation oc, DataEntity<?> ho, Value<?> value)
+            throws OwsExceptionReport {
         final OmObservation o = new OmObservation();
         o.setObservationID(Long.toString(ho.getId()));
         if (ho.isSetIdentifier() && !ho.getIdentifier().startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
@@ -222,9 +233,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             }
             o.setIdentifier(identifier);
         }
-        if (ho.isSetDescription()) {
-            o.setDescription(ho.getDescription());
-        }
+        addNameAndDescription(ho, o, getRequestedLanguage(), getI18N(), false);
         o.setObservationConstellation(oc);
         addDefaultValuesToObservation(o);
         o.setResultTime(new TimeInstant(new DateTime(ho.getResultTime(), DateTimeZone.UTC)));
@@ -242,7 +251,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return new PhenomenonTimeCreator(hObservation).create();
     }
 
-    private String createPhenomenon(final DataEntity<?> hObservation) throws CodedException {
+    private String createPhenomenon(final DataEntity<?> hObservation) throws OwsExceptionReport {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getDataset().getPhenomenon().getIdentifier();
@@ -290,7 +299,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation, String procedureId,
-            String phenomenonId, String featureId, Set<String> offerings) throws CodedException {
+            String phenomenonId, String featureId, Set<String> offerings) throws OwsExceptionReport {
         long start = System.currentTimeMillis();
         LOGGER.trace("Creating ObservationConstellation...");
         OmObservationConstellation obsConst = new OmObservationConstellation(getProcedure(procedureId),
@@ -311,12 +320,21 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             addIdentifier(obsConst, series);
         }
         obsConst.setObservationType(getResultModel());
-        if (series.isSetName()) {
-            addName(obsConst, series);
+        if (request.isSetRequestedLanguage()) {
+            addNameAndDescription(series, obsConst,
+                    getRequestedLanguage(), getI18N(), false);
+            if (obsConst.isSetName()) {
+                obsConst.setHumanReadableIdentifier(obsConst.getFirstName().getValue());
+            }
+        } else {
+            if (series.isSetName()) {
+                addName(obsConst, series);
+            }
+            if (series.isSetDescription()) {
+                obsConst.setDescription(series.getDescription());
+            }
         }
-        if (series.isSetDescription()) {
-            obsConst.setDescription(series.getDescription());
-        }
+
         LOGGER.trace("Creating ObservationConstellation done in {} ms.", System.currentTimeMillis() - start);
         return obsConst;
     }

@@ -55,7 +55,8 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> e
             identifier.setValue(null);
         }
         final AbstractFeature absFeat = createFeature(identifier);
-        addNameAndDescription(getContext().getRequestedLanguage(), f, absFeat);
+        addNameAndDescription(f, absFeat, getContext().getRequestedLanguage(), getContext().getDefaultLanguage(),
+                getContext().isShowAllLanguages());
         if (absFeat instanceof AbstractSamplingFeature) {
             AbstractSamplingFeature absSampFeat = (AbstractSamplingFeature) absFeat;
             absSampFeat.setGeometry(createGeometryFrom(f));

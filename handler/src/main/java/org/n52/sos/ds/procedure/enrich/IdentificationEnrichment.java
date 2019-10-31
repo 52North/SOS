@@ -33,7 +33,9 @@ import java.util.Optional;
 
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
+import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
@@ -76,39 +78,50 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     }
 
     private void enrichShortName(AbstractSensorML description) {
-        if (!description.findIdentification(shortNamePredicate()).isPresent()) {
-            description.addIdentifier(createShortName());
-        }
         Optional<SmlIdentifier> shortName = description.findIdentification(shortNamePredicate());
-        if (isSetI18NProcedure() && shortName.isPresent()) {
+        if (!shortName.isPresent()) {
+            description.addIdentifier(createShortName());
+        } else if (isSetI18NProcedure()) {
             SmlIdentifier smlIdentifier = shortName.get();
-            Optional<LocalizedString> localization =
-                    i18n.getShortName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
+            Optional<LocalizedString> localization = getI18N(i18n.getShortName());
             if (localization.isPresent()) {
                 smlIdentifier.setValue(localization.get().getText());
             }
         }
     }
 
+
     private void enrichLongName(AbstractSensorML description) {
-        if (!description.findIdentification(longNamePredicate()).isPresent()) {
-            description.addIdentifier(createLongName());
-        }
         Optional<SmlIdentifier> longName = description.findIdentification(longNamePredicate());
-        if (isSetI18NProcedure() && longName.isPresent()) {
+        if (!longName.isPresent()) {
+            description.addIdentifier(createLongName());
+        } else if (isSetI18NProcedure()) {
             SmlIdentifier smlIdentifier = longName.get();
-            Optional<LocalizedString> localization =
-                    i18n.getLongName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
+            Optional<LocalizedString> localization = getI18N(i18n.getLongName());
             if (localization.isPresent()) {
                 smlIdentifier.setValue(localization.get().getText());
             }
         }
+    }
+
+    private Optional<LocalizedString> getI18N(MultilingualString i18n) {
+        Optional<LocalizedString> localization = i18n.getLocalization(getLocale());
+        if (localization.isPresent()) {
+            return localization;
+        } else {
+            for (Locale locale : LocaleHelper.getEquivalents(getLocale())) {
+                Optional<LocalizedString> t = i18n.getLocalization(locale);
+                if (t != null && t.isPresent()) {
+                    return t;
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private String getLongName() {
         if (isSetI18NProcedure()) {
-            Optional<LocalizedString> longName =
-                    i18n.getLongName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
+            Optional<LocalizedString> longName = getI18N(i18n.getLongName());
             if (longName.isPresent()) {
                 return longName.get().getText();
             }
@@ -118,10 +131,9 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
 
     private String getShortName() {
         if (isSetI18NProcedure()) {
-            Optional<LocalizedString> longName =
-                    i18n.getShortName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
-            if (longName.isPresent()) {
-                return longName.get().getText();
+            Optional<LocalizedString> shortName = getI18N(i18n.getShortName());
+            if (shortName.isPresent()) {
+                return shortName.get().getText();
             }
         }
         return getName() != null && !getName().isEmpty() ? getName() : getIdentifier();

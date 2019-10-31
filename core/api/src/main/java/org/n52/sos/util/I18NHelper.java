@@ -28,10 +28,12 @@
  */
 package org.n52.sos.util;
 
+import java.net.URI;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -51,8 +53,8 @@ public interface I18NHelper {
             Locale defaultLocale, boolean showAllLanguages) {
         String identifier = offering.getIdentifier();
 
-        if (requestedLocale != null && cache.hasI18NNamesForOffering(identifier, requestedLocale)) {
-            offering.addName(new CodeType(cache.getI18nNameForOffering(identifier, requestedLocale)));
+        if (requestedLocale != null) {
+            checkForNames(cache, offering, requestedLocale);
         } else {
             if (showAllLanguages) {
                 Optional.ofNullable(cache.getI18nNamesForOffering(identifier)).map(MultilingualString::stream)
@@ -67,12 +69,50 @@ public interface I18NHelper {
         }
     }
 
+    default void checkForNames(SosContentCache cache, SosOffering offering, Locale requestedLocale) {
+        if (!checkForLocaleName(cache, offering, requestedLocale, requestedLocale)) {
+            for (Locale locale : LocaleHelper.getEquivalents(requestedLocale)) {
+                if (!checkForLocaleName(cache, offering, locale, requestedLocale)) {
+                    continue;
+                }
+            }
+        }
+    }
+
+    default boolean checkForLocaleName(SosContentCache cache, SosOffering offering, Locale locale,
+            Locale requestedLocale) {
+        if (cache.hasI18NNamesForOffering(offering.getIdentifier(), locale)) {
+            LocalizedString i18nNameForOffering = cache.getI18nNameForOffering(offering.getIdentifier(), locale);
+            offering.setName(
+                    new CodeType(i18nNameForOffering.getText(), URI.create(LocaleHelper.encode(requestedLocale))));
+            return true;
+        }
+        return false;
+    }
+
     default void addOfferingDescription(SosOffering offering, Locale locale, Locale defaultLocale,
-                                              SosContentCache cache) {
-        Optional.ofNullable(cache.getI18nDescriptionsForOffering(offering.getIdentifier()))
-                .flatMap(d -> d.getLocalizationOrDefault(locale, defaultLocale))
-                .map(LocalizedString::getText)
-                .ifPresent(offering::setDescription);
+            SosContentCache cache) {
+        if (!checkForLocaleDescription(cache, offering, locale)) {
+            for (Locale l : LocaleHelper.getEquivalents(locale)) {
+                if (!checkForLocaleDescription(cache, offering, l)) {
+                    continue;
+                }
+            }
+        }
+        // Optional.ofNullable(cache.getI18nDescriptionsForOffering(offering.getIdentifier()))
+        // .flatMap(d -> d.getLocalizationOrDefault(locale,
+        // defaultLocale)).map(LocalizedString::getText)
+        // .ifPresent(offering::setDescription);
+    }
+
+    default boolean checkForLocaleDescription(SosContentCache cache, SosOffering offering, Locale locale) {
+        if (cache.hasI18NDescriptionForOffering(offering.getIdentifier(), locale)) {
+            LocalizedString i18nDescriptionForOffering =
+                    cache.getI18nDescriptionForOffering(offering.getIdentifier(), locale);
+            offering.setDescription(i18nDescriptionForOffering.getText());
+            return true;
+        }
+        return false;
     }
 
 }

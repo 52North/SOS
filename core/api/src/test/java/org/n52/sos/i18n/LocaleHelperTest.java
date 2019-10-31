@@ -68,6 +68,6 @@ public class LocaleHelperTest {
         errors.checkThat(LocaleHelper.decode("de DE", null), Matchers.is(Locale.GERMANY));
         errors.checkThat(LocaleHelper.decode("de-de", null), Matchers.is(Locale.GERMANY));
         errors.checkThat(LocaleHelper.decode("de-DE", null), Matchers.is(Locale.GERMANY));
-        errors.checkThat(LocaleHelper.decode("deu", null), Matchers.is(Locale.GERMAN));
+        errors.checkThat(LocaleHelper.decode("deu", null), Matchers.is(new Locale("deu")));
     }
 }

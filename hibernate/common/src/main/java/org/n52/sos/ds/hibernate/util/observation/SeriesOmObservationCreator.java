@@ -128,11 +128,19 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         if (getSeries().isSetIdentifier()) {
             addIdentifier(obsConst, getSeries());
         }
-        if (getSeries().isSetName()) {
-            addName(obsConst, getSeries());
-        }
-        if (getSeries().isSetDescription()) {
-            obsConst.setDescription(getSeries().getDescription());
+        if (getRequest().isSetRequestedLanguage()) {
+            addNameAndDescription(getSeries(), obsConst,
+                    getRequestedLanguage(), getI18N(), false);
+            if (obsConst.isSetName()) {
+                obsConst.setHumanReadableIdentifier(obsConst.getFirstName().getValue());
+            }
+        } else {
+            if (getSeries().isSetName()) {
+                addName(obsConst, getSeries());
+            }
+            if (getSeries().isSetDescription()) {
+                obsConst.setDescription(getSeries().getDescription());
+            }
         }
         return obsConst;
     }

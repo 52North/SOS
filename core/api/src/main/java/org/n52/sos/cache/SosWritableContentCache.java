@@ -30,11 +30,13 @@ package org.n52.sos.cache;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.joda.time.DateTime;
 
 import org.n52.iceland.cache.WritableContentCache;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.janmayen.i18n.MultilingualString;
 
 /**
@@ -990,6 +992,16 @@ public interface SosWritableContentCache
      * @param language the new language
      */
     void addSupportedLanguage(Locale language);
+
+    /**
+     * Add the specified language.
+     *
+     * @param language the new language
+     */
+    default void addSupportedLanguage(String language) {
+        Objects.requireNonNull(language, SUPPORTED_LANGUAGE);
+        addSupportedLanguage(LocaleHelper.decode(language));
+    }
 
     /**
      * Add the specified languages.

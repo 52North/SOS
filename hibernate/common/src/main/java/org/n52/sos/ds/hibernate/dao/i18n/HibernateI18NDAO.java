@@ -46,13 +46,17 @@ public interface HibernateI18NDAO<T extends AbstractI18NMetadata> extends I18NDA
 
     T getMetadata(String id, Locale locale, Session session) throws OwsExceptionReport;
 
+    T getMetadata(String id, String locale) throws OwsExceptionReport;
+
     Collection<T> getMetadata(Session session) throws OwsExceptionReport;
 
     Collection<T> getMetadata(Collection<String> id, Session session) throws OwsExceptionReport;
 
     Collection<T> getMetadata(Collection<String> id, Locale locale, Session session) throws OwsExceptionReport;
 
+    Collection<T> getMetadata(Collection<String> id, String locale) throws OwsExceptionReport;
+
     void saveMetadata(T i18n, Session session) throws OwsExceptionReport;
 
-    Collection<Locale> getAvailableLocales(Session session) throws OwsExceptionReport;
+    Collection<String> getAvailableLocales(Session session) throws OwsExceptionReport;
 }

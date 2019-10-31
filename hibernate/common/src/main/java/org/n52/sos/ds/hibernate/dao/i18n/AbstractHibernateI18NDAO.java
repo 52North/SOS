@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -105,7 +107,30 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     @Override
+    public S getMetadata(String id, String locale) throws OwsExceptionReport {
+        Session session = null;
+        try {
+            session = sessionHolder.getSession();
+            return getMetadata(id, locale, session);
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+    }
+
+    @Override
     public Collection<S> getMetadata(Collection<String> id, Locale locale)
+            throws OwsExceptionReport {
+        Session session = null;
+        try {
+            session = sessionHolder.getSession();
+            return getMetadata(id, locale, session);
+        } finally {
+            sessionHolder.returnSession(session);
+        }
+    }
+
+    @Override
+    public Collection<S> getMetadata(Collection<String> id, String locale)
             throws OwsExceptionReport {
         Session session = null;
         try {
@@ -151,25 +176,59 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public S getMetadata(String id, Locale locale, Session session)
+            throws OwsExceptionReport {
+        return getMetadata(id, locale.toString(), session);
+    }
+
+    private S getMetadata(String id, String locale, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
         criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale.toString()));
+        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale));
+        List<H> list = criteria.list();
+        if (list.isEmpty()) {
+            return getMetadata(id, LocaleHelper.getEquivalents(locale), session);
+        }
+        return createSosObject(id, list);
+    }
+
+    private S getMetadata(String id, Set<String> locales, Session session)
+            throws OwsExceptionReport {
+        Criteria criteria = session.createCriteria(getHibernateEntityClass());
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.eq(DescribableEntity.IDENTIFIER, id));
+        criteria.add(Restrictions.in(I18nEntity.PROPERTY_LOCALE, locales));
         List<H> list = criteria.list();
         return createSosObject(id, list);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Collection<S> getMetadata(Collection<String> id, Locale locale, Session session)
+            throws OwsExceptionReport {
+        return getMetadata(id, locale.toString(), session);
+    }
+
+    private Collection<S> getMetadata(Collection<String> id, String locale, Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
         criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
                 .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
-        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale.toString()));
+        criteria.add(Restrictions.eq(I18nEntity.PROPERTY_LOCALE, locale));
+        List<H> list = criteria.list();
+        if (list.isEmpty()) {
+            return getMetadata(id, LocaleHelper.getEquivalents(locale), session);
+        }
+        return createSosObject(list);
+    }
+
+    private Collection<S> getMetadata(Collection<String> id, Set<String> locales, Session session)
+            throws OwsExceptionReport {
+        Criteria criteria = session.createCriteria(getHibernateEntityClass());
+        criteria.createCriteria(I18nEntity.PROPERTY_ENTITY)
+                .add(Restrictions.in(DescribableEntity.IDENTIFIER, id));
+        criteria.add(Restrictions.in(I18nEntity.PROPERTY_LOCALE, locales));
         List<H> list = criteria.list();
         return createSosObject(list);
     }
@@ -226,7 +285,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            return getAvailableLocales(session);
+            return getAvailableLocales(session).stream().map(l -> LocaleHelper.decode(l)).collect(Collectors.toSet());
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -234,7 +293,7 @@ public abstract class AbstractHibernateI18NDAO<T extends DescribableEntity,
 
     @Override
     @SuppressWarnings("unchecked")
-    public Collection<Locale> getAvailableLocales(Session session)
+    public Collection<String> getAvailableLocales(Session session)
             throws OwsExceptionReport {
         Criteria criteria = session.createCriteria(getHibernateEntityClass());
         criteria.setProjection(Projections.distinct(Projections.property(I18nEntity.PROPERTY_LOCALE)));

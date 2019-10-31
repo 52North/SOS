@@ -28,30 +28,22 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
-import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.hibernate.dao.i18n.HibernateI18NDAO;
+import org.n52.sos.ds.I18nNameDescriptionAdder;
 
 import com.google.common.collect.Lists;
 
-public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements FeatureCreator<T> {
+public abstract class AbstractFeatureCreator<T extends FeatureEntity>
+        implements FeatureCreator<T>, I18nNameDescriptionAdder {
 
     public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS =
             "service.createFeatureGeometryFromSamplingGeometries";
@@ -70,87 +62,126 @@ public abstract class AbstractFeatureCreator<T extends FeatureEntity> implements
         return identifier;
     }
 
-    protected void addNameAndDescription(Locale requestedLocale, FeatureEntity feature,
-            AbstractFeature abstractFeature) throws OwsExceptionReport {
-        HibernateI18NDAO<I18NFeatureMetadata> i18nDAO = (HibernateI18NDAO<I18NFeatureMetadata>) getContext()
-                .getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
-        // set name as human readable identifier if set
-        if (feature.isSetName()) {
-            abstractFeature.setHumanReadableIdentifier(feature.getName());
-        }
-        if (i18nDAO == null) {
-            // no i18n support
-            abstractFeature.addName(getName(feature));
-            abstractFeature.setDescription(getDescription(feature));
-        } else {
-            I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getSession());
-            if (requestedLocale != null) {
-                // specific locale was requested
-                i18n = i18nDAO.getMetadata(feature.getIdentifier(), requestedLocale, getContext().getSession());
-                Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
-                if (name.isPresent()) {
-                    abstractFeature.addName(new CodeType(name.get()));
-                } else {
-                    abstractFeature.addName(getName(feature));
-                }
-                Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
-                if (description.isPresent()) {
-                    abstractFeature.setDescription(description.get().getText());
-                } else {
-                    abstractFeature.setDescription(getDescription(feature));
-                }
-            } else {
-                if (getContext().isShowAllLanguages()) {
-                    // load all names
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getSession());
-                } else {
-                    // load only name in default locale
-                    i18n = i18nDAO.getMetadata(feature.getIdentifier(), getContext().getDefaultLanguage(),
-                            getContext().getSession());
-                }
-                for (LocalizedString name : i18n.getName()) {
-                    // either all or default only
-                    abstractFeature.addName(new CodeType(name));
-                }
-                // choose always the description in the default locale
-                Optional<LocalizedString> description =
-                        i18n.getDescription().getLocalization(getContext().getDefaultLanguage());
-                if (description.isPresent()) {
-                    abstractFeature.setDescription(description.get().getText());
-                }
-            }
-        }
-    }
-
-    protected CodeType getName(DescribableEntity entity) throws OwsExceptionReport {
-        if (entity.isSetName()) {
-            CodeType name = new CodeType(entity.getName());
-            if (entity.isSetNameCodespace()) {
-                try {
-                    name.setCodeSpace(new URI(entity.getNameCodespace().getName()));
-                } catch (URISyntaxException e) {
-                    throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'",
-                            entity.getNameCodespace().getName());
-                }
-            }
-            return name;
-        }
-        return null;
-    }
-
-    protected String getDescription(DescribableEntity entity) {
-        if (entity.isSetDescription()) {
-            return entity.getDescription();
-        }
-        return null;
-    }
+    // protected void addNameAndDescription(Locale requestedLocale,
+    // FeatureEntity feature,
+    // AbstractFeature abstractFeature) throws OwsExceptionReport {
+    // HibernateI18NDAO<I18NFeatureMetadata> i18nDAO =
+    // (HibernateI18NDAO<I18NFeatureMetadata>) getContext()
+    // .getI18NDAORepository().getDAO(I18NFeatureMetadata.class);
+    // // set name as human readable identifier if set
+    // if (feature.isSetName()) {
+    // abstractFeature.setHumanReadableIdentifier(feature.getName());
+    // }
+    // if (i18nDAO == null) {
+    // // no i18n support
+    // abstractFeature.addName(getName(feature));
+    // abstractFeature.setDescription(getDescription(feature));
+    // } else {
+    // I18NFeatureMetadata i18n = i18nDAO.getMetadata(feature.getIdentifier(),
+    // getContext().getSession());
+    // if (requestedLocale != null && !i18n.getLocales().isEmpty()) {
+    // Optional<LocalizedString> name = getOptionalName(i18n, requestedLocale);
+    // if (name.isPresent()) {
+    // abstractFeature.addName(new CodeType(name.get().getText(),
+    // URI.create(requestedLocale.getLanguage())));
+    // } else {
+    // abstractFeature.addName(getName(feature));
+    // }
+    // Optional<LocalizedString> description = getOptionalDescription(i18n,
+    // requestedLocale);
+    // if (description.isPresent()) {
+    // abstractFeature.setDescription(description.get().getText());
+    // } else {
+    // abstractFeature.setDescription(getDescription(feature));
+    // }
+    // } else {
+    // if (getContext().isShowAllLanguages()) {
+    // // load all names
+    // i18n = i18nDAO.getMetadata(feature.getIdentifier(),
+    // getContext().getSession());
+    // for (LocalizedString name : i18n.getName()) {
+    // // either all or default only
+    // abstractFeature.addName(new CodeType(name));
+    // }
+    // } else {
+    // // load only name in default locale
+    // Optional<LocalizedString> name = getOptionalName(i18n,
+    // getContext().getDefaultLanguage());
+    // if (name.isPresent()) {
+    // abstractFeature.addName(new CodeType(name.get().getText(),
+    // URI.create(getContext().getDefaultLanguage().getLanguage())));
+    // }
+    // }
+    //
+    // // choose always the description in the default locale
+    // Optional<LocalizedString> description =
+    // i18n.getDescription().getLocalization(getContext().getDefaultLanguage());
+    // if (description.isPresent()) {
+    // abstractFeature.setDescription(description.get().getText());
+    // }
+    // }
+    // }
+    // }
+    //
+    // private Optional<LocalizedString> getOptionalName(I18NFeatureMetadata
+    // i18n, Locale locale) {
+    // if (i18n.getName().getLocalization(locale).isPresent()) {
+    // return i18n.getName().getLocalization(locale);
+    // }
+    // for (Locale eqLocale : LocaleHelper.getEquivalents(locale)) {
+    // if (i18n.getName().getLocalization(eqLocale).isPresent()) {
+    // return i18n.getName().getLocalization(eqLocale);
+    // }
+    // }
+    // return Optional.empty();
+    // }
+    //
+    // private Optional<LocalizedString>
+    // getOptionalDescription(I18NFeatureMetadata i18n, Locale locale) {
+    // if (i18n.getDescription().getLocalization(locale).isPresent()) {
+    // return i18n.getDescription().getLocalization(locale);
+    // }
+    // for (Locale eqLocale : LocaleHelper.getEquivalents(locale)) {
+    // if (i18n.getDescription().getLocalization(eqLocale).isPresent()) {
+    // return i18n.getDescription().getLocalization(eqLocale);
+    // }
+    // }
+    // return Optional.empty();
+    // }
+    //
+    // protected CodeType getName(DescribableEntity entity) throws
+    // OwsExceptionReport {
+    // if (entity.isSetName()) {
+    // CodeType name = new CodeType(entity.getName());
+    // if (entity.isSetNameCodespace()) {
+    // try {
+    // name.setCodeSpace(new URI(entity.getNameCodespace().getName()));
+    // } catch (URISyntaxException e) {
+    // throw new NoApplicableCodeException().causedBy(e).withMessage("Error
+    // while creating URI from '{}'",
+    // entity.getNameCodespace().getName());
+    // }
+    // }
+    // return name;
+    // }
+    // return null;
+    // }
+    //
+    // protected String getDescription(DescribableEntity entity) {
+    // if (entity.isSetDescription()) {
+    // return entity.getDescription();
+    // }
+    // return null;
+    // }
 
     /**
      * Get the geometry from featureOfInterest object.
      *
-     * @param feature the feature entity
+     * @param feature
+     *            the feature entity
      * @return geometry the geometry
-     * @throws OwsExceptionReport If an error occurs
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
     protected Geometry createGeometryFrom(FeatureEntity feature) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {

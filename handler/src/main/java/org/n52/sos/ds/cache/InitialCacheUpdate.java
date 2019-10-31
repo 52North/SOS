@@ -82,7 +82,6 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                                   i18NDAORepository),
               new OfferingCacheUpdate(threadCount,
                                       defaultLocale,
-                                      i18NDAORepository,
                                       geometryHandler,
                                       sessionStore),
               new ProcedureCacheUpdate(threadCount, sessionStore));

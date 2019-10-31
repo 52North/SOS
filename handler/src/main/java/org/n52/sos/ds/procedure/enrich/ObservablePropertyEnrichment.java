@@ -30,45 +30,53 @@ package org.n52.sos.ds.procedure.enrich;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
-import org.n52.janmayen.i18n.LocalizedString;
-import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.io.request.IoParameters;
+import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.PhenomenonDao;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.ApiQueryHelper;
+import org.n52.sos.ds.I18nNameDescriptionAdder;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
-public class ObservablePropertyEnrichment
-        extends
-        ProcedureDescriptionEnrichment {
+import com.google.common.collect.Maps;
+
+public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
+        implements ApiQueryHelper, I18nNameDescriptionAdder {
 
     public ObservablePropertyEnrichment(AbstractProcedureCreationContext ctx) {
         super(ctx);
     }
 
     @Override
-    public void enrich()
-            throws OwsExceptionReport {
-        if (isSetLocale()) {
-            I18NDAO<I18NObservablePropertyMetadata> dao =
-                    getProcedureCreationContext().getI18nr().getDAO(I18NObservablePropertyMetadata.class);
-            if (dao != null) {
-                Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
-                Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(checkForPublished(ids));
-                for (I18NObservablePropertyMetadata i18n : metadata) {
-                    OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
-                    Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale(),
-                            getProcedureCreationContext().getDefaultLocale());
-                    if (name.isPresent()) {
-                        observableProperty.addName(new CodeType(name.get()));
-                    }
-                    getDescription().addPhenomenon(observableProperty);
-                }
-            }
+    public void enrich() throws OwsExceptionReport {
+
+        List<PhenomenonEntity> phens = new PhenomenonDao(getSession()).getAllInstances(
+                createDbQuery(checkForPublished(getCache().getObservablePropertiesForProcedure(getIdentifier()))));
+        for (PhenomenonEntity phen : phens) {
+            getDescription().addPhenomenon(createObservableProperty(phen));
         }
+    }
+
+    private AbstractPhenomenon createObservableProperty(PhenomenonEntity phen) throws OwsExceptionReport {
+        OmObservableProperty observableProperty = new OmObservableProperty(phen.getIdentifier());
+        addNameAndDescription(phen, observableProperty, getLocale(), null, false);
+        return observableProperty;
+    }
+
+    private DbQuery createDbQuery(Collection<String> ids) {
+        Map<String, String> map = Maps.newHashMap();
+        if (ids != null && !ids.isEmpty()) {
+            map.put(IoParameters.PHENOMENA, listToString(ids));
+        }
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
     private Set<String> checkForPublished(Set<String> ids) {

@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.OfferingEntity;
@@ -68,24 +67,20 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
 
     private final Locale defaultLanguage;
 
-    private final I18NDAORepository i18NDAORepository;
-
     private GeometryHandler geometryHandler;
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
-            GeometryHandler geometryHandler, HibernateSessionStore sessionStore) {
-        this(threads, defaultLanguage, i18NDAORepository, geometryHandler, sessionStore, null);
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, GeometryHandler geometryHandler,
+            HibernateSessionStore sessionStore) {
+        this(threads, defaultLanguage, geometryHandler, sessionStore, null);
     }
 
-    public OfferingCacheUpdate(int threads, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
-            GeometryHandler geometryHandler, HibernateSessionStore sessionStore,
-            Collection<String> offeringIdsToUpdate) {
+    public OfferingCacheUpdate(int threads, Locale defaultLanguage, GeometryHandler geometryHandler,
+            HibernateSessionStore sessionStore, Collection<String> offeringIdsToUpdate) {
         super(threads, THREAD_GROUP_NAME, sessionStore);
         if (offeringIdsToUpdate != null) {
             this.offeringsIdToUpdate.addAll(offeringIdsToUpdate);
         }
         this.defaultLanguage = defaultLanguage;
-        this.i18NDAORepository = i18NDAORepository;
         this.geometryHandler = geometryHandler;
     }
 
@@ -124,8 +119,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
         for (OfferingEntity offering : getOfferingsToUpdate()) {
-            offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering.getId(), this.defaultLanguage,
-                    this.i18NDAORepository, geometryHandler));
+            offeringUpdateTasks
+                    .add(new OfferingCacheUpdateTask(offering.getId(), this.defaultLanguage, geometryHandler));
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }

@@ -39,16 +39,15 @@ import java.util.stream.Collectors;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
-import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.janmayen.i18n.MultilingualString;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.beans.i18n.I18nEntity;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -78,8 +77,6 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
 
     private final Locale defaultLanguage;
 
-    private final I18NDAORepository i18NDAORepository;
-
     private String identifier;
 
     private OfferingEntity offering;
@@ -96,14 +93,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
      *            Offering entity
      * @param defaultLanguage
      *            the default language
-     * @param i18NDAORepository
-     *            the i18n repository
      */
-    public OfferingCacheUpdateTask(Long offeringId, Locale defaultLanguage, I18NDAORepository i18NDAORepository,
-            GeometryHandler geometryHandler) {
+    public OfferingCacheUpdateTask(Long offeringId, Locale defaultLanguage, GeometryHandler geometryHandler) {
         this.offeringId = offeringId;
         this.defaultLanguage = defaultLanguage;
-        this.i18NDAORepository = i18NDAORepository;
         this.geometryHandler = geometryHandler;
         this.datasets.clear();
     }
@@ -132,7 +125,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
                 d -> d.isPublished() || d.getDatasetType().equals(DatasetType.not_initialized) && !d.isDeleted())) {
             getCache().addPublishedOffering(identifier);
         }
-        addOfferingNamesAndDescriptionsToCache(identifier, session);
+        addOfferingNamesAndDescriptionsToCache(offering, session);
 
         if (offering.hasParents()) {
             Collection<String> parents = getParents(offering);
@@ -186,44 +179,46 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         getCache().setMaxResultTimeForOffering(identifier, DateTimeHelper.makeDateTime(offering.getResultTimeEnd()));
     }
 
-    protected void addOfferingNamesAndDescriptionsToCache(String identifier, Session session)
+    protected void addOfferingNamesAndDescriptionsToCache(OfferingEntity offering, Session session)
             throws OwsExceptionReport {
-        final MultilingualString name;
-        final MultilingualString description;
+        final MultilingualString name = new MultilingualString();
+        final MultilingualString description = new MultilingualString();
 
-        I18NDAO<I18NOfferingMetadata> dao = i18NDAORepository.getDAO(I18NOfferingMetadata.class);
-
-        if (dao != null) {
-            I18NOfferingMetadata metadata = dao.getMetadata(identifier);
-            name = metadata.getName();
-            description = metadata.getDescription();
+        if (offering.isSetName()) {
+            final Locale locale = defaultLanguage;
+            name.addLocalization(locale, offering.getName());
+            getCache().setNameForOffering(offering.getIdentifier(), offering.getName());
         } else {
-            name = new MultilingualString();
-            description = new MultilingualString();
-            if (offering.isSetName()) {
-                final Locale locale = defaultLanguage;
-                name.addLocalization(locale, offering.getName());
-            } else {
-                String offeringName = identifier;
-                if (offeringName.startsWith("http")) {
-                    offeringName = offeringName.substring(offeringName.lastIndexOf('/') + 1, offeringName.length());
-                } else if (offeringName.startsWith("urn")) {
-                    offeringName = offeringName.substring(offeringName.lastIndexOf(':') + 1, offeringName.length());
-                }
-                if (offeringName.contains("#")) {
-                    offeringName = offeringName.substring(offeringName.lastIndexOf('#') + 1, offeringName.length());
-                }
-                name.addLocalization(defaultLanguage, offeringName);
+            String offeringName = offering.getIdentifier();
+            if (offeringName.startsWith("http")) {
+                offeringName = offeringName.substring(offeringName.lastIndexOf('/') + 1, offeringName.length());
+            } else if (offeringName.startsWith("urn")) {
+                offeringName = offeringName.substring(offeringName.lastIndexOf(':') + 1, offeringName.length());
             }
-            if (offering.isSetDescription()) {
-                final Locale locale = defaultLanguage;
-                description.addLocalization(locale, offering.getDescription());
+            if (offeringName.contains("#")) {
+                offeringName = offeringName.substring(offeringName.lastIndexOf('#') + 1, offeringName.length());
+            }
+            name.addLocalization(defaultLanguage, offeringName);
+        }
+        if (offering.isSetDescription()) {
+            final Locale locale = defaultLanguage;
+            description.addLocalization(locale, offering.getDescription());
+        }
+
+        if (offering.hasTranslations()) {
+            for (I18nEntity<? extends Describable> t : offering.getTranslations()) {
+                if (t.hasName()) {
+                    name.addLocalization(t.getLocale(), t.getName());
+                }
+                if (t.hasDescription()) {
+                    description.addLocalization(t.getLocale(), t.getDescription());
+                }
             }
         }
 
-        getCache().setI18nDescriptionForOffering(identifier, description);
-        getCache().setI18nNameForOffering(identifier, name);
-        addHumanReadableIdentifier(identifier, offering, name);
+        getCache().setI18nDescriptionForOffering(offering.getIdentifier(), description);
+        getCache().setI18nNameForOffering(offering.getIdentifier(), name);
+        addHumanReadableIdentifier(offering.getIdentifier(), offering, name);
     }
 
     private void addHumanReadableIdentifier(String offeringId, OfferingEntity offering, MultilingualString name) {

@@ -42,6 +42,7 @@ import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -71,6 +72,7 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.I18nNameDescriptionAdder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -88,7 +90,7 @@ import com.google.common.base.Strings;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public abstract class AbstractOmObservationCreator {
+public abstract class AbstractOmObservationCreator implements I18nNameDescriptionAdder {
     protected static final String SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES =
             "getUnitForObservablePropertyProcedureSeries";
 
@@ -197,24 +199,24 @@ public abstract class AbstractOmObservationCreator {
     }
 
     public String getVersion() {
-        return request.getVersion();
+        return getRequest().getVersion();
     }
 
     public String getService() {
-        return request.getService();
+        return getRequest().getService();
     }
 
     public String getResponseFormat() {
-        return request.isSetResponseFormat() ? request.getResponseFormat()
+        return getRequest().isSetResponseFormat() ? getRequest().getResponseFormat()
                 : getActiveProfile().getObservationResponseFormat();
     }
 
     public List<MediaType> getAcceptType() {
-        return request.getRequestContext().getAcceptType().get();
+        return getRequest().getRequestContext().getAcceptType().get();
     }
 
     public boolean checkAcceptType() {
-        return request.getRequestContext() != null && request.getRequestContext().getAcceptType().isPresent();
+        return getRequest().getRequestContext() != null && getRequest().getRequestContext().getAcceptType().isPresent();
     }
 
     public Session getSession() {
@@ -227,6 +229,10 @@ public abstract class AbstractOmObservationCreator {
 
     public I18NDAORepository getI18NDAORepository() {
         return getCreatorContext().getI18nr();
+    }
+
+    public AbstractObservationRequest getRequest() {
+        return request;
     }
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
@@ -242,13 +248,22 @@ public abstract class AbstractOmObservationCreator {
     }
 
     protected OmObservableProperty createObservableProperty(PhenomenonEntity observableProperty)
-            throws CodedException {
+            throws OwsExceptionReport {
         String phenID = observableProperty.getIdentifier();
         String description = observableProperty.getDescription();
         OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
-        if (observableProperty.isSetName()) {
-            omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
-            addName(omObservableProperty, observableProperty);
+
+        if (getRequest().isSetRequestedLanguage()) {
+            addNameAndDescription(observableProperty, omObservableProperty,
+                    getRequestedLanguage(), getI18N(), false);
+            if (omObservableProperty.isSetName()) {
+                omObservableProperty.setHumanReadableIdentifier(omObservableProperty.getFirstName().getValue());
+            }
+        } else {
+            if (observableProperty.isSetName()) {
+                omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
+                addName(omObservableProperty, observableProperty);
+            }
         }
         return omObservableProperty;
     }
@@ -296,9 +311,16 @@ public abstract class AbstractOmObservationCreator {
         } else {
             SosProcedureDescriptionUnknownType sosProcedure =
                     new SosProcedureDescriptionUnknownType(hProcedure.getIdentifier(), format, null);
-            if (hProcedure.isSetName()) {
-                sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
-                addName(sosProcedure, hProcedure);
+            if (getRequest().isSetRequestedLanguage()) {
+                addNameAndDescription(hProcedure, sosProcedure, getRequestedLanguage(), getI18N(), false);
+                if (sosProcedure.isSetName()) {
+                    sosProcedure.setHumanReadableIdentifier(sosProcedure.getFirstName().getValue());
+                }
+            } else {
+                if (hProcedure.isSetName()) {
+                    sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
+                    addName(sosProcedure, hProcedure);
+                }
             }
             return sosProcedure;
         }
@@ -339,6 +361,9 @@ public abstract class AbstractOmObservationCreator {
     protected AbstractFeature createFeatureOfInterest(AbstractFeatureEntity foi) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
         queryObject.setFeatureObject(foi).addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
+        if (getRequest().isSetRequestedLanguage()) {
+            queryObject.setI18N(getRequestedLanguage());
+        }
         final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
         if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null && !feature
                 .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
@@ -362,6 +387,9 @@ public abstract class AbstractOmObservationCreator {
     protected AbstractFeature createFeatureOfInterest(String featureOfInterest) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
         queryObject.setFeatureObject(featureOfInterest).setVersion(getVersion());
+        if (getRequest().isSetRequestedLanguage()) {
+            queryObject.setI18N(getRequestedLanguage());
+        }
         final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;
     }
@@ -408,8 +436,8 @@ public abstract class AbstractOmObservationCreator {
         return keys;
     }
 
-    public static String checkVersion(AbstractObservationRequest request) {
-        return request != null ? request.getVersion() : null;
+    public String checkVersion(AbstractObservationRequest request) {
+        return getRequest() != null ? getRequest().getVersion() : null;
     }
 
     protected String queryUnit(DatasetEntity series) {
@@ -432,6 +460,13 @@ public abstract class AbstractOmObservationCreator {
                     series.getObservableProperty().getIdentifier(), SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_SERIES,
                     namedQuery.getQueryString());
             return (String) namedQuery.uniqueResult();
+        }
+        return null;
+    }
+
+    protected Locale getRequestedLanguage() {
+        if (getRequest().isSetRequestedLanguage()) {
+            return LocaleHelper.decode(getRequest().getRequestedLanguage());
         }
         return null;
     }

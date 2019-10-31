@@ -74,4 +74,5 @@ public class FeatureI18NDAO
     public Set<I18NDAOKey> getKeys() {
         return Collections.singleton(new I18NDAOKey(I18NFeatureMetadata.class));
     }
+
 }

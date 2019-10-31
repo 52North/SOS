@@ -70,7 +70,8 @@ public class EnvironmentalMonitoringFacilityCreator
             final org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature =
                     new org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
                             getMediaMonitored(f.getMediaMonitored()));
-            addNameAndDescription(getContext().getRequestedLanguage(), f, emFeature);
+            addNameAndDescription(f, emFeature, getContext().getRequestedLanguage(), getContext().getDefaultLanguage(),
+                    getContext().isShowAllLanguages());
             emFeature.setGeometry(createGeometry(f));
             // add measurementRegime, mobile, operationalActivityPeriod(Set)
             emFeature.setMeasurementRegime(new ReferenceType(f.getMeasurementRegime()));

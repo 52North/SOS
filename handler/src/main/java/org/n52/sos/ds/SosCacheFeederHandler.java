@@ -169,7 +169,6 @@ public class SosCacheFeederHandler implements CacheFeederHandler {
         OfferingCacheUpdate update = new OfferingCacheUpdate(
                 this.cacheThreadCount,
                 this.defaultLocale,
-                this.i18NDAORepository,
                 this.geometryHandler,
                 this.sessionStore);
         update.setCache(cache);

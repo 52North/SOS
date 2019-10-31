@@ -48,11 +48,10 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.I18nNameDescriptionAdder;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.SosHelper;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -61,7 +60,8 @@ import com.google.common.collect.Sets;
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
-public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment implements ApiQueryHelper {
+public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment
+        implements ApiQueryHelper, I18nNameDescriptionAdder {
 
     public FeatureOfInterestEnrichment(AbstractProcedureCreationContext ctx) {
         super(ctx);
@@ -102,11 +102,6 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
 
     private Map<String, AbstractFeature> getAbstractFeaturesMap(Collection<String> featureOfInterestIDs)
             throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject object = new FeatureQueryHandlerQueryObject(getSession());
-        object.setFeatures(featureOfInterestIDs);
-        if (isSetLocale()) {
-            object.setI18N(getLocale());
-        }
         try {
             return createFeatures(
                     new HashSet<>(new FeatureDao(getSession()).getAllInstances(createDbQuery(featureOfInterestIDs))));
@@ -137,12 +132,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
 
     private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {
         final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getIdentifier()));
-        if (feature.isSetName()) {
-            sampFeat.addName(feature.getName());
-        }
-        if (!Strings.isNullOrEmpty(feature.getDescription())) {
-            sampFeat.setDescription(feature.getDescription());
-        }
+        addNameAndDescription(feature, sampFeat, getLocale(), null, false);
         if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
             if (getProcedureCreationContext().getGeometryHandler() != null) {
                 sampFeat.setGeometry(getProcedureCreationContext().getGeometryHandler()

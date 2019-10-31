@@ -404,10 +404,11 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
     private void addSosOfferingToObservationOffering(OfferingEntity offering,
             SosObservationOffering sosObservationOffering, GetCapabilitiesRequest request) throws CodedException {
-        SosOffering sosOffering = new SosOffering(offering.getIdentifier(), false);
+        SosOffering sosOffering = offering.isSetName() ? new SosOffering(offering.getIdentifier(), offering.getName())
+                : new SosOffering(offering.getIdentifier(), false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name
-        addOfferingNames(getCache(), sosOffering, getRequestedLocale(request), Locale.ROOT, false);
+        addOfferingNames(getCache(), sosOffering, getRequestedLocale(request), Locale.ROOT, isShowAllLanguages());
         // add offering description
         addOfferingDescription(sosOffering, getRequestedLocale(request), Locale.ROOT, getCache());
     }

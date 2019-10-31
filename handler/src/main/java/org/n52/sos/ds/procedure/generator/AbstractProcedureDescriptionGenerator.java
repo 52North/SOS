@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeSet;
 
 import org.hibernate.Session;
@@ -40,13 +39,10 @@ import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocaleHelper;
-import org.n52.janmayen.i18n.LocalizedString;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -59,6 +55,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.ds.I18nNameDescriptionAdder;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,17 +74,23 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public abstract class AbstractProcedureDescriptionGenerator implements ProcedureDescriptionGenerator {
+public abstract class AbstractProcedureDescriptionGenerator
+        implements ProcedureDescriptionGenerator, I18nNameDescriptionAdder {
 
     protected static final Joiner COMMA_JOINER = Joiner.on(",");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractProcedureDescriptionGenerator.class);
 
     private Locale locale;
+
     private I18NDAORepository i18NDAORepository;
+
     private ContentCacheController cacheController;
+
     private Locale defaultLanguage;
+
     private boolean showAllLanguageValues;
+
     private ProcedureDescriptionSettings procedureSettings;
 
     public AbstractProcedureDescriptionGenerator(I18NDAORepository i18NDAORepository,
@@ -155,54 +158,8 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
     protected void setCommonData(ProcedureEntity procedure, AbstractFeature feature, Session session)
             throws OwsExceptionReport {
         String identifier = procedure.getIdentifier();
-        addNameAndDescription(procedure, feature);
+        addNameAndDescription(procedure, feature, getLocale(), defaultLanguage, showAllLanguageValues);
         feature.setIdentifier(identifier);
-    }
-
-    protected void addNameAndDescription(ProcedureEntity procedure, AbstractFeature feature) throws OwsExceptionReport {
-        if (isSetI18NDAORepository()) {
-            I18NDAO<I18NProcedureMetadata> i18nDAO = getI18NDAORepository().getDAO(I18NProcedureMetadata.class);
-            Locale requestedLocale = getLocale();
-            if (i18nDAO == null) {
-                feature.addName(procedure.getName());
-                feature.setDescription(procedure.getDescription());
-            } else {
-                if (requestedLocale != null) {
-                    // specific locale was requested
-                    I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
-                    Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
-                    if (name.isPresent()) {
-                        feature.addName(new CodeType(name.get()));
-                    }
-                    Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
-                    if (description.isPresent()) {
-                        feature.setDescription(description.get().getText());
-                    }
-                } else {
-                    Locale defaultLocale = defaultLanguage;
-                    final I18NProcedureMetadata i18n;
-                    if (showAllLanguageValues) {
-                        // load all names
-                        i18n = i18nDAO.getMetadata(procedure.getIdentifier());
-                    } else {
-                        // load only name in default locale
-                        i18n = i18nDAO.getMetadata(procedure.getIdentifier(), defaultLocale);
-                    }
-                    for (LocalizedString name : i18n.getName()) {
-                        // either all or default only
-                        feature.addName(new CodeType(name));
-                    }
-                    // choose always the description in the default locale
-                    Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLocale);
-                    if (description.isPresent()) {
-                        feature.setDescription(description.get().getText());
-                    }
-                }
-            }
-        } else {
-            feature.addName(procedure.getName());
-            feature.setDescription(procedure.getDescription());
-        }
     }
 
     /**
@@ -212,10 +169,12 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
      *            Hibernate procedure entity
      *
      * @return Collection with names
+     * @throws OwsExceptionReport
+     *             If an error occurs
      */
-    protected List<CodeType> createNames(ProcedureEntity procedure) {
+    protected List<CodeType> createNames(ProcedureEntity procedure) throws OwsExceptionReport {
         // locale
-        return Lists.newArrayList(new CodeType(procedure.getIdentifier()));
+        return Lists.newArrayList(getName(procedure));
     }
 
     protected List<String> createDescriptions(ProcedureEntity procedure, String[] observableProperties) {
@@ -233,8 +192,8 @@ public abstract class AbstractProcedureDescriptionGenerator implements Procedure
             PhenomenonDao dao = new PhenomenonDao(session);
             return dao.getAllInstances(createDbQuery(procedure));
         } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage(
-                    "Error while querying observable properties for sensor description!");
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying observable properties for sensor description!");
         }
     }
 

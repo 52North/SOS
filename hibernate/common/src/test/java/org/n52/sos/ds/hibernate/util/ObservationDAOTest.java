@@ -34,6 +34,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -43,6 +44,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -80,7 +82,7 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
             transaction = session.beginTransaction();
             HibernateObservationBuilder b;
             b = new HibernateObservationBuilder(session, daoFactory);
-            DateTime begin = new DateTime();
+            DateTime begin = DateTimeHelper.parseIsoString2DateTime("2019-10-01T12:00:00.000Z");
             for (int i = 0; i < 50; ++i) {
                 b.createObservation(String.valueOf(i), begin.plusHours(i));
             }

@@ -217,13 +217,13 @@ public class SosDescribeSensorOperatorV20 extends
                     if (procedureDescription.getProcedureDescription() instanceof AbstractProcess) {
                         AbstractProcess abstractProcess =
                                 (AbstractProcess) procedureDescription.getProcedureDescription();
-                        if (!abstractProcess.isSetOutputs()) {
+                        if (abstractProcess.isSetOutputs()) {
                             extendOutputs(procedureDescription, abstractProcess);
                         }
                         if (SensorMLConstants.NS_SML.equalsIgnoreCase(response.getOutputFormat())) {
                             addSpecialCapabilities(procedureDescription, abstractProcess);
                         }
-                        if (SensorML20Constants.NS_SML.equalsIgnoreCase(response.getOutputFormat())) {
+                        if (SensorML20Constants.NS_SML_20.equalsIgnoreCase(response.getOutputFormat())) {
                             if (procedureDescription.isSetOfferings()) {
                                 final Set<SweText> offeringsSet =
                                         convertOfferingsToSet(procedureDescription.getOfferings());
@@ -244,15 +244,13 @@ public class SosDescribeSensorOperatorV20 extends
                                     } else {
                                         smlFeatureOfInterest = abstractProcessV20.getSmlFeatureOfInterest();
                                     }
-                                    if (procedureDescription.isSetFeaturesOfInterest()) {
-                                        smlFeatureOfInterest
-                                                .addFeaturesOfInterest(procedureDescription.getFeaturesOfInterest());
-                                    }
                                     if (procedureDescription.isSetFeaturesOfInterestMap()) {
                                         smlFeatureOfInterest.addFeaturesOfInterest(
                                                 procedureDescription.getFeaturesOfInterestMap());
+                                    } else if (procedureDescription.isSetFeaturesOfInterest()) {
+                                        smlFeatureOfInterest
+                                                .addFeaturesOfInterest(procedureDescription.getFeaturesOfInterest());
                                     }
-
                                 }
                             }
                         }

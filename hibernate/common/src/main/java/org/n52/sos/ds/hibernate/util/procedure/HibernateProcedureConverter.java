@@ -182,7 +182,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
                 SosProcedureDescription<?> converted = convert(description.get().getDescriptionFormat(),
                         requestedDescriptionFormat, description.get());
                 converted.setDescriptionFormat(requestedDescriptionFormat);
-                return converted;
+               description = Optional.of(converted);
             }
             addHumanReadableName(description.get(), procedure);
             enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), i18n,
@@ -329,6 +329,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
                 SosProcedureDescription<AbstractProcess> sosProcedureDescription =
                         new SosProcedureDescription<>(abstractProcess);
                 enrichments.setDescription(sosProcedureDescription).enrichAll();
+                desc.add(sosProcedureDescription);
             }
         } else {
             enrichments.enrichAll();

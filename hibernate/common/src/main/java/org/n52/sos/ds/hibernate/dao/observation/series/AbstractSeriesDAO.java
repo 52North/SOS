@@ -454,21 +454,13 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
         if (ds != null) {
             DatasetEntity concrete = getDatasetFactory().visit(observation);
-            concrete.copy(ds);
-            // StringBuilder builder = new StringBuilder();
-            // builder.append("update ")
-            // .append(getSeriesClass().getSimpleName())
-            // .append(" set valueType = :valueType")
-            // .append(" where id = :id");
-            // session.createQuery(builder.toString())
-            // .setParameter( "valueType",
-            // getDatasetFactory().visit(observation).getValueType())
-            // .setParameter( "id", dataset.getId())
-            // .executeUpdate();
-            session.delete(ds);
-            session.saveOrUpdate(concrete);
+            session.evict(ds);
+            ds.setDatasetType(concrete.getDatasetType());
+            ds.setObservationType(concrete.getObservationType());
+            ds.setValueType(concrete.getValueType());
+            ds = (DatasetEntity) session.merge(ds);
             session.flush();
-            return (DatasetEntity) concrete;
+            return ds;
         }
         return ds;
     }

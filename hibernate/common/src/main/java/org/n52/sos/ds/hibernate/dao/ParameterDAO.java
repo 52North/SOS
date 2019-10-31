@@ -292,7 +292,8 @@ public class ParameterDAO {
                     .setResultTransformer(RootEntityResultTransformer.INSTANCE)
                     .add(Restrictions.eq(ValuedParameter.NAME, namedValue.getName().getHref()))
                     .add(Restrictions.eq(ValuedParameter.VALUE, value));
-            if (parameter instanceof HasUnit && !((HasUnit) parameter).isSetUnit()) {
+            if (parameter instanceof HasUnit && !((HasUnit) parameter).isSetUnit()
+                    && getUnit(namedValue.getValue()) != null) {
                 ((HasUnit) parameter).setUnit(getUnit(namedValue.getValue()));
                 c.add(Restrictions.eq(HasUnit.UNIT, ((HasUnit) parameter).getUnit()));
             }

@@ -970,12 +970,12 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
 
     public DataEntity<?> getMinObservation(DatasetEntity series, DateTime time, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
-        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET, series));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, series.getId()));
         c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, time.toDate()));
         return (DataEntity<?>) c.uniqueResult();
     }
 
-    public Object getMaxObservation(DatasetEntity series, DateTime time, Session session) {
+    public DataEntity<?> getMaxObservation(DatasetEntity series, DateTime time, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, series.getId()));
         c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, time.toDate()));
@@ -989,7 +989,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         public SeriesTimeExtrema transformTuple(Object[] tuple, String[] aliases) {
             SeriesTimeExtrema seriesTimeExtrema = new SeriesTimeExtrema();
             if (tuple != null) {
-                seriesTimeExtrema.setSeries(((DatasetEntity) tuple[0]).getId());
+                seriesTimeExtrema.setSeries((Long) tuple[0]);
                 seriesTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
                 seriesTimeExtrema.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
             }

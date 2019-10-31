@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -537,14 +538,27 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     private String[] checkForCountValue(final String[] blockValues, final String tokenSeparator) {
         if (blockValues != null && blockValues.length > 0) {
             if (blockValues[0].contains(tokenSeparator)) {
-                return blockValues;
+                return checkBlockForDupliations(blockValues);
             } else {
                 final String[] blockValuesWithoutCount = new String[blockValues.length - 1];
                 System.arraycopy(blockValues, 1, blockValuesWithoutCount, 0, blockValuesWithoutCount.length);
-                return blockValuesWithoutCount;
+                return checkBlockForDupliations(blockValuesWithoutCount);
             }
         }
         return null;
+    }
+
+    private String[] checkBlockForDupliations(String[] blockValues) {
+        if (checkForDuplicatedObservations()) {
+            List<String> list = new LinkedList<String>();
+            for (String block : blockValues) {
+                if (!list.contains(block)) {
+                    list.add(block);
+                }
+            }
+            return list.toArray(new String[list.size()]);
+        }
+        return blockValues;
     }
 
     /**

@@ -20,6 +20,7 @@
 
   - Fix Admin -> Settings -> Datasource call in combination with Oracle datasource
   - Fix missing of first observation value when using scrollable result streaming.
+  - Check blocks in InsertResult for duplicity to avoid duplicate observations.
   
  
 ## Release 52n-sensorweb-sos-4.4.12

@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -192,30 +193,12 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
 
         Collection<DataEntity<?>> seriesObservations = Lists.newArrayList();
         AbstractSeriesDAO seriesDAO = daoFactory.getSeriesDAO();
-        DataEntity<?> first = null;
-        DataEntity<?> last = null;
         for (IndeterminateValue sosIndeterminateTime : request.getFirstLatestTemporalFilter()) {
-            for (DatasetEntity series : seriesDAO.getSeries(request, features, session)) {
-                if (overallExtrema) {
-                    if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST) && (first == null
-                            || series.getFirstValueAt().before(first.getSamplingTimeStart()))) {
-                        first = series.getFirstObservation();
-                    } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)
-                            && (last == null || series.getLastValueAt().after(last.getSamplingTimeEnd()))) {
-                        last = series.getLastObservation();
-                    }
-                    if (first != null) {
-                        seriesObservations.add(first);
-                    }
-                    if (last != null) {
-                        seriesObservations.add(last);
-                    }
-                } else {
-                    if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)) {
-                        seriesObservations.add(series.getFirstObservation());
-                    } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)) {
-                        seriesObservations.add(series.getLastObservation());
-                    }
+            for (DatasetEntity series : getSeries(seriesDAO, request, features, sosIndeterminateTime, session)) {
+                if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)) {
+                    seriesObservations.add(series.getFirstObservation());
+                } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)) {
+                    seriesObservations.add(series.getLastObservation());
                 }
             }
         }
@@ -246,11 +229,45 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         }
 
         LOGGER.debug(LOG_TIME_TO_QUERY, System.currentTimeMillis() - start);
-        Collection<DataEntity<?>> abstractObservations = Lists.newArrayList();
-        abstractObservations.addAll(seriesObservations);
         toSosObservation(new ArrayList<>(seriesObservations), request, requestedLocale, pdf, observationCreatorContext,
                 session).forEachRemaining(result::add);
         return result;
+    }
+
+    private List<DatasetEntity> getSeries(AbstractSeriesDAO seriesDAO, GetObservationRequest request,
+            List<String> features, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
+        if (!overallExtrema) {
+            return seriesDAO.getSeries(request, features, session);
+        }
+        Date first = null;
+        Date last = null;
+        List<DatasetEntity> list = new LinkedList<>();
+        for (DatasetEntity dataset : seriesDAO.getSeries(request, features, session)) {
+            if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.FIRST)) {
+                if (first == null) {
+                    first = dataset.getFirstValueAt();
+                    list.add(dataset);
+                } else if (dataset.getFirstValueAt().equals(first)) {
+                    list.add(dataset);
+                } else if (dataset.getFirstValueAt().before(first)) {
+                    list.clear();
+                    first = dataset.getFirstValueAt();
+                    list.add(dataset);
+                }
+            } else if (sosIndeterminateTime.equals(ExtendedIndeterminateTime.LATEST)) {
+                if (last == null) {
+                    last = dataset.getLastValueAt();
+                    list.add(dataset);
+                } else if (dataset.getLastValueAt().equals(last)) {
+                    list.add(dataset);
+                } else if (dataset.getLastValueAt().after(last)) {
+                    list.clear();
+                    last = dataset.getLastValueAt();
+                    list.add(dataset);
+                }
+            }
+        }
+        return list;
     }
 
     /**

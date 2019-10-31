@@ -244,6 +244,7 @@ This project includes:
   Microsoft JDBC Driver for SQL Server under MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
+  Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
   netcdf4 under (MIT-style) netCDF C library license
   Netty/Buffer under Apache License, Version 2.0
   Netty/Codec under Apache License, Version 2.0

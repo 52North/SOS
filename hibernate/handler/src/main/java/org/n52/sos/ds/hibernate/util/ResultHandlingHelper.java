@@ -139,42 +139,40 @@ public class ResultHandlingHelper {
                     } else {
                         final String definition = entry.getValue();
                         switch (definition) {
-                            case OmConstants.PHENOMENON_TIME:
-                                builder.append(getTimeStringForPhenomenonTime(observation.getSamplingTimeStart(),
-                                        observation.getSamplingTimeEnd(), noDataPlaceholder));
-                                break;
-                            case OmConstants.RESULT_TIME:
-                                builder.append(getTimeStringForResultTime(observation.getResultTime(),
-                                    noDataPlaceholder));
-                                break;
-                            case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
-                                builder.append(getSamplingGeometry(observation, tokenSeparator,
-                                        sosResultStructure.get().get(), noDataPlaceholder));
-                                break;
-                            case OmConstants.OM_PARAMETER:
-                            case OmConstants.PARAMETER:
-                                builder.append(getParameters(observation, tokenSeparator,
-                                        sosResultStructure.get().get()));
-                                break;
-                            case OM_PROCEDURE:
-                                if (observation.getDataset().getProcedure() != null
-                                        && observation.getDataset().getProcedure().isSetIdentifier()) {
-                                    builder.append(observation.getDataset().getProcedure().getIdentifier());
-                                } else {
-                                    builder.append("");
-                                }
-                                break;
-                            case OM_FEATURE_OF_INTEREST:
-                                if (observation.getDataset().getFeature() != null
-                                        && observation.getDataset().getFeature().isSetIdentifier()) {
-                                    builder.append(observation.getDataset().getFeature().getIdentifier());
-                                } else {
-                                    builder.append("");
-                                }
-                                break;
-                            default:
-                                builder.append(getValueAsStringForObservedProperty(observation, definition));
-                                break;
+                        case OmConstants.PHENOMENON_TIME:
+                            builder.append(getTimeStringForPhenomenonTime(observation.getSamplingTimeStart(),
+                                    observation.getSamplingTimeEnd(), noDataPlaceholder));
+                            break;
+                        case OmConstants.RESULT_TIME:
+                            builder.append(getTimeStringForResultTime(observation.getResultTime(), noDataPlaceholder));
+                            break;
+                        case OmConstants.PARAM_NAME_SAMPLING_GEOMETRY:
+                            builder.append(getSamplingGeometry(observation, tokenSeparator,
+                                    sosResultStructure.get().get(), noDataPlaceholder));
+                            break;
+                        case OmConstants.OM_PARAMETER:
+                        case OmConstants.PARAMETER:
+                            builder.append(getParameters(observation, tokenSeparator, sosResultStructure.get().get()));
+                            break;
+                        case OM_PROCEDURE:
+                            if (observation.getDataset().getProcedure() != null
+                                    && observation.getDataset().getProcedure().isSetIdentifier()) {
+                                builder.append(observation.getDataset().getProcedure().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        case OM_FEATURE_OF_INTEREST:
+                            if (observation.getDataset().getFeature() != null
+                                    && observation.getDataset().getFeature().isSetIdentifier()) {
+                                builder.append(observation.getDataset().getFeature().getIdentifier());
+                            } else {
+                                builder.append("");
+                            }
+                            break;
+                        default:
+                            builder.append(getValueAsStringForObservedProperty(observation, definition));
+                            break;
                         }
                         builder.append(tokenSeparator);
                     }
@@ -541,6 +539,18 @@ public class ResultHandlingHelper {
         return true;
     }
 
+    public boolean checkDataArrayForObservedProperty(SweField swefield, String observedProperty)
+            throws CodedException {
+        if (isDataArray(swefield) && !checkDefinition(swefield, observedProperty)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "The swe:DataArray element is currently only supported for the definition of the "
+                            + "phenomenonTime and observedProperty. The definition should be '%s' or '%s'!",
+                            OmConstants.PHENOMENON_TIME, observedProperty);
+        }
+        return true;
+    }
+
     public boolean checkForFeatureOfInterest(SweField swefield) throws CodedException {
         if (isText(swefield) && !checkDefinition(swefield, OM_FEATURE_OF_INTEREST)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
@@ -585,6 +595,10 @@ public class ResultHandlingHelper {
 
     public boolean isDataRecord(SweField sweField) {
         return sweField.getElement() instanceof SweDataRecord;
+    }
+
+    public boolean isDataArray(SweField sweField) {
+        return sweField.getElement() instanceof SweDataArray;
     }
 
     public boolean isVector(SweField sweField) {

@@ -411,7 +411,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
         int j = 0;
         getIndexFor(record, j, observedProperties, units, featureOfInterest, procedure,
-                Sets.newHashSet(resultTimeIndex, phenomenonTimeIndex));
+                Sets.newHashSet(resultTimeIndex, phenomenonTimeIndex), encoding);
 
         final MultiObservationValues<SweDataArray> sosValues =
                 createObservationValueFrom(blockValues, record, encoding, resultTimeIndex, phenomenonTimeIndex);
@@ -429,7 +429,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     @VisibleForTesting
     protected void getIndexFor(SweDataRecord record, int j, Map<Integer, String> observedProperties,
             Map<Integer, String> units, Map<Integer, String> featureOfInterest, Map<Integer, String> procedure,
-            HashSet<Integer> reserved) throws CodedException {
+            HashSet<Integer> reserved, SweAbstractEncoding encoding) throws CodedException {
         int idx = j;
         for (final SweField swefield : record.getFields()) {
             if (!reserved.contains(idx)) {
@@ -451,7 +451,17 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     }
                 } else if (swefield.getElement() instanceof SweDataRecord) {
                     getIndexFor((SweDataRecord) swefield.getElement(), idx, observedProperties, units,
-                            featureOfInterest, procedure, reserved);
+                            featureOfInterest, procedure, reserved, encoding);
+                } else if (swefield.getElement() instanceof SweDataArray
+                        && ((SweDataArray) swefield.getElement()).getElementType() instanceof SweDataRecord) {
+                    SweDataArray array = (SweDataArray) swefield.getElement();
+                    if (!array.isSetEncoding()) {
+                        array.setEncoding(encoding);
+                    }
+                    getIndexFor((SweDataRecord) array.getElementType(), j,
+                            observedProperties,
+                            units,
+                            featureOfInterest, procedure, reserved, encoding);
                 } else if (swefield.getElement() instanceof SweVector) {
                     helper.checkVectorForSamplingGeometry(swefield);
                 } else {

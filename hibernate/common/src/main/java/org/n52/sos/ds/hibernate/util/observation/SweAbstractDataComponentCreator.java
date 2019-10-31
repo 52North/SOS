@@ -30,7 +30,10 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.janmayen.NcName;
 import org.n52.series.db.beans.BlobDataEntity;
 import org.n52.series.db.beans.BooleanDataEntity;
@@ -50,16 +53,23 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * {@code ValuedObservationVisitor} to create {@link SweAbstractDataComponent}
@@ -165,9 +175,45 @@ public class SweAbstractDataComponentCreator
 
     @Override
     public SweDataArray visit(DataArrayDataEntity o) throws OwsExceptionReport {
-        SweDataArray array = new SweDataArray();
-        // TODO
-        return array;
+        try {
+            SweDataArray array = new SweDataArray();
+            decode(XmlHelper.parseXmlString(o.getEncoding()));
+            array.setEncoding((SweAbstractEncoding) decode(XmlHelper.parseXmlString(o.getEncoding())));
+            array.setElementType((SweAbstractDataComponent) decode(XmlHelper.parseXmlString(o.getStructure())));
+            if (o.isSetStringValue()) {
+                array.setXml(null);
+                List<List<String>> values = new LinkedList<>();
+                for (String block : o.getStringValue()
+                        .split(((SweTextEncoding) array.getEncoding()).getBlockSeparator())) {
+                    List<String> v = new LinkedList<>();
+                    for (String value : block.split(((SweTextEncoding) array.getEncoding()).getTokenSeparator())) {
+                        v.add(value);
+                    }
+                    values.add(v);
+                }
+                array.setValues(values);
+            } else if (o.getValue() != null && o.getValue().isEmpty()) {
+                int i = ((SweAbstractDataRecord) array.getElementType())
+                        .getFieldIndexByIdentifier(o.getDataset().getPhenomenon().getIdentifier()) == 0 ? 1 : 0;
+                List<List<String>> values = new LinkedList<>();
+                for (DataEntity<?> v : o.getValue()) {
+                    List<String> value = new LinkedList<>();
+                    if (i == 0) {
+                        value.add(v.getDataset().getPhenomenon().getName());
+                        value.add(JavaHelper.asString(v.getValue()));
+                    } else {
+                        value.add(JavaHelper.asString(v.getValue()));
+                        value.add(v.getDataset().getPhenomenon().getName());
+                    }
+                    values.add(value);
+                }
+                array.setValues(values);
+            }
+            return array;
+        } catch (DecodingException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while creating SweDataArray from database entity!");
+        }
     }
 
     @Override
@@ -184,6 +230,10 @@ public class SweAbstractDataComponentCreator
             component.setValue(o.getValueName());
         }
         return setCommonValues(component, o);
+    }
+
+    protected Object decode(XmlObject xml) throws DecodingException {
+        return decoderRepository.getDecoder(CodingHelper.getDecoderKey(xml)).decode(xml);
     }
 
     protected String getFieldName(DataEntity<?> sub) {

@@ -61,7 +61,7 @@ public class InsertResultDAOTest
         final Map<Integer, String> featureOfInterests = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> procedures = new HashMap<Integer, String>(record.getFields().size() - 1);
         insertResultDAO.getIndexFor(record, 0, observedProperties, units, featureOfInterests, procedures,
-                Sets.newHashSet(0));
+                Sets.newHashSet(0), null);
         assertThat(observedProperties.size(), is(1));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
     }
@@ -75,7 +75,7 @@ public class InsertResultDAOTest
         final Map<Integer, String> featureOfInterests = new HashMap<Integer, String>(record.getFields().size() - 1);
         final Map<Integer, String> procedures = new HashMap<Integer, String>(record.getFields().size() - 1);
         insertResultDAO.getIndexFor(record, 0, observedProperties, units, featureOfInterests, procedures,
-                Sets.newHashSet(0));
+                Sets.newHashSet(0), null);
         assertThat(observedProperties.size(), is(3));
         assertThat(observedProperties.get(1).equals(OBS_PROP_1), is(true));
         assertThat(observedProperties.get(2).equals(OBS_PROP_2), is(true));

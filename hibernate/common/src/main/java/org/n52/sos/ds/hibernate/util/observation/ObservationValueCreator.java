@@ -28,6 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.xmlbeans.XmlObject;
 import org.n52.series.db.beans.BlobDataEntity;
 import org.n52.series.db.beans.BooleanDataEntity;
 import org.n52.series.db.beans.CategoryDataEntity;
@@ -56,11 +60,20 @@ import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.util.CodingHelper;
+import org.n52.svalbard.util.XmlHelper;
 
 /**
  * TODO JavaDoc
@@ -175,9 +188,45 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
 
     @Override
     public SweDataArrayValue visit(DataArrayDataEntity o) throws OwsExceptionReport {
-        SweDataArray array = new SweDataArray();
-        // TODO
-        return new SweDataArrayValue(array);
+        try {
+            SweDataArray array = new SweDataArray();
+            decode(XmlHelper.parseXmlString(o.getEncoding()));
+            array.setEncoding((SweAbstractEncoding) decode(XmlHelper.parseXmlString(o.getEncoding())));
+            array.setElementType((SweAbstractDataComponent) decode(XmlHelper.parseXmlString(o.getStructure())));
+            if (o.isSetStringValue()) {
+                array.setXml(null);
+                List<List<String>> values = new LinkedList<>();
+                for (String block : o.getStringValue()
+                        .split(((SweTextEncoding) array.getEncoding()).getBlockSeparator())) {
+                    List<String> v = new LinkedList<>();
+                    for (String value : block.split(((SweTextEncoding) array.getEncoding()).getTokenSeparator())) {
+                        v.add(value);
+                    }
+                    values.add(v);
+                }
+                array.setValues(values);
+            } else if (o.getValue() != null && o.getValue().isEmpty()) {
+                int i = ((SweAbstractDataRecord) array.getElementType())
+                        .getFieldIndexByIdentifier(o.getDataset().getPhenomenon().getIdentifier()) == 0 ? 1 : 0;
+                List<List<String>> values = new LinkedList<>();
+                for (DataEntity<?> v : o.getValue()) {
+                    List<String> value = new LinkedList<>();
+                    if (i == 0) {
+                        value.add(v.getDataset().getPhenomenon().getName());
+                        value.add(JavaHelper.asString(v.getValue()));
+                    } else {
+                        value.add(JavaHelper.asString(v.getValue()));
+                        value.add(v.getDataset().getPhenomenon().getName());
+                    }
+                    values.add(value);
+                }
+                array.setValues(values);
+            }
+            return new SweDataArrayValue(array);
+        } catch (DecodingException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while creating SweDataArray from database entity!");
+        }
     }
 
     @Override
@@ -195,6 +244,10 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
+    }
+
+    protected Object decode(XmlObject xml) throws DecodingException {
+        return decoderRepository.getDecoder(CodingHelper.getDecoderKey(xml)).decode(xml);
     }
 
     @SuppressWarnings("rawtypes")

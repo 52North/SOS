@@ -131,7 +131,8 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      * Get map keyed by observable properties with collections of child
      * observable properties (if supported) as values
      *
-     * @param session the session
+     * @param session
+     *            the session
      * @return Map keyed by observable properties with values of child
      *         observable properties collections
      */
@@ -258,7 +259,6 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
         insertHierachy(observableProperties, existing, session);
         return existing;
     }
-
 
     private void insertTranslations(PhenomenonEntity result, Set<I18nEntity<? extends Describable>> translations,
             Session session) {

@@ -172,7 +172,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
 
         for (final SweField swefield : record.getFields()) {
             if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>) || helper.isDataRecord(swefield)
-                    || helper.isVector(swefield))) {
+                    || helper.isVector(swefield) || helper.isDataArray(swefield))) {
                 throw new NoApplicableCodeException().withMessage(
                         "The swe:Field element of type %s is not yet supported!",
                         swefield.getElement().getClass().getName());

@@ -83,10 +83,12 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweCoordinate;
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.SweVector;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
@@ -248,6 +250,10 @@ public class ObservationUnfolder {
                                 observedValue = parseSweDataRecord(((SweDataRecord) dataComponent).copy(), block,
                                         tokenIndex, parameterHolder);
                             }
+                        } else if (dataComponent instanceof SweDataArray) {
+                            observedValue = parseSweDataArray(((SweDataArray) dataComponent).copy(), block, tokenIndex,
+                                    parameterHolder,
+                                    multiObservation.getObservationConstellation().getObservablePropertyIdentifier());
                         } else if (dataComponent instanceof SweVector) {
                             parseSweVectorAsGeometry(((SweVector) dataComponent).copy(), block, tokenIndex,
                                     samplingGeometry);
@@ -459,6 +465,19 @@ public class ObservationUnfolder {
             tokenIndex.decrementAndGet();
         }
         return new ComplexValue(record);
+    }
+
+    private Value<?> parseSweDataArray(SweDataArray dataArray, List<String> block, IncDecInteger tokenIndex,
+            ParameterHolder parameterHolder, String observedProperty) throws CodedException {
+        List<List<String>> values = new LinkedList<>();
+        values.add(block.subList(4, block.size()));
+        dataArray.setValues(values);
+        SweDataArrayValue sweDataArrayValue = new SweDataArrayValue(dataArray);
+        SweField field = ((SweDataRecord) dataArray.getElementType()).getFieldByIdentifier(observedProperty);
+        if (field != null && field.getElement() instanceof SweAbstractUomType) {
+            sweDataArrayValue.setUnit(((SweAbstractUomType) field.getElement()).getUomObject());
+        }
+        return sweDataArrayValue;
     }
 
     private OmObservation createSingleValueObservation(final OmObservation multiObservation, final Time phenomenonTime,

@@ -40,9 +40,11 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
+import org.n52.janmayen.NcName;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.ComplexDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.GeometryDataEntity;
@@ -55,6 +57,7 @@ import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gwml.GWMLConstants;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -95,7 +98,11 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
@@ -204,16 +211,20 @@ public class ObservationPersister
 
     @Override
     public DataEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
-        throw new NoApplicableCodeException().withMessage("The insertion of %s is not yet supported",
-                value.getClass().getSimpleName());
-        // DataArrayDataEntity dataArray =
-        // observationFactory.sweDataEntityArray();
-        // dataArray.setEncoding(value.getValue().getEncoding().getXml());
-        // dataArray.setStructure(value.getValue().getEncoding().getXml());
-        // DataEntity dataArrayDataEntity = persist((DataEntity) dataArray, new
-        // HashSet<DataEntity<?>>());
-        // persistChildren(value.getValue(), dataArrayDataEntity.getId());
-        // return dataArrayDataEntity;
+        DataArrayDataEntity dataArray = observationFactory.sweDataEntityArray();
+        dataArray.setEncoding(value.getValue().getEncoding().getXml());
+        dataArray.setStructure(value.getValue().getElementType().getXml());
+        DataEntity dataArrayDataEntity = null;
+        if (value.getValue().getElementType() instanceof SweAbstractDataRecord
+                && checkFields((SweAbstractDataRecord) value.getValue().getElementType())) {
+            dataArrayDataEntity = persist(dataArray, new HashSet<DataEntity<?>>());
+            persistChildren(value.getValue(), dataArrayDataEntity.getId());
+        } else {
+            dataArray.setStringValue(value.getValue().getValueAsString());
+            dataArrayDataEntity = persist((DataEntity) dataArray, new HashSet<DataEntity<?>>());
+        }
+
+        return dataArrayDataEntity;
     }
 
     @Override
@@ -323,6 +334,17 @@ public class ObservationPersister
         throw notSupported(value);
     }
 
+    private boolean checkFields(SweAbstractDataRecord sweAbstractDataRecord) {
+        return sweAbstractDataRecord.getFields().size() == 2
+                && sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
+                        .getElement() instanceof SweAbstractSimpleType
+                && (!(sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
+                        .getElement() instanceof SweTime)
+                        || !(sweAbstractDataRecord.getFields()
+                                .get(getNotObservablePropertyField(sweAbstractDataRecord))
+                                .getElement() instanceof SweTimeRange));
+    }
+
     private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, Long parent)
             throws HibernateException, OwsExceptionReport {
         Set<DataEntity<?>> children = new TreeSet<>();
@@ -354,41 +376,31 @@ public class ObservationPersister
         return children;
     }
 
-    // private Set<DataEntity<?>> persistChildren(SweDataArray value, Long
-    // parent) throws OwsExceptionReport {
-    // Set<DataEntity<?>> children = new TreeSet<>();
-    // if (value.getElementType() instanceof SweAbstractSimpleType<?>) {
-    // SweAbstractSimpleType<?> type = (SweAbstractSimpleType<?>)
-    // value.getElementType();
-    // for (List<String> block : value.getValues()) {
-    // for (String token : block) {
-    // type.setStringValue(token);
-    // ObservationPersister childPersister = createChildPersister(parent);
-    // children.add(
-    // type.accept(ValueCreatingSweDataComponentVisitor.getInstance()).accept(childPersister));
-    // }
-    // }
-    // } else if (value.getElementType() instanceof SweAbstractDataRecord) {
-    // SweAbstractDataRecord dataRecord = (SweAbstractDataRecord)
-    // value.getElementType();
-    // for (List<String> block : value.getValues()) {
-    // for (int i = 0; i < block.size(); i++) {
-    // SweAbstractDataComponent element =
-    // dataRecord.getFields().get(i).getElement();
-    // if (element instanceof SweAbstractSimpleType<?>) {
-    // ((SweAbstractSimpleType<?>) element).setStringValue(block.get(i));
-    // }
-    // }
-    // children.addAll(persistChildren(dataRecord, parent));
-    // }
-    // } else {
-    // throw new NoApplicableCodeException().withMessage("Type '%s' is not yet
-    // supported!",
-    // value.getElementType().getClass().getSimpleName());
-    // }
-    // session.flush();
-    // return children;
-    // }
+    private Set<DataEntity<?>> persistChildren(SweDataArray value, Long parent) throws OwsExceptionReport {
+        Set<DataEntity<?>> children = new TreeSet<>();
+        if (value.getElementType() instanceof SweAbstractDataRecord) {
+            SweAbstractDataRecord dataRecord = (SweAbstractDataRecord) value.getElementType();
+            int i = getNotObservablePropertyField(dataRecord);
+            SweField field = dataRecord.getFieldByIdentifier(
+                    omObservation.getObservationConstellation().getObservablePropertyIdentifier());
+            for (List<String> block : value.getValues()) {
+                PhenomenonEntity observableProperty =
+                        getObservablePropertyForField(dataRecord.getFields().get(i), block.get(i));
+                ObservationPersister childPersister = createChildPersister(observableProperty, parent);
+                children.add(field.accept(ValueCreatingSweDataComponentVisitor.getInstance()).accept(childPersister));
+            }
+        } else {
+            throw new NoApplicableCodeException().withMessage("Type '%s' is not yet supported!",
+                    value.getElementType().getClass().getSimpleName());
+        }
+        session.flush();
+        return children;
+    }
+
+    private int getNotObservablePropertyField(SweAbstractDataRecord dataRecord) {
+        return dataRecord.getFieldIndexByIdentifier(
+                omObservation.getObservationConstellation().getObservablePropertyIdentifier()) == 0 ? 1 : 0;
+    }
 
     private OmObservation getObservationWithLevelParameter(ProfileLevel level) {
         OmObservation o = new OmObservation();
@@ -455,6 +467,21 @@ public class ObservationPersister
             }
         }
         return getObservableProperty(new OmObservableProperty(definition));
+    }
+
+    private PhenomenonEntity getObservablePropertyForField(SweField field, String value) {
+        String definition = field.getElement().getDefinition() + "_" + NcName.makeValid(value);
+        if (omObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
+            for (OmObservableProperty component : ((OmCompositePhenomenon) omObservation.getObservationConstellation()
+                    .getObservableProperty()).getPhenomenonComponents()) {
+                if (component.getIdentifier().equals(definition)) {
+                    getObservableProperty(component);
+                }
+            }
+        }
+        OmObservableProperty obsProp = new OmObservableProperty(definition);
+        obsProp.setName(new CodeType(value));
+        return getObservableProperty(obsProp);
     }
 
     private PhenomenonEntity getObservableProperty(AbstractPhenomenon observableProperty) {

@@ -40,7 +40,6 @@ import org.n52.shetland.ogc.sos.delobs.DeleteObservationConstants;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 import org.n52.sos.ds.AbstractDeleteObservationHandler;
-import org.n52.sos.event.events.DeleteObservationEvent;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 
@@ -64,7 +63,6 @@ public class DeleteObservationRequestOperator extends
     @Override
     public DeleteObservationResponse receive(DeleteObservationRequest request) throws OwsExceptionReport {
         DeleteObservationResponse response = getOperationHandler().deleteObservation(request);
-        getServiceEventBus().submit(new DeleteObservationEvent(request, response));
         return response;
     }
 

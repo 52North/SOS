@@ -30,9 +30,11 @@ package org.n52.sos.ds.hibernate;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -82,6 +84,10 @@ import com.google.common.base.Joiner;
 public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteObservationHandler.class);
+
+    private static final String DELETE_PARAMETER = "delete ";
+
+    private static final String FROM_PARAMETER = " from ";
 
     private static final String EQUAL_PARAMETER = " = :";
 
@@ -154,8 +160,9 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
     private void deleteObservation(Collection<DatasetEntity> serieses, Collection<TemporalFilter> filters,
             Session session) throws OwsExceptionReport {
         boolean temporalFilters = filters != null && !filters.isEmpty();
-        Set<DatasetEntity> modifiedDatasets = new HashSet<>();
-        for (DatasetEntity s : serieses) {
+        Set<Long> modifiedDatasets = new HashSet<>();
+        for (Long s : getSeriesInlcudeChildObs(
+                serieses.stream().map(DatasetEntity::getId).collect(Collectors.toSet()), session)) {
             Query<?> q = session.createQuery(getUpdateQueryString(filters, temporalFilters));
             q.setParameter(DataEntity.PROPERTY_DELETED, true);
             q.setParameter(DataEntity.PROPERTY_DATASET, s);
@@ -172,27 +179,68 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
             checkSeriesForFirstLatest(modifiedDatasets, session);
             if (deletePhysically) {
                 // TODO select all parent ids -> delete childs -> delete parents
-                deleteDeletedChildObservations(modifiedDatasets, filters, temporalFilters, session);
+                Set<Long> parents = getParents(modifiedDatasets, filters, temporalFilters, session);
+                if (!parents.isEmpty()) {
+                    deleteDeletedChildObservations(parents, filters, temporalFilters, session);
+                }
                 deleteDeletedObservations(modifiedDatasets, filters, temporalFilters, session);
             }
         }
     }
 
-    private void deleteDeletedChildObservations(Set<DatasetEntity> modifiedDatasets,
-            Collection<TemporalFilter> filters, boolean temporalFilters, Session session)
+    private Set<Long> getSeriesInlcudeChildObs(Set<Long> serieses, Session session) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("select distinct o2.").append(DataEntity.PROPERTY_DATASET_ID).append(FROM_PARAMETER);
+        builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName())
+                .append(" o ");
+        builder.append(" JOIN ")
+                .append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName())
+                .append(" o2 ");
+        builder.append(" ON o.").append(DataEntity.PROPERTY_ID).append(" = o2.").append(DataEntity.PROPERTY_PARENT);
+        builder.append(WHERE_PARAMETER).append(" o.").append(DataEntity.PROPERTY_DATASET_ID).append(IN_PARAMETER)
+                .append(DataEntity.PROPERTY_DATASET);
+        Query<?> q = session.createQuery(builder.toString());
+        q.setParameter(DataEntity.PROPERTY_DATASET, serieses);
+        List<Long> list = (List<Long>) q.list();
+        if (list != null && !list.isEmpty()) {
+            serieses.addAll(list);
+        }
+        return serieses;
+    }
+
+    private Set<Long> getParents(Set<Long> modifiedDatasets, Collection<TemporalFilter> filters,
+            boolean temporalFilters, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
-        Query<?> q = session.createQuery(getDeletChildQueryString(filters, temporalFilters));
+        StringBuilder builder = new StringBuilder();
+        builder.append("select distinct ").append(DataEntity.PROPERTY_ID).append(FROM_PARAMETER);
+        builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
+        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET_ID).append(IN_PARAMETER)
+                .append(DataEntity.PROPERTY_DATASET);
+        if (temporalFilters) {
+            builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
+                    .append(")");
+        }
+        Query<?> q = session.createQuery(builder.toString());
         q.setParameter(DataEntity.PROPERTY_DATASET, modifiedDatasets);
         if (temporalFilters) {
             checkForPlaceholder(q, filters);
         }
+        List<Long> list = (List<Long>) q.list();
+        return list != null ? new LinkedHashSet<>(list) : new LinkedHashSet<>();
+    }
+
+    private void deleteDeletedChildObservations(Set<Long> parents,
+            Collection<TemporalFilter> filters, boolean temporalFilters, Session session)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        Query<?> q = session.createQuery(getDeletChildQueryString(parents));
+        q.setParameter(DataEntity.PROPERTY_PARENT, parents);
         int executeUpdate = q.executeUpdate();
         LOGGER.debug("{} child observations were physically deleted!", executeUpdate);
         session.flush();
 
     }
 
-    private void deleteDeletedObservations(Set<DatasetEntity> modifiedDatasets, Collection<TemporalFilter> filters,
+    private void deleteDeletedObservations(Set<Long> modifiedDatasets, Collection<TemporalFilter> filters,
             boolean temporalFilters, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Query<?> q = session.createQuery(getDeletQueryString(filters, temporalFilters));
@@ -208,9 +256,9 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
     private String getDeletQueryString(Collection<TemporalFilter> filters, boolean temporalFilters)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
-        builder.append("delete ");
+        builder.append(DELETE_PARAMETER);
         builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET).append(IN_PARAMETER)
+        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET_ID).append(IN_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         if (temporalFilters) {
             builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
@@ -219,18 +267,13 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         return builder.toString();
     }
 
-    private String getDeletChildQueryString(Collection<TemporalFilter> filters, boolean temporalFilters)
+    private String getDeletChildQueryString(Set<Long> parents)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
-        builder.append("delete ");
+        builder.append(DELETE_PARAMETER);
         builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET).append(IN_PARAMETER)
-                .append(DataEntity.PROPERTY_DATASET);
-        builder.append(AND_PARAMETER).append(DataEntity.PROPERTY_PARENT).append(" IS NOT NULL ");
-        if (temporalFilters) {
-            builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
-                    .append(")");
-        }
+        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_PARENT).append(IN_PARAMETER)
+                .append(DataEntity.PROPERTY_PARENT);
         return builder.toString();
     }
 
@@ -240,8 +283,8 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
         builder.append("update ");
         builder.append(daoFactory.getObservationDAO().getObservationFactory().observationClass().getSimpleName());
         builder.append(" set ").append(DataEntity.PROPERTY_DELETED).append(EQUAL_PARAMETER)
-        .append(DataEntity.PROPERTY_DELETED);
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET).append(EQUAL_PARAMETER)
+                .append(DataEntity.PROPERTY_DELETED);
+        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET_ID).append(EQUAL_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         if (temporalFilters) {
             builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
@@ -264,7 +307,8 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
                 delete(observation, session);
             }
             if (!modifiedDatasets.isEmpty()) {
-                checkSeriesForFirstLatest(modifiedDatasets, session);
+                checkSeriesForFirstLatest(
+                        modifiedDatasets.stream().map(DatasetEntity::getId).collect(Collectors.toSet()), session);
             }
         } else {
             if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
@@ -344,11 +388,12 @@ public class DeleteObservationHandler extends AbstractDeleteObservationHandler {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void checkSeriesForFirstLatest(Set<DatasetEntity> serieses, Session session) throws OwsExceptionReport {
+    private void checkSeriesForFirstLatest(Set<Long> serieses, Session session) throws OwsExceptionReport {
         if (!serieses.isEmpty()) {
             AbstractSeriesObservationDAO observationDAO = daoFactory.getObservationDAO();
-            Map<Long, SeriesTimeExtrema> minMaxTimes = observationDAO.getMinMaxSeriesTimes(serieses, session);
-            for (DatasetEntity series : serieses) {
+            Map<Long, SeriesTimeExtrema> minMaxTimes = observationDAO.getMinMaxSeriesTimesById(serieses, session);
+            for (Long id : serieses) {
+               DatasetEntity series = session.get(DatasetEntity.class, id);
                 boolean update = false;
                 if (minMaxTimes.containsKey(series.getId())) {
                     SeriesTimeExtrema extrema = minMaxTimes.get(series.getId());

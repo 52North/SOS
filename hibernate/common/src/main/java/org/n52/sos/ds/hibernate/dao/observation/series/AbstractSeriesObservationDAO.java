@@ -951,9 +951,13 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     }
 
     public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimes(Set<DatasetEntity> serieses, Session session) {
+        return getMinMaxSeriesTimesById(serieses.stream().map(DatasetEntity::getId).collect(Collectors.toSet()),
+                session);
+    }
+
+    public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimesById(Set<Long> serieses, Session session) {
         Criteria c = getDefaultObservationTimeCriteria(session);
-        c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID,
-                serieses.stream().map(DatasetEntity::getId).collect(Collectors.toSet())));
+        c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID, serieses));
         c.setProjection(Projections.projectionList().add(Projections.groupProperty(DataEntity.PROPERTY_DATASET_ID))
                 .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
                 .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));

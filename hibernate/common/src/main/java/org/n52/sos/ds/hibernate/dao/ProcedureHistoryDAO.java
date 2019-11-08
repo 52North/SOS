@@ -30,14 +30,11 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -215,23 +212,4 @@ public class ProcedureHistoryDAO {
         return criteria.list();
     }
 
-    public Map<String, String> getTProcedureFormatMap(Session session) {
-        Criteria criteria = session.createCriteria(ProcedureEntity.class);
-        criteria.createAlias(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME, "vpt");
-        criteria.createAlias(ProcedureHistoryEntity.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
-        criteria.add(Restrictions.isNull("vpt." + ProcedureHistoryEntity.END_TIME));
-        criteria.setProjection(Projections.projectionList().add(Projections.property(ProcedureEntity.IDENTIFIER))
-                .add(Projections.property("pdf." + FormatEntity.FORMAT)));
-        criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
-        LOGGER.trace("QUERY getTProcedureFormatMap(): {}", HibernateHelper.getSqlString(criteria));
-        @SuppressWarnings("unchecked")
-        List<Object[]> results = criteria.list();
-        Map<String, String> tProcedureFormatMap = Maps.newTreeMap();
-        for (Object[] result : results) {
-            String procedureIdentifier = (String) result[0];
-            String format = (String) result[1];
-            tProcedureFormatMap.put(procedureIdentifier, format);
-        }
-        return tProcedureFormatMap;
-    }
 }

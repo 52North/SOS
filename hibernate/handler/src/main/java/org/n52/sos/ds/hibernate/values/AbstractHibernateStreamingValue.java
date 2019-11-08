@@ -47,11 +47,13 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
+import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -422,10 +424,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (o.getDataset().hasVerticalMetadata()) {
             VerticalMetadataEntity verticalMetadata = o.getDataset().getVerticalMetadata();
             if (o.hasVerticalInterval()) {
-                observation.addParameter(createParameter(verticalMetadata.getVerticalFromName(), o.getVerticalFrom()));
-                observation.addParameter(createParameter(verticalMetadata.getVerticalToName(), o.getVerticalTo()));
+                observation.addParameter(createParameter(getVerticalFromName(verticalMetadata), o.getVerticalFrom(),
+                        verticalMetadata.getVerticalUnit()));
+                observation.addParameter(createParameter(getVerticalToName(verticalMetadata), o.getVerticalTo(),
+                        verticalMetadata.getVerticalUnit()));
             } else {
-                observation.addParameter(createParameter(verticalMetadata.getVerticalFromName(), o.getVerticalFrom()));
+                observation.addParameter(createParameter(getVerticalFromName(verticalMetadata), o.getVerticalFrom(),
+                        verticalMetadata.getVerticalUnit()));
             }
         }
         addRelatedObservation(o, observation);
@@ -435,11 +440,25 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         return observation;
     }
 
-    private NamedValue<BigDecimal> createParameter(String name, BigDecimal value) {
+    private String getVerticalFromName(VerticalMetadataEntity verticalMetadata) {
+        return verticalMetadata.isSetVerticalFromName() ? verticalMetadata.getVerticalFromName()
+                : getVerticalToName(verticalMetadata);
+    }
+
+    private String getVerticalToName(VerticalMetadataEntity verticalMetadata) {
+        return verticalMetadata.isSetVerticalToName() ? verticalMetadata.getVerticalToName()
+                : getNameFromOrientation(verticalMetadata);
+    }
+
+    private String getNameFromOrientation(VerticalMetadataEntity verticalMetadata) {
+        return verticalMetadata.getOrientation() != null && verticalMetadata.getOrientation() > 0 ? "height" : "depth";
+    }
+
+    private NamedValue<BigDecimal> createParameter(String name, BigDecimal value, UnitEntity unit) {
         final NamedValue<BigDecimal> namedValue = new NamedValue<>();
         final ReferenceType referenceType = new ReferenceType(name);
         namedValue.setName(referenceType);
-        namedValue.setValue(new QuantityValue(value, "m"));
+        namedValue.setValue(new QuantityValue(value, unit != null ? unit.getUnit() : "m"));
         return namedValue;
     }
 

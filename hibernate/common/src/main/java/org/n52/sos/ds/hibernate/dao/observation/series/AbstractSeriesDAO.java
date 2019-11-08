@@ -45,6 +45,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
@@ -1295,6 +1296,23 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             }
         }
         return null;
+    }
+
+    public List<DatasetEntity> delete(ProcedureEntity procedure, Session session) {
+        List<DatasetEntity> series = getSeries(procedure.getIdentifier(), null, null, null, session);
+        if (series != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("delete ");
+            builder.append(DatasetEntity.class.getSimpleName());
+            builder.append(" where ").append(DatasetEntity.PROPERTY_PROCEDURE).append(" = :")
+                    .append(DatasetEntity.PROPERTY_PROCEDURE);
+            Query<?> q = session.createQuery(builder.toString());
+            q.setParameter(DatasetEntity.PROPERTY_PROCEDURE, procedure);
+            int executeUpdate = q.executeUpdate();
+            LOGGER.debug("{} datasets were physically deleted!", executeUpdate);
+            session.flush();
+        }
+        return series;
     }
 
 }

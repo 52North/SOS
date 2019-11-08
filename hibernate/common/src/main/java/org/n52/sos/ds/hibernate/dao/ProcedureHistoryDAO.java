@@ -36,6 +36,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.series.db.beans.FormatEntity;
@@ -102,6 +103,19 @@ public class ProcedureHistoryDAO {
      */
     public void update(ProcedureHistoryEntity validProcedureTime, Session session) {
         session.saveOrUpdate(validProcedureTime);
+    }
+
+    public void delete(ProcedureEntity procedure, Session session) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("delete ");
+        builder.append(ProcedureHistoryEntity.class.getSimpleName());
+        builder.append(" where ").append(ProcedureHistoryEntity.PROPERTY_PROCEDURE).append(" = :")
+                .append(ProcedureHistoryEntity.PROPERTY_PROCEDURE);
+        Query<?> q = session.createQuery(builder.toString());
+        q.setParameter(ProcedureHistoryEntity.PROPERTY_PROCEDURE, procedure);
+        int executeUpdate = q.executeUpdate();
+        LOGGER.debug("{} datasets were physically deleted!", executeUpdate);
+        session.flush();
     }
 
     /**

@@ -38,6 +38,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.hibernate.sql.JoinType;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DatasetEntity;
@@ -387,6 +388,20 @@ public class ResultTemplateDAO {
         } catch (final XmlException e) {
             throw new XmlDecodingException("XML string", xmlString, e);
         }
+    }
+
+    public void delete(ProcedureEntity procedure, Session session) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("delete ");
+        builder.append(ResultTemplateEntity.class.getSimpleName());
+        builder.append(" where ").append(ResultTemplateEntity.PROPERTY_PROCEDURE).append(" = :")
+                .append(ResultTemplateEntity.PROPERTY_PROCEDURE);
+        Query<?> q = session.createQuery(builder.toString());
+        q.setParameter(ResultTemplateEntity.PROPERTY_PROCEDURE, procedure);
+        int executeUpdate = q.executeUpdate();
+        LOGGER.debug("{} result templates were physically deleted!", executeUpdate);
+        session.flush();
+
     }
 
 }

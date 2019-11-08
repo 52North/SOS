@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -763,6 +764,22 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
             if (latestDataEntity != null) {
                 offering.setSamplingTimeEnd(latestDataEntity.getSamplingTimeEnd());
             }
+        }
+    }
+
+    public void delete(Collection<OfferingEntity> offerings, Session session) throws OwsExceptionReport {
+        if (offerings != null && !offerings.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("delete ");
+            builder.append(OfferingEntity.class.getSimpleName());
+            builder.append(" where ").append(OfferingEntity.PROPERTY_ID).append(" in :")
+                    .append(OfferingEntity.PROPERTY_ID);
+            Query<?> q = session.createQuery(builder.toString());
+            q.setParameter(OfferingEntity.PROPERTY_ID,
+                    offerings.stream().map(OfferingEntity::getId).collect(Collectors.toSet()));
+            int executeUpdate = q.executeUpdate();
+            LOGGER.debug("{} offerings were physically deleted!", executeUpdate);
+            session.flush();
         }
     }
 

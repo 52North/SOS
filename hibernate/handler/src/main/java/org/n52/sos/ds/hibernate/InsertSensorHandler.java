@@ -102,7 +102,7 @@ import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.RelatedFeatureDAO;
-import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureHistoryDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationPersister;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
@@ -167,7 +167,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                         assignedProcedureID, procedureDescriptionFormat, request.getProcedureDescription(),
                         request.isType(), session);
                 // TODO: set correct validTime,
-                new ValidProcedureTimeDAO(getDaoFactory()).insertValidProcedureTime(hProcedure,
+                new ProcedureHistoryDAO(getDaoFactory()).insert(hProcedure,
                         procedureDescriptionFormat,
                         getSensorDescriptionFromProcedureDescription(request.getProcedureDescription()),
                         new DateTime(DateTimeZone.UTC), session);

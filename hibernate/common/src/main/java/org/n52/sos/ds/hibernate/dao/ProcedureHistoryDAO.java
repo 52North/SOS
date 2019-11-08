@@ -53,21 +53,19 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Maps;
-
 /**
  * Hibernate data access class for valid procedure time
  *
  * @author CarstenHollmann
  * @since 4.0.0
  */
-public class ValidProcedureTimeDAO {
+public class ProcedureHistoryDAO {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidProcedureTimeDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureHistoryDAO.class);
 
     private final DaoFactory daoFactory;
 
-    public ValidProcedureTimeDAO(DaoFactory daoFactory) {
+    public ProcedureHistoryDAO(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
     }
 
@@ -84,7 +82,7 @@ public class ValidProcedureTimeDAO {
      *            Hibernate session
      * @return
      */
-    public ProcedureHistoryEntity insertValidProcedureTime(ProcedureEntity procedure,
+    public ProcedureHistoryEntity insert(ProcedureEntity procedure,
             FormatEntity procedureDescriptionFormat, String xmlDescription, DateTime validStartTime, Session session) {
         ProcedureHistoryEntity vpd = new ProcedureHistoryEntity();
         vpd.setProcedure(procedure);
@@ -105,7 +103,7 @@ public class ValidProcedureTimeDAO {
      * @param session
      *            Hibernate session
      */
-    public void updateValidProcedureTime(ProcedureHistoryEntity validProcedureTime, Session session) {
+    public void update(ProcedureHistoryEntity validProcedureTime, Session session) {
         session.saveOrUpdate(validProcedureTime);
     }
 
@@ -121,7 +119,7 @@ public class ValidProcedureTimeDAO {
      * @throws UnsupportedValueReferenceException If an error occurs
      * @throws UnsupportedTimeException If an error occurs
      */
-    public void setValidProcedureDescriptionEndTime(String procedureIdentifier, String procedureDescriptionFormat,
+    public void setEndTime(String procedureIdentifier, String procedureDescriptionFormat,
             Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         ProcedureEntity procedure = new ProcedureDAO(daoFactory).getProcedureForIdentifier(procedureIdentifier,
@@ -143,7 +141,7 @@ public class ValidProcedureTimeDAO {
      * @param session
      *            Hibernate session
      */
-    public void setValidProcedureDescriptionEndTime(String procedureIdentifier, Session session) {
+    public void setEndTime(String procedureIdentifier, Session session) {
         ProcedureEntity procedure =
                 new ProcedureDAO(daoFactory).getProcedureForIdentifierIncludeDeleted(procedureIdentifier, session);
         Set<ProcedureHistoryEntity> validProcedureTimes = procedure.getProcedureHistory();
@@ -172,7 +170,7 @@ public class ValidProcedureTimeDAO {
      *             If temporal operator is not supported
      */
     @SuppressWarnings("unchecked")
-    public List<ProcedureHistoryEntity> getValidProcedureTimes(ProcedureEntity procedure,
+    public List<ProcedureHistoryEntity> get(ProcedureEntity procedure,
             String procedureDescriptionFormat, Time validTime, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Criteria criteria = session.createCriteria(ProcedureHistoryEntity.class);
@@ -196,7 +194,7 @@ public class ValidProcedureTimeDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ProcedureHistoryEntity> getValidProcedureTimes(ProcedureEntity procedure,
+    public List<ProcedureHistoryEntity> get(ProcedureEntity procedure,
             Set<String> possibleProcedureDescriptionFormats, Time validTime, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Criteria criteria = session.createCriteria(ProcedureHistoryEntity.class);

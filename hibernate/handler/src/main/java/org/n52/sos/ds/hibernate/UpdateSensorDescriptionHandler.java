@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
 import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
+import org.n52.sos.ds.hibernate.dao.ProcedureHistoryDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
@@ -101,15 +101,15 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
                 FormatEntity procedureDescriptionFormat = new DaoFactory().getProcedureDescriptionFormatDAO()
                         .getFormatEntityObject(request.getProcedureDescriptionFormat(), session);
                 Set<ProcedureHistoryEntity> procedureHistories = procedure.getProcedureHistory();
-                ValidProcedureTimeDAO procedureHistroyDAO = daoFactory.getValidProcedureTimeDAO();
+                ProcedureHistoryDAO procedureHistroyDAO = daoFactory.getProcedureHistoryDAO();
                 for (ProcedureHistoryEntity procedureHistroy : procedureHistories) {
                     if (procedureHistroy.getFormat().getFormat().equals(procedureDescriptionFormat.getFormat())
                             && procedureHistroy.getEndTime() == null) {
                         procedureHistroy.setEndTime(currentTime.toDate());
-                        procedureHistroyDAO.updateValidProcedureTime(procedureHistroy, session);
+                        procedureHistroyDAO.update(procedureHistroy, session);
                     }
                 }
-                procedureHistroyDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
+                procedureHistroyDAO.insert(procedure, procedureDescriptionFormat,
                         getSensorDescriptionFromProcedureDescription(procedureDescription), currentTime, session);
             }
             session.flush();

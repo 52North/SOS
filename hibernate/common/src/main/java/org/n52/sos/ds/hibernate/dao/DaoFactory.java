@@ -237,9 +237,8 @@ public class DaoFactory {
         return new FeatureOfInterestDAO(this);
     }
 
-    @Deprecated
-    public ValidProcedureTimeDAO getValidProcedureTimeDAO() {
-        return new ValidProcedureTimeDAO(this);
+    public ProcedureHistoryDAO getProcedureHistoryDAO() {
+        return new ProcedureHistoryDAO(this);
     }
 
     public RelatedFeatureDAO getRelatedFeatureDAO() {

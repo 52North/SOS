@@ -187,8 +187,8 @@ public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorD
         List<SosProcedureDescription<?>> list = Lists.newLinkedList();
         if (procedure != null) {
             if (procedure.hasProcedureHistory()) {
-                for (ProcedureHistoryEntity validProcedureTime : daoFactory.getValidProcedureTimeDAO()
-                        .getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats, request.getValidTime(),
+                for (ProcedureHistoryEntity validProcedureTime : daoFactory.getProcedureHistoryDAO()
+                        .get(procedure, possibleProcedureDescriptionFormats, request.getValidTime(),
                                 session)) {
                     SosProcedureDescription<?> sosProcedureDescription =
                             procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure,

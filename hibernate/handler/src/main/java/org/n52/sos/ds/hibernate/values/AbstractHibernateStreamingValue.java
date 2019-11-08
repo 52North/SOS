@@ -50,6 +50,7 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
+import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -198,21 +199,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     public void setTemporalFilterCriterion(Criterion temporalFilterCriterion) {
         this.temporalFilterCriterion = temporalFilterCriterion;
 
-    }
-
-    /**
-     * Create a {@link TimeValuePair} from {@link DataEntity}
-     *
-     * @param abstractValue
-     *            {@link DataEntity} to create
-     *            {@link TimeValuePair} from
-     * @return resulting {@link TimeValuePair}
-     * @throws OwsExceptionReport
-     *             If an error occurs when getting the value
-     */
-    protected TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
-        return new TimeValuePair(createPhenomenonTime(abstractValue),
-                new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(abstractValue));
     }
 
     /**
@@ -366,6 +352,30 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         return namedValue;
     }
 
+    /**
+     * Create a {@link TimeValuePair} from {@link DataEntity}
+     *
+     * @param abstractValue
+     *            {@link DataEntity} to create
+     *            {@link TimeValuePair} from
+     * @return resulting {@link TimeValuePair}
+     * @throws OwsExceptionReport
+     *             If an error occurs when getting the value
+     */
+    protected TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
+        return new TimeValuePair(createPhenomenonTime(abstractValue),
+                new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(abstractValue));
+    }
+
+    protected NamedValue<?> createDetectionLimit(DetectionLimitEntity detectionLimit, UoM uoM) {
+        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
+        final ReferenceType referenceType =
+                new ReferenceType(detectionLimit.getFlag() > 0 ? "exceed limit" : "below limit");
+        namedValue.setName(referenceType);
+        namedValue.setValue(new QuantityValue(detectionLimit.getDetectionLimit(), uoM));
+        return namedValue;
+    }
+
     public DaoFactory getDaoFactory() {
         return daoFactory;
     }
@@ -412,6 +422,9 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                         .isSetUnit()) {
             value.setUnit(((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
                     .getUnit());
+        }
+        if (!value.isSetValue() && o.hasDetectionLimit()) {
+            observation.addParameter(createDetectionLimit(o.getDetectionLimit(), value.getUnitObject()));
         }
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));

@@ -188,21 +188,21 @@ No printer friendly documentation exist for this release. Instead, refer to the 
 
 ## Support
 
-You can get support in the community mailing list:
+You can get support via the community mailing list:
 
     https://list.52north.org/mailman/listinfo/sensorweb/
 
 ## License
 
-The 52N SOS is licenses under the [GNU General Public License v2 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html).
+The 52N SOS is licensed under the [GNU General Public License v2 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html).
 
-The used 3rd party libraries and under which they are licensed is listed in the [NOITICE file](https://github.com/52North/SOS/blob/develop/NOTICE)
+The 3rd party libraries used and their licenses are listed in the [NOITICE file](https://github.com/52North/SOS/blob/develop/NOTICE)
 
 ## Contribute
 
-You are interesting in contributing the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
+Are you are interested in contributing to the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
 
-In that case we need your official permission and for this purpose we have a so called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
+In that case we need your official permission. For this purpose we have a so-called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
 
 A link to the contributors license agreement and further explanations are available here: 
 

@@ -38,9 +38,10 @@ import javax.inject.Inject;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -115,9 +116,9 @@ public class SensorDescriptionController extends AbstractAdminController {
     @Inject
     private Optional<ProcedureFormatDAO> dao;
     @Inject
-    private ContentCacheController contentCacheController;
+    private Optional<RequestOperatorRepository> requestOperatorRepository = Optional.empty();
     @Inject
-    private BindingRepository bindingRepository;
+    private Optional<BindingRepository> bindingRepository = Optional.empty();
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {
@@ -126,29 +127,35 @@ public class SensorDescriptionController extends AbstractAdminController {
         boolean getSoap = false;
         boolean update = false;
         boolean delete = false;
-        try {
-            for (Binding b : this.bindingRepository.getBindings().values()) {
-                if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {
-                    getKvp = true;
+        if (this.requestOperatorRepository.isPresent() && this.bindingRepository.isPresent()) {
+            try {
+                for (Binding b : this.bindingRepository.get().getBindings().values()) {
+                    if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {
+                        getKvp = true;
+                    }
+                    if (checkRequestOperator(UPDATE_SENSOR_DECODER_KEY_KVP)
+                            && b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_KVP)) {
+                        update = true;
+                    }
+                    if (checkRequestOperator(DELETE_SENSOR_DECODER_KEY_KVP)
+                            && b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_KVP)) {
+                        delete = true;
+                    }
+                    if (b.checkOperationHttpPostSupported(DESCRIBE_SENSOR_DECODER_KEY_SOAP)) {
+                        getSoap = true;
+                    }
+                    if (checkRequestOperator(UPDATE_SENSOR_DECODER_KEY_SOAP)
+                            && b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_SOAP)) {
+                        update = true;
+                    }
+                    if (checkRequestOperator(DELETE_SENSOR_DECODER_KEY_SOAP)
+                            && b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_SOAP)) {
+                        delete = true;
+                    }
                 }
-                if (b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_KVP)) {
-                    update = true;
-                }
-                if (b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_KVP)) {
-                    delete = true;
-                }
-                if (b.checkOperationHttpPostSupported(DESCRIBE_SENSOR_DECODER_KEY_SOAP)) {
-                    getSoap = true;
-                }
-                if (b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_SOAP)) {
-                    update = true;
-                }
-                if (b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_SOAP)) {
-                    delete = true;
-                }
+            } catch (HTTPException ex) {
+                log.error("Error requesting DCP for operation.", ex);
             }
-        } catch (HTTPException ex) {
-            log.error("Error requesting DCP for operation.", ex);
         }
 
         if (getKvp) {
@@ -166,6 +173,11 @@ public class SensorDescriptionController extends AbstractAdminController {
             model.put(PROCEDURE_FORMAT_MAP, this.dao.get().getProcedureFormatMap());
         }
         return new ModelAndView(ControllerConstants.Views.ADMIN_SENSOR_DESCRIPTIONS, model);
+    }
+
+    private boolean checkRequestOperator(OperationDecoderKey odk) {
+        return requestOperatorRepository.get()
+                .isActive(new RequestOperatorKey(odk.getService(), odk.getVersion(), odk.getOperation(), false));
     }
 
     @ResponseBody

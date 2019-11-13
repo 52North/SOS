@@ -295,7 +295,7 @@
 			var self = this;
 			this.$loadCurrent.disabled();
 			$.ajax({
-				url: this.baseUrl + "sos/kvp?",
+				url: this.baseUrl + "service?",
 				type: "GET",
 				dataType: "xml",
 				data: { service: "SOS", request: "GetCapabilities" }

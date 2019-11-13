@@ -147,19 +147,19 @@ $.extend(Descriptons.prototype, {
 	},
 	_sendSoapRequest: function(req, success, error) {
 		$.ajax({
-			type: "POST", url: baseUrl + "sos/soap", context: this,
+			type: "POST", url: baseUrl + "service", context: this,
 			contentType: "application/soap+xml", dataType: "xml", data: xml2string(req)
 		}).done(success).fail(error);
 	},
 	_sendPoxRequest: function(req, success, error) {
 		$.ajax({
-			type: "POST", url: baseUrl + "sos/pox", context: this,
+			type: "POST", url: baseUrl + "service", context: this,
 			contentType: "application/xml", dataType: "xml", data: xml2string(req)
 		}).done(success).fail(error);
 	},
 	_sendKvpRequest: function(req, success, error) {
 		$.ajax({
-			type: "GET", url: baseUrl + "sos/kvp?",
+			type: "GET", url: baseUrl + "service?",
 			context: this, data: req, dataType: "xml"
 		}).done(success).fail(error);
 	},

@@ -107,9 +107,6 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     @Inject
     private CapabilitiesExtensionService capabilitiesExtensionService;
 
-    @Inject
-    private SosObservationOfferingExtensionRepository offeringExtensionRepository;
-
     /**
      * Get the contents for SOS 1.0.0 capabilities
      *
@@ -274,8 +271,8 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                                     // add offering to observation offering
                                     addSosOfferingToObservationOffering(offering, sosObservationOffering, request);
                                     // add offering extension
-                                    if (offeringExtensionRepository.hasOfferingExtensionProviderFor(request)) {
-                                        offeringExtensionRepository.getOfferingExtensionProvider(request).stream()
+                                    if (getOfferingExtensionRepository().hasOfferingExtensionProviderFor(request)) {
+                                        getOfferingExtensionRepository().getOfferingExtensionProvider(request).stream()
                                                 .filter(Objects::nonNull)
                                                 .filter(provider -> provider
                                                         .hasExtendedOfferingFor(offering.getIdentifier()))
@@ -349,9 +346,9 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                     addSosOfferingToObservationOffering(entry.getKey(), sosObservationOffering,
                             sectionSpecificContentObject.getGetCapabilitiesRequest());
                     // add offering extension
-                    if (offeringExtensionRepository.hasOfferingExtensionProviderFor(
+                    if (getOfferingExtensionRepository().hasOfferingExtensionProviderFor(
                             sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                        offeringExtensionRepository
+                        getOfferingExtensionRepository()
                                 .getOfferingExtensionProvider(sectionSpecificContentObject.getGetCapabilitiesRequest())
                                 .stream().filter(Objects::nonNull)
                                 .filter(provider -> provider.hasExtendedOfferingFor(entry.getKey().getIdentifier()))

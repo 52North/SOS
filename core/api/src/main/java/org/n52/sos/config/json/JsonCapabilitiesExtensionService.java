@@ -249,7 +249,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
             if (!node.has(identifier)) {
                 throw new NoSuchExtensionException(identifier);
             } else {
-                node.with(identifier).put(JsonConstants.DISABLED, true);
+                node.with(identifier).put(JsonConstants.DISABLED, disabled);
             }
         } finally {
             writeLock().unlock();
@@ -280,17 +280,19 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
             throws NoSuchExtensionException {
         writeLock().lock();
         try {
-            JsonNode node
-                    = getConfiguration()
-                            .path(JsonConstants.STATIC_CAPABILITIES)
-                            .path(JsonConstants.CAPABILITIES)
-                            .path(identifier);
-            if (node.isMissingNode() || node.isNull()) {
-                throw new NoSuchExtensionException(identifier);
-            }
+            if (identifier != null && !identifier.isEmpty()) {
+                JsonNode node
+                        = getStaticCapabilitiesJsonNode()
+                                .path(identifier);
+                if (node.isMissingNode() || node.isNull()) {
+                    throw new NoSuchExtensionException(identifier);
+                }
 
-            getConfiguration().with(JsonConstants.STATIC_CAPABILITIES)
-                    .put(JsonConstants.ACTIVE, identifier);
+                getConfiguration().with(JsonConstants.STATIC_CAPABILITIES)
+                        .put(JsonConstants.ACTIVE, identifier);
+            } else {
+                getConfiguration().with(JsonConstants.STATIC_CAPABILITIES).remove(JsonConstants.ACTIVE);
+            }
         } finally {
             writeLock().unlock();
         }
@@ -313,9 +315,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         readLock().lock();
         try {
             String id = getActiveStaticCapabilities();
-            return id == null ? null : getConfiguration()
-                    .path(JsonConstants.STATIC_CAPABILITIES)
-                    .path(JsonConstants.CAPABILITIES)
+            return id == null ? null : getStaticCapabilitiesJsonNode()
                     .path(id)
                     .textValue();
         } finally {
@@ -339,7 +339,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
         readLock().lock();
         try {
             JsonNode node =
-                    getConfiguration().path(JsonConstants.STATIC_CAPABILITIES).path(JsonConstants.CAPABILITIES);
+                    getStaticCapabilitiesJsonNode();
             return createEntryStream(node).collect(
                     toMap(Entry::getKey, e -> new StaticCapabilitiesImpl(e.getKey(), e.getValue().textValue())));
         } finally {
@@ -351,9 +351,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
     public StaticCapabilities getStaticCapabilities(String id) {
         readLock().lock();
         try {
-            String value = getConfiguration()
-                    .path(JsonConstants.STATIC_CAPABILITIES)
-                    .path(JsonConstants.CAPABILITIES)
+            String value = getStaticCapabilitiesJsonNode()
                     .path(id)
                     .textValue();
             return value == null ? null : new StaticCapabilitiesImpl(id, value);
@@ -366,10 +364,8 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
     public void saveStaticCapabilities(String identifier, String document) {
         writeLock().lock();
         try {
-            getConfiguration()
-                    .with(JsonConstants.STATIC_CAPABILITIES)
-                    .with(JsonConstants.CAPABILITIES)
-                    .put(identifier, document);
+            getStaticCapabilitiesObjectNode()
+                .put(identifier, document);
         } finally {
             writeLock().unlock();
         }
@@ -380,8 +376,7 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
     public void deleteStaticCapabilities(String identifier) throws NoSuchExtensionException {
         writeLock().lock();
         try {
-            JsonNode removed = getConfiguration()
-                    .with(JsonConstants.STATIC_CAPABILITIES)
+            JsonNode removed = getStaticCapabilitiesObjectNode()
                     .remove(identifier);
             if (removed == null) {
                 throw new NoSuchExtensionException(identifier);
@@ -390,6 +385,18 @@ public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements
             writeLock().unlock();
         }
         configuration().scheduleWrite();
+    }
+
+    private ObjectNode getStaticCapabilitiesObjectNode() {
+        return  getConfiguration()
+                .with(JsonConstants.STATIC_CAPABILITIES)
+                .with(JsonConstants.CAPABILITIES);
+    }
+
+    private JsonNode getStaticCapabilitiesJsonNode() {
+        return  getConfiguration()
+                .path(JsonConstants.STATIC_CAPABILITIES)
+                .path(JsonConstants.CAPABILITIES);
     }
 
     private static <T extends Extension<?>> Collector<T, ?, Map<String, T>> swesExtensionCollector() {

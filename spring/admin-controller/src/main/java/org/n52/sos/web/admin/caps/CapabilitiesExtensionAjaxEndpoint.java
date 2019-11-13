@@ -66,7 +66,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     public String getCapabilitiesExtensions() {
         ObjectNode response = Json.nodeFactory().objectNode();
         Map<String, StringBasedCapabilitiesExtension> capabilitiesExtensions =
-                getCapabilitiesExtensionService().getActiveCapabilitiesExtensions();
+                getCapabilitiesExtensionService().getAllCapabilitiesExtensions();
         for (Entry<String, StringBasedCapabilitiesExtension> entry : capabilitiesExtensions.entrySet()) {
             response.set(entry.getKey(), toJson(entry.getValue()));
         }
@@ -86,7 +86,7 @@ public class CapabilitiesExtensionAjaxEndpoint extends AbstractAdminCapabiltiesA
     public String getCapabilitiesExtension(@PathVariable("identifier") String identifier)
             throws NoSuchIdentifierException {
         StringBasedCapabilitiesExtension ce =
-                getCapabilitiesExtensionService().getActiveCapabilitiesExtensions().get(identifier);
+                getCapabilitiesExtensionService().getAllCapabilitiesExtensions().get(identifier);
         if (ce == null) {
             throw new NoSuchIdentifierException(identifier);
         }

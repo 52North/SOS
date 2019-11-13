@@ -397,7 +397,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
          * for the request
          */
         OwsOperationMetadataExtensionProvider provider =
-                owsExtendedCapabilitiesProviderRepository.getExtendedCapabilitiesProvider(service, version);
+                getOwsExtendedCapabilitiesProviderRepository().getExtendedCapabilitiesProvider(service, version);
         if (provider != null && provider.hasExtendedCapabilitiesFor(request)) {
             owsExtendedCapabilities = provider.getOwsExtendedCapabilities(request);
         }
@@ -645,7 +645,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
     private List<OwsCapabilitiesExtension> getAndMergeExtensions(String service, String version)
             throws OwsExceptionReport {
         List<OwsCapabilitiesExtensionProvider> providers =
-                capabilitiesExtensionRepository.getCapabilitiesExtensionProvider(service, version);
+                getCapabilitiesExtensionRepository().getCapabilitiesExtensionProvider(service, version);
         List<OwsCapabilitiesExtension> extensions = new LinkedList<>();
         if (CollectionHelper.isNotEmpty(providers)) {
             Map<String, MergableExtension> map = new HashMap<>(providers.size());

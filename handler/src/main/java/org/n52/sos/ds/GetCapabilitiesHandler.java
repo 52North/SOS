@@ -85,7 +85,6 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.OMHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.config.CapabilitiesExtensionService;
-import org.n52.sos.ogc.sos.SosObservationOfferingExtensionRepository;
 import org.n52.sos.util.I18NHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +120,6 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         Session session = null;
         try {
             session = sessionStore.getSession();
-            String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
             Collection<OfferingEntity> offerings =
                     new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
             List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());

@@ -66,7 +66,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
-			<artifactId>gt-api</artifactId>
+			<artifactId>gt-main</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>java3d</groupId>

@@ -85,7 +85,7 @@ public final class H2Configuration implements ConnectionProvider {
 
     private static final String H2_DRIVER = "org.h2.Driver";
 
-    private static final String H2_CONNECTION_URL = "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;MULTI_THREADED=true";
+    private static final String H2_CONNECTION_URL = "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1";
 
     private static final String DB_INITIALIZED = "Database is not initialized";
 

@@ -89,6 +89,10 @@ public final class H2Configuration implements ConnectionProvider {
 
     private static final String DB_INITIALIZED = "Database is not initialized";
 
+    private static final String SET_REFERENTIAL_INTEGRITY_FALSE = "SET REFERENTIAL_INTEGRITY FALSE";
+
+    private static final String SET_REFERENTIAL_INTEGRITY_TRUE = "SET REFERENTIAL_INTEGRITY TRUE";
+
     private static SchemaExport schemaExport;
 
     private static Metadata metadata;
@@ -206,7 +210,7 @@ public final class H2Configuration implements ConnectionProvider {
             try {
                 session = getSession();
                 transaction = session.beginTransaction();
-                schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.DROP, metadata);
+                session.createSQLQuery("DROP ALL OBJECTS").executeUpdate();
                 schemaExport.execute(EnumSet.of(TargetType.DATABASE), Action.CREATE, metadata);
                 transaction.commit();
             } catch (final Exception e) {
@@ -238,11 +242,11 @@ public final class H2Configuration implements ConnectionProvider {
                 transaction = session.beginTransaction();
                 session.doWork(connection -> {
                     try (Statement stmt = connection.createStatement()) {
-                        stmt.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
+                        stmt.addBatch(SET_REFERENTIAL_INTEGRITY_FALSE);
                         for (String table : tableNames) {
                             stmt.addBatch("DELETE FROM " + table);
                         }
-                        stmt.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
+                        stmt.addBatch(SET_REFERENTIAL_INTEGRITY_TRUE);
                         stmt.executeBatch();
                     }
                 });

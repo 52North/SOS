@@ -88,7 +88,7 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <artifactId>hamcrest-all</artifactId>
+            <artifactId>hamcrest</artifactId>
             <groupId>org.hamcrest</groupId>
             <scope>compile</scope>
         </dependency>

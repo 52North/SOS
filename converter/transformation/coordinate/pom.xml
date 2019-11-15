@@ -45,6 +45,11 @@
             <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
             <classifier>tests</classifier>
@@ -57,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
+            <artifactId>hamcrest</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

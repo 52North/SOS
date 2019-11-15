@@ -84,6 +84,8 @@ This project includes:
   52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
   Animal Sniffer Annotations under MIT license
   AntLR Parser Generator under BSD License
+  Apache Ant Core under The Apache Software License, Version 2.0
+  Apache Ant Launcher under The Apache Software License, Version 2.0
   Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
   Apache Commons Compress under Apache License, Version 2.0
@@ -92,7 +94,9 @@ This project includes:
   Apache Commons Lang under Apache License, Version 2.0
   Apache Commons Text under Apache License, Version 2.0
   Apache FontBox under Apache License, Version 2.0
-  Apache FOP under The Apache Software License, Version 2.0
+  Apache FOP Core under The Apache Software License, Version 2.0
+  Apache FOP Events under The Apache Software License, Version 2.0
+  Apache FOP Utilities under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpClient Cache under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
@@ -111,23 +115,7 @@ This project includes:
   AWS Java SDK for Amazon S3 under Apache License, Version 2.0
   AWS Java SDK for AWS KMS under Apache License, Version 2.0
   AWS SDK for Java - Core under Apache License, Version 2.0
-  Batik animation engine under The Apache Software License, Version 2.0
-  Batik AWT utilities under The Apache Software License, Version 2.0
-  Batik bridge classes under The Apache Software License, Version 2.0
-  Batik constants library under The Apache Software License, Version 2.0
-  Batik CSS engine under The Apache Software License, Version 2.0
-  Batik DOM implementation under The Apache Software License, Version 2.0
-  Batik extension classes under The Apache Software License, Version 2.0
-  Batik external code under The Apache Software License, Version 2.0
-  Batik GVT (Graphics Vector Tree) under The Apache Software License, Version 2.0
-  Batik i18n library under The Apache Software License, Version 2.0
-  Batik Java2D SVG generator under The Apache Software License, Version 2.0
-  Batik scripting language classes under The Apache Software License, Version 2.0
-  Batik SVG DOM implementation under The Apache Software License, Version 2.0
-  Batik SVG microsyntax parser library under The Apache Software License, Version 2.0
-  Batik SVG transcoder classes under The Apache Software License, Version 2.0
-  Batik utility library under The Apache Software License, Version 2.0
-  Batik XML utility library under The Apache Software License, Version 2.0
+  axis under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm under (MIT-style) netCDF C library license
   cf4j under GNU Lesser General Public License
@@ -162,7 +150,6 @@ This project includes:
   Guava ListenableFuture only under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under Apache License, Version 2.0
   H2 Database Engine under MPL 2.0 or EPL 1.0
-  Hamcrest Core under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   HdrHistogram under Public Domain, per Creative Commons CC0
   Hibernate Commons Annotations under GNU Library General Public License v2.1 or later
@@ -200,8 +187,10 @@ This project includes:
   Java Native Access under LGPL, version 2.1 or ASL, version 2
   Java Property Utility under The Apache Software License, Version 2.0
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
+  Java(TM) EE 7 Specification APIs under CDDL + GPLv2 with classpath exception
   JavaBeans Activation Framework API jar under CDDL/GPLv2+CE
   JavaBeans(TM) Activation Framework under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+  JavaMail API under CDDL/GPLv2+CE
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
@@ -295,11 +284,29 @@ This project includes:
   Old JAXB Core under CDDL 1.1 or GPL2 w/ CPE
   Old JAXB Runtime under CDDL 1.1 or GPL2 w/ CPE
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
+  org.apache.xmlgraphics:batik-anim under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-awt-util under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-bridge under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-constants under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-css under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-dom under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-ext under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-extension under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-gvt under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-i18n under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-parser under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-script under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-svg-dom under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-svggen under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-transcoder under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-util under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-xml under The Apache Software License, Version 2.0
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.2 under BSD-2-Clause
   Protocol Buffers [Core] under 3-Clause BSD License
+  QDox under The Apache Software License, Version 2.0
   quartz under The Apache Software License, Version 2.0
   Referencing services under Lesser General Public License (LGPL)
   Saxon-HE under Mozilla Public License Version 2.0

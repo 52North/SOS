@@ -78,6 +78,11 @@
             <artifactId>javax.inject</artifactId>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

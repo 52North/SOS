@@ -32,7 +32,6 @@ import java.io.File;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
@@ -40,7 +39,6 @@ import org.hamcrest.Factory;
  * @since 4.0.0
  */
 public class Existing extends BaseMatcher<File> {
-    @Factory
     public static Existing existing() {
         return new Existing();
     }

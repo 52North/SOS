@@ -60,7 +60,6 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
-import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;

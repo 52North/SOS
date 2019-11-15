@@ -88,27 +88,27 @@
         <postgis.version>2.3.0</postgis.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.26</slf4j.version>
-        <hibernate.version>5.4.4.Final</hibernate.version>
+        <hibernate.version>5.4.8.Final</hibernate.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <hikaricp.version>3.3.1</hikaricp.version>
-        <geotools.version>21.2</geotools.version>
+        <geotools.version>22.0</geotools.version>
         <jackson.version>2.10.0</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.2.1.jre8</sqljdbc.version>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.2.0</arctic-sea.version>
+        <arctic-sea.version>7.3.0-SNAPSHOT</arctic-sea.version>
 
-        <dataset.api.version>2.0.1-alpha.8</dataset.api.version>
-        <dataset.dao.version>3.0.0-alpha.8</dataset.dao.version>
+        <dataset.api.version>2.0.1-SNAPSHOT</dataset.api.version>
+        <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-        <dataset.hibernate.version>1.0.0-alpha.8</dataset.hibernate.version>
+        <dataset.hibernate.version>1.0.0-SNAPSHOT</dataset.hibernate.version>
 
         <org.springframework.security.version>5.1.6.RELEASE</org.springframework.security.version>
         <org.springframework.version>5.1.9.RELEASE</org.springframework.version>
         <aspectj.version>1.9.4</aspectj.version>
-        <saxon.version>9.9.1-4</saxon.version>
+        <saxon.version>9.9.1-5</saxon.version>
         <elasticsearch.version>7.2.0</elasticsearch.version>
         <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
     </properties>
@@ -713,16 +713,16 @@
                  <artifactId>byte-buddy</artifactId>
                  <version>1.9.10</version>
             </dependency>
-               <dependency>
+            <dependency>
                 <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>1.3</version>
+                <artifactId>hamcrest</artifactId>
+                <version>2.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
-                <version>1.3</version>
+                <version>2.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -744,6 +744,11 @@
                 <groupId>javax.inject</groupId>
                 <artifactId>javax.inject</artifactId>
                 <version>1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>7.0</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -1456,7 +1461,7 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.199</version>
+                <version>1.4.200</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
@@ -1596,6 +1601,10 @@
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1621,6 +1630,10 @@
                     <exclusion>
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

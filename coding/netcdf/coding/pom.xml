@@ -48,6 +48,11 @@
             <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api-netcdf</artifactId>
         </dependency>

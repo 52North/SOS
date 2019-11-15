@@ -17,7 +17,7 @@
         <many-to-one name="series"
                      class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      foreign-key="observationSeriesFk">
-            <column
+            <column index="obsSeriesIdx"
                     name="seriesId"
                     not-null="true">
                    <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
@@ -67,7 +67,8 @@
         <many-to-one name="codespace"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
                      foreign-key="obsCodespaceIdentifierFk">
-            <column name="codespace">
+            <column name="codespace"
+                    index="obsCodespaceIdx">
                 <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
@@ -80,7 +81,8 @@
         <many-to-one name="codespaceName"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
                      foreign-key="obsCodespaceNameFk">
-            <column name="codespaceName">
+            <column name="codespaceName"
+                    index="obsCodespaceNameIdx">
                 <comment>The name of the observation, gml:name. Optional</comment>
             </column>
         </many-to-one>

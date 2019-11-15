@@ -17,7 +17,7 @@
         <many-to-one name="series"
                      class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      foreign-key="observationSeriesFk">
-            <column
+            <column index="obsSeriesIdx"
                     name="seriesId"
                     not-null="true">
                    <comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>

@@ -15,6 +15,7 @@
 ### Changes
   
   - Remove obsolete Oracle notes in Streaming settings.
+  - Update geotools version to 19.4
   
 ### Fixed issues
 

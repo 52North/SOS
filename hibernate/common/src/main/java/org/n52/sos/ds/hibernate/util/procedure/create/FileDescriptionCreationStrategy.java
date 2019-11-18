@@ -47,8 +47,7 @@ import com.google.common.base.Strings;
 /**
  * Strategy to create the {@link SosProcedureDescription} from a file.
  */
-public class FileDescriptionCreationStrategy
-        extends XmlStringDescriptionCreationStrategy {
+public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreationStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileDescriptionCreationStrategy.class);
 
@@ -56,8 +55,7 @@ public class FileDescriptionCreationStrategy
 
     @Override
     public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
-            HibernateProcedureCreationContext ctx, Session s)
-            throws OwsExceptionReport {
+            HibernateProcedureCreationContext ctx, Session s) throws OwsExceptionReport {
         try {
             SosProcedureDescription<?> desc =
                     new SosProcedureDescription<>(readXml(read(p.getDescriptionFile(), ctx), ctx));
@@ -84,14 +82,13 @@ public class FileDescriptionCreationStrategy
         return this.getClass().getResourceAsStream(builder.toString());
     }
 
-    private String read(String path, HibernateProcedureCreationContext ctx)
-            throws IOException {
+    private String read(String path, HibernateProcedureCreationContext ctx) throws IOException {
         InputStream stream = getDocumentAsStream(path, ctx);
         return StringHelper.convertStreamToString(stream);
     }
 
     @Override
     public boolean apply(ProcedureEntity p) {
-        return !Strings.isNullOrEmpty(p.getDescriptionFile());
+        return p != null && !Strings.isNullOrEmpty(p.getDescriptionFile());
     }
 }

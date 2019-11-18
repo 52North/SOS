@@ -49,27 +49,24 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-public class LinkedDescriptionCreationStrategy
-        implements DescriptionCreationStrategy {
+public class LinkedDescriptionCreationStrategy implements DescriptionCreationStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkedDescriptionCreationStrategy.class);
 
     @Override
     public boolean apply(ProcedureEntity p) {
-        return !Strings.isNullOrEmpty(p.getDescriptionFile()) && (p.getDescriptionFile().startsWith("http"));
+        return p != null && !Strings.isNullOrEmpty(p.getDescriptionFile())
+                && (p.getDescriptionFile().startsWith("http"));
     }
 
     @Override
     public SosProcedureDescription<?> create(ProcedureEntity p, String descriptionFormat, Locale i18n,
-            HibernateProcedureCreationContext ctx, Session s)
-            throws OwsExceptionReport {
+            HibernateProcedureCreationContext ctx, Session s) throws OwsExceptionReport {
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
-        return new SosProcedureDescriptionUnknownType(p.getIdentifier(),
-                p.getFormat().getFormat(), xml);
+        return new SosProcedureDescriptionUnknownType(p.getIdentifier(), p.getFormat().getFormat(), xml);
     }
 
-    private String loadDescriptionFromHttp(String descriptionFile)
-            throws OwsExceptionReport {
+    private String loadDescriptionFromHttp(String descriptionFile) throws OwsExceptionReport {
         InputStream is = null;
         Scanner scanner = null;
         try {
@@ -98,8 +95,7 @@ public class LinkedDescriptionCreationStrategy
         }
     }
 
-    private String checkXml(String xml)
-            throws DecodingException {
+    private String checkXml(String xml) throws DecodingException {
         XmlHelper.parseXmlString(xml);
         if (xml.startsWith("<?xml")) {
             return xml.substring(xml.indexOf(">") + 1);

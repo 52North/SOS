@@ -94,7 +94,7 @@ public class TransactionalRequestChecker {
 
         @Override
         public boolean apply(OwsServiceRequestContext ctx) {
-            return ctx.getToken().isPresent() && ctx.getToken().get().equals(this.token);
+            return ctx != null && ctx.getToken().isPresent() && ctx.getToken().get().equals(this.token);
         }
     }
 
@@ -110,7 +110,7 @@ public class TransactionalRequestChecker {
 
         @Override
         public boolean apply(OwsServiceRequestContext ctx) {
-            if (ctx.getIPAddress().isPresent()) {
+            if (ctx != null && ctx.getIPAddress().isPresent()) {
                 final IPAddress address;
                 if (ctx.getForwardedForChain().isPresent()) {
                     if (!this.allowedProxies.contains(ctx.getIPAddress().get())) {

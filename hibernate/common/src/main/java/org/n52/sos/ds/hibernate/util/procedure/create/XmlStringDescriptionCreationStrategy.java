@@ -60,7 +60,7 @@ public class XmlStringDescriptionCreationStrategy implements DescriptionCreation
 
     @Override
     public boolean apply(ProcedureEntity p) {
-        return !Strings.isNullOrEmpty(p.getDescriptionFile()) && p.getDescriptionFile().startsWith("<");
+        return p != null && !Strings.isNullOrEmpty(p.getDescriptionFile()) && p.getDescriptionFile().startsWith("<");
     }
 
     protected AbstractFeature readXml(String xml, HibernateProcedureCreationContext ctx) throws OwsExceptionReport {

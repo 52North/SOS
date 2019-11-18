@@ -172,7 +172,7 @@ public abstract class ProcedureDescriptionEnrichment implements I18NHelper {
             Predicate<ProcedureDescriptionEnrichment> {
         @Override
         public boolean apply(ProcedureDescriptionEnrichment input) {
-            return input.isApplicable();
+            return input != null && input.isApplicable();
         }
     }
 }

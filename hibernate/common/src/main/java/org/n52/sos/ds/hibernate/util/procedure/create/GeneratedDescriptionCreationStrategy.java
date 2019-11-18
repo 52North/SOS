@@ -55,7 +55,7 @@ public class GeneratedDescriptionCreationStrategy implements DescriptionCreation
 
     @Override
     public boolean apply(ProcedureEntity p) {
-        return Strings.isNullOrEmpty(p.getDescriptionFile());
+        return p != null && Strings.isNullOrEmpty(p.getDescriptionFile());
     }
 
     @VisibleForTesting

@@ -126,14 +126,16 @@ This project includes:
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
-  core under The Apache Software License, Version 2.0
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   dexx under MIT License
   dom4j under BSD 3-clause New License
   EJML under The Apache Software License, Version 2.0
   Elastic JNA Distribution under The Apache Software License, Version 2.0
   elasticsearch-cli under The Apache Software License, Version 2.0
+  elasticsearch-core under The Apache Software License, Version 2.0
   elasticsearch-geo under The Apache Software License, Version 2.0
+  elasticsearch-secure-sm under The Apache Software License, Version 2.0
+  elasticsearch-x-content under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   error-prone annotations under Apache 2.0
   EXIficient under MIT License
@@ -198,7 +200,7 @@ This project includes:
   JAXB Runtime under CDDL+GPL License
   jaxb-api under CDDL 1.1 or GPL2 w/ CPE
   JBoss Logging 3 under Apache License, version 2.0
-  JCL 1.2 implemented over SLF4J under MIT License
+  JCL 1.2 implemented over SLF4J under Apache License, Version 2.0
   JCommander under The Apache Software License, Version 2.0
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
@@ -310,7 +312,6 @@ This project includes:
   quartz under The Apache Software License, Version 2.0
   Referencing services under Lesser General Public License (LGPL)
   Saxon-HE under Mozilla Public License Version 2.0
-  secure-sm under The Apache Software License, Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0
   Series Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
   Series REST API - IO module under GNU General Public License, Version 2.0
@@ -355,7 +356,6 @@ This project includes:
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
-  x-content under The Apache Software License, Version 2.0
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   Xerces2-j under The Apache Software License, Version 2.0

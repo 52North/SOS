@@ -1950,7 +1950,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.7.v20170914</version>
+                    <version>9.4.22.v20191022</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

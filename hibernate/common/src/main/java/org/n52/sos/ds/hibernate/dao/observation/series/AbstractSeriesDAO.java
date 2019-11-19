@@ -1179,6 +1179,16 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     public DatasetEntity checkOrInsertSeries(ProcedureEntity procedure, PhenomenonEntity observableProperty,
+            OfferingEntity offering, CategoryEntity category, AbstractFeatureEntity<?> feature,
+            PlatformEntity platform, FormatEntity observationType, boolean b, Session session)
+            throws OwsExceptionReport {
+        ObservationContext ctx = new ObservationContext().setCategory(category).setOffering(offering)
+                .setPhenomenon(observableProperty).setProcedure(procedure).setFeatureOfInterest(feature)
+                .setPlatform(platform).setObservationType(observationType);
+        return getOrInsert(ctx, session);
+    }
+
+    public DatasetEntity checkOrInsertSeries(ProcedureEntity procedure, PhenomenonEntity observableProperty,
             OfferingEntity offering, CategoryEntity category, AbstractFeatureEntity feature, PlatformEntity platform,
             boolean parentOffering, Session session) throws OwsExceptionReport {
         ObservationContext ctx =

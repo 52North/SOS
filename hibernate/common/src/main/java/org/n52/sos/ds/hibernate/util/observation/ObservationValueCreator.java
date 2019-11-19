@@ -190,9 +190,11 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
     public SweDataArrayValue visit(DataArrayDataEntity o) throws OwsExceptionReport {
         try {
             SweDataArray array = new SweDataArray();
-            decode(XmlHelper.parseXmlString(o.getEncoding()));
-            array.setEncoding((SweAbstractEncoding) decode(XmlHelper.parseXmlString(o.getEncoding())));
-            array.setElementType((SweAbstractDataComponent) decode(XmlHelper.parseXmlString(o.getStructure())));
+            decode(XmlHelper.parseXmlString(o.getResultTemplate().getEncoding()));
+            array.setEncoding(
+                    (SweAbstractEncoding) decode(XmlHelper.parseXmlString(o.getResultTemplate().getEncoding())));
+            array.setElementType(
+                    (SweAbstractDataComponent) decode(XmlHelper.parseXmlString(o.getResultTemplate().getStructure())));
             if (o.isSetStringValue()) {
                 array.setXml(null);
                 List<List<String>> values = new LinkedList<>();
@@ -205,7 +207,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
                     values.add(v);
                 }
                 array.setValues(values);
-            } else if (o.getValue() != null && o.getValue().isEmpty()) {
+            } else if (o.getValue() != null && !o.getValue().isEmpty()) {
                 int i = ((SweAbstractDataRecord) array.getElementType())
                         .getFieldIndexByIdentifier(o.getDataset().getPhenomenon().getIdentifier()) == 0 ? 1 : 0;
                 List<List<String>> values = new LinkedList<>();

@@ -241,7 +241,7 @@ public class ResultTemplateDAO {
      *
      * @param request
      *            Insert result template request
-     * @param observationConstellation
+     * @param dataset
      *            Observation constellation object
      * @param procedure
      *            the procedure
@@ -249,20 +249,21 @@ public class ResultTemplateDAO {
      *            FeatureOfInterest object
      * @param session
      *            Hibernate session
+     * @return created or exiting {@link ResultTemplateEntity}
      * @throws OwsExceptionReport
      *             If the requested structure/encoding is invalid
      */
-    public void checkOrInsertResultTemplate(InsertResultTemplateRequest request,
-            DatasetEntity observationConstellation, ProcedureEntity procedure, AbstractFeatureEntity featureOfInterest,
-            Session session) throws OwsExceptionReport {
+    public ResultTemplateEntity checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity dataset,
+            ProcedureEntity procedure, AbstractFeatureEntity featureOfInterest, Session session)
+            throws OwsExceptionReport {
         try {
-            String offering = observationConstellation.getOffering().getIdentifier();
-            String observableProperty = observationConstellation.getObservableProperty().getIdentifier();
+            String offering = dataset.getOffering().getIdentifier();
+            String observableProperty = dataset.getObservableProperty().getIdentifier();
 
             List<ResultTemplateEntity> resultTemplates =
                     getResultTemplateObject(offering, observableProperty, null, session);
             if (CollectionHelper.isEmpty(resultTemplates)) {
-                createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest, session);
+                return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, session);
             } else {
                 List<String> storedIdentifiers = new ArrayList<>(0);
 
@@ -286,14 +287,31 @@ public class ResultTemplateDAO {
                 if (request.getIdentifier() != null && request.getIdentifier().isSetValue()
                         && !storedIdentifiers.contains(request.getIdentifier().getValue())) {
                     /* save it only if the identifier is different */
-                    createAndSaveResultTemplate(request, observationConstellation, procedure, featureOfInterest,
-                            session);
+                    return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, session);
                 }
-
+                return resultTemplates.iterator().next();
             }
         } catch (EncodingException | DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
+    }
+
+    /**
+     * Check or insert result template
+     *
+     * @param request
+     *            Insert result template request
+     * @param dataset
+     *            Observation constellation object
+     * @param session
+     *            Hibernate session
+     * @return created or exiting {@link ResultTemplateEntity}
+     * @throws OwsExceptionReport
+     *             If the requested structure/encoding is invalid
+     */
+    public ResultTemplateEntity checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity dataset,
+            Session session) throws OwsExceptionReport {
+        return checkOrInsertResultTemplate(request, dataset, dataset.getProcedure(), dataset.getFeature(), session);
     }
 
     /**
@@ -309,10 +327,11 @@ public class ResultTemplateDAO {
      *            FeatureOfInterest object
      * @param session
      *            Hibernate session
+     * @return created or exiting {@link ResultTemplateEntity}
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
+    private ResultTemplateEntity createAndSaveResultTemplate(final InsertResultTemplateRequest request,
             final DatasetEntity observationConstellation, ProcedureEntity procedure,
             final AbstractFeatureEntity featureOfInterest, final Session session) throws EncodingException {
         final ResultTemplateEntity resultTemplate = new ResultTemplateEntity();
@@ -341,6 +360,8 @@ public class ResultTemplateDAO {
 
         session.save(resultTemplate);
         session.flush();
+        session.refresh(resultTemplate);
+        return resultTemplate;
     }
 
     private SosResultEncoding createSosResultEncoding(String resultEncoding) throws DecodingException {

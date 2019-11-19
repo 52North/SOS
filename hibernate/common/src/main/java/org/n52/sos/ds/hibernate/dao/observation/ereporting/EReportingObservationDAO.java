@@ -44,6 +44,8 @@ import org.hibernate.criterion.Subqueries;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
+import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
@@ -240,6 +242,13 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
             }
         }
         return ctx;
+    }
+
+    @Override
+    protected DatasetEntity addObservationContextToObservation(ObservationContext ctx, DataEntity<?> observation,
+            Session session) throws OwsExceptionReport {
+        observation.setEreportingProfile(new EReportingProfileDataEntity());
+        return super.addObservationContextToObservation(ctx, observation, session);
     }
 
     @Override

@@ -45,6 +45,12 @@ import org.n52.shetland.util.CollectionHelper;
 
 public interface EReportingDaoHelper {
 
+    String SAMPLING_POINT_ASSOCIATION_PATH = DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDatasetEntity.SAMPLING_POINT;
+
+    String VALIDATION_ASSOCIATION_PATH = DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION;
+
+    String VERIFICATION_ASSOCIATION_PATH = DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION;
+
     default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request,
             StringBuilder logArgs) throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
@@ -52,13 +58,13 @@ public interface EReportingDaoHelper {
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 if (isSetValidityFlags()) {
                     c.add(Restrictions.in(
-                            DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION,
+                            VALIDATION_ASSOCIATION_PATH,
                             getValidityFlags()));
                     logArgs.append(", validationFlag");
                 }
                 if (isSetVerificationFlags()) {
                     c.add(Restrictions.in(
-                            DataEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION,
+                            VERIFICATION_ASSOCIATION_PATH,
                             getVerificationFlags()));
                     logArgs.append(", verification");
                 }
@@ -67,7 +73,7 @@ public interface EReportingDaoHelper {
     }
 
     default String getSamplingPointAssociationPath() {
-        return DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDatasetEntity.SAMPLING_POINT;
+        return SAMPLING_POINT_ASSOCIATION_PATH;
     }
 
     Set<Integer> getVerificationFlags();

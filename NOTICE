@@ -181,7 +181,7 @@ This project includes:
   Jackson-dataformat-YAML under The Apache Software License, Version 2.0
   Java Annotation Indexer under Apache License, Version 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
-  Java Native Access under LGPL, version 2.1 or ASL, version 2
+  Java Native Access under LGPL, version 2.1 or Apache License v2.0
   Java Property Utility under The Apache Software License, Version 2.0
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   Java(TM) EE 7 Specification APIs under CDDL + GPLv2 with classpath exception

@@ -1696,7 +1696,7 @@
             <dependency>
                 <groupId>edu.ucar</groupId>
                 <artifactId>cdm</artifactId>
-                <version>4.6.11</version>
+                <version>5.1.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.dataformat</groupId>

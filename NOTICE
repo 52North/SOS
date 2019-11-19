@@ -4,7 +4,6 @@ Licensed under GNU General Public License, Version 2.0
 
 This project includes: 
 
-  "Java Concurrency in Practice" book annotations under Creative Commons Attribution License, http://creativecommons.org/licenses/by/2.5
   52North REST-API PDF report structure under GNU General Public License, Version 2.0
   52°North Faroe under The Apache Software License, Version 2.0
   52°North Faroe Annotations under The Apache Software License, Version 2.0
@@ -112,19 +111,15 @@ This project includes:
   AspectJ weaver under Eclipse Public License - v 1.0
   Avalon Framework API under The Apache Software License, Version 2.0
   Avalon Framework Implementation under The Apache Software License, Version 2.0
-  AWS Java SDK for Amazon S3 under Apache License, Version 2.0
-  AWS Java SDK for AWS KMS under Apache License, Version 2.0
-  AWS SDK for Java - Core under Apache License, Version 2.0
   axis under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  cdm under (MIT-style) netCDF C library license
+  cdm-core under BSD 3-Clause License
   cf4j under GNU Lesser General Public License
   Checker Qual under The MIT License
   ClassLoader Leak Prevention library under Apache 2
   ClassLoader Leak Prevention library for servlet environments under Apache 2
   ClassMate under Apache License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
-  Commons Logging under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   dexx under MIT License
@@ -160,7 +155,7 @@ This project includes:
   Hibernate ORM - hibernate-spatial under GNU Library General Public License v2.1 or later
   HikariCP under The Apache Software License, Version 2.0
   HPPC Collections under The Apache Software License, Version 2.0
-  httpservices under (MIT-style) netCDF C library license
+  httpservices under BSD 3-Clause License
   HyperSQL Database under HSQLDB License, a BSD open source license
   INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
   INSPIRE Administrative Units schema (spec. v4.0) under The Apache Software License, Version 2.0
@@ -201,11 +196,10 @@ This project includes:
   jaxb-api under CDDL 1.1 or GPL2 w/ CPE
   JBoss Logging 3 under Apache License, version 2.0
   JCL 1.2 implemented over SLF4J under Apache License, Version 2.0
-  JCommander under The Apache Software License, Version 2.0
+  jcommander under Apache License, Version 2.0
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
-  JMES Path Query library under Apache License, Version 2.0
   Joda-Time under Apache License, Version 2.0
   JOpt Simple under The MIT License
   JSONLD Java :: Core under Revised BSD License
@@ -236,7 +230,7 @@ This project includes:
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, v2 with FOSS exception
   Neo Visionaries Internationalization Package under The Apache Software License, Version 2.0
-  netcdf4 under (MIT-style) netCDF C library license
+  netcdf4 under BSD 3-Clause License
   Netty/Buffer under Apache License, Version 2.0
   Netty/Codec under Apache License, Version 2.0
   Netty/Codec/HTTP under Apache License, Version 2.0
@@ -310,6 +304,7 @@ This project includes:
   Protocol Buffers [Core] under 3-Clause BSD License
   QDox under The Apache Software License, Version 2.0
   quartz under The Apache Software License, Version 2.0
+  RE2/J under Go License
   Referencing services under Lesser General Public License (LGPL)
   Saxon-HE under Mozilla Public License Version 2.0
   Series Database Model - Entities under The Apache Software License, Version 2.0
@@ -324,7 +319,6 @@ This project includes:
   SI Units for Java SE 8 under BSD
   SLF4J API Module under MIT License
   SnakeYAML under Apache License, Version 2.0
-  software.amazon.ion:ion-java under The Apache License, Version 2.0
   SpotBugs Annotations under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Spring AOP under Apache License, Version 2.0
   Spring Aspects under Apache License, Version 2.0
@@ -348,7 +342,7 @@ This project includes:
   StAX API under The Apache Software License, Version 2.0
   T-Digest under The Apache Software License, Version 2.0
   TXW2 Runtime under CDDL+GPL License
-  udunits under (MIT-style) netCDF C library license
+  udunits under BSD 3-Clause License
   Units of Measurement API under BSD
   Units of Measurement Common Library under BSD
   Units of Measurement Common Unit Systems for Java 8 under BSD

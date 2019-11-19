@@ -95,6 +95,7 @@
         <jackson.version>2.10.1</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.2.1.jre8</sqljdbc.version>
+        <version.netcdf>5.2.0</version.netcdf>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
@@ -255,6 +256,10 @@
                     <exclusion>
                         <groupId>com.fasterxml.jackson.dataformat</groupId>
                         <artifactId>jackson-dataformat-cbor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>net.java.dev.jna</groupId>
+                        <artifactId>jna</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1673,7 +1678,7 @@
             <dependency>
                 <groupId>edu.ucar</groupId>
                 <artifactId>netcdf4</artifactId>
-                <version>4.6.11</version>
+                <version>${version.netcdf}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>c3p0</groupId>
@@ -1695,8 +1700,8 @@
             </dependency>
             <dependency>
                 <groupId>edu.ucar</groupId>
-                <artifactId>cdm</artifactId>
-                <version>4.6.11</version>
+                <artifactId>cdm-core</artifactId>
+                <version>${version.netcdf}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -1752,7 +1757,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>4.2.2</version>
+                <version>5.5.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

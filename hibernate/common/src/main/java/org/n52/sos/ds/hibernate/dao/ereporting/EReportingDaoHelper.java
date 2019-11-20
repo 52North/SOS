@@ -32,7 +32,6 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDataEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
@@ -45,11 +44,14 @@ import org.n52.shetland.util.CollectionHelper;
 
 public interface EReportingDaoHelper {
 
-    String SAMPLING_POINT_ASSOCIATION_PATH = DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDatasetEntity.SAMPLING_POINT;
+    String SAMPLING_POINT_ASSOCIATION_PATH =
+            DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDatasetEntity.SAMPLING_POINT;
 
-    String VALIDATION_ASSOCIATION_PATH = DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION;
+    String VALIDATION_ASSOCIATION_PATH =
+            DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VALIDATION;
 
-    String VERIFICATION_ASSOCIATION_PATH = DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION;
+    String VERIFICATION_ASSOCIATION_PATH =
+            DatasetEntity.PROPERTY_EREPORTING_PROFILE + "." + EReportingProfileDataEntity.VERIFICATION;
 
     default void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request,
             StringBuilder logArgs) throws OwsExceptionReport {
@@ -57,15 +59,11 @@ public interface EReportingDaoHelper {
             ReportObligationType flow = ReportObligations.getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
                 if (isSetValidityFlags()) {
-                    c.add(Restrictions.in(
-                            VALIDATION_ASSOCIATION_PATH,
-                            getValidityFlags()));
+                    c.add(Restrictions.in(VALIDATION_ASSOCIATION_PATH, getValidityFlags()));
                     logArgs.append(", validationFlag");
                 }
                 if (isSetVerificationFlags()) {
-                    c.add(Restrictions.in(
-                            VERIFICATION_ASSOCIATION_PATH,
-                            getVerificationFlags()));
+                    c.add(Restrictions.in(VERIFICATION_ASSOCIATION_PATH, getVerificationFlags()));
                     logArgs.append(", verification");
                 }
             }

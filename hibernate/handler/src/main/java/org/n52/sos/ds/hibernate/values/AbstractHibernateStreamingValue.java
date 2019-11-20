@@ -104,11 +104,11 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHibernateStreamingValue.class);
 
-    protected final HibernateSessionHolder sessionHolder;
-
     protected final AbstractObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
+
+    private final HibernateSessionHolder sessionHolder;
 
     private final DaoFactory daoFactory;
 
@@ -141,7 +141,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (session == null) {
             session = sessionHolder.getSession();
         }
+
         return session;
+    }
+
+    protected void returnSession(Session session) {
+        this.session = null;
+        sessionHolder.returnSession(session);
     }
 
     @Override

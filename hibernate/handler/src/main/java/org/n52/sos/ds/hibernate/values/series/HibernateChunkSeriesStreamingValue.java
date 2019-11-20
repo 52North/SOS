@@ -104,7 +104,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             next = seriesValuesResult.hasNext();
         }
         if (!next) {
-            sessionHolder.returnSession(getSession());
+            returnSession(getSession());
         }
 
         return next;
@@ -126,7 +126,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -145,7 +145,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             }
             return null;
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(getSession());
+            returnSession(getSession());
             throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
@@ -175,7 +175,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             checkMaxNumberOfReturnedValues(resutltValues.size());
             setSeriesValuesResult(resutltValues);
         } catch (final HibernateException he) {
-            sessionHolder.returnSession(session);
+            returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }

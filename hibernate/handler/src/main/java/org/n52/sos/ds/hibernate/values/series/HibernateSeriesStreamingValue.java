@@ -105,7 +105,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
         } finally {
-            sessionHolder.returnSession(session);
+            returnSession(session);
         }
     }
 
@@ -118,7 +118,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         } finally {
-            sessionHolder.returnSession(session);
+            returnSession(session);
         }
     }
 

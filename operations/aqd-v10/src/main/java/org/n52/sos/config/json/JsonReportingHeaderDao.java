@@ -44,6 +44,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.json.JSONEncoderKey;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class JsonReportingHeaderDao extends AbstractJsonDao implements ReportingHeaderDao {
 
@@ -84,7 +85,7 @@ public class JsonReportingHeaderDao extends AbstractJsonDao implements Reporting
             throw new RuntimeException(ex);
 
         }
-        getConfiguration().with(REPORTING_HEADERS).set(key, node);
+        getConfiguration().set(key, node);
         configuration().writeNow();
     }
 
@@ -122,4 +123,8 @@ public class JsonReportingHeaderDao extends AbstractJsonDao implements Reporting
         return getConfiguration().path(key);
     }
 
+    @Override
+    protected ObjectNode getConfiguration() {
+        return super.getConfiguration().with(REPORTING_HEADERS);
+    }
 }

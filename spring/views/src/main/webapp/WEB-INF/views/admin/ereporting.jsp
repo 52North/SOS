@@ -726,6 +726,38 @@ CodeTypeController.prototype.val = function() {
     } : this.$value.val();
 };
 
+function PTFreeTextController(options) {
+    SimpleController.call(this, util.mixin(options, {class: "free-text"}));
+    options.value = options.value !== null ? options.value[0] : {};
+    options.value = util.isString(options.value) ? {value: options.value} : options.value;
+    this.$language = $("<input>")
+        .addClass("codetype-language")
+        .attr("type", "text")
+        .attr("placeholder", "Language")
+        .val(options.value.language);
+    this.$text = $("<input>")
+        .addClass("codetype-text")
+        .attr("type", "text")
+        .attr("placeholder", "Text")
+        .val(options.value.text);
+
+    $("<div>")
+        .addClass("controls-row")
+        .append(this.$language)
+        .append(this.$text)
+        .appendTo(this.$controls);
+
+    this._addHelpText(options);
+}
+PTFreeTextController.prototype = Object.create(SimpleController.prototype);
+PTFreeTextController.prototype.val = function() {
+    var language = this.$language.val();
+    return language ? {
+      language: language,
+        text: this.$text.val()
+    } : this.$text.val();
+};
+
 function InspireIdController(options) {
     CompositeController.call(this, util.mixin(options, {class: "inpire-id"}));
     this.delegates = {
@@ -788,7 +820,7 @@ function ReportingAuthorityController(options) {
     this.delegates = {
         individualName: new NillableController({
             div: $("<div>").appendTo(this.$controls),
-            delegate: StringController,
+            delegate: PTFreeTextController,
             menu: this.menu,
             delegateOptions: {
                 label: "Individual Name",
@@ -799,7 +831,7 @@ function ReportingAuthorityController(options) {
         }),
         organisationName: new NillableController({
             div: $("<div>").appendTo(this.$controls),
-            delegate: StringController,
+            delegate: PTFreeTextController,
             menu: this.menu,
             delegateOptions: {
                 label: "Organsiation Name",
@@ -810,7 +842,7 @@ function ReportingAuthorityController(options) {
         }),
         positionName: new NillableController({
             div: $("<div>").appendTo(this.$controls),
-            delegate: StringController,
+            delegate: PTFreeTextController,
             menu: this.menu,
             delegateOptions: {
                 label: "Position Name",
@@ -851,7 +883,7 @@ function ContactController(options) {
     this.delegates = {
         contactInstructions: new NillableController({
             div: $("<div>").appendTo(this.$controls),
-            delegate: StringController,
+            delegate: PTFreeTextController,
             menu: this.menu,
             delegateOptions: {
                 label: "Contact Instructions",
@@ -874,7 +906,7 @@ function ContactController(options) {
         }),
         hoursOfService: new NillableController({
             div: $("<div>").appendTo(this.$controls),
-            delegate: StringController,
+            delegate: PTFreeTextController,
             menu: this.menu,
             delegateOptions: {
                 label: "Hours of Service",

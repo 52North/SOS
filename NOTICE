@@ -184,9 +184,9 @@ This project includes:
   Java Native Access under LGPL, version 2.1 or Apache License v2.0
   Java Property Utility under The Apache Software License, Version 2.0
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
-  Java(TM) EE 7 Specification APIs under CDDL + GPLv2 with classpath exception
   JavaBeans Activation Framework API jar under CDDL/GPLv2+CE
   JavaBeans(TM) Activation Framework under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+  javaee-api under CDDL + GPLv2 with classpath exception
   JavaMail API under CDDL/GPLv2+CE
   JavaMail API jar under CDDL or GPLv2+CE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0

@@ -84,14 +84,14 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <postgresql.version>42.2.5</postgresql.version>
+        <postgresql.version>42.2.8</postgresql.version>
         <postgis.version>2.3.0</postgis.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.29</slf4j.version>
         <hibernate.version>5.4.9.Final</hibernate.version>
         <c3p0.version>0.9.5.4</c3p0.version>
-        <hikaricp.version>3.3.1</hikaricp.version>
-        <geotools.version>22.0</geotools.version>
+        <hikaricp.version>3.4.1</hikaricp.version>
+        <geotools.version>22.2</geotools.version>
         <jackson.version>2.10.1</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.4.1.jre8</sqljdbc.version>
@@ -660,7 +660,7 @@
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>
                 <artifactId>javax.servlet.jsp-api</artifactId>
-                <version>2.3.1</version>
+                <version>2.3.3</version>
                 <scope>provided</scope>
                 <exclusions>
                     <exclusion>
@@ -1387,7 +1387,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.9</version>
+                <version>4.5.10</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.httpcomponents</groupId>
@@ -1410,7 +1410,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>4.4.11</version>
+                <version>4.4.12</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1546,7 +1546,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>28.0-jre</version>
+                <version>28.1-jre</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -1955,7 +1955,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.22.v20191022</version>
+                    <version>9.4.24.v20191120</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -2035,7 +2035,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>license-maven-plugin</artifactId>
-                        <version>1.14</version>
+                        <version>2.0.0</version>
                         <configuration>
                             <useMissingFile>true</useMissingFile>
                             <fileTemplate>misc/license-as-csv.ftl</fileTemplate>

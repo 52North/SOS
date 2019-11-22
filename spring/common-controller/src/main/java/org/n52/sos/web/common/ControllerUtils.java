@@ -44,7 +44,7 @@ public final class ControllerUtils {
     public static <E extends Enum<E>, T> Map<String, T> toStringMap(Map<E, T> enumMap) {
         Map<String, T> map = new HashMap<>(enumMap.size(), 1f);
         for (Entry<E, T> entry : enumMap.entrySet()) {
-            map.put(entry.getKey().name(), enumMap.get(entry));
+            map.put(entry.getKey().name(), entry.getValue());
         }
         return map;
     }

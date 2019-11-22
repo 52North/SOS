@@ -14,19 +14,10 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="http://localhost:8080/52n-sos-webapp/service" />
     </bean>
-    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
-        <property name="key" value="service.capabilitiesCacheUpdateInterval" />
-        <property name="title" value="Content cache update interval" />
-        <property name="description" value="The update interval of the content cache in minutes. Set this to lower value if your database is externally modified frequently. Set to 0 to disable scheduled cache updates." />
-        <property name="order" value="1.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="120" />
-        <property name="minimum" value="0" />
-    </bean>
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="service.capabilitiesCacheUpdate" />
         <property name="title" value="Content cache update interval" />
-        <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html" />
+        <property name="description" value="The update definition for the cache update. See http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html" />
         <property name="order" value="1.1" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="0 0/120 * * * ?" />

@@ -319,7 +319,6 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
      *
      * @param procedure
      *            Hibernate procedure entity
-     * @param b
      *
      * @return SensorML Position
      */
@@ -332,7 +331,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml
      *
      * @param procedure
      *            Hibernate procedure entity
-     * @param b
+     * @param vector
+     *            Flag to indicate that the geometry should be defined as a
+     *            vector
      *
      * @return SensorML Position
      */

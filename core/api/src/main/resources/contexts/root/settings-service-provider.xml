@@ -114,7 +114,7 @@
     <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="serviceProvider.onlineResource" />
         <property name="title" value="Online resource" />
-        <property name="description" value="Set the online resource" />
+        <property name="description" value="Set the online resource by typing a 'title' and a 'href' value, separated by '|'." />
         <property name="order" value="13.0" />
         <property name="group" ref="serviceProviderSettingsDefitionGroup" />
         <property name="defaultValue" value="TBA|TBA" />

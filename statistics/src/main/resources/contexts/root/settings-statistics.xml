@@ -113,17 +113,6 @@
 	</bean>
 
 	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-		<property name="key" value="statistics.counting-outputstream" />
-		<property name="title"
-			value="Elasticsearch: The response document size is calculated" />
-		<property name="description"
-			value="The size of the response document which is sent back to the client. This could result in a small performance degradation." />
-		<property name="order" value="8.0" />
-		<property name="group" ref="statisticsDefinitionGroup" />
-		<property name="defaultValue" value="false" />
-	</bean>
-
-	<bean class="org.n52.faroe.settings.BooleanSettingDefinition">
 		<property name="key"
 			value="statistics.elasticsearch.kibana_config_enable" />
 		<property name="title"

@@ -58,6 +58,7 @@
 <div>
     <h3>Enhancement</h3>
     <p>In this section you can select and insert pre-defined sets of observableProperties or units of measurement into the database.</p>
+    <p>NOTE: The insertion of pre-defined sets of observableProperties or units of measurement requires write access to the database!!!</p>
     <h4>ObservableProperty - Phenomena - Parameter</h4>
     <p>Select one of the predefined observableProperty vocabularies from the drop-down list and the press the 'Load' button to load the predefined data into the SOS.</p>
     <div id="obsprop-container">
@@ -268,9 +269,9 @@ $(function() {
                 	"name": value
                 }
             }).fail(function(error){
-                showError("Request failed: " + error.status + " " + error.statusText);
+                showError("Request failed: " + error.responseText);
             }).done(function(response){
-            	 showSuccess("Predefined phenomena successfully reloaded!");
+            	 showSuccess(response);
             });
         }
     });
@@ -297,9 +298,9 @@ $(function() {
                   "name": value
                 }
             }).fail(function(error){
-                showError("Request failed: " + error.status + " " + error.statusText);
+                showError("Request failed: " + error.responseText);
             }).done(function(response){
-            	showSuccess("Predefined units successfully reloaded!");
+            	showSuccess(response);
             });
         }
     });

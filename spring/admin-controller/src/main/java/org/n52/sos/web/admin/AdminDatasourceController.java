@@ -214,7 +214,7 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         return "Insert is still in progress!";
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_LOAD_PREDEFINED_PHENOMENA,
                     method = RequestMethod.GET)
     public void loadPredefinedObservedProperties(@RequestParam("name") String name) throws OwsExceptionReport {
@@ -228,7 +228,7 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         }
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_LOAD_PREDEFINED_UNITS, method = RequestMethod.GET)
     public void loadPredefinedUnits(@RequestParam("name") String name) throws OwsExceptionReport {
         if (handler.isPresent() && name != null && !name.isEmpty() && !name.equalsIgnoreCase(NO_PREDEFINED_DATA)) {

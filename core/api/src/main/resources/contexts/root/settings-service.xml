@@ -64,14 +64,6 @@
         <property name="defaultValue" value="false" />
     </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.useDefaultPrefixes" />
-        <property name="title" value="Use default prefixes for offering, procedure, features" />
-        <property name="description" value="Use default prefixes for offering, procedure, features." />
-        <property name="order" value="11.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="service.jdbc.deregister" />
         <property name="title" value="Deregister JDBC driver" />
         <property name="description" value="Should the service deregister all used JDBC driver (SQLite, PostgreSQL or H2) during shutdown process." />

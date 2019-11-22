@@ -47,7 +47,7 @@ public class DefaultProfile implements Profile {
 
     private static final String DEFAULT_ENCODING_NAMESPACE_FOR_FEATUTREOFINTEREST_SOS_20 = "";
 
-    private static final boolean DEFAULT_ENCODE_FEATUREOFINTEREST_IN_OBSERVATION = true;
+    private static final boolean DEFAULT_ENCODE_FEATUREOFINTEREST_IN_OBSERVATION = false;
 
     private static final boolean DEFAULT_SHOW_METADATA_OF_EMPTY_OBSERVATIONS = false;
 
@@ -61,11 +61,11 @@ public class DefaultProfile implements Profile {
 
     private static final boolean DEFAULT_ENCODE_CHILD_PROCEDURE_DESCRIPTION = false;
 
-    private static final boolean DEFAULT_SHOW_FULL_OPERATIONS_METADATA = false;
+    private static final boolean DEFAULT_SHOW_FULL_OPERATIONS_METADATA = true;
 
-    private static final boolean DEFAULT_SHOW_FULL_OPERATIONS_METADATA_FOR_OBSERVATIONS = false;
+    private static final boolean DEFAULT_SHOW_FULL_OPERATIONS_METADATA_FOR_OBSERVATIONS = true;
 
-    private static final String DAFUALT_RESPONSE_NODATA_PLACEHOLDER = "noData";
+    private static final String DEFAULT_RESPONSE_NODATA_PLACEHOLDER = "noData";
 
     private Set<String> defaultNoDataPlaceholder = new HashSet<String>();
 
@@ -74,6 +74,11 @@ public class DefaultProfile implements Profile {
     private Map<String, String> defaultObservationTypesForEncoding = new HashMap<String, String>(0);
 
     private String definition;
+
+    public DefaultProfile() {
+        super();
+        defaultNoDataPlaceholder.add(DEFAULT_RESPONSE_NODATA_PLACEHOLDER);
+    }
 
     @Override
     public String getIdentifier() {
@@ -175,7 +180,7 @@ public class DefaultProfile implements Profile {
 
     @Override
     public String getResponseNoDataPlaceholder() {
-        return DAFUALT_RESPONSE_NODATA_PLACEHOLDER;
+        return DEFAULT_RESPONSE_NODATA_PLACEHOLDER;
     }
 
     @Override

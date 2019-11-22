@@ -34,6 +34,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
+import org.n52.sos.service.profile.DefaultProfile;
 import org.n52.sos.service.profile.Profile;
 
 public class ProfileHandlerImplTest {
@@ -61,10 +62,18 @@ public class ProfileHandlerImplTest {
     public void is_two_profles_available() {
         Assert.assertThat(phi.getAvailableProfiles().size(), Is.is(3));
     }
+    
+    @Test
+    public void check_DEFAULT_PROFILE() {
+        testSosProfile(new DefaultProfile());
+    }
 
     @Test
     public void check_SOS_20_PROFILE() {
-        Profile profile = phi.getAvailableProfiles().get(PROFILE_SOS);
+        testSosProfile(phi.getAvailableProfiles().get(PROFILE_SOS));
+    }
+    
+    private void testSosProfile(Profile profile) {
         Assert.assertNotNull(profile);
         Assert.assertThat(profile.isActiveProfile(), Is.is(true));
         Assert.assertThat(profile.getObservationResponseFormat(), Is.is("http://www.opengis.net/om/2.0"));

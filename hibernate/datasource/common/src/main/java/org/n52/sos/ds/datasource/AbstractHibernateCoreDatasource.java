@@ -28,12 +28,19 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.BooleanSettingDefinition;
+import org.n52.faroe.settings.ChoiceSettingDefinition;
 import org.n52.faroe.settings.IntegerSettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
 import org.n52.iceland.ds.Datasource;
@@ -77,19 +84,6 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
 
     protected static final String C3P0_CONNECTION_POOL = "org.hibernate.c3p0.internal.C3P0ConnectionProvider";
 
-    // protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE =
-    // false;
-
-    // protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC
-    // driver";
-    //
-    // protected static final String PROVIDED_JDBC_DRIVER_DESCRIPTION =
-    // "Is the JDBC driver provided and should not be derigistered during
-    // shutdown?";
-    //
-    // protected static final String PROVIDED_JDBC_DRIVER_KEY =
-    // "sos.jdbc.provided";
-
     protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
 
     protected static final String MIN_POOL_SIZE_TITLE = "Minimum ConnectionPool size";
@@ -117,7 +111,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
 
     protected static final String TIMEZONE_KEY = "datasource.timezone";
 
-    protected static final String TIMEZONE_DEFAULT_VALUE = "UTC";
+    protected static final String TIMEZONE_DEFAULT_VALUE = "+00:00";
 
     protected static final String TIME_STRING_FORMAT_KEY = "datasource.timeStringFormat";
 
@@ -346,22 +340,35 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      *
      * @return Time zone settings definition
      */
-    protected StringSettingDefinition createTimeZoneDefinition() {
-        StringSettingDefinition def = new StringSettingDefinition();
+    protected ChoiceSettingDefinition createTimeZoneDefinition() {
+        ChoiceSettingDefinition def = new ChoiceSettingDefinition();
         def.setGroup(ADVANCED_GROUP);
         def.setOrder(8);
         def.setKey(TIMEZONE_KEY);
         def.setTitle(TIMEZONE_TITLE);
         def.setDescription(TIMEZONE_DESCRIPTION);
         def.setDefaultValue(TIMEZONE_DEFAULT_VALUE);
+        def.setOptions(getTimeZoneValues());
         def.setOptional(true);
         return def;
     }
 
-    protected StringSettingDefinition createTimeZoneDefinition(String defaultValue) {
-        StringSettingDefinition def = createTimeZoneDefinition();
+    protected ChoiceSettingDefinition createTimeZoneDefinition(String defaultValue) {
+        ChoiceSettingDefinition def = createTimeZoneDefinition();
         def.setDefaultValue(defaultValue);
         return def;
+    }
+
+    protected Map<String, String> getTimeZoneValues() {
+        Set<String> offsets = new TreeSet<String>();
+        LocalDateTime dt = LocalDateTime.now();
+        for (String zone : ZoneId.getAvailableZoneIds()) {
+            ZoneId id = ZoneId.of(zone);
+            ZonedDateTime zdt = dt.atZone(id);
+            ZoneOffset offset = zdt.getOffset();
+            offsets.add(offset.getId().replaceAll("Z", TIMEZONE_DEFAULT_VALUE));
+        }
+        return offsets.stream().collect(Collectors.toMap(o -> o, o -> o));
     }
 
     protected StringSettingDefinition createTimeStringFormatDefinition() {

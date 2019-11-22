@@ -157,6 +157,7 @@ function generateSettings(settings, settingValues, container, tabbed) {
         var $controls = $("<div>").addClass("controls");
         var $label = $("<label>").attr("for", setting.id).addClass("control-label").text(setting.title);
         var $input = $("<select>").attr("name", setting.id).addClass("span8");
+        var $description = $("<span>").addClass("help-block").html(setting.description);
         $.each(setting.options, function(val, desc) {
             $("<option>").attr("value", val).text(desc).appendTo($input);
         });
@@ -177,7 +178,6 @@ function generateSettings(settings, settingValues, container, tabbed) {
             }
         }
 
-        var $description = $("<span>").addClass("help-block").html(setting.description);
         if (setting.required) {
             var $required = $("<span>").addClass("label label-warning").text("required");
             $description.prepend(" ").prepend($required);

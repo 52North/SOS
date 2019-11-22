@@ -59,8 +59,9 @@ public class EReportingObservationContext extends ObservationContext {
     }
 
     @Override
-    public void addIdentifierRestrictionsToCritera(Criteria criteria, boolean includeFeature) {
-        super.addIdentifierRestrictionsToCritera(criteria, includeFeature);
+    public void addIdentifierRestrictionsToCritera(Criteria criteria, boolean includeFeature,
+            boolean includeCategory) {
+        super.addIdentifierRestrictionsToCritera(criteria, includeFeature, includeCategory);
         if (includeFeature && isSetSamplingPoint()) {
             criteria.add(Restrictions.eq(EReportingDaoHelper.SAMPLING_POINT_ASSOCIATION_PATH, getSamplingPoint()));
         }

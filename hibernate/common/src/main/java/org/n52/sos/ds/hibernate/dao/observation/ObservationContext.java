@@ -206,10 +206,11 @@ public class ObservationContext {
     }
 
     public void addIdentifierRestrictionsToCritera(Criteria c) {
-        addIdentifierRestrictionsToCritera(c, true);
+        addIdentifierRestrictionsToCritera(c, true, true);
     }
 
-    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeatureAndPlatform) {
+    public void addIdentifierRestrictionsToCritera(Criteria c, boolean includeFeatureAndPlatform,
+            boolean includeCategory) {
         if (includeFeatureAndPlatform) {
             if (isSetFeatureOfInterest()) {
                 c.add(Restrictions
@@ -242,7 +243,7 @@ public class ObservationContext {
                         getOffering()));
         }
 
-        if (isSetCategory()) {
+        if (includeCategory && isSetCategory()) {
             c.add(Restrictions
                     .eq(DatasetEntity.PROPERTY_CATEGORY,
                         getCategory()));

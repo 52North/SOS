@@ -55,11 +55,16 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
     }
 
     public CategoryEntity getOrInsertCategory(String value, Session session) {
+        return getOrInsertCategory(value, value, null, session);
+    }
+
+    public CategoryEntity getOrInsertCategory(String value, String name, String description, Session session) {
         CategoryEntity category = getCategoryForIdentifier(value, session);
         if (category == null) {
             category = new CategoryEntity();
             addIdentifier(category, value, session);
-            addName(category, value, session);
+            addName(category, name, session);
+            addDescription(category, description);
             session.save(category);
             session.flush();
             session.refresh(category);

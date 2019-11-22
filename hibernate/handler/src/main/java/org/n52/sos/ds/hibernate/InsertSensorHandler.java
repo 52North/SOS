@@ -167,8 +167,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                         assignedProcedureID, procedureDescriptionFormat, request.getProcedureDescription(),
                         request.isType(), session);
                 // TODO: set correct validTime,
-                new ProcedureHistoryDAO(getDaoFactory()).insert(hProcedure,
-                        procedureDescriptionFormat,
+                new ProcedureHistoryDAO(getDaoFactory()).insert(hProcedure, procedureDescriptionFormat,
                         getSensorDescriptionFromProcedureDescription(request.getProcedureDescription()),
                         new DateTime(DateTimeZone.UTC), session);
                 if (!request.isType()) {
@@ -324,10 +323,9 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
             Map<String, CodespaceEntity> codespaceCache = CollectionHelper.synchronizedMap();
             Map<UoM, UnitEntity> unitCache = CollectionHelper.synchronizedMap();
-            ObservationPersister persister =
-                    new ObservationPersister(getDaoFactory(), getDaoFactory().getObservationDAO(),
-                            sosObservation, hObservationConstellationReferenceSeries, hFeature,
-                            codespaceCache, unitCache, Collections.singleton(hOfferingReferenceSeries), session);
+            ObservationPersister persister = new ObservationPersister(getDaoFactory(),
+                    getDaoFactory().getObservationDAO(), sosObservation, hObservationConstellationReferenceSeries,
+                    hFeature, codespaceCache, unitCache, Collections.singleton(hOfferingReferenceSeries), session);
             DataEntity<?> observation = sosValue.getValue().accept(persister);
             DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
                     hObservableProperty.getIdentifier(), hOfferingReferenceSeries.getIdentifier(),
@@ -454,10 +452,15 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
         if (request.hasExtension(CATEGORY)) {
             Optional<Extension<?>> extension = request.getExtension(CATEGORY);
             if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
-                getDaoFactory().getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(), session);
+                return getDaoFactory().getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(),
+                        session);
             }
         }
-        return getDaoFactory().getCategoryDAO().getOrInsertCategory(hObservableProperty, session);
+        return getDaoFactory().getCategoryDAO().getOrInsertCategory(SosConstants.SOS, SosConstants.SOS,
+                "Default SOS category", session);
+        // return
+        // getDaoFactory().getCategoryDAO().getOrInsertCategory(hObservableProperty,
+        // session);
     }
 
     private Set<String> getAllParentOfferings(ProcedureEntity hProcedure) {

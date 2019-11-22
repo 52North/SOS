@@ -324,12 +324,16 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     protected DatasetEntity getOrInsert(ObservationContext ctx, DataEntity<?> observation, Session session)
             throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
-        ctx.addIdentifierRestrictionsToCritera(criteria);
-        criteria.setMaxResults(1);
+        ctx.addIdentifierRestrictionsToCritera(criteria, true, false);
+//        criteria.setMaxResults(1);
         // TODO: check for Unit if available!!!
-        LOGGER.trace("QUERY getOrInsertSeries(feature, observableProperty, procedure, offering): {}",
+        LOGGER.trace(
+                "QUERY getOrInsertSeries(feature, observableProperty, procedure, offering, platform, category): {}",
                 HibernateHelper.getSqlString(criteria));
-        DatasetEntity series = (DatasetEntity) criteria.uniqueResult();
+        List<DatasetEntity> datasets = (List<DatasetEntity>) criteria.list();
+        DatasetEntity series = datasets.isEmpty() ? null
+                : datasets.stream().filter(d -> d.getCategory().equals(ctx.getCategory())).findFirst()
+                        .orElse(datasets.iterator().next());
         if (series == null || series.getDatasetType().equals(DatasetType.not_initialized)) {
             series = preCheckDataset(ctx, observation, series, session);
             if (series != null && series.isMobile()) {
@@ -448,7 +452,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         DatasetEntity ds = dataset;
         if (ds == null) {
             Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
-            ctx.addIdentifierRestrictionsToCritera(criteria, false);
+            ctx.addIdentifierRestrictionsToCritera(criteria, false, true);
             LOGGER.trace("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
                     HibernateHelper.getSqlString(criteria));
             ds = (DatasetEntity) criteria.uniqueResult();

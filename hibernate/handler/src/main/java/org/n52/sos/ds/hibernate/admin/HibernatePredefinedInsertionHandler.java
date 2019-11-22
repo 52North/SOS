@@ -46,6 +46,7 @@ import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.i18n.I18nEntity;
 import org.n52.series.db.beans.i18n.I18nPhenomenonEntity;
 import org.n52.series.db.beans.i18n.I18nUnitEntity;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.PredefinedInsertionHandler;
@@ -92,10 +93,7 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
                 transaction.rollback();
             }
             LOGGER.error("Error while insertin predefined observableProperties!", pe);
-            if (pe instanceof SQLGrammarException && ((SQLGrammarException) pe).getSQLState().equals("42501")) {
-                throw new NoApplicableCodeException()
-                        .withMessage("The user does not have the privileges to write data into the database!");
-            }
+            checkExceptionAndThrow(pe);
             return false;
         } finally {
             getHibernateSessionHolder().returnSession(session);
@@ -120,15 +118,19 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
                 transaction.rollback();
             }
             LOGGER.error("Error while inserting predefined units!", pe);
-            if (pe instanceof SQLGrammarException && ((SQLGrammarException) pe).getSQLState().equals("42501")) {
-                throw new NoApplicableCodeException()
-                        .withMessage("The user does not have the privileges to write data into the database!");
-            }
+            checkExceptionAndThrow(pe);
             return false;
         } finally {
             getHibernateSessionHolder().returnSession(session);
         }
         return true;
+    }
+
+    private void checkExceptionAndThrow(HibernateException pe) throws CodedException {
+        if (pe instanceof SQLGrammarException && ((SQLGrammarException) pe).getSQLState().equals("42501")) {
+            throw new NoApplicableCodeException()
+            .withMessage("The user does not have the privileges to write data into the database!");
+        }
     }
 
     private PhenomenonEntity convert(Phenomenon phenomenon) {

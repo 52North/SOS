@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestConstants;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
-import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.IdGenerator;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.event.events.FeatureInsertion;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -104,7 +104,7 @@ public class InsertFeatureOfInterestOperator extends
     private void checkFeatureMembers(List<AbstractFeature> featureMembers) throws OwsExceptionReport {
         for (AbstractFeature abstractFeature : featureMembers) {
             if (!abstractFeature.isSetIdentifier()) {
-                abstractFeature.setIdentifier(JavaHelper.generateID(abstractFeature.toString()));
+                abstractFeature.setIdentifier(IdGenerator.generate(abstractFeature.toString()));
             }
             if (getCache().hasFeatureOfInterest(abstractFeature.getIdentifier())) {
                 throw new InvalidParameterValueException().at("featureMember.identifier").withMessage(

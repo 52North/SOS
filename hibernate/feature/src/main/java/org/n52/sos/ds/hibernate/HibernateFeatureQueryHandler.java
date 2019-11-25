@@ -70,7 +70,7 @@ import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.IdGenerator;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
@@ -327,7 +327,7 @@ public class HibernateFeatureQueryHandler
             String featureIdentifier;
             if (!samplingFeature.isSetIdentifier()) {
                 featureIdentifier =
-                        SosConstants.GENERATED_IDENTIFIER_PREFIX + JavaHelper.generateID(samplingFeature.getXml());
+                        SosConstants.GENERATED_IDENTIFIER_PREFIX + IdGenerator.generate(samplingFeature.getXml());
                 samplingFeature.setIdentifier(new CodeWithAuthority(featureIdentifier));
             }
             return insertFeatureOfInterest(samplingFeature, session).getIdentifier();

@@ -35,8 +35,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.IdGenerator;
 import org.n52.sos.service.profile.Profile;
 
 /**
@@ -129,7 +128,7 @@ public class ProfileImpl implements Profile {
         if (identifier != null && !identifier.isEmpty()) {
             this.identifier = identifier;
         } else {
-            this.identifier = JavaHelper.generateID(Long.toString(System.currentTimeMillis()));
+            this.identifier = IdGenerator.generate(Long.toString(System.currentTimeMillis()));
             LOGGER.warn("The identifier is null or empty! This generated identifier {} is set!", this.identifier);
         }
     }

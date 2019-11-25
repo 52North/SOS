@@ -62,7 +62,7 @@ public class ProfileHandlerImplTest {
     public void is_two_profles_available() {
         Assert.assertThat(phi.getAvailableProfiles().size(), Is.is(3));
     }
-    
+
     @Test
     public void check_DEFAULT_PROFILE() {
         testSosProfile(new DefaultProfile());
@@ -72,7 +72,7 @@ public class ProfileHandlerImplTest {
     public void check_SOS_20_PROFILE() {
         testSosProfile(phi.getAvailableProfiles().get(PROFILE_SOS));
     }
-    
+
     private void testSosProfile(Profile profile) {
         Assert.assertNotNull(profile);
         Assert.assertThat(profile.isActiveProfile(), Is.is(true));

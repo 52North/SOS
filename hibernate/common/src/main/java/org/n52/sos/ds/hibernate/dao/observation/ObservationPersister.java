@@ -108,7 +108,7 @@ import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
-import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.IdGenerator;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -233,7 +233,7 @@ public class ObservationPersister
                 new SosResultEncoding(value.getValue().getEncoding(), value.getValue().getEncoding().getXml()));
         insertResultTemplateRequest.setResultStructure(
                 new SosResultStructure(value.getValue().getElementType(), value.getValue().getElementType().getXml()));
-        insertResultTemplateRequest.setIdentifier(JavaHelper.generateID(value.getValue().getElementType().getXml()));
+        insertResultTemplateRequest.setIdentifier(IdGenerator.generate(value.getValue().getElementType().getXml()));
         ResultTemplateEntity resultTemplate = daoFactory.getResultTemplateDAO()
                 .checkOrInsertResultTemplate(insertResultTemplateRequest, dataArray.getDataset(), session);
         dataArray.setResultTemplate(resultTemplate);

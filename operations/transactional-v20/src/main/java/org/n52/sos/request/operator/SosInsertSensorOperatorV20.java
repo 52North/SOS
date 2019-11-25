@@ -66,7 +66,7 @@ import org.n52.shetland.ogc.swe.DataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.util.IdGenerator;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
@@ -125,7 +125,7 @@ public class SosInsertSensorOperatorV20 extends
     @Override
     protected void checkParameters(InsertSensorRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
-        String generatedId = JavaHelper.generateID(request.getProcedureDescription().toString());
+        String generatedId = IdGenerator.generate(request.getProcedureDescription().toString());
         // check parameters with variable content
         try {
             checkServiceParameter(request.getService());
@@ -359,7 +359,7 @@ public class SosInsertSensorOperatorV20 extends
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
             request.setAssignedProcedureIdentifier(
-                    JavaHelper.generateID(request.getProcedureDescription().toString()));
+                    IdGenerator.generate(request.getProcedureDescription().toString()));
         }
         // check for reserved character
         checkReservedCharacter(request.getAssignedProcedureIdentifier(),

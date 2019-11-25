@@ -65,13 +65,11 @@ This project includes:
   52°North SOS - Hibernate DAOs under GPLv2
   52°North SOS - Hibernate Datasources under GPLv2
   52°North SOS - Hibernate Feature Query DAO under GPLv2
-  52°North SOS - Hibernate Generator under GPLv2
   52°North SOS - Hibernate H2 under GPLv2
   52°North SOS - Hibernate H2 Datasource under GPLv2
   52°North SOS - Hibernate Mappings under GPLv2
   52°North SOS - Hibernate Module under GPLv2
   52°North SOS - Hibernate MySQL Datasource under GPLv2
-  52°North SOS - Hibernate Oracle Datasource under GPLv2
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
   52°North SOS - Hibernate Session Factory under GPLv2
   52°North SOS - Hibernate SQL Server Datasource under GPLv2
@@ -189,7 +187,7 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under MPL 2.0 or EPL 1.0
   Hamcrest All under New BSD License
-  Hamcrest Core under New BSD License
+  Hamcrest Core under BSD style
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
@@ -292,7 +290,6 @@ This project includes:
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
-  ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0

@@ -4,25 +4,25 @@
       <uib-tab-heading>
         <span translate="listSelection.headers.category"></span>
       </uib-tab-heading>
-      <swc-list-selection parameters="categoryParams" listselectionid="'category'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset)"></swc-list-selection>
+      <swc-list-selection parameters="categoryParams" listselectionid="'category'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset, url)"></swc-list-selection>
     </uib-tab>
     <uib-tab>
       <uib-tab-heading>
         <span translate="listSelection.headers.station"></span>
       </uib-tab-heading>
-      <swc-list-selection parameters="stationParams" listselectionid="'station'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset)"></swc-list-selection>
+      <swc-list-selection parameters="stationParams" listselectionid="'station'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset, url)"></swc-list-selection>
     </uib-tab>
     <uib-tab>
       <uib-tab-heading>
         <span translate="listSelection.headers.phenomenon"></span>
       </uib-tab-heading>
-      <swc-list-selection parameters="phenomenonParams" listselectionid="'phenomenon'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset)"></swc-list-selection>
+      <swc-list-selection parameters="phenomenonParams" listselectionid="'phenomenon'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset, url)"></swc-list-selection>
     </uib-tab>
     <uib-tab>
       <uib-tab-heading>
         <span translate="listSelection.headers.procedure"></span>
       </uib-tab-heading>
-      <swc-list-selection parameters="procedureParams" listselectionid="'procedure'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset)"></swc-list-selection>
+      <swc-list-selection parameters="procedureParams" listselectionid="'procedure'" provider-list="$ctrl.providerList" on-dataset-selection="$ctrl.datasetSelected(dataset, url)"></swc-list-selection>
     </uib-tab>
   </uib-tabset>
 </div>

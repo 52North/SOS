@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>transformation</artifactId>
-		<version>4.4.7-3-efas</version>
+		<version>4.4.7-4-efas-SNAPSHOT</version>
 	</parent>
 	<artifactId>request-response-coordinate-transformer</artifactId>
 	<packaging>jar</packaging>

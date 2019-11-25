@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>gda</artifactId>
-        <version>4.4.7-3-efas</version>
+        <version>4.4.7-4-efas-SNAPSHOT</version>
     </parent>
     <artifactId>gda-coding</artifactId>
     <name>52°North Svalbard - Extension GetDataAvailability - SOS 2.0 coding</name>

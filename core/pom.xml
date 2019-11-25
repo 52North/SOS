@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos</artifactId>
-        <version>4.4.7-3-efas-SNAPSHOT</version>
+        <version>4.4.7-3-efas</version>
     </parent>
     <artifactId>core</artifactId>
     <packaging>pom</packaging>

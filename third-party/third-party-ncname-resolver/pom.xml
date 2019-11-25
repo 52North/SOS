@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>52n-sos-third-party</artifactId>
-        <version>4.4.7-3-efas-SNAPSHOT</version>
+        <version>4.4.7-3-efas</version>
     </parent>
     <artifactId>third-party-ncname-resolver</artifactId>
     <name>52°North Third Party - NCName resolver</name>

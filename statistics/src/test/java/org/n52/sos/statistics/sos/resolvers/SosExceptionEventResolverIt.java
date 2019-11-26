@@ -30,7 +30,9 @@ package org.n52.sos.statistics.sos.resolvers;
 
 import javax.inject.Inject;
 
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,8 +61,8 @@ public class SosExceptionEventResolverIt extends ElasticsearchAwareTest {
         // eventually realtime should be enough
         Thread.sleep(2500);
 
-        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
-                .setTypes(clientSettings.getTypeId()).get();
+        SearchResponse resp = getEmbeddedClient().search(new SearchRequest(clientSettings.getIndexId())
+                .types(clientSettings.getTypeId()), RequestOptions.DEFAULT);
         Assert.assertEquals(1L, resp.getHits().getTotalHits());
 
     }

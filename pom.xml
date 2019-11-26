@@ -257,9 +257,56 @@
                         <groupId>com.fasterxml.jackson.dataformat</groupId>
                         <artifactId>jackson-dataformat-cbor</artifactId>
                     </exclusion>
+                     <exclusion>
+                        <groupId>com.fasterxml.jackson.dataformat</groupId>
+                        <artifactId>jackson-dataformat-yaml</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>net.java.dev.jna</groupId>
                         <artifactId>jna</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch.version}</version>
+                <exclusions>
+                    <exclusion>
+                      <groupId>org.apache.commons</groupId>
+                      <artifactId>commons-compress</artifactId>
+                    </exclusion>
+                    <exclusion>
+                      <groupId>commons-logging</groupId>
+                      <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                      <groupId>commons-codec</groupId>
+                      <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>pl.allegro.tech</groupId>
+                <artifactId>embedded-elasticsearch</artifactId>
+                <version>2.10.0</version>
+                <exclusions>
+                    <exclusion>
+                      <groupId>org.yaml</groupId>
+                      <artifactId>snakeyaml</artifactId>
+                    </exclusion>
+                     <exclusion>
+                      <groupId>org.apache.commons</groupId>
+                      <artifactId>commons-compress</artifactId>
+                    </exclusion>
+                    <exclusion>
+                      <groupId>org.apache.commons</groupId>
+                      <artifactId>commons-lang3</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

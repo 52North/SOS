@@ -34,11 +34,13 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.env.Environment;
-import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeValidationException;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -51,6 +53,9 @@ import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic;
+import pl.allegro.tech.embeddedelasticsearch.PopularProperties;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:testContext.xml" })
 public abstract class ElasticsearchAwareTest extends SpringBaseTest {
@@ -58,7 +63,7 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
     @ClassRule
     public static final TemporaryFolder TEMP_FOLDER = new TemporaryFolder();
 
-    private static Node embeddedNode;
+    private static EmbeddedElastic embeddedNode;
 
     @Inject
     protected ElasticsearchSettings clientSettings;
@@ -80,8 +85,16 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
         // .loadFromStream("elasticsearch_embedded.yml",
         // ElasticsearchAwareTest.class.getResourceAsStream("/elasticsearch_embedded.yml"))
         // .build();
-//        embeddedNode = new Node(new Environment(settings, TEMP_FOLDER.getRoot().toPath()));
-        embeddedNode = new TestNode(settings);
+        // embeddedNode = new Node(new Environment(settings,
+        // TEMP_FOLDER.getRoot().toPath()));
+
+        pl.allegro.tech.embeddedelasticsearch.EmbeddedElastic.Builder builder =
+                EmbeddedElastic.builder().withElasticVersion("6.3.0").withPlugin("groovy");
+        builder.withSetting(PopularProperties.TRANSPORT_TCP_PORT, 9300);
+        for (String key : settings.keySet()) {
+            builder.withSetting(key, settings.get(key));
+        }
+        embeddedNode = builder.build();
         embeddedNode.start();
 
         logger.debug("Started embedded node");
@@ -89,12 +102,14 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
     }
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUp() throws InterruptedException, IOException {
 
         try {
             logger.info("Deleting {} index", clientSettings.getIndexId());
             Thread.sleep(2000);
-            embeddedNode.client().admin().indices().prepareDelete(clientSettings.getIndexId()).get().isAcknowledged();
+            getEmbeddedClient().indices()
+                    .create(new CreateIndexRequest(clientSettings.getIndexId()), RequestOptions.DEFAULT)
+                    .isAcknowledged();
             Thread.sleep(2000);
         } catch (ElasticsearchException e) {
             logger.error("Error when setting up the test!", e);
@@ -108,14 +123,15 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
     @AfterClass
     public static void destroy() throws IOException {
         logger.debug("Closing embedded node");
-        embeddedNode.close();
+        embeddedNode.stop();
 
         FileUtils.deleteDirectory(new File(".\\data"));
 
     }
 
-    protected static Client getEmbeddedClient() {
-        return embeddedNode.client();
+    protected static RestHighLevelClient getEmbeddedClient() {
+        return new RestHighLevelClient(
+                RestClient.builder(new HttpHost("localhost", embeddedNode.getTransportTcpPort())));
     }
 
 }

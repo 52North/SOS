@@ -676,7 +676,8 @@
             </exclusions>
         </dependency>
 
-        <!-- Statistics -->
+        <!-- Currently disabled !!! Require refactoring -->
+        <!-- Statistics
         <dependency>
             <groupId>org.n52.sensorweb.sos</groupId>
             <artifactId>statistics</artifactId>
@@ -687,7 +688,7 @@
             <artifactId>iceland-statistics</artifactId>
             <scope>runtime</scope>
         </dependency>
-
+        -->
 
         <!-- ADMINISTRATION INTERFACE -->
 

@@ -127,7 +127,7 @@
         <property name="description"
           value="The size of the response document which is sent back to the client. This could result in a small performance degradation." />
         <property name="order" value="50.0" />
-        <property name="group" ref="statisticsDefinitionGroup" />
+        <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
 </beans>

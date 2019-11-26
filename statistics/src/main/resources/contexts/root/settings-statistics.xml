@@ -44,8 +44,6 @@
 			value="statistics.elasticsearch.connection_mode.node" />
 		<property name="options">
 			<map>
-				<entry key="statistics.elasticsearch.connection_mode.node"
-					value="Node client" />
 				<entry key="statistics.elasticsearch.connection_mode.transport_client"
 					value="Transport client" />
 				<entry key="statistics.elasticsearch.connection_mode.embedded_server"

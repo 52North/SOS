@@ -28,12 +28,16 @@
  */
 package org.n52.sos.statistics.sos.resolvers;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.elasticsearch.ElasticsearchGenerationException;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,7 +59,7 @@ public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
     private IStatisticsDataHandler dataHandler;
 
     @Test
-    public void persistExceptionToDb() throws InterruptedException {
+    public void persistExceptionToDb() throws InterruptedException, ElasticsearchGenerationException, IOException {
 
         OwsServiceRequestContext ctx = new OwsServiceRequestContext();
         ctx.setIPAddress(new IPAddress("172.168.22.53"));
@@ -74,8 +78,8 @@ public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
         // eventually realtime should be enough
         Thread.sleep(2000);
 
-        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
-                .setTypes(clientSettings.getTypeId()).get();
+        SearchResponse resp = getEmbeddedClient().search(new SearchRequest(clientSettings.getIndexId())
+                .types(clientSettings.getTypeId()), RequestOptions.DEFAULT);
         Assert.assertEquals(1, resp.getHits().getTotalHits());
     }
 }

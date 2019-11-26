@@ -28,9 +28,13 @@
  */
 package org.n52.sos.statistics.sos;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.search.SearchHit;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
@@ -69,7 +73,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
     private EventBus serviceBus;
 
     @Test
-    public void sendSosNormalFlowToElasticSearch() throws InterruptedException {
+    public void sendSosNormalFlowToElasticSearch() throws InterruptedException, IOException {
 
         OwsServiceRequestContext ctx = new OwsServiceRequestContext();
         ctx.setIPAddress(new IPAddress(IP));
@@ -102,8 +106,8 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         // wait for the other thread to stop, hopefully
         Thread.sleep(9000);
 
-        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
-                .setTypes(clientSettings.getTypeId()).get();
+        SearchResponse response = getEmbeddedClient().search(new SearchRequest(clientSettings.getIndexId())
+                .types(clientSettings.getTypeId()), RequestOptions.DEFAULT);
 
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
@@ -115,7 +119,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
     }
 
     @Test
-    public void sendSosExceptionFlowTriadtToElasticSearch() throws InterruptedException {
+    public void sendSosExceptionFlowTriadtToElasticSearch() throws InterruptedException, IOException {
         OwsServiceRequestContext ctx = new OwsServiceRequestContext();
         ctx.setIPAddress(new IPAddress(IP));
 
@@ -139,8 +143,8 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         // wait for the other thread to stop, hopefully
         Thread.sleep(9000);
 
-        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId())
-                .setTypes(clientSettings.getTypeId()).get();
+        SearchResponse response = getEmbeddedClient().search(new SearchRequest(clientSettings.getIndexId())
+                .types(clientSettings.getTypeId()), RequestOptions.DEFAULT);
 
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);

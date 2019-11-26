@@ -28,8 +28,16 @@
  */
 package org.n52.sos.statistics.sos.schema;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.GetFieldMappingsRequest;
+import org.elasticsearch.client.indices.GetFieldMappingsResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -43,9 +51,9 @@ public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
     private final String type = "mytpe";
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUp() throws InterruptedException, IOException {
         try {
-            getEmbeddedClient().admin().indices().prepareDelete(idx).get();
+            getEmbeddedClient().delete(new DeleteRequest(idx), RequestOptions.DEFAULT);
             Thread.sleep(3000);
         } catch (ElasticsearchException e) {
             logger.error("Error while setting up the test!", e);
@@ -54,21 +62,29 @@ public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
 
     @Test
     @Ignore
-    public void createSchema() {
+    public void createSchema() throws IOException {
         SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
-        getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getSchema()).get();
+        Map<String, Object> map = new HashMap<>();
+        map.put(type, sch.getSchema());
+        getEmbeddedClient().indices().create(new CreateIndexRequest(idx).mapping(map),
+                RequestOptions.DEFAULT);
 
-        GetMappingsResponse resp = getEmbeddedClient().admin().indices().prepareGetMappings(idx).addTypes(type).get();
-        Assert.assertNotNull(resp.getMappings());
+        GetFieldMappingsResponse resp = getEmbeddedClient().indices()
+                .getFieldMapping(new GetFieldMappingsRequest().indices(idx).fields(type), RequestOptions.DEFAULT);
+        Assert.assertNotNull(resp.mappings());
     }
 
     @Test
     @Ignore
-    public void createMetaDataSchema() {
+    public void createMetaDataSchema() throws IOException {
         SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
-        getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getMetadataSchema()).get();
+        Map<String, Object> map = new HashMap<>();
+        map.put(type, sch.getMetadataSchema());
+        getEmbeddedClient().indices().create(new CreateIndexRequest(idx).mapping(map),
+                RequestOptions.DEFAULT);
 
-        GetMappingsResponse resp = getEmbeddedClient().admin().indices().prepareGetMappings(idx).addTypes(type).get();
-        Assert.assertNotNull(resp.getMappings());
+        GetFieldMappingsResponse resp = getEmbeddedClient().indices()
+                .getFieldMapping(new GetFieldMappingsRequest().indices(idx).fields(type), RequestOptions.DEFAULT);
+        Assert.assertNotNull(resp.mappings());
     }
 }

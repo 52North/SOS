@@ -91,7 +91,7 @@
         <hibernate.version>5.4.9.Final</hibernate.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <hikaricp.version>3.4.1</hikaricp.version>
-        <geotools.version>22.1</geotools.version>
+        <geotools.version>22.2</geotools.version>
         <jackson.version>2.10.1</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc.version>7.4.1.jre8</sqljdbc.version>

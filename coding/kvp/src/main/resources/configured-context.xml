@@ -7,11 +7,14 @@
     <bean class="org.n52.sos.decode.kvp.GetCapabilitiesKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.v1.DescribeSensorKvpDecoderv100"/>
     <bean class="org.n52.sos.decode.kvp.v1.GetObservationKvpDecoderv100"/>
+    <bean class="org.n52.sos.decode.kvp.v2.DeleteObservationKvpDecoder"/>
+    <bean class="org.n52.sos.decode.kvp.v2.DeleteResultTemplateKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20"/>
     <bean class="org.n52.sos.decode.kvp.v2.DescribeSensorKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetDataAvailabilityKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.v2.GetFeatureOfInterestKvpDecoderv20"/>
-    <bean class="org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20"/>
     <bean class="org.n52.sos.decode.kvp.v2.GetObservationByIdKvpDecoderv20"/>
+    <bean class="org.n52.sos.decode.kvp.v2.GetObservationKvpDecoderv20"/>
     <bean class="org.n52.sos.decode.kvp.v2.GetResultKvpDecoderv20"/>
     <bean class="org.n52.sos.decode.kvp.v2.GetResultTemplateKvpDecoderv20"/>
 

@@ -37,19 +37,19 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
   - [Efficient XML Interchange (EXI) 1.0 format](http://52north.org/communities/sensorweb/sos/index.html#www.w3.orgTRexi)
   - Support for [GoundWaterML 2 GeologyLog observation](http://www.opengeospatial.org/standards/gwml2)
   
-### Future
+### Future work
 
-From version 5.x of the 52N SOS, the database model and the DAO layer of 52N SOS and the [52N Sensor Web REST-API](https://github.com/52North/series-rest-api) would be merged to finally provide an easy-to-install and easy-to-configure service that provides the OGC SOS 2.0 interface and the 52N Sensor WEB REST-API to easily access the observed data via a restful interface.
+As of version 5.x, the 52N SOS's database model and DAO layer will be merged with the [52N Sensor Web REST-API](https://github.com/52North/series-rest-api) to provide an easy-to-install and easy-to-configure service. This service will provide an OGC SOS 2.0 interface and 52N Sensor WEB REST-API to easily access the observed data via a restful interface.
 
-For that the similar database models of both services would be harmonized to use the same model. Furthermore, the new database model is to be defined in this way that a simple basic database model would provide the main features of the SOS and the Sensor WEB REST-API and can be easily extended to provide further features.
+The database models of both services will be harmonized. A simple basic database model will provide the main features of the SOS and the Sensor WEB REST-API and will be easily extendable.
 
-The Data Access Objects (DAO) layer would also be harmonized to provide a single point for accessing and manipulating the data in the database. This would reduce the maintenance and new database features would be easier supported by the SOS and the REST interface.
+The Data Access Objects (DAO) layer will also be harmonized to provide a single point for accessing and manipulating the data in the database. This will reduce the maintenance and the SOS and the REST interface will easily support new database features.
 
-In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer would be provided as a separate project that would be use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
+In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer will be provided as a separate project for use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
 
 ## Quick Start
 
- Get started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
+ Getting started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
  
 ### Docker
 
@@ -80,11 +80,11 @@ docker run -p 8080:8080 -p 8000:8000 -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=tra
 
 ## User Guide
 
- The official OGC SOS 2.0 tutorial [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial) is currently not available, see http://www.ogcnetwork.net.
+ An Open Geospatial Consortium (OGC) SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial) is currently not available, see http://www.ogcnetwork.net.
 
 ## Demo
 
-    http://sensorweb.demo.52north.org/sensorwebtestbed/
+ Access a basic form-based test client and the administrative backend at our [demo site](http://sensorweb.demo.52north.org/sensorwebtestbed/).
 
 ## License
 

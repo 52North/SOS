@@ -21,7 +21,7 @@ The 52°North SOS enables the user to:
  - insert and retrieve sensor descriptions (encoded according to the OGC SensorML standard - SML 1.0.1, SML 2.0)
  - publish measurement data (near real-time, as well as archived data) 
 
-An extension accommodates additional INSPIRE Directive requirements, thus ensuring interoperable exchange of any kind of observation data across political, administrative and organizational boundaries. Client applications, such as [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measurement data provided via the SOS server.
+An extension accommodates additional INSPIRE Directive requirements, thus ensuring the interoperable exchange of any kind of observation data across political, administrative and organizational boundaries. Client applications, such as [Helgoland](http://www-neu.52north.org/software/software-projects/helgoland/) enable analysis and visualization of the measurement data provided via the SOS server.
  
 ### Features
 
@@ -45,7 +45,7 @@ The database models of both services will be harmonized. A simple basic database
 
 The Data Access Objects (DAO) layer will also be harmonized to provide a single point for accessing and manipulating the data in the database. This will reduce the maintenance and the SOS and the REST interface will easily support new database features.
 
-In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer will be provided as a separate project for use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
+In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer will be provided as a separate project for use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally, the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
 
 ## Quick Start
 
@@ -55,7 +55,7 @@ In the [Sensor Web Suite database project](https://github.com/52North/series-hib
 
 Docker images are automatically deployed to [Docker Hub](https://hub.docker.com/r/52north/sos).
 
-The configuration is located in `/etc/sos`. The directory is per default a volume and when no other directory is mounted (see also the [Docker documentation](https://docs.docker.com/storage/) for pre-populated volumes) a default configuration using H2 is used. This default installation uses the admin credentials `admin:admin`. If you want to install the SOS, you have to mount a empty directory instead of the default volume.
+The configuration is located in `/etc/sos`. The directory is per default a volume and when no other directory is mounted (see also the [Docker documentation](https://docs.docker.com/storage/) for pre-populated volumes) a default configuration using H2 is used. This default installation uses the admin credentials `admin: admin`. If you want to install the SOS, you have to mount an empty directory instead of the default volume.
 
 The cache file is located in `/var/lib/jetty/webapps/ROOT/tmp`. The directory is per default a volume.
 
@@ -92,23 +92,23 @@ docker run -p 8080:8080 -p 8000:8000 -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=tra
 
 ## Changelog
 
- The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
+ The latest changes, additions, bug fixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
 
 ## References
 
  - [IRCEL-CELINE](http://www.irceline.be/) (Belgium): *Current and archived air quality data for all of Belgium*
- - [Wupperverband](https://www.wupperverband.de/) (Germnay): *Regional water board providing a multitude of hydrological measurment data with the help of SOS standards*
+ - [Wupperverband](https://www.wupperverband.de/) (Germany): *Regional water board providing a multitude of hydrological measurement data with the help of SOS standards*
  - [Swedish EPA](http://www.swedishepa.se/)/[IVL](http://www.ivl.se/)/[SMHI](http://www.smhi.se/) (Schweden): *Current and archived air quality data for all of Sweden, as well as delivery this data to the European Protection Agency*
  - [RIVM](http://www.rivm.nl/) (Netherlands): *Current and archived air quality data for all of the Netherlands*
  - [Lithuanian EPA](http://gamta.lt/cms/index?lang=en) (Lithuania): *Current and archived air quality data for all of Lithuania*
  - [European Environment Agency (EEA)](http://www.eea.europa.eu/): *Use of SOS interface to collect data from the member countries, as well as to publish the collective data*
- - [PEGELONLINE](https://www.pegelonline.wsv.de/) (Germany): *Interoperable publication of te federal waterways' hydrological measurment data.*
+ - [PEGELONLINE](https://www.pegelonline.wsv.de/) (Germany): *Interoperable publication of te federal waterways' hydrological measurement data.*
 
 ## Credits
 
 ### Contributors
 
-The development the 52°North Sensor Observation Service implementations was contributed by
+The development of the 52°North Sensor Observation Service implementations was contributed by
 
 | Name | Organisation |
 | ------------- | :-------------: |
@@ -126,7 +126,7 @@ The development the 52°North Sensor Observation Service implementations was con
 
 ### Contributing organizations
 
-The development the 52°North Sensor Observation Service implementations was contributed by several organizations
+The development of the 52°North Sensor Observation Service implementations was contributed by several organizations
 
 <p align="center"><a target="_blank" href="http://52north.org"><img alt="52N" align="middle" width="286" src="https://raw.githubusercontent.com/52North/sos/develop/spring/views/src/main/webapp/static/images/52n-logo-220x80.png" /></a></p>
 
@@ -138,7 +138,7 @@ The development the 52°North Sensor Observation Service implementations was con
 
 ### Funding organizations/projects
 
-The development the 52°North Sensor Observation Service implementations was supported by several organizations and projects. Among other we would like to thank the following organisations and project
+The development of the 52°North Sensor Observation Service implementations was supported by several organizations and projects. Among others, we would like to thank the following organizations and project
 
 | Project/Logo | Description |
 | :-------------: | :------------- |
@@ -172,7 +172,7 @@ The development the 52°North Sensor Observation Service implementations was sup
  
 ## Download
 
-The binaries of the 52N SOS releases are provided are provided with the releases on GitHub:
+The binaries of the 52N SOS releases are provided with the releases on GitHub:
 
     https://github.com/52North/SOS/releases
     
@@ -184,7 +184,7 @@ The binaries of the 52N SOS releases are provided are provided with the releases
   * `README` :          This file
   * `RELEASE-NOTES` : The release notes of the 52°North SOS
 
-No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
+No printer-friendly documentation exists for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
 
 ## Support
 
@@ -202,9 +202,9 @@ The 3rd party libraries used and their licenses are listed in the [NOITICE file]
 
 Are you are interested in contributing to the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
 
-In that case we need your official permission. For this purpose we have a so-called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
+In that case, we need your official permission. For this purpose, we have a so-called contributors license agreement (CLA) in place. With this agreement, you grant us the right to use and publish your code under an open-source license.
 
-A link to the contributors license agreement and further explanations are available here: 
+A link to the contributor's license agreement and further explanations are available here: 
 
     https://52north.org/software/licensing/guidelines/
     
@@ -216,7 +216,7 @@ Ongoing development is done in branch [develop](../../tree/develop) and dedicate
 ## Code Compilation
 
 This project is managed with Maven3. Simply run `mvn clean install`
-to create a deployable .WAR file.
+to create a deployable.WAR file.
 
 
-52°North Inititative for Geospatial Open Source Software GmbH, Germany
+52°North Initiative for Geospatial Open Source Software GmbH, Germany

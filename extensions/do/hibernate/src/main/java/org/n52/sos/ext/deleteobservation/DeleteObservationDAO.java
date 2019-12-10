@@ -251,15 +251,17 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             }
             if (filter.getTime() instanceof TimeInstant) {
                 TimeInstant ti = (TimeInstant) filter.getTime();
-                if (q.getComment().contains(":" + TemporalRestriction.START)
-                        && q.getComment().contains(":" + TemporalRestriction.END)) {
+                if (q.getComment().contains(":" + TemporalRestriction.START)) {
                     q.setParameter(TemporalRestriction.START + count, ti.getValue().toDate(),
                             UtcTimestampType.INSTANCE);
+                }
+                if (q.getComment().contains(":" + TemporalRestriction.END)) {
                     q.setParameter(TemporalRestriction.END + count,
                             DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(ti.getValue(),
                                     ti.getRequestedTimeLength()).toDate(),
                             UtcTimestampType.INSTANCE);
-                } else {
+                }
+                if (q.getComment().contains(":" + TemporalRestriction.INSTANT)) {
                     q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue().toDate(), UtcTimestampType.INSTANCE);
                 }
             }

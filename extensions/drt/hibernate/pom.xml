@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.4.7-4-efas-SNAPSHOT</version>
+        <version>4.4.7-4-efas</version>
         <artifactId>drt</artifactId>
     </parent>
     <artifactId>drt-hibernate</artifactId>

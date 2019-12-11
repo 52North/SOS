@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>core</artifactId>
-        <version>4.4.7-4-efas-SNAPSHOT</version>
+        <version>4.4.7-4-efas</version>
     </parent>
     <artifactId>admin</artifactId>
     <name>52°North SOS - Administrator Service Operator</name>

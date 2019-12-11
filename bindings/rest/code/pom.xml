@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>rest</artifactId>
-        <version>4.4.7-4-efas</version>
+        <version>4.4.7-5-efas-SNAPSHOT</version>
     </parent>
     <artifactId>rest-code</artifactId>
     <name>52°North SOS - Extension REST Binding - Core</name>

@@ -7,17 +7,22 @@
         </div>
     </div>
     <div class="modal-body stationContent">
-        <swc-ecmwf-procedure-selection ng-if="parentProcedures" items="parentProcedures" on-select="selectProcedure(item)" />
-        <swc-ecmwf-result-time-selection ng-if="resultTimes && selectedProcedure" items="resultTimes" on-select="selectResultTime(item)" />
-        <div ng-if="selectedProcedure && selectedResultTime && datasets" ng-repeat="dataset in datasets" ng-if="phenomenonId == null || dataset.seriesParameters.phenomenon.id === phenomenonId">
+        <swc-ecmwf-procedure-selection ng-if="parentProcedures" items="parentProcedures"
+            on-select="selectProcedure(item)" />
+        <swc-ecmwf-result-time-selection ng-if="resultTimes && selectedProcedure" items="resultTimes"
+            on-select="selectResultTime(item)" />
+        <div ng-if="selectedProcedure && selectedResultTime && datasets" ng-repeat="dataset in datasets"
+            ng-if="phenomenonId == null || dataset.seriesParameters.phenomenon.id === phenomenonId">
             <h4>{{dataset.label}}</h4>
             <div class="tsItem" ng-class="{selected : selected}">
                 <div class="checkbox">
                     <div class="glyphicon glyphicon-refresh loading icon-spin" ng-hide="dataset.id"></div>
                     <label>
-                        <input type="checkbox" ng-disabled="!dataset.id" ng-model="dataset.selected" ng-change="toggled()">
+                        <input type="checkbox" ng-disabled="!dataset.id" ng-model="dataset.selected"
+                            ng-change="toggled()">
                         <span>{{timeseries.procedure.label}}</span>
-                        <span ng-show="dataset.seriesParameters.category.label">({{dataset.seriesParameters.category.label}})</span>
+                        <span
+                            ng-show="dataset.seriesParameters.category.label">({{dataset.seriesParameters.category.label}})</span>
                     </label>
                     <div class="additionalInfo" ng-show="dataset.lastValue">
                         <span>{{dataset.lastValue.value}}</span>

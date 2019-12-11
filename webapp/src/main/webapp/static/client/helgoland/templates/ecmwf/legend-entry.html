@@ -1,4 +1,5 @@
-<div class="legendItem" style="position: relative;" ng-click="$ctrl.toggleSelection()" ng-class="{'selected': $ctrl.item.items[0].styles.selected}">
+<div class="legendItem" style="position: relative;" ng-click="$ctrl.toggleSelection()"
+    ng-class="{'selected': $ctrl.item.items[0].styles.selected}">
     <div class="legendItemheader">
         <div class="legendItemLabel" ng-style="{color: timeseries.styles.color}">
             <swc-label-mapper label="$ctrl.item.items[0].seriesParameters.platform.label"></swc-label-mapper>
@@ -8,19 +9,21 @@
                 <span class="glyphicon glyphicon-warning-sign red"></span>
                 <span class="small" translate="legend.entry.noData"></span>
             </div>
-            <div class="additionalLegendEntry" ng-controller="SwcJumpToFirstLatestValuesCtrl" ng-click="$event.stopPropagation(); jumpToLastTimeStamp($ctrl.item.items[0].lastValue)">
+            <div class="additionalLegendEntry" ng-controller="SwcJumpToFirstLatestValuesCtrl"
+                ng-click="$event.stopPropagation(); jumpToLastTimeStamp($ctrl.item.items[0].lastValue)">
                 <span class="glyphicon glyphicon-chevron-right"></span>
                 <span class="small" translate="legend.entry.jumpToLastValue"></span>
             </div>
         </div>
         <div class="small">
-          <span translate="ecmwf.modelcreationtime"></span>
-          <span>:</span>
-          <span>{{$ctrl.item.items[0].filter.resultTime| date: 'dd.MM.yy HH:mm'}}</span>
+            <span translate="ecmwf.modelcreationtime"></span>
+            <span>:</span>
+            <span>{{$ctrl.item.items[0].filter.resultTime| date: 'dd.MM.yy HH:mm'}}</span>
         </div>
         <div class="small">
             <swc-label-mapper label="$ctrl.item.items[0].seriesParameters.phenomenon.label"></swc-label-mapper>
-            <span>(<swc-label-mapper ng-if="$ctrl.item.items[0].uom" label="$ctrl.item.items[0].uom"></swc-label-mapper>)</span>
+            <span>(<swc-label-mapper ng-if="$ctrl.item.items[0].uom" label="$ctrl.item.items[0].uom"></swc-label-mapper>
+                )</span>
         </div>
         <div ng-repeat="item in $ctrl.item.items">
             <label ng-style="{'color': item.styles.color}">
@@ -30,8 +33,10 @@
             </label>
         </div>
         <div class="legendicons">
-            <span class="glyphicon glyphicon-map-marker inMap" ng-click="$event.stopPropagation(); $ctrl.showInMap()"></span>
-            <span class="glyphicon glyphicon-remove delete" ng-controller="SwcDeleteLegendEntryCtrl" ng-click="$event.stopPropagation(); $ctrl.removeAll()"></span>
+            <span class="glyphicon glyphicon-map-marker inMap"
+                ng-click="$event.stopPropagation(); $ctrl.showInMap()"></span>
+            <span class="glyphicon glyphicon-remove delete" ng-controller="SwcDeleteLegendEntryCtrl"
+                ng-click="$event.stopPropagation(); $ctrl.removeAll()"></span>
         </div>
     </div>
 </div>

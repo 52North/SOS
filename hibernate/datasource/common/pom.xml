@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate-datasource</artifactId>
-        <version>4.4.7-5-efas-SNAPSHOT</version>
+        <version>4.4.7-4-efas-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource-common</artifactId>

@@ -110,7 +110,7 @@
         <org.springframework.version>5.2.2.RELEASE</org.springframework.version>
         <aspectj.version>1.9.5</aspectj.version>
         <saxon.version>9.9.1-6</saxon.version>
-        <elasticsearch.version>7.4.2</elasticsearch.version>
+        <elasticsearch.version>7.5.0</elasticsearch.version>
         <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
     </properties>
 
@@ -763,7 +763,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.4</version>
+                 <version>1.10.5</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -2012,7 +2012,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.7.8</version>
+                    <version>1.7.9</version>
                 </plugin>
 
                 <plugin>

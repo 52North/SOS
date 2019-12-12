@@ -81,7 +81,9 @@ public class DefaultContentModificationListener
                     SensorDeletion.class,
                     ResultInsertion.class,
                     UpdateCache.class,
-                    ResultTemplatesDeletion.class);
+                    ResultTemplatesDeletion.class,
+                    FeatureInsertion.class,
+                    DeleteObservationEvent.class);
 
     private final CacheFeederHandler handler;
     private final ContentCacheController controller;

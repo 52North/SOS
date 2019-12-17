@@ -87,7 +87,7 @@
         <postgresql.version>42.2.9</postgresql.version>
         <postgis.version>2.3.0</postgis.version>
         <logback.version>1.2.3</logback.version>
-        <slf4j.version>1.7.29</slf4j.version>
+        <slf4j.version>1.7.30</slf4j.version>
         <hibernate.version>5.4.9.Final</hibernate.version>
         <c3p0.version>0.9.5.4</c3p0.version>
         <hikaricp.version>3.4.1</hikaricp.version>

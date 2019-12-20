@@ -96,6 +96,11 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>mchange-commons-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
          <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

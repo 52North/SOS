@@ -2013,7 +2013,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.24.v20191120</version>
+                    <version>9.4.25.v20191220</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

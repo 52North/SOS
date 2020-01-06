@@ -142,7 +142,7 @@ This project includes:
   Apache HttpClient Mime under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
-  API interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  API interfaces under Lesser General Public License (LGPL)
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   Avalon Framework API under The Apache Software License, Version 2.0
@@ -177,7 +177,7 @@ This project includes:
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   EJML under The Apache Software License, Version 2.0
-  EPSG Authority Service using HSQL database under GNU Lesser General Public License (LGPL) version 2.1
+  EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   EXIficient under MIT License
   EXIficient-Core under MIT License
   EXIficient-Grammars under MIT License
@@ -246,9 +246,9 @@ This project includes:
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
-  Main module under GNU Lesser General Public License (LGPL) version 2.1
+  Main module under Lesser General Public License (LGPL)
   mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  Metadata under GNU Lesser General Public License (LGPL) version 2.1
+  Metadata under Lesser General Public License (LGPL)
   Microsoft JDBC Driver for SQL Server under MIT License
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
@@ -293,14 +293,14 @@ This project includes:
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
-  Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
   quartz under The Apache Software License, Version 2.0
-  Referencing services under GNU Lesser General Public License (LGPL) version 2.1
+  Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL or The New BSD License
   SaxonB under Mozilla Public License Version 1.0
   Series REST API - DAO Mappings module under GNU General Public License, Version 2.0

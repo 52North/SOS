@@ -88,7 +88,7 @@
         <postgis.version>2.3.0</postgis.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <hibernate.version>5.4.9.Final</hibernate.version>
+        <hibernate.version>5.4.10.Final</hibernate.version>
         <c3p0.version>0.9.5.5</c3p0.version>
         <hikaricp.version>3.4.1</hikaricp.version>
         <geotools.version>22.1</geotools.version>

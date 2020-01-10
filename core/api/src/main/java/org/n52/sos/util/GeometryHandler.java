@@ -707,6 +707,10 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         }
     }
 
+    public boolean is3dCrs(int epsgCode) throws OwsExceptionReport {
+        return getCRS(epsgCode).getCoordinateSystem().getDimension() == 3;
+    }
+
     /**
      * Create CRS for EPSG code.
      *

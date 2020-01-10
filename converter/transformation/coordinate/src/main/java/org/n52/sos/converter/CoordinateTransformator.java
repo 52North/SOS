@@ -617,9 +617,21 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
                 x = northing.doubleValue();
             }
 
+
+
             GeometryFactory factory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), sourceCrs);
-            Coordinate coordinate = getGeomtryHandler().transform(factory.createPoint(new Coordinate(x, y)), targetCrs)
-                    .getCoordinate();
+            Coordinate coordinate = null;
+            if (getGeomtryHandler().is3dCrs(sourceCrs)) {
+                double z = 0.0;
+                if (altitude != null && altitude.getValue() != null && altitude.getValue().getValue() != null) {
+                    z = altitude.getValue().getValue().doubleValue();
+                }
+                coordinate = getGeomtryHandler().transform(factory.createPoint(new Coordinate(x, y, z)), targetCrs)
+                        .getCoordinate();
+            } else {
+                coordinate = getGeomtryHandler().transform(factory.createPoint(new Coordinate(x, y)), targetCrs)
+                        .getCoordinate();
+            }
 
             if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
                 x = coordinate.y;

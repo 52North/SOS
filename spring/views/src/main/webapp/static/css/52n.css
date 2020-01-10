@@ -260,7 +260,7 @@ li#fb_exception {
     color: #FFFFFF;
 }
 #navigation_m li.current_page_item  {
-    background: url("../images/mainnav-active.gif") no-repeat scroll center bottom transparent;
+    background: url("../static/images/mainnav-active.gif") no-repeat scroll center bottom transparent;
     background-color: #66C6E4;
     padding: 12px 20px 17px 20px;
 }

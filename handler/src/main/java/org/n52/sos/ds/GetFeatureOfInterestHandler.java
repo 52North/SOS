@@ -52,6 +52,7 @@ import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -218,10 +219,19 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             Session session) throws OwsExceptionReport {
         // try {
         Collection<DatasetEntity> datasets = new DatasetDao(session).get(createDbQuery(req));
+        Collection<FeatureEntity> allFeatures =
+                new FeatureDao(session).get(new DbQuery(IoParameters.createDefaults()));
         if (datasets != null) {
-            return datasets.stream().filter(d -> d.isSetFeature()
+            Set<AbstractFeatureEntity> features = datasets.stream().filter(d -> d.isSetFeature()
                     && (d.isPublished() || !d.isPublished() && d.getDatasetType().equals(DatasetType.not_initialized)))
                     .map(d -> d.getFeature()).collect(Collectors.toSet());
+
+            Set<AbstractFeatureEntity> notVisibleFeatures =
+                    datasets.stream().filter(d -> d.isDeleted() || !d.isPublished()).map(d -> d.getFeature())
+                            .collect(Collectors.toSet());
+            features.addAll(
+                    allFeatures.stream().filter(o -> !notVisibleFeatures.contains(o)).collect(Collectors.toSet()));
+            return features;
         }
         return Collections.emptySet();
         // return new FeatureDao(session).getAllInstances(createDbQuery(req));

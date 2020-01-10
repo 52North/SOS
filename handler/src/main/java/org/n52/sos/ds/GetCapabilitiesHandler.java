@@ -59,9 +59,12 @@ import org.locationtech.jts.geom.Geometry;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.DataAccessException;
 import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.dao.DatasetDao;
 import org.n52.series.db.dao.DbQuery;
 import org.n52.series.db.dao.OfferingDao;
 import org.n52.series.db.dao.PhenomenonDao;
@@ -120,8 +123,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         Session session = null;
         try {
             session = sessionStore.getSession();
-            Collection<OfferingEntity> offerings =
-                    new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+            Collection<OfferingEntity> offerings = getOfferings(session);
             List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
             for (OfferingEntity offering : offerings) {
                 Collection<ProcedureEntity> procedures =
@@ -222,8 +224,8 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         Session session = null;
         try {
             session = sessionStore.getSession();
-            Collection<OfferingEntity> offerings =
-                    new OfferingDao(session).getAllInstances(new DbQuery(IoParameters.createDefaults()));
+
+            Collection<OfferingEntity> offerings = getOfferings(session);
             List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
             Map<String, List<SosObservationOfferingExtension>> extensions =
                     this.capabilitiesExtensionService.getActiveOfferingExtensions();
@@ -314,6 +316,21 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         } finally {
             sessionStore.returnSession(session);
         }
+    }
+
+    private Collection<OfferingEntity> getOfferings(Session session) {
+        OfferingDao offeringDao = new OfferingDao(session);
+        Collection<OfferingEntity> offerings =
+                offeringDao.getAllInstances(new DbQuery(IoParameters.createDefaults()));
+
+        Collection<OfferingEntity> allOfferings = offeringDao.get(new DbQuery(IoParameters.createDefaults()));
+        Collection<DatasetEntity> datasets = new DatasetDao(session).get(new DbQuery(IoParameters.createDefaults()));
+        Set<OfferingEntity> notVisibleOfferings = datasets.stream().filter(
+                d -> d.isDeleted() || (!d.isPublished() && !d.getDatasetType().equals(DatasetType.not_initialized)))
+                .map(d -> d.getOffering()).collect(Collectors.toSet());
+        offerings.addAll(
+                allOfferings.stream().filter(o -> !notVisibleOfferings.contains(o)).collect(Collectors.toSet()));
+        return offerings;
     }
 
     private Collection<? extends SosObservationOffering> createAndGetParentOfferings(
@@ -516,6 +533,6 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
             throws OwsExceptionReport, DataAccessException {
         Map<String, String> map = new HashMap<>(1);
         map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
-        return new ProcedureDao(session).getAllInstances(new DbQuery(IoParameters.createFromSingleValueMap(map)));
+        return new ProcedureDao(session).get(new DbQuery(IoParameters.createFromSingleValueMap(map)));
     }
 }

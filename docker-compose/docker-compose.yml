@@ -27,7 +27,6 @@ services:
   sos:
     image: 52north/sos:latest
     ports:
-      - 8080:8080
       - 8000:8000
     links:
       - db:postgres

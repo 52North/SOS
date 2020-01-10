@@ -14,7 +14,7 @@
 # Just run docker-compose up in the directory of this file.
 #
 # The current proxy configuration secures the context / with user "test:test"
-version: '3'
+version: '3.7'
 ################################################################################
 #                                                                              #
 #                     Services                                                 #
@@ -30,9 +30,6 @@ services:
     image: mdillon/postgis:9.5
     ports:
       - 5432:5432
-    networks:
-      network:
-        ipv4_address: 172.52.0.52
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -40,11 +37,7 @@ services:
   sos:
     image: 52north/sos:latest
     ports:
-      - 8080:8080
       - 8000:8000
-    networks:
-      network:
-        ipv4_address: 172.52.0.62
     volumes:
       - "./sos-config:/etc/sos"
     depends_on:
@@ -60,9 +53,8 @@ services:
     image: nginx:alpine
     ports:
       - 80:80
-    networks:
-      network:
-        ipv4_address: 172.52.0.72
     volumes:
       - "./nginx-proxy.conf:/etc/nginx/conf.d/default.conf"
       - "./htpasswd:/etc/nginx/htpasswd"
+    depends_on:
+      - sos

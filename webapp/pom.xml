@@ -17,7 +17,7 @@
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
         <series.api.version>2.0.0-alpha.7</series.api.version>
         <series.db.version>2.0.0-alpha.3-1</series.db.version>
-        <helgoland.version>1.0.0</helgoland.version>
+        <helgoland.version>2.0.1</helgoland.version>
     </properties>
     <build>
         <finalName>${conf.sos.name}</finalName>
@@ -61,16 +61,16 @@
 							<goal>unpack</goal>
 						</goals>
 						<configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.n52.series-api.db</groupId>
-                                    <artifactId>mappings</artifactId>
-                                    <includes>hbm/sos/v44/*.hbm.xml</includes>
-                                    <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory>
-                                    <overWrite>true</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <overWriteReleases>false</overWriteReleases>
+                <artifactItems>
+                    <artifactItem>
+                        <groupId>org.n52.series-api.db</groupId>
+                        <artifactId>mappings</artifactId>
+                        <includes>hbm/sos/v44/*.hbm.xml</includes>
+                        <outputDirectory>${project.build.outputDirectory}/mapping/extension/readonly/</outputDirectory>
+                        <overWrite>true</overWrite>
+                    </artifactItem>
+                </artifactItems>
+                <overWriteReleases>false</overWriteReleases>
 						</configuration>
 					</execution>
                 </executions>
@@ -97,7 +97,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- 
             <plugin>
               <groupId>com.googlecode.maven-download-plugin</groupId>
               <artifactId>download-maven-plugin</artifactId>
@@ -110,14 +109,13 @@
                           <goal>wget</goal>
                       </goals>
                       <configuration>
-                          <url>https://github.com/52North/helgoland/releases/download/v${helgoland.version}/client.${helgoland.version}.war</url>
+                          <url> https://github.com/52North/helgoland/releases/download/v${helgoland.version}/helgoland-complete.war</url>
                           <unpack>true</unpack>
-                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
+                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland-2</outputDirectory>
                       </configuration>
                   </execution>
               </executions>
             </plugin>
-             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -186,6 +184,32 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+            <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>replacer</artifactId>
+            <version>1.5.3</version>
+            <executions>
+                <execution>
+                    <id>Update Helgoland index file</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>replace</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <basedir>${project.build.directory}/${conf.sos.name}/static/client/helgoland-2</basedir>
+                <includes>
+                    <include>index.html</include>
+                </includes>
+                <replacements>
+                    <replacement>
+                        <token>/helgoland-complete/</token>
+                        <value>./</value>
+                    </replacement>
+                </replacements>
+            </configuration>
+        </plugin>
         </plugins>
         <pluginManagement>
             <plugins>

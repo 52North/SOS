@@ -947,6 +947,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     }
 
     public Map<String, String> getProcedureFormatMap(Session session) {
+        Map<String, String> procedureFormatMap = Maps.newTreeMap();
         if (HibernateHelper.isEntitySupported(ProcedureHistoryEntity.class)) {
             Criteria criteria = session.createCriteria(ProcedureEntity.class);
             criteria.createAlias(ProcedureEntity.PROPERTY_VALID_PROCEDURE_TIME, "vpt");
@@ -958,30 +959,14 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             LOGGER.trace(QUERY_FORMAT_MAP_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
             @SuppressWarnings("unchecked")
             List<Object[]> results = criteria.list();
-            Map<String, String> tProcedureFormatMap = Maps.newTreeMap();
-            for (Object[] result : results) {
-                String procedureIdentifier = (String) result[0];
-                String format = (String) result[1];
-                tProcedureFormatMap.put(procedureIdentifier, format);
-            }
-            return tProcedureFormatMap;
-        } else {
-            Criteria criteria = getDefaultCriteria(session);
-            criteria.createAlias(ProcedureEntity.PROCEDURE_DESCRIPTION_FORMAT, PDF);
-            criteria.setProjection(Projections.projectionList().add(Projections.property(ProcedureEntity.IDENTIFIER))
-                    .add(Projections.property(PDF_PREFIX + FormatEntity.FORMAT)));
-            criteria.addOrder(Order.asc(ProcedureEntity.IDENTIFIER));
-            LOGGER.trace(QUERY_FORMAT_MAP_LOG_TEMPLATE, HibernateHelper.getSqlString(criteria));
-            @SuppressWarnings("unchecked")
-            List<Object[]> results = criteria.list();
-            Map<String, String> procedureFormatMap = Maps.newTreeMap();
+
             for (Object[] result : results) {
                 String procedureIdentifier = (String) result[0];
                 String format = (String) result[1];
                 procedureFormatMap.put(procedureIdentifier, format);
             }
-            return procedureFormatMap;
         }
+        return procedureFormatMap;
     }
 
     @SuppressWarnings("unchecked")

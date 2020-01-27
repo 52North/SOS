@@ -127,7 +127,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
         location.setDescription(feature.isSetDescription() ? feature.getDescription() : location.getName());
         location.setLocationEncoding(
                 getDaoFactory().getFeatureTypeDAO().getOrInsertFormatEntity(ENCODINGTYPE_GEOJSON, session));
-        location.setGeometry(feature.getGeometry());
+        location.setGeometryEntity(feature.getGeometryEntity());
 
         session.save(location);
         session.flush();

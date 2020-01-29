@@ -834,8 +834,8 @@ function ReportingAuthorityController(options) {
             delegate: PTFreeTextController,
             menu: this.menu,
             delegateOptions: {
-                label: "Organsiation Name",
-                placeholder: "Organsiation Name",
+                label: "Organisation Name",
+                placeholder: "Organisation Name",
                 helpText: "Name of the related organisation."
             },
             value: options.value.organisationName

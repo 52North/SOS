@@ -128,7 +128,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String TIME_STRING_Z_TITLE = "Has the datasource time string a 'Z'";
 
     protected static final String TIME_STRING_Z_DESCRIPTION =
-            "Define if the datasoucre time string uses a 'Z' instead of '+00:00'.";
+            "Define if the datasource time string uses a 'Z' instead of '+00:00'.";
 
     protected static final boolean TIME_STRING_Z_DEFAULT_VALUE = false;
 

@@ -74,6 +74,8 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                         getCache().addPublishedFeatureOfInterest(identifier);
                     }
                     getCache().setProceduresForFeatureOfInterest(identifier, getProcedures(datasets));
+                } else {
+                    getCache().addPublishedFeatureOfInterest(identifier);
                 }
                 if (featureEntity.isSetName()) {
                     getCache().addFeatureOfInterestIdentifierHumanReadableName(identifier, featureEntity.getName());

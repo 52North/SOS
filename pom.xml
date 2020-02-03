@@ -94,7 +94,7 @@
         <geotools.version>22.3</geotools.version>
         <jackson.version>2.10.2</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
-        <sqljdbc.version>7.4.1.jre8</sqljdbc.version>
+        <sqljdbc.version>8.2.0.jre13</sqljdbc.version>
         <version.netcdf>5.2.0</version.netcdf>
 
         <!-- 52N dependency versions -->

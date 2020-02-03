@@ -453,19 +453,21 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
 
-        List<PhenomenonEntity> observableProperties =
-                new PhenomenonDao(session).getAllInstances(new DbQuery(IoParameters.createFromSingleValueMap(map)));
+        Collection<PhenomenonEntity> observableProperties =
+                new PhenomenonDao(session).get(new DbQuery(IoParameters.createFromSingleValueMap(map)));
+        Set<String> validObsProps = getCache().getObservablePropertiesForOffering(offering.getIdentifier());
 
         Collection<String> phenomenons = new LinkedList<>();
         Map<String, Collection<String>> phens4CompPhens = new HashMap<>(observableProperties.size());
         observableProperties.forEach(observableProperty -> {
-            if (!observableProperty.hasChildren() && !observableProperty.hasParents()) {
-                phenomenons.add(observableProperty.getIdentifier());
-            } else if (observableProperty.hasChildren() && !observableProperty.hasParents()) {
-                phens4CompPhens.put(observableProperty.getIdentifier(), observableProperty.getChildren().stream()
-                        .map(PhenomenonEntity::getIdentifier).collect(toCollection(TreeSet::new)));
+            if (validObsProps.contains(observableProperty.getIdentifier())) {
+                if (!observableProperty.hasChildren() && !observableProperty.hasParents()) {
+                    phenomenons.add(observableProperty.getIdentifier());
+                } else if (observableProperty.hasChildren() && !observableProperty.hasParents()) {
+                    phens4CompPhens.put(observableProperty.getIdentifier(), observableProperty.getChildren().stream()
+                            .map(PhenomenonEntity::getIdentifier).collect(toCollection(TreeSet::new)));
+                }
             }
-
         });
         sosOffering.setObservableProperties(phenomenons);
         sosOffering.setPhens4CompPhens(phens4CompPhens);

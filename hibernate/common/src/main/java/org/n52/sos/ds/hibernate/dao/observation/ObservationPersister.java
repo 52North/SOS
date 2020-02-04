@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.CategoryDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -179,6 +180,14 @@ public class ObservationPersister implements ValueVisitor<Observation<?>>, Profi
          *  - series, phenTimeStart, phenTimeEnd, resultTime, depth/height parameter (same observation different depth/height)
          */
         if (checkForDuplicity) {
+            if (sosObservation.isSetIdentifier()) {
+                if (daos.observation
+                        .isIdentifierContained(sosObservation.getIdentifier(), session)) {
+                    throw new NoApplicableCodeException().withMessage(
+                            "The observation identifier '%s' already exists in the database!",
+                            sosObservation.getIdentifier());
+                }
+            }
             daos.observation.checkForDuplicatedObservations(sosObservation, observationConstellation, session);
         }
     }

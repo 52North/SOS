@@ -128,14 +128,6 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                                     + " the Spatial Filtering Profile is specification conformant. To use a less"
                                     + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
                 }
-                if (sosObservation.isSetIdentifier()) {
-                    if (DaoFactory.getInstance().getObservationDAO()
-                            .isIdentifierContained(sosObservation.getIdentifier(), session)) {
-                        throw new NoApplicableCodeException().withMessage(
-                                "The observation identifier '%s' already exists in the database!",
-                                sosObservation.getIdentifier());
-                    }
-                }
                 insertObservation(sosObservation, cache, exceptions, session);
 
                 // flush every FLUSH_INTERVAL

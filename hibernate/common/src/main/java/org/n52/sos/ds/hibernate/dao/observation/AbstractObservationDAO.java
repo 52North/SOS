@@ -1378,6 +1378,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
+    public boolean isIdentifierContained(String identifier, Session session) {
+            Criteria c = getDefaultObservationCriteria(session).add(Restrictions.eq(Observation.IDENTIFIER, identifier));
+            LOGGER.debug("QUERY isIdentifierContained(identifier): {}",
+                    HibernateHelper.getSqlString(c));
+            return c.list().size() > 0;
+    }
+
     private void addParameterRestriction(Criteria c, NamedValue<?> hdp) throws OwsExceptionReport {
         c.add(Subqueries.propertyIn(AbstractBaseObservation.OBS_ID, getParameterRestriction(c, hdp.getName().getHref(), hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
     }
@@ -1424,13 +1431,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                         .withMessage("Error while creating result time filter for querying observations!");
             }
         }
-    }
-
-    public boolean isIdentifierContained(String identifier, Session session) {
-            Criteria c = getDefaultObservationCriteria(session).add(Restrictions.eq(Observation.IDENTIFIER, identifier));
-            LOGGER.debug("QUERY isIdentifierContained(identifier): {}",
-                    HibernateHelper.getSqlString(c));
-            return c.list().size() > 0;
     }
 
     public ParameterFactory getParameterFactory() {

@@ -45,6 +45,16 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
+            <exclusions>
+              <exclusion>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-jdbc</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>org.springframework</groupId>
+                  <artifactId>spring-tx</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

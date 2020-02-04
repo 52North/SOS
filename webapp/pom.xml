@@ -168,6 +168,9 @@
                         <excludes>
                             <exclude>WEB-INF/spring/series-database-config.xml</exclude>
                             <exclude>WEB-INF/classes/*.xml</exclude>
+                            <exclude>WEB-INF/lib/spring-*-4.2.5.RELEASE.jar</exclude>
+                            <exclude>WEB-INF/lib/spring-*-4.3.14.RELEASE.jar</exclude>
+                            <exclude>WEB-INF/lib/gt-*-19.0.jar</exclude>
                         </excludes>
                     </overlay>
                     </overlays>
@@ -751,6 +754,10 @@
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
               <artifactId>gt-epsg-hsql</artifactId>
             </exclusion>
             <exclusion>
@@ -773,6 +780,22 @@
               <groupId>com.fasterxml.jackson.core</groupId>
               <artifactId>jackson-annotations</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-beans</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-context</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-context-support</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>
@@ -784,6 +807,10 @@
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -808,6 +835,22 @@
             <exclusion>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -823,6 +866,10 @@
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
               <artifactId>gt-epsg-hsql</artifactId>
             </exclusion>
             <exclusion>
@@ -844,6 +891,10 @@
             <exclusion>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -865,6 +916,10 @@
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
               <artifactId>gt-epsg-hsql</artifactId>
             </exclusion>
             <exclusion>
@@ -879,6 +934,22 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-beans</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-orm</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-tx</artifactId>
+            </exclusion>
           </exclusions>
          </dependency>
          <dependency>
@@ -890,6 +961,10 @@
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -917,6 +992,10 @@
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
               <artifactId>gt-epsg-hsql</artifactId>
             </exclusion>
             <exclusion>
@@ -929,12 +1008,32 @@
             </exclusion>
           </exclusions>
         </dependency>
-            <dependency>
-                <groupId>org.geotools</groupId>
-                <artifactId>gt-main</artifactId>
-            </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-main</artifactId>
+        </dependency>
          
         <!-- copied from REST-API series-dao-webapp -->  
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>

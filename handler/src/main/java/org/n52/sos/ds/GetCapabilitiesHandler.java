@@ -92,6 +92,8 @@ import org.n52.sos.util.I18NHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 /**
  * Implementation of the interface AbstractGetCapabilitiesHandler
  *
@@ -287,7 +289,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                                                 .forEach(sosObservationOffering::addExtension);
                                     }
 
-                                    setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
+                                    setUpPhenomenaForOffering(offering, procedures, sosObservationOffering, session);
                                     setUpTimeForOffering(offering, sosObservationOffering);
                                     setUpRelatedFeaturesForOffering(offering, sosObservationOffering);
                                     setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
@@ -352,8 +354,8 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                     sosObservationOffering.setObservationTypes(observationTypes);
                     sosObservationOffering.setObservedArea(getObservedArea(entry));
 
-                    sosObservationOffering.setProcedures(
-                            procedures.stream().map(p -> p.getIdentifier()).collect(Collectors.toSet()));
+                    sosObservationOffering.setProcedures(getParentProcedures(procedures).keySet().stream()
+                            .map(p -> p.getIdentifier()).collect(Collectors.toSet()));
                     //
                     // // TODO: add intended application
                     //
@@ -387,7 +389,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                         sosObservationOffering.addExtension(relatedOfferings);
                     }
 
-                    setUpPhenomenaForOffering(allOfferings, procedures.iterator().next(), sosObservationOffering,
+                    setUpPhenomenaForOffering(allOfferings, procedures, sosObservationOffering,
                             session);
                     setUpTimeForOffering(allOfferings.stream().map(OfferingEntity::getIdentifier),
                             sosObservationOffering);
@@ -403,15 +405,32 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         return sosOfferings;
     }
 
-    private Map<OfferingEntity, Set<OfferingEntity>> getParentOfferings(Collection<OfferingEntity> offerings) {
-        return offerings.stream().filter(OfferingEntity::hasParents)
-                .collect(toMap(Function.identity(), this::getAllParents));
+    private Map<OfferingEntity, Set<OfferingEntity>> getParentOfferings(Collection<OfferingEntity> entities) {
+        return entities.stream().distinct().filter(o -> !o.hasParents())
+                .collect(toMap(Function.identity(), this::getAllChildrenExclude));
     }
 
-    private Set<OfferingEntity> getAllParents(OfferingEntity entity) {
-        return Stream
-                .concat(Stream.of(entity), entity.getParents().stream().map(this::getAllParents).flatMap(Set::stream))
-                .collect(toSet());
+    private Set<OfferingEntity> getAllChildrenExclude(OfferingEntity entity) {
+        return entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream).collect(toSet());
+    }
+
+    private Set<OfferingEntity> getAllChildren(OfferingEntity entity) {
+        return Stream.concat(Stream.of(entity),
+                entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream)).collect(toSet());
+    }
+
+    private Map<ProcedureEntity, Set<ProcedureEntity>> getParentProcedures(Collection<ProcedureEntity> entities) {
+        return entities.stream().distinct().filter(o -> !o.hasParents())
+                .collect(toMap(Function.identity(), this::getAllChildrenExclude));
+    }
+
+    private Set<ProcedureEntity> getAllChildrenExclude(ProcedureEntity entity) {
+        return entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream).collect(toSet());
+    }
+
+    private Set<ProcedureEntity> getAllChildren(ProcedureEntity entity) {
+        return Stream.concat(Stream.of(entity),
+                entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream)).collect(toSet());
     }
 
     private void addSosOfferingToObservationOffering(OfferingEntity offering,
@@ -440,7 +459,21 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
         return observationTypes;
     }
 
-    protected void setUpPhenomenaForOffering(Set<OfferingEntity> allOfferings, ProcedureEntity procedure,
+
+
+    protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings, Collection<ProcedureEntity> procedures,
+            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
+        for (ProcedureEntity procedure : procedures) {
+            setUpPhenomenaForOffering(allOfferings, procedure, sosObservationOffering, session);
+        }
+    }
+
+    protected void setUpPhenomenaForOffering(OfferingEntity offering, Collection<ProcedureEntity> procedures,
+            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
+            setUpPhenomenaForOffering(Sets.newHashSet(offering), procedures, sosObservationOffering, session);
+    }
+
+    protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings, ProcedureEntity procedure,
             SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
         for (OfferingEntity offering : allOfferings) {
             setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
@@ -469,7 +502,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                 }
             }
         });
-        sosOffering.setObservableProperties(phenomenons);
+        sosOffering.addObservatbleProperties(phenomenons);
         sosOffering.setPhens4CompPhens(phens4CompPhens);
     }
 

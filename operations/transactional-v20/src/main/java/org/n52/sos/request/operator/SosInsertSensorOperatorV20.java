@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -261,6 +262,37 @@ public class SosInsertSensorOperatorV20 extends
                             && ((AbstractPhysicalProcess) abstractProcessV20).isSetAttachedTo()) {
                         procedureDescription
                                 .setParentProcedure(((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo());
+                        Set<String> offeringsForProcedure = getCache().getOfferingsForProcedure(
+                                ((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo().getHref());
+                        Map<String, Boolean> containedOfferings = new LinkedHashMap<>();
+                        for (String string : offeringsForProcedure) {
+                            containedOfferings.put(string, false);
+                        }
+                        if (procedureDescription.isSetOfferings()) {
+                            for (SosOffering off : procedureDescription.getOfferings()) {
+                                if (offeringsForProcedure.contains(off.getIdentifier())) {
+                                    off.setParentOfferingFlag(true);
+                                    containedOfferings.put(off.getIdentifier(), true);
+                                }
+                            }
+                            containedOfferings.entrySet().forEach(e -> {
+                                if (e.getValue()) {
+                                    SosOffering sosOff = new SosOffering(e.getKey(),
+                                            getCache().getOfferingHumanReadableNameForIdentifier(e.getKey()));
+                                    sosOff.setParentOfferingFlag(true);
+                                    procedureDescription.addOffering(sosOff);
+                                }
+                            });
+                        } else {
+                            offeringsForProcedure.forEach(o -> {
+                                SosOffering sosOff = new SosOffering(o,
+                                        getCache().getOfferingHumanReadableNameForIdentifier(
+                                                ((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo()
+                                                        .getHref()));
+                                sosOff.setParentOfferingFlag(true);
+                                procedureDescription.addOffering(sosOff);
+                            });
+                        }
                     }
                     if (abstractProcessV20.isSetSmlFeatureOfInterest()) {
                         if (abstractProcessV20.getSmlFeatureOfInterest().isSetFeaturesOfInterest()) {

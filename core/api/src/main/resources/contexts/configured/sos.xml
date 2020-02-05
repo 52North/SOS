@@ -42,9 +42,6 @@
     <bean id="batchRequestOperator"
           class="org.n52.sos.request.operator.BatchRequestOperator"/>
 
-    <bean id="procedureRequestSettingProvider"
-          class="org.n52.sos.request.ProcedureRequestSettingProvider"/>
-
     <bean id="implementationVersionHeaderAdder"
           class="org.n52.sos.service.SosImplementationVersionHeaderAdder"/>
 

@@ -237,7 +237,7 @@ public class EprtrConverter implements RequestResponseModifier {
     private List<OmObservation> checkObservationFeatures(ObservationStream observationStream)
             throws NoSuchElementException, OwsExceptionReport {
         List<OmObservation> processed = new LinkedList<>();
-        while (observationStream.hasNext()) {
+        while (observationStream != null && observationStream.hasNext()) {
             OmObservation omObservation = observationStream.next();
             checkFeature(omObservation.getObservationConstellation().getFeatureOfInterest());
             processed.add(omObservation);

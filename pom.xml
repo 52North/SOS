@@ -595,8 +595,8 @@
             </dependency>
             <dependency>
                 <groupId>com.vividsolutions</groupId>
-                <artifactId>jts</artifactId>
-                <version>1.13</version>
+                <artifactId>jts-core</artifactId>
+                <version>1.14.0</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -613,6 +613,10 @@
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.javassist</groupId>
+                        <artifactId>javassist</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1281,6 +1285,12 @@
                 <groupId>org.opengeo</groupId>
                 <artifactId>geodb</artifactId>
                 <version>0.8</version>
+                <exclusions>
+                  <exclusion>
+                      <groupId>com.vividsolutions</groupId>
+                      <artifactId>jts-core</artifactId>
+                  </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>

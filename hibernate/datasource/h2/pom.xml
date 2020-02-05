@@ -30,6 +30,12 @@
         <dependency>
             <groupId>org.opengeo</groupId>
             <artifactId>geodb</artifactId>
+            <exclusions>
+              <exclusion>
+                  <groupId>com.vividsolutions</groupId>
+                  <artifactId>jts-core</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>

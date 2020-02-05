@@ -426,6 +426,12 @@
         <dependency>
     		    <groupId>${project.groupId}</groupId>
     		    <artifactId>hibernate-datasource-h2</artifactId>
+            <exclusions>
+              <exclusion>
+                  <groupId>com.vividsolutions</groupId>
+                  <artifactId>jts-core</artifactId>
+              </exclusion>
+            </exclusions>
     		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

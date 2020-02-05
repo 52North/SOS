@@ -410,22 +410,22 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
                 .collect(toMap(Function.identity(), this::getAllChildrenExclude));
     }
 
+    private Map<ProcedureEntity, Set<ProcedureEntity>> getParentProcedures(Collection<ProcedureEntity> entities) {
+        return entities.stream().distinct().filter(o -> !o.hasParents())
+                .collect(toMap(Function.identity(), this::getAllChildrenExclude));
+    }
+
     private Set<OfferingEntity> getAllChildrenExclude(OfferingEntity entity) {
+        return entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream).collect(toSet());
+    }
+
+    private Set<ProcedureEntity> getAllChildrenExclude(ProcedureEntity entity) {
         return entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream).collect(toSet());
     }
 
     private Set<OfferingEntity> getAllChildren(OfferingEntity entity) {
         return Stream.concat(Stream.of(entity),
                 entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream)).collect(toSet());
-    }
-
-    private Map<ProcedureEntity, Set<ProcedureEntity>> getParentProcedures(Collection<ProcedureEntity> entities) {
-        return entities.stream().distinct().filter(o -> !o.hasParents())
-                .collect(toMap(Function.identity(), this::getAllChildrenExclude));
-    }
-
-    private Set<ProcedureEntity> getAllChildrenExclude(ProcedureEntity entity) {
-        return entity.getChildren().stream().map(this::getAllChildren).flatMap(Set::stream).collect(toSet());
     }
 
     private Set<ProcedureEntity> getAllChildren(ProcedureEntity entity) {
@@ -461,8 +461,9 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
 
 
-    protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings, Collection<ProcedureEntity> procedures,
-            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
+    protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings,
+            Collection<ProcedureEntity> procedures, SosObservationOffering sosObservationOffering, Session session)
+            throws DataAccessException {
         for (ProcedureEntity procedure : procedures) {
             setUpPhenomenaForOffering(allOfferings, procedure, sosObservationOffering, session);
         }

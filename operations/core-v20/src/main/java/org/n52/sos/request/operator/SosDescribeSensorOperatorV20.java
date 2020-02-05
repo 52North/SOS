@@ -41,6 +41,7 @@ import javax.inject.Inject;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
+import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.service.ServiceSettings;
@@ -76,7 +77,6 @@ import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
-import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -94,8 +94,12 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
+@Configurable
 public class SosDescribeSensorOperatorV20 extends
         AbstractV2RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
+
+    public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
+
     private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
     private static final Set<String> CONFORMANCE_CLASSES =
@@ -106,6 +110,8 @@ public class SosDescribeSensorOperatorV20 extends
     private BindingRepository bindingRepository;
 
     private String serviceURL;
+
+    private boolean encodeFullChildrenInDescribeSensor;
 
     public SosDescribeSensorOperatorV20() {
         super(OPERATION_NAME, DescribeSensorRequest.class);
@@ -133,6 +139,15 @@ public class SosDescribeSensorOperatorV20 extends
 
     private String getServiceURL() {
         return serviceURL;
+    }
+
+    @Setting(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
+    public void setEncodeFullChildrenInDescribeSensor(final boolean encodeFullChildrenInDescribeSensor) {
+        this.encodeFullChildrenInDescribeSensor = encodeFullChildrenInDescribeSensor;
+    }
+
+    private boolean isEncodeFullChildrenInDescribeSensor() {
+        return encodeFullChildrenInDescribeSensor;
     }
 
     @Override
@@ -203,13 +218,6 @@ public class SosDescribeSensorOperatorV20 extends
     }
 
     private class PostProcessor {
-        private ProcedureRequestSettingProvider procedureRequestSettingProvider;
-
-        @Inject
-        public void setProcedureRequestSettingProvider(
-                ProcedureRequestSettingProvider procedureRequestSettingProvider) {
-            this.procedureRequestSettingProvider = procedureRequestSettingProvider;
-        }
 
         public DescribeSensorResponse process(DescribeSensorResponse response) {
             if (response.isSetProcedureDescriptions()) {
@@ -560,7 +568,7 @@ public class SosDescribeSensorOperatorV20 extends
                 final SmlComponent component = new SmlComponent("component" + childCount);
                 component.setTitle(childProcedure.getIdentifier());
 
-                if (procedureRequestSettingProvider.isEncodeFullChildrenInDescribeSensor()) {
+                if (isEncodeFullChildrenInDescribeSensor()) {
                     component.setProcess(childProcedure);
                 } else {
                     if (getBindingRepository().isBindingSupported(MediaTypes.APPLICATION_KVP)) {

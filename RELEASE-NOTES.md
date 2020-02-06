@@ -10,6 +10,21 @@
  
 ### New features
 
+  - Add Helgoland v2 to SOS as a second Viewer
+  
+### Changes
+  
+  - Move check for duplicate observation identifier to check for duplicity in observation persister
+  - Remove duplicate lib versions
+  
+### Fixed issues
+
+  - Issue #731: docker-compose/nginx-proxy.conf is invalid
+
+## Release 52n-sensorweb-sos-4.4.13
+ 
+### New features
+
   - 
   
 ### Changes

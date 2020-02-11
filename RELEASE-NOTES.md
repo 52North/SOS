@@ -6,7 +6,7 @@
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
-## Release 52n-sensorweb-sos-4.4.13
+## Release 52n-sensorweb-sos-4.4.14
  
 ### New features
 
@@ -16,6 +16,7 @@
   
   - Move check for duplicate observation identifier to check for duplicity in observation persister
   - Remove duplicate lib versions
+  - Add index on observation.identifier column
   
 ### Fixed issues
 

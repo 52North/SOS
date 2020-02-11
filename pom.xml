@@ -21,7 +21,7 @@
     </issueManagement>
     <ciManagement>
         <system>Jenkins</system>
-        <url>http://build.dev.52north.org/jenkins/job/sos-dev/</url>
+        <url>https://build.dev.52north.org/jenkins/job/sos-dev/</url>
     </ciManagement>
     <modules>
         <module>core</module>
@@ -38,7 +38,7 @@
     <licenses>
         <license>
             <name>GPLv2</name>
-            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <url>https://www.gnu.org/licenses/gpl-2.0.html</url>
             <distribution>repo</distribution>
             <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
         </license>
@@ -1806,7 +1806,7 @@
         <repository>
             <id>Apache</id>
             <name>Apache repository</name>
-            <url>http://repo1.maven.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -1814,7 +1814,7 @@
         <repository>
             <id>n52-releases</id>
             <name>52n Releases</name>
-            <url>http://52north.org/maven/repo/releases</url>
+            <url>https://52north.org/maven/repo/releases</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -1825,7 +1825,7 @@
         <repository>
             <id>n52s</id>
             <name>52n Snapshots</name>
-            <url>http://52north.org/maven/repo/snapshots</url>
+            <url>https://52north.org/maven/repo/snapshots</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -1836,7 +1836,7 @@
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
+            <url>https://download.osgeo.org/webdav/geotools/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -1896,7 +1896,7 @@
                         <configuration>
                             <noticeTemplate>misc/NOTICE.template</noticeTemplate>
                             <licenseMapping>
-                                <param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+                                <param>https://52north.github.io/cdn/licenses/license-mappings.xml</param>
                                 <param>misc/license-mappings.xml</param>
                             </licenseMapping>
                             <generateChildNotices>false</generateChildNotices>

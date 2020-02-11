@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
     <name>52°North SOS - Extension REST Binding</name>
     <description>RESTful binding for the 52°North SOS</description>
-    <url>http://52north.org/communities/sensorweb/sosREST/</url>
+    <url>https://52north.org/communities/sensorweb/sosREST/</url>
     <inceptionYear>2012</inceptionYear>
     <modules>
         <module>xml</module>
@@ -27,7 +27,7 @@
                 <role>designer</role>
             </roles>
             <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
+            <organizationUrl>https://52north.org/</organizationUrl>
         </contributor>
         <contributor>
             <name>Arne Bröring</name>
@@ -36,7 +36,7 @@
                 <role>designer</role>
             </roles>
             <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
+            <organizationUrl>https://52north.org/</organizationUrl>
         </contributor>
     </contributors>
 </project>

@@ -15,7 +15,7 @@
                 BSD 2-clause "Simplified" or "FreeBSD"
                 License
             </name>
-            <url>http://www.spdx.org/licenses/BSD-2-Clause</url>
+            <url>https://www.spdx.org/licenses/BSD-2-Clause</url>
             <comments>This license type is derived from the term "Aduna BSD like license".</comments>
         </license>
     </licenses>

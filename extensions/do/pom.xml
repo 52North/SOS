@@ -14,7 +14,7 @@
     <licenses>
         <license>
             <name>GPLv2</name>
-            <url>http://www.gnu.org/licenses/gpl-2.0.html</url>
+            <url>https://www.gnu.org/licenses/gpl-2.0.html</url>
             <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
         </license>
     </licenses>
@@ -36,21 +36,21 @@
   </scm>
     <organization>
         <name>52°North</name>
-        <url>http://52north.org/</url>
+        <url>https://52north.org/</url>
     </organization>
     <developers>
         <developer>
             <name>Eike Hinderk Jürrens</name>
             <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
+            <organizationUrl>https://52north.org/</organizationUrl>
         </developer>
     </developers>
     <mailingLists>
         <mailingList>
             <name>Sensor Web Mailing List</name>
-            <subscribe>http://list.52north.org/mailman/listinfo/sensorweb</subscribe>
-            <unsubscribe>http://list.52north.org/mailman/listinfo/sensorweb#subscribers</unsubscribe>
-            <archive>http://list.52north.org/pipermail/sensorweb/</archive>
+            <subscribe>https://list.52north.org/mailman/listinfo/sensorweb</subscribe>
+            <unsubscribe>https://list.52north.org/mailman/listinfo/sensorweb#subscribers</unsubscribe>
+            <archive>https://list.52north.org/pipermail/sensorweb/</archive>
         </mailingList>
     </mailingLists>
     <issueManagement>
@@ -64,14 +64,14 @@
                 <role>designer</role>
             </roles>
             <organization>52°North</organization>
-            <organizationUrl>http://52north.org/</organizationUrl>
+            <organizationUrl>https://52north.org/</organizationUrl>
         </contributor>
     </contributors>
     <repositories>
         <repository>
             <id>n52-releases</id>
             <name>52n Releases</name>
-            <url>http://52north.org/maven/repo/releases/</url>
+            <url>https://52north.org/maven/repo/releases/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -82,7 +82,7 @@
         <repository>
             <id>n52s</id>
             <name>52n Snapshots</name>
-            <url>http://52north.org/maven/repo/snapshots/</url>
+            <url>https://52north.org/maven/repo/snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>

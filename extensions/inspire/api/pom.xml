@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>52°North SOS - API for INSPIRE Module</name>
 	<description>52°North Sensor Observation Service API for INSPIRE module</description>
-	<url>http://52north.org</url>
+	<url>https://52north.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

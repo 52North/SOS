@@ -90,7 +90,7 @@
 		<repository>
 			<id>Apache</id>
 			<name>Apache repository</name>
-			<url>http://repo1.maven.org/maven2</url>
+			<url>https://repo1.maven.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -98,7 +98,7 @@
 		<repository>
 			<id>n52-releases</id>
 			<name>52n Releases</name>
-			<url>http://52north.org/maven/repo/releases</url>
+			<url>https://52north.org/maven/repo/releases</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -109,7 +109,7 @@
 		<repository>
 			<id>n52s</id>
 			<name>52n Snapshots</name>
-			<url>http://52north.org/maven/repo/snapshots</url>
+			<url>https://52north.org/maven/repo/snapshots</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
@@ -120,14 +120,14 @@
 		<repository>
 			<id>Refractions</id>
 			<name>Refractions repository</name>
-			<url>http://lists.refractions.net/m2</url>
+			<url>https://lists.refractions.net/m2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 		<repository>
 			<id>Hibernate Spatial repo</id>
-			<url>http://www.hibernatespatial.org/repository</url>
+			<url>https://www.hibernatespatial.org/repository</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -135,7 +135,7 @@
 		<repository>
 			<id>boundless</id>
 			<name>Boundless repository</name>
-			<url>http://repo.boundlessgeo.com/main</url>
+			<url>https://repo.boundlessgeo.com/main</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -189,7 +189,7 @@
 								</goals>
 								<configuration>
 									<packageName>org.n52.sos</packageName>
-									<wsdlFile>http://127.0.0.1:8080/52n-sos-webapp/wsdl?wsdl
+									<wsdlFile>https://127.0.0.1:8080/52n-sos-webapp/wsdl?wsdl
 									</wsdlFile>
 									<databindingName>xmlbeans</databindingName>
 									<classpathElements>${project.build.outputDirectory}

@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>52°North SOS - Extension for INSPIRE - Coding Module</name>
 	<description>52°North Sensor Observation Service Extension for INSPIRE module containing coding</description>
-	<url>http://52north.org</url>
+	<url>https://52north.org</url>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

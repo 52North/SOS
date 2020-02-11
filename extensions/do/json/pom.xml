@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
     <name>52°North SOS - Extension Delete Observation - JSON</name>
     <description>52°North Sensor Observation Service Extension Delete Observation operator module containing the code for JSON binding</description>
-    <url>http://52north.org</url>
+    <url>https://52north.org</url>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

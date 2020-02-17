@@ -57,6 +57,7 @@ import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
+import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -321,9 +322,40 @@ public class ObservationPersister
         if (value.isSetPhenomenonTime()) {
             omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
         }
+        dataset.setValueType(getProfileValueType(value));
         DataEntity profileDataEntity = persist((DataEntity) profile, new HashSet<DataEntity<?>>());
         persistChildren(value.getValue(), profileDataEntity.getId());
         return profileDataEntity;
+    }
+
+    private ValueType getProfileValueType(ProfileValue value) {
+        for (ProfileLevel level : value.getValue()) {
+            if (level.getValue().size() == 1) {
+                Value<?> v = level.getValue().iterator().next();
+                if (v instanceof QuantityValue) {
+                    return ValueType.quantity;
+                } else if (v instanceof BooleanValue) {
+                    return ValueType.bool;
+                } else if (v instanceof CategoryValue) {
+                    return ValueType.category;
+                } else if (v instanceof SweAbstractDataRecord) {
+                    return ValueType.complex;
+                } else if (v instanceof CountValue) {
+                    return ValueType.count;
+                } else if (v instanceof SweDataArrayValue) {
+                    return ValueType.dataarray;
+                } else if (v instanceof GeometryValue) {
+                    return ValueType.geometry;
+                } else if (v instanceof ReferenceValue) {
+                    return ValueType.referenced;
+                } else if (v instanceof TextValue) {
+                    return ValueType.text;
+                }
+            } else {
+                return ValueType.complex;
+            }
+        }
+        return ValueType.not_initialized;
     }
 
     @Override
@@ -606,6 +638,9 @@ public class ObservationPersister
             observationContext.setCategory(dataset.getCategory());
             observationContext.setPlatform(dataset.getPlatform());
             observationContext.setUnit(dataset.getUnit());
+            if (!ValueType.not_initialized.equals(dataset.getValueType()) && !observationContext.isSetValueType()) {
+                observationContext.setValueType(dataset.getValueType());
+            }
         }
         // currently only profiles with one observedProperty are supported
         if (parent != null && !isProfileObservation(dataset)) {
@@ -639,7 +674,24 @@ public class ObservationPersister
             ObservationContext ctx, Session session) throws OwsExceptionReport {
 
         if (parameterHolder.isSetParameter()) {
-            if (parameterHolder.isSetHeightDepthParameter()) {
+            if (parameterHolder.isSetFromToParameter()) {
+                NamedValue<BigDecimal> fromParameter = parameterHolder.getFromParameter();
+                NamedValue<BigDecimal> toParameter = parameterHolder.getToParameter();
+                observation.setVerticalFrom(fromParameter.getValue().getValue());
+                observation.setVerticalTo(toParameter.getValue().getValue());
+                // set vertical metadata
+                VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
+                verticalMetadata.setVerticalFromName(fromParameter.getName().getHref());
+                verticalMetadata.setVerticalToName(toParameter.getName().getHref());
+                if (fromParameter.getValue().isSetUnit()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(fromParameter.getValue().getUnitObject(), caches.units, session));
+                }
+                ctx.setVertical(verticalMetadata);
+
+                parameterHolder.removeParameter(fromParameter);
+                parameterHolder.removeParameter(toParameter);
+            } else if (parameterHolder.isSetHeightDepthParameter()) {
                 NamedValue<BigDecimal> parameter = parameterHolder.getHeightDepthParameter();
                 VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
                 if (parameterHolder.isSetDepthParameter()) {
@@ -661,23 +713,6 @@ public class ObservationPersister
                 ctx.setVertical(verticalMetadata);
 
                 parameterHolder.removeParameter(parameter);
-            } else if (parameterHolder.isSetFromToParameter()) {
-                NamedValue<BigDecimal> fromParameter = parameterHolder.getFromParameter();
-                NamedValue<BigDecimal> toParameter = parameterHolder.getToParameter();
-                observation.setVerticalFrom(fromParameter.getValue().getValue());
-                observation.setVerticalTo(toParameter.getValue().getValue());
-                // set vertical metadata
-                VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
-                verticalMetadata.setVerticalFromName(fromParameter.getName().getHref());
-                verticalMetadata.setVerticalToName(toParameter.getName().getHref());
-                if (fromParameter.getValue().isSetUnit()) {
-                    verticalMetadata
-                            .setVerticalUnit(getUnit(fromParameter.getValue().getUnitObject(), caches.units, session));
-                }
-                ctx.setVertical(verticalMetadata);
-
-                parameterHolder.removeParameter(fromParameter);
-                parameterHolder.removeParameter(toParameter);
             }
             if (parameterHolder.isSetParameter()) {
                 Set<ParameterEntity<?>> insertParameter =

@@ -46,6 +46,7 @@ import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
+import org.n52.series.db.beans.dataset.ValueType;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -70,6 +71,7 @@ public class ObservationContext {
     private VerticalMetadataEntity vertical;
     private boolean mobile;
     private boolean insitu = true;
+    private ValueType valueType;
 
 
     /**
@@ -318,11 +320,25 @@ public class ObservationContext {
         return vertical;
     }
 
-    public void setVertical(VerticalMetadataEntity vertical) {
+    public ObservationContext setVertical(VerticalMetadataEntity vertical) {
         this.vertical = vertical;
+        return this;
     }
 
     public boolean isSetVertical() {
         return getVertical() != null;
+    }
+
+    public ObservationContext setValueType(ValueType valueType) {
+       this.valueType = valueType;
+       return this;
+    }
+
+    public ValueType getValueType() {
+        return valueType;
+    }
+
+    public boolean isSetValueType() {
+        return getValueType() != null;
     }
 }

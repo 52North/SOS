@@ -462,7 +462,11 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             session.evict(ds);
             ds.setDatasetType(concrete.getDatasetType());
             ds.setObservationType(concrete.getObservationType());
-            ds.setValueType(concrete.getValueType());
+            if (ValueType.not_initialized.equals(concrete.getValueType()) && ctx.isSetValueType()) {
+                ds.setValueType(ctx.getValueType());
+            } else {
+                ds.setValueType(concrete.getValueType());
+            }
             ds = (DatasetEntity) session.merge(ds);
             session.flush();
             return ds;

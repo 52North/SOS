@@ -10,7 +10,7 @@
  
 ### New features
 
-  - Add Helgoland v2 to SOS as a second Viewer
+  - Use Helgoland v2 as viewer
   
 ### Changes
   

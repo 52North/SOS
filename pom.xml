@@ -40,7 +40,7 @@
             <name>GPLv2</name>
             <url>https://www.gnu.org/licenses/gpl-2.0.html</url>
             <distribution>repo</distribution>
-            <comments>See also http://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
+            <comments>See also https://52north.org/about/licensing/ for all information about 52°North licenses.</comments>
         </license>
     </licenses>
     <properties>

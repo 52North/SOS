@@ -1,7 +1,0 @@
-<div style="text-align: center;" ng-if="$ctrl.loading > 0">
-    <span class="glyphicon glyphicon-refresh icon-spin"></span>
-    <span translate="listSelection.loading" translate-values="{ countProvider: $ctrl.loading }"></span>
-</div>
-<div class="selector-entry" ng-repeat="item in $ctrl.items | orderBy:'+label'" ng-click="$ctrl.selectItem(item)" ng-class="{'selected': $ctrl.selectionId === item.id}">
-    <swc-label-mapper label="item.label"></swc-label-mapper>
-</div>

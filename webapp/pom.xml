@@ -111,7 +111,7 @@
                       <configuration>
                           <url> https://github.com/52North/helgoland/releases/download/v${helgoland.version}/helgoland-complete.war</url>
                           <unpack>true</unpack>
-                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland-2</outputDirectory>
+                          <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
                       </configuration>
                   </execution>
               </executions>
@@ -201,7 +201,7 @@
                 </execution>
             </executions>
             <configuration>
-                <basedir>${project.build.directory}/${conf.sos.name}/static/client/helgoland-2</basedir>
+                <basedir>${project.build.directory}/${conf.sos.name}/static/client/helgoland</basedir>
                 <includes>
                     <include>index.html</include>
                 </includes>
@@ -430,6 +430,10 @@
               <exclusion>
                   <groupId>com.vividsolutions</groupId>
                   <artifactId>jts-core</artifactId>
+              </exclusion>
+              <exclusion>
+                  <groupId>com.vividsolutions</groupId>
+                  <artifactId>jts</artifactId>
               </exclusion>
             </exclusions>
     		</dependency>

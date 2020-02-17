@@ -87,13 +87,6 @@
                                                     </a>
                                                 </li>
                                               </c:if>
-                                              <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/helgoland/index.html')}">
-                                                <li>
-                                                    <a id="sw-client-menuitem" target="_blank" href="<c:url value="/static/client/helgoland-2/index.html" />">
-                                                        <span class="menu-title">Sensor Web Thin Client (Helgoland v2.0)</span>
-                                                    </a>
-                                                </li>
-                                              </c:if>
                                             </ul>
                                         </li>
                                     </c:if>

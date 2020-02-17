@@ -99,7 +99,7 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.3.0-SNAPSHOT</arctic-sea.version>
+        <arctic-sea.version>7.3.0</arctic-sea.version>
 
         <dataset.api.version>3.0.0-SNAPSHOT</dataset.api.version>
         <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
@@ -769,7 +769,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.7</version>
+                 <version>1.10.8</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1579,7 +1579,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>3.1.12</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -2023,7 +2023,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.7.9</version>
+                    <version>1.7.10</version>
                 </plugin>
 
                 <plugin>

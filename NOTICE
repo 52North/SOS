@@ -4,7 +4,6 @@ Licensed under GNU General Public License, Version 2.0
 
 This project includes: 
 
-  52North REST-API PDF report structure under GNU General Public License, Version 2.0
   52°North Faroe under The Apache Software License, Version 2.0
   52°North Faroe Annotations under The Apache Software License, Version 2.0
   52°North Faroe JSON Backend under The Apache Software License, Version 2.0
@@ -317,13 +316,14 @@ This project includes:
   rest under The Apache Software License, Version 2.0
   rest-high-level under The Apache Software License, Version 2.0
   Saxon-HE under Mozilla Public License Version 2.0
-  Series Database Model - Entities under The Apache Software License, Version 2.0
-  Series Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
-  Series REST API - IO module under GNU General Public License, Version 2.0
-  Series REST API - REST module under GNU General Public License, Version 2.0
-  Series REST API - SPI module under GNU General Public License, Version 2.0
-  Series REST API DAO - DAO under GNU General Public License, Version 2.0
-  Series REST API DAO - Webapp under GNU General Public License, Version 2.0
+  Sensor Web Server DAO Impl - DAO under GNU General Public License, Version 2.0
+  Sensor Web Server DAO Impl - Webapp under GNU General Public License, Version 2.0
+  Sensor Web Server Database Model - Entities under The Apache Software License, Version 2.0
+  Sensor Web Server Database Model - Hibernate Spatial Dialects under The Apache Software License, Version 2.0
+  Sensor Web Server Helgoland - IO module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland - PDF report structure under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0
+  Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
   server under The Apache Software License, Version 2.0
   SI Quantities under BSD
   SI Units for Java SE 8 under BSD

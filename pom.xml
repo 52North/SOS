@@ -103,8 +103,8 @@
 
         <dataset.api.version>3.0.0-SNAPSHOT</dataset.api.version>
         <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
+        <dataset.hibernate.version>1.0.0</dataset.hibernate.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-        <dataset.hibernate.version>1.0.0-SNAPSHOT</dataset.hibernate.version>
 
         <org.springframework.security.version>5.2.2.RELEASE</org.springframework.security.version>
         <org.springframework.version>5.2.3.RELEASE</org.springframework.version>
@@ -315,15 +315,15 @@
                 <artifactId>spatial4j</artifactId>
                 <version>0.7</version>
             </dependency>
-            <!-- <dependency> <groupId>org.n52.series-api</groupId> <artifactId>proxy-dao</artifactId> 
+            <!-- <dependency> <groupId>org.n52.sensorweb-server.helgoland</groupId> <artifactId>proxy-dao</artifactId> 
                 <version>${dataset.proxy.version}</version> <exclusions> <exclusion> <groupId>org.springframework</groupId> 
                 <artifactId>spring-tx</artifactId> </exclusion> <exclusion> <groupId>commons-codec</groupId> 
                 <artifactId>commons-codec</artifactId> </exclusion> </exclusions> </dependency> 
-                <dependency> <groupId>org.n52.series-api</groupId> <artifactId>proxy-mappings</artifactId> 
+                <dependency> <groupId>org.n52.sensorweb-server.helgoland</groupId> <artifactId>proxy-mappings</artifactId> 
                 <version>${dataset.proxy.version}</version> </dependency> -->
             <dependency>
-                <groupId>org.n52.series-api.db</groupId>
-                <artifactId>dao</artifactId>
+                <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                <artifactId>dao-impl-dao</artifactId>
                 <version>${dataset.dao.version}</version>
                 <exclusions>
                     <exclusion>
@@ -338,30 +338,30 @@
             </dependency>
 
             <dependency>
-                <groupId>org.n52.series.db</groupId>
-                <artifactId>mappings</artifactId>
+                <groupId>org.n52.sensorweb-server.db-model</groupId>
+                <artifactId>db-model-mappings</artifactId>
                 <version>${dataset.hibernate.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.n52.series.db</groupId>
-                <artifactId>dialects</artifactId>
+                <groupId>org.n52.sensorweb-server.db-model</groupId>
+                <artifactId>db-model-dialects</artifactId>
                 <version>${dataset.hibernate.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.n52.series.db</groupId>
-                <artifactId>entities</artifactId>
+                <groupId>org.n52.sensorweb-server.db-model</groupId>
+                <artifactId>db-model-entities</artifactId>
                 <version>${dataset.hibernate.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.series.db</groupId>
-                <artifactId>types</artifactId>
+                <groupId>org.n52.sensorweb-server.db-model</groupId>
+                <artifactId>db-model-types</artifactId>
                 <version>${dataset.hibernate.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.series-api</groupId>
-                <artifactId>io</artifactId>
+                <groupId>org.n52.sensorweb-server.helgoland</groupId>
+                <artifactId>helgoland-io</artifactId>
                 <version>${dataset.api.version}</version>
                 <exclusions>
                     <exclusion>
@@ -371,13 +371,13 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.n52.series-api</groupId>
-                <artifactId>spi</artifactId>
+                <groupId>org.n52.sensorweb-server.helgoland</groupId>
+               <artifactId>helgoland-spi</artifactId>
                 <version>${dataset.api.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.n52.series-api</groupId>
-                <artifactId>rest</artifactId>
+                <groupId>org.n52.sensorweb-server.helgoland</groupId>
+                <artifactId>helgoland-rest</artifactId>
                 <version>${dataset.api.version}</version>
             </dependency>
             <dependency>

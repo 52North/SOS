@@ -328,6 +328,28 @@ public class ObservationPersister
         return profileDataEntity;
     }
 
+    @Override
+    public Collection<DataEntity<?>> visit(ProfileLevel value) throws OwsExceptionReport {
+        List<DataEntity<?>> childObservations = new ArrayList<>();
+        if (value.isSetValue()) {
+            for (Value<?> v : value.getValue()) {
+                DataEntity<?> d = v.accept(this);
+                childObservations.add(d);
+            }
+        }
+        return childObservations;
+    }
+
+    @Override
+    public DataEntity<?> visit(XmlValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public DataEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
     private ValueType getProfileValueType(ProfileValue value) {
         for (ProfileLevel level : value.getValue()) {
             if (level.getValue().size() == 1) {
@@ -356,28 +378,6 @@ public class ObservationPersister
             }
         }
         return ValueType.not_initialized;
-    }
-
-    @Override
-    public Collection<DataEntity<?>> visit(ProfileLevel value) throws OwsExceptionReport {
-        List<DataEntity<?>> childObservations = new ArrayList<>();
-        if (value.isSetValue()) {
-            for (Value<?> v : value.getValue()) {
-                DataEntity<?> d = v.accept(this);
-                childObservations.add(d);
-            }
-        }
-        return childObservations;
-    }
-
-    @Override
-    public DataEntity<?> visit(XmlValue value) throws OwsExceptionReport {
-        throw notSupported(value);
-    }
-
-    @Override
-    public DataEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
-        throw notSupported(value);
     }
 
     private boolean checkFields(SweAbstractDataRecord sweAbstractDataRecord) {

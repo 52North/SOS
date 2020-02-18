@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.sensorweb.sos</groupId>
 		<artifactId>converter</artifactId>
-		   <version>4.4.14</version>
+		   <version>4.4.15-SNAPSHOT</version>
 	</parent>
 	<artifactId>eprtr</artifactId>
 	<packaging>jar</packaging>

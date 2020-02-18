@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>gda</artifactId>
-         <version>4.4.14-SNAPSHOT</version>
+         <version>4.4.14</version>
     </parent>
     <artifactId>gda-operation</artifactId>
     <name>52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation</name>

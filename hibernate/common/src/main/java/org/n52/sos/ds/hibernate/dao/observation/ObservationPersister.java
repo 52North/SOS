@@ -313,11 +313,6 @@ public class ObservationPersister
                             .setVerticalUnit(getUnit(value.getToLevel().getUomObject(), caches.units, session));
                 }
             }
-            if (!dataset.hasVerticalMetadata()) {
-                dataset.setVerticalMetadata(
-                        daos.verticalMetadata().getOrInsertVerticalMetadata(verticalMetadata, session));
-            }
-
         }
         if (value.isSetPhenomenonTime()) {
             omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
@@ -686,6 +681,15 @@ public class ObservationPersister
                 if (fromParameter.getValue().isSetUnit()) {
                     verticalMetadata
                             .setVerticalUnit(getUnit(fromParameter.getValue().getUnitObject(), caches.units, session));
+                }
+                if (parameterHolder.isSetHeightDepthParameter()) {
+                    if (parameterHolder.isSetDepthParameter() && parameterHolder.isSetHeightParameter()) {
+                        verticalMetadata.setOrientation(Short.valueOf("0"));
+                    } else if (parameterHolder.isSetDepthParameter()) {
+                        verticalMetadata.setOrientation(Short.valueOf("-1"));
+                    } else {
+                        verticalMetadata.setOrientation(Short.valueOf("1"));
+                    }
                 }
                 ctx.setVertical(verticalMetadata);
 

@@ -15,7 +15,7 @@
         <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
         <!-- do not overwrite this one! -->
         <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/config/configuration.db</sqliteSettingDatabaseTargetFile>
-        <helgoland.version>1.0.0</helgoland.version>
+        <helgoland.version>2.0.1</helgoland.version>
         <jetty.port.http>9090</jetty.port.http>
         <jetty.port.stop>9091</jetty.port.stop>
     </properties>
@@ -36,7 +36,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <ignoredUnusedDeclaredDependencies>
-                        <ignoredUnusedDeclaredDependency>org.n52.series-api.db:webapp:war</ignoredUnusedDeclaredDependency>
+                        <ignoredUnusedDeclaredDependency>org.n52.sensorweb-server.dao-impl:dao-impl-webapp:war</ignoredUnusedDeclaredDependency>
                     </ignoredUnusedDeclaredDependencies>
                 </configuration>
                 <executions>
@@ -52,8 +52,8 @@
                             </usedDependencies>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.n52.series.db</groupId>
-                                    <artifactId>mappings</artifactId>
+                                    <groupId>org.n52.sensorweb-server.db-model</groupId>
+                                    <artifactId>db-model-mappings</artifactId>
                                     <overWrite>false</overWrite>
                                 </artifactItem>
                             </artifactItems>
@@ -103,7 +103,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
             <plugin>
               <groupId>com.googlecode.maven-download-plugin</groupId>
               <artifactId>download-maven-plugin</artifactId>
@@ -116,14 +115,13 @@
                           <goal>wget</goal>
                       </goals>
                       <configuration>
-                          <url>https://github.com/52North/helgoland/releases/download/v${helgoland.version}/client.${helgoland.version}.war</url>
+                          <url> https://github.com/52North/helgoland/releases/download/v${helgoland.version}/helgoland-complete.war</url>
                           <unpack>true</unpack>
                           <outputDirectory>${project.build.directory}/${project.build.finalName}/static/client/helgoland</outputDirectory>
                       </configuration>
                   </execution>
               </executions>
             </plugin>
-             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -160,8 +158,8 @@
                             <artifactId>views</artifactId>
                         </overlay>
                         <overlay>
-                            <groupId>org.n52.series-api.db</groupId>
-                            <artifactId>webapp</artifactId>
+                            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                            <artifactId>dao-impl-webapp</artifactId>
                             <includes>
                                 <include>WEB-INF/spring/*</include>
                                 <include>WEB-INF/classes/**</include>
@@ -192,6 +190,32 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+            <groupId>com.google.code.maven-replacer-plugin</groupId>
+            <artifactId>replacer</artifactId>
+            <version>1.5.3</version>
+            <executions>
+                <execution>
+                    <id>Update Helgoland index file</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>replace</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <basedir>${project.build.directory}/${conf.sos.name}/static/client/helgoland</basedir>
+                <includes>
+                    <include>index.html</include>
+                </includes>
+                <replacements>
+                    <replacement>
+                        <token>/helgoland-complete/</token>
+                        <value>./</value>
+                    </replacement>
+                </replacements>
+            </configuration>
+        </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -767,13 +791,17 @@
 
         <!-- REST API Dependencies -->
         <dependency>
-          <groupId>org.n52.series-api</groupId>
-          <artifactId>io</artifactId>
+          <groupId>org.n52.sensorweb-server.helgoland</groupId>
+          <artifactId>helgoland-io</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -802,13 +830,17 @@
           </exclusions>
         </dependency>
         <dependency>
-          <groupId>org.n52.series-api</groupId>
-          <artifactId>rest</artifactId>
+          <groupId>org.n52.sensorweb-server.helgoland</groupId>
+          <artifactId>helgoland-rest</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -833,13 +865,17 @@
           </exclusions>
         </dependency>
         <dependency>
-          <groupId>org.n52.series-api</groupId>
-          <artifactId>spi</artifactId>
+          <groupId>org.n52.sensorweb-server.helgoland</groupId>
+         <artifactId>helgoland-spi</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -864,19 +900,23 @@
           </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.n52.series-api.db</groupId>
-            <artifactId>webapp</artifactId>
+            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+            <artifactId>dao-impl-webapp</artifactId>
             <version>${dataset.dao.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
-          <groupId>org.n52.series-api.db</groupId>
-          <artifactId>dao</artifactId>
+          <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+          <artifactId>dao-impl-dao</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -893,13 +933,17 @@
           </exclusions>
          </dependency>
          <dependency>
-          <groupId>org.n52.series.db</groupId>
-          <artifactId>entities</artifactId>
+          <groupId>org.n52.sensorweb-server.db-model</groupId>
+          <artifactId>db-model-entities</artifactId>
           <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.geotools</groupId>

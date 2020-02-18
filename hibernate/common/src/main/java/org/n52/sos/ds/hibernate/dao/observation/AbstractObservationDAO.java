@@ -1444,12 +1444,6 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
-    public boolean isIdentifierContained(String identifier, Session session) {
-        Criteria c = getDefaultObservationCriteria(session).add(Restrictions.eq(DataEntity.IDENTIFIER, identifier));
-        LOGGER.trace("QUERY isIdentifierContained(identifier): {}", HibernateHelper.getSqlString(c));
-        return c.list().size() > 0;
-    }
-
     public ParameterFactory getParameterFactory() {
         return ParameterFactory.getInstance();
     }

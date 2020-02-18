@@ -5,6 +5,24 @@
  in Observation&Measurement), information about the sensor itself (encoded in a 
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
+
+## Release 52n-sensorweb-sos-4.4.14
+ 
+### New features
+
+  - Use Helgoland v2 as viewer
+  
+### Changes
+  
+  - Move check for duplicate observation identifier to check for duplicity in observation persister
+  - Remove duplicate lib versions
+  - Add index on observation.identifier column
+  
+### Fixed issues
+
+  - Issue #731: docker-compose/nginx-proxy.conf is invalid
+
+## Release 52n-sensorweb-sos-4.4.13
  
 ## Release 52n-sensorweb-sos-4.4.12
 ## Release 52n-sensorweb-sos-4.4.11

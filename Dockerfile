@@ -14,7 +14,7 @@ FROM jetty:jre8
 
 COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
 COPY ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
-COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland/settings.json
+COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland/assets/settings.json
 COPY ./docker/default-config /etc/sos
 
 USER root

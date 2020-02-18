@@ -17,7 +17,7 @@
   }],
   "datasetApis": [{
       "name": "localhost",
-      "url": "http://localhost:8080/api/"
+      "url": "http://localhost:8080/52n-sos-webapp/api/"
     }
   ],
   "languages": [{

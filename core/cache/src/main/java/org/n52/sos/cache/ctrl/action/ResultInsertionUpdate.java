@@ -84,7 +84,7 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
             final Time resultTime = observation.getResultTime();
 
             cache.updatePhenomenonTime(phenomenonTime);
-            cache.updateResultTime(resultTime);
+            cache.updateResultTime(resultTime != null ? resultTime : phenomenonTime);
 
             cache.addProcedure(procedure);
             cache.updatePhenomenonTimeForProcedure(procedure, phenomenonTime);

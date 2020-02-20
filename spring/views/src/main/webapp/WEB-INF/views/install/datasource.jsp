@@ -54,9 +54,6 @@
     <fieldset id="actions" style="display: none;">
         <legend>Actions</legend>
        		 <p><span class="label label-important">Note!</span></p> 
-       		 <!-- <p>To fulfill some requirements, the database model was adjusted from 52N SOS version 4.4.1 to 4.4.2</p>
-       		 <p>This requires an update of existing database model which can be performed with <strong><em>Force updating existing tables</em></strong>, but the new column (offering id in series) is not filled with values.</p>
-       		 <p>If each of your observation relates to only one offering, you can use the update script provided in the SOS sources folder <strong>/misc/db/.../..update_441_442.sql</strong>.</p> -->
         <div class="control-group" id="create">
             <div class="controls">
                 <label class="checkbox">

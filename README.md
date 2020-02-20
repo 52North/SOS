@@ -32,20 +32,20 @@ An extension accommodates additional INSPIRE Directive requirements, thus ensuri
   - [WaterML 2.0](http://www.opengeospatial.org/standards/waterml)
   - [AQD e-Reporting flows E](https://www.eionet.europa.eu/aqportal/requirements/dataflows)
   - Multiple DB support (by using the [Hibernate ORM framework](http://hibernate.org/orm/))
-  - Bundle including [Sensor Web REST-API](https://github.com/52North/series-rest-api) and [helgoland](https://github.com/52North/helgoland/)
+  - Bundle including [Sensor Web Server Helgoland](https://github.com/52North/sensorweb-server-helgoland) and [helgoland](https://github.com/52North/helgoland/)
   - DeleteObservation operation, to delete observation by identifier (not part of the SOS 2.0 specification)
   - [Efficient XML Interchange (EXI) 1.0 format](http://52north.org/communities/sensorweb/sos/index.html#www.w3.orgTRexi)
   - Support for [GoundWaterML 2 GeologyLog observation](http://www.opengeospatial.org/standards/gwml2)
   
 ### Future work
 
-As of version 5.x, the 52N SOS's database model and DAO layer will be merged with the [52N Sensor Web REST-API](https://github.com/52North/series-rest-api) to provide an easy-to-install and easy-to-configure service. This service will provide an OGC SOS 2.0 interface and 52N Sensor WEB REST-API to easily access the observed data via a restful interface.
+As of version 5.x, the 52N SOS's database model and DAO layer will be merged with the [52N Sensor Web Server Helgoland](https://github.com/52North/sensorweb-server-helgoland) to provide an easy-to-install and easy-to-configure service. This service will provide an OGC SOS 2.0 interface and 52N Sensor WEB REST-API to easily access the observed data via a restful interface.
 
 The database models of both services will be harmonized. A simple basic database model will provide the main features of the SOS and the Sensor WEB REST-API and will be easily extendable.
 
 The Data Access Objects (DAO) layer will also be harmonized to provide a single point for accessing and manipulating the data in the database. This will reduce the maintenance and the SOS and the REST interface will easily support new database features.
 
-In the [Sensor Web Suite database project](https://github.com/52North/series-hibernate) the harmonized database model and the DAO layer will be provided as a separate project for use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N SOS Proxy](https://github.com/52North/series-sos-proxy) will also use this project to persist the metadata of the harvested SOS services. 
+In the [Sensor Web Server database model](https://github.com/52North/sensorweb-server-db-model) the harmonized database model and the DAO layer will be provided as a separate project for use in the future 52N SOS and 52N Sensor WEB REST-API implementations. Additionally the [52N Sensor Web Server Helgoland Adapters](https://github.com/52North/sensorweb-server-helgoland-adapters) will also use this project to persist the metadata of the harvested SOS services. 
 
 ## Quick Start
 

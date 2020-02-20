@@ -97,8 +97,8 @@
                                             <ul>
                                             	<c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
 			                                        <li>
-			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="https://52north.github.io/series-rest-api/" />">
-			                                                <span class="menu-title">Sensor Web Client REST-API</span>
+			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="https://github.com/52North/sensorweb-server-helgoland/" />">
+			                                                <span class="menu-title">Sensor Web Server Helgoland</span>
 			                                            </a>
 			                                        </li>
 			                                    </c:if>

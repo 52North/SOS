@@ -47,8 +47,8 @@
 
 <h4>Other Documentations</h4>
 
-<p>Sensor Web Client REST-API
-	<a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="https://52north.github.io/series-rest-api/develop/" />">
+<p>Sensor Web Server Helgoland
+	<a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="Sensor Web Server Helgoland/develop/" />">
 	    <span class="menu-title">documentation</span>
 	</a>
 </p>

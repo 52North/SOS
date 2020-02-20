@@ -16,9 +16,10 @@
 	-->
 
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logFile}.log</file><filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-      <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
-        <expression>return message.contains("WARN  deprecation - HHH90000022");</expression>
+		<file>${logFile}.log</file>
+    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+      <evaluator>
+        <expression>return message.contains("HHH90000022") || message.contains("HHH000179");</expression>
       </evaluator>
       <OnMismatch>NEUTRAL</OnMismatch>
       <OnMatch>DENY</OnMatch>
@@ -39,6 +40,13 @@
 	</appender>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+      <evaluator>
+        <expression>return message.contains("HHH90000022") || message.contains("HHH000179");</expression>
+      </evaluator>
+      <OnMismatch>NEUTRAL</OnMismatch>
+      <OnMatch>DENY</OnMatch>
+    </filter>
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{0} - %msg%n</pattern>
 		</encoder>

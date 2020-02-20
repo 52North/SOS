@@ -320,14 +320,11 @@ public class ObservationPersister
         if (value.isSetValue()) {
             for (Value<?> v : value.getValue()) {
                 DataEntity<?> d = v.accept(this);
-                if (value.isSetLevelStart()) {
-                    if (d.getVerticalFrom().compareTo(value.getLevelStart().getValue()) != 0) {
-                        d.setVerticalFrom(value.getLevelStart().getValue());
-                    }
-                } else {
-                    if (value.isSetLevelEnd() && d.getVerticalFrom().compareTo(value.getLevelEnd().getValue()) != 0) {
-                        d.setVerticalFrom(value.getLevelEnd().getValue());
-                    }
+                if (value.isSetLevelStart() && d.getVerticalFrom().compareTo(value.getLevelStart().getValue()) != 0) {
+                    d.setVerticalFrom(value.getLevelStart().getValue());
+                } else if (!value.isSetLevelStart() && value.isSetLevelEnd()
+                        && d.getVerticalFrom().compareTo(value.getLevelEnd().getValue()) != 0) {
+                    d.setVerticalFrom(value.getLevelEnd().getValue());
                 }
                 if (value.isSetLevelEnd() && d.getVerticalTo().compareTo(value.getLevelEnd().getValue()) != 0) {
                     d.setVerticalTo(value.getLevelEnd().getValue());

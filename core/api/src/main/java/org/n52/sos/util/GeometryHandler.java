@@ -760,9 +760,12 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
             CoordinateReferenceSystem sourceCRS = getCRS(sourceSRID);
             CoordinateReferenceSystem targetCRS = getCRS(targetSRID);
             try {
-                MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
-                Envelope transformed = JTS.transform(envelope, transform);
-                return transformed;
+                if (sourceCRS.getCoordinateSystem().getDimension() == targetCRS.getCoordinateSystem().getDimension()) {
+                    MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
+                    Envelope transformed = JTS.transform(envelope, transform);
+                    return transformed;
+                }
+                return envelope;
             } catch (FactoryException fe) {
                 throw new NoApplicableCodeException().causedBy(fe).withMessage(EPSG_NOT_SUPPORTED_TMEPLATE,
                         sourceSRID);

@@ -207,6 +207,11 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     }
 
     private ReferencedEnvelope processObservedArea(Geometry geometry) throws OwsExceptionReport {
+        geometry.setSRID(
+                geometry.getSRID() <= 0
+                        ? Double.isNaN(geometry.getCoordinate().getZ()) ? getGeometryHandler().getStorageEPSG()
+                                : getGeometryHandler().getStorage3DEPSG()
+                        : geometry.getSRID());
         return new ReferencedEnvelope(
                 getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getEnvelopeInternal(),
                 geometry.getSRID());

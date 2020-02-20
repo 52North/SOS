@@ -120,6 +120,7 @@ This project includes:
   ClassMate under Apache License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
+  commons-compiler under New BSD License
   compiler under Apache License 2.0
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   dexx under MIT License
@@ -180,6 +181,7 @@ This project includes:
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
   Jackson-dataformat-YAML under The Apache Software License, Version 2.0
+  janino under New BSD License
   Java Annotation Indexer under Apache License, Version 2.0
   Java archiving library under Apache 2
   Java implementation of GeographicLib under The MIT License(MIT)

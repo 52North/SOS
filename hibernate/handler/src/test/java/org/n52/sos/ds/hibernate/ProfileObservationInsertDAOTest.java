@@ -236,10 +236,21 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         ProfileValue profileValue = new ProfileValue("");
         profileValue.setGmlId("pv_1");
         UoM uom = new UoM(VERTICAL_UNIT);
-        profileValue.setFromLevel(new QuantityValue(VERTICAL_0, uom));
-        profileValue.setToLevel(new QuantityValue(VERTICAL_20, uom));
+        if (interval) {
+            profileValue.setFromLevel(createQuantityValue(VERTICAL_0, uom, DEPTH));
+            profileValue.setToLevel(createQuantityValue(VERTICAL_20, uom, DEPTH));
+        } else {
+            profileValue.setFromLevel(createQuantityValue(VERTICAL_0, uom, FROM));
+            profileValue.setToLevel(createQuantityValue(VERTICAL_20, uom, TO));
+        }
         profileValue.setValue(createProfileLevel(interval));
         return profileValue;
+    }
+
+    private QuantityValue createQuantityValue(Double vertical, UoM uom, String definition) {
+        QuantityValue quantityValue = new QuantityValue(vertical, uom);
+        quantityValue.setDefinition(definition);
+        return quantityValue;
     }
 
     private List<ProfileLevel> createProfileLevel(boolean interval) {

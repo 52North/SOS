@@ -291,7 +291,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
 
     /**
-     * Get Hibernate Criteria for {@link TemporalReferencedObservation} with
+     * Get Hibernate Criteria with
      * restrictions observation identifiers
      *
      * @param observation

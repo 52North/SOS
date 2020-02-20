@@ -210,6 +210,10 @@ public class ObservationUnfolder {
                                 throw new NoApplicableCodeException().causedBy(e).withMessage(ERROR_PARSING_TIME_LOG);
                             }
                         } else if (dataComponent instanceof SweTimeRange) {
+                            if (!token.contains("/")) {
+                                throw new NoApplicableCodeException().withMessage(
+                                        ERROR_PARSING_TIME_LOG + " A time range is expected instead of an instance!");
+                            }
                             try {
                                 final String[] subTokens = token.split("/");
                                 phenomenonTime = new TimePeriod(DateTimeHelper.parseIsoString2DateTime(subTokens[0]),

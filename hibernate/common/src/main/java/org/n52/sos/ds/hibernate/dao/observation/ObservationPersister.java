@@ -296,22 +296,13 @@ public class ObservationPersister
     public DataEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
         ProfileDataEntity profile = observationFactory.profile();
         if (value.isSetFromLevel() || value.isSetToLevel()) {
-            VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
             if (value.isSetFromLevel()) {
                 profile.setVerticalFrom(value.getFromLevel().getValue());
-                verticalMetadata.setVerticalFromName(value.getFromLevel().getDefinition());
-                if (value.getFromLevel().isSetUom()) {
-                    verticalMetadata
-                            .setVerticalUnit(getUnit(value.getFromLevel().getUomObject(), caches.units, session));
-                }
+                omObservation.addParameter(createParameter((QuantityValue) value.getFromLevel()));
             }
             if (value.isSetToLevel()) {
                 profile.setVerticalTo(value.getToLevel().getValue());
-                verticalMetadata.setVerticalToName(value.getToLevel().getDefinition());
-                if (value.getToLevel().isSetUom()) {
-                    verticalMetadata
-                            .setVerticalUnit(getUnit(value.getToLevel().getUomObject(), caches.units, session));
-                }
+                omObservation.addParameter(createParameter((QuantityValue) value.getToLevel()));
             }
         }
         if (value.isSetPhenomenonTime()) {
@@ -329,6 +320,18 @@ public class ObservationPersister
         if (value.isSetValue()) {
             for (Value<?> v : value.getValue()) {
                 DataEntity<?> d = v.accept(this);
+                if (value.isSetLevelStart()) {
+                    if (d.getVerticalFrom().compareTo(value.getLevelStart().getValue()) != 0) {
+                        d.setVerticalFrom(value.getLevelStart().getValue());
+                    }
+                } else {
+                    if (value.isSetLevelEnd() && d.getVerticalFrom().compareTo(value.getLevelEnd().getValue()) != 0) {
+                        d.setVerticalFrom(value.getLevelEnd().getValue());
+                    }
+                }
+                if (value.isSetLevelEnd() && d.getVerticalTo().compareTo(value.getLevelEnd().getValue()) != 0) {
+                    d.setVerticalTo(value.getLevelEnd().getValue());
+                }
                 childObservations.add(d);
             }
         }
@@ -454,12 +457,7 @@ public class ObservationPersister
             o.setValue(new SingleObservationValue<>());
             o.getValue().setPhenomenonTime(level.getPhenomenonTime());
         }
-        if (level.isSetLevelStart() && level.isSetLevelEnd()) {
-            o.addParameter(createParameter(level.getLevelStart()));
-            o.addParameter(createParameter(level.getLevelEnd()));
-        } else {
-            o.addParameter(createParameter(level.getLevelEnd()));
-        }
+        o.getParameterHolder().addParameter(level.getLevelStartEndAsParameter());
         return o;
     }
 
@@ -672,8 +670,10 @@ public class ObservationPersister
             if (parameterHolder.isSetFromToParameter()) {
                 NamedValue<BigDecimal> fromParameter = parameterHolder.getFromParameter();
                 NamedValue<BigDecimal> toParameter = parameterHolder.getToParameter();
-                observation.setVerticalFrom(fromParameter.getValue().getValue());
-                observation.setVerticalTo(toParameter.getValue().getValue());
+                if (!(observation instanceof ProfileDataEntity)) {
+                    observation.setVerticalFrom(fromParameter.getValue().getValue());
+                    observation.setVerticalTo(toParameter.getValue().getValue());
+                }
                 // set vertical metadata
                 VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
                 verticalMetadata.setVerticalFromName(fromParameter.getName().getHref());
@@ -684,11 +684,11 @@ public class ObservationPersister
                 }
                 if (parameterHolder.isSetHeightDepthParameter()) {
                     if (parameterHolder.isSetDepthParameter() && parameterHolder.isSetHeightParameter()) {
-                        verticalMetadata.setOrientation(Short.valueOf("0"));
+                        verticalMetadata.setOrientation(Integer.valueOf(0).shortValue());
                     } else if (parameterHolder.isSetDepthParameter()) {
-                        verticalMetadata.setOrientation(Short.valueOf("-1"));
+                        verticalMetadata.setOrientation(Integer.valueOf(-1).shortValue());
                     } else {
-                        verticalMetadata.setOrientation(Short.valueOf("1"));
+                        verticalMetadata.setOrientation(Integer.valueOf(1).shortValue());
                     }
                 }
                 ctx.setVertical(verticalMetadata);
@@ -699,13 +699,17 @@ public class ObservationPersister
                 NamedValue<BigDecimal> parameter = parameterHolder.getHeightDepthParameter();
                 VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
                 if (parameterHolder.isSetDepthParameter()) {
-                    observation.setVerticalFrom(parameter.getValue().getValue());
-                    observation.setVerticalTo(parameter.getValue().getValue());
-                    verticalMetadata.setOrientation(Short.valueOf("-1"));
+                    if (!(observation instanceof ProfileDataEntity)) {
+                        observation.setVerticalFrom(parameter.getValue().getValue());
+                        observation.setVerticalTo(parameter.getValue().getValue());
+                    }
+                    verticalMetadata.setOrientation(Integer.valueOf(-1).shortValue());
                 } else {
-                    observation.setVerticalFrom(parameter.getValue().getValue());
-                    observation.setVerticalTo(parameter.getValue().getValue());
-                    verticalMetadata.setOrientation(Short.valueOf("1"));
+                    if (!(observation instanceof ProfileDataEntity)) {
+                        observation.setVerticalFrom(parameter.getValue().getValue());
+                        observation.setVerticalTo(parameter.getValue().getValue());
+                    }
+                    verticalMetadata.setOrientation(Integer.valueOf(1).shortValue());
                 }
                 // set vertical metadata
                 verticalMetadata.setVerticalFromName(parameter.getName().getHref());

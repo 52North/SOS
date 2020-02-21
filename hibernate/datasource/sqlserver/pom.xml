@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>hibernate-datasource</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>hibernate-datasource-sqlserver</artifactId>
+    <artifactId>sos-hibernate-datasource-sqlserver</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate SQL Server Datasource</name>
     <description>52°North Sensor Observation Service Hibernate SQL Server module</description>
@@ -33,11 +33,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-common</artifactId>
+            <artifactId>sos-hibernate-datasource-common</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-session-factory</artifactId>
+            <artifactId>sos-hibernate-session-factory</artifactId>
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -46,12 +46,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
         </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-common</artifactId>
+            <artifactId>sos-hibernate-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -95,8 +95,8 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <usedDependencies>
-                        <usedDependency>${project.groupId}:api</usedDependency>
-                        <usedDependency>${project.groupId}:hibernate-common</usedDependency>
+                        <usedDependency>${project.groupId}:sos-api</usedDependency>
+                        <usedDependency>${project.groupId}:sos-hibernate-common</usedDependency>
                     </usedDependencies>
                 </configuration>
             </plugin>

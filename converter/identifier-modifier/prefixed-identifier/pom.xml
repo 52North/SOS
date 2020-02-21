@@ -2,11 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>identifier-modifier</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>prefixed-identifier</artifactId>
+    <artifactId>sos-prefixed-identifier</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Prefixed identifier convert module</name>
     <description>52°North SOS - Module to support prefixed identifiers in requests and responses</description>
@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>abstract-identifier</artifactId>
+            <artifactId>sos-abstract-identifier</artifactId>
         </dependency>
     </dependencies>
 </project>

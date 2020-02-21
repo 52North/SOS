@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>hibernate</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>hibernate-handler</artifactId>
+      <artifactId>sos-hibernate-handler</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate Handler</name>
     <description>52°North Sensor Observation Service Hibernate Handler module</description>
@@ -17,28 +17,28 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-utils</artifactId>
+            <artifactId>sos-hibernate-utils</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-common</artifactId>
+            <artifactId>sos-hibernate-common</artifactId>
         </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-feature</artifactId>
+            <artifactId>sos-hibernate-feature</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>cache</artifactId>
+             <artifactId>sos-cache</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>handler</artifactId>
+             <artifactId>sos-handler</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
@@ -153,7 +153,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-session-factory</artifactId>
+            <artifactId>sos-hibernate-session-factory</artifactId>
         </dependency>
          <dependency>
             <groupId>org.hibernate</groupId>
@@ -176,17 +176,17 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>split-and-merge</artifactId>
+            <artifactId>sos-split-and-merge</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-h2</artifactId>
+            <artifactId>sos-hibernate-h2</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>test</artifactId>
+            <artifactId>sos-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -196,7 +196,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>transactional-v20</artifactId>
+            <artifactId>sos-transactional-v20</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

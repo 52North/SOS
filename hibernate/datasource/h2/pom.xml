@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>hibernate-datasource</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>hibernate-datasource-h2</artifactId>
+    <artifactId>sos-hibernate-datasource-h2</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Hibernate H2 Datasource</name>
     <description>52°North Sensor Observation Service Hibernate H2 module</description>
@@ -33,15 +33,15 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-common</artifactId>
+            <artifactId>sos-hibernate-datasource-common</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-session-factory</artifactId>
+            <artifactId>sos-hibernate-session-factory</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>

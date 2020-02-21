@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>netcdf</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
         </dependency>
          <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -58,7 +58,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>test</artifactId>
+            <artifactId>sos-test</artifactId>
             <scope>test</scope>
         </dependency>
          <dependency>

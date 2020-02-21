@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>transformation</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>request-response-coordinate-transformer</artifactId>
+    <artifactId>sos-request-response-coordinate-transformer</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - Coordinate transformation module</name>
     <description>52°North SOS - Module to transform coordinates in requests and responses</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
@@ -72,7 +72,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>test</artifactId>
+            <artifactId>sos-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

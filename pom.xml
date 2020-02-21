@@ -7,7 +7,7 @@
         <artifactId>parent</artifactId>
         <version>16</version>
     </parent>
-    <groupId>org.n52.sensorweb.sos</groupId>
+    <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>52n-sos</artifactId>
     <version>5.0.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
@@ -101,7 +101,7 @@
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
         <arctic-sea.version>7.3.0</arctic-sea.version>
 
-        <dataset.api.version>3.0.0-SNAPSHOT</dataset.api.version>
+        <dataset.api.version>3.0.0</dataset.api.version>
         <dataset.dao.version>3.0.0-SNAPSHOT</dataset.dao.version>
         <dataset.hibernate.version>1.0.0</dataset.hibernate.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
@@ -393,248 +393,238 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>api</artifactId>
+                <artifactId>sos-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>api</artifactId>
+                <artifactId>sos-api</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>api</artifactId>
+                <artifactId>sos-api</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
                 <classifier>tests</classifier>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>cache</artifactId>
+                 <artifactId>sos-cache</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>core-v100</artifactId>
+                 <artifactId>sos-core-v100</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>core-v20</artifactId>
+                 <artifactId>sos-core-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>gc-dao</artifactId>
+                 <artifactId>sos-handler</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>handler</artifactId>
+                  <artifactId>sos-hibernate-handler</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-handler</artifactId>
+                 <artifactId>sos-coding-gml</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-gml</artifactId>
+                <artifactId>sos-coding-gml-cov</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-gml-cov</artifactId>
+                <artifactId>sos-coding-cv-gml</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-cv-gml</artifactId>
+                <artifactId>sos-coding-gwml</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-gwml</artifactId>
+                <artifactId>sos-coding-uvf</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-uvf</artifactId>
+                <artifactId>sos-hibernate-session-factory</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-session-factory</artifactId>
+                <artifactId>sos-hibernate-geodb-c3p0</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-geodb-c3p0</artifactId>
+                <artifactId>sos-hibernate-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-common</artifactId>
+                <artifactId>sos-hibernate-utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-utils</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-mappings</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-h2</artifactId>
+                <artifactId>sos-hibernate-h2</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-feature</artifactId>
+                <artifactId>sos-hibernate-feature</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-datasource-common</artifactId>
+                <artifactId>sos-hibernate-datasource-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-datasource-postgres</artifactId>
+                <artifactId>sos-hibernate-datasource-postgres</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-datasource-oracle</artifactId>
+                <artifactId>sos-hibernate-datasource-oracle</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-datasource-sqlserver</artifactId>
+                <artifactId>sos-hibernate-datasource-sqlserver</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-datasource-h2</artifactId>
+                <artifactId>sos-hibernate-datasource-h2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>hibernate-datasource-mysql</artifactId>
+                <artifactId>sos-hibernate-datasource-mysql</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-kvp</artifactId>
+                <artifactId>sos-coding-kvp</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>binding-register</artifactId>
+                <artifactId>sos-binding-register</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>enhanced-v20</artifactId>
+                <artifactId>sos-enhanced-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>transactional-v20</artifactId>
+                <artifactId>sos-transactional-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>resultHandling-v20</artifactId>
+                <artifactId>sos-resultHandling-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>extensions-v20</artifactId>
+                <artifactId>sos-extensions-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>profile-coding</artifactId>
+                <artifactId>sos-profile-coding</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>common-controller</artifactId>
+                <artifactId>sos-common-controller</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>views</artifactId>
+                <artifactId>sos-views</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>admin-controller</artifactId>
+                <artifactId>sos-admin-controller</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>install-controller</artifactId>
+                <artifactId>sos-install-controller</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>client-controller</artifactId>
+                <artifactId>sos-client-controller</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>test</artifactId>
+                <artifactId>sos-test</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>webapp</artifactId>
+                <artifactId>sos-webapp</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-inspire-omso</artifactId>
+                <artifactId>sos-coding-inspire-omso</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-inspire-ompr</artifactId>
+                <artifactId>sos-coding-inspire-ompr</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>inspire-api</artifactId>
+                <artifactId>sos-inspire-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>inspire-code</artifactId>
+                <artifactId>sos-inspire-code</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- EREPORTING -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>ereporting</artifactId>
+                <artifactId>sos-ereporting</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <!-- AQD eReporting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>aqd-v10</artifactId>
+                <artifactId>sos-aqd-v10</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -643,65 +633,60 @@
             <!-- Split and Merge observatioons -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>split-and-merge</artifactId>
+                <artifactId>sos-split-and-merge</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>procedure-description-converter</artifactId>
+                <artifactId>sos-procedure-description-converter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>request-response-coordinate-transformer</artifactId>
+                <artifactId>sos-request-response-coordinate-transformer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>observation-converter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>seriestype</artifactId>
+                <artifactId>sos-observation-converter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- flexible identifiers -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>abstract-identifier</artifactId>
+                <artifactId>sos-abstract-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>flexible-identifier</artifactId>
+                <artifactId>sos-flexible-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>prefixed-identifier</artifactId>
+                <artifactId>sos-prefixed-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>ereporting-identifier</artifactId>
+                <artifactId>sos-ereporting-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Related offering encoding -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>coding-related-offering</artifactId>
+                <artifactId>sos-coding-related-offering</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Statistics -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>statistics</artifactId>
+                <artifactId>sos-statistics</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>eprtr</artifactId>
+                <artifactId>sos-eprtr</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1310,12 +1295,12 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>org.n52.sensorweb.sos</groupId>
                 <artifactId>test-suite-common</artifactId>
                 <version>${sos.test.suite.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>org.n52.sensorweb.sos</groupId>
                 <artifactId>test-suite-sos-20</artifactId>
                 <version>${sos.test.suite.version}</version>
             </dependency>

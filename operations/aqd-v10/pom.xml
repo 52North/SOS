@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.n52.sensorweb.sos</groupId>
+        <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>operations</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>aqd-v10</artifactId>
+    <artifactId>sos-aqd-v10</artifactId>
     <packaging>jar</packaging>
     <name>52°North SOS - AQD 1.0.0 Operator</name>
     <description>52°North Air Quality Data 1.0.0 operator module</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
+            <artifactId>sos-api</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>common-controller</artifactId>
+            <artifactId>sos-common-controller</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>

@@ -1,6 +1,6 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.n52.sensorweb.sos</groupId>
+    <groupId>org.n52.sensorweb-server.sos</groupId>
     <packaging>jar</packaging>
     <artifactId>wsdl</artifactId>
     <version>1.0</version>

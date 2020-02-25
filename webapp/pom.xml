@@ -768,17 +768,17 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>api-netcdf</artifactId>
+            <artifactId>sos-api-netcdf</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-netcdf</artifactId>
+            <artifactId>sos-coding-netcdf</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-oceansites</artifactId>
+            <artifactId>sos-coding-oceansites</artifactId>
             <scope>runtime</scope>
         </dependency>
 

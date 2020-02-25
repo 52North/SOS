@@ -627,6 +627,23 @@
                 <artifactId>sos-aqd-v10</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- netCDF -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-api-netcdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-coding-netcdf</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>sos-coding-oceansites</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- CONVERTER -->
 
@@ -1366,66 +1383,6 @@
                 <version>2.8</version>
                 <scope>runtime</scope>
             </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>gda</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>gda-operation</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>gda-coding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>gda-hibernate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ifoi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ifoi-operation</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ifoi-coding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>ifoi-hibernate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>drt</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>drt-operation</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>drt-coding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>drt-hibernate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <!-- required for common test classes -->
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1484,21 +1441,6 @@
                         <artifactId>commons-codec</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>do-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>do-hibernate</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>do-kvp</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.opengeo</groupId>
@@ -1785,21 +1727,6 @@
                 <groupId>com.axiomalaska</groupId>
                 <artifactId>cf4j</artifactId>
                 <version>35.0</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>api-netcdf</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-netcdf</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>coding-oceansites</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.activation</groupId>

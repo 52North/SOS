@@ -6,7 +6,7 @@
         <artifactId>52n-sos</artifactId>
         <version>5.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>hibernate</artifactId>
+    <artifactId>sos-hibernate</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Hibernate Module</name>
     <description>52°North SOS Hibernate Module</description>

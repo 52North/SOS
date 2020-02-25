@@ -8,7 +8,7 @@
         <version>16</version>
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
-    <artifactId>52n-sos</artifactId>
+    <artifactId>sos-parent</artifactId>
     <version>5.0.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>

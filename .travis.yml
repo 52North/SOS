@@ -11,8 +11,3 @@ script: mvn -U -B clean install
 cache:
   directories:
     - $HOME/.m2
-notifications:
-  slack:
-    rooms:
-      - secure: "f+40o8Uduiz7GUNSwqlxgkwdX7lwSy6ae+Wzx1t8EVONGczql56k8Juyz8yWEAr9cAjqe0Md81ZT73nHx2ty1quDpzwYRS1K+51gT9FTN6Pv460ceJCtllxuU4Mza0y6jPL7RptG3+AkcQAcL6SMfrx8qmcVR/PLK7eiIUkZRxg="
-      - secure: "fe/GY3VlJN+Fbq+6MEtjtANmv1FGyshc1vx1Nmd1qr0OsPuxnktlDh2zpA4JjzJgz3YblcbtvOmVZoAq4kOsLSxL/zgk/pc+jGzMer4emXOGe8GLPylitwhl2+xKYCbDtG2trLZQH8XfgKnKgBs3m8zQgKK92YU223ZJjO4yHck="

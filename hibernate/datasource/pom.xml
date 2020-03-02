@@ -35,12 +35,4 @@
             <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>oracle</id>
-            <modules>
-                <module>oracle</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>

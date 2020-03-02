@@ -93,7 +93,7 @@
         <hikaricp.version>3.4.2</hikaricp.version>
         <geotools.version>22.3</geotools.version>
         <jackson.version>2.10.2</jackson.version>
-        <ojdbc6.version>11.2.0</ojdbc6.version>
+        <ojdbc8.version>12.2.0.1</ojdbc8.version>
         <sqljdbc.version>7.4.1.jre8</sqljdbc.version>
         <version.netcdf>5.2.0</version.netcdf>
 
@@ -1565,9 +1565,10 @@
                 <version>1.6</version>
             </dependency>
             <dependency>
-                <groupId>com.oracle</groupId>
-                <artifactId>ojdbc6</artifactId>
-                <version>${ojdbc6.version}</version>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc8</artifactId>
+                <version>${ojdbc8.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.geolatte</groupId>

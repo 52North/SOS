@@ -240,7 +240,6 @@
             <artifactId>c3p0</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!-- LOGGING -->
 
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -553,6 +552,16 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-hibernate-datasource-mysql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-hibernate-datasource-oracle</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- CONVERTER -->
@@ -961,23 +970,6 @@
 
     <profiles>
         <profile>
-            <id>oracle</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>sos-hibernate-datasource-oracle</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.oracle</groupId>
-                    <artifactId>ojdbc6</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-        </profile>
-        <profile>
             <!-- Profile for integration testing, run with: mvn -P itest clean install -->
             <id>itest</id>
             <build>
@@ -1061,18 +1053,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>sos-hibernate-datasource-oracle</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>sos-hibernate-datasource-sqlserver</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
         </profile>
 
         <!-- Profile for deploy SOS -->

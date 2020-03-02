@@ -214,7 +214,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                       DatabaseConcept.EREPORTING.getDisplayName());
         def.addOption(DatabaseConcept.TRANSACTIONAL.name(),
                 DatabaseConcept.TRANSACTIONAL.getDisplayName());
-        def.setDefaultValue(DatabaseConcept.SIMPLE.name());
+        def.setDefaultValue(DatabaseConcept.TRANSACTIONAL.name());
         return def;
     }
 

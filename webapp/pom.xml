@@ -103,6 +103,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- 
             <plugin>
               <groupId>com.googlecode.maven-download-plugin</groupId>
               <artifactId>download-maven-plugin</artifactId>
@@ -122,6 +123,7 @@
                   </execution>
               </executions>
             </plugin>
+             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -190,32 +192,34 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- 
             <plugin>
-            <groupId>com.google.code.maven-replacer-plugin</groupId>
-            <artifactId>replacer</artifactId>
-            <version>1.5.3</version>
-            <executions>
-                <execution>
-                    <id>Update Helgoland index file</id>
-                    <phase>prepare-package</phase>
-                    <goals>
-                        <goal>replace</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <basedir>${project.build.directory}/${conf.sos.name}/static/client/helgoland</basedir>
-                <includes>
-                    <include>index.html</include>
-                </includes>
-                <replacements>
-                    <replacement>
-                        <token>/helgoland-complete/</token>
-                        <value>./</value>
-                    </replacement>
-                </replacements>
-            </configuration>
-        </plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>Update Helgoland index file</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <basedir>${project.build.directory}/${conf.sos.name}/static/client/helgoland</basedir>
+                    <includes>
+                        <include>index.html</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>/helgoland-complete/</token>
+                            <value>./</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+             -->
         </plugins>
     </build>
     <dependencies>

@@ -1,0 +1,182 @@
+{
+	"controls": {
+		"cancel": "Cancel",
+		"close": "Close",
+		"ok": "Ok"
+	},
+	"favorite": {
+		"notifier": {
+			"add-favorite": "Favorite created",
+			"remove-favorite": "Favorite removed"
+		}
+	},
+	"list-selection": {
+		"loading": "Load new parameter list...",
+		"parameter": {
+			"category": "Category",
+			"phenomenon": "Phenomenon",
+			"sensor": "Sensor",
+			"station": "Station"
+		},
+		"provider": "Provider"
+	},
+	"navigation": {
+		"profiles": {
+			"combi": "Combination",
+			"diagram": "Diagram",
+			"main": "Profiles",
+			"selection": "Selection"
+		},
+		"timeseries": {
+			"diagram": "Diagram",
+			"favorites": "Favorites",
+			"list-selection": "List selection",
+			"main": "Timeseries",
+			"map": "Map",
+			"table": "Table"
+		},
+		"trajectories": {
+			"main": "Trajectories",
+			"selection": "Selection",
+			"view": "View"
+		}
+	},
+	"permalink": {
+		"button": {
+			"in-mail": "Send by mail",
+			"in-window": "Open in a new tab",
+			"to-clipboard": "Copy to clipboard"
+		},
+		"confirm-to-clipboard": "Permalink was copied to clipboard."
+	},
+	"profiles": {
+		"hint": {
+			"select-profile": "Please select a profile first."
+		},
+		"legend": {
+			"delete-subentry": "Remove this profile",
+			"edit-style": "Edit the style of this profile",
+			"go-to-combi-view": "Show in the combined view",
+			"show-geometry": "Show profile geometry",
+			"visibility": "Show/Hide this profile"
+		},
+		"selection": {
+			"load-timestamps": "Loading valid time stamps",
+			"platform": "Platform",
+			"select-offering": "Select offering",
+			"select-phenomenon": "Select phenomenon",
+			"select-platform": {
+				"header": "Select platform",
+				"loading-mobile-platforms": "Load mobile platforms",
+				"loading-stationary-platforms": "Load stationary platforms",
+				"mobile": "Mobile platforms",
+				"stationary": "Stationary platforms"
+			},
+			"select-profile": "Select profile",
+			"select-provider": "Select provider",
+			"select-sensor": "Select sensor",
+			"select-timestamp": "Select timestamp",
+			"timestamp": "Timestamp",
+			"to-combi-view": "Combined view",
+			"to-diagram-view": "Diagram view"
+		}
+	},
+	"service-selector": {
+		"datasets": "Datasets",
+		"phenomena": "Phenomena",
+		"platforms": "Platforms",
+		"service-url": "Service-Url",
+		"stations": "Stations",
+		"timeseries": "Timeseries"
+	},
+	"timeseries": {
+		"diagram": {
+			"hint": {
+				"select-timeseries-first": "Please select a timeseries first."
+			},
+			"legend": {
+				"entry": {
+					"first-value-at": "First value at",
+					"jumpToLastTimeStamp": "Jump to last measurement",
+					"last-value-at": "Last value at",
+					"no-data-available": "No data available"
+				},
+				"header": "Legend",
+				"remove-all": "Remove series",
+				"show-geometry-header": "Position of the station",
+				"style-edit": {
+					"generalize": "Generalize data",
+					"header": "Change style of this timeseries",
+					"lineWidth": "Line width",
+					"max": "Max",
+					"min": "Min",
+					"pointRadius": "Point radius",
+					"zeroBasedYAxis": "Timeseries zero based"
+				}
+			},
+			"phenomenon": {
+				"header": "Phenomena",
+				"show-all": "All phenomena"
+			}
+		},
+		"favorites": {
+			"addToDiagram": "Add to diagram",
+			"export": "Export favorites",
+			"import": "Import favorites",
+			"lastMeasurements": "Last measurements"
+		},
+		"list-selection": {
+			"category": "Category",
+			"phenomenon": "Phenomenon",
+			"provider": "Provider",
+			"sensor": "Sensor",
+			"station": "Station"
+		},
+		"map-selection": {
+			"dataset-selection-hint": "Please select one or more timeseries to display in diagram",
+			"map": "Map",
+			"provider": "Provider",
+			"show-in-diagram": "Show adjustments in diagram"
+		},
+		"timespan-selector": {
+			"current_month": "Current Month",
+			"current_week": "Current Week",
+			"current_year": "Current Year",
+			"header": "Select Timespan",
+			"last_hour": "Last Hour",
+			"last_month": "Last Month",
+			"last_week": "Last Week",
+			"last_year": "Last Year",
+			"today": "Today",
+			"today_yesterday": "Today & Yesterday",
+			"yesterday": "Yesterday"
+		}
+	},
+	"trajectories": {
+		"diagram": {
+			"hint": "Please select at least one phenomenon on the right."
+		},
+		"map": {
+			"loading": ""
+		},
+		"parameter": {
+			"mobile-platform": "Mobile platform",
+			"offering": "Offering",
+			"path": "Path",
+			"phenomenon": "Phenomenon"
+		},
+		"selection": {
+			"select-by-phenomenon": "Select by phenomenon",
+			"select-by-platform": "Select by platform"
+		},
+		"view": {
+			"change-color-header": "Change color",
+			"graph-distance-tooltip": "x-axis figures the disatance",
+			"graph-dotted-tooltip": "Timeseries as line/dots",
+			"graph-information-tooltip": "The observation period can be shrinked by click and draw. A single click on the diagram represents the complete observation period.",
+			"graph-ticks-tooltip": "x-axis figures the measurement ticks linearly",
+			"graph-time-tooltip": "x-axis figures the timeframe",
+			"hint": "Please select a trajectory first."
+		}
+	}
+}

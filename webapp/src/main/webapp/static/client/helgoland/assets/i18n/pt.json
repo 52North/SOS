@@ -1,0 +1,182 @@
+{
+	"controls": {
+		"cancel": "Cancelar",
+		"close": "Fechar",
+		"ok": "Ok"
+	},
+	"favorite": {
+		"notifier": {
+			"add-favorite": "",
+			"remove-favorite": ""
+		}
+	},
+	"list-selection": {
+		"loading": "",
+		"parameter": {
+			"category": "",
+			"phenomenon": "",
+			"sensor": "",
+			"station": ""
+		},
+		"provider": ""
+	},
+	"navigation": {
+		"profiles": {
+			"combi": "Combinação",
+			"diagram": "Diagrama",
+			"main": "Perfis",
+			"selection": "Selecção"
+		},
+		"timeseries": {
+			"diagram": "Diagrama",
+			"favorites": "Favoritos",
+			"list-selection": "Seleção de lista",
+			"main": "Série temporal",
+			"map": "Mapa",
+			"table": "Tabela"
+		},
+		"trajectories": {
+			"main": "Trajectórias",
+			"selection": "Selecção",
+			"view": "Vista"
+		}
+	},
+	"permalink": {
+		"button": {
+			"in-mail": "Enviar por correio",
+			"in-window": "Abrir em nova aba",
+			"to-clipboard": "Copiar para a área de transferência"
+		},
+		"confirm-to-clipboard": "Permalink foi copiado para a área de transferência."
+	},
+	"profiles": {
+		"hint": {
+			"select-profile": "Por favor, selecione um perfil primeiro."
+		},
+		"legend": {
+			"delete-subentry": "Remover este perfil",
+			"edit-style": "Editar o estilo deste perfil",
+			"go-to-combi-view": "Mostrar na vista combinada",
+			"show-geometry": "Mostrar geometria do perfil",
+			"visibility": "Mostrar/ocultar este perfil"
+		},
+		"selection": {
+			"load-timestamps": "Carregamento de carimbos de hora válidos",
+			"platform": "Plataforma",
+			"select-offering": "Selecione a oferta",
+			"select-phenomenon": "Selecione parâmetro",
+			"select-platform": {
+				"header": "Selecione a plataforma",
+				"loading-mobile-platforms": "",
+				"loading-stationary-platforms": "",
+				"mobile": "Plataformas móveis",
+				"stationary": "Plataformas fixas"
+			},
+			"select-profile": "Selecionar perfil",
+			"select-provider": "Selecionar fornecedor",
+			"select-sensor": "Selecionar sensor",
+			"select-timestamp": "Selecionar timestamp",
+			"timestamp": "Timestamp",
+			"to-combi-view": "Vista conjunta",
+			"to-diagram-view": "Vista de diagrama"
+		}
+	},
+	"service-selector": {
+		"datasets": "Conjuntos de dados",
+		"phenomena": "Parâmetros",
+		"platforms": "Plataformas",
+		"service-url": "URL do serviço",
+		"stations": "Estações",
+		"timeseries": "Série temporal"
+	},
+	"timeseries": {
+		"diagram": {
+			"hint": {
+				"select-timeseries-first": "Por favor, selecione uma série temporal primeiro."
+			},
+			"legend": {
+				"entry": {
+					"first-value-at": "Primeiro valor a",
+					"jumpToLastTimeStamp": "Saltar para a última medição",
+					"last-value-at": "Último valor em",
+					"no-data-available": "Nenhum dado disponível"
+				},
+				"header": "Legenda",
+				"remove-all": "",
+				"show-geometry-header": "Posição da estação",
+				"style-edit": {
+					"generalize": "Generalizar dados",
+					"header": "Alterar o estilo desta série temporal",
+					"lineWidth": "Largura da linha",
+					"max": "Máximo",
+					"min": "Mínimo",
+					"pointRadius": "Raio do ponto",
+					"zeroBasedYAxis": "Série temporal baseado em zero"
+				}
+			},
+			"phenomenon": {
+				"header": "Parâmetros",
+				"show-all": "Todos os parâmetros"
+			}
+		},
+		"favorites": {
+			"addToDiagram": "Adicionar ao diagrama",
+			"export": "Exportar favoritos",
+			"import": "Importar favoritos",
+			"lastMeasurements": "Últimas medições"
+		},
+		"list-selection": {
+			"category": "Categoria",
+			"phenomenon": "Parâmetro",
+			"provider": "Provedor",
+			"sensor": "Sensor",
+			"station": "Estação"
+		},
+		"map-selection": {
+			"dataset-selection-hint": "Selecione um ou mais série temporal para exibir no diagrama",
+			"map": "Mapa",
+			"provider": "Provedor",
+			"show-in-diagram": "Mostrar os ajustes no diagrama"
+		},
+		"timespan-selector": {
+			"current_month": "Mês atual",
+			"current_week": "Semana atual",
+			"current_year": "Ano atual",
+			"header": "Selecione o perído de tempo",
+			"last_hour": "Última hora",
+			"last_month": "Último mês",
+			"last_week": "Semana passada",
+			"last_year": "Último ano",
+			"today": "Hoje",
+			"today_yesterday": "Hoje & ontem",
+			"yesterday": "Ontem"
+		}
+	},
+	"trajectories": {
+		"diagram": {
+			"hint": "Por favor, selecione pelo menos no parâmetro à direita."
+		},
+		"map": {
+			"loading": ""
+		},
+		"parameter": {
+			"mobile-platform": "Plataforma móvel",
+			"offering": "Oferta",
+			"path": "Caminho",
+			"phenomenon": "Parâmetro"
+		},
+		"selection": {
+			"select-by-phenomenon": "Selecionar por parâmetro",
+			"select-by-platform": "Selecionar por plataforma"
+		},
+		"view": {
+			"change-color-header": "Alterar cor",
+			"graph-distance-tooltip": "O eixo x representa a distância",
+			"graph-dotted-tooltip": "Série temporal como linha/pontos",
+			"graph-information-tooltip": "O período de observação pode ser reduzido por clique e desenho. Um simples clique no diagrama representa o período de observação completo.",
+			"graph-ticks-tooltip": "O eixo x representa os instantes de medição",
+			"graph-time-tooltip": "O eixo x indica o período de tempo",
+			"hint": "Por favor, selecione uma trajetória primeiro."
+		}
+	}
+}

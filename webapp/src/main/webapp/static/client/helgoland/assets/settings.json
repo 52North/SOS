@@ -1,21 +1,28 @@
 {
   "providerBlackList": [{
     "serviceId": "srv_42c69c781d20426f2d383c11625a26b5",
-    "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
+    "apiUrl": "https://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
   }, {
     "serviceId": "srv_9d58c5df42e02e2a533ca2ce3c0096f5",
-    "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
+    "apiUrl": "https://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
   }, {
     "serviceId": "srv_3ece93835fe20251956114f6a1778299",
-    "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
+    "apiUrl": "https://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
   }, {
     "serviceId": "srv_d40aa3b33600e7b6c3cf19803332eb74",
-    "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
+    "apiUrl": "https://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
   }, {
     "serviceId": "srv_6d9ccea8d609ecb74d4a512922bb7cee",
-    "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
+    "apiUrl": "https://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
   }],
-  "datasetApis": [{
+  "defaultTimeseriesTimeduration": {
+    "duration": {
+      "days": 7
+    },
+    "align": "end"
+  },
+  "datasetApis": [
+    {
       "name": "localhost",
       "url": "http://localhost:8080/52n-sos-webapp/api/"
     }

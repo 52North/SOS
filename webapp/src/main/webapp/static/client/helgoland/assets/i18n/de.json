@@ -1,0 +1,182 @@
+{
+	"controls": {
+		"cancel": "Abbrechen",
+		"close": "Schließen",
+		"ok": "OK"
+	},
+	"favorite": {
+		"notifier": {
+			"add-favorite": "Favorit erstellt",
+			"remove-favorite": "Favorit entfernt"
+		}
+	},
+	"list-selection": {
+		"loading": "Lade weitere Parameterliste...",
+		"parameter": {
+			"category": "Kategorie",
+			"phenomenon": "Phänomen",
+			"sensor": "Sensor",
+			"station": "Station"
+		},
+		"provider": "Anbieter"
+	},
+	"navigation": {
+		"profiles": {
+			"combi": "Kombinierte Ansicht",
+			"diagram": "Diagramm",
+			"main": "Profile",
+			"selection": "Auswahl"
+		},
+		"timeseries": {
+			"diagram": "Diagramm",
+			"favorites": "Favoriten",
+			"list-selection": "Listenauswahl",
+			"main": "Zeitreihen",
+			"map": "Kartenauswahl",
+			"table": "Tabelle"
+		},
+		"trajectories": {
+			"main": "Trajektorien",
+			"selection": "Auswahl",
+			"view": "Ansicht"
+		}
+	},
+	"permalink": {
+		"button": {
+			"in-mail": "Per Mail verschicken",
+			"in-window": "In neuem Tab öffnen",
+			"to-clipboard": "In die Zwischenablage"
+		},
+		"confirm-to-clipboard": "Der Permalink ist in der Zwischenablage."
+	},
+	"profiles": {
+		"hint": {
+			"select-profile": "Bitte wählen Sie zuerst Profile aus."
+		},
+		"legend": {
+			"delete-subentry": "Entferne dieses Profil",
+			"edit-style": "Verändere das Aussehen dieses Profils",
+			"go-to-combi-view": "Zeige in der kombinierten Ansicht",
+			"show-geometry": "Zeige Profil-Geometry",
+			"visibility": "Zeige/Verstecke das Profil"
+		},
+		"selection": {
+			"load-timestamps": "Läd die verfügbaren Zeitpunkte",
+			"platform": "Platform",
+			"select-offering": "Wähle Offering",
+			"select-phenomenon": "Wähle Phänomen",
+			"select-platform": {
+				"header": "Wähle Platform",
+				"loading-mobile-platforms": "Lade mobile Platformen",
+				"loading-stationary-platforms": "Lade stationäre Platformen",
+				"mobile": "Mobile Platform",
+				"stationary": "Stationäre Platform"
+			},
+			"select-profile": "Wähle Profile",
+			"select-provider": "Wähle Anbieter",
+			"select-sensor": "Wähle Sensor",
+			"select-timestamp": "Selektiere ein Zeitpunkt um das Profile zu sehen",
+			"timestamp": "Zeitpunkt",
+			"to-combi-view": "Kombinierte Ansicht",
+			"to-diagram-view": "Diagram Ansicht"
+		}
+	},
+	"service-selector": {
+		"datasets": "Datensätze",
+		"phenomena": "Phänomene",
+		"platforms": "Platformen",
+		"service-url": "Service-Url",
+		"stations": "Stationen",
+		"timeseries": "Zeitreihen"
+	},
+	"timeseries": {
+		"diagram": {
+			"hint": {
+				"select-timeseries-first": "Bitte wählen Sie zuerst eine Zeitreihe aus."
+			},
+			"legend": {
+				"entry": {
+					"first-value-at": "Erster Wert am",
+					"jumpToLastTimeStamp": "Springe zur letzten Messung",
+					"last-value-at": "Letzter Wert am",
+					"no-data-available": "Keine Daten verfügbar"
+				},
+				"header": "Legende",
+				"remove-all": "Zeitreihen entfernen",
+				"show-geometry-header": "Position der Station",
+				"style-edit": {
+					"generalize": "Daten generalisieren",
+					"header": "Zeitreihenerscheinung ändern",
+					"lineWidth": "Linienbreite",
+					"max": "Max",
+					"min": "Min",
+					"pointRadius": "Punktradius",
+					"zeroBasedYAxis": "Zeitreihe null-basiert"
+				}
+			},
+			"phenomenon": {
+				"header": "Phänomene",
+				"show-all": "Alle Phänomene"
+			}
+		},
+		"favorites": {
+			"addToDiagram": "Zum Diagram hinzufügen",
+			"export": "Favoriten exportieren",
+			"import": "Favoriten importieren",
+			"lastMeasurements": "Letzte Messungen"
+		},
+		"list-selection": {
+			"category": "Kategorie",
+			"phenomenon": "Phänomen",
+			"provider": "Anbieter",
+			"sensor": "Sensor",
+			"station": "Station"
+		},
+		"map-selection": {
+			"dataset-selection-hint": "Bitte wählen Sie eine oder mehrere Zeitreihen zur Darstellung aus",
+			"map": "Karte",
+			"provider": "Anbieter",
+			"show-in-diagram": "Zeige {{value}} Zeitreihen im Diagramm"
+		},
+		"timespan-selector": {
+			"current_month": "Derzeitiger Monat",
+			"current_week": "Derzeitige Woche",
+			"current_year": "Derzeitiges Jahr",
+			"header": "Zeitraumauswahl",
+			"last_hour": "Letzte Stunde",
+			"last_month": "Letzter Monat",
+			"last_week": "Letzte Woche",
+			"last_year": "Letztes Jahr",
+			"today": "Heute",
+			"today_yesterday": "Heute & Gestern",
+			"yesterday": "Gestern"
+		}
+	},
+	"trajectories": {
+		"diagram": {
+			"hint": "Bitte wählen Sie mindestens ein Phänomen aus auf der rechten Seite aus."
+		},
+		"map": {
+			"loading": ""
+		},
+		"parameter": {
+			"mobile-platform": "Mobile Platform",
+			"offering": "Offering",
+			"path": "Pfad",
+			"phenomenon": "Phänomen"
+		},
+		"selection": {
+			"select-by-phenomenon": "Wähle über Phänomen",
+			"select-by-platform": "Wähle über Platform"
+		},
+		"view": {
+			"change-color-header": "Farbe ändern",
+			"graph-distance-tooltip": "X-Achse bildet die Distanz ab",
+			"graph-dotted-tooltip": "Zeitreihe als Linien-/Punktdarstellung",
+			"graph-information-tooltip": "Der Betrachtungsraum lässt sich mit der Maus durch klicken und ziehen verkleiner. Mit einem einfach Klick auf das Diagramm wird wieder der ganze Betrachtungsraum dargestellt.",
+			"graph-ticks-tooltip": "X-Achse bildet die Messpunkte linear ab",
+			"graph-time-tooltip": "X-Achse bildet den Zeitraum ab",
+			"hint": "Bitte wählen Sie zuerst eine Trajektorie aus."
+		}
+	}
+}

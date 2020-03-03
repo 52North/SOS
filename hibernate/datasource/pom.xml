@@ -16,6 +16,7 @@
         <module>mysql</module>
         <module>common</module>
         <module>sqlserver</module>
+        <module>oracle</module>
     </modules>
     <dependencies>
         <dependency>

@@ -106,7 +106,7 @@
 
         <dataset.api.version>3.0.0</dataset.api.version>
         <dataset.dao.version>3.0.0</dataset.dao.version>
-        <dataset.hibernate.version>1.0.0</dataset.hibernate.version>
+        <dataset.hibernate.version>1.1.0</dataset.hibernate.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
 
         <org.springframework.security.version>5.2.2.RELEASE</org.springframework.security.version>

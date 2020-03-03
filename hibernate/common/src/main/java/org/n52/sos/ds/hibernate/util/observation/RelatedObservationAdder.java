@@ -81,11 +81,11 @@ public class RelatedObservationAdder {
                             observation.addRelatedObservation(
                                     new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(
                                             hRelatedObservation.getRelatedItem().getIdentifier()))));
-                        } else if (hRelatedObservation.getRelatedItem() instanceof DataEntity) {
+                        } else {
                             // TODO check if this should be set because result
                             // may not be a unique observation.
                             observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(
-                                    createGetObservationUrl((DataEntity<?>) hRelatedObservation.getRelatedItem()))));
+                                    createGetObservationUrl(hRelatedObservation.getRelatedItem()))));
                         }
                     }
                 }

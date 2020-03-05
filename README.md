@@ -49,7 +49,7 @@ In the [Sensor Web Server database model](https://github.com/52North/sensorweb-s
 
 ## Quick Start
 
- Getting started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation#Installation) helps you install and configure the 52°North SOS.
+ Getting started - the [installation guide](https://wiki.52north.org/SensorWeb/SensorObservationServiceVDocumentation#Installation) helps you install and configure the 52°North SOS.
  
 ### Docker
 
@@ -184,7 +184,7 @@ The binaries of the 52N SOS releases are provided are provided with the releases
   * `README` :          This file
   * `RELEASE-NOTES` : The release notes of the 52°North SOS
 
-No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation).
+No printer friendly documentation exist for this release. Instead, refer to the [wiki documentation](https://wiki.52north.org/SensorWeb/SensorObservationServiceVDocumentation).
 
 ## Support
 

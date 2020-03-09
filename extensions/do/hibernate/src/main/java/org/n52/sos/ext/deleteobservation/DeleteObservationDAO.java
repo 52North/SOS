@@ -290,21 +290,21 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                     if (!series.isSetFirstTimeStamp() || (series.isSetFirstTimeStamp() && !DateTimeHelper.makeDateTime(series.getFirstTimeStamp())
                             .equals(extrema.getMinPhenomenonTime()))) {
                         series.setFirstTimeStamp(extrema.getMinPhenomenonTime().toDate());
-                        if (series.getSeriesType().equals("quantity")) {
-                            NumericValuedObservation o = (NumericValuedObservation) observationDAO
-                                    .getMinObservation(series, extrema.getMinPhenomenonTime(), session);
-                            series.setFirstNumericValue(o.getValue());
-                        }
+//                        if (series.getSeriesType().equals("quantity")) {
+//                            NumericValuedObservation o = (NumericValuedObservation) observationDAO
+//                                    .getMinObservation(series, extrema.getMinPhenomenonTime(), session);
+//                            series.setFirstNumericValue(o.getValue());
+//                        }
                         update = true;
                     }
                     if (!series.isSetLastTimeStamp() || (series.isSetLastTimeStamp() && !DateTimeHelper.makeDateTime(series.getLastTimeStamp())
                             .equals(extrema.getMaxPhenomenonTime()))) {
                         series.setLastTimeStamp(extrema.getMaxPhenomenonTime().toDate());
-                        if (series.getSeriesType().equals("quantity")) {
-                            NumericValuedObservation o = (NumericValuedObservation) observationDAO
-                                    .getMaxObservation(series, extrema.getMaxPhenomenonTime(), session);
-                            series.setLastNumericValue(o.getValue());
-                        }
+//                        if (series.getSeriesType().equals("quantity")) {
+//                            NumericValuedObservation o = (NumericValuedObservation) observationDAO
+//                                    .getMaxObservation(series, extrema.getMaxPhenomenonTime(), session);
+//                            series.setLastNumericValue(o.getValue());
+//                        }
                         update = true;
                     }
                 } else {

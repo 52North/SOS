@@ -98,7 +98,7 @@
         <jackson.version>2.10.3</jackson.version>
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <version.netcdf>5.3.0</version.netcdf>
+        <version.netcdf>5.3.1</version.netcdf>
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>

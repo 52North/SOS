@@ -34,10 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
 import org.n52.shetland.ogc.sos.SosInsertionMetadata;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
@@ -76,19 +75,19 @@ public class InsertSensorRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_OFFERINGS.getName()),
+        MatcherAssert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_OFFERINGS.getName()),
                 CoreMatchers.instanceOf(List.class));
-        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS.getName()),
+        MatcherAssert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS.getName()),
                 CoreMatchers.is(PROC));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.IS_OBSERVABLE_PROPERTY.getName()),
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.IS_OBSERVABLE_PROPERTY.getName()),
                 CoreMatchers.hasItems(OP_1, OP_2));
-        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION.getName()),
+        MatcherAssert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION.getName()),
                 CoreMatchers.instanceOf(SosProcedureDescription.class));
-        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT.getName()),
+        MatcherAssert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT.getName()),
                 CoreMatchers.is(FORMAT));
-        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES.getName()),
+        MatcherAssert.assertThat((Set<String>) map.get(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES.getName()),
                 CoreMatchers.hasItems(FOI_1, FOI_2));
-        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_OBSERVATION_TYPES.getName()),
+        MatcherAssert.assertThat((Set<String>) map.get(SosDataMapping.IS_OBSERVATION_TYPES.getName()),
                 CoreMatchers.hasItems(OT_1, OT_2));
 
     }

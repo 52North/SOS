@@ -33,10 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
@@ -76,19 +75,19 @@ public class GetObservationRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OFFERINGS.getName()),
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GO_OFFERINGS.getName()),
                 CoreMatchers.hasItems(OF_1, OF_2));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_PROCEDURES.getName()),
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GO_PROCEDURES.getName()),
                 CoreMatchers.hasItems(P_1, P_2));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OBSERVED_PROPERTIES.getName()),
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GO_OBSERVED_PROPERTIES.getName()),
                 CoreMatchers.hasItems(OB_1, OB_2));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName()),
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName()),
                 CoreMatchers.hasItems(ID_1, ID_2));
-        Assert.assertThat(map.get(SosDataMapping.GO_RESPONSE_FORMAT.getName()),
+        MatcherAssert.assertThat(map.get(SosDataMapping.GO_RESPONSE_FORMAT.getName()),
                 CoreMatchers.is(RESPONSE_FORMAT));
-        Assert.assertThat(map.get(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES.getName()), CoreMatchers.is(true));
-        Assert.assertThat(map.get(SosDataMapping.GO_SPATIAL_FILTER.getName()), CoreMatchers.notNullValue());
-        Assert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName()),
+        MatcherAssert.assertThat(map.get(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES.getName()), CoreMatchers.is(true));
+        MatcherAssert.assertThat(map.get(SosDataMapping.GO_SPATIAL_FILTER.getName()), CoreMatchers.notNullValue());
+        MatcherAssert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName()),
                 CoreMatchers.allOf(CoreMatchers.instanceOf(List.class)));
     }
 }

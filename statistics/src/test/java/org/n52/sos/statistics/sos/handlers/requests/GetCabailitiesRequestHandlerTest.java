@@ -33,10 +33,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
@@ -65,11 +65,11 @@ public class GetCabailitiesRequestHandlerTest extends HandlerBaseTest {
         Map<String, Object> map = handler.resolveAsMap(request);
 
         Assert.assertEquals(UPDATE_SEQ, map.get(SosDataMapping.GC_UPDATE_SEQUENCE.getName()));
-        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_VERSIONS_FIELD.getName()),
+        MatcherAssert.assertThat((Collection<String>) map.get(SosDataMapping.GC_VERSIONS_FIELD.getName()),
                 CoreMatchers.hasItems(VER_1, VER_2));
-        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_FORMATS_FIELD.getName()),
+        MatcherAssert.assertThat((Collection<String>) map.get(SosDataMapping.GC_FORMATS_FIELD.getName()),
                 CoreMatchers.hasItems(FOR_1, FOR_2));
-        Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_SECTIONS.getName()),
+        MatcherAssert.assertThat((Collection<String>) map.get(SosDataMapping.GC_SECTIONS.getName()),
                 CoreMatchers.hasItems("a", "b", "c"));
     }
 

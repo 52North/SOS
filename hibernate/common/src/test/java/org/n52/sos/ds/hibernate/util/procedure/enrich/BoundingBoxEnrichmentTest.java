@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import java.util.Collection;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.locationtech.jts.geom.Envelope;
@@ -81,10 +81,10 @@ public class BoundingBoxEnrichmentTest {
         final System system = new System();
         sml.addMember(system);
         enrichmentMock.enrich(sml);
-        Assert.assertThat(sml.getCapabilities(), Matchers.hasSize(1));
-        Assert.assertThat(sml.getCapabilities().get(0).getName(),
+        MatcherAssert.assertThat(sml.getCapabilities(), Matchers.hasSize(1));
+        MatcherAssert.assertThat(sml.getCapabilities().get(0).getName(),
                 Matchers.is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
-        Assert.assertThat(sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement().getDefinition(),
+        MatcherAssert.assertThat(sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement().getDefinition(),
                 Matchers.is(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN));
     }
 
@@ -94,10 +94,10 @@ public class BoundingBoxEnrichmentTest {
         final System system = new System();
         sml.addMember(system);
         enrichmentMock.enrich(sml);
-        Assert.assertThat(sml.getCapabilities(), Matchers.hasSize(1));
-        Assert.assertThat(sml.getCapabilities().get(0).getName(),
+        MatcherAssert.assertThat(sml.getCapabilities(), Matchers.hasSize(1));
+        MatcherAssert.assertThat(sml.getCapabilities().get(0).getName(),
                 Matchers.is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
-        Assert.assertThat(((SweEnvelope) sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement())
+        MatcherAssert.assertThat(((SweEnvelope) sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement())
                 .getReferenceFrame(), Matchers.is("4326"));
     }
 

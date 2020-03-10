@@ -37,6 +37,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.search.SearchHit;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -112,9 +113,9 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
-        // Assert.assertThat(hit.getSourceAsMap().values(),
+        // MatcherAssert.assertThat(hit.getSourceAsMap().values(),
         // CoreMatchers.hasItem(request.getOperationName()));
-        Assert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
+        MatcherAssert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
 
     }
 
@@ -149,9 +150,9 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
         logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
-        // Assert.assertThat(hit.getSourceAsMap().values(),
+        // MatcherAssert.assertThat(hit.getSourceAsMap().values(),
         // CoreMatchers.hasItem(request.getOperationName()));
-        Assert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
+        MatcherAssert.assertThat(hit.getSourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
     }
 
     @Override

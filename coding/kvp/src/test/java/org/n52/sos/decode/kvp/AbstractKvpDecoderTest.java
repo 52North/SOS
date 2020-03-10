@@ -31,8 +31,8 @@ package org.n52.sos.decode.kvp;
 import java.util.Collections;
 import java.util.List;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator2;
@@ -252,7 +252,7 @@ public abstract class AbstractKvpDecoderTest extends AbstractSosKvpDecoder<OwsSe
 
     private void check(List<TemporalFilter> parseEventTime, TimeOperator operator) {
         for (TemporalFilter temporalFilter : parseEventTime) {
-            Assert.assertThat(temporalFilter.getOperator().name(), Matchers.is(operator.name()));
+            MatcherAssert.assertThat(temporalFilter.getOperator().name(), Matchers.is(operator.name()));
         }
     }
 

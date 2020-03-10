@@ -33,7 +33,6 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;

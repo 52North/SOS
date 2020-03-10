@@ -147,7 +147,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
      * @param session
      *            Hibernate session
      *
-     * @return List of {@link ObservationConstellation}
+     * @return List of {@link DatasetEntity}
      * @throws OwsExceptionReport
      *             If an error occurs
      */

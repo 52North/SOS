@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.text.IsEmptyString;
 import org.junit.Assert;
 import org.junit.Test;
@@ -68,9 +69,9 @@ public class AbstractSqlServerDatasourceTest {
                 hostDescription = settingDefinition.getDescription();
             }
         }
-        Assert.assertThat(hostDescription, CoreMatchers.not(IsEmptyString.isEmptyString()));
-        Assert.assertThat(databaseDescription, CoreMatchers.not(IsEmptyString.isEmptyString()));
-        Assert.assertThat(hostDescription, CoreMatchers.is(CoreMatchers.not(databaseDescription)));
+       MatcherAssert.assertThat(hostDescription, CoreMatchers.not(IsEmptyString.isEmptyString()));
+       MatcherAssert.assertThat(databaseDescription, CoreMatchers.not(IsEmptyString.isEmptyString()));
+       MatcherAssert.assertThat(hostDescription, CoreMatchers.is(CoreMatchers.not(databaseDescription)));
     }
 
     @Test
@@ -105,7 +106,7 @@ public class AbstractSqlServerDatasourceTest {
         settings.put(AbstractHibernateCoreDatasource.PORT_KEY, port);
         settings.put(AbstractHibernateCoreDatasource.DATABASE_KEY, database);
         final String created = new AbstractSqlServerDatasourceSeam().toURL(settings);
-        Assert.assertThat(created, CoreMatchers.is(expected));
+       MatcherAssert.assertThat(created, CoreMatchers.is(expected));
     }
 
     @Test
@@ -125,7 +126,7 @@ public class AbstractSqlServerDatasourceTest {
         settings.put(AbstractHibernateCoreDatasource.DATABASE_KEY, database);
         settings.put(AbstractSqlServerDatasource.INSTANCE_KEY, instance);
         final String created = new AbstractSqlServerDatasourceSeam().toURL(settings);
-        Assert.assertThat(created, CoreMatchers.is(expected));
+       MatcherAssert.assertThat(created, CoreMatchers.is(expected));
     }
 
     @Test
@@ -139,10 +140,10 @@ public class AbstractSqlServerDatasourceTest {
                 expectedPort + INSTANCE_NAME +
                 expectedInstance + DATABASE_NAME +
                 expectedDatabaseName);
-        Assert.assertThat(parsedValues[0], CoreMatchers.is(expectedServer));
-        Assert.assertThat(parsedValues[1], CoreMatchers.is(expectedPort));
-        Assert.assertThat(parsedValues[2], CoreMatchers.is(expectedDatabaseName));
-        Assert.assertThat(parsedValues[3], CoreMatchers.is(expectedInstance));
+       MatcherAssert.assertThat(parsedValues[0], CoreMatchers.is(expectedServer));
+       MatcherAssert.assertThat(parsedValues[1], CoreMatchers.is(expectedPort));
+       MatcherAssert.assertThat(parsedValues[2], CoreMatchers.is(expectedDatabaseName));
+       MatcherAssert.assertThat(parsedValues[3], CoreMatchers.is(expectedInstance));
     }
 
     @Test
@@ -154,9 +155,9 @@ public class AbstractSqlServerDatasourceTest {
                 expectedServer + ":" +
                 expectedPort + DATABASE_NAME +
                 expectedDatabaseName);
-        Assert.assertThat(parsedValues[0], CoreMatchers.is(expectedServer));
-        Assert.assertThat(parsedValues[1], CoreMatchers.is(expectedPort));
-        Assert.assertThat(parsedValues[2], CoreMatchers.is(expectedDatabaseName));
+       MatcherAssert.assertThat(parsedValues[0], CoreMatchers.is(expectedServer));
+       MatcherAssert.assertThat(parsedValues[1], CoreMatchers.is(expectedPort));
+       MatcherAssert.assertThat(parsedValues[2], CoreMatchers.is(expectedDatabaseName));
     }
 
     private class AbstractSqlServerDatasourceSeam extends AbstractSqlServerDatasource {

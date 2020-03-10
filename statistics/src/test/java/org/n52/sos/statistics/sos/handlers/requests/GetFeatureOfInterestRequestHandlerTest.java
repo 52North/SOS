@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
@@ -67,11 +67,11 @@ public class GetFeatureOfInterestRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_FEATURE_IDENTIFIERS.getName()),
+       MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GFOI_FEATURE_IDENTIFIERS.getName()),
                 CoreMatchers.hasItems(ID_1, ID_2));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_OBSERVED_PROPERTIES.getName()),
+       MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GFOI_OBSERVED_PROPERTIES.getName()),
                 CoreMatchers.hasItems(OB_1, OB_2));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_PROCEDURES.getName()),
+       MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GFOI_PROCEDURES.getName()),
                 CoreMatchers.hasItems(P_1, P_2));
         Assert.assertNotNull(map.get(SosDataMapping.GFOI_SPATIAL_FILTER.getName()));
         Assert.assertNotNull(map.get(SosDataMapping.GFOI_TEMPORAL_FILTER.getName()));

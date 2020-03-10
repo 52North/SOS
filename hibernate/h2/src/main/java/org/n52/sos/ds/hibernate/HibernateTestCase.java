@@ -29,9 +29,9 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hibernate.Session;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
@@ -56,11 +56,11 @@ public class HibernateTestCase extends Matchers implements ConnectionProvider {
     }
 
     public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
-        Assert.assertThat(actual, matcher);
+        MatcherAssert.assertThat(actual, matcher);
     }
 
     public static <T> void assertThat(String reason, T actual, Matcher<? super T> matcher) {
-        Assert.assertThat(reason, actual, matcher);
+        MatcherAssert.assertThat(reason, actual, matcher);
     }
 
     @Override

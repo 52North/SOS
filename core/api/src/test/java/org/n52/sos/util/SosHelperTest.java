@@ -28,9 +28,9 @@
  */
 package org.n52.sos.util;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsNull;
-import org.junit.Assert;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -72,23 +72,23 @@ public class SosHelperTest
 
     @Test
     public void shouldValidHttpGetGetFeatureOfInterestRequest() throws MalformedURLException {
-        Assert.assertThat(createFoiGetUrl(FOI_ID, VERSION_1, SERVICE_URL), Is.is(getFoi100Url()));
-        Assert.assertThat(createFoiGetUrl(FOI_ID, VERSION_2, SERVICE_URL), Is.is(getFoi200Url()));
+        MatcherAssert.assertThat(createFoiGetUrl(FOI_ID, VERSION_1, SERVICE_URL), Is.is(getFoi100Url()));
+        MatcherAssert.assertThat(createFoiGetUrl(FOI_ID, VERSION_2, SERVICE_URL), Is.is(getFoi200Url()));
     }
 
     @Test
     public void shouldValidHttpGetDescribeSensorRequest() throws MalformedURLException, UnsupportedEncodingException {
-        Assert.assertThat(getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID,
+        MatcherAssert.assertThat(getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID,
                 SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), Is.is(getProcDesc100Url()));
-        Assert.assertThat(
+        MatcherAssert.assertThat(
                 getDescribeSensorUrl(VERSION_2, SERVICE_URL, PROC_ID, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL),
                 Is.is(getProcDesc200Url()));
     }
 
     protected void checkMinMax(MinMax<String> minmax, double minY, double minX, double maxY, double maxX) {
-        Assert.assertThat(minmax, Is.is(IsNull.notNullValue()));
-        Assert.assertThat(minmax.getMinimum(), Is.is(minY + " " + minX));
-        Assert.assertThat(minmax.getMaximum(), Is.is(maxY + " " + maxX));
+        MatcherAssert.assertThat(minmax, Is.is(IsNull.notNullValue()));
+        MatcherAssert.assertThat(minmax.getMinimum(), Is.is(minY + " " + minX));
+        MatcherAssert.assertThat(minmax.getMaximum(), Is.is(maxY + " " + maxX));
     }
 
     protected URL getFoi100Url() throws MalformedURLException {

@@ -40,6 +40,8 @@ import org.n52.shetland.ogc.sos.drt.DeleteResultTemplateConstants;
  */
 public class DeleteResultTemplateInvalidParameterValueException extends CodedOwsException {
 
+    private static final long serialVersionUID = -5697374281501971502L;
+
     public DeleteResultTemplateInvalidParameterValueException(
             String offeringValue,
             String observedPropertyValue) {

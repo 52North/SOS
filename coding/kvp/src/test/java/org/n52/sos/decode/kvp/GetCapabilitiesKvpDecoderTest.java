@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
@@ -64,9 +64,9 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
     @Test
     public void basic() throws DecodingException {
         GetCapabilitiesRequest req = decoder.decode(createMap());
-        Assert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
-        Assert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.GetCapabilities.name()));
-        Assert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
+        MatcherAssert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
+        MatcherAssert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.GetCapabilities.name()));
+        MatcherAssert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
     }
 
     @Test
@@ -74,10 +74,10 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
         final Map<String, String> map = createMap();
         map.put(GetCapabilitiesParams.AcceptVersions.name(), ACCEPT_VERSIONS);
         GetCapabilitiesRequest req = decoder.decode(map);
-        Assert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
-        Assert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.GetCapabilities.name()));
-        Assert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
-        Assert.assertThat(req.getAcceptVersions(), CoreMatchers.is(Arrays.asList(ACCEPT_VERSIONS.split(","))));
+        MatcherAssert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
+        MatcherAssert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.GetCapabilities.name()));
+        MatcherAssert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
+        MatcherAssert.assertThat(req.getAcceptVersions(), CoreMatchers.is(Arrays.asList(ACCEPT_VERSIONS.split(","))));
     }
 
     @Test(expected = DecodingException.class)

@@ -33,9 +33,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -61,11 +61,11 @@ public class SosGetObservationOperatorV20Test {
 
         // null
         List<String> childFeatures = operator.addChildFeatures(null);
-        Assert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.TRUE));
+       MatcherAssert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.TRUE));
 
         // empty list
         childFeatures = operator.addChildFeatures(new ArrayList<String>(0));
-        Assert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.TRUE));
+       MatcherAssert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.TRUE));
     }
 
     @Test
@@ -81,10 +81,10 @@ public class SosGetObservationOperatorV20Test {
 
         final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList(FEATURE));
 
-        Assert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.FALSE));
-        Assert.assertThat(childFeatures.size(), Is.is(2));
-        Assert.assertThat(childFeatures, IsCollectionContaining.hasItem(CHILD_FEATURE));
-        Assert.assertThat(childFeatures, IsCollectionContaining.hasItem(FEATURE));
+       MatcherAssert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(childFeatures.size(), Is.is(2));
+       MatcherAssert.assertThat(childFeatures, IsCollectionContaining.hasItem(CHILD_FEATURE));
+       MatcherAssert.assertThat(childFeatures, IsCollectionContaining.hasItem(FEATURE));
     }
 
 }

@@ -28,9 +28,8 @@
  */
 package org.n52.sos.cache;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
 
@@ -52,7 +51,7 @@ public class ReadableCacheTest {
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER, new DateTime(52L));
 
-        Assert.assertThat(cache.hasMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER),
+       MatcherAssert.assertThat(cache.hasMinResultTimeForOffering(ReadableCacheTest.OFFERING_IDENTIFIER),
                 Is.is(Boolean.TRUE));
     }
 
@@ -60,12 +59,12 @@ public class ReadableCacheTest {
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
 
-        Assert.assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
 
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
-        Assert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
     }
 
     @Test
@@ -74,9 +73,9 @@ public class ReadableCacheTest {
         final String relatedFeature = FEATURE_IDENTIFIER;
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(OFFERING_IDENTIFIER, relatedFeature);
 
-        Assert.assertThat(readCache.isRelatedFeatureSampled(null), Is.is(Boolean.FALSE));
-        Assert.assertThat(readCache.isRelatedFeatureSampled(""), Is.is(Boolean.FALSE));
-        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(null), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(""), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.FALSE));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class ReadableCacheTest {
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
         ((SosWritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
 
-        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.TRUE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.TRUE));
     }
 
 }

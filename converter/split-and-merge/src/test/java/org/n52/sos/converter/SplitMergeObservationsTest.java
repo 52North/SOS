@@ -31,8 +31,8 @@ package org.n52.sos.converter;
 import java.util.List;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Test;
 import org.n52.shetland.ogc.om.MultiObservationValues;
 import org.n52.shetland.ogc.om.ObservationValue;
@@ -126,21 +126,21 @@ public class SplitMergeObservationsTest {
         /*
          * VERIFY
          */
-        Assert.assertThat(modifiedRequest, Is.is(CoreMatchers.instanceOf(InsertObservationRequest.class)));
+       MatcherAssert.assertThat(modifiedRequest, Is.is(CoreMatchers.instanceOf(InsertObservationRequest.class)));
         List<OmObservation> splittedObservations = ((InsertObservationRequest) modifiedRequest).getObservations();
 
-        Assert.assertThat(splittedObservations.size(), Is.is(2));
+       MatcherAssert.assertThat(splittedObservations.size(), Is.is(2));
 
         OmObservation obs0 = splittedObservations.get(0);
         OmObservation obs1 = splittedObservations.get(1);
 
-        Assert.assertThat(obs0.getObservationConstellation(),
+       MatcherAssert.assertThat(obs0.getObservationConstellation(),
                 Is.is(CoreMatchers.equalTo(obs1.getObservationConstellation())));
-        Assert.assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(),
+       MatcherAssert.assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(),
                 Is.is(CoreMatchers.equalTo(obs1.getIdentifierCodeWithAuthority().getCodeSpace())));
-        Assert.assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(), Is.is(identifierCodeSpace));
-        Assert.assertThat(obs0.getIdentifier(), Is.is(identifier + "1"));
-        Assert.assertThat(obs1.getIdentifier(), Is.is(identifier + "2"));
+       MatcherAssert.assertThat(obs0.getIdentifierCodeWithAuthority().getCodeSpace(), Is.is(identifierCodeSpace));
+       MatcherAssert.assertThat(obs0.getIdentifier(), Is.is(identifier + "1"));
+       MatcherAssert.assertThat(obs1.getIdentifier(), Is.is(identifier + "2"));
     }
 
 }

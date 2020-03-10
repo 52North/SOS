@@ -28,28 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.n52.shetland.ogc.om.OmConstants;
-import org.n52.shetland.ogc.om.features.SfConstants;
-import org.n52.sos.util.builder.DataRecordBuilder;
-import org.n52.sos.util.builder.InsertObservationRequestBuilder;
-import org.n52.sos.util.builder.InsertResultTemplateRequestBuilder;
-import org.n52.sos.util.builder.InsertResultTemplateResponseBuilder;
-import org.n52.sos.util.builder.InsertSensorRequestBuilder;
-import org.n52.sos.util.builder.InsertSensorResponseBuilder;
-import org.n52.sos.util.builder.ObservablePropertyBuilder;
-import org.n52.sos.util.builder.ObservationBuilder;
-import org.n52.sos.util.builder.ObservationConstellationBuilder;
-import org.n52.sos.util.builder.ProcedureDescriptionBuilder;
-import org.n52.sos.util.builder.QuantityObservationValueBuilder;
-import org.n52.sos.util.builder.QuantityValueBuilder;
-import org.n52.sos.util.builder.SamplingFeatureBuilder;
-import org.n52.sos.util.builder.SweDataArrayBuilder;
-import org.n52.sos.util.builder.SweDataArrayValueBuilder;
-import org.n52.sos.util.builder.SweTimeBuilder;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,21 +35,30 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.n52.iceland.convert.ConverterRepository;
 import org.junit.rules.TemporaryFolder;
-
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.PrecisionModel;
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.cache.ctrl.ContentCacheControllerImpl;
 import org.n52.iceland.cache.ctrl.ContentCacheFactory;
 import org.n52.iceland.cache.ctrl.persistence.ImmediatePersistenceStrategy;
+import org.n52.iceland.convert.ConverterRepository;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
@@ -93,12 +80,23 @@ import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
 import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.MockCacheFeederDAO;
+import org.n52.sos.util.builder.DataRecordBuilder;
 import org.n52.sos.util.builder.DeleteSensorRequestBuilder;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.PrecisionModel;
+import org.n52.sos.util.builder.InsertObservationRequestBuilder;
+import org.n52.sos.util.builder.InsertResultTemplateRequestBuilder;
+import org.n52.sos.util.builder.InsertResultTemplateResponseBuilder;
+import org.n52.sos.util.builder.InsertSensorRequestBuilder;
+import org.n52.sos.util.builder.InsertSensorResponseBuilder;
+import org.n52.sos.util.builder.ObservablePropertyBuilder;
+import org.n52.sos.util.builder.ObservationBuilder;
+import org.n52.sos.util.builder.ObservationConstellationBuilder;
+import org.n52.sos.util.builder.ProcedureDescriptionBuilder;
+import org.n52.sos.util.builder.QuantityObservationValueBuilder;
+import org.n52.sos.util.builder.QuantityValueBuilder;
+import org.n52.sos.util.builder.SamplingFeatureBuilder;
+import org.n52.sos.util.builder.SweDataArrayBuilder;
+import org.n52.sos.util.builder.SweDataArrayValueBuilder;
+import org.n52.sos.util.builder.SweTimeBuilder;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -196,17 +194,17 @@ public class ContentCacheControllerImplTest {
                 new File(tempFolder.getRoot().toPath().resolve("WEB-INF").resolve("tmp").toFile(), "cache.tmp");
 
         Files.deleteIfExists(tempFile.toPath());
-        Assert.assertThat(tempFile, Matchers.is(Matchers.not(Existing.existing())));
+       MatcherAssert.assertThat(tempFile, Matchers.is(Matchers.not(Existing.existing())));
         this.controller = createController();
-        Assert.assertThat(getCache().getFeaturesOfInterest(), Matchers.is(Matchers.empty()));
+       MatcherAssert.assertThat(getCache().getFeaturesOfInterest(), Matchers.is(Matchers.empty()));
         getCache().addFeatureOfInterest(FEATURE);
-        Assert.assertThat(getCache().getFeaturesOfInterest(), Matchers.contains(FEATURE));
+       MatcherAssert.assertThat(getCache().getFeaturesOfInterest(), Matchers.contains(FEATURE));
         this.controller.destroy();
 
-        Assert.assertThat(tempFile, Matchers.is(Existing.existing()));
+       MatcherAssert.assertThat(tempFile, Matchers.is(Existing.existing()));
         this.controller = createController();
-        Assert.assertThat(tempFile, Matchers.is(Existing.existing()));
-        Assert.assertThat(getCache().getFeaturesOfInterest(), Matchers.contains(FEATURE));
+       MatcherAssert.assertThat(tempFile, Matchers.is(Existing.existing()));
+       MatcherAssert.assertThat(getCache().getFeaturesOfInterest(), Matchers.contains(FEATURE));
     }
 
     @After
@@ -580,13 +578,13 @@ public class ContentCacheControllerImplTest {
         updateCacheWithInsertSensor(PROCEDURE_2);
         updateCacheWithSingleObservation(PROCEDURE_2, phenomenonTime);
 
-        Assert.assertThat(getCache().getMaxPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
-        Assert.assertThat(getCache().getMinPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
+       MatcherAssert.assertThat(getCache().getMaxPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
+       MatcherAssert.assertThat(getCache().getMinPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
 
         deleteSensorPreparation();
 
-        Assert.assertThat(getCache().getMaxPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
-        Assert.assertThat(getCache().getMinPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
+       MatcherAssert.assertThat(getCache().getMaxPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
+       MatcherAssert.assertThat(getCache().getMinPhenomenonTime(), Matchers.is(CoreMatchers.notNullValue()));
     }
 
     @Test
@@ -604,7 +602,7 @@ public class ContentCacheControllerImplTest {
 
         deleteSensorPreparation();
 
-        Assert.assertThat(getCache().getGlobalEnvelope(), Matchers.is(offering2Envelope));
+       MatcherAssert.assertThat(getCache().getGlobalEnvelope(), Matchers.is(offering2Envelope));
     }
 
     @Test
@@ -732,7 +730,7 @@ public class ContentCacheControllerImplTest {
         insertResultPreparation();
         final boolean CONTAINED = true;
 
-        Assert.assertThat(getCache().getObservablePropertiesForResultTemplate(RESULT_TEMPLATE_IDENTIFIER)
+       MatcherAssert.assertThat(getCache().getObservablePropertiesForResultTemplate(RESULT_TEMPLATE_IDENTIFIER)
                 .contains(OBSERVABLE_PROPERTY), Matchers.is(CONTAINED));
     }
 

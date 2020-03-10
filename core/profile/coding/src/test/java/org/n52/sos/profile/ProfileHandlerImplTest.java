@@ -28,9 +28,9 @@
  */
 package org.n52.sos.profile;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
@@ -55,12 +55,12 @@ public class ProfileHandlerImplTest {
 
     @Test
     public void is_aktive_profile_SOS_20_PROFILE() {
-        Assert.assertThat(phi.getActiveProfile().getIdentifier(), Is.is(PROFILE_SOS));
+        MatcherAssert.assertThat(phi.getActiveProfile().getIdentifier(), Is.is(PROFILE_SOS));
     }
 
     @Test
     public void is_two_profles_available() {
-        Assert.assertThat(phi.getAvailableProfiles().size(), Is.is(3));
+        MatcherAssert.assertThat(phi.getAvailableProfiles().size(), Is.is(3));
     }
 
     @Test
@@ -75,51 +75,51 @@ public class ProfileHandlerImplTest {
 
     private void testSosProfile(Profile profile) {
         Assert.assertNotNull(profile);
-        Assert.assertThat(profile.isActiveProfile(), Is.is(true));
-        Assert.assertThat(profile.getObservationResponseFormat(), Is.is("http://www.opengis.net/om/2.0"));
-        Assert.assertThat(profile.isEncodeFeatureOfInterestInObservations(), Is.is(false));
-        Assert.assertThat(profile.isShowMetadataOfEmptyObservations(), Is.is(false));
-        Assert.assertThat(profile.isListFeatureOfInterestsInOfferings(), Is.is(true));
-        Assert.assertThat(profile.isEncodeChildProcedureDescriptions(), Is.is(false));
-        Assert.assertThat(profile.isShowFullOperationsMetadata(), Is.is(true));
-        Assert.assertThat(profile.isShowFullOperationsMetadataForObservations(), Is.is(true));
-        Assert.assertThat(profile.isAllowSubsettingForSOS20OM20(), Is.is(false));
-        Assert.assertThat(profile.isMergeValues(), Is.is(false));
-        Assert.assertThat(profile.getResponseNoDataPlaceholder(), Is.is(NO_DATA));
-        Assert.assertThat(profile.isSetNoDataPlaceholder(), Is.is(true));
-        Assert.assertThat(profile.getNoDataPlaceholder().size(), Is.is(1));
-        Assert.assertThat(profile.getNoDataPlaceholder().iterator().next(), Is.is(NO_DATA));
-        Assert.assertThat(profile.isReturnLatestValueIfTemporalFilterIsMissingInGetObservation(), Is.is(false));
+        MatcherAssert.assertThat(profile.isActiveProfile(), Is.is(true));
+        MatcherAssert.assertThat(profile.getObservationResponseFormat(), Is.is("http://www.opengis.net/om/2.0"));
+        MatcherAssert.assertThat(profile.isEncodeFeatureOfInterestInObservations(), Is.is(false));
+        MatcherAssert.assertThat(profile.isShowMetadataOfEmptyObservations(), Is.is(false));
+        MatcherAssert.assertThat(profile.isListFeatureOfInterestsInOfferings(), Is.is(true));
+        MatcherAssert.assertThat(profile.isEncodeChildProcedureDescriptions(), Is.is(false));
+        MatcherAssert.assertThat(profile.isShowFullOperationsMetadata(), Is.is(true));
+        MatcherAssert.assertThat(profile.isShowFullOperationsMetadataForObservations(), Is.is(true));
+        MatcherAssert.assertThat(profile.isAllowSubsettingForSOS20OM20(), Is.is(false));
+        MatcherAssert.assertThat(profile.isMergeValues(), Is.is(false));
+        MatcherAssert.assertThat(profile.getResponseNoDataPlaceholder(), Is.is(NO_DATA));
+        MatcherAssert.assertThat(profile.isSetNoDataPlaceholder(), Is.is(true));
+        MatcherAssert.assertThat(profile.getNoDataPlaceholder().size(), Is.is(1));
+        MatcherAssert.assertThat(profile.getNoDataPlaceholder().iterator().next(), Is.is(NO_DATA));
+        MatcherAssert.assertThat(profile.isReturnLatestValueIfTemporalFilterIsMissingInGetObservation(), Is.is(false));
     }
 
     @Test
     public void check_hydrology() {
         Profile profile = phi.getAvailableProfiles().get(PROFILE_HYDRO);
         Assert.assertNotNull(profile);
-        Assert.assertThat(profile.isActiveProfile(), Is.is(false));
-        Assert.assertThat(profile.getObservationResponseFormat(), Is.is(WaterMLConstants.NS_WML_20));
-        Assert.assertThat(profile.isEncodeFeatureOfInterestInObservations(), Is.is(false));
-        Assert.assertThat(profile.getEncodingNamespaceForFeatureOfInterest(), Is.is(WaterMLConstants.NS_WML_20));
-        Assert.assertThat(profile.isShowMetadataOfEmptyObservations(), Is.is(true));
-        Assert.assertThat(profile.isListFeatureOfInterestsInOfferings(), Is.is(true));
-        Assert.assertThat(profile.isEncodeChildProcedureDescriptions(), Is.is(false));
-        Assert.assertThat(profile.isShowFullOperationsMetadata(), Is.is(true));
-        Assert.assertThat(profile.isShowFullOperationsMetadataForObservations(), Is.is(true));
-        Assert.assertThat(profile.isAllowSubsettingForSOS20OM20(), Is.is(true));
-        Assert.assertThat(profile.isMergeValues(), Is.is(true));
-        Assert.assertThat(profile.getResponseNoDataPlaceholder(), Is.is(NO_DATA));
-        Assert.assertThat(profile.isSetNoDataPlaceholder(), Is.is(true));
-        Assert.assertThat(profile.getNoDataPlaceholder().size(), Is.is(1));
-        Assert.assertThat(profile.getNoDataPlaceholder().iterator().next(), Is.is(NO_DATA));
-        Assert.assertThat(profile.isReturnLatestValueIfTemporalFilterIsMissingInGetObservation(), Is.is(true));
-        Assert.assertThat(profile.isEncodeProcedureInObservation(), Is.is(true));
-        Assert.assertThat(
+        MatcherAssert.assertThat(profile.isActiveProfile(), Is.is(false));
+        MatcherAssert.assertThat(profile.getObservationResponseFormat(), Is.is(WaterMLConstants.NS_WML_20));
+        MatcherAssert.assertThat(profile.isEncodeFeatureOfInterestInObservations(), Is.is(false));
+        MatcherAssert.assertThat(profile.getEncodingNamespaceForFeatureOfInterest(), Is.is(WaterMLConstants.NS_WML_20));
+        MatcherAssert.assertThat(profile.isShowMetadataOfEmptyObservations(), Is.is(true));
+        MatcherAssert.assertThat(profile.isListFeatureOfInterestsInOfferings(), Is.is(true));
+        MatcherAssert.assertThat(profile.isEncodeChildProcedureDescriptions(), Is.is(false));
+        MatcherAssert.assertThat(profile.isShowFullOperationsMetadata(), Is.is(true));
+        MatcherAssert.assertThat(profile.isShowFullOperationsMetadataForObservations(), Is.is(true));
+        MatcherAssert.assertThat(profile.isAllowSubsettingForSOS20OM20(), Is.is(true));
+        MatcherAssert.assertThat(profile.isMergeValues(), Is.is(true));
+        MatcherAssert.assertThat(profile.getResponseNoDataPlaceholder(), Is.is(NO_DATA));
+        MatcherAssert.assertThat(profile.isSetNoDataPlaceholder(), Is.is(true));
+        MatcherAssert.assertThat(profile.getNoDataPlaceholder().size(), Is.is(1));
+        MatcherAssert.assertThat(profile.getNoDataPlaceholder().iterator().next(), Is.is(NO_DATA));
+        MatcherAssert.assertThat(profile.isReturnLatestValueIfTemporalFilterIsMissingInGetObservation(), Is.is(true));
+        MatcherAssert.assertThat(profile.isEncodeProcedureInObservation(), Is.is(true));
+        MatcherAssert.assertThat(
                 profile.isEncodeProcedureInObservation("http://www.opengis.net/waterml/2.0/observationProcess"),
                 Is.is(true));
-        Assert.assertThat(profile.getDefaultObservationTypesForEncoding().isEmpty(), Is.is(false));
-        Assert.assertThat(profile.getDefaultObservationTypesForEncoding().containsKey(WaterMLConstants.NS_WML_20),
+        MatcherAssert.assertThat(profile.getDefaultObservationTypesForEncoding().isEmpty(), Is.is(false));
+        MatcherAssert.assertThat(profile.getDefaultObservationTypesForEncoding().containsKey(WaterMLConstants.NS_WML_20),
                 Is.is(true));
-        Assert.assertThat(profile.getDefaultObservationTypesForEncoding().get(WaterMLConstants.NS_WML_20),
+        MatcherAssert.assertThat(profile.getDefaultObservationTypesForEncoding().get(WaterMLConstants.NS_WML_20),
                 Is.is("http://www.opengis.net/def/observationType/waterml/2.0/MeasurementTimeseriesTVPObservation"));
     }
 
@@ -128,14 +128,14 @@ public class ProfileHandlerImplTest {
         phi.activateProfile(PROFILE_HYDRO);
         phi.persist();
         phi.reloadProfiles();
-        Assert.assertThat(phi.getAvailableProfiles().get(PROFILE_HYDRO).isActiveProfile(), Is.is(true));
-        Assert.assertThat(phi.getAvailableProfiles().get(PROFILE_SOS).isActiveProfile(), Is.is(false));
+        MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_HYDRO).isActiveProfile(), Is.is(true));
+        MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_SOS).isActiveProfile(), Is.is(false));
 
         phi.activateProfile(PROFILE_SOS);
         phi.persist();
         phi.reloadProfiles();
-        Assert.assertThat(phi.getAvailableProfiles().get(PROFILE_HYDRO).isActiveProfile(), Is.is(false));
-        Assert.assertThat(phi.getAvailableProfiles().get(PROFILE_SOS).isActiveProfile(), Is.is(true));
+        MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_HYDRO).isActiveProfile(), Is.is(false));
+        MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_SOS).isActiveProfile(), Is.is(true));
 
     }
 }

@@ -30,8 +30,8 @@ package org.n52.sos.decode.kvp.v2;
 
 import java.util.Map;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -77,13 +77,13 @@ public class GetDataAvailabilityKvpDecoderTest implements KvpTest {
         map.put(FILTER, "om:result eq '10.5'");
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
-        Assert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
-        Assert.assertThat(request.getResultFilter() instanceof ComparisonFilter, Matchers.is(true));
+        MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(true));
+        MatcherAssert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
+        MatcherAssert.assertThat(request.getResultFilter() instanceof ComparisonFilter, Matchers.is(true));
         ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
-        Assert.assertThat(filter.getOperator().name(),
+        MatcherAssert.assertThat(filter.getOperator().name(),
                 Matchers.is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name()));
-        Assert.assertThat(filter.getValue(), Matchers.is("10.5"));
+        MatcherAssert.assertThat(filter.getValue(), Matchers.is("10.5"));
     }
 
     @Test
@@ -92,14 +92,14 @@ public class GetDataAvailabilityKvpDecoderTest implements KvpTest {
         map.put(FILTER, "om:result ge '10.0' and om:result le '20.0'");
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
-        Assert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
-        Assert.assertThat(request.getResultFilter() instanceof ComparisonFilter, Matchers.is(true));
+        MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(true));
+        MatcherAssert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
+        MatcherAssert.assertThat(request.getResultFilter() instanceof ComparisonFilter, Matchers.is(true));
         ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
-        Assert.assertThat(filter.getOperator().name(),
+        MatcherAssert.assertThat(filter.getOperator().name(),
                 Matchers.is(FilterConstants.ComparisonOperator.PropertyIsBetween.name()));
-        Assert.assertThat(filter.getValue(), Matchers.is("10.0"));
-        Assert.assertThat(filter.getValueUpper(), Matchers.is("20.0"));
+        MatcherAssert.assertThat(filter.getValue(), Matchers.is("10.0"));
+        MatcherAssert.assertThat(filter.getValueUpper(), Matchers.is("20.0"));
     }
 
     @Test
@@ -110,10 +110,10 @@ public class GetDataAvailabilityKvpDecoderTest implements KvpTest {
                         polygon.getSRID(), wktGeometry));
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(false));
-        Assert.assertThat(request.hasSpatialFilter(), Matchers.is(true));
-        Assert.assertThat(request.hasSpatialFilteringProfileSpatialFilter(), Matchers.is(true));
-        Assert.assertThat(request.getSpatialFilter().getOperator().name(),
+        MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(false));
+        MatcherAssert.assertThat(request.hasSpatialFilter(), Matchers.is(true));
+        MatcherAssert.assertThat(request.hasSpatialFilteringProfileSpatialFilter(), Matchers.is(true));
+        MatcherAssert.assertThat(request.getSpatialFilter().getOperator().name(),
                 Matchers.is(FilterConstants.SpatialOperator.BBOX.name()));
     }
 
@@ -125,7 +125,7 @@ public class GetDataAvailabilityKvpDecoderTest implements KvpTest {
                         polygon.getSRID(), wktGeometry));
         final GetDataAvailabilityRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
+        MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(true));
     }
 
     private Map<String, String> getDefaultMap() {

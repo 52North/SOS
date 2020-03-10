@@ -28,16 +28,16 @@
  */
 package org.n52.sos.cache;
 
-import org.hamcrest.core.Is;
-import org.hamcrest.core.IsNot;
-import org.hamcrest.core.IsNull;
-import org.junit.Assert;
-
 import java.util.Collections;
 import java.util.Set;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.Is;
+import org.hamcrest.core.IsNot;
+import org.hamcrest.core.IsNull;
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.iceland.coding.SupportedTypeRepository;
@@ -126,8 +126,8 @@ public class InMemoryCacheImplTest {
         instance.setGlobalEnvelope(null);
         final ReferencedEnvelope emptyReferencedEnvelope = new ReferencedEnvelope(null, instance.getDefaultEPSGCode());
 
-        Assert.assertThat(instance.getGlobalEnvelope(), IsNot.not(IsNull.nullValue()));
-        Assert.assertThat(instance.getGlobalEnvelope(), Is.is(emptyReferencedEnvelope));
+       MatcherAssert.assertThat(instance.getGlobalEnvelope(), IsNot.not(IsNull.nullValue()));
+       MatcherAssert.assertThat(instance.getGlobalEnvelope(), Is.is(emptyReferencedEnvelope));
     }
 
     @Test
@@ -142,19 +142,19 @@ public class InMemoryCacheImplTest {
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, new DateTime(52L));
 
-        Assert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.TRUE));
+       MatcherAssert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.TRUE));
     }
 
     @Test
     public void should_return_false_if_min_resulttime_for_offering_is_null() {
         final InMemoryCacheImpl readCache = new InMemoryCacheImpl();
 
-        Assert.assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
 
         final InMemoryCacheImpl cache = new InMemoryCacheImpl();
         cache.setMinResultTimeForOffering(OFFERING_IDENTIFIER, null);
 
-        Assert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(cache.hasMinResultTimeForOffering(OFFERING_IDENTIFIER), Is.is(Boolean.FALSE));
     }
 
     @Test
@@ -163,9 +163,9 @@ public class InMemoryCacheImplTest {
         final String relatedFeature = FEATURE_IDENTIFIER;
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(OFFERING_IDENTIFIER, relatedFeature);
 
-        Assert.assertThat(readCache.isRelatedFeatureSampled(null), Is.is(Boolean.FALSE));
-        Assert.assertThat(readCache.isRelatedFeatureSampled(""), Is.is(Boolean.FALSE));
-        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(null), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(""), Is.is(Boolean.FALSE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.FALSE));
     }
 
     @Test
@@ -178,7 +178,7 @@ public class InMemoryCacheImplTest {
         ((SosWritableContentCache) readCache).addRelatedFeatureForOffering(offering, relatedFeature2);
         ((SosWritableContentCache) readCache).addParentFeature(relatedFeature2, relatedFeature);
 
-        Assert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.TRUE));
+       MatcherAssert.assertThat(readCache.isRelatedFeatureSampled(relatedFeature), Is.is(Boolean.TRUE));
     }
 
 }

@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -99,11 +100,11 @@ public class DeleteObservationKvpDecoderTest {
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 
-        Assert.assertThat(decodedRequest, CoreMatchers.is(CoreMatchers.not(CoreMatchers.nullValue())));
-        Assert.assertThat(decodedRequest.getVersion(), CoreMatchers.is(Sos2Constants.SERVICEVERSION));
-        Assert.assertThat(decodedRequest.getService(), CoreMatchers.is(SosConstants.SOS));
-        Assert.assertThat(decodedRequest.getOperationName(), CoreMatchers.is(OPERATION_NAME));
-        Assert.assertThat(decodedRequest.getObservationIdentifiers().iterator().next(),
+        MatcherAssert.assertThat(decodedRequest, CoreMatchers.is(CoreMatchers.not(CoreMatchers.nullValue())));
+        MatcherAssert.assertThat(decodedRequest.getVersion(), CoreMatchers.is(Sos2Constants.SERVICEVERSION));
+        MatcherAssert.assertThat(decodedRequest.getService(), CoreMatchers.is(SosConstants.SOS));
+        MatcherAssert.assertThat(decodedRequest.getOperationName(), CoreMatchers.is(OPERATION_NAME));
+        MatcherAssert.assertThat(decodedRequest.getObservationIdentifiers().iterator().next(),
                 CoreMatchers.is(observationIdentifier));
     }
 
@@ -122,15 +123,15 @@ public class DeleteObservationKvpDecoderTest {
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 
-        Assert.assertThat(decodedRequest, CoreMatchers.is(CoreMatchers.not(CoreMatchers.nullValue())));
-        Assert.assertThat(decodedRequest.getVersion(), CoreMatchers.is(Sos2Constants.SERVICEVERSION));
-        Assert.assertThat(decodedRequest.getService(), CoreMatchers.is(SosConstants.SOS));
-        Assert.assertThat(decodedRequest.getOperationName(), CoreMatchers.is(OPERATION_NAME));
-        Assert.assertThat(decodedRequest.getProcedures().iterator().next(), CoreMatchers.is(PROCEDURE));
-        Assert.assertThat(decodedRequest.getFeatureIdentifiers().iterator().next(), CoreMatchers.is(FEATURE));
-        Assert.assertThat(decodedRequest.getObservedProperties().iterator().next(),
+        MatcherAssert.assertThat(decodedRequest, CoreMatchers.is(CoreMatchers.not(CoreMatchers.nullValue())));
+        MatcherAssert.assertThat(decodedRequest.getVersion(), CoreMatchers.is(Sos2Constants.SERVICEVERSION));
+        MatcherAssert.assertThat(decodedRequest.getService(), CoreMatchers.is(SosConstants.SOS));
+        MatcherAssert.assertThat(decodedRequest.getOperationName(), CoreMatchers.is(OPERATION_NAME));
+        MatcherAssert.assertThat(decodedRequest.getProcedures().iterator().next(), CoreMatchers.is(PROCEDURE));
+        MatcherAssert.assertThat(decodedRequest.getFeatureIdentifiers().iterator().next(), CoreMatchers.is(FEATURE));
+        MatcherAssert.assertThat(decodedRequest.getObservedProperties().iterator().next(),
                 CoreMatchers.is(OBSERVED_PROPERTY));
-        Assert.assertThat(decodedRequest.getOfferings().iterator().next(), CoreMatchers.is(OFFERING));
+        MatcherAssert.assertThat(decodedRequest.getOfferings().iterator().next(), CoreMatchers.is(OFFERING));
     }
 
 }

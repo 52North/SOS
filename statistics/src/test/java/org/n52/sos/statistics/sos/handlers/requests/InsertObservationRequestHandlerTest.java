@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -62,7 +63,8 @@ public class InsertObservationRequestHandlerTest extends HandlerBaseTest {
         Map<String, Object> map = handler.resolveAsMap(request);
 
         Assert.assertEquals(SENSOR_ID, map.get(SosDataMapping.IO_ASSIGNED_SENSORID.getName()));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.IO_OFFERINGS.getName()), CoreMatchers.hasItem(OF_1));
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.IO_OFFERINGS.getName()),
+                CoreMatchers.hasItem(OF_1));
         Assert.assertNotNull(map.get(SosDataMapping.IO_OBSERVATION.getName()));
     }
 }

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.request;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 
 import java.util.Arrays;
 
@@ -48,23 +48,23 @@ public class RequestContextTest {
     @Test
     public void shouldEmpty() {
         OwsServiceRequestContext rc = new OwsServiceRequestContext();
-        Assert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(false));
-        Assert.assertThat(rc.getToken().isPresent(), Matchers.is(false));
+        MatcherAssert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(false));
+        MatcherAssert.assertThat(rc.getToken().isPresent(), Matchers.is(false));
     }
 
     @Test
     public void shouldNotEmptyTokenSet() {
         OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setToken("asfsf2");
-        Assert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(false));
-        Assert.assertThat(rc.getToken().isPresent(), Matchers.is(true));
+        MatcherAssert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(false));
+        MatcherAssert.assertThat(rc.getToken().isPresent(), Matchers.is(true));
     }
 
     @Test
     public void shouldNotEmptyIpSet() {
         OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setIPAddress(new IPAddress("192.168.1.2"));
-        Assert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(true));
+        MatcherAssert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(true));
     }
 
     @Test
@@ -72,8 +72,8 @@ public class RequestContextTest {
         OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setIPAddress(new IPAddress("192.168.1.1"));
         rc.setToken("asfsf");
-        Assert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(true));
-        Assert.assertThat(rc.getToken().isPresent(), Matchers.is(true));
+        MatcherAssert.assertThat(rc.getIPAddress().isPresent(), Matchers.is(true));
+        MatcherAssert.assertThat(rc.getToken().isPresent(), Matchers.is(true));
     }
 
     @Test
@@ -82,15 +82,15 @@ public class RequestContextTest {
         MediaType xml = new MediaType("application", "xml");
         MediaType json = new MediaType("text", "plain");
         rc.setAcceptType(Arrays.asList(xml, json));
-        Assert.assertThat(rc.getAcceptType().isPresent(), Matchers.is(true));
-        Assert.assertThat(rc.getAcceptType().get().size(), Matchers.is(2));
+        MatcherAssert.assertThat(rc.getAcceptType().isPresent(), Matchers.is(true));
+        MatcherAssert.assertThat(rc.getAcceptType().get().size(), Matchers.is(2));
     }
 
     @Test
     public void shouldNotEmptyContentType() {
         OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setContentType("application/xml");
-        Assert.assertThat(rc.getContentType().isPresent(), Matchers.is(true));
+        MatcherAssert.assertThat(rc.getContentType().isPresent(), Matchers.is(true));
     }
 
 }

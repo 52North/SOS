@@ -30,8 +30,8 @@ package org.n52.sos.decode.kvp.v2;
 
 import java.util.Map;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -92,10 +92,10 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
         mapFalse.put(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name(), "false");
         final GetObservationRequest requestFalse = decoder.decode(mapFalse);
 
-        Assert.assertThat(requestTrue.getExtensions().getBooleanExtension(
+     MatcherAssert.assertThat(requestTrue.getExtensions().getBooleanExtension(
                 Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), Matchers.is(Boolean.TRUE));
 
-        Assert.assertThat(requestFalse.getExtensions().getBooleanExtension(
+     MatcherAssert.assertThat(requestFalse.getExtensions().getBooleanExtension(
                 Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), Matchers.is(Boolean.FALSE));
     }
 
@@ -105,11 +105,11 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
         map.put(OWSConstants.AdditionalRequestParams.language.name(), GER);
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.language),
+     MatcherAssert.assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.language),
                 Matchers.is(Boolean.TRUE));
-        Assert.assertThat(request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.language.name())
+     MatcherAssert.assertThat(request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.language.name())
                 .get().getValue(), Matchers.instanceOf(SweText.class));
-        Assert.assertThat(((SweText) request.getExtensions()
+     MatcherAssert.assertThat(((SweText) request.getExtensions()
                 .getExtension(OWSConstants.AdditionalRequestParams.language.name()).get().getValue()).getStringValue(),
                 Matchers.is(GER));
     }
@@ -120,12 +120,12 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
         map.put(OWSConstants.AdditionalRequestParams.crs.name(), EPSG_4852);
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.crs),
+     MatcherAssert.assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.crs),
                 Matchers.is(Boolean.TRUE));
-        Assert.assertThat(
+     MatcherAssert.assertThat(
                 request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs.name()).get().getValue(),
                 Matchers.instanceOf(SweText.class));
-        Assert.assertThat(((SweText) request.getExtensions()
+     MatcherAssert.assertThat(((SweText) request.getExtensions()
                 .getExtension(OWSConstants.AdditionalRequestParams.crs.name()).get().getValue()).getValue(),
                 Matchers.is(EPSG_4852));
     }
@@ -136,8 +136,8 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
         map.put("resultType", MY_OBSERVATION);
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.isSetResultModel(), Matchers.is(Boolean.TRUE));
-        Assert.assertThat(request.getResultModel(), Matchers.is(MY_OBSERVATION));
+     MatcherAssert.assertThat(request.isSetResultModel(), Matchers.is(Boolean.TRUE));
+     MatcherAssert.assertThat(request.getResultModel(), Matchers.is(MY_OBSERVATION));
     }
 
     @Test
@@ -146,13 +146,13 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
         map.put(FILTER, "om:result eq '10.5'");
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
-        Assert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
-        Assert.assertThat(request.getResultFilter(), Matchers.instanceOf(ComparisonFilter.class));
+     MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(true));
+     MatcherAssert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
+     MatcherAssert.assertThat(request.getResultFilter(), Matchers.instanceOf(ComparisonFilter.class));
         ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
-        Assert.assertThat(filter.getOperator().name(),
+     MatcherAssert.assertThat(filter.getOperator().name(),
                 Matchers.is(FilterConstants.ComparisonOperator.PropertyIsEqualTo.name()));
-        Assert.assertThat(filter.getValue(), Matchers.is("10.5"));
+     MatcherAssert.assertThat(filter.getValue(), Matchers.is("10.5"));
     }
 
     @Test
@@ -161,14 +161,14 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
         map.put(FILTER, "om:result ge '10.0' and om:result le '20.0'");
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
-        Assert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
-        Assert.assertThat(request.getResultFilter(), Matchers.instanceOf(ComparisonFilter.class));
+     MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(true));
+     MatcherAssert.assertThat(request.getResultFilter().getValueReference(), Matchers.is(OM_RESULT));
+     MatcherAssert.assertThat(request.getResultFilter(), Matchers.instanceOf(ComparisonFilter.class));
         ComparisonFilter filter = (ComparisonFilter) request.getResultFilter();
-        Assert.assertThat(filter.getOperator().name(),
+     MatcherAssert.assertThat(filter.getOperator().name(),
                 Matchers.is(FilterConstants.ComparisonOperator.PropertyIsBetween.name()));
-        Assert.assertThat(filter.getValue(), Matchers.is("10.0"));
-        Assert.assertThat(filter.getValueUpper(), Matchers.is("20.0"));
+     MatcherAssert.assertThat(filter.getValue(), Matchers.is("10.0"));
+     MatcherAssert.assertThat(filter.getValueUpper(), Matchers.is("20.0"));
     }
 
     @Test
@@ -180,10 +180,10 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
                         polygon.getSRID(), wktGeometry));
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(false));
-        Assert.assertThat(request.isSetSpatialFilter(), Matchers.is(true));
-        Assert.assertThat(request.hasSpatialFilteringProfileSpatialFilter(), Matchers.is(true));
-        Assert.assertThat(request.getSpatialFilter().getOperator().name(),
+     MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(false));
+     MatcherAssert.assertThat(request.isSetSpatialFilter(), Matchers.is(true));
+     MatcherAssert.assertThat(request.hasSpatialFilteringProfileSpatialFilter(), Matchers.is(true));
+     MatcherAssert.assertThat(request.getSpatialFilter().getOperator().name(),
                 Matchers.is(FilterConstants.SpatialOperator.BBOX.name()));
     }
 
@@ -194,7 +194,7 @@ public class GetObservationKvpDecoderv20Test implements KvpTest {
                 polygon.getSRID(), wktGeometry));
         final GetObservationRequest request = decoder.decode(map);
 
-        Assert.assertThat(request.hasResultFilter(), Matchers.is(true));
+     MatcherAssert.assertThat(request.hasResultFilter(), Matchers.is(true));
     }
 
     private Map<String, String> getDefaultMap() {

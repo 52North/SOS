@@ -32,10 +32,10 @@ import java.util.Collections;
 
 import javax.naming.ConfigurationException;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsInstanceOf;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -90,11 +90,11 @@ public class UVFRequestModifierTest {
 
     @Test
     public void shouldModifyOnlySOS200GetObservationRequests() {
-        Assert.assertThat(modifier.getKeys().size(), Is.is(2));
+        MatcherAssert.assertThat(modifier.getKeys().size(), Is.is(2));
         final RequestResponseModifierKey key = modifier.getKeys().iterator().next();
-        Assert.assertThat(key.getService(), Is.is(SosConstants.SOS));
-        Assert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
-        Assert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
+        MatcherAssert.assertThat(key.getService(), Is.is(SosConstants.SOS));
+        MatcherAssert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
+        MatcherAssert.assertThat(key.getVersion(), Is.is(Sos2Constants.SERVICEVERSION));
     }
 
     @Test
@@ -102,26 +102,26 @@ public class UVFRequestModifierTest {
             throws OwsExceptionReport {
         request.getRequestContext().setContentType(MediaTypes.APPLICATION_JSON.toString());
         OwsServiceRequest modifiedRequest = modifier.modifyRequest(request);
-        Assert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
-        Assert.assertThat((GetObservationRequest) modifiedRequest, IsEqual.equalTo(request));
+        MatcherAssert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
+        MatcherAssert.assertThat((GetObservationRequest) modifiedRequest, IsEqual.equalTo(request));
     }
 
     @Test
     public void shouldNotModifyValidRequest()
             throws OwsExceptionReport {
         OwsServiceRequest modifiedRequest = modifier.modifyRequest(request);
-        Assert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
-        Assert.assertThat((GetObservationRequest) modifiedRequest, IsEqual.equalTo(request));
-        Assert.assertThat((GetObservationRequest) modifiedRequest, IsEqual.equalTo(request));
+        MatcherAssert.assertThat(modifiedRequest, IsInstanceOf.instanceOf(request.getClass()));
+        MatcherAssert.assertThat((GetObservationRequest) modifiedRequest, IsEqual.equalTo(request));
+        MatcherAssert.assertThat((GetObservationRequest) modifiedRequest, IsEqual.equalTo(request));
     }
 
     @Test
     public void shouldReturnValidRequestResponseModifierFacilitator() {
         RequestResponseModifierFacilitator facilitator = modifier.getFacilitator();
 
-        Assert.assertThat(facilitator.isAdderRemover(), Is.is(false));
-        Assert.assertThat(facilitator.isMerger(), Is.is(false));
-        Assert.assertThat(facilitator.isSplitter(), Is.is(false));
+        MatcherAssert.assertThat(facilitator.isAdderRemover(), Is.is(false));
+        MatcherAssert.assertThat(facilitator.isMerger(), Is.is(false));
+        MatcherAssert.assertThat(facilitator.isSplitter(), Is.is(false));
     }
 
     @Test
@@ -161,9 +161,9 @@ public class UVFRequestModifierTest {
         OwsServiceRequest modifiedRequest = modifier.modifyRequest(request);
         final Extensions extensions = modifiedRequest.getExtensions();
 
-        Assert.assertThat(extensions.getExtensions().size(), Is.is(1));
-        Assert.assertThat(extensions.containsExtension(OWSConstants.AdditionalRequestParams.crs), Is.is(true));
-        Assert.assertThat(
+        MatcherAssert.assertThat(extensions.getExtensions().size(), Is.is(1));
+        MatcherAssert.assertThat(extensions.containsExtension(OWSConstants.AdditionalRequestParams.crs), Is.is(true));
+        MatcherAssert.assertThat(
                 ((SweText) extensions.getExtension(OWSConstants.AdditionalRequestParams.crs).get().getValue())
                         .getValue(),
                 Is.is(UVFConstants.ALLOWED_CRS.get(0)));

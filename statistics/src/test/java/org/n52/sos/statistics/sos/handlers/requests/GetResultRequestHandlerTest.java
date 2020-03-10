@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
@@ -66,7 +66,7 @@ public class GetResultRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GR_FEATURE_IDENTIFIERS.getName()),
+        MatcherAssert.assertThat((List<String>) map.get(SosDataMapping.GR_FEATURE_IDENTIFIERS.getName()),
                 CoreMatchers.hasItems(FI_1, FI_2));
         Assert.assertEquals(TEMPLATE_1, map.get(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER.getName()));
         Assert.assertEquals(OBP, map.get(SosDataMapping.GR_OBSERVATION_PROPERTY.getName()));

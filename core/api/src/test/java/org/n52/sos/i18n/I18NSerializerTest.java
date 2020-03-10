@@ -35,7 +35,6 @@ import java.util.Locale;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.junit.rules.ExpectedException;
 
 import org.n52.iceland.i18n.I18NSerializer;
 import org.n52.janmayen.i18n.MultilingualString;
@@ -50,8 +49,6 @@ public class I18NSerializerTest {
     private static final String TEXT = "text!;\")=?§";
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
-    @Rule
-    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testSingle() {

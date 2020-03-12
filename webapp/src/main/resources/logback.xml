@@ -25,7 +25,6 @@
       <OnMatch>DENY</OnMatch>
     </filter>
 
-
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
 			<!-- keep ${config.logger.history.max} days' worth of history -->

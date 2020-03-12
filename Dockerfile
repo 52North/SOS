@@ -43,14 +43,14 @@ HEALTHCHECK --interval=5s --timeout=20s --retries=3 \
   CMD wget http://localhost:8080/ -q -O - > /dev/null 2>&1
 
 LABEL maintainer="Carsten Hollmann <c.hollmann@52north.org>" \
-      org.label-schema.schema-version="1.0" \
-      org.label-schema.name="52°North SOS" \
-      org.label-schema.description="52°North Sensor Observation Service" \
-      org.label-schema.license="GPLv2" \
-      org.label-schema.url="https://52north.org/software/software-projects/sos/" \
-      org.label-schema.vendor="52°North GmbH" \
-      org.label-schema.vcs-url="https://github.com/52north/SOS.git" \
-      org.label-schema.version="5.0.0"
+      org.opencontainers.image.title="52°North SOS" \
+      org.opencontainers.image.description="52°North Sensor Observation Service" \
+      org.opencontainers.image.licenses="GPLv2" \
+      org.opencontainers.image.url="https://52north.org/software/software-projects/sos/" \
+      org.opencontainers.image.vendor="52°North GmbH" \
+      org.opencontainers.image.source="https://github.com/52north/SOS.git" \
+      org.opencontainers.image.version="5.0.0" \
+      org.opencontainers.image.authors="Carsten Hollmann <c.hollmann@52north.org>, Christian Autermann <c.autermann@52north.org>"
 
 ENTRYPOINT [ "/usr/local/bin/faroe-entrypoint.sh" ]
 CMD [ "jetty.sh", "run" ]

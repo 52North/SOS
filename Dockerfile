@@ -17,27 +17,27 @@ RUN  set -ex \
  && apk add --no-cache jq \
  && wget -q -P /usr/local/bin https://raw.githubusercontent.com/52North/arctic-sea/master/etc/faroe-entrypoint.sh \
  && chmod +x /usr/local/bin/faroe-entrypoint.sh
-USER jetty
-ENV FAROE_CONFIGURATION /etc/sos/configuration.json
+USER jetty:jetty
 
-COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp /var/lib/jetty/webapps/ROOT
-COPY ./docker/logback.xml /var/lib/jetty/webapps/ROOT/WEB-INF/classes/
-COPY ./docker/helgoland.json /var/lib/jetty/webapps/ROOT/static/client/helgoland/assets/settings.json
+ENV FAROE_CONFIGURATION /etc/sos/configuration.json
+ENV WEBAPP ${JETTY_BASE}/webapps/ROOT
+ENV HELGOLAND ${WEBAPP}/static/client/helgoland
+
+COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp ${WEBAPP}
+COPY ./docker/logback.xml    ${WEBAPP}/WEB-INF/classes/
+COPY ./docker/helgoland.json ${HELGOLAND}/assets/settings.json
 COPY ./docker/default-config /etc/sos
 
 USER root
-RUN mkdir -p /var/lib/jetty/webapps/ROOT/WEB-INF/tmp \
- && chown -R jetty:jetty /var/lib/jetty/webapps/ROOT /etc/sos
-USER jetty
-RUN ln -s /etc/sos /var/lib/jetty/webapps/ROOT/WEB-INF/config
+RUN mkdir -p ${WEBAPP}/WEB-INF/tmp \
+ && ln -s /etc/sos ${WEBAPP}/WEB-INF/config \
+ && chown -R jetty:jetty ${WEBAPP} /etc/sos
+USER jetty:jetty
 
-VOLUME /var/lib/jetty/webapps/ROOT/WEB-INF/tmp
+VOLUME ${WEBAPP}/WEB-INF/tmp
 VOLUME /etc/sos
 
-ENV FAROE_CONFIGURATION /etc/sos/configuration.json
-
-
-HEALTHCHECK --interval=5s --timeout=20s --retries=3 \
+HEALTHCHECK --interval=10s --timeout=20s --retries=3 \
   CMD wget http://localhost:8080/ -q -O - > /dev/null 2>&1
 
 LABEL maintainer="Carsten Hollmann <c.hollmann@52north.org>" \

@@ -10,13 +10,11 @@ RUN mvn --batch-mode --errors --fail-fast \
   --define maven.javadoc.skip=true \
   --define skipTests=true install
 
-FROM jetty:jre8
+FROM jetty:jre8-alpine
 
 USER root
 RUN  set -ex \
- && apt-get update \
- && apt-get install -y --no-install-recommends jq \
- && rm -rf /var/lib/apt/lists/* \
+ && apk add --no-cache jq \
  && wget -q -P /usr/local/bin https://raw.githubusercontent.com/52North/arctic-sea/master/etc/faroe-entrypoint.sh \
  && chmod +x /usr/local/bin/faroe-entrypoint.sh
 USER jetty
@@ -52,5 +50,5 @@ LABEL maintainer="Carsten Hollmann <c.hollmann@52north.org>" \
       org.opencontainers.image.version="5.0.0" \
       org.opencontainers.image.authors="Carsten Hollmann <c.hollmann@52north.org>, Christian Autermann <c.autermann@52north.org>"
 
-ENTRYPOINT [ "/usr/local/bin/faroe-entrypoint.sh" ]
-CMD [ "jetty.sh", "run" ]
+ENTRYPOINT [ "/usr/local/bin/faroe-entrypoint.sh", "/docker-entrypoint.sh" ]
+CMD [ "java", "-jar", "/usr/local/jetty/start.jar" ]

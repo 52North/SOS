@@ -29,10 +29,9 @@
     
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<fileNamePattern>${logFile}/%d{yyyy-MM-dd}-%i.log</fileNamePattern>
-			<!-- keep ${config.logger.history.max} days' worth of history -->
-			<maxHistory>${config.logger.history.max}</maxHistory>
+			<maxHistory>7</maxHistory>
 			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-				<maxFileSize>${config.logger.maxFileSize}</maxFileSize>
+				<maxFileSize>10MB</maxFileSize>
 			</timeBasedFileNamingAndTriggeringPolicy>
 		</rollingPolicy>
 		<encoder>
@@ -55,7 +54,7 @@
 
 	<logger name="org.n52" level="INFO" />
 	<logger name="org.springframework" level="WARN" />
-  <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
+        <logger name="org.hibernate.engine.internal.StatefulPersistenceContext" level="ERROR" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

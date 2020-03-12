@@ -47,7 +47,7 @@ LABEL maintainer="Carsten Hollmann <c.hollmann@52north.org>" \
       org.opencontainers.image.url="https://52north.org/software/software-projects/sos/" \
       org.opencontainers.image.vendor="52°North GmbH" \
       org.opencontainers.image.source="https://github.com/52north/SOS.git" \
-      org.opencontainers.image.version="5.0.0" \
+      org.opencontainers.image.version="5.0.1" \
       org.opencontainers.image.authors="Carsten Hollmann <c.hollmann@52north.org>, Christian Autermann <c.autermann@52north.org>"
 
 ENTRYPOINT [ "/usr/local/bin/faroe-entrypoint.sh", "/docker-entrypoint.sh" ]

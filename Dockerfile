@@ -69,4 +69,13 @@ ENTRYPOINT [ \
   "/usr/local/bin/faroe-entrypoint.sh", \
   "/docker-entrypoint.sh" ]
 
+ENV SOS_ADMIN_USERNAME=admin \
+    SOS_ADMIN_PASSWORD=password \
+    SOS_DATASOURCE_TYPE=h2 \
+    SOS_DATASOURCE_USERNAME=postgres \
+    SOS_DATASOURCE_PASSWORD=postgres \
+    SOS_DATASOURCE_DATABASE=sos \
+    SOS_DATASOURCE_HOST=db \
+    SOS_DATASOURCE_PORT=5432
+
 CMD [ "java", "-jar", "/usr/local/jetty/start.jar" ]

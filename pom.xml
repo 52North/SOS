@@ -102,7 +102,7 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.3.0</arctic-sea.version>
+        <arctic-sea.version>7.3.1</arctic-sea.version>
 
         <dataset.api.version>3.0.0</dataset.api.version>
         <dataset.dao.version>3.0.0</dataset.dao.version>

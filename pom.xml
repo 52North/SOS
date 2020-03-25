@@ -87,7 +87,7 @@
         <postgresql.version>42.2.11</postgresql.version>
         <postgis.version>2.4.0</postgis.version>
         <ojdbc8.version>19.3.0.0</ojdbc8.version>
-        <sqljdbc.version>8.2.1.jre8</sqljdbc.version>
+        <sqljdbc.version>8.2.2.jre13</sqljdbc.version>
         <mysql.version>8.0.19</mysql.version>
         <h2.version>1.4.200</h2.version>
         <geodb.version>0.9</geodb.version>

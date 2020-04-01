@@ -85,7 +85,7 @@
 
 
         <postgresql.version>42.2.11</postgresql.version>
-        <postgis.version>2.4.0</postgis.version>
+        <postgis.version>2.5.0</postgis.version>
         <ojdbc8.version>19.3.0.0</ojdbc8.version>
         <sqljdbc.version>8.2.2.jre8</sqljdbc.version>
         <mysql.version>8.0.19</mysql.version>
@@ -102,7 +102,7 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.3.0</arctic-sea.version>
+        <arctic-sea.version>7.3.1</arctic-sea.version>
 
         <dataset.api.version>3.0.0</dataset.api.version>
         <dataset.dao.version>3.0.0</dataset.dao.version>
@@ -110,9 +110,9 @@
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
 
         <org.springframework.security.version>5.3.0.RELEASE</org.springframework.security.version>
-        <org.springframework.version>5.2.4.RELEASE</org.springframework.version>
+        <org.springframework.version>5.2.5.RELEASE</org.springframework.version>
         <aspectj.version>1.9.5</aspectj.version>
-        <saxon.version>9.9.1-7</saxon.version>
+        <saxon.version>10.0</saxon.version>
         <elasticsearch.version>7.6.1</elasticsearch.version>
         <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
         
@@ -761,7 +761,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -842,7 +842,7 @@
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.1</version>
+                <version>3.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
@@ -1371,7 +1371,7 @@
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.4.0</version>
+                <version>1.4.1</version>
             </dependency>
             <dependency>
                 <groupId>jstl</groupId>
@@ -1526,7 +1526,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1962,7 +1962,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.7.10</version>
+                    <version>1.7.11</version>
                 </plugin>
 
                 <plugin>

@@ -113,7 +113,7 @@
         <org.springframework.version>5.2.5.RELEASE</org.springframework.version>
         <aspectj.version>1.9.5</aspectj.version>
         <saxon.version>10.0</saxon.version>
-        <elasticsearch.version>7.6.1</elasticsearch.version>
+        <elasticsearch.version>7.6.2</elasticsearch.version>
         <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
         
         <version.httpcore>4.4.13</version.httpcore>

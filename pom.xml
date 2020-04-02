@@ -109,7 +109,7 @@
         <dataset.hibernate.version>1.2.0</dataset.hibernate.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
 
-        <org.springframework.security.version>5.3.0.RELEASE</org.springframework.security.version>
+        <org.springframework.security.version>5.3.1.RELEASE</org.springframework.security.version>
         <org.springframework.version>5.2.5.RELEASE</org.springframework.version>
         <aspectj.version>1.9.5</aspectj.version>
         <saxon.version>10.0</saxon.version>

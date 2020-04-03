@@ -137,15 +137,27 @@ public class ComplexObservationInsertDAOTest extends AbstractInsertDAOTest {
         assertThat(value.getValue().getValue() instanceof SweAbstractDataRecord, is(true));
         SweAbstractDataRecord record = (SweAbstractDataRecord) value.getValue().getValue();
         assertThat(record.getFields().size(), is(3));
-        checkField(record.getFields().get(0), OBSPROP_VALUE1, VAL1);
-        checkField(record.getFields().get(1), OBSPROP_VALUE2, VAL2);
-        checkField(record.getFields().get(2), OBSPROP_VALUE3, VAL3);
+        for (SweField field : record.getFields()) {
+            switch (field.getName().getValue()) {
+            case OBSPROP_VALUE1:
+                checkField(field, OBSPROP_VALUE1, VAL1);
+                break;
+            case OBSPROP_VALUE2:
+                checkField(field, OBSPROP_VALUE2, VAL2);
+                break;
+            case OBSPROP_VALUE3:
+                checkField(field, OBSPROP_VALUE3, VAL3);
+                break;
+            default:
+                break;
+            }
+        }
     }
 
     private void checkField(SweField field, String definition, Double value) {
-        assertEquals(field.getName().getValue(), definition);
+        assertEquals(definition, field.getName().getValue());
         assertNotNull(field.getElement());
-        assertEquals(field.getElement().getDefinition(), definition);
+        assertEquals(definition, field.getElement().getDefinition());
         assertThat(field.getElement() instanceof SweQuantity, is(true));
         SweQuantity quantityValue = (SweQuantity) field.getElement();
         assertThat(quantityValue.getValue().doubleValue(), is(value));

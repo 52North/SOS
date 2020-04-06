@@ -81,6 +81,7 @@ This project includes:
   52°North Svalbard XML Stream under The Apache Software License, Version 2.0
   52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
   aggs-matrix-stats under The Apache Software License, Version 2.0
+  ANTLR 4 Runtime under The BSD License
   AntLR Parser Generator under BSD License
   Apache Ant Core under The Apache Software License, Version 2.0
   Apache Ant Launcher under The Apache Software License, Version 2.0
@@ -204,6 +205,7 @@ This project includes:
   JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift-core under GNU Lesser General Public License, version 2.0 (LGPLv2)
+  JLine under The BSD License
   Joda-Time under Apache License, Version 2.0
   JOpt Simple under The MIT License
   JSONLD Java :: Core under Revised BSD License
@@ -305,6 +307,7 @@ This project includes:
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   parent-join under The Apache Software License, Version 2.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
+  PostGIS Geometry under GNU Lesser General Public License
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.2 under BSD-2-Clause
   Protocol Buffers [Core] under 3-Clause BSD License

@@ -51,6 +51,8 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationHa
                                                             A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
+    public static final String ADD_OBSERVATION_IDENTIFIER_FOR_STA = "service.addObservationIdentifierForSTA";
+
     private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;
 
     private TransactionalSecurityConfiguration transactionalSecurityConfiguration;

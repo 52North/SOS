@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.0.1</version>
+    <version>5.0.2</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -20,7 +20,7 @@
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>v5.0.1</tag>
+        <tag>v5.0.2</tag>
     </scm>
 
     <issueManagement>
@@ -84,14 +84,14 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <postgresql.version>42.2.11</postgresql.version>
-        <postgis.version>2.4.0</postgis.version>
+        <postgresql.version>42.2.12</postgresql.version>
+        <postgis.version>2.5.0</postgis.version>
         <ojdbc8.version>19.3.0.0</ojdbc8.version>
-        <sqljdbc.version>8.2.1.jre8</sqljdbc.version>
+        <sqljdbc.version>8.2.2.jre8</sqljdbc.version>
         <mysql.version>8.0.19</mysql.version>
         <h2.version>1.4.200</h2.version>
         <geodb.version>0.9</geodb.version>
-        <hibernate.version>5.4.10.Final</hibernate.version>
+        <hibernate.version>5.4.13.Final</hibernate.version>
         <c3p0.version>0.9.5.5</c3p0.version>
         <hikaricp.version>3.4.2</hikaricp.version>
         <geotools.version>22.3</geotools.version>
@@ -102,18 +102,18 @@
 
         <!-- 52N dependency versions -->
         <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.3.0</arctic-sea.version>
+        <arctic-sea.version>7.4.0</arctic-sea.version>
 
-        <dataset.api.version>3.0.0</dataset.api.version>
-        <dataset.dao.version>3.0.0</dataset.dao.version>
-        <dataset.hibernate.version>1.2.0</dataset.hibernate.version>
+        <dataset.api.version>3.1.0</dataset.api.version>
+        <dataset.dao.version>3.1.0</dataset.dao.version>
+        <dataset.hibernate.version>1.3.0</dataset.hibernate.version>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
 
-        <org.springframework.security.version>5.3.0.RELEASE</org.springframework.security.version>
-        <org.springframework.version>5.2.4.RELEASE</org.springframework.version>
+        <org.springframework.security.version>5.3.1.RELEASE</org.springframework.security.version>
+        <org.springframework.version>5.2.5.RELEASE</org.springframework.version>
         <aspectj.version>1.9.5</aspectj.version>
-        <saxon.version>9.9.1-7</saxon.version>
-        <elasticsearch.version>7.6.1</elasticsearch.version>
+        <saxon.version>10.0</saxon.version>
+        <elasticsearch.version>7.6.2</elasticsearch.version>
         <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
         
         <version.httpcore>4.4.13</version.httpcore>
@@ -761,7 +761,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -777,7 +777,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.8</version>
+                 <version>1.10.9</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -842,7 +842,7 @@
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.1</version>
+                <version>3.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
@@ -1371,7 +1371,7 @@
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.4.0</version>
+                <version>1.4.1</version>
             </dependency>
             <dependency>
                 <groupId>jstl</groupId>
@@ -1526,7 +1526,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1962,7 +1962,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.7.10</version>
+                    <version>1.7.11</version>
                 </plugin>
 
                 <plugin>

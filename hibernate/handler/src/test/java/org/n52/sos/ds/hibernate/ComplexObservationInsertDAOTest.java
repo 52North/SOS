@@ -167,8 +167,14 @@ public class ComplexObservationInsertDAOTest extends AbstractInsertDAOTest {
     @Override
     protected void assertInsertionAftermath(boolean afterCacheUpdate) throws OwsExceptionReport {
         // check observation types
-        assertThat(getCache().getObservationTypesForOffering(OFFERING3),
-                contains(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION));
+        if (afterCacheUpdate) {
+            assertThat(getCache().getObservationTypesForOffering(OFFERING3),
+                    contains(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION, OmConstants.OBS_TYPE_MEASUREMENT));
+        } else {
+            assertThat(getCache().getObservationTypesForOffering(OFFERING3),
+                    contains(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION));
+        }
+
 
         // check offerings for procedure
         assertThat(getCache().getOfferingsForProcedure(PROCEDURE3), containsInAnyOrder(OFFERING3));

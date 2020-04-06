@@ -150,9 +150,10 @@ public class ObservationPersister
     public ObservationPersister(DaoFactory daoFactory, AbstractObservationDAO observationDao,
             OmObservation sosObservation, DatasetEntity hDataset, AbstractFeatureEntity<?> hFeature,
             Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
-            Set<OfferingEntity> hOfferings, Session session) throws OwsExceptionReport {
-        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache), sosObservation,
-                hDataset, hFeature, null, hOfferings, session, null);
+            Map<String, FormatEntity> formatCache, Set<OfferingEntity> hOfferings, Session session)
+            throws OwsExceptionReport {
+        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache, formatCache),
+                sosObservation, hDataset, hFeature, null, hOfferings, session, null);
     }
 
     private ObservationPersister(DaoFactory daoFactory, DAOs daos, Caches caches, OmObservation observation,
@@ -476,7 +477,7 @@ public class ObservationPersister
             Long id) throws OwsExceptionReport {
         return new ObservationPersister(daoFactory, daos, caches, omObservation,
                 getObservationConstellation(observableProperty,
-                        daoFactory.getObservationTypeDAO().getFormatEntityObject(observationType, session), dataset),
+                        getObservationType(observationType, session), dataset),
                 featureOfInterest, samplingGeometry, offerings, session, id);
     }
 
@@ -484,7 +485,7 @@ public class ObservationPersister
             DataEntity dataEntity) throws OwsExceptionReport {
         return new ObservationPersister(daoFactory, daos, caches, omObservation,
                 getObservationConstellation(observableProperty,
-                        daoFactory.getObservationTypeDAO().getFormatEntityObject(observationType, session),
+                        getObservationType(observationType, session),
                         dataEntity.getDataset()),
                 featureOfInterest, samplingGeometry, offerings, session, dataEntity.getId());
     }
@@ -498,8 +499,9 @@ public class ObservationPersister
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty,
             FormatEntity observationType, DatasetEntity datasetEntity) throws OwsExceptionReport {
-        return daos.dataset().checkOrInsertSeries(datasetEntity.getProcedure(), observableProperty, datasetEntity.getOffering(),
-                datasetEntity.getCategory(), featureOfInterest, datasetEntity.getPlatform(), observationType, true, session);
+        return daos.dataset().checkOrInsertSeries(datasetEntity.getProcedure(), observableProperty,
+                datasetEntity.getOffering(), datasetEntity.getCategory(), featureOfInterest,
+                datasetEntity.getPlatform(), observationType, true, session);
     }
 
     private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
@@ -614,7 +616,7 @@ public class ObservationPersister
         String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity<?>) observation);
 
         observationContext
-                .setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
+                .setObservationType(getObservationType(observationType, session));
 
         if (dataset != null) {
             if ((!isProfileObservation(dataset) && !isDataArrayObservation(dataset))
@@ -677,6 +679,14 @@ public class ObservationPersister
             session.refresh(observation);
         }
         return observation;
+    }
+
+    private FormatEntity getObservationType(String observationType, Session session) {
+        if (!caches.formats.containsKey(observationType)) {
+            caches.formats.put(observationType,
+                    daos.observationType().getOrInsertFormatEntity(observationType, session));
+        }
+        return caches.formats().get(observationType);
     }
 
     private <T extends DataEntity<?>> T checkForParameter(T observation, ParameterHolder parameterHolder,
@@ -803,9 +813,13 @@ public class ObservationPersister
 
         private final Map<UoM, UnitEntity> units;
 
-        Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units) {
+        private final Map<String, FormatEntity> formats;
+
+        Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units,
+                Map<String, FormatEntity> formats) {
             this.codespaces = codespaces;
             this.units = units;
+            this.formats = formats;
         }
 
         public Map<String, CodespaceEntity> codespaces() {
@@ -814,6 +828,10 @@ public class ObservationPersister
 
         public Map<UoM, UnitEntity> units() {
             return units;
+        }
+
+        public Map<String, FormatEntity> formats() {
+            return formats;
         }
 
     }

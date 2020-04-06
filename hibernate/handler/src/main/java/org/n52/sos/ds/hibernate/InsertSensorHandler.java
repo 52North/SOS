@@ -323,9 +323,11 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             hObservationConstellationReferenceSeries.setProcedure(hProcedureReferenceSeries);
             Map<String, CodespaceEntity> codespaceCache = CollectionHelper.synchronizedMap();
             Map<UoM, UnitEntity> unitCache = CollectionHelper.synchronizedMap();
-            ObservationPersister persister = new ObservationPersister(getDaoFactory(),
-                    getDaoFactory().getObservationDAO(), sosObservation, hObservationConstellationReferenceSeries,
-                    hFeature, codespaceCache, unitCache, Collections.singleton(hOfferingReferenceSeries), session);
+            Map<String, FormatEntity> formatCache = CollectionHelper.synchronizedMap();
+            ObservationPersister persister =
+                    new ObservationPersister(getDaoFactory(), getDaoFactory().getObservationDAO(), sosObservation,
+                            hObservationConstellationReferenceSeries, hFeature, codespaceCache, unitCache, formatCache,
+                            Collections.singleton(hOfferingReferenceSeries), session);
             DataEntity<?> observation = sosValue.getValue().accept(persister);
             DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
                     hObservableProperty.getIdentifier(), hOfferingReferenceSeries.getIdentifier(),

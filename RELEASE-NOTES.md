@@ -13,7 +13,8 @@
   - add more configuration options for docker
   - add default env variables
   - Fix issue with duplicated and not initialized datasets in the database when inserting complex observations.
-
+  - Set observation identifier = pkid if not defined in request (configurable via setting)
+  - Fix issue with duplicate created datasets (only without platform entity) when inserting ComplexObservations.
   
     
 ### Dependency Updates
@@ -33,6 +34,7 @@
   - Bump elasticsearch.version from 7.6.1 to 7.6.2 (#797)
   - Bump postgresql from 42.2.11 to 42.2.12 (#798)
   - Bump byte-buddy from 1.10.8 to 1.10.9 (#799)
+  - Update hibernate from 5.4.10 to 5.4.13
 
 ### Breaking Changes
  

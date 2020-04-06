@@ -664,8 +664,18 @@ public class ObservationPersister
         session.save(observation);
         session.flush();
         session.refresh(observation);
-        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, (DataEntity<?>) observation, session);
+        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset,
+                (DataEntity<?>) checkForStaIdentifier(observation), session);
+        return observation;
+    }
 
+    private <V, T extends DataEntity<V>> T checkForStaIdentifier(T observation) {
+        if (daoFactory.isSetObservationIdentifierForSTA() && !observation.isSetIdentifier()) {
+            observation.setIdentifier(Long.toString(observation.getId()));
+            session.update(observation);
+            session.flush();
+            session.refresh(observation);
+        }
         return observation;
     }
 

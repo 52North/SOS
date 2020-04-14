@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
+import org.n52.iceland.util.action.Action;
 import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;

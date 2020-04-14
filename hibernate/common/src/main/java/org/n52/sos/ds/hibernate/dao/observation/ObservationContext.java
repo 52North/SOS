@@ -112,7 +112,8 @@ public class ObservationContext {
     }
 
     /**
-     * @param category the category to set
+     * @param category
+     *            the category to set
      */
     public ObservationContext setCategory(CategoryEntity category) {
         this.category = category;
@@ -144,11 +145,10 @@ public class ObservationContext {
         return procedure;
     }
 
-
     /**
      * @param procedure
-     *                  the procedure to set
-     * @return
+     *            the procedure to set
+     * @return this {@link ObservationContext}
      */
     public ObservationContext setProcedure(ProcedureEntity procedure) {
         this.procedure = procedure;
@@ -172,8 +172,6 @@ public class ObservationContext {
         this.unit = unit;
         return this;
     }
-
-
 
     public boolean isSetFeatureOfInterest() {
         return getFeatureOfInterest() != null;
@@ -215,40 +213,28 @@ public class ObservationContext {
             boolean includeCategory) {
         if (includeFeatureAndPlatform) {
             if (isSetFeatureOfInterest()) {
-                c.add(Restrictions
-                        .eqOrIsNull(DatasetEntity.PROPERTY_FEATURE,
-                            getFeatureOfInterest()));
+                c.add(Restrictions.eqOrIsNull(DatasetEntity.PROPERTY_FEATURE, getFeatureOfInterest()));
 
             }
             if (isSetPlatform()) {
-                c.add(Restrictions
-                        .eq(DatasetEntity.PROPERTY_PLATFORM,
-                            getPlatform()));
+                c.add(Restrictions.eq(DatasetEntity.PROPERTY_PLATFORM, getPlatform()));
             }
         } else {
             c.add(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE));
             c.add(Restrictions.isNull(DatasetEntity.PROPERTY_PLATFORM));
         }
         if (isSetPhenomenon()) {
-            c.add(Restrictions
-                    .eq(DatasetEntity.PROPERTY_PHENOMENON,
-                        getPhenomenon()));
+            c.add(Restrictions.eq(DatasetEntity.PROPERTY_PHENOMENON, getPhenomenon()));
         }
         if (isSetProcedure()) {
-            c.add(Restrictions
-                    .eq(DatasetEntity.PROPERTY_PROCEDURE,
-                        getProcedure()));
+            c.add(Restrictions.eq(DatasetEntity.PROPERTY_PROCEDURE, getProcedure()));
         }
         if (isSetOffering()) {
-            c.add(Restrictions
-                    .eq(DatasetEntity.PROPERTY_OFFERING,
-                        getOffering()));
+            c.add(Restrictions.eq(DatasetEntity.PROPERTY_OFFERING, getOffering()));
         }
 
         if (includeCategory && isSetCategory()) {
-            c.add(Restrictions
-                    .eq(DatasetEntity.PROPERTY_CATEGORY,
-                        getCategory()));
+            c.add(Restrictions.eq(DatasetEntity.PROPERTY_CATEGORY, getCategory()));
         }
     }
 
@@ -330,8 +316,8 @@ public class ObservationContext {
     }
 
     public ObservationContext setValueType(ValueType valueType) {
-       this.valueType = valueType;
-       return this;
+        this.valueType = valueType;
+        return this;
     }
 
     public ValueType getValueType() {

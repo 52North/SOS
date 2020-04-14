@@ -42,7 +42,7 @@ public class VerticalMetadataDAO {
     private final DaoFactory daoFactory;
 
     public VerticalMetadataDAO(DaoFactory daoFactory) {
-      this.daoFactory = daoFactory;
+        this.daoFactory = daoFactory;
     }
 
     public VerticalMetadataEntity getOrInsertVerticalMetadata(VerticalMetadataEntity entity, Session session) {
@@ -80,7 +80,4 @@ public class VerticalMetadataDAO {
         return (VerticalMetadataEntity) criteria.uniqueResult();
     }
 
-    private DaoFactory getDaoFactory() {
-        return daoFactory;
-    }
 }

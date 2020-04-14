@@ -57,29 +57,21 @@ public final class TemporalRestrictions {
 
     /**
      * Marker for a value reference referencing the phenomenon time ({@value} ).
-     *
-     * @see #PHENOMENON_TIME_FIELDS
      */
     public static final String PHENOMENON_TIME_VALUE_REFERENCE = "phenomenonTime";
 
     /**
      * Marker for a value reference referencing the result time ({@value} ).
-     *
-     * @see #RESULT_TIME_FIELDS
      */
     public static final String RESULT_TIME_VALUE_REFERENCE = "resultTime";
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
-     *
-     * @see #VALID_TIME_FIELDS
      */
     public static final String VALID_TIME_VALUE_REFERENCE = "validTime";
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
-     *
-     * @see #VALID_TIME_FIELDS
      */
     public static final String VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE = "validDescribeSensorTime";
 

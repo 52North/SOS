@@ -269,28 +269,28 @@ public class AdminDatasourceController extends AbstractDatasourceController {
             try {
                 JsonNode predefined = Json.loadFile(file);
                 switch (PredefinedType.valueOf(predefined.get("type").asText())) {
-                case PHENOMENA:
-                    List<AbstractPredefined<?>> pl;
-                    if (predefinedMap.containsKey(PredefinedType.PHENOMENA)) {
-                        pl = predefinedMap.get(PredefinedType.PHENOMENA);
-                    } else {
-                        pl = new LinkedList<AbstractPredefined<?>>();
-                    }
-                    pl.add(om.treeToValue(predefined, PhenomenonPredefined.class));
-                    predefinedMap.put(PredefinedType.PHENOMENA, pl);
-                    break;
-                case UNIT:
-                    List<AbstractPredefined<?>> ul;
-                    if (predefinedMap.containsKey(PredefinedType.UNIT)) {
-                        ul = predefinedMap.get(PredefinedType.UNIT);
-                    } else {
-                        ul = new LinkedList<AbstractPredefined<?>>();
-                    }
-                    ul.add(om.treeToValue(predefined, UnitPredefined.class));
-                    predefinedMap.put(PredefinedType.UNIT, ul);
-                    break;
-                default:
-                    break;
+                    case PHENOMENA:
+                        List<AbstractPredefined<?>> pl;
+                        if (predefinedMap.containsKey(PredefinedType.PHENOMENA)) {
+                            pl = predefinedMap.get(PredefinedType.PHENOMENA);
+                        } else {
+                            pl = new LinkedList<AbstractPredefined<?>>();
+                        }
+                        pl.add(om.treeToValue(predefined, PhenomenonPredefined.class));
+                        predefinedMap.put(PredefinedType.PHENOMENA, pl);
+                        break;
+                    case UNIT:
+                        List<AbstractPredefined<?>> ul;
+                        if (predefinedMap.containsKey(PredefinedType.UNIT)) {
+                            ul = predefinedMap.get(PredefinedType.UNIT);
+                        } else {
+                            ul = new LinkedList<AbstractPredefined<?>>();
+                        }
+                        ul.add(om.treeToValue(predefined, UnitPredefined.class));
+                        predefinedMap.put(PredefinedType.UNIT, ul);
+                        break;
+                    default:
+                        break;
                 }
             } catch (IOException ioe) {
                 throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while loading profies file.");

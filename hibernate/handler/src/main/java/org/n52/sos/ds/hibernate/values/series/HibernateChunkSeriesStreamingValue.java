@@ -182,11 +182,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     /**
-     * Check the queried {@link AbstractValuedObservation}s for null and set
+     * Check the queried {@link DataEntity}s for null and set
      * them as iterator to local variable.
      *
      * @param seriesValuesResult
-     *            Queried {@link AbstractValuedObservation}s
+     *            Queried {@link DataEntity}s
      */
     private void setSeriesValuesResult(Collection<DataEntity<?>> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {

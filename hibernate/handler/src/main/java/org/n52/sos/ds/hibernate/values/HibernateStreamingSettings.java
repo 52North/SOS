@@ -29,7 +29,7 @@
 package org.n52.sos.ds.hibernate.values;
 
 /**
- * {@link SettingDefinitionProvider} class for streaming datasource settings
+ * Interface for streaming datasource settings
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0

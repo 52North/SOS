@@ -75,6 +75,7 @@ public class FeatureVisitorContext {
     /**
      * @param session
      *            the session to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setSession(Session session) {
         this.session = session;
@@ -91,6 +92,7 @@ public class FeatureVisitorContext {
     /**
      * @param storageEPSG
      *            the storageEPSG to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setStorageEPSG(int storageEPSG) {
         this.storageEPSG = storageEPSG;
@@ -107,6 +109,7 @@ public class FeatureVisitorContext {
     /**
      * @param storage3depsg
      *            the storage3DEPSG to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setStorage3DEPSG(int storage3depsg) {
         storage3DEPSG = storage3depsg;
@@ -123,6 +126,7 @@ public class FeatureVisitorContext {
     /**
      * @param geometryHandler
      *            the geometryHandler to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setGeometryHandler(GeometryHandler geometryHandler) {
         this.geometryHandler = geometryHandler;
@@ -139,6 +143,7 @@ public class FeatureVisitorContext {
     /**
      * @param daoFactory
      *            the daoFactory to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -155,6 +160,7 @@ public class FeatureVisitorContext {
     /**
      * @param defaultLanguage
      *            the defaultLanguage to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setDefaultLanguage(Locale defaultLanguage) {
         this.defaultLanguage = defaultLanguage;
@@ -171,6 +177,7 @@ public class FeatureVisitorContext {
     /**
      * @param version
      *            the version to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setVersion(String version) {
         this.version = version;
@@ -187,7 +194,7 @@ public class FeatureVisitorContext {
     /**
      * @param requestedLanguage
      *            the requestedLanguage to set
-     * @return
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setRequestedLanguage(Locale requestedLanguage) {
         this.requestedLanguage = requestedLanguage;
@@ -204,6 +211,7 @@ public class FeatureVisitorContext {
     /**
      * @param showAllLanguages
      *            the showAllLanguages to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setShowAllLanguages(boolean showAllLanguages) {
         this.showAllLanguages = showAllLanguages;
@@ -239,6 +247,7 @@ public class FeatureVisitorContext {
     /**
      * @param i18ndaoRepository
      *            the i18NDAORepository to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setI18NDAORepository(I18NDAORepository i18ndaoRepository) {
         i18NDAORepository = i18ndaoRepository;
@@ -248,6 +257,7 @@ public class FeatureVisitorContext {
     /**
      * @param cache
      *            the cache to set
+     * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setCache(SosContentCache cache) {
         this.cache = cache;

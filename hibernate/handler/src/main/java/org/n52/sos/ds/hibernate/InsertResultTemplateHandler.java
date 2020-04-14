@@ -120,7 +120,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     checkResultStructure(request.getResultStructure(),
                             obsConst.getObservableProperty().getIdentifier(), sosObsConst);
                     ProcedureEntity procedure = null;
-                    AbstractFeatureEntity feature = null;
+                    AbstractFeatureEntity<?> feature = null;
                     if (sosObsConst.isSetFeatureOfInterest()) {
                         FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
                         feature = featureOfInterestDAO.checkOrInsert(sosObsConst.getFeatureOfInterest(), session);
@@ -150,7 +150,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
             }
             throw owse;
         } finally {
-           sessionHolder.returnSession(session);
+            sessionHolder.returnSession(session);
         }
         return response;
     }
@@ -161,7 +161,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     }
 
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity obsConst,
-            ProcedureEntity procedure, AbstractFeatureEntity feature, Session session) throws OwsExceptionReport {
+            ProcedureEntity procedure, AbstractFeatureEntity<?> feature, Session session) throws OwsExceptionReport {
         daoFactory.getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }
 

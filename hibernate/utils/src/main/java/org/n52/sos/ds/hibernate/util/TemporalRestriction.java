@@ -197,8 +197,7 @@ public interface TemporalRestriction {
     /**
      * Create a filter for the specified period and fields. If the period is no
      * real period but a instance, the method will call
-     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)
-     * filterWithInstant()}.
+     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)}.
      *
      * @param time
      *            the time
@@ -251,7 +250,7 @@ public interface TemporalRestriction {
     /**
      * Creates a filter for the specfied instant and fields. In case of a
      * instance with reduced precision a the method will call
-     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor)}.
+     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor, boolean)}.
      *
      * @param time
      *            the time
@@ -350,43 +349,6 @@ public interface TemporalRestriction {
             return periods;
         }
         return null;
-//        if (periods == null) {
-//            if (instants == null) {
-//                return null;
-//            } else {
-//                return Restrictions.and(isInstant(r), instants);
-//            }
-//        } else if (instants == null) {
-//            return Restrictions.and(isPeriod(r), periods);
-//        } else {
-//            return Restrictions.or(Restrictions.and(isPeriod(r), periods), Restrictions.and(isInstant(r), instants));
-//        }
     }
-
-//    /**
-//     * Creates a {@code Criterion} that checks that the persisted period is a
-//     * "real" period ({@code begin != end}).
-//     *
-//     * @param r
-//     *            the property names
-//     *
-//     * @return the {@code Criterion}
-//     */
-//    static PropertyExpression isPeriod(TimePrimitiveFieldDescriptor r) {
-//        return Restrictions.neProperty(r.getBeginPosition(), r.getEndPosition());
-//    }
-//
-//    /**
-//     * Creates a {@code Criterion} that checks that the persisted period is a
-//     * instant period ({@code begin == end}).
-//     *
-//     * @param r
-//     *            the property names
-//     *
-//     * @return the {@code Criterion}
-//     */
-//    static PropertyExpression isInstant(TimePrimitiveFieldDescriptor r) {
-//        return Restrictions.eqProperty(r.getBeginPosition(), r.getEndPosition());
-//    }
 
 }

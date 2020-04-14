@@ -64,24 +64,24 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SeriesOmObservationCreator.class);
 
-    protected final DatasetEntity series;
+    protected final DatasetEntity dataset;
 
     public SeriesOmObservationCreator(DatasetEntity series, AbstractObservationRequest request, Locale i18n,
             String pdf, OmObservationCreatorContext creatorContext, Session session) {
         super(request, i18n, pdf, creatorContext, session);
-        this.series = series;
+        this.dataset = series;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public ObservationStream create() throws OwsExceptionReport, ConverterException {
-        if (series == null) {
+        if (dataset == null) {
             return ObservationStream.empty();
         }
-        SosProcedureDescription procedure = createProcedure(series.getProcedure().getIdentifier());
-        OmObservableProperty obsProp = createObservableProperty(series.getObservableProperty());
+        SosProcedureDescription procedure = createProcedure(dataset.getProcedure().getIdentifier());
+        OmObservableProperty obsProp = createObservableProperty(dataset.getObservableProperty());
         obsProp.setUnit(queryUnit());
-        AbstractFeature feature = createFeatureOfInterest(series.getFeature());
+        AbstractFeature feature = createFeatureOfInterest(dataset.getFeature());
 
         final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
         final OmObservation sosObservation = new OmObservation();
@@ -90,7 +90,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         sosObservation.setTupleSeparator(getTupleSeparator());
         sosObservation.setDecimalSeparator(getDecimalSeparator());
         sosObservation.setObservationConstellation(obsConst);
-        checkForAdditionalObservationCreator(series, sosObservation);
+        checkForAdditionalObservationCreator(dataset, sosObservation);
         final NilTemplateValue value = new NilTemplateValue();
         value.setUnit(obsProp.getUnit());
         sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
@@ -119,7 +119,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             } else {
                 AbstractSeriesObservationDAO observationDAO =
                         (AbstractSeriesObservationDAO) getDaoFactory().getObservationDAO();
-                obsConst.setOfferings(observationDAO.getOfferingsForSeries(series, getSession()));
+                obsConst.setOfferings(observationDAO.getOfferingsForSeries(dataset, getSession()));
                 // } else {
                 // obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
                 // obsConst.getProcedure().getIdentifier())));
@@ -146,10 +146,10 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     }
 
     /**
-     * @return
+     * @return The {@link DatasetEntity}
      */
     protected DatasetEntity getSeries() {
-        return series;
+        return dataset;
     }
 
     protected void checkForAdditionalObservationCreator(DatasetEntity series, OmObservation sosObservation)
@@ -172,8 +172,8 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     }
 
     private String queryUnit() {
-        String property = series.getObservableProperty().getIdentifier();
-        String procedure = series.getProcedure().getIdentifier();
+        String property = dataset.getObservableProperty().getIdentifier();
+        String procedure = dataset.getProcedure().getIdentifier();
 
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
                 getSession())) {

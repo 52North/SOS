@@ -325,7 +325,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         ctx.addIdentifierRestrictionsToCritera(criteria, true, false);
-//        criteria.setMaxResults(1);
+        // criteria.setMaxResults(1);
         // TODO: check for Unit if available!!!
         LOGGER.trace(
                 "QUERY getOrInsertSeries(feature, observableProperty, procedure, offering, platform, category): {}",

@@ -906,12 +906,6 @@
           </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.n52.sensorweb-server.dao-impl</groupId>
-            <artifactId>dao-impl-webapp</artifactId>
-            <version>${dataset.dao.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
           <groupId>org.n52.sensorweb-server.dao-impl</groupId>
           <artifactId>dao-impl-dao</artifactId>
           <scope>runtime</scope>

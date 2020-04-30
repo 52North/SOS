@@ -160,12 +160,4 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.addObservationIdentifierForSTA" />
-        <property name="title" value="Should this SOS add an observation identifier if it is not set for STA" />
-        <property name="description" value="Whether the SOS should set an observaion identifier (the pkid valus) if it is not defined. Required for STA support." />
-        <property name="order" value="27.0" />
-        <property name="group" ref="serviceSettingDefintionGroup" />
-        <property name="defaultValue" value="true" />
-    </bean>
 </beans>

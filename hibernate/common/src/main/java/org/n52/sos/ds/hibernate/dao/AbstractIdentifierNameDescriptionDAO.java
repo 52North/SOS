@@ -99,6 +99,8 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
                             new CodespaceDAO().getOrInsertCodespace(identifier.getCodeSpace(), session));
                 }
             }
+        } else {
+            entity.setStaIdentifier(entity.generateUUID());
         }
     }
 

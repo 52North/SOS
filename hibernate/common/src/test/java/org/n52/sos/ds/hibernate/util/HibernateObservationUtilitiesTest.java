@@ -218,6 +218,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             hObservation.setSamplingTimeEnd(hObservation.getSamplingTimeStart());
             hObservation.setResultTime(hObservation.getSamplingTimeStart());
             hObservation.setDataset(hObservationConstellation);
+            hObservation.setStaIdentifier("123");
             hObservation.setDeleted(false);
             session.save(hObservation);
             transaction.commit();

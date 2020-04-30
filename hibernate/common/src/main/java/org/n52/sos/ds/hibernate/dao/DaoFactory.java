@@ -51,7 +51,6 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.request.operator.AbstractRequestOperator;
-import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
@@ -95,7 +94,6 @@ public class DaoFactory {
     private FeatureQueryHandler featureQueryHandler;
     private String serviceURL;
     private boolean includeChildObservableProperties;
-    private boolean observationIdentifierForSTA;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -158,14 +156,6 @@ public class DaoFactory {
         this.includeChildObservableProperties = include;
     }
 
-    public boolean isSetObservationIdentifierForSTA() {
-        return observationIdentifierForSTA;
-    }
-
-    @Setting(AbstractTransactionalRequestOperator.ADD_OBSERVATION_IDENTIFIER_FOR_STA)
-    public void setObservationIdentifierForSTA(boolean observationIdentifierForSTA) {
-        this.observationIdentifierForSTA = observationIdentifierForSTA;
-    }
 
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {

@@ -88,7 +88,7 @@
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>19.6.0.0</version.ojdbc8>
         <version.sqljdbc>8.2.2.jre8</version.sqljdbc>
-        <version.mysql>8.0.19</version.mysql>
+        <version.mysql>8.0.20</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.4.13.Final</version.hibernate>

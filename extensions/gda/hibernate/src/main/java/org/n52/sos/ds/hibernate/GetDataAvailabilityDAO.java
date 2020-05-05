@@ -512,7 +512,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      */
     private void processDataAvailability(Series series, GdaRequestContext context, Session session) throws OwsExceptionReport {
         TimePeriod timePeriod = null;
-        if (!context.getRequest().isSetOfferings()) {
+        if (!context.getRequest().isSetOfferings() || series.isSetOffering()) {
             // get time information from series object
             if (series.isSetFirstLastTime()) {
                 timePeriod = new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp());

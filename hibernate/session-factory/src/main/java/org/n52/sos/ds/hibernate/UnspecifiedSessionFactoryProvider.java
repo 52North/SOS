@@ -51,9 +51,10 @@ import org.n52.faroe.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
-import org.n52.sos.ds.hibernate.type.IsoTimeStringType;
-import org.n52.sos.ds.hibernate.type.UtcTimestampType;
+//import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
+//import org.n52.sos.ds.hibernate.type.IsoTimeStringType;
+//import org.n52.sos.ds.hibernate.type.UtcTimestampType;
+//import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.service.DriverCleanupListener;
 
@@ -166,7 +167,7 @@ public abstract class UnspecifiedSessionFactoryProvider
              * set timestamp mapping to a special type to ensure time is always
              * queried in defined time zone
              */
-            registerTimestampMapping(configuration, properties);
+//            registerTimestampMapping(configuration, properties);
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             UnspecifiedSessionFactoryProvider.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -185,17 +186,26 @@ public abstract class UnspecifiedSessionFactoryProvider
         }
     }
 
-    private void registerTimestampMapping(Configuration configuration, Properties properties) {
-        if (properties.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)
-                && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE).isEmpty()) {
-            configuration.registerTypeOverride(
-                    new ConfigurableTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
-        } else {
-            configuration.registerTypeOverride(new UtcTimestampType());
-        }
-        configuration.registerTypeOverride(new IsoTimeStringType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE),
-                properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
-                Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
-    }
+//    private void registerTimestampMapping(Configuration configuration, Properties properties) {
+//        if ((properties.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)
+//                && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)
+//                        .isEmpty())
+//                || (properties.containsKey(HibernateConstants.JDBC_TIME_ZONE)
+//                        && !properties.getProperty(HibernateConstants.JDBC_TIME_ZONE)
+//                                .isEmpty())) {
+//            configuration.registerTypeOverride(
+//                    new ConfigurableTimestampType(properties.containsKey(HibernateConstants.JDBC_TIME_ZONE)
+//                            ? properties.getProperty(HibernateConstants.JDBC_TIME_ZONE)
+//                            : properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
+//        } else {
+//            configuration.registerTypeOverride(new UtcTimestampType());
+//        }
+//        configuration.registerTypeOverride(new IsoTimeStringType(
+//                properties.containsKey(HibernateConstants.JDBC_TIME_ZONE)
+//                        ? properties.getProperty(HibernateConstants.JDBC_TIME_ZONE)
+//                        : properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE),
+//                properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
+//                Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
+//    }
 
 }

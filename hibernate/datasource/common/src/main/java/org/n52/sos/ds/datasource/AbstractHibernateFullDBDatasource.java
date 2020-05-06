@@ -147,7 +147,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(FEATURE_CONCEPT_KEY, settings.get(FEATURE_CONCEPT_KEY));
         if (settings.containsKey(TIMEZONE_KEY)) {
-            p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
+            p.put(HibernateConstants.JDBC_TIME_ZONE, settings.get(TIMEZONE_KEY));
         }
         if (settings.containsKey(TIME_STRING_FORMAT_KEY) && settings.get(TIME_STRING_FORMAT_KEY) != null) {
             p.put(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT, settings.get(TIME_STRING_FORMAT_KEY));
@@ -178,7 +178,11 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
-        settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)) {
+            settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        } else {
+            settings.put(TIMEZONE_KEY, current.getProperty(HibernateConstants.JDBC_TIME_ZONE));
+        }
         if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT)) {
             settings.put(TIME_STRING_FORMAT_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT));
         }

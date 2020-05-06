@@ -57,6 +57,7 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
@@ -289,8 +290,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *            Datasource settings to create custom configuration from
      * @return Custom configuration from datasource settings
      */
-    public CustomConfiguration getConfig(Map<String, Object> settings) {
-        CustomConfiguration config = new CustomConfiguration();
+    public Configuration getConfig(Map<String, Object> settings) {
+        Configuration config = new Configuration();
         // config.configure("/hibernate.cfg.xml");
         for (File path : getMappingPaths(settings)) {
             config.addDirectory(path);
@@ -560,7 +561,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
         if (registry == null) {
-            CustomConfiguration config = getConfig(settings);
+            Configuration config = getConfig(settings);
             StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
             settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
             registryBuilder.applySettings(settings);

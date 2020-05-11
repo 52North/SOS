@@ -93,7 +93,7 @@
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.4.15.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
-        <version.hikaricp>3.4.3</version.hikaricp>
+        <version.hikaricp>3.4.5</version.hikaricp>
         <version.geotools>23.0</version.geotools>
         <version.jackson>2.11.0</version.jackson>
         <version.logback>1.2.3</version.logback>

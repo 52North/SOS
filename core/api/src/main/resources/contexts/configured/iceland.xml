@@ -93,9 +93,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
     <bean id="soapChainResponseWriterFactory"
           class="org.n52.iceland.response.SoapChainResponseWriterFactory"/>
 
-    <bean id="soapResponseWriterFactory"
-          class="org.n52.iceland.response.SoapResponseWriterFactory"/>
-
     <bean
           class="org.n52.iceland.util.activation.ActivationRegistrator">
         <description>Used to wire up activation persistence.</description>

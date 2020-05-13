@@ -100,7 +100,7 @@
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.2</version.netcdf>
         <!-- 52N dependency versions -->
-        <version.n52.common.xml>2.6.1</version.n52.common.xml>
+        <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>7.4.1</version.arctic-sea>
         <version.helgoland.api>3.1.0</version.helgoland.api>
         <version.dao-impl>3.1.0</version.dao-impl>

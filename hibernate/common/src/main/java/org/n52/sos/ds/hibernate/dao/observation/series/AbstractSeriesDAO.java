@@ -374,7 +374,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 DatastreamEntity datastream = existsDatastream(dataset, session);
                 if (datastream == null) {
                     datastream = new DatastreamEntity();
-                    datastream.setIdentifier(UUID.randomUUID().toString());
+                    datastream.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
                     datastream.setName(createDatastreamName(dataset));
                     datastream.setDescription(createDatastreamDescription(dataset));
                     datastream.setProcedure(dataset.getProcedure());

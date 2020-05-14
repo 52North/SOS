@@ -160,4 +160,12 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="service.sta.supports.urls" />
+        <property name="title" value="Does the SensorThings API supports URLs as identifier?" />
+        <property name="description" value="Whether the SensorThings API supports URLs as identifier or in more detail the used servlet container." />
+        <property name="order" value="27.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
 </beans>

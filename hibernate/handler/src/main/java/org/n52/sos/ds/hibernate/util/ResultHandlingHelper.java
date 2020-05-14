@@ -71,6 +71,8 @@ import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
@@ -88,6 +90,8 @@ public class ResultHandlingHelper {
     public static final String OM_PROCEDURE = "om:procedure";
 
     public static final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
+
+    public static final String PHENOMENON_TIME = "phenomenonTime";
 
     private final SweHelper helper;
 
@@ -617,6 +621,21 @@ public class ResultHandlingHelper {
 
     private GeometryHandler getGeomtryHandler() {
         return geometryHandler;
+    }
+
+    public SweDataRecord createRecord(DataEntity<?> observation) {
+        SweDataRecord record = new SweDataRecord();
+        if (observation.isSamplingTimePeriod()) {
+            record.addField(new SweField(PHENOMENON_TIME, new SweTimeRange().setUom(OmConstants.PHEN_UOM_ISO8601)
+                    .setDefinition(OmConstants.PHENOMENON_TIME)));
+        } else {
+            record.addField(new SweField(PHENOMENON_TIME, new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
+                    .setDefinition(OmConstants.PHENOMENON_TIME)));
+        }
+        record.addField(new SweField("resultTime", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
+                .setDefinition(OmConstants.RESULT_TIME)));
+        // TODO
+        return record;
     }
 
 }

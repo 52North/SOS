@@ -49,12 +49,12 @@ public class HibernateRenameDAO implements RenameDAO {
     private HibernateSessionHolder sessionHolder;
 
     @Inject
+    private DaoFactory daoFactory;
+
+    @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
-
-    @Inject
-    private DaoFactory daoFactory;
 
     @Override
     public void renameObservableProperty(String oldName, String newName) throws OwsExceptionReport,

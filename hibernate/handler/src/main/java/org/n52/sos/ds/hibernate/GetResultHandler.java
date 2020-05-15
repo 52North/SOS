@@ -120,8 +120,8 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
     @Override
     public void init() {
         this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
-        this.resultHandlingHelper =
-                new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper());
+        this.resultHandlingHelper = new ResultHandlingHelper(daoFactory.getGeometryHandler(),
+                daoFactory.getSweHelper(), daoFactory.getDecoderRepository());
     }
 
     @Override
@@ -169,11 +169,9 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
                         .getStructure());
                 final List<DataEntity<?>> observations;
                 observations = querySeriesObservation(request, featureIdentifier, session);
-                response.setResultValues(
-                        new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper())
-                                .createResultValuesFromObservations(observations, sosResultEncoding,
-                                        sosResultStructure, getProfileHandler().getActiveProfile()
-                                                .getResponseNoDataPlaceholder()));
+                response.setResultValues(resultHandlingHelper.createResultValuesFromObservations(observations,
+                        sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile()
+                                .getResponseNoDataPlaceholder()));
             }
             return response;
         } catch (final HibernateException he) {

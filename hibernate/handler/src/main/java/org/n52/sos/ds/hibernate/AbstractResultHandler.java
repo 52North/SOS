@@ -34,8 +34,7 @@ import org.n52.svalbard.util.SweHelper;
 public interface AbstractResultHandler {
 
     default SosResultEncoding createSosResultEncoding() {
-//        return new SosResultEncoding(getSweHelper().createDefaultTextEncoding());
-        return null;
+        return new SosResultEncoding(getSweHelper().createDefaultTextEncoding());
     }
 
     SweHelper getSweHelper();

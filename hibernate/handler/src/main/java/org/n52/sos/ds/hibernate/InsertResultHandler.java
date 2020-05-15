@@ -140,7 +140,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     @Override
     public void init() {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper());
+        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper(),
+                daoFactory.getDecoderRepository());
     }
 
     @Override

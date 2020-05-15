@@ -28,12 +28,16 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -41,9 +45,11 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
 import org.n52.svalbard.util.SweHelper;
 
@@ -53,13 +59,13 @@ import org.n52.svalbard.util.SweHelper;
  * @since 4.0.0
  *
  */
-public class GetResultTemplateHandler
-        extends AbstractGetResultTemplateHandler implements AbstractResultHandler, Constructable {
+public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
+        implements AbstractResultHandler, Constructable {
     private HibernateSessionHolder sessionHolder;
 
     private DaoFactory daoFactory;
 
-//    private ResultHandlingHelper resultHandlingHelper;
+    private ResultHandlingHelper resultHandlingHelper;
 
     private boolean supportsDatabaseEntities;
 
@@ -80,8 +86,8 @@ public class GetResultTemplateHandler
     @Override
     public void init() {
         this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
-//        this.resultHandlingHelper =
-//                new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper());
+        this.resultHandlingHelper = new ResultHandlingHelper(daoFactory.getGeometryHandler(),
+                daoFactory.getSweHelper(), daoFactory.getDecoderRepository());
     }
 
     @Override
@@ -121,23 +127,34 @@ public class GetResultTemplateHandler
     }
 
     private SosResultStructure createSosResultStructure(GetResultTemplateRequest request, Session session)
-            throws NoSweCommonEncodingForOfferingObservablePropertyCombination {
-//        List<DatasetEntity> series = daoFactory.getSeriesDAO()
-//                .getSeries(null, request.getObservedProperty(), request.getOffering(), null, session);
-//        if (series != null && !series.isEmpty()) {
-//            boolean procedure = checkForProcedures(series);
-//            boolean feature = checkForFeatures(series);
-//            SweDataRecord createRecord = resultHandlingHelper.createRecord(series.get(0).getFirstObservation());
-//        }
+            throws OwsExceptionReport {
+        List<DatasetEntity> series = daoFactory.getSeriesDAO()
+                .getSeries(null, request.getObservedProperty(), request.getOffering(), null, session);
+        if (series != null && !series.isEmpty()) {
+            boolean procedure = checkForProcedures(series);
+            boolean feature = checkForFeatures(series);
+            SweDataRecord createRecord = resultHandlingHelper.createRecord(series.get(0)
+                    .getFirstObservation(), procedure, feature);
+            return new SosResultStructure(createRecord);
+
+        }
         throw new NoSweCommonEncodingForOfferingObservablePropertyCombination(request.getOffering(),
                 request.getObservedProperty());
     }
 
-//    private boolean checkForProcedures(List<DatasetEntity> series) {
-//        return series.stream().map(d -> d.getProcedure().getId()).collect(Collectors.toSet()).size() > 1;
-//    }
-//
-//    private boolean checkForFeatures(List<DatasetEntity> series) {
-//        return series.stream().map(d -> d.getFeature().getId()).collect(Collectors.toSet()).size() > 1;
-//    }
+    private boolean checkForProcedures(List<DatasetEntity> series) {
+        return series.stream()
+                .map(d -> d.getProcedure()
+                        .getId())
+                .collect(Collectors.toSet())
+                .size() > 1;
+    }
+
+    private boolean checkForFeatures(List<DatasetEntity> series) {
+        return series.stream()
+                .map(d -> d.getFeature()
+                        .getId())
+                .collect(Collectors.toSet())
+                .size() > 1;
+    }
 }

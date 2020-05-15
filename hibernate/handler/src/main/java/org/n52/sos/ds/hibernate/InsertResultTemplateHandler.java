@@ -95,7 +95,8 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     @Override
     public void init() {
         sessionHolder = new HibernateSessionHolder(connectionProvider);
-        helper = new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper());
+        helper = new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper(),
+                daoFactory.getDecoderRepository());
     }
 
     @Override

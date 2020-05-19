@@ -65,7 +65,7 @@ public class DefaultProfile implements Profile {
 
     private static final boolean DEFAULT_SHOW_FULL_OPERATIONS_METADATA_FOR_OBSERVATIONS = true;
 
-    private static final String DEFAULT_RESPONSE_NODATA_PLACEHOLDER = "noData";
+    private static final String DEFAULT_RESPONSE_NODATA_PLACEHOLDER = "";
 
     private Set<String> defaultNoDataPlaceholder = new HashSet<String>();
 

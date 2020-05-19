@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.locationtech.jts.geom.Coordinate;
@@ -52,15 +53,19 @@ import org.n52.series.db.beans.CategoryDataEntity;
 import org.n52.series.db.beans.ComplexDataEntity;
 import org.n52.series.db.beans.CountDataEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ObservationType;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.values.ProfileLevel;
+import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -85,6 +90,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.ds.hibernate.util.observation.SweAbstractDataComponentCreator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -96,7 +102,7 @@ import com.google.common.base.Strings;
  * @since 4.0.0
  *
  */
-public class ResultHandlingHelper {
+public class ResultHandlingHelper implements HibernateUnproxy {
 
     public static final String OM_PROCEDURE = "om:procedure";
 
@@ -112,9 +118,9 @@ public class ResultHandlingHelper {
 
     public ResultHandlingHelper(GeometryHandler geometryHandler, SweHelper sweHelper,
             DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
         this.geometryHandler = geometryHandler;
         this.helper = sweHelper;
-        this.decoderRepository = decoderRepository;
     }
 
     /**
@@ -127,6 +133,8 @@ public class ResultHandlingHelper {
      *            The ResultEncoding
      * @param sosResultStructure
      *            The ResultStructure
+     * @param session
+     *            The Hibernate session
      * @return Result values String from observation according to ResultEncoding
      *         and ResultStructure
      * @throws OwsExceptionReport
@@ -134,16 +142,17 @@ public class ResultHandlingHelper {
      */
     public String createResultValuesFromObservations(final Collection<DataEntity<?>> observations,
             final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure,
-            String noDataPlaceholder) throws OwsExceptionReport {
+            String noDataPlaceholder, Session session) throws OwsExceptionReport {
         final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.get()
                 .get());
         return createResultValuesFromObservations(observations, sosResultEncoding, sosResultStructure,
-                noDataPlaceholder, valueOrder, true);
+                noDataPlaceholder, valueOrder, true, null, session);
     }
 
     private String createResultValuesFromObservations(final Collection<DataEntity<?>> observations,
             final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure,
-            String noDataPlaceholder, Map<Integer, String> valueOrder, boolean addCount) throws OwsExceptionReport {
+            String noDataPlaceholder, Map<Integer, String> valueOrder, boolean addCount, VerticalMetadataEntity vertical, Session session)
+            throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
         if (CollectionHelper.isNotEmpty(observations)) {
             final String tokenSeparator = getTokenSeparator(sosResultEncoding.get()
@@ -153,12 +162,15 @@ public class ResultHandlingHelper {
             if (addCount) {
                 addElementCount(builder, observations.size(), blockSeparator);
             }
-            for (final DataEntity<?> observation : observations) {
-                for (final Entry<Integer, String> entry : valueOrder.entrySet()) {
-                    if (observation instanceof ProfileDataEntity) {
-                        builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(),
-                                sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false));
-                    } else {
+            for (final DataEntity<?> obs : observations) {
+                DataEntity<?> observation = unproxy(obs, session);
+                if (observation instanceof ProfileDataEntity) {
+                    builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(),
+                            sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false,
+                            ((ProfileDataEntity) observation).getDataset().getVerticalMetadata(), session));
+                    builder.append(blockSeparator);
+                } else {
+                    for (final Entry<Integer, String> entry : valueOrder.entrySet()) {
                         final String definition = entry.getValue();
                         switch (definition) {
                             case OmConstants.PHENOMENON_TIME:
@@ -177,16 +189,13 @@ public class ResultHandlingHelper {
                             case OmConstants.OM_PARAMETER:
                             case OmConstants.PARAMETER:
                                 builder.append(getParameters(observation, tokenSeparator, sosResultStructure.get()
-                                        .get()));
+                                        .get(), vertical));
                                 break;
                             case OM_PROCEDURE:
                                 if (observation.getDataset()
-                                        .getProcedure() != null && observation.getDataset()
-                                                .getProcedure()
+                                        .getProcedure() != null && observation.getDataset().getProcedure()
                                                 .isSetIdentifier()) {
-                                    builder.append(observation.getDataset()
-                                            .getProcedure()
-                                            .getIdentifier());
+                                    builder.append(observation.getDataset().getProcedure().getIdentifier());
                                 } else {
                                     builder.append("");
                                 }
@@ -210,8 +219,8 @@ public class ResultHandlingHelper {
                         builder.append(tokenSeparator);
                     }
                     builder.delete(builder.lastIndexOf(tokenSeparator), builder.length());
+                    builder.append(blockSeparator);
                 }
-                builder.append(blockSeparator);
             }
             if (builder.length() > 0) {
                 builder.delete(builder.lastIndexOf(blockSeparator), builder.length());
@@ -509,7 +518,7 @@ public class ResultHandlingHelper {
     }
 
     private String getParameters(DataEntity<?> observation, String tokenSeparator,
-            SweAbstractDataComponent resultStructure) {
+            SweAbstractDataComponent resultStructure, VerticalMetadataEntity vertical) {
         SweDataRecord record = null;
         if (resultStructure instanceof SweDataArray
                 && ((SweDataArray) resultStructure).getElementType() instanceof SweDataRecord) {
@@ -527,6 +536,17 @@ public class ResultHandlingHelper {
                 if (observation.hasParameters() && hasParameter(observation.getParameters(), order.getValue())) {
                     builder.append(getParameterValue(observation.getParameters(), order.getValue()))
                             .append(tokenSeparator);
+                } else if (vertical != null && (vertical.getVerticalFromName().equals(order.getValue())
+                        || vertical.getVerticalToName().equals(order.getValue()))) {
+                    if (vertical.areVerticalNamesEqual()) {
+                        builder.append(observation.getVerticalTo().toPlainString()).append(tokenSeparator);
+                    } else {
+                        if (vertical.getVerticalFromName().equals(order.getValue())) {
+                            builder.append(observation.getVerticalFrom().toPlainString()).append(tokenSeparator);
+                        } else if (vertical.getVerticalToName().equals(order.getValue())) {
+                            builder.append(observation.getVerticalTo().toPlainString()).append(tokenSeparator);
+                        }
+                    }
                 } else {
                     builder.append("")
                             .append(tokenSeparator);
@@ -663,8 +683,8 @@ public class ResultHandlingHelper {
         return geometryHandler;
     }
 
-    public SweDataRecord createRecord(DataEntity<?> observation, boolean procedure, boolean feature)
-            throws OwsExceptionReport {
+    public SweDataRecord createDataRecordForResultTemplate(DataEntity<?> observation, boolean procedure,
+            boolean feature) throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
         if (observation.isSamplingTimePeriod()) {
             record.addField(new SweField(PHENOMENON_TIME, new SweTimeRange().setUom(OmConstants.PHEN_UOM_ISO8601)
@@ -675,7 +695,7 @@ public class ResultHandlingHelper {
         }
         record.addField(new SweField("resultTime", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
                 .setDefinition(OmConstants.RESULT_TIME)));
-        record.addField(createObservedPropertyField(observation));
+        createObservedPropertyField(observation).stream().forEach(f -> record.addField(f));
         if (procedure) {
             record.addField(new SweField("procedure", new SweText().setDefinition(OM_PROCEDURE)));
         }
@@ -685,30 +705,64 @@ public class ResultHandlingHelper {
         if (observation.isSetGeometryEntity()) {
             record.addField(new SweField("samplingGeometry", createSamplingGeometryVector()));
         }
-//        if (observation.hasParameters()) {
-//            // OmConstants.OM_PARAMETER;
-//        }
         return record;
     }
 
-    private SweField createObservedPropertyField(DataEntity observation) throws OwsExceptionReport {
+    private List<SweField> createObservedPropertyField(DataEntity<?> observation) throws OwsExceptionReport {
+        List<SweField> fields = new LinkedList<>();
         PhenomenonEntity phenomenon = observation.getDataset()
                 .getPhenomenon();
-        if (!observation.getDataset()
+        if (observation.getDataset()
                 .getDatasetType()
                 .equals(DatasetType.profile)
-                && !observation.getDataset()
+                || observation.getDataset()
                         .getObservationType()
                         .equals(ObservationType.profile)) {
-            Value<?> value = new ObservationValueCreator(decoderRepository).visit(observation);
-            if (value instanceof SweAbstractDataComponent) {
-                return new SweField(NcName.makeValid(phenomenon.getName()), (SweAbstractDataComponent) value);
+            ProfileValue profile = (ProfileValue) new ObservationValueCreator(decoderRepository).visit(observation);
+            ProfileLevel level = profile.getValue().get(0);
+            fields.add(createVerticalParameter(level));
+            if (level.getValue()
+                    .get(0) instanceof SweAbstractDataComponent) {
+                if (level.getValue().size() > 1) {
+                    SweDataRecord record = new SweDataRecord();
+                    for (Value<?> v : level.getValue()) {
+                        SweAbstractDataComponent dc = (SweAbstractDataComponent) v;
+                        record.addField(new SweField(NcName.makeValid(dc.getDefinition()), dc));
+                    }
+                    fields.add(new SweField(getNcNameName(phenomenon), record));
+                    return fields;
+                } else {
+                    SweAbstractDataComponent swe = (SweAbstractDataComponent) level.getValue().get(0).setValue(null);
+                    swe.setDefinition(phenomenon.getIdentifier());
+                    fields.add(new SweField(getNcNameName(phenomenon), swe));
+                    return fields;
+                }
             }
-            // } else {
-            //
-            // return new SweField(NcName.makeValid(phenomenon.getName()), );
+        } else {
+            SweAbstractDataComponent value =
+                    new SweAbstractDataComponentCreator(decoderRepository, true).visit(observation);
+            fields.add(new SweField(getNcNameName(phenomenon), (SweAbstractDataComponent) value));
+            return fields;
         }
         throw new NoApplicableCodeException();
+    }
+
+    private SweField createVerticalParameter(ProfileLevel level) {
+        SweDataRecord record = new SweDataRecord();
+        record.setDefinition(OmConstants.OM_PARAMETER);
+        if (level.isSetLevelStart()) {
+            record.addField(new SweField(level.getLevelStart()
+                    .getName(),
+                    level.getLevelStart()
+                            .setValue((BigDecimal) null)));
+        }
+        if (level.isSetLevelEnd()) {
+            record.addField(new SweField(level.getLevelEnd()
+                    .getName(),
+                    level.getLevelEnd()
+                            .setValue((BigDecimal) null)));
+        }
+        return new SweField(OmConstants.OM_PARAMETER, record);
     }
 
     private SweVector createSamplingGeometryVector() {
@@ -719,8 +773,8 @@ public class ResultHandlingHelper {
                 createSweQuantityLatLon(SweCoordinateNames.LATITUDE, "lat")));
         coordinates.add(new SweCoordinate<>(SweCoordinateNames.LONGITUDE,
                 createSweQuantityLatLon(SweCoordinateNames.LONGITUDE, "lon")));
-        coordinates.add(new SweCoordinate<>(SweCoordinateNames.ALTITUDE,
-                createSweQuantity(SweCoordinateNames.ALTITUDE, "alt", "m")));
+//        coordinates.add(new SweCoordinate<>(SweCoordinateNames.ALTITUDE,
+//                createSweQuantity(SweCoordinateNames.ALTITUDE, "alt", "m")));
         vector.setCoordinates(coordinates);
         return vector;
     }
@@ -734,5 +788,69 @@ public class ResultHandlingHelper {
                 .setUom(unit)
                 .setDefinition(definition);
     }
+
+    private String getNcNameName(Describable entity) {
+       return NcName.makeValid(
+                entity.isSetName() ? entity.getName() : entity.getIdentifier());
+    }
+
+//    @Override
+//    public QuantityValue visit(QuantityDataEntity o) {
+//        return visit(o, new QuantityValue((BigDecimal) null));
+//    }
+//
+//    @Override
+//    public UnknownValue visit(BlobDataEntity o) {
+//        return visit(o, new UnknownValue(null));
+//    }
+//
+//    @Override
+//    public BooleanValue visit(BooleanDataEntity o) {
+//        return visit(o, new BooleanValue(null));
+//    }
+//
+//    @Override
+//    public CategoryValue visit(CategoryDataEntity o) {
+//        return visit(o, new CategoryValue(null));
+//    }
+//
+//    @Override
+//    public ComplexValue visit(ComplexDataEntity o) throws OwsExceptionReport {
+//        SweAbstractDataComponentCreator visitor = new SweAbstractDataComponentCreator(getDecoderRepository(), true);
+//        SweDataRecord record = visitor.visit(o);
+//        return new ComplexValue(record);
+//    }
+//
+//    @Override
+//    public CountValue visit(CountDataEntity o) {
+//        return new CountValue(null);
+//    }
+//
+//    @Override
+//    public GeometryValue visit(GeometryDataEntity o) throws OwsExceptionReport {
+//        return visit(o, new GeometryValue((AbstractGeometry) null));
+//    }
+//
+//    @Override
+//    public TextValue visit(TextDataEntity o) {
+//        return visit(o, new TextValue(null));
+//    }
+//
+//    @Override
+//    public SweDataArrayValue visit(DataArrayDataEntity o) throws OwsExceptionReport {
+//        SweDataArray array = createSweDataArray(o);
+//        array.setEncoding(null);
+//        return new SweDataArrayValue(array);
+//    }
+//
+//    @Override
+//    public ProfileValue visit(ProfileDataEntity o) throws OwsExceptionReport {
+//        return new ProfileGeneratorSplitter(this).create(o);
+//    }
+//
+//    @Override
+//    public ReferenceValue visit(ReferencedDataEntity o) {
+//        return visit(o, new ReferenceValue(null));
+//    }
 
 }

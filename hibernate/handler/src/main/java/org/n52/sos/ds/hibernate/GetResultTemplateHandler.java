@@ -28,29 +28,22 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
-import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
-import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
 import org.n52.svalbard.util.SweHelper;
 
 /**
@@ -86,18 +79,30 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     @Override
     public void init() {
         this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
-        this.resultHandlingHelper = new ResultHandlingHelper(daoFactory.getGeometryHandler(),
-                daoFactory.getSweHelper(), daoFactory.getDecoderRepository());
     }
 
     @Override
     public boolean isSupported() {
-        return supportsDatabaseEntities;
+        return true;
     }
 
     @Override
     public SweHelper getSweHelper() {
-        return daoFactory.getSweHelper();
+        return getDaoFactory().getSweHelper();
+    }
+
+    @Override
+    public ResultHandlingHelper getResultHandlingHelper() {
+        if (resultHandlingHelper == null) {
+            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(),
+                    getDaoFactory().getSweHelper(), getDaoFactory().getDecoderRepository());
+        }
+        return resultHandlingHelper;
+    }
+
+    @Override
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
     @Override
@@ -108,14 +113,15 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
             GetResultTemplateResponse response = new GetResultTemplateResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
-            ResultTemplateEntity resultTemplate = supportsDatabaseEntities ? daoFactory.getResultTemplateDAO()
+            ResultTemplateEntity resultTemplate = supportsDatabaseEntities ? getDaoFactory().getResultTemplateDAO()
                     .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), session) : null;
             if (resultTemplate != null) {
                 response.setResultEncoding(createSosResultEncoding(resultTemplate.getEncoding()));
                 response.setResultStructure(createSosResultStructure(resultTemplate.getStructure()));
             } else {
                 response.setResultEncoding(createSosResultEncoding());
-                response.setResultStructure(createSosResultStructure(request, session));
+                response.setResultStructure(generateSosResultStructure(request.getObservedProperty(),
+                        request.getOffering(), null, session));
             }
             return response;
         } catch (HibernateException he) {
@@ -126,35 +132,4 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
         }
     }
 
-    private SosResultStructure createSosResultStructure(GetResultTemplateRequest request, Session session)
-            throws OwsExceptionReport {
-        List<DatasetEntity> series = daoFactory.getSeriesDAO()
-                .getSeries(null, request.getObservedProperty(), request.getOffering(), null, session);
-        if (series != null && !series.isEmpty()) {
-            boolean procedure = checkForProcedures(series);
-            boolean feature = checkForFeatures(series);
-            SweDataRecord createRecord = resultHandlingHelper.createRecord(series.get(0)
-                    .getFirstObservation(), procedure, feature);
-            return new SosResultStructure(createRecord);
-
-        }
-        throw new NoSweCommonEncodingForOfferingObservablePropertyCombination(request.getOffering(),
-                request.getObservedProperty());
-    }
-
-    private boolean checkForProcedures(List<DatasetEntity> series) {
-        return series.stream()
-                .map(d -> d.getProcedure()
-                        .getId())
-                .collect(Collectors.toSet())
-                .size() > 1;
-    }
-
-    private boolean checkForFeatures(List<DatasetEntity> series) {
-        return series.stream()
-                .map(d -> d.getFeature()
-                        .getId())
-                .collect(Collectors.toSet())
-                .size() > 1;
-    }
 }

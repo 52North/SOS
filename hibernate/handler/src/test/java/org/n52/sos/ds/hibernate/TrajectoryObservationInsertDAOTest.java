@@ -48,9 +48,19 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapability;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweVector;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -116,9 +126,68 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
 
     @Test
     public void testInsertObservation() throws OwsExceptionReport, InterruptedException, ConverterException {
-        InsertObservationRequest req = new InsertObservationRequest();
-        req.setAssignedSensorId(PROCEDURE3);
-        req.setOfferings(Lists.newArrayList(OFFERING3));
+        inserObservationData();
+        assertInsertionAftermathBeforeAndAfterCacheReload();
+        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1, TRAJ_GEOMETRY_1),
+                TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
+        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_2, TRAJ_GEOMETRY_2),
+                TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
+        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_3, TRAJ_GEOMETRY_3),
+                TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
+        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_4, TRAJ_GEOMETRY_4),
+                TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
+        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
+                TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+    }
+    
+    @Test
+    public void testGeneratedGetResultTemplate()
+            throws OwsExceptionReport, ConverterException, EncodingException {
+        inserObservationData();
+        GetResultTemplateRequest request = new GetResultTemplateRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultTemplateResponse response = getResultTemplateHandler.getResultTemplate(request);
+        assertThat(response, notNullValue());
+        assertThat(response.getResultStructure(), notNullValue());
+        assertThat(response.getResultStructure().get().isPresent(), is(true));
+        SweAbstractDataComponent sweAbstractDataComponent = response.getResultStructure().get().get();
+        assertThat(sweAbstractDataComponent, instanceOf(SweDataRecord.class));
+        SweDataRecord record = (SweDataRecord) sweAbstractDataComponent;
+        assertThat(record.getFields().size(), is(4));
+        SweField samp = record.getFieldByIdentifier("samplingGeometry");
+        assertThat(samp, notNullValue());
+        assertThat(samp.getElement(), notNullValue());
+        assertThat(samp.getElement(), instanceOf(SweVector.class));
+        SweVector sampVector = (SweVector) samp.getElement();
+        assertThat(sampVector.getDefinition(), is(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));
+        assertThat(sampVector.getCoordinates().size(), is(2));
+        assertThat(sampVector.getCoordinates().get(0).getName(), is(SweCoordinateNames.LATITUDE));
+        assertThat(sampVector.getCoordinates().get(1).getName(), is(SweCoordinateNames.LONGITUDE));
+        SweField field = record.getFieldByIdentifier(OBSPROP3);
+        assertThat(field, notNullValue());
+        assertThat(field.getElement(), notNullValue());
+        assertThat(field.getElement(), instanceOf(SweQuantity.class));
+    }
+
+    @Test
+    public void testGeneratedGetResult() throws OwsExceptionReport, ConverterException {
+        inserObservationData();
+        GetResultRequest request = new GetResultRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultResponse response = getResultHandler.getResult(request);
+        assertThat(response, notNullValue());
+        String resultValues = response.getResultValues();
+        assertThat(resultValues, is(
+                "5#2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,1.0000000000,52.7,7.52#"
+                + "2013-07-18T04:00:00.000Z,2013-07-18T04:00:00.000Z,2.0000000000,52.8,7.53#"
+                + "2013-07-18T05:00:00.000Z,2013-07-18T05:00:00.000Z,3.0000000000,52.9,7.54#"
+                + "2013-07-18T06:00:00.000Z,2013-07-18T06:00:00.000Z,4.0000000000,53.0,7.55#"
+                + "2013-07-18T07:00:00.000Z,2013-07-18T07:00:00.000Z,5.0000000000,53.1,7.56"));
+    }
+    
+    private List<OmObservation> createDefaultObservation() throws OwsExceptionReport, ConverterException {
         OmObservation obs = new OmObservation();
 
         Session session = null;
@@ -135,21 +204,16 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
         observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
         observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
-
-        req.setObservation(observations);
+        return observations;
+    }
+    
+    private void inserObservationData() throws OwsExceptionReport, ConverterException {
+        InsertObservationRequest req = new InsertObservationRequest();
+        req.setAssignedSensorId(PROCEDURE3);
+        req.setOfferings(Lists.newArrayList(OFFERING3));
+        req.setObservation(createDefaultObservation());
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         this.serviceEventBus.submit(new ObservationInsertion(req, resp));
-        assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1, TRAJ_GEOMETRY_1),
-                TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_2, TRAJ_GEOMETRY_2),
-                TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_3, TRAJ_GEOMETRY_3),
-                TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_4, TRAJ_GEOMETRY_4),
-                TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
-                TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
     }
 
     private OmObservation addData(OmObservation obs, Geometry geometry, DateTime time, Double value) {

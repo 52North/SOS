@@ -46,9 +46,14 @@ import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
@@ -80,6 +85,57 @@ public class ComplexObservationInsertDAOTest extends AbstractInsertDAOTest {
 
     @Test
     public void testInsertComplexObservation() throws OwsExceptionReport, InterruptedException, ConverterException {
+        insertData();
+        assertInsertionAftermathBeforeAndAfterCacheReload();
+        checkObservation();
+    }
+
+    @Test
+    public void testGeneratedGetResultTemplate() throws OwsExceptionReport, ConverterException {
+        insertData();
+        GetResultTemplateRequest request = new GetResultTemplateRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultTemplateResponse response = getResultTemplateHandler.getResultTemplate(request);
+        assertThat(response, notNullValue());
+        assertThat(response.getResultStructure(), notNullValue());
+        assertThat(response.getResultStructure().get().isPresent(), is(true));
+        SweAbstractDataComponent sweAbstractDataComponent = response.getResultStructure().get().get();
+        assertThat(sweAbstractDataComponent, instanceOf(SweDataRecord.class));
+        SweDataRecord record = (SweDataRecord) sweAbstractDataComponent;
+        assertThat(record.getFields().size(), is(3));
+        SweField field = record.getFieldByIdentifier(OBSPROP3);
+        assertThat(field, notNullValue());
+        assertThat(field.getElement(), notNullValue());
+        assertThat(field.getElement(), instanceOf(SweDataRecord.class));
+        SweDataRecord valueRecord = (SweDataRecord) field.getElement();
+        assertThat(valueRecord.getFields().size(), is(3));
+        assertThat(valueRecord.getFields().get(0).getElement().getDefinition(), is(OBSPROP_VALUE1));
+        assertThat(valueRecord.getFields().get(1).getElement().getDefinition(), is(OBSPROP_VALUE2));
+        assertThat(valueRecord.getFields().get(2).getElement().getDefinition(), is(OBSPROP_VALUE3));
+    }
+
+    @Test
+    public void testGeneratedGetResult() throws OwsExceptionReport, ConverterException {
+        insertData();
+        GetResultRequest request = new GetResultRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultResponse response = getResultHandler.getResult(request);
+        assertThat(response, notNullValue());
+        String resultValues = response.getResultValues();
+        String[] blocks = resultValues.split(BLOCK_SEPARATOR);
+        assertThat(blocks.length, is(2));
+        String[] tokens = blocks[1].split(TOKEN_SEPARATOR);
+        assertThat(tokens.length, is(5));
+        assertThat(BigDecimal.valueOf(VAL1).equals(BigDecimal.valueOf(Double.valueOf(tokens[2]))), is(true));
+        assertThat(BigDecimal.valueOf(VAL2).equals(BigDecimal.valueOf(Double.valueOf(tokens[3]))), is(true));
+        assertThat(BigDecimal.valueOf(VAL3).equals(BigDecimal.valueOf(Double.valueOf(tokens[4]))), is(true));
+        assertThat(resultValues, is(
+                "1#2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,19.1000000000,19.8000000000,20.4000000000"));
+    }
+
+    private void insertData() throws OwsExceptionReport, ConverterException {
         InsertObservationRequest req = new InsertObservationRequest();
         req.setAssignedSensorId(PROCEDURE3);
         req.setOfferings(Lists.newArrayList(OFFERING3));
@@ -110,18 +166,16 @@ public class ComplexObservationInsertDAOTest extends AbstractInsertDAOTest {
         req.setObservation(Lists.newArrayList(obs));
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         this.serviceEventBus.submit(new ObservationInsertion(req, resp));
-        assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkObservation();
     }
 
     protected void checkObservation() throws OwsExceptionReport {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(OFFERING3, PROCEDURE3, OBSPROP3, OBS_TIME, FEATURE3);
-        GetObservationResponse getObsResponse =
+        GetObservationResponse response =
                 getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
-        assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
-        OmObservation omObservation = getObservation(getObsResponse);
+        assertThat(response, notNullValue());
+        assertThat(response.getObservationCollection().hasNext(), is(true));
+        OmObservation omObservation = getObservation(response);
         assertThat(omObservation.getObservationConstellation(), notNullValue());
         OmObservationConstellation obsConst = omObservation.getObservationConstellation();
         assertThat(obsConst.getProcedure().getIdentifier(), is(PROCEDURE3));

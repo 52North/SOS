@@ -51,9 +51,16 @@ import org.n52.shetland.ogc.om.values.ProfileValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.event.events.ObservationInsertion;
@@ -63,7 +70,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
-
 
     private static final Double PROFILE_VAL1 = 2.5;
 
@@ -107,37 +113,120 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
     @Test
     public void testInsertProfileIntervalObservation()
             throws OwsExceptionReport, InterruptedException, ConverterException {
-        InsertObservationRequest req = new InsertObservationRequest();
-        req.setAssignedSensorId(PROCEDURE3);
-        req.setOfferings(Lists.newArrayList(OFFERING3));
-        OmObservation obs = new OmObservation();
-        Session session = null;
-        try {
-            session = getSession();
-            obs.setObservationConstellation(getOmObsConst(PROCEDURE3, OBSPROP3, TEMP_UNIT, OFFERING3, FEATURE3,
-                    OmConstants.OBS_TYPE_PROFILE_OBSERVATION, session));
-        } finally {
-            returnSession(session);
-        }
-        obs.setResultTime(new TimeInstant(OBS_TIME));
-        SingleObservationValue<List<ProfileLevel>> obsVal = new SingleObservationValue<List<ProfileLevel>>();
-        ProfileValue profileValue = createProfileValue(true);
-        obsVal.setValue(profileValue);
-        obs.setValue(obsVal);
-        req.setObservation(Lists.newArrayList(obs));
-        InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
-        this.serviceEventBus.submit(new ObservationInsertion(req, resp));
+        insertProfileIntervalObservationData();
         assertInsertionAftermathBeforeAndAfterCacheReload();
         checkObservation(true);
     }
 
     @Test
-    public void testInsertProfileObservation() throws OwsExceptionReport, InterruptedException, ConverterException {
+    public void testGeneratedProfileIntervalGetResultTemplate() throws OwsExceptionReport, ConverterException {
+        insertProfileIntervalObservationData();
+        GetResultTemplateRequest request = new GetResultTemplateRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultTemplateResponse response = getResultTemplateHandler.getResultTemplate(request);
+        assertThat(response, notNullValue());
+        assertThat(response.getResultStructure(), notNullValue());
+        assertThat(response.getResultStructure().get().isPresent(), is(true));
+        SweAbstractDataComponent sweAbstractDataComponent = response.getResultStructure().get().get();
+        assertThat(sweAbstractDataComponent, instanceOf(SweDataRecord.class));
+        SweDataRecord record = (SweDataRecord) sweAbstractDataComponent;
+        assertThat(record.getFields().size(), is(4));
+        SweField param = record.getFieldByIdentifier("om:parameter");
+        assertThat(param, notNullValue());
+        assertThat(param.getElement(), notNullValue());
+        assertThat(param.getElement(), instanceOf(SweDataRecord.class));
+        SweDataRecord paramRecord = (SweDataRecord) param.getElement();
+        assertThat(paramRecord.getDefinition(), is(OmConstants.OM_PARAMETER));
+        assertThat(paramRecord.getFields().size(), is(2));
+        assertThat(paramRecord.getFields().get(0).getElement().getDefinition(), is(FROM));
+        assertThat(paramRecord.getFields().get(1).getElement().getDefinition(), is(TO));
+        SweField field = record.getFieldByIdentifier(OBSPROP3);
+        assertThat(field, notNullValue());
+        assertThat(field.getElement(), notNullValue());
+        assertThat(field.getElement(), instanceOf(SweQuantity.class));
+    }
+
+    @Test
+    public void testGeneratedProfileIntervalGetResult() throws OwsExceptionReport, ConverterException {
+        insertProfileIntervalObservationData();
+        GetResultRequest request = new GetResultRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultResponse response = getResultHandler.getResult(request);
+        assertThat(response, notNullValue());
+        String resultValues = response.getResultValues();
+        assertThat(resultValues, is(
+                "1#2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,0.0000000000,5.0000000000,2.5000000000#"
+                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,5.0000000000,10.0000000000,7.5000000000#"
+                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,10.0000000000,15.0000000000,12.5000000000#"
+                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,15.0000000000,20.0000000000,17.5000000000"));
+    }
+
+    private void insertProfileIntervalObservationData() throws OwsExceptionReport, ConverterException {
         InsertObservationRequest req = new InsertObservationRequest();
         req.setAssignedSensorId(PROCEDURE3);
         req.setOfferings(Lists.newArrayList(OFFERING3));
-        OmObservation obs = new OmObservation();
+        req.setObservation(Lists.newArrayList(createDefaultObservation(createProfileValue(true))));
+        InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
+        this.serviceEventBus.submit(new ObservationInsertion(req, resp));
+    }
 
+    @Test
+    public void testInsertProfileObservation() throws OwsExceptionReport, InterruptedException, ConverterException {
+        insertProfileObservationData();
+        assertInsertionAftermathBeforeAndAfterCacheReload();
+        checkObservation(false);
+    }
+
+    @Test
+    public void testGeneratedProfileGetResultTemplate()
+            throws OwsExceptionReport, ConverterException, EncodingException {
+        insertProfileObservationData();
+        GetResultTemplateRequest request = new GetResultTemplateRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultTemplateResponse response = getResultTemplateHandler.getResultTemplate(request);
+        assertThat(response, notNullValue());
+        assertThat(response.getResultStructure(), notNullValue());
+        assertThat(response.getResultStructure().get().isPresent(), is(true));
+        SweAbstractDataComponent sweAbstractDataComponent = response.getResultStructure().get().get();
+        assertThat(sweAbstractDataComponent, instanceOf(SweDataRecord.class));
+        SweDataRecord record = (SweDataRecord) sweAbstractDataComponent;
+        assertThat(record.getFields().size(), is(4));
+        SweField param = record.getFieldByIdentifier("om:parameter");
+        assertThat(param, notNullValue());
+        assertThat(param.getElement(), notNullValue());
+        assertThat(param.getElement(), instanceOf(SweDataRecord.class));
+        SweDataRecord paramRecord = (SweDataRecord) param.getElement();
+        assertThat(paramRecord.getDefinition(), is(OmConstants.OM_PARAMETER));
+        assertThat(paramRecord.getFields().size(), is(1));
+        assertThat(paramRecord.getFields().get(0).getElement().getDefinition(), is(DEPTH));
+        SweField field = record.getFieldByIdentifier(OBSPROP3);
+        assertThat(field, notNullValue());
+        assertThat(field.getElement(), notNullValue());
+        assertThat(field.getElement(), instanceOf(SweQuantity.class));
+    }
+
+    @Test
+    public void testGeneratedProfileGetResult() throws OwsExceptionReport, ConverterException {
+        insertProfileObservationData();
+        GetResultRequest request = new GetResultRequest();
+        request.setObservedProperty(OBSPROP3);
+        request.setOffering(OFFERING3);
+        GetResultResponse response = getResultHandler.getResult(request);
+        assertThat(response, notNullValue());
+        String resultValues = response.getResultValues();
+        assertThat(resultValues, is(
+                "1#2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,5.0000000000,2.5000000000#"
+                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,10.0000000000,7.5000000000#"
+                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,15.0000000000,12.5000000000#"
+                + "2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,20.0000000000,17.5000000000"));
+    }
+
+    private OmObservation createDefaultObservation(ProfileValue profileValue)
+            throws OwsExceptionReport, ConverterException {
+        OmObservation obs = new OmObservation();
         Session session = null;
         try {
             session = getSession();
@@ -146,18 +235,21 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         } finally {
             returnSession(session);
         }
-
         obs.setResultTime(new TimeInstant(OBS_TIME));
         SingleObservationValue<List<ProfileLevel>> obsVal = new SingleObservationValue<List<ProfileLevel>>();
         obsVal.setPhenomenonTime(new TimeInstant(OBS_TIME));
-        ProfileValue profileValue = createProfileValue(false);
         obsVal.setValue(profileValue);
         obs.setValue(obsVal);
-        req.setObservation(Lists.newArrayList(obs));
+        return obs;
+    }
+
+    private void insertProfileObservationData() throws OwsExceptionReport, ConverterException {
+        InsertObservationRequest req = new InsertObservationRequest();
+        req.setAssignedSensorId(PROCEDURE3);
+        req.setOfferings(Lists.newArrayList(OFFERING3));
+        req.setObservation(Lists.newArrayList(createDefaultObservation(createProfileValue(false))));
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         this.serviceEventBus.submit(new ObservationInsertion(req, resp));
-        assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkObservation(false);
     }
 
     protected void checkObservation(boolean interval) throws OwsExceptionReport {
@@ -168,15 +260,19 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         OmObservation omObservation = getObservation(getObsResponse);
         assertThat(omObservation.getObservationConstellation(), notNullValue());
         OmObservationConstellation obsConst = omObservation.getObservationConstellation();
-        assertThat(obsConst.getProcedure().getIdentifier(), is(PROCEDURE3));
-        assertThat(obsConst.getObservableProperty().getIdentifier(), is(OBSPROP3));
-        assertThat(obsConst.getFeatureOfInterest().getIdentifier(), is(FEATURE3));
+        assertThat(obsConst.getProcedure()
+                .getIdentifier(), is(PROCEDURE3));
+        assertThat(obsConst.getObservableProperty()
+                .getIdentifier(), is(OBSPROP3));
+        assertThat(obsConst.getFeatureOfInterest()
+                .getIdentifier(), is(FEATURE3));
         assertThat(omObservation.getValue(), notNullValue());
         ObservationValue<?> value = omObservation.getValue();
         assertThat(value.getValue(), instanceOf(ProfileValue.class));
         assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
         TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
-        assertThat(timeInstant.getValue().toDate(), is(OBS_TIME.toDate()));
+        assertThat(timeInstant.getValue()
+                .toDate(), is(OBS_TIME.toDate()));
 
         assertNotNull(value.getValue());
         assertThat(value.getValue() instanceof ProfileValue, is(true));
@@ -193,41 +289,48 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         checkQuantity(profile.getToLevel(), VERTICAL_20);
         assertNotNull(profile.getValue());
         assertTrue(profile.isSetValue());
-        assertThat(profile.getValue().size(), is(4));
-        checkProfileLevel(profile.getValue().get(0), PROFILE_VAL1, interval, VERTICAL_0, VERTICAL_5);
-        checkProfileLevel(profile.getValue().get(1), PROFILE_VAL2, interval, VERTICAL_5, VERTICAL_10);
-        checkProfileLevel(profile.getValue().get(2), PROFILE_VAL3, interval, VERTICAL_10, VERTICAL_15);
-        checkProfileLevel(profile.getValue().get(3), PROFILE_VAL4, interval, VERTICAL_15, VERTICAL_20);
+        assertThat(profile.getValue()
+                .size(), is(4));
+        checkProfileLevel(profile.getValue()
+                .get(0), PROFILE_VAL1, interval, VERTICAL_0, VERTICAL_5);
+        checkProfileLevel(profile.getValue()
+                .get(1), PROFILE_VAL2, interval, VERTICAL_5, VERTICAL_10);
+        checkProfileLevel(profile.getValue()
+                .get(2), PROFILE_VAL3, interval, VERTICAL_10, VERTICAL_15);
+        checkProfileLevel(profile.getValue()
+                .get(3), PROFILE_VAL4, interval, VERTICAL_15, VERTICAL_20);
     }
 
     private void checkProfileLevel(ProfileLevel level, Double value, boolean interval, Double from, Double to) {
-       if (interval) {
-           assertNotNull(level.getLevelStart());
-           assertTrue(level.isSetLevelStart());
-           checkQuantity(level.getLevelStart(), from);
-           assertNotNull(level.getLevelEnd());
-           assertTrue(level.isSetLevelEnd());
-           checkQuantity(level.getLevelEnd(), to);
-       } else {
-           assertNotNull(level.getLevelEnd());
-           assertTrue(level.isSetLevelEnd());
-           checkQuantity(level.getLevelEnd(), to);
-       }
-       assertTrue(level.isSetValue());
-       assertThat(level.getSimpleValue() instanceof QuantityValue, is(true));
-       checkQuantityValue((QuantityValue) level.getSimpleValue(), value);
+        if (interval) {
+            assertNotNull(level.getLevelStart());
+            assertTrue(level.isSetLevelStart());
+            checkQuantity(level.getLevelStart(), from);
+            assertNotNull(level.getLevelEnd());
+            assertTrue(level.isSetLevelEnd());
+            checkQuantity(level.getLevelEnd(), to);
+        } else {
+            assertNotNull(level.getLevelEnd());
+            assertTrue(level.isSetLevelEnd());
+            checkQuantity(level.getLevelEnd(), to);
+        }
+        assertTrue(level.isSetValue());
+        assertThat(level.getSimpleValue() instanceof QuantityValue, is(true));
+        checkQuantityValue((QuantityValue) level.getSimpleValue(), value);
     }
 
     private void checkQuantityValue(QuantityValue quantity, Double value) {
         assertNotNull(quantity.getValue());
-        assertThat(quantity.getValue().doubleValue(), is(value));
+        assertThat(quantity.getValue()
+                .doubleValue(), is(value));
         assertNotNull(quantity.getUom());
         assertThat(quantity.getUom(), is(TEMP_UNIT));
     }
 
     private void checkQuantity(SweQuantity quantity, Double value) {
         assertNotNull(quantity.getValue());
-        assertThat(quantity.getValue().doubleValue(), is(value));
+        assertThat(quantity.getValue()
+                .doubleValue(), is(value));
         assertNotNull(quantity.getUom());
         assertThat(quantity.getUom(), is(VERTICAL_UNIT));
     }
@@ -237,11 +340,11 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
         profileValue.setGmlId("pv_1");
         UoM uom = new UoM(VERTICAL_UNIT);
         if (interval) {
-            profileValue.setFromLevel(createQuantityValue(VERTICAL_0, uom, DEPTH));
-            profileValue.setToLevel(createQuantityValue(VERTICAL_20, uom, DEPTH));
-        } else {
             profileValue.setFromLevel(createQuantityValue(VERTICAL_0, uom, FROM));
             profileValue.setToLevel(createQuantityValue(VERTICAL_20, uom, TO));
+        } else {
+            profileValue.setFromLevel(createQuantityValue(VERTICAL_0, uom, DEPTH));
+            profileValue.setToLevel(createQuantityValue(VERTICAL_20, uom, DEPTH));
         }
         profileValue.setValue(createProfileLevel(interval));
         return profileValue;
@@ -333,7 +436,6 @@ public class ProfileObservationInsertDAOTest extends AbstractInsertDAOTest {
 
         // check child procedures
         assertThat(getCache().getChildProcedures(PROCEDURE3, true, false), empty());
-
 
         if (afterCacheUpdate) {
             // check features of interest for offering

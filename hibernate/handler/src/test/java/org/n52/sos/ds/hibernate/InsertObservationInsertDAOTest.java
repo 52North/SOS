@@ -40,8 +40,16 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.event.events.ObservationInsertion;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -107,6 +115,7 @@ public class InsertObservationInsertDAOTest extends AbstractObservationInsertDAO
         checkObservation(OFFERING3, PROCEDURE3, OBSPROP3, OBS_TIME, PROCEDURE3, OBSPROP3, FEATURE3, OBS_VAL,
                 TEMP_UNIT);
     }
+
 
     @Test
     public void testInsertObservationWithSamplingGeometry()
@@ -197,6 +206,5 @@ public class InsertObservationInsertDAOTest extends AbstractObservationInsertDAO
         this.serviceEventBus.submit(new ObservationInsertion(req, resp2));
         assertInsertionAftermathBeforeAndAfterCacheReload();
     }
-
 
 }

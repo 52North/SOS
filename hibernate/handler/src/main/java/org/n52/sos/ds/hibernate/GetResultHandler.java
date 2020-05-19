@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -120,8 +119,6 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
     @Override
     public void init() {
         this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
-        this.resultHandlingHelper = new ResultHandlingHelper(daoFactory.getGeometryHandler(),
-                daoFactory.getSweHelper(), daoFactory.getDecoderRepository());
     }
 
     @Override
@@ -142,12 +139,26 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
 
     @Override
     public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
+        return true;
     }
 
     @Override
     public SweHelper getSweHelper() {
-        return daoFactory.getSweHelper();
+        return getDaoFactory().getSweHelper();
+    }
+
+    @Override
+    public ResultHandlingHelper getResultHandlingHelper() {
+        if (resultHandlingHelper == null) {
+            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(),
+                    getDaoFactory().getSweHelper(), getDaoFactory().getDecoderRepository());
+        }
+        return resultHandlingHelper;
+    }
+
+    @Override
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
     @Override
@@ -159,20 +170,24 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             final Set<String> featureIdentifier =
-                    QueryHelper.getFeatures(daoFactory.getFeatureQueryHandler(), request, session);
-            final List<ResultTemplateEntity> resultTemplates =
+                    QueryHelper.getFeatures(getDaoFactory().getFeatureQueryHandler(), request, session);
+            final ResultTemplateEntity resultTemplate =
                     queryResultTemplate(request, featureIdentifier, session);
-            if (CollectionHelper.isNotEmpty(resultTemplates)) {
-                final SosResultEncoding sosResultEncoding = createSosResultEncoding(resultTemplates.get(0)
-                        .getEncoding());
-                final SosResultStructure sosResultStructure = createSosResultStructure(resultTemplates.get(0)
-                        .getStructure());
-                final List<DataEntity<?>> observations;
-                observations = querySeriesObservation(request, featureIdentifier, session);
-                response.setResultValues(resultHandlingHelper.createResultValuesFromObservations(observations,
-                        sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile()
-                                .getResponseNoDataPlaceholder()));
+            SosResultEncoding sosResultEncoding = null;
+            SosResultStructure sosResultStructure = null;
+            if (resultTemplate != null) {
+                sosResultEncoding = createSosResultEncoding(resultTemplate.getEncoding());
+                sosResultStructure = createSosResultStructure(resultTemplate.getStructure());
+            } else {
+                sosResultEncoding = createSosResultEncoding();
+                sosResultStructure = generateSosResultStructure(request.getObservedProperty(),
+                        request.getOffering(), featureIdentifier, session);
             }
+            final List<DataEntity<?>> observations;
+            observations = querySeriesObservation(request, featureIdentifier, session);
+            response.setResultValues(getResultHandlingHelper().createResultValuesFromObservations(observations,
+                    sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile()
+                            .getResponseNoDataPlaceholder(), session));
             return response;
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
@@ -205,7 +220,7 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
         addSpatialFilteringProfileRestrictions(c, request, session);
         addParentChildRestriction(c);
 
-        List<DatasetEntity> series = daoFactory.getSeriesDAO()
+        List<DatasetEntity> series = getDaoFactory().getSeriesDAO()
                 .getSeries(request, featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
@@ -236,12 +251,17 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
      *            Hibernate session
      * @return Resulting ResultTemplates as list
      */
-    private List<ResultTemplateEntity> queryResultTemplate(final GetResultRequest request,
+    private ResultTemplateEntity queryResultTemplate(final GetResultRequest request,
             final Set<String> featureIdentifier, final Session session) {
-        return supportsDatabaseEntities ? daoFactory.getResultTemplateDAO()
-                .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), featureIdentifier,
-                        session)
-                : new LinkedList<>();
+        if (supportsDatabaseEntities) {
+            List<ResultTemplateEntity> resultTemplates = getDaoFactory().getResultTemplateDAO()
+                    .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), featureIdentifier,
+                            session);
+            if (!resultTemplates.isEmpty()) {
+                return resultTemplates.get(0);
+            }
+        }
+        return null;
     }
 
     /**
@@ -302,7 +322,7 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             criteria.add(SpatialRestrictions.filter(DataEntity.PROPERTY_GEOMETRY_ENTITY, request.getSpatialFilter()
                     .getOperator(),
-                    daoFactory.getGeometryHandler()
+                    getDaoFactory().getGeometryHandler()
                             .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter()
                                     .getGeometry()
                                     .toGeometry())));

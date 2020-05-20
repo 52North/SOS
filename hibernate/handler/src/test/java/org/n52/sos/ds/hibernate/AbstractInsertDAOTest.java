@@ -811,7 +811,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         namedValue.setValue(new TextValue(value));
         return namedValue;
     }
-    
+
     protected void printXml(Object o, String namespace) throws EncodingException {
         Encoder<XmlObject, Object> encoder = encoderRepository.getEncoder(new XmlEncoderKey(namespace, o.getClass()));
         if (encoder != null) {

@@ -151,8 +151,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
 
     private String createResultValuesFromObservations(final Collection<DataEntity<?>> observations,
             final SosResultEncoding sosResultEncoding, final SosResultStructure sosResultStructure,
-            String noDataPlaceholder, Map<Integer, String> valueOrder, boolean addCount, VerticalMetadataEntity vertical, Session session)
-            throws OwsExceptionReport {
+            String noDataPlaceholder, Map<Integer, String> valueOrder, boolean addCount,
+            VerticalMetadataEntity vertical, Session session) throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
         if (CollectionHelper.isNotEmpty(observations)) {
             final String tokenSeparator = getTokenSeparator(sosResultEncoding.get()

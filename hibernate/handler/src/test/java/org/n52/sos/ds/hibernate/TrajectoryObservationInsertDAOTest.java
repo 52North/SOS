@@ -139,7 +139,7 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
                 TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
     }
-    
+
     @Test
     public void testGeneratedGetResultTemplate()
             throws OwsExceptionReport, ConverterException, EncodingException {
@@ -186,7 +186,7 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
                 + "2013-07-18T06:00:00.000Z,2013-07-18T06:00:00.000Z,4.0000000000,53.0,7.55#"
                 + "2013-07-18T07:00:00.000Z,2013-07-18T07:00:00.000Z,5.0000000000,53.1,7.56"));
     }
-    
+
     private List<OmObservation> createDefaultObservation() throws OwsExceptionReport, ConverterException {
         OmObservation obs = new OmObservation();
 
@@ -206,7 +206,7 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
         return observations;
     }
-    
+
     private void inserObservationData() throws OwsExceptionReport, ConverterException {
         InsertObservationRequest req = new InsertObservationRequest();
         req.setAssignedSensorId(PROCEDURE3);

@@ -108,6 +108,7 @@ public class InsertObservationInsertDAOTest extends AbstractObservationInsertDAO
                 TEMP_UNIT);
     }
 
+
     @Test
     public void testInsertObservationWithSamplingGeometry()
             throws OwsExceptionReport, ConverterException, InterruptedException {
@@ -197,6 +198,5 @@ public class InsertObservationInsertDAOTest extends AbstractObservationInsertDAO
         this.serviceEventBus.submit(new ObservationInsertion(req, resp2));
         assertInsertionAftermathBeforeAndAfterCacheReload();
     }
-
 
 }

@@ -91,7 +91,7 @@
         <version.mysql>8.0.20</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.4.15.Final</version.hibernate>
+        <version.hibernate>5.4.16.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
         <version.geotools>23.0</version.geotools>
@@ -100,7 +100,7 @@
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.2</version.netcdf>
         <!-- 52N dependency versions -->
-        <version.arctic-sea>7.4.1</version.arctic-sea>
+        <version.arctic-sea>7.5.0-SNAPSHOT</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.helgoland.api>3.1.0</version.helgoland.api>
         <version.dao-impl>3.1.0</version.dao-impl>
@@ -1610,6 +1610,18 @@
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1624,6 +1636,18 @@
                     <exclusion>
                         <groupId>org.apache.commons</groupId>
                         <artifactId>commons-lang3</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1640,6 +1664,18 @@
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1655,6 +1691,18 @@
                         <groupId>org.apache.commons</groupId>
                         <artifactId>commons-lang3</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1665,6 +1713,18 @@
                     <exclusion>
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

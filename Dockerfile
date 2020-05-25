@@ -30,19 +30,22 @@ ENV FAROE_CONFIGURATION /etc/sos/configuration.json
 ENV WEBAPP ${JETTY_BASE}/webapps/ROOT
 ENV HELGOLAND ${WEBAPP}/static/client/helgoland
 
-COPY --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp ${WEBAPP}
-COPY ./docker/logback.xml    ${WEBAPP}/WEB-INF/classes/
-COPY ./docker/helgoland.json ${HELGOLAND}/assets/settings.json
-COPY ./docker/default-config /etc/sos
+COPY --chown=jetty:jetty --from=BUILD /usr/src/app/webapp/target/52n-sos-webapp ${WEBAPP}
+COPY --chown=jetty:jetty ./docker/logback.xml    ${WEBAPP}/WEB-INF/classes/
+COPY --chown=jetty:jetty ./docker/helgoland.json ${HELGOLAND}/assets/settings.json
+COPY --chown=jetty:jetty ./docker/default-config /etc/sos
 
 USER root
 COPY --from=BCRYPT_BUILD /usr/src/app /usr/lib/java-brcypt
 COPY docker/bcrypt/bcrypt.sh /usr/local/bin/bcrypt
 COPY docker/sos-entrypoint.sh /usr/local/bin
 
+
 RUN mkdir -p ${WEBAPP}/WEB-INF/tmp \
  && ln -s /etc/sos ${WEBAPP}/WEB-INF/config \
- && chown -R jetty:jetty ${WEBAPP} /etc/sos \
+ && chown -R jetty:jetty ${WEBAPP}/WEB-INF/tmp \
+                         ${WEBAPP}/WEB-INF/config \
+                         /etc/sos \
  && chmod +x /usr/local/bin/sos-entrypoint.sh \
              /usr/local/bin/bcrypt
 USER jetty:jetty

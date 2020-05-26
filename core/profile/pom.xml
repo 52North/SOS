@@ -6,7 +6,7 @@
         <version>5.0.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>profile</artifactId>
+    <artifactId>sos-profile</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Profile Module</name>
     <description>52°North SOS profile module</description>

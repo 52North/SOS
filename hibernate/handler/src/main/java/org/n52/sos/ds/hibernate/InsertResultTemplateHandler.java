@@ -95,7 +95,8 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     @Override
     public void init() {
         sessionHolder = new HibernateSessionHolder(connectionProvider);
-        helper = new ResultHandlingHelper(daoFactory.getGeometryHandler(), daoFactory.getSweHelper());
+        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper(),
+                getDaoFactory().getDecoderRepository());
     }
 
     @Override
@@ -113,7 +114,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             DatasetEntity obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
-                obsConst = daoFactory.getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
+                obsConst = getDaoFactory().getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
                         Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
                     // check if result structure elements are supported
@@ -122,7 +123,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     ProcedureEntity procedure = null;
                     AbstractFeatureEntity<?> feature = null;
                     if (sosObsConst.isSetFeatureOfInterest()) {
-                        FeatureOfInterestDAO featureOfInterestDAO = daoFactory.getFeatureOfInterestDAO();
+                        FeatureOfInterestDAO featureOfInterestDAO = getDaoFactory().getFeatureOfInterestDAO();
                         feature = featureOfInterestDAO.checkOrInsert(sosObsConst.getFeatureOfInterest(), session);
                         featureOfInterestDAO.checkOrInsertRelatedFeatureRelation(feature, obsConst.getOffering(),
                                 session);
@@ -160,9 +161,14 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
         return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity obsConst,
             ProcedureEntity procedure, AbstractFeatureEntity<?> feature, Session session) throws OwsExceptionReport {
-        daoFactory.getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
+        getDaoFactory().getResultTemplateDAO()
+                .checkOrInsertResultTemplate(request, obsConst, procedure, feature, session);
     }
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty,

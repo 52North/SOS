@@ -36,9 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
-import org.hibernate.proxy.HibernateProxy;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.convert.ConverterException;
@@ -68,6 +66,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.sos.ds.hibernate.util.HibernateUnproxy;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +76,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class ObservationOmObservationCreator extends AbstractOmObservationCreator {
+public class ObservationOmObservationCreator extends AbstractOmObservationCreator implements HibernateUnproxy {
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
     private final Collection<? extends DataEntity<?>> observations;
@@ -165,7 +164,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String phenomenonId = createPhenomenon(hObservation);
         Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
         final Value<?> value = new ObservationValueCreator(getCreatorContext().getDecoderRepository())
-                .visit(hObservation instanceof HibernateProxy ? unproxy(hObservation) : hObservation);
+                .visit(unproxy(hObservation, getSession()));
         OmObservation sosObservation = null;
         if (value != null) {
             value.setUnit(queryUnit(hObservation.getDataset()));
@@ -192,14 +191,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done in {} ms.", System.currentTimeMillis() - start);
         return sosObservation;
-    }
-
-    private DataEntity<?> unproxy(DataEntity<?> dataEntity) {
-        if (dataEntity instanceof HibernateProxy
-                && ((HibernateProxy) dataEntity).getHibernateLazyInitializer().getSession() == null) {
-            return unproxy(getSession().load(DataEntity.class, dataEntity.getId()));
-        }
-        return (DataEntity<?>) Hibernate.unproxy(dataEntity);
     }
 
     private void addRelatedObservations(OmObservation sosObservation, DataEntity<?> hObservation)

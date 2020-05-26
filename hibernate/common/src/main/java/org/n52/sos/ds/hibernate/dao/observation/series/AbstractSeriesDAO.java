@@ -1104,10 +1104,10 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
         }
-        if (Strings.isNullOrEmpty(observedProperty)) {
+        if (!Strings.isNullOrEmpty(observedProperty)) {
             addObservablePropertyToCriteria(c, observedProperty);
         }
-        if (Strings.isNullOrEmpty(offering)) {
+        if (!Strings.isNullOrEmpty(offering)) {
             addOfferingToCriteria(c, offering);
         }
         return c;

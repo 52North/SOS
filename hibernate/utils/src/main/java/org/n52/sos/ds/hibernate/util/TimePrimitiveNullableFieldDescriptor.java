@@ -28,14 +28,27 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-public class TimePrimitiveFieldDescriptor extends AbstractTimePrimitiveFieldDescriptor {
+public class TimePrimitiveNullableFieldDescriptor extends AbstractTimePrimitiveFieldDescriptor {
 
-    public TimePrimitiveFieldDescriptor(String position) {
+    private TimePrimitiveFieldDescriptor alternative;
+
+    public TimePrimitiveNullableFieldDescriptor(String position, TimePrimitiveFieldDescriptor alternative) {
         super(position);
+        this.setAlternative(alternative);
     }
 
-    public TimePrimitiveFieldDescriptor(String begin, String end) {
-        super(begin, end);
+    /**
+     * @return the alternative
+     */
+    public TimePrimitiveFieldDescriptor getAlternative() {
+        return alternative;
+    }
+
+    /**
+     * @param alternative the alternative to set
+     */
+    public void setAlternative(TimePrimitiveFieldDescriptor alternative) {
+        this.alternative = alternative;
     }
 
 }

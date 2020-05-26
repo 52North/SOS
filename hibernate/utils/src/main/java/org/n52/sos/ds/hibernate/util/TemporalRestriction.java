@@ -74,7 +74,7 @@ public interface TemporalRestriction {
      * @throws UnsupportedTimeException
      *             if the supplied time can not be used with this restriction
      */
-    default Criterion getCriterion(TimePrimitiveFieldDescriptor ref, Time time, Integer count)
+    default Criterion getCriterion(AbstractTimePrimitiveFieldDescriptor ref, Time time, Integer count)
             throws UnsupportedTimeException {
         if (time instanceof TimePeriod) {
             return filterWithPeriod((TimePeriod) time, ref, false, count);
@@ -195,9 +195,10 @@ public interface TemporalRestriction {
     }
 
     /**
-     * Create a filter for the specified period and fields. If the period is no
-     * real period but a instance, the method will call
-     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)}.
+     * Create a filter for the specified period and fields that are nullable,
+     * e.g. resultTime. If the period is no real period but a instance, the
+     * method will call
+     * {@link #filterWithInstant(TimeInstant, AbstractTimePrimitiveFieldDescriptor)}.
      *
      * @param time
      *            the time
@@ -206,7 +207,39 @@ public interface TemporalRestriction {
      *
      * @return the {@code Criterion} that describes this restriction
      */
-    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveNullableFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant) {
+        return Restrictions.or(
+                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
+                        filterWithPeriod(time, (AbstractTimePrimitiveFieldDescriptor) r,
+                                periodFromReducedPrecisionInstant)),
+                Restrictions.and(Restrictions.isNull(r.getPosition()),
+                        filterWithPeriod(time, r.getAlternative(), periodFromReducedPrecisionInstant)));
+    }
+
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveNullableFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant, Integer count) {
+        return Restrictions.or(
+                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
+                        filterWithPeriod(time, (AbstractTimePrimitiveFieldDescriptor) r,
+                                periodFromReducedPrecisionInstant, count)),
+                Restrictions.and(Restrictions.isNull(r.getPosition()),
+                        filterWithPeriod(time, r.getAlternative(), periodFromReducedPrecisionInstant, count)));
+    }
+
+    /**
+     * Create a filter for the specified period and fields. If the period is no
+     * real period but a instance, the method will call
+     * {@link #filterWithInstant(TimeInstant, AbstractTimePrimitiveFieldDescriptor)}.
+     *
+     * @param time
+     *            the time
+     * @param r
+     *            the property name(s)
+     *
+     * @return the {@code Criterion} that describes this restriction
+     */
+    default Criterion filterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
             boolean periodFromReducedPrecisionInstant) {
         Date begin = time.resolveStart().toDate();
         // FIXME should also incorporate reduced precision like
@@ -225,7 +258,7 @@ public interface TemporalRestriction {
 
     }
 
-    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
+    default Criterion filterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
             boolean periodFromReducedPrecisionInstant, Integer count) {
         Date begin = time.resolveStart().toDate();
         // FIXME should also incorporate reduced precision like
@@ -248,9 +281,9 @@ public interface TemporalRestriction {
     }
 
     /**
-     * Creates a filter for the specfied instant and fields. In case of a
+     * Creates a filter for the specfied instant and fields that are nullable. In case of a
      * instance with reduced precision a the method will call
-     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor, boolean)}.
+     * {@link #filterWithPeriod(TimePeriod, AbstractTimePrimitiveFieldDescriptor, boolean)}.
      *
      * @param time
      *            the time
@@ -259,7 +292,47 @@ public interface TemporalRestriction {
      *
      * @return the {@code Criterion} that describes this restriction
      */
-    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveFieldDescriptor r) {
+    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveNullableFieldDescriptor r) {
+        /*
+         * Saved primitives can be periods, but can also be instants. As begin
+         * &lt; end has to be true for all periods those are instants and have
+         * to be treated as such. Also instants with reduced precision are
+         * semantically periods and have to be handled like periods.
+         */
+        return Restrictions.or(
+                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
+                        filterWithInstant(time, (AbstractTimePrimitiveFieldDescriptor) r)),
+                Restrictions.and(Restrictions.isNull(r.getPosition()), filterWithInstant(time, r.getAlternative())));
+    }
+
+    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveNullableFieldDescriptor r, Integer count) {
+        /*
+         * Saved primitives can be periods, but can also be instants. As begin
+         * &lt; end has to be true for all periods those are instants and have
+         * to be treated as such. Also instants with reduced precision are
+         * semantically periods and have to be handled like periods.
+         */
+        return Restrictions.or(
+                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
+                        filterWithInstant(time, (AbstractTimePrimitiveFieldDescriptor) r, count)),
+                Restrictions.and(Restrictions.isNull(r.getPosition()),
+                        filterWithInstant(time, r.getAlternative(), count)));
+    }
+
+
+    /**
+     * Creates a filter for the specfied instant and fields. In case of a
+     * instance with reduced precision a the method will call
+     * {@link #filterWithPeriod(TimePeriod, AbstractTimePrimitiveFieldDescriptor, boolean)}.
+     *
+     * @param time
+     *            the time
+     * @param r
+     *            the property name(s)
+     *
+     * @return the {@code Criterion} that describes this restriction
+     */
+    default Criterion filterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r) {
         /*
          * Saved primitives can be periods, but can also be instants. As begin
          * &lt; end has to be true for all periods those are instants and have
@@ -280,7 +353,7 @@ public interface TemporalRestriction {
         }
     }
 
-    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveFieldDescriptor r, Integer count) {
+    default Criterion filterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r, Integer count) {
         /*
          * Saved primitives can be periods, but can also be instants. As begin
          * &lt; end has to be true for all periods those are instants and have
@@ -340,7 +413,7 @@ public interface TemporalRestriction {
      *         could be applied
      */
     static Criterion getPropertyCheckingCriterion(Criterion periods, Criterion instants,
-            TimePrimitiveFieldDescriptor r) {
+            AbstractTimePrimitiveFieldDescriptor r) {
         if (periods != null && instants != null) {
             return Restrictions.or(periods, instants);
         } else if (periods != null && instants == null) {

@@ -6,7 +6,7 @@
         <artifactId>sos-converter</artifactId>
          <version>5.0.3-SNAPSHOT</version>
     </parent>
-    <artifactId>identifier-modifier</artifactId>
+    <artifactId>sos-identifier-modifier</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Identifier Modifier Modules</name>
     <description>52°North SOS - Identifier Modifier Modules</description>

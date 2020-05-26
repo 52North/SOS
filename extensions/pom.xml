@@ -6,7 +6,7 @@
         <artifactId>sos-parent</artifactId>
         <version>5.0.3-SNAPSHOT</version>
     </parent>
-    <artifactId>extensions</artifactId>
+    <artifactId>sos-extensions</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Extension Modules</name>
     <description>52°North SOS - Extension Modules</description>

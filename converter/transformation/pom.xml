@@ -6,7 +6,7 @@
         <artifactId>sos-converter</artifactId>
         <version>5.0.3-SNAPSHOT</version>
     </parent>
-    <artifactId>transformation</artifactId>
+    <artifactId>sos-transformation</artifactId>
     <packaging>pom</packaging>
     <name>52°North SOS - Converter Modules</name>
     <description>52°North SOS - Converter Modules</description>

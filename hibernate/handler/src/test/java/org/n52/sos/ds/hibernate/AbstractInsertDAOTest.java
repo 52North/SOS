@@ -73,7 +73,6 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.ObservationValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
@@ -133,6 +132,7 @@ import org.n52.svalbard.decode.SensorMLDecoderV101;
 import org.n52.svalbard.decode.SensorMLDecoderV20;
 import org.n52.svalbard.decode.SweCommonDecoderV101;
 import org.n52.svalbard.decode.SweCommonDecoderV20;
+import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.GmlEncoderv311;
 import org.n52.svalbard.encode.GmlEncoderv321;
@@ -140,6 +140,7 @@ import org.n52.svalbard.encode.SensorMLEncoderv101;
 import org.n52.svalbard.encode.SensorMLEncoderv20;
 import org.n52.svalbard.encode.SweCommonEncoderv101;
 import org.n52.svalbard.encode.SweCommonEncoderv20;
+import org.n52.svalbard.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.SweHelper;
@@ -272,6 +273,10 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected final GetObservationDaoImpl getObsDAO = new GetObservationDaoImpl();
 
+    protected final GetResultTemplateHandler getResultTemplateHandler = new GetResultTemplateHandler();
+
+    protected final GetResultHandler getResultHandler = new GetResultHandler();
+
     protected final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
 
     protected final I18NDAORepository i18NDAORepository = new I18NDAORepository();
@@ -336,6 +341,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         daoFactory.setDecoderRepository(decoderRepository);
         daoFactory.setEncoderRepository(encoderRepository);
         daoFactory.setI18NDAORepository(i18NDAORepository);
+        daoFactory.setSweHelper(initSweHelper());
 
         cacheFeeder.setConnectionProvider(holder);
         cacheFeeder.setI18NDAORepository(i18NDAORepository);
@@ -372,7 +378,6 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
                 featureQueryHandler, converterRepository, factoryRepository, geometryHandler, decoderRepository, null,
                 bindingRepository);
         observationCtx.setDefaultLanguage("eng");
-        initDaos();
         Session session = null;
         try {
             session = getSession();
@@ -380,7 +385,17 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         } finally {
             returnSession(session);
         }
+        initDaos();
+    }
 
+    protected SweHelper initSweHelper() {
+        SweHelper helper = new SweHelper();
+        helper.setDecimalSeparator(DECIMAL_SEPARATOR);
+        helper.setTokenSeparator(TOKEN_SEPARATOR);
+        helper.setTupleSeparator(BLOCK_SEPARATOR);
+        helper.setNorthingNames(SweConstants.SweCoordinateNames.LATITUDE);
+        helper.setEastingNames(SweConstants.SweCoordinateNames.LONGITUDE);
+        return helper;
     }
 
     @After
@@ -422,6 +437,15 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         getObsDAO.setEncoderRepository(encoderRepository);
         getObsDAO.setDefaultLanguage("eng");
         getObsDAO.setOmObservationCreatorContext(observationCtx);
+        getResultTemplateHandler.setConnectionProvider(this);
+        getResultTemplateHandler.setDecoderRepository(decoderRepository);
+        getResultTemplateHandler.setDaoFactory(daoFactory);
+        getResultTemplateHandler.init();
+        getResultHandler.setConnectionProvider(this);
+        getResultHandler.setDecoderRepository(decoderRepository);
+        getResultHandler.setDaoFactory(daoFactory);
+        getResultHandler.setProfileHandler(new DefaultProfileHandler());
+        getResultHandler.init();
     }
 
     private void initEncoder() {
@@ -786,6 +810,13 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         namedValue.setName(referenceType);
         namedValue.setValue(new TextValue(value));
         return namedValue;
+    }
+
+    protected void printXml(Object o, String namespace) throws EncodingException {
+        Encoder<XmlObject, Object> encoder = encoderRepository.getEncoder(new XmlEncoderKey(namespace, o.getClass()));
+        if (encoder != null) {
+            System.out.println(encoder.encode(o).xmlText(new XmlOptions()));
+        }
     }
 
     private class TestingSosContentCacheControllerImpl extends SosContentCacheControllerImpl {

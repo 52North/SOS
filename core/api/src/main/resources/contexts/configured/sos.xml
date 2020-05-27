@@ -30,6 +30,9 @@
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
 
+    <bean id="sosHelper"
+          class="org.n52.sos.util.SosHelper" />
+
     <bean id="encoderRepository"
           class="org.n52.sos.coding.encode.SosEncoderRepository" />
 

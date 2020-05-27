@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,15 +49,12 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
@@ -113,8 +109,6 @@ public class HibernateFeatureQueryHandler
 
     private ContentCacheController contentCacheController;
 
-    private String serviceURL;
-
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -143,16 +137,6 @@ public class HibernateFeatureQueryHandler
     @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
     public void setShowAllLanguages(boolean showAllLanguages) {
         this.showAllLanguages = showAllLanguages;
-    }
-
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
     }
 
     @Override
@@ -418,8 +402,7 @@ public class HibernateFeatureQueryHandler
         .setUpdateFeatureGeometry(updateFeatureGeometry)
         .setCreateFeatureGeometryFromSamplingGeometries(createFeatureGeometryFromSamplingGeometries)
         .setI18NDAORepository(i18NDAORepository)
-        .setCache((SosContentCache) contentCacheController.getCache())
-        .setServiceURL(serviceURL);
+        .setCache((SosContentCache) contentCacheController.getCache());
     }
 
     protected AbstractFeatureEntity insertFeatureOfInterest(AbstractSamplingFeature samplingFeature,

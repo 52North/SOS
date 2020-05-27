@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -125,6 +126,7 @@ import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.profile.DefaultProfileHandler;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.GmlDecoderv311;
 import org.n52.svalbard.decode.GmlDecoderv321;
@@ -329,6 +331,9 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
         holder.setConnectionProvider(this);
         daoFactory.setSweHelper(new SweHelper());
+        SosHelper sosHelper = new SosHelper();
+        sosHelper.setServiceURL(URI.create("http://test.org"));
+        daoFactory.setSosHelper(sosHelper);
         GeometryHandler geometryHandler = new GeometryHandler();
         initGeometryHandler(geometryHandler);
         daoFactory.setGeometryHandler(geometryHandler);

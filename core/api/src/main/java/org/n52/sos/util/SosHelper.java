@@ -102,7 +102,7 @@ public class SosHelper {
     /**
      * Hide utility constructor
      */
-    protected SosHelper() {
+    public SosHelper() {
     }
 
     public String getServiceURL() {

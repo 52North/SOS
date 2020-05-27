@@ -394,7 +394,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             } else {
                 featureOfInterest.setGeometry(geom);
             }
-            session.saveOrUpdate(featureOfInterest);
+            session.merge(featureOfInterest);
         }
     }
 

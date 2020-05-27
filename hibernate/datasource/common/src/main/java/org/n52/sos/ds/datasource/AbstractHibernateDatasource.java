@@ -303,7 +303,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         properties.put(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY, toURL(settings));
         config.addProperties(properties);
         config.registerTypeOverride(SmallBooleanType.INSTANCE);
-        config.buildMappings();
         return config;
     }
 
@@ -549,7 +548,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metadata == null) {
             getServiceRegistry(settings);
             MetadataSources sources = new MetadataSources(registry);
-
             for (File dir : getMappingPaths(settings)) {
                 sources.addDirectory(dir);
             }

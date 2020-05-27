@@ -38,6 +38,7 @@ import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedTimeException.TimeType;
 
 /**
  * Implements the 13 temporal relationships identified by Allen as
@@ -115,13 +116,16 @@ public interface TemporalRestriction {
      *
      * @return the criterion for the temporal relation (or {@code null} if not
      *         applicable)
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
-    default Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd) {
-        return null;
+    default Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Date otherBegin, Date otherEnd)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(new TimePeriod(otherBegin, otherEnd));
     }
 
-    default Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count) {
-        return null;
+    default Criterion filterPeriodWithPeriod(String selfBegin, String selfEnd, Integer count)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(TimeType.TimePeriod, TimeType.TimePeriod);
     }
 
     /**
@@ -139,19 +143,21 @@ public interface TemporalRestriction {
      *
      * @return the criterion for the temporal relation (or {@code null} if not
      *         applicable)
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
     default Criterion filterInstantWithPeriod(String selfPosition, Date otherBegin, Date otherEnd,
-            boolean isOtherPeriodFromReducedPrecisionInstant) {
-        return null;
+            boolean isOtherPeriodFromReducedPrecisionInstant) throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(new TimePeriod(otherBegin, otherEnd));
     }
 
-    default Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count) {
-        return null;
+    default Criterion filterInstantWithPeriod(String selfPosition, String otherPosition, Integer count)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(TimeType.TimeInstant, TimeType.TimePeriod);
     }
 
     default Criterion filterInstantWithPeriod(String position, String endPosition, Date begin, Date end,
-            boolean periodFromReducedPrecisionInstant) {
-        return null;
+            boolean periodFromReducedPrecisionInstant) throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(new TimePeriod(begin, end));
     }
 
     /**
@@ -166,13 +172,16 @@ public interface TemporalRestriction {
      *
      * @return the criterion for the temporal relation (or {@code null} if not
      *         applicable)
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
-    default Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition) {
-        return null;
+    default Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Date otherPosition)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(new TimeInstant(otherPosition));
     }
 
-    default Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count) {
-        return null;
+    default Criterion filterPeriodWithInstant(String selfBegin, String selfEnd, Integer count)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(TimeType.TimePeriod, TimeType.TimeInstant);
     }
 
     /**
@@ -185,20 +194,23 @@ public interface TemporalRestriction {
      *
      * @return the criterion for the temporal relation (or {@code null} if not
      *         applicable)
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
-    default Criterion filterInstantWithInstant(String selfPosition, Date otherPosition) {
-        return null;
+    default Criterion filterInstantWithInstant(String selfPosition, Date otherPosition)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(new TimeInstant(otherPosition));
     }
 
-    default Criterion filterInstantWithInstant(String selfPosition, String otherPosition, Integer count) {
-        return null;
+    default Criterion filterInstantWithInstant(String selfPosition, String otherPosition, Integer count)
+            throws UnsupportedTimeException {
+        throw new UnsupportedTimeException(TimeType.TimeInstant, TimeType.TimeInstant);
     }
 
     /**
      * Create a filter for the specified period and fields that are nullable,
      * e.g. resultTime. If the period is no real period but a instance, the
      * method will call
-     * {@link #filterWithInstant(TimeInstant, AbstractTimePrimitiveFieldDescriptor)}.
+     * {@link #filterWithInstant(TimeInstant, TimePrimitiveNullableFieldDescriptor)}.
      *
      * @param time
      *            the time
@@ -206,25 +218,34 @@ public interface TemporalRestriction {
      *            the property name(s)
      *
      * @return the {@code Criterion} that describes this restriction
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
     default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveNullableFieldDescriptor r,
-            boolean periodFromReducedPrecisionInstant) {
-        return Restrictions.or(
-                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
-                        filterWithPeriod(time, (AbstractTimePrimitiveFieldDescriptor) r,
+            boolean periodFromReducedPrecisionInstant) throws UnsupportedTimeException {
+        return Restrictions.disjunction(
+                Restrictions.conjunction(Restrictions.isNotNull(r.getPosition()),
+                        createFilterWithPeriod(time, (AbstractTimePrimitiveFieldDescriptor) r,
                                 periodFromReducedPrecisionInstant)),
-                Restrictions.and(Restrictions.isNull(r.getPosition()),
-                        filterWithPeriod(time, r.getAlternative(), periodFromReducedPrecisionInstant)));
+                Restrictions.conjunction(Restrictions.isNull(r.getPosition()),
+                        createFilterWithPeriod(time, r.getAlternative(), periodFromReducedPrecisionInstant)));
     }
 
-    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveNullableFieldDescriptor r,
-            boolean periodFromReducedPrecisionInstant, Integer count) {
-        return Restrictions.or(
-                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
-                        filterWithPeriod(time, (AbstractTimePrimitiveFieldDescriptor) r,
-                                periodFromReducedPrecisionInstant, count)),
-                Restrictions.and(Restrictions.isNull(r.getPosition()),
-                        filterWithPeriod(time, r.getAlternative(), periodFromReducedPrecisionInstant, count)));
+    /**
+     * Create a filter for the specified period and fields. If the period is no
+     * real period but a instance, the method will call
+     * {@link #filterWithInstant(TimeInstant, TimePrimitiveFieldDescriptor)}.
+     *
+     * @param time
+     *            the time
+     * @param r
+     *            the property name(s)
+     *
+     * @return the {@code Criterion} that describes this restriction
+     * @throws UnsupportedTimeException If the filter is not supported!
+     */
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant) throws UnsupportedTimeException {
+        return createFilterWithPeriod(time, r, periodFromReducedPrecisionInstant);
     }
 
     /**
@@ -238,14 +259,46 @@ public interface TemporalRestriction {
      *            the property name(s)
      *
      * @return the {@code Criterion} that describes this restriction
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
     default Criterion filterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
-            boolean periodFromReducedPrecisionInstant) {
-        Date begin = time.resolveStart().toDate();
+            boolean periodFromReducedPrecisionInstant) throws UnsupportedTimeException {
+        return r instanceof TimePrimitiveFieldDescriptor
+                ? createFilterWithPeriod(time, r, periodFromReducedPrecisionInstant)
+                : filterWithPeriod(time, (TimePrimitiveNullableFieldDescriptor) r, periodFromReducedPrecisionInstant);
+    }
+
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveNullableFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant, Integer count) throws UnsupportedTimeException {
+        return Restrictions.disjunction(
+                Restrictions.conjunction(Restrictions.isNotNull(r.getPosition()),
+                        createFilterWithPeriod(time, r, periodFromReducedPrecisionInstant, count)),
+                Restrictions.conjunction(Restrictions.isNull(r.getPosition()),
+                        createFilterWithPeriod(time, r.getAlternative(), periodFromReducedPrecisionInstant, count)));
+    }
+
+    default Criterion filterWithPeriod(TimePeriod time, TimePrimitiveFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant, Integer count) throws UnsupportedTimeException {
+        return createFilterWithPeriod(time, r, periodFromReducedPrecisionInstant, count);
+    }
+
+    default Criterion filterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant, Integer count) throws UnsupportedTimeException {
+        return r instanceof TimePrimitiveFieldDescriptor
+                ? createFilterWithPeriod(time, r, periodFromReducedPrecisionInstant, count)
+                : filterWithPeriod(time, (TimePrimitiveNullableFieldDescriptor) r, periodFromReducedPrecisionInstant,
+                        count);
+    }
+
+    default Criterion createFilterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant) throws UnsupportedTimeException {
+        Date begin = time.resolveStart()
+                .toDate();
         // FIXME should also incorporate reduced precision like
         // getRequestedTimeLength()
         // (Partially?) fixed with use of periodFromReducedPrecisionInstant?
-        Date end = time.resolveEnd().toDate();
+        Date end = time.resolveEnd()
+                .toDate();
         if (begin.equals(end)) {
             return filterWithInstant(new TimeInstant(time.resolveStart()), r);
         }
@@ -255,16 +308,17 @@ public interface TemporalRestriction {
         } else {
             return filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
         }
-
     }
 
-    default Criterion filterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
-            boolean periodFromReducedPrecisionInstant, Integer count) {
-        Date begin = time.resolveStart().toDate();
+    default Criterion createFilterWithPeriod(TimePeriod time, AbstractTimePrimitiveFieldDescriptor r,
+            boolean periodFromReducedPrecisionInstant, Integer count) throws UnsupportedTimeException {
+        Date begin = time.resolveStart()
+                .toDate();
         // FIXME should also incorporate reduced precision like
         // getRequestedTimeLength()
         // (Partially?) fixed with use of periodFromReducedPrecisionInstant?
-        Date end = time.resolveEnd().toDate();
+        Date end = time.resolveEnd()
+                .toDate();
         if (begin.equals(end)) {
             return filterWithInstant(new TimeInstant(time.resolveStart()), r);
         }
@@ -278,11 +332,12 @@ public interface TemporalRestriction {
             return count != null ? filterInstantWithPeriod(r.getBeginPosition(), r.getEndPosition(), count)
                     : filterInstantWithPeriod(r.getPosition(), begin, end, periodFromReducedPrecisionInstant);
         }
+
     }
 
     /**
-     * Creates a filter for the specfied instant and fields that are nullable. In case of a
-     * instance with reduced precision a the method will call
+     * Creates a filter for the specfied instant and fields that are nullable.
+     * In case of a instance with reduced precision a the method will call
      * {@link #filterWithPeriod(TimePeriod, AbstractTimePrimitiveFieldDescriptor, boolean)}.
      *
      * @param time
@@ -291,34 +346,40 @@ public interface TemporalRestriction {
      *            the property name(s)
      *
      * @return the {@code Criterion} that describes this restriction
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
-    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveNullableFieldDescriptor r) {
+    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveNullableFieldDescriptor r)
+            throws UnsupportedTimeException {
         /*
          * Saved primitives can be periods, but can also be instants. As begin
          * &lt; end has to be true for all periods those are instants and have
          * to be treated as such. Also instants with reduced precision are
          * semantically periods and have to be handled like periods.
          */
-        return Restrictions.or(
-                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
-                        filterWithInstant(time, (AbstractTimePrimitiveFieldDescriptor) r)),
-                Restrictions.and(Restrictions.isNull(r.getPosition()), filterWithInstant(time, r.getAlternative())));
+        return Restrictions.disjunction(
+                Restrictions.conjunction(Restrictions.isNotNull(r.getPosition()),
+                        createFilterWithInstant(time, (AbstractTimePrimitiveFieldDescriptor) r)),
+                Restrictions.conjunction(Restrictions.isNull(r.getPosition()),
+                        createFilterWithInstant(time, r.getAlternative())));
     }
 
-    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveNullableFieldDescriptor r, Integer count) {
-        /*
-         * Saved primitives can be periods, but can also be instants. As begin
-         * &lt; end has to be true for all periods those are instants and have
-         * to be treated as such. Also instants with reduced precision are
-         * semantically periods and have to be handled like periods.
-         */
-        return Restrictions.or(
-                Restrictions.and(Restrictions.isNotNull(r.getPosition()),
-                        filterWithInstant(time, (AbstractTimePrimitiveFieldDescriptor) r, count)),
-                Restrictions.and(Restrictions.isNull(r.getPosition()),
-                        filterWithInstant(time, r.getAlternative(), count)));
+    /**
+     * Creates a filter for the specfied instant and fields. In case of a
+     * instance with reduced precision a the method will call
+     * {@link #filterWithPeriod(TimePeriod, TimePrimitiveFieldDescriptor, boolean)}.
+     *
+     * @param time
+     *            the time
+     * @param r
+     *            the property name(s)
+     *
+     * @return the {@code Criterion} that describes this restriction
+     * @throws UnsupportedTimeException If the filter is not supported!
+     */
+    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveFieldDescriptor r)
+            throws UnsupportedTimeException {
+        return createFilterWithInstant(time, r);
     }
-
 
     /**
      * Creates a filter for the specfied instant and fields. In case of a
@@ -331,15 +392,50 @@ public interface TemporalRestriction {
      *            the property name(s)
      *
      * @return the {@code Criterion} that describes this restriction
+     * @throws UnsupportedTimeException If the filter is not supported!
      */
-    default Criterion filterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r) {
+    default Criterion filterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r)
+            throws UnsupportedTimeException {
+        return r instanceof TimePrimitiveFieldDescriptor ? createFilterWithInstant(time, r)
+                : filterWithInstant(time, (TimePrimitiveNullableFieldDescriptor) r);
+    }
+
+    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveNullableFieldDescriptor r, Integer count)
+            throws UnsupportedTimeException {
         /*
          * Saved primitives can be periods, but can also be instants. As begin
          * &lt; end has to be true for all periods those are instants and have
          * to be treated as such. Also instants with reduced precision are
          * semantically periods and have to be handled like periods.
          */
-        Date begin = time.resolveValue().toDate();
+        return Restrictions.disjunction(
+                Restrictions.conjunction(Restrictions.isNotNull(r.getPosition()),
+                        createFilterWithInstant(time, (AbstractTimePrimitiveFieldDescriptor) r, count)),
+                Restrictions.conjunction(Restrictions.isNull(r.getPosition()),
+                        createFilterWithInstant(time, r.getAlternative(), count)));
+    }
+
+    default Criterion filterWithInstant(TimeInstant time, TimePrimitiveFieldDescriptor r, Integer count)
+            throws UnsupportedTimeException {
+        return createFilterWithInstant(time, r, count);
+    }
+
+    default Criterion filterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r, Integer count)
+            throws UnsupportedTimeException {
+        return r instanceof TimePrimitiveFieldDescriptor ? createFilterWithInstant(time, r, count)
+                : filterWithInstant(time, (TimePrimitiveNullableFieldDescriptor) r, count);
+    }
+
+    default Criterion createFilterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r)
+            throws UnsupportedTimeException {
+        /*
+         * Saved primitives can be periods, but can also be instants. As begin
+         * &lt; end has to be true for all periods those are instants and have
+         * to be treated as such. Also instants with reduced precision are
+         * semantically periods and have to be handled like periods.
+         */
+        Date begin = time.resolveValue()
+                .toDate();
         Date end = checkInstantWithReducedPrecision(time);
         if (end != null) {
             return filterWithPeriod(new TimePeriod(new DateTime(begin), new DateTime(end)), r, true);
@@ -353,14 +449,16 @@ public interface TemporalRestriction {
         }
     }
 
-    default Criterion filterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r, Integer count) {
+    default Criterion createFilterWithInstant(TimeInstant time, AbstractTimePrimitiveFieldDescriptor r, Integer count)
+            throws UnsupportedTimeException {
         /*
          * Saved primitives can be periods, but can also be instants. As begin
          * &lt; end has to be true for all periods those are instants and have
          * to be treated as such. Also instants with reduced precision are
          * semantically periods and have to be handled like periods.
          */
-        Date begin = time.resolveValue().toDate();
+        Date begin = time.resolveValue()
+                .toDate();
         Date end = checkInstantWithReducedPrecision(time);
         if (end != null) {
             return filterWithPeriod(new TimePeriod(new DateTime(begin), new DateTime(end)), r, true, count);
@@ -369,8 +467,10 @@ public interface TemporalRestriction {
             return count != null
                     ? getPropertyCheckingCriterion(
                             filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), count), null, r)
-                    : getPropertyCheckingCriterion(filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(),
-                            time.getValue().toDate()), null, r);
+                    : getPropertyCheckingCriterion(
+                            filterPeriodWithInstant(r.getBeginPosition(), r.getEndPosition(), time.getValue()
+                                    .toDate()),
+                            null, r);
 
         } else {
             return count != null ? filterInstantWithInstant(r.getPosition(), r.getBeginPosition(), count)
@@ -391,7 +491,8 @@ public interface TemporalRestriction {
     static Date checkInstantWithReducedPrecision(TimeInstant time) {
         DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(time.getValue(),
                 time.getRequestedTimeLength());
-        return time.getValue().equals(end) ? null : end.toDate();
+        return time.getValue()
+                .equals(end) ? null : end.toDate();
     }
 
     /**

@@ -26,29 +26,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds.hibernate.util;
 
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+public interface TemporalRestrictionTestConstants {
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @since 4.0.0
- */
-public class UnsupportedTimeException extends NoApplicableCodeException {
+    String PHENOMENON_TIME = "phenomenonTime";
 
-    private static final long serialVersionUID = -6897786883586612395L;
+    String RESULT_TIME = "resultTime";
 
-    public UnsupportedTimeException(Time time) {
-        withMessage("Time %s is not supported", time);
-    }
+    String PROPERTY_SAMPLING_TIME_START = "samplingTimeStart";
 
-    public UnsupportedTimeException(TimeType referenced, TimeType requested) {
-        withMessage("%s is not supported with %s", referenced.name(), requested.name());
-    }
+    String PROPERTY_SAMPLING_TIME_END = "samplingTimeEnd";
 
-    public enum TimeType {
-        TimePeriod, TimeInstant
-    }
+    String PROPERTY_RESULT_TIME = "resultTime";
 
+    String PROPERTY_VALID_TIME_START = "validTimeStart";
+
+    String PROPERTY_VALID_TIME_END = "validTimeEnd";
+
+    String START_TIME = "startTime";
+
+    String END_TIME = "endTime";
 }

@@ -49,14 +49,13 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
  *
  * @since 4.4.0
  */
-public class TemporalRestrictionHqlPeriodPeriodTest
-        implements TemporalRestrictionTestConstants {
+public class TemporalRestrictionHqlInstantPeriodTest implements TemporalRestrictionTestConstants {
 
     @Test
     public void testAfterPhenomenonTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_After, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart>:end1"));
     }
 
@@ -64,7 +63,7 @@ public class TemporalRestrictionHqlPeriodPeriodTest
     public void testBeforePhenomenonTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Before, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeEnd<:start1"));
     }
 
@@ -72,7 +71,7 @@ public class TemporalRestrictionHqlPeriodPeriodTest
     public void testEqualsPhenomenonTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Equals, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart=:start1 and samplingTimeEnd=:end1"));
     }
 
@@ -80,50 +79,49 @@ public class TemporalRestrictionHqlPeriodPeriodTest
     public void testContainsPhenomenonTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Contains, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("samplingTimeStart<:start1 and samplingTimeEnd>:end1"));
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test
     public void testDuringPhenomenonTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_During, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart>:start1 and samplingTimeEnd<:end1"));
     }
 
     @Test
     public void testBeginsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Begins, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart=:start1 and samplingTimeEnd<:end1"));
     }
 
     @Test
     public void testBegunByPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_BegunBy, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart=:start1 and samplingTimeEnd>:end1"));
     }
 
     @Test
     public void testEndsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Ends, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart>:start1 and samplingTimeEnd=:end1"));
     }
 
     @Test
     public void testEndedByPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_EndedBy, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart<:start1 and samplingTimeEnd=:end1"));
     }
 
     @Test
     public void testOverlapsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Overlaps, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(),
                 equalTo("(samplingTimeStart<:start1 and samplingTimeEnd>:start1 and samplingTimeEnd<:end1)"));
     }
@@ -131,7 +129,7 @@ public class TemporalRestrictionHqlPeriodPeriodTest
     @Test
     public void testOverlappedByPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_OverlappedBy, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(),
                 equalTo("(samplingTimeStart>:start1 and samplingTimeStart<:end1 and samplingTimeEnd>:end1)"));
     }
@@ -139,14 +137,14 @@ public class TemporalRestrictionHqlPeriodPeriodTest
     @Test
     public void testMeetsPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Meets, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeEnd=:start1"));
     }
 
     @Test
     public void testMetByPhenomenonTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_MetBy, PHENOMENON_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
         assertThat(filterHql.toString(), equalTo("samplingTimeStart=:end1"));
     }
 
@@ -154,92 +152,98 @@ public class TemporalRestrictionHqlPeriodPeriodTest
     public void testAfterResultTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_After, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("((resultTime is not null and resultTime>:end1) or (resultTime is null and samplingTimeEnd>:end1))"));
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
+        assertThat(filterHql.toString(), equalTo(
+                "((resultTime is not null and resultTime>:end1) or (resultTime is null and samplingTimeEnd>:end1))"));
     }
 
     @Test
     public void testBeforeResultTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Before, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("((resultTime is not null and resultTime<:start1) or (resultTime is null and samplingTimeEnd<:start1))"));
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
+        assertThat(filterHql.toString(), equalTo(
+                "((resultTime is not null and resultTime<:start1) or (resultTime is null and samplingTimeEnd<:start1))"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testEqualsResultTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Equals, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testContainsResultTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Contains, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test
     public void testDuringResultTime()
             throws UnsupportedValueReferenceException, UnsupportedTimeException, UnsupportedOperatorException {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_During, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("((resultTime is not null and resultTime>:start1 and resultTime<:end1) or (resultTime is null and samplingTimeEnd>:start1 and samplingTimeEnd<:end1))"));
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
+        assertThat(filterHql.toString(), equalTo(
+                "((resultTime is not null and resultTime>:start1 and resultTime<:end1) or (resultTime is null and samplingTimeEnd>:start1 and samplingTimeEnd<:end1))"));
     }
 
     @Test
     public void testBeginsResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Begins, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("((resultTime is not null and resultTime=:start1) or (resultTime is null and samplingTimeEnd=:start1))"));
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
+        assertThat(filterHql.toString(), equalTo(
+                "((resultTime is not null and resultTime=:start1) or (resultTime is null and samplingTimeEnd=:start1))"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testBegunByResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_BegunBy, RESULT_TIME);
-        SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test
     public void testEndsResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Ends, RESULT_TIME);
-        Criterion filterHql = SosTemporalRestrictions.filterHql(tf, 1);
-        assertThat(filterHql.toString(), equalTo("((resultTime is not null and resultTime=:end1) or (resultTime is null and samplingTimeEnd=:end1))"));
+        Criterion filterHql = TestTemporalRestrictions.filterHql(tf, 1);
+        assertThat(filterHql.toString(), equalTo(
+                "((resultTime is not null and resultTime=:end1) or (resultTime is null and samplingTimeEnd=:end1))"));
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testEndedByResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_EndedBy, RESULT_TIME);
-        SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testOverlapsResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Overlaps, RESULT_TIME);
-        SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testOverlappedByResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_OverlappedBy, RESULT_TIME);
-        SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testMeetsResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_Meets, RESULT_TIME);
-        SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     @Test(expected = UnsupportedTimeException.class)
     public void testMetByResultTime() throws OwsExceptionReport {
         TemporalFilter tf = create(FilterConstants.TimeOperator.TM_MetBy, RESULT_TIME);
-        SosTemporalRestrictions.filterHql(tf, 1);
+        TestTemporalRestrictions.filterHql(tf, 1);
     }
 
     private TemporalFilter create(FilterConstants.TimeOperator op, String vr) {
-        return new TemporalFilter(op, new TimePeriod(DateTime.now().minusHours(1), DateTime.now()), vr);
+        return new TemporalFilter(op, new TimePeriod(DateTime.now()
+                .minusHours(1), DateTime.now()), vr);
     }
 
 }

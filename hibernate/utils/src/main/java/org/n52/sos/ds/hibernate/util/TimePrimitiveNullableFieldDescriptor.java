@@ -26,29 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.exception.ows.concrete;
+package org.n52.sos.ds.hibernate.util;
 
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+public class TimePrimitiveNullableFieldDescriptor extends AbstractTimePrimitiveFieldDescriptor {
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @since 4.0.0
- */
-public class UnsupportedTimeException extends NoApplicableCodeException {
+    private TimePrimitiveFieldDescriptor alternative;
 
-    private static final long serialVersionUID = -6897786883586612395L;
-
-    public UnsupportedTimeException(Time time) {
-        withMessage("Time %s is not supported", time);
+    public TimePrimitiveNullableFieldDescriptor(String position, TimePrimitiveFieldDescriptor alternative) {
+        super(position);
+        this.setAlternative(alternative);
     }
 
-    public UnsupportedTimeException(TimeType referenced, TimeType requested) {
-        withMessage("%s is not supported with %s", referenced.name(), requested.name());
+    /**
+     * @return the alternative
+     */
+    public TimePrimitiveFieldDescriptor getAlternative() {
+        return alternative;
     }
 
-    public enum TimeType {
-        TimePeriod, TimeInstant
+    /**
+     * @param alternative the alternative to set
+     */
+    public void setAlternative(TimePrimitiveFieldDescriptor alternative) {
+        this.alternative = alternative;
     }
 
 }

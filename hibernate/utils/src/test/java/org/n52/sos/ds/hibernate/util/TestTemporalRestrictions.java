@@ -35,8 +35,6 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.sos.ds.hibernate.util.restriction.AfterRestriction;
@@ -78,7 +76,7 @@ import com.google.common.collect.Maps;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @since 4.0.0
  */
-public final class SosTemporalRestrictions {
+public final class TestTemporalRestrictions implements TemporalRestrictionTestConstants {
 
     /**
      * Fields describing the phenomenon time of a {@code Observation}.
@@ -87,7 +85,7 @@ public final class SosTemporalRestrictions {
      * @see DataEntity#PROPERTY_SAMPLING_TIME_END
      */
     public static final AbstractTimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
-            DataEntity.PROPERTY_SAMPLING_TIME_START, DataEntity.PROPERTY_SAMPLING_TIME_END);
+            PROPERTY_SAMPLING_TIME_START, PROPERTY_SAMPLING_TIME_END);
 
     /**
      * Fields describing the result time of a {@code Observation}.
@@ -95,8 +93,8 @@ public final class SosTemporalRestrictions {
      * @see DataEntity#PROPERTY_RESULT_TIME
      */
     public static final AbstractTimePrimitiveFieldDescriptor RESULT_TIME_FIELDS =
-            new TimePrimitiveNullableFieldDescriptor(DataEntity.PROPERTY_RESULT_TIME,
-                    new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_SAMPLING_TIME_END));
+            new TimePrimitiveNullableFieldDescriptor(PROPERTY_RESULT_TIME,
+                    new TimePrimitiveFieldDescriptor(PROPERTY_SAMPLING_TIME_END));
 
     /**
      * Fields describing the valid time of a {@code Observation}.
@@ -105,7 +103,7 @@ public final class SosTemporalRestrictions {
      * @see DataEntity#PROPERTY_VALID_TIME_END
      */
     public static final AbstractTimePrimitiveFieldDescriptor VALID_TIME_FIELDS =
-            new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_VALID_TIME_START, DataEntity.PROPERTY_VALID_TIME_END);
+            new TimePrimitiveFieldDescriptor(PROPERTY_VALID_TIME_START, PROPERTY_VALID_TIME_END);
 
     /**
      * Fields describing the valid time of a {@code ValidProcedureTime}.
@@ -114,12 +112,12 @@ public final class SosTemporalRestrictions {
      * @see ProcedureHistoryEntity#END_TIME
      */
     public static final AbstractTimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS =
-            new TimePrimitiveFieldDescriptor(ProcedureHistoryEntity.START_TIME, ProcedureHistoryEntity.END_TIME);
+            new TimePrimitiveFieldDescriptor(START_TIME, END_TIME);
 
     /**
      * Private constructor due to static access.
      */
-    private SosTemporalRestrictions() {
+    private TestTemporalRestrictions() {
         // noop
     }
 

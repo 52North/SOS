@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.net.URI;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -43,7 +42,6 @@ import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -74,7 +72,6 @@ public class OmObservationCreatorContext {
     private HibernateProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository;
     private GeometryHandler geometryHandler;
     private Locale defaultLanguage;
-    private String serviceURL;
     private DecoderRepository decoderRepository;
     private HibernateProcedureConverter procedureConverter;
     private BindingRepository bindingRepository;
@@ -131,16 +128,6 @@ public class OmObservationCreatorContext {
     @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
     public void setDefaultLanguage(String defaultLanguage) {
         this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
-    }
-
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
     }
 
     /**
@@ -252,7 +239,7 @@ public class OmObservationCreatorContext {
      * @return the serviceURL
      */
     public String getServiceURL() {
-        return serviceURL;
+        return getDaoFactory().getServiceURL();
     }
 
     /**

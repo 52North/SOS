@@ -29,19 +29,19 @@
 package org.n52.sos.inspire.capabilities;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.annotation.Configurable;
+import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
+import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
 import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProviderKey;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.inspire.InspireConformity;
+import org.n52.shetland.inspire.InspireConformity.InspireDegreeOfConformity;
 import org.n52.shetland.inspire.InspireConformityCitation;
 import org.n52.shetland.inspire.InspireConstants;
 import org.n52.shetland.inspire.InspireDateOfCreation;
@@ -52,7 +52,6 @@ import org.n52.shetland.inspire.InspireMetadataPointOfContact;
 import org.n52.shetland.inspire.InspireResourceLocator;
 import org.n52.shetland.inspire.InspireTemporalReference;
 import org.n52.shetland.inspire.InspireUniqueResourceIdentifier;
-import org.n52.shetland.inspire.InspireConformity.InspireDegreeOfConformity;
 import org.n52.shetland.inspire.dls.FullInspireExtendedCapabilities;
 import org.n52.shetland.inspire.dls.MinimalInspireExtendedCapabilities;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -65,6 +64,8 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
@@ -75,13 +76,6 @@ import org.n52.sos.util.SosHelper;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-
-import org.n52.iceland.ogc.ows.extension.OwsOperationMetadataExtensionProvider;
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
-import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
 
 /**
  * Provider for the INSPIRE ExtendedCapabilities
@@ -99,21 +93,16 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
 
     private OwsServiceMetadataRepository serviceMetadataRepository;
 
-    private String serviceURL;
+    private SosHelper sosHelper;
 
     @Inject
     public void setServiceMetadataRepository(OwsServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
 
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
+    @Inject
+    public void setSosHelperL(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
     }
 
     public OwsServiceProvider getOwsServiceProvider() {
@@ -240,7 +229,8 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
     private InspireResourceLocator getResourceLocator() throws OwsExceptionReport {
         try {
             InspireResourceLocator resourceLocator =
-                    new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest(serviceURL).toString());
+                    new InspireResourceLocator(SosHelper.getGetCapabilitiesKVPRequest(sosHelper.getServiceURL())
+                            .toString());
             resourceLocator.addMediaType(MediaTypes.APPLICATION_XML);
             return resourceLocator;
         } catch (MalformedURLException ex) {
@@ -305,7 +295,7 @@ public class InspireExtendedCapabilitiesProvider extends AbstractInspireProvider
             if (getInspireHelper().isSetNamespace()) {
                 iuri.setNamespace(getInspireHelper().getNamespace());
             } else {
-                iuri.setNamespace(serviceURL);
+                iuri.setNamespace(sosHelper.getServiceURL());
             }
             spatialDataSetIdentifier.add(iuri);
         }

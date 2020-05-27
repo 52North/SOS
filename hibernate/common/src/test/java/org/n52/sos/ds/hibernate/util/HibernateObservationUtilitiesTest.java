@@ -62,10 +62,12 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
 import org.n52.sos.service.profile.DefaultProfileHandler;
+import org.n52.sos.util.SosHelper;
 
 /**
  * The class <code>HibernateObservationUtilitiesTest</code> contains tests for
@@ -225,12 +227,15 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
 
             ArrayList<DataEntity<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
+            SosHelper sosHelper = new SosHelper();
+            sosHelper.setServiceURL(URI.create("http://test.org/"));
+            DaoFactory daoFactory = new DaoFactory();
+            daoFactory.setSosHelper(sosHelper);
             // CALL
-            OmObservationCreatorContext ctx = new OmObservationCreatorContext(null, null, null,
+            OmObservationCreatorContext ctx = new OmObservationCreatorContext(null, null, daoFactory,
                     new DefaultProfileHandler(), Mockito.mock(AdditionalObservationCreatorRepository.class), null,
                     new FeatureQueryHandlerMock(), null, null, null, null, null,
                     Mockito.mock(BindingRepository.class));
-            ctx.setServiceURL(URI.create("http://test.org/"));
             ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(
                     observationsFromDataBase, request, Locale.ENGLISH, null, ctx, session);
             // TEST RESULTS

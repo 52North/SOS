@@ -1,4 +1,9 @@
 {
+	"basic-auth": {
+		"header": "Basic-Auth für Service-URL",
+		"password": "Passwort",
+		"username": "Nutzer"
+	},
 	"controls": {
 		"cancel": "Abbrechen",
 		"close": "Schließen",
@@ -91,11 +96,13 @@
 	},
 	"timeseries": {
 		"diagram": {
+			"annotation": "Daten ohne Gewähr",
 			"hint": {
 				"select-timeseries-first": "Bitte wählen Sie zuerst eine Zeitreihe aus."
 			},
 			"legend": {
 				"entry": {
+					"csv-download": "Daten als CSV (Zip-Archiv)",
 					"first-value-at": "Erster Wert am",
 					"jumpToLastTimeStamp": "Springe zur letzten Messung",
 					"last-value-at": "Letzter Wert am",
@@ -112,6 +119,13 @@
 					"min": "Min",
 					"pointRadius": "Punktradius",
 					"zeroBasedYAxis": "Zeitreihe null-basiert"
+				}
+			},
+			"options": {
+				"hovering": {
+					"line": "Linie",
+					"none": "Kein",
+					"point": "Punkt"
 				}
 			},
 			"phenomenon": {

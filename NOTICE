@@ -110,8 +110,6 @@ This project includes:
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
-  Avalon Framework API under The Apache Software License, Version 2.0
-  Avalon Framework Implementation under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm-core under BSD 3-Clause License
   cf4j under GNU Lesser General Public License
@@ -297,6 +295,7 @@ This project includes:
   org.apache.xmlgraphics:batik-i18n under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-parser under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-script under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-shared-resources under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-svg-dom under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-svggen under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-transcoder under The Apache Software License, Version 2.0

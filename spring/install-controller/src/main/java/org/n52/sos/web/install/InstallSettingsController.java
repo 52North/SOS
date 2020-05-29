@@ -37,11 +37,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.SettingType;
 import org.n52.faroe.SettingValue;
 import org.n52.faroe.SettingsService;
+import org.n52.iceland.exception.JSONException;
+import org.n52.shetland.util.EReportingSetting;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.HibernateDatasourceConstants.*;
+import org.n52.sos.service.TransactionalSecuritySettings;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
 
@@ -80,6 +85,56 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
                 c.setSetting(def, val);
             }
         }
+    }
+
+//    @Override
+//    public InstallationConfiguration getSettings(HttpSession s) {
+//        InstallationConfiguration c = super.getSettings(s);
+//        String concept = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
+//
+//        switch (DatabaseConcept.valueOf(concept)) {
+//            case SIMPLE:
+//                removeSettingsbyGroup(c, TransactionalSecuritySettings.TRANSACTIONAL_GROUP_TITLE);
+//                removeSettingsbyGroup(c, EReportingSetting.EREPORTING_GROUP_TITLE);
+//                break;
+//            case TRANSACTIONAL:
+//                removeSettingsbyGroup(c, EReportingSetting.EREPORTING_GROUP_TITLE);
+//                break;
+//            case EREPORTING:
+//            default:
+//                break;
+//        }
+//        return c;
+//    }
+//
+//    private void removeSettingsbyGroup(InstallationConfiguration c, String group) {
+//        c.getSettings()
+//                .keySet()
+//                .stream()
+//                .filter(d -> d.hasGroup() && d.getGroup()
+//                        .getTitle()
+//                        .equals(group))
+//                .forEach(t -> c.getSettings()
+//                        .remove(t));
+//    }
+
+    @Override
+    protected Map<String, Object> toModel(InstallationConfiguration c) throws ConfigurationError, JSONException {
+        Map<String, Object> model = super.toModel(c);
+        String concept = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
+        switch (DatabaseConcept.valueOf(concept)) {
+            case SIMPLE:
+                model.put("exclude", TransactionalSecuritySettings.TRANSACTIONAL_GROUP_TITLE + ","
+                        + EReportingSetting.EREPORTING_GROUP_TITLE);
+                break;
+            case TRANSACTIONAL:
+                model.put("exclude", EReportingSetting.EREPORTING_GROUP_TITLE);
+                break;
+            case EREPORTING:
+            default:
+                break;
+        }
+        return model;
     }
 
     protected void logSettings(Map<String, String> parameters) {

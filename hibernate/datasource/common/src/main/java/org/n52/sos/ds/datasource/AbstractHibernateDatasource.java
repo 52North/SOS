@@ -105,8 +105,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String DATABASE_CONCEPT_DESCRIPTION = "Select the database concept this SOS should use";
 
-    protected static final String DATABASE_CONCEPT_KEY = "sos.database.concept";
-
     protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SIMPLE.name();
 
     protected static final String DATABASE_EXTENSION_TITLE = "Database extension";

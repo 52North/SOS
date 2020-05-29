@@ -110,6 +110,8 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_DATASOURCE_TIME_STRING_Z = "hibernate.datasource.timeStringZ";
 
+    String DATABASE_CONCEPT_KEY = "sos.database.concept";
+
     enum DatabaseConcept {
         SIMPLE("Simple database model"), TRANSACTIONAL("Transactional database model"), EREPORTING(
                 "eReporting database model");

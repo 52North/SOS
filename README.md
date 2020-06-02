@@ -92,7 +92,7 @@ docker run -p 8080:8080 -p 8000:8000 -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=tra
 
 ## Changelog
 
- The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/blob/website-markdowns/RELEASE-NOTES)
+ The latest changes, additions, bugfixes, etc. can be found in the [RELEASE-NOTES](https://github.com/52North/SOS/releases)
 
 ## References
 

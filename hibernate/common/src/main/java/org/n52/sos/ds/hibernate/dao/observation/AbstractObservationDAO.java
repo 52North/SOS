@@ -60,6 +60,7 @@ import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
@@ -149,7 +150,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation to add identifiers
      * @param session
      *            the session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -291,8 +292,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
 
     /**
-     * Get Hibernate Criteria with
-     * restrictions observation identifiers
+     * Get Hibernate Criteria with restrictions observation identifiers
      *
      * @param observation
      *
@@ -578,22 +578,24 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Map based codespace object cache to prevent redundant queries
      * @param unitCache
      *            Map based unit object cache to prevent redundant queries
+     * @param formatCache
+     *            Map cache for format objects (to prevent redundant querying)
      * @param session
      *            Hibernate session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
     public DatasetEntity insertObservationMultiValue(DatasetEntity observationConstellation,
             AbstractFeatureEntity feature, OmObservation containerObservation,
-            Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache, Session session)
-            throws OwsExceptionReport {
+            Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
+            Map<String, FormatEntity> formatCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = new ObservationUnfolder(containerObservation,
                 getDaoFactory().getSweHelper(), getDaoFactory().getGeometryHandler()).unfold();
         for (OmObservation sosObservation : unfoldObservations) {
             DatasetEntity dataset = insertObservationSingleValue(observationConstellation, feature, sosObservation,
-                    codespaceCache, unitCache, session);
+                    codespaceCache, unitCache, formatCache, session);
             if (!dataset.equals(observationConstellation)) {
                 return dataset;
             }
@@ -613,14 +615,15 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            SOS observation to insert
      * @param session
      *            Hibernate session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
      */
     public DatasetEntity insertObservationSingleValue(DatasetEntity hObservationConstellation,
             AbstractFeatureEntity hFeature, OmObservation sosObservation, Session session) throws OwsExceptionReport {
-        return insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, session);
+        return insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, null,
+                session);
     }
 
     /**
@@ -638,9 +641,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            querying)
      * @param unitCache
      *            Map cache for unit objects (to prevent redundant querying)
+     * @param formatCache
+     *            Map cache for format objects (to prevent redundant querying)
      * @param session
      *            Hibernate session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -648,11 +653,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     @SuppressWarnings("rawtypes")
     public DatasetEntity insertObservationSingleValue(DatasetEntity hObservationConstellation,
             AbstractFeatureEntity hFeature, OmObservation sosObservation, Map<String, CodespaceEntity> codespaceCache,
-            Map<UoM, UnitEntity> unitCache, Session session) throws OwsExceptionReport {
+            Map<UoM, UnitEntity> unitCache, Map<String, FormatEntity> formatCache, Session session)
+            throws OwsExceptionReport {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
-        ObservationPersister persister = new ObservationPersister(getDaoFactory(), this,
-                sosObservation, hObservationConstellation, hFeature, codespaceCache, unitCache,
-                getOfferings(hObservationConstellation), session);
+        ObservationPersister persister =
+                new ObservationPersister(getDaoFactory(), this, sosObservation, hObservationConstellation, hFeature,
+                        codespaceCache, unitCache, formatCache, getOfferings(hObservationConstellation), session);
         return value.getValue().accept(persister).getDataset();
     }
 
@@ -1297,7 +1303,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             // XXX workaround for Hibernate Spatial's lack of support for
             // GeoDB's extent aggregate see
             // http://www.hibernatespatial.org/pipermail/hibernatespatial-users/2013-August/000876.html
-            Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getDialect();
+            Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getJdbcServices().getDialect();
             if (getGeometryHandler().isSpatialDatasource()
                     && HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
@@ -1484,8 +1490,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     public static class MinMaxLatLon {
         private Double minLat;
+
         private Double maxLat;
+
         private Double minLon;
+
         private Double maxLon;
 
         public MinMaxLatLon(Object[] result) {

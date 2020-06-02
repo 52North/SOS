@@ -150,9 +150,10 @@ public class ObservationPersister
     public ObservationPersister(DaoFactory daoFactory, AbstractObservationDAO observationDao,
             OmObservation sosObservation, DatasetEntity hDataset, AbstractFeatureEntity<?> hFeature,
             Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
-            Set<OfferingEntity> hOfferings, Session session) throws OwsExceptionReport {
-        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache), sosObservation,
-                hDataset, hFeature, null, hOfferings, session, null);
+            Map<String, FormatEntity> formatCache, Set<OfferingEntity> hOfferings, Session session)
+            throws OwsExceptionReport {
+        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache, formatCache),
+                sosObservation, hDataset, hFeature, null, hOfferings, session, null);
     }
 
     private ObservationPersister(DaoFactory daoFactory, DAOs daos, Caches caches, OmObservation observation,
@@ -246,7 +247,7 @@ public class ObservationPersister
     public DataEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
         ComplexDataEntity complex = observationFactory.complex();
         DataEntity complexyDataEntity = persist((DataEntity) complex, new HashSet<DataEntity<?>>());
-        persistChildren(value.getValue(), complexyDataEntity.getId());
+        persistChildren(value.getValue(), complexyDataEntity);
         return complexyDataEntity;
     }
 
@@ -385,14 +386,14 @@ public class ObservationPersister
                                 .getElement() instanceof SweTimeRange));
     }
 
-    private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, Long parent)
+    private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, DataEntity dataEntity)
             throws HibernateException, OwsExceptionReport {
         Set<DataEntity<?>> children = new TreeSet<>();
         for (SweField field : dataRecord.getFields()) {
             PhenomenonEntity observableProperty = getObservablePropertyForField(field);
             Value<?> value = field.accept(ValueCreatingSweDataComponentVisitor.getInstance());
             String observationType = OMHelper.getObservationTypeFor(value);
-            ObservationPersister childPersister = createChildPersister(observableProperty, observationType, parent);
+            ObservationPersister childPersister = createChildPersister(observableProperty, observationType, dataEntity);
             children.add(value.accept(childPersister));
         }
         session.flush();
@@ -473,11 +474,20 @@ public class ObservationPersister
     }
 
     private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, String observationType,
-            Long parent) throws OwsExceptionReport {
+            Long id) throws OwsExceptionReport {
         return new ObservationPersister(daoFactory, daos, caches, omObservation,
                 getObservationConstellation(observableProperty,
-                        daoFactory.getObservationTypeDAO().getFormatEntityObject(observationType, session)),
-                featureOfInterest, samplingGeometry, offerings, session, parent);
+                        getObservationType(observationType, session), dataset),
+                featureOfInterest, samplingGeometry, offerings, session, id);
+    }
+
+    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, String observationType,
+            DataEntity dataEntity) throws OwsExceptionReport {
+        return new ObservationPersister(daoFactory, daos, caches, omObservation,
+                getObservationConstellation(observableProperty,
+                        getObservationType(observationType, session),
+                        dataEntity.getDataset()),
+                featureOfInterest, samplingGeometry, offerings, session, dataEntity.getId());
     }
 
     // private ObservationPersister createChildPersister(Long parent) throws
@@ -488,9 +498,10 @@ public class ObservationPersister
     // }
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty,
-            FormatEntity observationType) throws OwsExceptionReport {
-        return daos.dataset().checkOrInsertSeries(dataset.getProcedure(), observableProperty, dataset.getOffering(),
-                dataset.getCategory(), featureOfInterest, dataset.getPlatform(), observationType, true, session);
+            FormatEntity observationType, DatasetEntity datasetEntity) throws OwsExceptionReport {
+        return daos.dataset().checkOrInsertSeries(datasetEntity.getProcedure(), observableProperty,
+                datasetEntity.getOffering(), datasetEntity.getCategory(), featureOfInterest,
+                datasetEntity.getPlatform(), observationType, true, session);
     }
 
     private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
@@ -587,6 +598,7 @@ public class ObservationPersister
             daos.observation().addIdentifier(omObservation, observation, session, caches.codespaces);
         } else {
             observation.setParent(parent);
+            observation.setStaIdentifier(observation.generateUUID());
         }
 
         daos.observation().addName(omObservation, observation, session, caches.codespaces);
@@ -605,7 +617,7 @@ public class ObservationPersister
         String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity<?>) observation);
 
         observationContext
-                .setObservationType(daos.observationType().getOrInsertFormatEntity(observationType, session));
+                .setObservationType(getObservationType(observationType, session));
 
         if (dataset != null) {
             if ((!isProfileObservation(dataset) && !isDataArrayObservation(dataset))
@@ -655,9 +667,16 @@ public class ObservationPersister
         session.save(observation);
         session.flush();
         session.refresh(observation);
-        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, (DataEntity<?>) observation, session);
-
+        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, observation, session);
         return observation;
+    }
+
+    private FormatEntity getObservationType(String observationType, Session session) {
+        if (!caches.formats.containsKey(observationType)) {
+            caches.formats.put(observationType,
+                    daos.observationType().getOrInsertFormatEntity(observationType, session));
+        }
+        return caches.formats().get(observationType);
     }
 
     private <T extends DataEntity<?>> T checkForParameter(T observation, ParameterHolder parameterHolder,
@@ -784,9 +803,13 @@ public class ObservationPersister
 
         private final Map<UoM, UnitEntity> units;
 
-        Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units) {
+        private final Map<String, FormatEntity> formats;
+
+        Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units,
+                Map<String, FormatEntity> formats) {
             this.codespaces = codespaces;
             this.units = units;
+            this.formats = formats;
         }
 
         public Map<String, CodespaceEntity> codespaces() {
@@ -795,6 +818,10 @@ public class ObservationPersister
 
         public Map<UoM, UnitEntity> units() {
             return units;
+        }
+
+        public Map<String, FormatEntity> formats() {
+            return formats;
         }
 
     }

@@ -268,7 +268,7 @@ public interface OceanSITESConstants {
     /**
      * OPTIONAL<p>
      *
-     * example: citation={@link CITATION_DEFAULT_TEXT} (OceanSITES
+     * example: citation={@link #CITATION_DEFAULT_TEXT} (OceanSITES
      * specific)<p> note: The citation to be used in publications using the
      * dataset; should include a reference to OceanSITES but may contain any
      * other text deemed appropriate by the PI and DAC.

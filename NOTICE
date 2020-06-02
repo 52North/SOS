@@ -81,6 +81,7 @@ This project includes:
   52°North Svalbard XML Stream under The Apache Software License, Version 2.0
   52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
   aggs-matrix-stats under The Apache Software License, Version 2.0
+  ANTLR 4 Runtime under The BSD License
   AntLR Parser Generator under BSD License
   Apache Ant Core under The Apache Software License, Version 2.0
   Apache Ant Launcher under The Apache Software License, Version 2.0
@@ -109,8 +110,6 @@ This project includes:
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
-  Avalon Framework API under The Apache Software License, Version 2.0
-  Avalon Framework Implementation under The Apache Software License, Version 2.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm-core under BSD 3-Clause License
   cf4j under GNU Lesser General Public License
@@ -201,7 +200,6 @@ This project includes:
   JBoss Logging 3 under Apache License, version 2.0
   JCL 1.2 implemented over SLF4J under Apache License, Version 2.0
   jcommander under Apache License, Version 2.0
-  JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift-core under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda-Time under Apache License, Version 2.0
@@ -222,7 +220,6 @@ This project includes:
   Lucene Queries under Apache 2
   Lucene QueryParsers under Apache 2
   Lucene Sandbox under Apache 2
-  Lucene Spatial under Apache 2
   Lucene Spatial 3D under Apache 2
   Lucene Spatial Extras under Apache 2
   Lucene Suggest under Apache 2
@@ -285,6 +282,7 @@ This project includes:
   Old JAXB Core under CDDL 1.1 or GPL2 w/ CPE
   Old JAXB Runtime under CDDL 1.1 or GPL2 w/ CPE
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
+  Open Web Services Model under Lesser General Public License (LGPL)
   org.apache.xmlgraphics:batik-anim under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-awt-util under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-bridge under The Apache Software License, Version 2.0
@@ -297,6 +295,7 @@ This project includes:
   org.apache.xmlgraphics:batik-i18n under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-parser under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-script under The Apache Software License, Version 2.0
+  org.apache.xmlgraphics:batik-shared-resources under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-svg-dom under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-svggen under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-transcoder under The Apache Software License, Version 2.0
@@ -305,6 +304,7 @@ This project includes:
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   parent-join under The Apache Software License, Version 2.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
+  PostGIS Geometry under GNU Lesser General Public License
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver - JDBC 4.2 under BSD-2-Clause
   Protocol Buffers [Core] under 3-Clause BSD License
@@ -363,6 +363,7 @@ This project includes:
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   Xerces2-j under The Apache Software License, Version 2.0
+  Xlink Model under Lesser General Public License (LGPL)
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
   XML Pull Parsing API under Public Domain

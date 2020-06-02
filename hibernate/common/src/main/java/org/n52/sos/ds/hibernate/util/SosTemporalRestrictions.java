@@ -86,7 +86,7 @@ public final class SosTemporalRestrictions {
      * @see DataEntity#PROPERTY_SAMPLING_TIME_START
      * @see DataEntity#PROPERTY_SAMPLING_TIME_END
      */
-    public static final TimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
+    public static final AbstractTimePrimitiveFieldDescriptor PHENOMENON_TIME_FIELDS = new TimePrimitiveFieldDescriptor(
             DataEntity.PROPERTY_SAMPLING_TIME_START, DataEntity.PROPERTY_SAMPLING_TIME_END);
 
     /**
@@ -94,8 +94,9 @@ public final class SosTemporalRestrictions {
      *
      * @see DataEntity#PROPERTY_RESULT_TIME
      */
-    public static final TimePrimitiveFieldDescriptor RESULT_TIME_FIELDS =
-            new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_RESULT_TIME);
+    public static final AbstractTimePrimitiveFieldDescriptor RESULT_TIME_FIELDS =
+            new TimePrimitiveNullableFieldDescriptor(DataEntity.PROPERTY_RESULT_TIME,
+                    new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_SAMPLING_TIME_END));
 
     /**
      * Fields describing the valid time of a {@code Observation}.
@@ -103,7 +104,7 @@ public final class SosTemporalRestrictions {
      * @see DataEntity#PROPERTY_VALID_TIME_START
      * @see DataEntity#PROPERTY_VALID_TIME_END
      */
-    public static final TimePrimitiveFieldDescriptor VALID_TIME_FIELDS =
+    public static final AbstractTimePrimitiveFieldDescriptor VALID_TIME_FIELDS =
             new TimePrimitiveFieldDescriptor(DataEntity.PROPERTY_VALID_TIME_START, DataEntity.PROPERTY_VALID_TIME_END);
 
     /**
@@ -112,7 +113,7 @@ public final class SosTemporalRestrictions {
      * @see ProcedureHistoryEntity#START_TIME
      * @see ProcedureHistoryEntity#END_TIME
      */
-    public static final TimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS =
+    public static final AbstractTimePrimitiveFieldDescriptor VALID_TIME_DESCRIBE_SENSOR_FIELDS =
             new TimePrimitiveFieldDescriptor(ProcedureHistoryEntity.START_TIME, ProcedureHistoryEntity.END_TIME);
 
     /**
@@ -263,7 +264,7 @@ public final class SosTemporalRestrictions {
      * @throws UnsupportedValueReferenceException
      *             if the {@code valueReference} can not be decoded
      */
-    public static TimePrimitiveFieldDescriptor getFields(String valueReference)
+    public static AbstractTimePrimitiveFieldDescriptor getFields(String valueReference)
             throws UnsupportedValueReferenceException {
         if (valueReference.contains(TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE)) {
             return PHENOMENON_TIME_FIELDS;

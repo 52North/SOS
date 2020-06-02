@@ -325,7 +325,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         ctx.addIdentifierRestrictionsToCritera(criteria, true, false);
-//        criteria.setMaxResults(1);
+        // criteria.setMaxResults(1);
         // TODO: check for Unit if available!!!
         LOGGER.trace(
                 "QUERY getOrInsertSeries(feature, observableProperty, procedure, offering, platform, category): {}",
@@ -374,7 +374,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 DatastreamEntity datastream = existsDatastream(dataset, session);
                 if (datastream == null) {
                     datastream = new DatastreamEntity();
-                    datastream.setIdentifier(UUID.randomUUID().toString());
+                    datastream.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
                     datastream.setName(createDatastreamName(dataset));
                     datastream.setDescription(createDatastreamDescription(dataset));
                     datastream.setProcedure(dataset.getProcedure());
@@ -1104,10 +1104,10 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
         }
-        if (Strings.isNullOrEmpty(observedProperty)) {
+        if (!Strings.isNullOrEmpty(observedProperty)) {
             addObservablePropertyToCriteria(c, observedProperty);
         }
-        if (Strings.isNullOrEmpty(offering)) {
+        if (!Strings.isNullOrEmpty(offering)) {
             addOfferingToCriteria(c, offering);
         }
         return c;

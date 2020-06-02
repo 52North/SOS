@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.create;
 
+import java.net.URI;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.locationtech.jts.geom.Geometry;
@@ -40,12 +43,18 @@ import org.n52.shetland.inspire.ef.ObservingCapability;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.w3c.xlink.Reference;
+import org.n52.shetland.w3c.xlink.Referenceable;
 import org.n52.sos.util.SosHelper;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class EnvironmentalMonitoringFacilityCreator
@@ -81,7 +90,7 @@ public class EnvironmentalMonitoringFacilityCreator
             // emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
 
             addObservingCapabilities(emFeature, f);
-            // addHasObservations(emFeature, f);
+             addHasObservations(emFeature, f);
 
             // final Set<FeatureOfInterest> parentFeatures = emf.getParents();
             // if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -111,7 +120,7 @@ public class EnvironmentalMonitoringFacilityCreator
     }
 
     private void addObservingCapabilities(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
-            FeatureEntity feature) {
+            EnvironmentalMonitoringFacilityEntity feature) {
         emFeature.addObservingCapability(createObservingCapability(feature.getIdentifier()));
         if (feature.hasChildren()) {
             for (AbstractFeatureEntity<?> child : feature.getChildren()) {
@@ -125,60 +134,38 @@ public class EnvironmentalMonitoringFacilityCreator
         return new ObservingCapability(addParameter(getGetDataAvailabilityUrl(), "featureOfInterest", identifier));
     }
 
-    // private void
-    // addHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility
-    // emFeature,
-    // FeatureOfInterest feature) {
-    // Map<String, Set<String>> featureOfferings = Maps.newHashMap();
-    // featureOfferings.put(feature.getIdentifier(),
-    // getContext().getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
-    // // check for child features
-    // if (feature.hasChilds()) {
-    // for (AbstractFeatureOfInterest child : feature.getChilds()) {
-    // Set<String> childOfferings =
-    // getContext().getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
-    // if (CollectionHelper.isNotEmpty(childOfferings)) {
-    // featureOfferings.put(child.getIdentifier(), childOfferings);
-    // }
-    // }
-    // }
-    // createHasObservations(emFeature, featureOfferings);
-    // }
-    //
-    // private void
-    // createHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility
-    // emFeature,
-    // Map<String, Set<String>> featureOfferings) {
-    // if (featureOfferings != null) {
-    // for (Entry<String, Set<String>> entry : featureOfferings.entrySet()) {
-    // emFeature.addHasObservation(createObservation(entry.getKey(),
-    // entry.getValue()));
-    // }
-    // }
-    // }
-    //
-    // private OmObservation createObservation(String feature, Set<String>
-    // offerings) {
-    // String getObservationUrl = getGetObservationUrl();
-    // getObservationUrl = addParameter(getObservationUrl,
-    // SosConstants.GetObservationParams.featureOfInterest.name(), feature);
-    // getObservationUrl = addParameter(getObservationUrl,
-    // SosConstants.GetObservationParams.offering.name(), offerings);
-    // SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(getObservationUrl);
-    // OmObservation omObservation = new OmObservation();
-    // omObservation.setSimpleAttrs(simpleAttrs);
-    // return omObservation;
-    // }
-    //
-    // private OmObservation createObservation(String featureOfInterest, String
-    // offering) {
-    // SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(
-    // addParameter(getGetObservationUrl(),
-    // SosConstants.GetObservationParams.offering.name(), offering));
-    // OmObservation omObservation = new OmObservation();
-    // omObservation.setSimpleAttrs(simpleAttrs);
-    // return omObservation;
-    // }
+    private void addHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
+            EnvironmentalMonitoringFacilityEntity feature) {
+        Map<String, Set<String>> featureOfferings = Maps.newHashMap();
+        featureOfferings.put(feature.getIdentifier(),
+                getContext().getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
+        // check for child features
+        if (feature.hasChildren()) {
+            for (FeatureEntity child : feature.getChildren()) {
+                Set<String> childOfferings =
+                        getContext().getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
+                if (CollectionHelper.isNotEmpty(childOfferings)) {
+                    featureOfferings.put(child.getIdentifier(), childOfferings);
+                }
+            }
+        }
+        createHasObservations(emFeature, featureOfferings);
+    }
+
+    private void createHasObservations(org.n52.shetland.inspire.ef.EnvironmentalMonitoringFacility emFeature,
+            Map<String, Set<String>> featureOfferings) {
+        if (featureOfferings != null) {
+            for (Entry<String, Set<String>> entry : featureOfferings.entrySet()) {
+                emFeature.addHasObservation(createObservation(entry.getKey(), entry.getValue()));
+            }
+        }
+    }
+
+    private Referenceable<OmObservation> createObservation(String feature, Set<String> offerings) {
+        return Referenceable.of(new Reference().setHref(URI.create(addParameter(
+                addParameter(getGetObservationUrl(), SosConstants.GetObservationParams.offering.name(), offerings),
+                SosConstants.GetObservationParams.featureOfInterest.name(), feature))));
+    }
 
     private String getGetDataAvailabilityUrl() {
         return new StringBuilder(getBaseGetUrl()).append(getRequest("GetDataAvailability")).toString();
@@ -212,8 +199,8 @@ public class EnvironmentalMonitoringFacilityCreator
         return new StringBuilder(url).append('&').append(parameter).append('=').append(value).toString();
     }
 
-//    private String addParameter(String url, String parameter, Set<String> offerings) {
-//        return new StringBuilder(url).append('&').append(parameter).append('=').append(Joiner.on(',').join(offerings))
-//                .toString();
-//    }
+    private String addParameter(String url, String parameter, Set<String> offerings) {
+        return new StringBuilder(url).append('&').append(parameter).append('=').append(Joiner.on(',').join(offerings))
+                .toString();
+    }
 }

@@ -128,10 +128,10 @@ public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorD
     @Override
     public List<SosProcedureDescription<?>> querySensorDescriptions(DescribeSensorRequest request, Object connection)
             throws OwsExceptionReport {
-            if (checkConnection(connection)) {
-                return queryDescriptions(request, HibernateSessionHolder.getSession(connection));
-            }
-            return querySensorDescriptions(request);
+        if (checkConnection(connection)) {
+            return queryDescriptions(request, HibernateSessionHolder.getSession(connection));
+        }
+        return querySensorDescriptions(request);
     }
 
     private List<SosProcedureDescription<?>> queryDescriptions(DescribeSensorRequest request, Session session)

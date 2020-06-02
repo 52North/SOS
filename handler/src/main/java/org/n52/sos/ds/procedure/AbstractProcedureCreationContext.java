@@ -28,11 +28,10 @@
  */
 package org.n52.sos.ds.procedure;
 
-import java.net.URI;
 import java.util.Locale;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
+import javax.inject.Inject;
+
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
@@ -41,7 +40,6 @@ import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.sos.cache.SosContentCache;
@@ -49,6 +47,7 @@ import org.n52.sos.ds.procedure.generator.AbstractProcedureDescriptionGeneratorF
 import org.n52.sos.service.ProcedureDescriptionSettings;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.DecoderRepository;
 
 @Configurable
@@ -64,7 +63,7 @@ public class AbstractProcedureCreationContext {
     private BindingRepository bindingRepository;
     private boolean showAllLanguageValues;
     private ServiceOperatorRepository serviceOperatorRepository;
-    private String serviceURL;
+    private SosHelper sosHelper;
     private Locale defaultLocale;
     private ContentCacheController contentCacheController;
     private ProcedureDescriptionSettings procedureSettings;
@@ -133,19 +132,13 @@ public class AbstractProcedureCreationContext {
         return defaultLocale;
     }
 
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL)
-            throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
+    @Inject
+    public void setSosHelperL(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
     }
 
     public String getServiceURL() {
-        return serviceURL;
+        return sosHelper.getServiceURL();
     }
 
     /**

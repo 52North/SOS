@@ -103,6 +103,7 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_DEFAULT_OGM_PACKAGE = "org.n52.sos.ds.hibernate.ogm.entities";
 
+    @Deprecated
     String HIBERNATE_DATASOURCE_TIMEZONE = "hibernate.datasource.timezone";
 
     String HIBERNATE_DATASOURCE_TIME_STRING_FORMAT = "hibernate.datasource.timeStringFormat";

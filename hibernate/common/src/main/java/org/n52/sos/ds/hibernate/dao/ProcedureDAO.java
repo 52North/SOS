@@ -779,7 +779,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (procedure == null) {
             procedure = new ProcedureEntity();
             procedure.setFormat(procedureDescriptionFormat);
-            procedure.setIdentifier(identifier);
+            procedure.setIdentifier(identifier, getDaoFactory().isStaSupportsUrls());
             AbstractFeature af = procedureDescription.getProcedureDescription();
             if (af.isSetName()) {
                 procedure.setName(af.getFirstName().getValue());

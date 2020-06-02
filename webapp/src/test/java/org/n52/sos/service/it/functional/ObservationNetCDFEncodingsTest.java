@@ -29,7 +29,7 @@
 package org.n52.sos.service.it.functional;
 
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,6 +49,7 @@ import org.n52.sos.netcdf.NetcdfConstants;
 import com.sun.jna.Native;
 
 import ucar.nc2.dataset.NetcdfDataset;
+import ucar.nc2.dataset.NetcdfDatasets;
 import ucar.nc2.jni.netcdf.Nc4prototypes;
 
 public class ObservationNetCDFEncodingsTest extends AbstractObservationEncodingsTest {
@@ -117,33 +118,34 @@ public class ObservationNetCDFEncodingsTest extends AbstractObservationEncodings
     }
 
     private void testGetObsNetcdf(String serviceVersion, String responseFormat, boolean isZip) throws IOException {
-        // check for netcdf lib before test is run. on debian/ubuntu the package is libnetcdf-dev
+        // check for netcdf lib before test is run. on debian/ubuntu the package
+        // is libnetcdf-dev
         // TODO shouldn't netcdf3 response formats work without this library?
         try {
-            Native.loadLibrary("netcdf", Nc4prototypes.class);
+            Native.load("netcdf", Nc4prototypes.class);
         } catch (UnsatisfiedLinkError e) {
             Assume.assumeNoException("netcdf library not detected, skipping test", e);
         }
 
-        InputStream inputStream = sendGetObsKvp(serviceVersion, responseFormat).asInputStream();
         File netcdfFile = testFolder.newFile("52n-sos-netcdf-test.nc");
-        FileOutputStream fileOutputStream = new FileOutputStream(netcdfFile);
-        if (isZip) {
-            ZipInputStream zis = new ZipInputStream(inputStream);
-            zis.getNextEntry();
-            IOUtils.copy(zis, fileOutputStream);
-            zis.closeEntry();
-            zis.close();
-        } else {
-            IOUtils.copy(inputStream, fileOutputStream);
+        try (InputStream inputStream = sendGetObsKvp(serviceVersion, responseFormat).asInputStream();
+                FileOutputStream fileOutputStream = new FileOutputStream(netcdfFile)) {
+            if (isZip) {
+                try (ZipInputStream zis = new ZipInputStream(inputStream)) {
+                    zis.getNextEntry();
+                    IOUtils.copy(zis, fileOutputStream);
+                    zis.closeEntry();
+                }
+            } else {
+                IOUtils.copy(inputStream, fileOutputStream);
+            }
         }
-        fileOutputStream.close();
-        inputStream.close();
         assertThat(netcdfFile, notNullValue());
 
-        NetcdfDataset netcdfDataset = NetcdfDataset.openDataset(netcdfFile.getAbsolutePath());
-        assertThat(netcdfDataset, notNullValue());
-        netcdfDataset.close();
+        try (NetcdfDataset netcdfDataset = NetcdfDatasets.openDataset(netcdfFile.getAbsolutePath())) {
+            assertThat(netcdfDataset, notNullValue());
+            netcdfDataset.close();
+        }
         netcdfFile.delete();
         testFolder.delete();
     }

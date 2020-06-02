@@ -35,7 +35,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.write.Nc4ChunkingDefault;
 
 /**
- * Implementation of {@link Nc4ChunkingStrategyImpl} to force time chunk.
+ * Implementation of {@link Nc4ChunkingDefault} to force time chunk.
  *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>

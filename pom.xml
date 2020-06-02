@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.0.1</version>
+    <version>5.1.0</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -20,7 +20,7 @@
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>v5.0.1</tag>
+        <tag>v5.1.0</tag>
     </scm>
 
     <issueManagement>
@@ -84,38 +84,34 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <postgresql.version>42.2.11</postgresql.version>
-        <postgis.version>2.4.0</postgis.version>
-        <ojdbc8.version>19.3.0.0</ojdbc8.version>
-        <sqljdbc.version>8.2.1.jre8</sqljdbc.version>
-        <mysql.version>8.0.19</mysql.version>
-        <h2.version>1.4.200</h2.version>
-        <geodb.version>0.9</geodb.version>
-        <hibernate.version>5.4.10.Final</hibernate.version>
-        <c3p0.version>0.9.5.5</c3p0.version>
-        <hikaricp.version>3.4.2</hikaricp.version>
-        <geotools.version>22.3</geotools.version>
-        <jackson.version>2.10.3</jackson.version>
-        <logback.version>1.2.3</logback.version>
-        <slf4j.version>1.7.30</slf4j.version>
-        <version.netcdf>5.3.1</version.netcdf>
-
+        <version.postgresql>42.2.12</version.postgresql>
+        <version.postgis>2.5.0</version.postgis>
+        <version.ojdbc8>19.6.0.0</version.ojdbc8>
+        <version.sqljdbc>8.2.2.jre8</version.sqljdbc>
+        <version.mysql>8.0.20</version.mysql>
+        <version.h2>1.4.200</version.h2>
+        <version.geodb>0.9</version.geodb>
+        <version.hibernate>5.4.16.Final</version.hibernate>
+        <version.c3p0>0.9.5.5</version.c3p0>
+        <version.hikaricp>3.4.5</version.hikaricp>
+        <version.geotools>23.0</version.geotools>
+        <version.jackson>2.11.0</version.jackson>
+        <version.logback>1.2.3</version.logback>
+        <version.slf4j>1.7.30</version.slf4j>
+        <version.netcdf>5.3.2</version.netcdf>
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.6.1</n52.common.xml.version>
-        <arctic-sea.version>7.3.0</arctic-sea.version>
-
-        <dataset.api.version>3.0.0</dataset.api.version>
-        <dataset.dao.version>3.0.0</dataset.dao.version>
-        <dataset.hibernate.version>1.2.0</dataset.hibernate.version>
+        <version.arctic-sea>7.5.0</version.arctic-sea>
+        <version.n52.common.xml>2.7.0</version.n52.common.xml>
+        <version.helgoland.api>3.2.0</version.helgoland.api>
+        <version.dao-impl>3.2.1</version.dao-impl>
+        <version.db-model>2.0.1</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-
-        <org.springframework.security.version>5.3.0.RELEASE</org.springframework.security.version>
-        <org.springframework.version>5.2.4.RELEASE</org.springframework.version>
-        <aspectj.version>1.9.5</aspectj.version>
-        <saxon.version>9.9.1-7</saxon.version>
-        <elasticsearch.version>7.6.1</elasticsearch.version>
-        <sos.test.suite.version>2.0.0-M1</sos.test.suite.version>
-        
+        <version.springframework.security>5.3.2.RELEASE</version.springframework.security>
+        <version.springframework>5.2.6.RELEASE</version.springframework>
+        <version.aspectj>1.9.5</version.aspectj>
+        <version.saxon>10.1</version.saxon>
+        <version.elasticsearch>7.7.0</version.elasticsearch>
+        <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.13</version.httpcore>
         <version.httpcoponents>4.5.12</version.httpcoponents>
     </properties>
@@ -125,7 +121,7 @@
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>iceland</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.xml.bind</groupId>
@@ -135,8 +131,74 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>iceland</artifactId>
+                <version>${version.arctic-sea}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>iceland</artifactId>
+                <version>${version.arctic-sea}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>iceland-statistics</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>iceland-statistics-geolocation</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>faroe</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>faroe-utils</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>faroe-annotations</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>faroe-json</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>janmayen</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>shetland</artifactId>
+                <version>${version.arctic-sea}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>shetland</artifactId>
+                <version>${version.arctic-sea}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
+                <artifactId>shetland</artifactId>
+                <version>${version.arctic-sea}</version>
+                <scope>test</scope>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-odata</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -154,43 +216,18 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>faroe</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>faroe-utils</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>faroe-annotations</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>faroe-json</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>shetland</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-exi</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-json-common</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
                 <exclusions>
                   <exclusion>
                     <groupId>net.sf.jopt-simple</groupId>
@@ -201,63 +238,22 @@
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-json</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-xmlbeans</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.arctic-sea</groupId>
                 <artifactId>svalbard-xmlstream</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>janmayen</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>iceland</artifactId>
-                <version>${arctic-sea.version}</version>
-                <type>test-jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>iceland</artifactId>
-                <version>${arctic-sea.version}</version>
-                <scope>test</scope>
-                <classifier>tests</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>shetland</artifactId>
-                <version>${arctic-sea.version}</version>
-                <type>test-jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>shetland</artifactId>
-                <version>${arctic-sea.version}</version>
-                <scope>test</scope>
-                <classifier>tests</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>iceland-statistics</artifactId>
-                <version>${arctic-sea.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.n52.arctic-sea</groupId>
-                <artifactId>iceland-statistics-geolocation</artifactId>
-                <version>${arctic-sea.version}</version>
+                <version>${version.arctic-sea}</version>
             </dependency>
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>${elasticsearch.version}</version>
+                <version>${version.elasticsearch}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -276,12 +272,12 @@
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>${elasticsearch.version}</version>
+                <version>${version.elasticsearch}</version>
             </dependency>
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
                 <artifactId>elasticsearch-rest-client</artifactId>
-                <version>${elasticsearch.version}</version>
+                <version>${version.elasticsearch}</version>
                 <exclusions>
                     <exclusion>
                       <groupId>org.apache.commons</groupId>
@@ -330,7 +326,7 @@
             <dependency>
                 <groupId>org.n52.sensorweb-server.dao-impl</groupId>
                 <artifactId>dao-impl-dao</artifactId>
-                <version>${dataset.dao.version}</version>
+                <version>${version.dao-impl}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -342,33 +338,46 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                <artifactId>dao-impl-webapp</artifactId>
+                <version>${version.dao-impl}</version>
+                <type>war</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-tx</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb-server.db-model</groupId>
                 <artifactId>db-model-mappings</artifactId>
-                <version>${dataset.hibernate.version}</version>
+                <version>${version.db-model}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.n52.sensorweb-server.db-model</groupId>
                 <artifactId>db-model-dialects</artifactId>
-                <version>${dataset.hibernate.version}</version>
+                <version>${version.db-model}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.n52.sensorweb-server.db-model</groupId>
                 <artifactId>db-model-entities</artifactId>
-                <version>${dataset.hibernate.version}</version>
+                <version>${version.db-model}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb-server.db-model</groupId>
                 <artifactId>db-model-types</artifactId>
-                <version>${dataset.hibernate.version}</version>
+                <version>${version.db-model}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb-server.helgoland</groupId>
                 <artifactId>helgoland-io</artifactId>
-                <version>${dataset.api.version}</version>
+                <version>${version.helgoland.api}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jfree</groupId>
@@ -379,12 +388,12 @@
             <dependency>
                 <groupId>org.n52.sensorweb-server.helgoland</groupId>
                <artifactId>helgoland-spi</artifactId>
-                <version>${dataset.api.version}</version>
+                <version>${version.helgoland.api}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb-server.helgoland</groupId>
                 <artifactId>helgoland-rest</artifactId>
-                <version>${dataset.api.version}</version>
+                <version>${version.helgoland.api}</version>
             </dependency>
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -733,7 +742,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.6</version>
+                <version>2.7</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -761,7 +770,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -777,7 +786,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.8</version>
+                 <version>1.10.10</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -804,7 +813,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
+                <version>${version.slf4j}</version>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
@@ -819,30 +828,30 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
+                <version>${version.slf4j}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>jul-to-slf4j</artifactId>
-                <version>${slf4j.version}</version>
+                <version>${version.slf4j}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>log4j-over-slf4j</artifactId>
-                <version>${slf4j.version}</version>
+                <version>${version.slf4j}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
+                <version>${version.logback}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.1</version>
+                <version>3.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
@@ -852,13 +861,13 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.5</version>
+                <version>2.10.6</version>
             </dependency>
             <!-- Hibernate Core Dependencies -->
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
+                <version>${version.hibernate}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -878,7 +887,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-c3p0</artifactId>
-                <version>${hibernate.version}</version>
+                <version>${version.hibernate}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.postgresql</groupId>
@@ -897,7 +906,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-spatial</artifactId>
-                <version>${hibernate.version}</version>
+                <version>${version.hibernate}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.postgis</groupId>
@@ -921,7 +930,7 @@
             <dependency>
                 <groupId>com.mchange</groupId>
                 <artifactId>c3p0</artifactId>
-                <version>${c3p0.version}</version>
+                <version>${version.c3p0}</version>
             </dependency>
             <dependency>
                 <groupId>com.mchange</groupId>
@@ -931,17 +940,17 @@
             <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
-                <version>${hikaricp.version}</version>
+                <version>${version.hikaricp}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
+                <version>${version.postgresql}</version>
             </dependency>
             <dependency>
                 <groupId>net.postgis</groupId>
                 <artifactId>postgis-jdbc</artifactId>
-                <version>${postgis.version}</version>
+                <version>${version.postgis}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.postgresql</groupId>
@@ -952,222 +961,222 @@
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-cv-v022</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-base2-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-base-v33</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-omor-v30</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-ompr-v30</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-omso-v30</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-omso-v301</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-inspire-ef-v40</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v33</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gwml-v22</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v311</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v321</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gmlcov-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-filter-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sweCommon-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sweCommon-v101</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-ogc-schema</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-swes-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sensorML-v101</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sensorML-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gmd-v20120713</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-xlink-v110</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gco-v20120713</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-ifoi-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-drt-v100</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosgda-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosgda-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosro-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosrf-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sossf-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosrf-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-om-v100</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-om-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sampling-v100</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sampling-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-ows-v110</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sos-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sos-v100</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-soap-v12</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-wsa-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-waterML-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-waterML-dr-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosdo-v10</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-sosdo-v20</artifactId>
-                <version>${n52.common.xml.version}</version>
+                <version>${version.n52.common.xml}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlbeans</groupId>
@@ -1177,13 +1186,13 @@
             <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
-                <version>${saxon.version}</version>
+                <version>${version.saxon}</version>
             </dependency>
             <!-- Spring -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1194,7 +1203,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1205,7 +1214,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1216,7 +1225,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-expression</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1228,7 +1237,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1239,7 +1248,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1250,7 +1259,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
-                <version>${org.springframework.security.version}</version>
+                <version>${version.springframework.security}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1261,7 +1270,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
-                <version>${org.springframework.security.version}</version>
+                <version>${version.springframework.security}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1273,7 +1282,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>${org.springframework.security.version}</version>
+                <version>${version.springframework.security}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1285,7 +1294,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-taglibs</artifactId>
-                <version>${org.springframework.security.version}</version>
+                <version>${version.springframework.security}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1297,7 +1306,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-oxm</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1309,7 +1318,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1320,17 +1329,17 @@
             <dependency>
                 <groupId>org.n52.sensorweb.sos</groupId>
                 <artifactId>test-suite-common</artifactId>
-                <version>${sos.test.suite.version}</version>
+                <version>${version.sos.test.suite}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb.sos</groupId>
                 <artifactId>test-suite-sos-20</artifactId>
-                <version>${sos.test.suite.version}</version>
+                <version>${version.sos.test.suite}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -1341,7 +1350,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1353,7 +1362,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aspects</artifactId>
-                <version>${org.springframework.version}</version>
+                <version>${version.springframework}</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -1365,13 +1374,13 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjtools</artifactId>
-                <version>${aspectj.version}</version>
+                <version>${version.aspectj}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.4.0</version>
+                <version>1.4.1</version>
             </dependency>
             <dependency>
                 <groupId>jstl</groupId>
@@ -1456,7 +1465,7 @@
             <dependency>
                 <groupId>org.opengeo</groupId>
                 <artifactId>geodb</artifactId>
-                <version>${geodb.version}</version>
+                <version>${version.geodb}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.vividsolutions</groupId>
@@ -1471,12 +1480,12 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
+                <version>${version.h2}</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
+                <version>${version.mysql}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.protobuf</groupId>
@@ -1526,32 +1535,32 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.0.0</version>
+                <version>4.0.3</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
+                <version>${version.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>${version.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <version>${version.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-cbor</artifactId>
-                <version>${jackson.version}</version>
+                <version>${version.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>28.2-jre</version>
+                <version>29.0-jre</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -1578,7 +1587,7 @@
             <dependency>
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
-                <version>${ojdbc8.version}</version>
+                <version>${version.ojdbc8}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1589,24 +1598,36 @@
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
                 <artifactId>mssql-jdbc</artifactId>
-                <version>${sqljdbc.version}</version>
+                <version>${version.sqljdbc}</version>
             </dependency>
             <!-- geotools -->
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-epsg-hsql</artifactId>
-                <version>${geotools.version}</version>
+                <version>${version.geotools}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
-                <version>${geotools.version}</version>
+                <version>${version.geotools}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.media</groupId>
@@ -1616,12 +1637,24 @@
                         <groupId>org.apache.commons</groupId>
                         <artifactId>commons-lang3</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-referencing</artifactId>
-                <version>${geotools.version}</version>
+                <version>${version.geotools}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>java3d</groupId>
@@ -1631,12 +1664,24 @@
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-metadata</artifactId>
-                <version>${geotools.version}</version>
+                <version>${version.geotools}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.media</groupId>
@@ -1646,16 +1691,40 @@
                         <groupId>org.apache.commons</groupId>
                         <artifactId>commons-lang3</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.geotools</groupId>
                 <artifactId>gt-opengis</artifactId>
-                <version>${geotools.version}</version>
+                <version>${version.geotools}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.media</groupId>
                         <artifactId>jai_core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.emf</groupId>
+                        <artifactId>org.eclipse.emf.common</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1921,7 +1990,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
                     <configuration>
                       <!-- see: https://stackoverflow.com/questions/53010200/maven-surefire-could-not-find-forkedbooter-class -->
                         <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
@@ -1952,7 +2020,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.27.v20200227</version>
+                    <version>9.4.29.v20200521</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -1962,7 +2030,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.7.10</version>
+                    <version>1.7.12</version>
                 </plugin>
 
                 <plugin>
@@ -1994,7 +2062,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-webdav-jackrabbit</artifactId>
-                <version>1.0-beta-7</version>
+                <version>3.4.0</version>
             </extension>
         </extensions>
     </build>
@@ -2019,16 +2087,12 @@
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
-            <url>https://download.osgeo.org/webdav/geotools/</url>
+            <url>https://repo.osgeo.org/repository/release/</url>
+<!--             <url>https://repo.osgeo.org/service/rest/repository/browse/release/</url> -->
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>boundlessgeo-releases</id>
-            <url>https://repo.boundlessgeo.com/main</url>
-        </repository>
-
     </repositories>
     <profiles>
         <profile>

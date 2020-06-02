@@ -48,6 +48,7 @@ import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
@@ -247,10 +248,10 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
             DatasetEntity dataset = null;
             if (sosObservation.getValue() instanceof SingleObservationValue) {
                 dataset = observationDAO.insertObservationSingleValue(hDataset, hFeature, sosObservation,
-                        cache.getCodespaceCache(), cache.getUnitCache(), session);
+                        cache.getCodespaceCache(), cache.getUnitCache(), cache.getFormatCache(), session);
             } else if (sosObservation.getValue() instanceof MultiObservationValues) {
                 dataset = observationDAO.insertObservationMultiValue(hDataset, hFeature, sosObservation,
-                        cache.getCodespaceCache(), cache.getUnitCache(), session);
+                        cache.getCodespaceCache(), cache.getUnitCache(), cache.getFormatCache(), session);
             }
             if (dataset != null && !cache.get(sosObsConst, offeringID).equals(dataset)) {
                 cache.putConstellation(sosObsConst, offeringID, dataset);
@@ -377,6 +378,8 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
 
         private final Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
 
+        private final Map<String, FormatEntity> formatCache = Maps.newHashMap();
+
         private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap =
                 HashMultimap.create();
 
@@ -438,6 +441,10 @@ public class InsertObservationHandler extends AbstractInsertObservationHandler i
 
         public Map<UoM, UnitEntity> getUnitCache() {
             return unitCache;
+        }
+
+        public Map<String, FormatEntity> getFormatCache() {
+            return formatCache;
         }
 
         public Set<String> getAllOfferings() {

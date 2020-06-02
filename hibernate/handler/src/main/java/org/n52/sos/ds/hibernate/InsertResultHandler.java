@@ -48,6 +48,7 @@ import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -111,8 +112,8 @@ import com.google.common.collect.Sets;
 @Configurable
 public class InsertResultHandler extends AbstractInsertResultHandler implements Constructable {
 
-    public static final String CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES =
-            "misc.convertComplexProfileToSingleProfiles";
+    public static final String ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS =
+            "service.abortInsertResultForExistingObservations";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultHandler.class);
 
@@ -139,7 +140,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     @Override
     public void init() {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper());
+        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper(),
+                getDaoFactory().getDecoderRepository());
     }
 
     @Override
@@ -153,6 +155,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
 
         Map<String, CodespaceEntity> codespaceCache = Maps.newHashMap();
         Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
+        Map<String, FormatEntity> formatCache = Maps.newHashMap();
 
         try {
             session = getHibernateSessionHolder().getSession();
@@ -216,10 +219,10 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                 try {
                     if (observation.getValue() instanceof SingleObservationValue) {
                         observationDAO.insertObservationSingleValue(obsConst, feature, observation, codespaceCache,
-                                unitCache, session);
+                                unitCache, formatCache, session);
                     } else if (observation.getValue() instanceof MultiObservationValues) {
                         observationDAO.insertObservationMultiValue(obsConst, feature, observation, codespaceCache,
-                                unitCache, session);
+                                unitCache, formatCache, session);
                     }
                 } catch (NoApplicableCodeException nace) {
                     if (abortInsertResultForExistingObservations()) {
@@ -604,7 +607,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
         return oc;
     }
 
-    @Setting(CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
+    @Setting(ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS)
     public void setConvertComplexProfileToSingleProfiles(boolean convertComplexProfileToSingleProfiles) {
         this.convertComplexProfileToSingleProfiles = convertComplexProfileToSingleProfiles;
     }
@@ -621,8 +624,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
         return sessionHolder;
     }
 
-    @Setting(CONVERT_COMPLEX_PROFILE_TO_SINGLE_PROFILES)
-    public void setabortInsertResultForExistingObservations(boolean abortInsertResultForExistingObservations) {
+    @Setting(ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS)
+    public void setAbortInsertResultForExistingObservations(boolean abortInsertResultForExistingObservations) {
         this.abortInsertResultForExistingObservations = abortInsertResultForExistingObservations;
     }
 

@@ -555,13 +555,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
-        if (registry == null) {
-            CustomConfiguration config = getConfig(settings);
-            StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
-            settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
-            registryBuilder.applySettings(settings);
-            registry = registryBuilder.build();
+        if (registry != null) {
+            checkPostCreation();
         }
+        CustomConfiguration config = getConfig(settings);
+        StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
+        settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+        registryBuilder.applySettings(settings);
+        registry = registryBuilder.build();
         return registry;
     }
 
@@ -738,6 +739,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         // properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY,
         // builder.toString());
         // }
+    }
+
+    public void checkPostCreation() {
+        metadata = null;
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+            registry = null;
+        }
     }
 
     // private boolean checkIfExtensionDirectoryExists() {

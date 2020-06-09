@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.web.admin;
+package org.n52.sos.aqd.web.admin;
 
 import java.util.Iterator;
 

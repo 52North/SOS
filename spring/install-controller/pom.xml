@@ -33,10 +33,6 @@
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
         </dependency>
-         <dependency>
-            <groupId>org.n52.arctic-sea</groupId>
-            <artifactId>shetland</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe</artifactId>
@@ -76,6 +72,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

@@ -36,14 +36,16 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.DispatcherServlet;
 
 import com.google.common.base.Strings;
 
@@ -60,6 +62,9 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
 
     @Inject
     private Collection<Datasource> datasources;
+
+    @Inject
+    private DispatcherServlet servlet;
 
     @Override
     protected Step getStep() {
@@ -82,6 +87,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
             createTables = checkCreate(datasource, parameters, overwriteTables, c);
             forceUpdateTables = checkUpdate(datasource, parameters, overwriteTables, c);
             c.setDatabaseSettings(parseDatasourceSettings(datasource, parameters));
+            setProfiles(c);
             datasource.validateConnection(c.getDatabaseSettings());
             datasource.validatePrerequisites(c.getDatabaseSettings());
 
@@ -128,6 +134,12 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         } catch (ConfigurationError e) {
             throw new InstallationSettingsError(c, e.getMessage(), e);
         }
+    }
+
+    private void setProfiles(InstallationConfiguration c) {
+        String concept = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
+        servlet.getEnvironment().setActiveProfiles(concept.toLowerCase());
+        servlet.refresh();
     }
 
     protected boolean checkOverwrite(Datasource datasource, Map<String, String> parameters,

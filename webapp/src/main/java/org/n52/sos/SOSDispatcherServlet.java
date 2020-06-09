@@ -138,6 +138,7 @@ public class SOSDispatcherServlet
             throw new IllegalStateException("WebApplicationContext does not support refresh: " + applicationContext);
         }
         LOG.info("Reloading context");
+
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
     }
 }

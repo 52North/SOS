@@ -58,7 +58,7 @@
     <beans profile="transactional,ereporting">
         <bean id="batchOperationHandler"
             class="org.n52.sos.ds.BatchOperationHandler" />
-            
+
         <bean id="transactionalSecurityConfiguration"
             class="org.n52.sos.service.TransactionalSecurityConfiguration" />
 

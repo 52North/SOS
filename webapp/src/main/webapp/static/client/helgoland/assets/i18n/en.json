@@ -1,4 +1,9 @@
 {
+	"basic-auth": {
+		"header": "Basic-Auth for service url",
+		"password": "Password",
+		"username": "Username"
+	},
 	"controls": {
 		"cancel": "Cancel",
 		"close": "Close",
@@ -91,11 +96,13 @@
 	},
 	"timeseries": {
 		"diagram": {
+			"annotation": "Data without warranty",
 			"hint": {
 				"select-timeseries-first": "Please select a timeseries first."
 			},
 			"legend": {
 				"entry": {
+					"csv-download": "Data as CSV (Zip-Archive)",
 					"first-value-at": "First value at",
 					"jumpToLastTimeStamp": "Jump to last measurement",
 					"last-value-at": "Last value at",
@@ -112,6 +119,13 @@
 					"min": "Min",
 					"pointRadius": "Point radius",
 					"zeroBasedYAxis": "Timeseries zero based"
+				}
+			},
+			"options": {
+				"hovering": {
+					"line": "Line",
+					"none": "None",
+					"point": "Point"
 				}
 			},
 			"phenomenon": {

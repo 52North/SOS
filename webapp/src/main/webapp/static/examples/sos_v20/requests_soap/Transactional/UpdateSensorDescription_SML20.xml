@@ -115,6 +115,21 @@
 									</sml:output>
 								</sml:OutputList>
 							</sml:outputs>
+              <sml:parameters>
+                <sml:ParameterList>
+                    <sml:parameter name="settings">
+                        <swe:Quantity definition="http://www.52north.org/test/parameter" updatable="false">
+                            <swe:label>Test parmeter</swe:label>
+                            <swe:uom code="test" />
+                            <swe:constraint>
+                                <swe:AllowedValues>
+                                    <swe:interval>0.01 10.0</swe:interval>
+                                </swe:AllowedValues>
+                            </swe:constraint>
+                        </swe:Quantity>
+                    </sml:parameter>
+                </sml:ParameterList>
+              </sml:parameters>
 							<sml:attachedTo xlink:href="http://www.52north.org/test/procedure/1" xlink:title="http://www.52north.org/test/procedure/1"/>
 							<sml:position>
 								<swe:Vector referenceFrame="urn:ogc:def:crs:EPSG::4326">

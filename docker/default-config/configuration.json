@@ -40,13 +40,13 @@
       "type" : "string",
       "value" : "http://www.nexosproject.eu/dictionary/definitions.html#WMO_ID"
     },
+    "service.cacheFileFolder" : {
+      "type" : "file",
+      "value" : null
+    },
     "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION" : {
       "type" : "boolean",
       "value" : true
-    },
-    "eReporting.procedure.prefix" : {
-      "type" : "string",
-      "value" : ""
     },
     "procedureDesc.IDENTIFIER_SHORT_NAME_DEFINITION" : {
       "type" : "string",
@@ -82,10 +82,6 @@
         "en" : "52North Sensor Observation Service - Data Access for the Sensor Web"
       }
     },
-    "eReporting.offering.prefix" : {
-      "type" : "string",
-      "value" : ""
-    },
     "procedureDesc.ENRICH_WITH_OFFERINGS" : {
       "type" : "boolean",
       "value" : true
@@ -97,10 +93,6 @@
     "coding.tupleSeparator" : {
       "type" : "string",
       "value" : "@@"
-    },
-    "eReporting.flags.verification" : {
-      "type" : "string",
-      "value" : "1"
     },
     "serviceProvider.facsimile" : {
       "type" : "string",
@@ -130,10 +122,6 @@
       "type" : "choice",
       "value" : "CI_RoleCode_principalInvestigator"
     },
-    "eReporting.samplingPoint.prefix" : {
-      "type" : "string",
-      "value" : ""
-    },
     "sos.flexibleIdentifier.procedure" : {
       "type" : "boolean",
       "value" : true
@@ -158,6 +146,10 @@
       "type" : "boolean",
       "value" : false
     },
+    "serviceProvider.file" : {
+      "type" : "file",
+      "value" : null
+    },
     "netcdf.phenomenon.latitude" : {
       "type" : "string",
       "value" : ""
@@ -177,10 +169,6 @@
     "serviceProvider.phone" : {
       "type" : "string",
       "value" : "+49(0)251/396 371-0"
-    },
-    "eReporting.featureOfInterest.prefix" : {
-      "type" : "string",
-      "value" : ""
     },
     "serviceProvider.name" : {
       "type" : "string",
@@ -226,17 +214,9 @@
       "type" : "boolean",
       "value" : false
     },
-    "eReporting.station.prefix" : {
-      "type" : "string",
-      "value" : ""
-    },
     "service.capabilities.listOnlyParentOfferings" : {
       "type" : "boolean",
       "value" : false
-    },
-    "eReporting.flags.validity" : {
-      "type" : "string",
-      "value" : "1,2,3"
     },
     "sos.flexibleIdentifier.obervableProperty" : {
       "type" : "boolean",
@@ -245,10 +225,6 @@
     "service.cachePersistenceDelay" : {
       "type" : "integer",
       "value" : 30
-    },
-    "service.transactionalToken" : {
-      "type" : "string",
-      "value" : ""
     },
     "request.procedure.instancesOnly" : {
       "type" : "boolean",
@@ -261,10 +237,6 @@
     "coding.decimalSeparator" : {
       "type" : "string",
       "value" : "."
-    },
-    "service.transactionalAllowedIps" : {
-      "type" : "string",
-      "value" : "127.0.0.1"
     },
     "inspire.conformity.title" : {
       "type" : "string",
@@ -290,21 +262,17 @@
       "type" : "string",
       "value" : "CET"
     },
-    "misc.httpResponseCodeUseInKvpAndPoxBinding" : {
-      "type" : "boolean",
-      "value" : false
-    },
     "swe.coordinate.altitude" : {
       "type" : "string",
       "value" : "altitude,height,depth"
     },
+    "misc.httpResponseCodeUseInKvpAndPoxBinding" : {
+      "type" : "boolean",
+      "value" : false
+    },
     "procedureDesc.ALTITUDE_UOM" : {
       "type" : "string",
       "value" : "m"
-    },
-    "eReporting.namespace" : {
-      "type" : "string",
-      "value" : ""
     },
     "oceansites.definition.network" : {
       "type" : "string",
@@ -321,6 +289,10 @@
     "exi.alignment" : {
       "type" : "choice",
       "value" : "BIT_PACKED"
+    },
+    "service.sta.supports.urls" : {
+      "type" : "boolean",
+      "value" : false
     },
     "service.encodeFullChildrenInDescribeSensor" : {
       "type" : "boolean",
@@ -414,10 +386,6 @@
       "type" : "boolean",
       "value" : false
     },
-    "ABORT_INSERT_RESULT_FOR_EXISTING_OBSERVATIONS" : {
-      "type" : "boolean",
-      "value" : true
-    },
     "oceansites.definition.site" : {
       "type" : "string",
       "value" : "http://www.nexosproject.eu/dictionary/definitions.html#SITE_ID"
@@ -486,6 +454,10 @@
       "type" : "string",
       "value" : "31466"
     },
+    "inspire.metadataUrl.url" : {
+      "type" : "uri",
+      "value" : "http://myserver.org/"
+    },
     "serviceIdentification.keywords" : {
       "type" : "string",
       "value" : ""
@@ -500,11 +472,11 @@
     },
     "service.security.transactional.active" : {
       "type" : "boolean",
-      "value" : true
+      "value" : false
     },
-    "eReporting.observation.prefix" : {
-      "type" : "string",
-      "value" : ""
+    "serviceIdentification.file" : {
+      "type" : "file",
+      "value" : null
     },
     "misc.switchCoordinatesForEpsgCodes" : {
       "type" : "string",
@@ -564,10 +536,6 @@
       "type" : "boolean",
       "value" : false
     },
-    "eReporting.network.prefix" : {
-      "type" : "string",
-      "value" : ""
-    },
     "procedureDesc.CLASSIFIER_INTENDED_APPLICATION_DEFINITION" : {
       "type" : "string",
       "value" : "urn:ogc:def:classifier:OGC:1.0:application"
@@ -604,6 +572,10 @@
       "type" : "string",
       "value" : ""
     },
+    "service.abortInsertResultForExistingObservations" : {
+      "type" : "boolean",
+      "value" : true
+    },
     "i18n.defaultLanguage" : {
       "type" : "string",
       "value" : "eng"
@@ -612,10 +584,6 @@
       "type" : "boolean",
       "value" : true
     },
-    "service.transactionalAllowedProxies" : {
-      "type" : "string",
-      "value" : "127.0.0.1"
-    },
     "serviceProvider.contactInstructions" : {
       "type" : "string",
       "value" : "TBA"
@@ -623,6 +591,10 @@
     "sos.prefix.featureOfInterest" : {
       "type" : "string",
       "value" : ""
+    },
+    "serviceProvider.role.codespace" : {
+      "type" : "uri",
+      "value" : "TBA"
     },
     "service.sensorDirectory" : {
       "type" : "string",
@@ -640,6 +612,10 @@
       "type" : "integer",
       "value" : 4326
     },
+    "service.serviceURL" : {
+      "type" : "uri",
+      "value" : "http://localhost:8080/52n-sos-webapp/service"
+    },
     "oceansites.project" : {
       "type" : "string",
       "value" : ""
@@ -648,32 +624,126 @@
       "type" : "string",
       "value" : "urn:ogc:def:classifier:OGC:1.0:procedureType"
     },
-    "serviceIdentification.accessConstraints" : {
-      "type" : "string",
-      "value" : "NONE"
-    },
-    "service.cacheFileFolder" : {
-      "type" : "file",
-      "value" : null
-    },
-    "service.serviceURL" : {
-      "type" : "uri",
-      "value" : "http://localhost:8080/52n-sos-webapp/service"
-    },
-    "inspire.metadataUrl.url" : {
-      "type" : "uri",
-      "value" : "http://myserver.org/"
-    },
     "serviceProvider.site" : {
       "type" : "uri",
       "value" : "http://52north.org/swe"
     },
-    "serviceProvider.role.codespace" : {
-      "type" : "uri",
-      "value" : "TBA"
+    "serviceIdentification.accessConstraints" : {
+      "type" : "string",
+      "value" : "NONE"
+    },
+    "eReporting.flags.verification" : {
+      "type" : "string",
+      "value" : "1"
+    },
+    "eReporting.flags.validity" : {
+      "type" : "string",
+      "value" : "1,2,3"
+    },
+    "eReporting.namespace" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.observation.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.procedure.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.samplingPoint.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.offering.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.featureOfInterest.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.station.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "eReporting.network.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "service.transactionalToken" : {
+      "type" : "string",
+      "value" : ""
+    },
+    "service.transactionalAllowedIps" : {
+      "type" : "string",
+      "value" : "127.0.0.1"
+    },
+    "service.transactionalAllowedProxies" : {
+      "type" : "string",
+      "value" : "127.0.0.1"
     }
   },
   "users" : {
-    "a" : "$2a$10$MhbH91YpyWCaMF5UlwOb2OdoT2ZgZT5b2c9eH1W3MLonwA3bvQ0Za"
+    "admin" : "$2a$10$Za933umO2TpUM7sKTq2hPeB.RFjCuzOvqfQeIywd0m7IUMf2KfQxq"
+  },
+  "activation" : {
+    "operations" : [
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "InsertResult",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "DeleteObservation",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "InsertObservation",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "InsertFeatureOfInterest",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "DeleteSensor",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "DeleteResultTemplate",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "InsertResultTemplate",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "InsertSensor",
+        "active" : true
+      },
+      {
+        "service" : "SOS",
+        "version" : "2.0.0",
+        "operationName" : "UpdateSensorDescription",
+        "active" : true
+      }
+    ]
   }
 }

@@ -74,6 +74,21 @@
           "type": "string"
         }
       }
+    },
+    {
+      "required": [
+        "fields"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "dataRecord"
+          ]
+        },
+        "fields": {
+          "type": "array"
+        }
+      }
     }
   ]
 }

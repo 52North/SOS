@@ -117,6 +117,14 @@ public interface JSONConstants {
     String D_WITHIN = "dWithin";
 
     String DATA_TYPE = "dataType";
+    
+    String DATA_ARRAY = "dataArray";
+    
+    String DATA_ARRAY_TYPE = DATA_ARRAY;
+    
+    String DATA_RECORD = "dataRecord";
+    
+    String DATA_RECORD_TYPE = DATA_RECORD;
 
     String DCP = "dcp";
 

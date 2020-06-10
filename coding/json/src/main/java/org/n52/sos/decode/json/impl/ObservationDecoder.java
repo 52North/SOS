@@ -55,6 +55,7 @@ import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
@@ -65,6 +66,8 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
@@ -85,7 +88,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = ImmutableMap.of(
             SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet.of(
                     // OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION,
-                    // OmConstants.OBS_TYPE_COMPLEX_OBSERVATION,
+                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION,
                     OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION, OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
                     OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_MEASUREMENT,
                     OmConstants.OBS_TYPE_TEXT_OBSERVATION, OmConstants.OBS_TYPE_TRUTH_OBSERVATION));
@@ -242,6 +245,8 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
             return parseReferenceObservationValue(node);
         } else if (type.equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION)) {
             return parseGeometryObservation(node);
+        } else if (type.equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)) {
+            return parseComplexObservation(node);
         } else {
             throw new JSONDecodingException("Unsupported observationType: " + type);
         }
@@ -317,4 +322,17 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return ref;
     }
 
+    private ObservationValue<?> parseComplexObservation(JsonNode node) throws OwsExceptionReport {
+        final ComplexValue v = parceComplexValue(node.path(JSONConstants.RESULT));
+        return new SingleObservationValue<>(parsePhenomenonTime(node), v);
+    }
+
+    private ComplexValue parceComplexValue(JsonNode node) throws OwsExceptionReport {
+        SweDataRecord dataRecord = new SweDataRecord();
+        for (JsonNode field : node) {
+            dataRecord.addField(decodeJsonToObject(field, SweField.class));
+        }
+        return new ComplexValue();
+    }
+        
 }

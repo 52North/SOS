@@ -35,6 +35,7 @@ import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
@@ -87,6 +88,8 @@ public class FieldEncoder extends JSONEncoder<SweField> {
             return encodeSweTimeRangeField(field);
         case Category:
             return encodeSweCategoryField(field);
+        case DataRecord:
+            return encodeSweDataRecord(field);
         default:
             throw new UnsupportedEncoderInputException(this, field);
         }
@@ -218,6 +221,17 @@ public class FieldEncoder extends JSONEncoder<SweField> {
         jfield.put(JSONConstants.CODESPACE, sweCategory.getCodeSpace());
         if (sweCategory.isSetValue()) {
             jfield.put(JSONConstants.VALUE, sweCategory.getValue());
+        }
+        return jfield;
+    }
+    
+    private ObjectNode encodeSweDataRecord(SweField field) throws OwsExceptionReport {
+        ObjectNode jfield = createField(field);
+        jfield.put(JSONConstants.TYPE, JSONConstants.DATA_RECORD_TYPE);
+        SweDataRecord sweDataRecord = (SweDataRecord) field.getElement();
+        ArrayNode fields = jfield.putArray(JSONConstants.FIELDS);
+        for (SweField f : sweDataRecord.getFields()) {
+            fields.add(encodeObjectToJson(f));
         }
         return jfield;
     }

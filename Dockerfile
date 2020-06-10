@@ -37,5 +37,5 @@ LABEL maintainer="Carsten Hollmann <c.hollmann@52north.org>" \
       org.label-schema.url="https://52north.org/software/software-projects/sos/" \
       org.label-schema.vendor="52°North GmbH" \
       org.label-schema.vcs-url="https://github.com/52north/SOS.git" \
-      org.label-schema.version="4.4.14"
+      org.label-schema.version="4.4.15"
 

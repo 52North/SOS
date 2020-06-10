@@ -6,6 +6,20 @@
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
 
+## Release 52n-sensorweb-sos-4.4.15
+ 
+### New features
+
+  - Support swe:DataRecord in resultStructure of JSON encoded GetResultTemplate
+  
+### Changes
+  
+  - 
+  
+### Fixed issues
+
+  - 
+
 ## Release 52n-sensorweb-sos-4.4.14
  
 ### New features

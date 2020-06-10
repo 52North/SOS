@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>netcdf</artifactId>
-         <version>4.4.15-SNAPSHOT</version>
+         <version>4.4.15</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>api-netcdf</artifactId>

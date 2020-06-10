@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-         <version>4.4.15-SNAPSHOT</version>
+         <version>4.4.15</version>
     </parent>
     <artifactId>hibernate-mappings</artifactId>
     <name>52°North SOS - Hibernate Mappings</name>

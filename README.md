@@ -55,7 +55,7 @@ In the [Sensor Web Server database model](https://github.com/52North/sensorweb-s
 
 Docker images are automatically deployed to [Docker Hub](https://hub.docker.com/r/52north/sos).
 
-The configuration is located in `/etc/sos`. The directory is per default a volume and when no other directory is mounted (see also the [Docker documentation](https://docs.docker.com/storage/) for pre-populated volumes) a default configuration using H2 is used. This default installation uses the admin credentials `admin:admin`. If you want to install the SOS, you have to mount a empty directory instead of the default volume.
+The configuration is located in `/etc/sos`. The directory is per default a volume and when no other directory is mounted (see also the [Docker documentation](https://docs.docker.com/storage/) for pre-populated volumes) a default configuration using H2 is used. This default installation uses the admin credentials `admin:password`. If you want to install the SOS, you have to mount a empty directory instead of the default volume.
 
 The cache file is located in `/var/lib/jetty/webapps/ROOT/tmp`. The directory is per default a volume.
 

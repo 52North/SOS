@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>identifier-modifier</artifactId>
-          <version>4.4.16-SNAPSHOT</version>
+          <version>4.4.15-SNAPSHOT</version>
     </parent>
     <artifactId>abstract-identifier</artifactId>
     <packaging>jar</packaging>

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
-         <version>4.4.15-SNAPSHOT</version>
+         <version>4.4.15</version>
         <artifactId>drt</artifactId>
     </parent>
     <artifactId>drt-operation</artifactId>

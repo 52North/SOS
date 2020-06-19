@@ -16,4 +16,8 @@
         <description>This calls SettingsManager#configure for all beans.</description>
     </bean>
 
+    <bean class="org.n52.iceland.config.spring.SettingsBeanPostProcessor">
+        <description>This calls SettingsManager#addSetting for all beans</description>
+    </bean>
+
 </beans>

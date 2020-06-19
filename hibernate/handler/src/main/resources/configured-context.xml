@@ -20,6 +20,12 @@
     <bean id="getDataAvailabilityDao"
           class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDaoImpl"/>
 
+    <bean id="getResultTemplateHandler"
+        class="org.n52.sos.ds.hibernate.GetResultTemplateHandler" />
+
+    <bean id="getResultHandler"
+        class="org.n52.sos.ds.hibernate.GetResultHandler" />
+
     <bean class="org.n52.series.db.dao.DefaultDbQueryFactory"/>
 
     <!--
@@ -63,12 +69,6 @@
 
         <bean id="insertResultHandler"
               class="org.n52.sos.ds.hibernate.InsertResultHandler"/>
-
-        <bean id="getResultTemplateHandler"
-              class="org.n52.sos.ds.hibernate.GetResultTemplateHandler"/>
-
-        <bean id="getResultHandler"
-              class="org.n52.sos.ds.hibernate.GetResultHandler"/>
 
         <bean id="deleteSensorHandler"
               class="org.n52.sos.ds.hibernate.DeleteSensorHandler"/>

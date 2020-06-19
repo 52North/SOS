@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao;
 
 import static java.util.stream.Collectors.toSet;
 
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
@@ -38,19 +37,15 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
@@ -67,7 +62,10 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.request.operator.AbstractRequestOperator;
+import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.util.SweHelper;
@@ -92,8 +90,9 @@ public class DaoFactory {
     private GeometryHandler geometryHandler;
     private SweHelper sweHelper;
     private FeatureQueryHandler featureQueryHandler;
-    private String serviceURL;
     private boolean includeChildObservableProperties;
+    private boolean staSupportsUrls;
+    private SosHelper sosHelper;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -137,14 +136,9 @@ public class DaoFactory {
         this.sweHelper = sweHelper;
     }
 
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
+    @Inject
+    public void setSosHelper(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
     }
 
     public boolean isIncludeChildObservableProperties() {
@@ -156,6 +150,15 @@ public class DaoFactory {
         this.includeChildObservableProperties = include;
     }
 
+
+    public boolean isStaSupportsUrls() {
+        return staSupportsUrls;
+    }
+
+    @Setting(SosSettings.STA_SUPPORTS_URLS)
+    public void setStaSupportsUrls(boolean staSupportsUrls) {
+        this.staSupportsUrls = staSupportsUrls;
+    }
 
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
@@ -293,12 +296,16 @@ public class DaoFactory {
         return sweHelper;
     }
 
+    public SosHelper getSosHelper() {
+        return sosHelper;
+    }
+
     public FeatureQueryHandler getFeatureQueryHandler() {
         return featureQueryHandler;
     }
 
     public String getServiceURL() {
-        return serviceURL;
+        return getSosHelper().getServiceURL();
     }
 
     public XmlOptionsHelper getXmlOptionsHelper() {

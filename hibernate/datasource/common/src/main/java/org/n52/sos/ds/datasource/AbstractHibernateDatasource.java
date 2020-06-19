@@ -105,8 +105,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String DATABASE_CONCEPT_DESCRIPTION = "Select the database concept this SOS should use";
 
-    protected static final String DATABASE_CONCEPT_KEY = "sos.database.concept";
-
     protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SIMPLE.name();
 
     protected static final String DATABASE_EXTENSION_TITLE = "Database extension";
@@ -303,7 +301,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         properties.put(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY, toURL(settings));
         config.addProperties(properties);
         config.registerTypeOverride(SmallBooleanType.INSTANCE);
-        config.buildMappings();
         return config;
     }
 
@@ -549,7 +546,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metadata == null) {
             getServiceRegistry(settings);
             MetadataSources sources = new MetadataSources(registry);
-
             for (File dir : getMappingPaths(settings)) {
                 sources.addDirectory(dir);
             }
@@ -559,13 +555,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     protected StandardServiceRegistry getServiceRegistry(Map<String, Object> settings) {
-        if (registry == null) {
-            CustomConfiguration config = getConfig(settings);
-            StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
-            settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
-            registryBuilder.applySettings(settings);
-            registry = registryBuilder.build();
+        if (registry != null) {
+            checkPostCreation();
         }
+        CustomConfiguration config = getConfig(settings);
+        StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
+        settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());
+        registryBuilder.applySettings(settings);
+        registry = registryBuilder.build();
         return registry;
     }
 
@@ -742,6 +739,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         // properties.put(SessionFactoryProvider.HIBERNATE_DIRECTORY,
         // builder.toString());
         // }
+    }
+
+    public void checkPostCreation() {
+        metadata = null;
+        if (registry != null) {
+            StandardServiceRegistryBuilder.destroy(registry);
+            registry = null;
+        }
     }
 
     // private boolean checkIfExtensionDirectoryExists() {

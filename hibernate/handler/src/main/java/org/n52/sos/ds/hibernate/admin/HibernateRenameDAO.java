@@ -39,13 +39,18 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.RenameDAO;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.exception.NoSuchObservablePropertyException;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class HibernateRenameDAO implements RenameDAO {
+
     private HibernateSessionHolder sessionHolder;
+
+    @Inject
+    private DaoFactory daoFactory;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -66,7 +71,7 @@ public class HibernateRenameDAO implements RenameDAO {
             if (op == null) {
                 throw new NoSuchObservablePropertyException(oldName);
             }
-            op.setIdentifier(newName);
+            op.setIdentifier(newName, daoFactory.isStaSupportsUrls());
             s.update(op);
             s.flush();
             t.commit();

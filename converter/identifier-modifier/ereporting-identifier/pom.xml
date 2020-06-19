@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
-        <artifactId>identifier-modifier</artifactId>
-        <version>5.0.3-SNAPSHOT</version>
+        <artifactId>sos-identifier-modifier</artifactId>
+        <version>5.1.1-SNAPSHOT</version>
     </parent>
     <artifactId>sos-ereporting-identifier</artifactId>
     <packaging>jar</packaging>

@@ -29,7 +29,6 @@
 package org.n52.sos.request.operator;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,12 +38,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -109,7 +105,7 @@ public class SosDescribeSensorOperatorV20 extends
 
     private BindingRepository bindingRepository;
 
-    private String serviceURL;
+    private SosHelper sosHelper;
 
     private boolean encodeFullChildrenInDescribeSensor;
 
@@ -127,18 +123,13 @@ public class SosDescribeSensorOperatorV20 extends
         this.bindingRepository = bindingRepository;
     }
 
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
+    @Inject
+    public void setSosHelperL(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
     }
 
     private String getServiceURL() {
-        return serviceURL;
+        return sosHelper.getServiceURL();
     }
 
     @Setting(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)

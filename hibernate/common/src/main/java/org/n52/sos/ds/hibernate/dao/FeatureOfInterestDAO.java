@@ -287,7 +287,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         AbstractFeatureEntity feature = get(identifier, session);
         if (feature == null) {
             feature = new FeatureEntity();
-            feature.setIdentifier(identifier);
+            feature.setIdentifier(identifier, getDaoFactory().isStaSupportsUrls());
             if (url != null && !url.isEmpty()) {
                 feature.setUrl(url);
             }
@@ -394,7 +394,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             } else {
                 featureOfInterest.setGeometry(geom);
             }
-            session.saveOrUpdate(featureOfInterest);
+            session.merge(featureOfInterest);
         }
     }
 

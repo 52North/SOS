@@ -9,9 +9,6 @@
     <bean id="binaryAttachmentResponseWriterFactory"
           class="org.n52.sos.coding.encode.BinaryAttachmentResponseWriterFactory"/>
 
-    <bean id="batchOperationHandler"
-          class="org.n52.sos.ds.BatchOperationHandler"/>
-
     <bean id="capabilitiesExtensionService"
           class="org.n52.sos.config.json.JsonCapabilitiesExtensionService" />
 
@@ -30,17 +27,14 @@
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
 
+    <bean id="sosHelper"
+          class="org.n52.sos.util.SosHelper" />
+
     <bean id="encoderRepository"
           class="org.n52.sos.coding.encode.SosEncoderRepository" />
 
     <bean id="procedureDescriptionSettings"
           class="org.n52.sos.service.ProcedureDescriptionSettings" />
-
-    <bean id="transactionalSecurityConfiguration"
-          class="org.n52.sos.service.TransactionalSecurityConfiguration" />
-
-    <bean id="batchRequestOperator"
-          class="org.n52.sos.request.operator.BatchRequestOperator"/>
 
     <bean id="implementationVersionHeaderAdder"
           class="org.n52.sos.service.SosImplementationVersionHeaderAdder"/>
@@ -60,4 +54,15 @@
             </map>
         </property>
     </bean>
+
+    <beans profile="transactional,ereporting">
+        <bean id="batchOperationHandler"
+            class="org.n52.sos.ds.BatchOperationHandler" />
+
+        <bean id="transactionalSecurityConfiguration"
+            class="org.n52.sos.service.TransactionalSecurityConfiguration" />
+
+        <bean id="batchRequestOperator"
+            class="org.n52.sos.request.operator.BatchRequestOperator" />
+    </beans>
 </beans>

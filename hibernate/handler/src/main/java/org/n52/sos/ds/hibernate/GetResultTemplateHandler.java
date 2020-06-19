@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -42,7 +43,8 @@ import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
+import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.svalbard.util.SweHelper;
 
 /**
  * Implementation of the abstract class AbstractGetResultTemplateHandler
@@ -50,11 +52,15 @@ import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservab
  * @since 4.0.0
  *
  */
-public class GetResultTemplateHandler
-        extends AbstractGetResultTemplateHandler {
+public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
+        implements AbstractResultHandler, Constructable {
     private HibernateSessionHolder sessionHolder;
 
     private DaoFactory daoFactory;
+
+    private ResultHandlingHelper resultHandlingHelper;
+
+    private boolean supportsDatabaseEntities;
 
     public GetResultTemplateHandler() {
         super(SosConstants.SOS);
@@ -71,22 +77,53 @@ public class GetResultTemplateHandler
     }
 
     @Override
+    public void init() {
+        this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
+    }
+
+    @Override
+    public boolean isSupported() {
+        return true;
+    }
+
+    @Override
+    public SweHelper getSweHelper() {
+        return getDaoFactory().getSweHelper();
+    }
+
+    @Override
+    public ResultHandlingHelper getResultHandlingHelper() {
+        if (resultHandlingHelper == null) {
+            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(),
+                    getDaoFactory().getSweHelper(), getDaoFactory().getDecoderRepository());
+        }
+        return resultHandlingHelper;
+    }
+
+    @Override
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    @Override
     public GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            ResultTemplateEntity resultTemplate = daoFactory.getResultTemplateDAO()
-                    .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), session);
+            GetResultTemplateResponse response = new GetResultTemplateResponse();
+            response.setService(request.getService());
+            response.setVersion(request.getVersion());
+            ResultTemplateEntity resultTemplate = supportsDatabaseEntities ? getDaoFactory().getResultTemplateDAO()
+                    .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), session) : null;
             if (resultTemplate != null) {
-                GetResultTemplateResponse response = new GetResultTemplateResponse();
-                response.setService(request.getService());
-                response.setVersion(request.getVersion());
                 response.setResultEncoding(createSosResultEncoding(resultTemplate.getEncoding()));
                 response.setResultStructure(createSosResultStructure(resultTemplate.getStructure()));
-                return response;
+            } else {
+                response.setResultEncoding(createSosResultEncoding());
+                response.setResultStructure(generateSosResultStructure(request.getObservedProperty(),
+                        request.getOffering(), null, session));
             }
-            throw new NoSweCommonEncodingForOfferingObservablePropertyCombination(request.getOffering(),
-                    request.getObservedProperty());
+            return response;
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
                     .withMessage("Error while querying data result template data!");
@@ -95,8 +132,4 @@ public class GetResultTemplateHandler
         }
     }
 
-    @Override
-    public boolean isSupported() {
-        return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
-    }
 }

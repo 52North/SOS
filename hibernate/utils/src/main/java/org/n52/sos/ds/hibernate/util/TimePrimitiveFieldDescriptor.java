@@ -28,76 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-/**
- * Class that describes a time primitive of an entity. Instants are represented
- * by one field and periods by two.
- *
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- * @since 4.0.0
- */
-public class TimePrimitiveFieldDescriptor {
-    private final String begin;
-    private final String end;
+public class TimePrimitiveFieldDescriptor extends AbstractTimePrimitiveFieldDescriptor {
 
-    /**
-     * Creates a new descriptor for a period.
-     *
-     * @param begin
-     *            the begin field
-     * @param end
-     *            the end field
-     */
-    public TimePrimitiveFieldDescriptor(String begin, String end) {
-        if (begin == null) {
-            throw new NullPointerException("start may not be null");
-        }
-        this.begin = begin;
-        this.end = end;
-    }
-
-    /**
-     * Creates a new descriptor for a time instant.
-     *
-     * @param position
-     *            the field name
-     */
     public TimePrimitiveFieldDescriptor(String position) {
-        this(position, null);
+        super(position);
     }
 
-    /**
-     * @return the begin position of the period
-     */
-    public String getBeginPosition() {
-        return begin;
-    }
-
-    /**
-     * @return the end position of the period
-     */
-    public String getEndPosition() {
-        return end;
-    }
-
-    /**
-     * @return if this descriptor describes a period
-     */
-    public boolean isPeriod() {
-        return getEndPosition() != null;
-    }
-
-    /**
-     * @return the field name of the instant
-     */
-    public String getPosition() {
-        return getBeginPosition();
-    }
-
-    /**
-     * @return if this descriptor describes a instant
-     */
-    public boolean isInstant() {
-        return !isPeriod();
+    public TimePrimitiveFieldDescriptor(String begin, String end) {
+        super(begin, end);
     }
 
 }

@@ -56,9 +56,9 @@ import com.google.common.collect.Maps;
 public class ProfileGeneratorSplitter {
     private static final Logger LOG = LoggerFactory.getLogger(ProfileGeneratorSplitter.class);
 
-    private ObservationValueCreator creator;
+    private AbstractObservationValueCreator creator;
 
-    public ProfileGeneratorSplitter(ObservationValueCreator creator) {
+    public ProfileGeneratorSplitter(AbstractObservationValueCreator creator) {
         this.creator = creator;
     }
 

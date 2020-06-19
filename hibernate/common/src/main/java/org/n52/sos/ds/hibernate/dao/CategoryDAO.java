@@ -90,7 +90,7 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
         CategoryEntity category = getCategoryForIdentifier(obsProp.getIdentifier(), session);
         if (category == null) {
             category = new CategoryEntity();
-            category.setIdentifier(obsProp.getIdentifier());
+            category.setIdentifier(obsProp.getIdentifier(), getDaoFactory().isStaSupportsUrls());
             category.setIdentifierCodespace(obsProp.getIdentifierCodespace());
             category.setName(obsProp.getName());
             category.setNameCodespace(obsProp.getNameCodespace());

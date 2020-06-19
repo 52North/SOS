@@ -63,8 +63,6 @@ public class FeatureVisitorContext {
 
     private SosContentCache cache;
 
-    private String serviceURL;
-
     /**
      * @return the session
      */
@@ -272,12 +270,7 @@ public class FeatureVisitorContext {
     }
 
     public String getServiceURL() {
-        return serviceURL;
-    }
-
-    public FeatureVisitorContext setServiceURL(String serviceURL) {
-        this.serviceURL = serviceURL;
-        return this;
+        return getDaoFactory().getServiceURL();
     }
 
 }

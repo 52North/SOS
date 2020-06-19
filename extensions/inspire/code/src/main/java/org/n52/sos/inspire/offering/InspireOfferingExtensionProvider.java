@@ -28,16 +28,14 @@
  */
 package org.n52.sos.inspire.offering;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
+import javax.inject.Inject;
+
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.inspire.InspireConstants;
 import org.n52.shetland.inspire.InspireObject;
 import org.n52.shetland.inspire.InspireUniqueResourceIdentifier;
@@ -49,6 +47,7 @@ import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.settings.InspireSettings;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionKey;
 import org.n52.sos.ogc.sos.SosObservationOfferingExtensionProvider;
+import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
 
@@ -71,7 +70,7 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
 
     private String namespace;
 
-    private String serviceURL;
+    private SosHelper sosHelper;
 
     @Setting(InspireSettings.INSPIRE_ENABLED_KEY)
     public void setEnabled(boolean enabled) {
@@ -87,15 +86,11 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
         this.namespace = namespace;
     }
 
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
+    @Inject
+    public void setSosHelperL(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
     }
+
 
     @Override
     public Set<SosObservationOfferingExtensionKey> getKeys() {
@@ -122,7 +117,7 @@ public class InspireOfferingExtensionProvider extends AbstractInspireProvider
         if (!Strings.isNullOrEmpty(namespace)) {
             iuri.setNamespace(namespace);
         } else {
-            iuri.setNamespace(serviceURL);
+            iuri.setNamespace(sosHelper.getServiceURL());
         }
         return iuri;
     }

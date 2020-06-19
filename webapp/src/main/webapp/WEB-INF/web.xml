@@ -62,7 +62,7 @@
     </listener>
     <!-- Spring startup listener -->
     <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+        <listener-class>org.n52.sos.SosContextLoaderListener</listener-class>
     </listener>
     <filter>
         <filter-name>corsFilter</filter-name>

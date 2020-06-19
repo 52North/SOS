@@ -57,6 +57,7 @@ public class SOSDispatcherServlet
     private static final long serialVersionUID = -5390564503165988702L;
     private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     private boolean configured;
+    private boolean loadSettings;
 
     @Override
     public String getContextConfigLocation() {
@@ -140,5 +141,10 @@ public class SOSDispatcherServlet
         LOG.info("Reloading context");
 
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
+    }
+
+    @Override
+    public void loadSettings() {
+       this.loadSettings = true;
     }
 }

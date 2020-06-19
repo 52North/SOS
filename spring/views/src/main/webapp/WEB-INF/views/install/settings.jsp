@@ -96,7 +96,7 @@
 <form action="<c:url value="/install/settings" />" method="POST" class="form-horizontal">
 	<div id="settings"></div>
 	<script type="text/javascript">
-	$.getJSON('<c:url value="/settingDefinitions.json" />', function(settingDefinitions) {
+	$.getJSON('<c:url value="/settingDefinitions.json?exclude=${exclude}" />', function(settingDefinitions) {
  		var $container = $("#settings");
 		var settings = ${settings};
 		generateSettings(settingDefinitions, settings, $container, true);

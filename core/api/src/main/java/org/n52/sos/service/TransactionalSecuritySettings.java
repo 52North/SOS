@@ -35,6 +35,8 @@ package org.n52.sos.service;
  */
 public interface TransactionalSecuritySettings {
 
+    String TRANSACTIONAL_GROUP_TITLE = "Transactional Security";
+
     String TRANSACTIONAL_ACTIVE = "service.security.transactional.active";
 
     String TRANSACTIONAL_ALLOWED_IPS = "service.transactionalAllowedIps";

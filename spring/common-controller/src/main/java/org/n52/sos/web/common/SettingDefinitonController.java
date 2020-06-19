@@ -77,32 +77,36 @@ public class SettingDefinitonController extends AbstractController {
     @RequestMapping(value = ControllerConstants.Paths.SETTING_DEFINITIONS, method = RequestMethod.GET, produces
                     = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
     public String get(@RequestParam(value = "showAll", defaultValue = "true") boolean showAll,
-                      @RequestParam(value = "only", required = false) String only)
+                      @RequestParam(value = "only", required = false) String only,
+                      @RequestParam(value = "exclude", required = false) String exclude)
             throws ConfigurationError, JSONException {
         Set<SettingDefinition<?>> defs = this.settingsManager.getSettingDefinitions();
         Map<SettingDefinitionGroup, Set<SettingDefinition<?>>> grouped;
-        if (!Strings.isNullOrEmpty(only)) {
-            grouped = sortByGroup(defs, false, StringHelper.splitToSet(only));
+        if (!Strings.isNullOrEmpty(only) || !Strings.isNullOrEmpty(exclude)) {
+            grouped = sortByGroup(defs, false,
+                    !Strings.isNullOrEmpty(only) ? StringHelper.splitToSet(only) : Collections.emptySet(),
+                    !Strings.isNullOrEmpty(exclude) ? StringHelper.splitToSet(exclude) : Collections.emptySet());
         } else {
-            grouped = sortByGroup(defs, showAll, Collections.emptySet());
+            grouped = sortByGroup(defs, showAll, Collections.emptySet(), Collections.emptySet());
         }
         return Json.print(getSettingsEncoder().encode(grouped));
     }
 
     protected Map<SettingDefinitionGroup, Set<SettingDefinition<?>>> sortByGroup(
-            Set<SettingDefinition<?>> defs, boolean showAll, Set<String> only) {
+            Set<SettingDefinition<?>> defs, boolean showAll, Set<String> only, Set<String> exclude) {
         return defs.stream()
-                .filter(def -> checkGroup(def, showAll, only))
+                .filter(def -> checkGroup(def, showAll, only, exclude))
                 .collect(groupingBy(this::getGroup, toSet()));
     }
 
-    protected boolean checkGroup(SettingDefinition<?> def, boolean showAll, Set<String> only) {
+    protected boolean checkGroup(SettingDefinition<?> def, boolean showAll, Set<String> only, Set<String> exclude) {
         if (!showAll) {
             SettingDefinitionGroup group = getGroup(def);
-            if (CollectionHelper.isEmpty(only)) {
+            if (CollectionHelper.isEmpty(only) && CollectionHelper.isEmpty(exclude)) {
                 return group.isShowInDefaultSettings();
             }
-            return only.contains(group.getTitle());
+            return CollectionHelper.isNotEmpty(only) ? only.contains(group.getTitle())
+                    : CollectionHelper.isNotEmpty(exclude) ? !exclude.contains(group.getTitle()) : true;
         }
         return true;
     }

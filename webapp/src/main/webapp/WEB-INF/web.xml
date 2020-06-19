@@ -18,10 +18,15 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/application-context.xml
-            classpath*:contexts/settings/*.xml
             classpath*:contexts/root.xml
             classpath*:root-context.xml
             classpath*:contexts/root/*.xml
+        </param-value>
+    </context-param>
+    <context-param>
+        <param-name>settingsConfigLocation</param-name>
+        <param-value>
+            classpath*:contexts/settings/*.xml
         </param-value>
     </context-param>
     <!-- common sos context -->
@@ -57,7 +62,7 @@
     </listener>
     <!-- Spring startup listener -->
     <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+        <listener-class>org.n52.sos.SosContextLoaderListener</listener-class>
     </listener>
     <filter>
         <filter-name>corsFilter</filter-name>

@@ -178,7 +178,7 @@
 	                                                            </li>
                                                             </c:if>
                                                             --%>
-                                                            <c:if test="${sos:hasClass('org.n52.sos.web.admin.AdminEReportingHeaderController')}">
+                                                            <c:if test="${sos:hasClass('org.n52.sos.aqd.web.admin.AdminEReportingHeaderController')}">
                                                                 <li>
                                                                     <a href="<c:url value="/admin/ereporting" />">
                                                                         <span class="menu-title">eReporting Header</span>

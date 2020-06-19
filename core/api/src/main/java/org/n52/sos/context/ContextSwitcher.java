@@ -37,4 +37,6 @@ public interface ContextSwitcher {
     void reloadContext();
 
     boolean isConfigured();
+
+    void loadSettings();
 }

@@ -18,10 +18,15 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>
             /WEB-INF/application-context.xml
-            classpath*:contexts/settings/*.xml
             classpath*:contexts/root.xml
             classpath*:root-context.xml
             classpath*:contexts/root/*.xml
+        </param-value>
+    </context-param>
+    <context-param>
+        <param-name>settingsConfigLocation</param-name>
+        <param-value>
+            classpath*:contexts/settings/*.xml
         </param-value>
     </context-param>
     <!-- common sos context -->

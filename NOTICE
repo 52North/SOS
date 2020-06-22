@@ -111,7 +111,6 @@ This project includes:
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  Caffeine cache under Apache License, Version 2.0
   cdm-core under BSD 3-Clause License
   cf4j under GNU Lesser General Public License
   Checker Qual under The MIT License
@@ -185,7 +184,6 @@ This project includes:
   Java archiving library under Apache 2
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Native Access under LGPL, version 2.1 or Apache License v2.0
-  Java Native Access Platform under LGPL, version 2.1 or Apache License v2.0
   Java Property Utility under The Apache Software License, Version 2.0
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework API jar under CDDL/GPLv2+CE
@@ -304,8 +302,6 @@ This project includes:
   org.apache.xmlgraphics:batik-util under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-xml under The Apache Software License, Version 2.0
   org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
-  org.osgi.enterprise under The Apache Software License, Version 2.0
-  osgi.core under Apache License, Version 2.0
   parent-join under The Apache Software License, Version 2.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   PostGIS Geometry under GNU Lesser General Public License
@@ -364,7 +360,6 @@ This project includes:
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
-  waffle-jna under Eclipse Public License
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   Xerces2-j under The Apache Software License, Version 2.0

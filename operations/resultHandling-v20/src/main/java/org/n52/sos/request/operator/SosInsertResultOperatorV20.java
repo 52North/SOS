@@ -110,7 +110,7 @@ public class SosInsertResultOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.INSERT_RESULT;
     }
 }

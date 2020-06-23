@@ -120,7 +120,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.UPDATE_SENSOR_DESCRIPTION;
     }
 }

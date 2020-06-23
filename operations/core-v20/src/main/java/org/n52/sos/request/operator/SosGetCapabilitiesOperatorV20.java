@@ -71,7 +71,7 @@ public class SosGetCapabilitiesOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.GET_CAPABILITIES;
     }
 

@@ -244,7 +244,7 @@ public class SosInsertObservationOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.INSERT_OBSERVATION;
     }
 

@@ -114,7 +114,7 @@ public class InsertFeatureOfInterestOperator extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return null;
     }
 

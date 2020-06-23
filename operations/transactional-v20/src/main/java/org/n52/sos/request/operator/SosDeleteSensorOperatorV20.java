@@ -110,7 +110,7 @@ public class SosDeleteSensorOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.DELETE_SENSOR;
     }
 }

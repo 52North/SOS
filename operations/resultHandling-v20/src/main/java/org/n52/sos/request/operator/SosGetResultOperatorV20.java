@@ -107,7 +107,7 @@ public class SosGetResultOperatorV20
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.GET_RESULT;
     }
 }

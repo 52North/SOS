@@ -117,7 +117,7 @@ public class SosGetResultTemplateOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         return WSDLConstants.Operations.GET_RESULT_TEMPLATE;
     }
 }

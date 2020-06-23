@@ -164,7 +164,7 @@ public class GetDataAvailabilityOperator extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
+    public Operation getSosOperationDefinition() {
         // TODO no schema available
         // return GetDataAvailabilityConstants.WSDL_OPERATION;
         return null;

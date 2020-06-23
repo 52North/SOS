@@ -34,6 +34,7 @@ import javax.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractDeleteDeletedDataHandler;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.web.common.ControllerConstants;
 import org.springframework.http.HttpStatus;
@@ -49,18 +50,19 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @since 4.0.0
  */
 @Controller
-@RequestMapping(ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS)
-public class AdminDeleteDeletedObservationsController extends AbstractAdminController {
+@RequestMapping(value = { ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS,
+        ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_DATA })
+public class AdminDeleteDeletedDataController extends AbstractAdminController {
 
     @Inject
-    private Optional<DeleteDeletedObservationDAO> dao;
+    private Optional<AbstractDeleteDeletedDataHandler> handler;
 
-    private DeleteDeletedObservationDAO getDAO()
+    private AbstractDeleteDeletedDataHandler getHandler()
             throws NoImplementationFoundException {
-        if (!dao.isPresent()) {
+        if (!handler.isPresent()) {
             throw new NoImplementationFoundException(DeleteDeletedObservationDAO.class);
         }
-        return this.dao.get();
+        return this.handler.get();
     }
 
     @ResponseBody
@@ -73,6 +75,6 @@ public class AdminDeleteDeletedObservationsController extends AbstractAdminContr
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete() throws NoImplementationFoundException, OwsExceptionReport {
-        getDAO().deleteDeletedObservations();
+        getHandler().deleteDeletedData();
     }
 }

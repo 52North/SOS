@@ -91,6 +91,9 @@
         <bean id="deleteResultTemplateHandler"
               class="org.n52.sos.ds.hibernate.DeleteResultTemplateHandler"/>
 
+        <bean id="deleteDeletedDataHandler"
+              class="org.n52.sos.ds.hibernate.admin.DeleteDeletedDataHandler"/>
+
         <bean id="deleteDeletedObservationsHandler"
               class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
 

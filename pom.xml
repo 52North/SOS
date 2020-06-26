@@ -91,7 +91,7 @@
         <version.mysql>8.0.20</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.4.17.Final</version.hibernate>
+        <version.hibernate>5.4.18.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
         <version.geotools>23.1</version.geotools>

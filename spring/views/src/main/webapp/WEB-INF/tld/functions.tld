@@ -28,6 +28,11 @@
         <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
         <function-signature>boolean hasClass(java.lang.String)</function-signature>
     </function>
+    <function>
+        <name>supportsEReporting</name>
+        <function-class>org.n52.sos.web.common.JstlFunctions</function-class>
+        <function-signature>boolean supportsEReporting(java.lang.String, javax.servlet.ServletContext)</function-signature>
+    </function>
     <!-- 
     <function>
         <name>supportsI18N</name>

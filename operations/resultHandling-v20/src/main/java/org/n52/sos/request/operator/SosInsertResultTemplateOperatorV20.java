@@ -52,8 +52,8 @@ import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
 import org.n52.sos.service.SosSettings;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -296,7 +296,7 @@ public class SosInsertResultTemplateOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.INSERT_RESULT_TEMPLATE;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.INSERT_RESULT_TEMPLATE;
     }
 }

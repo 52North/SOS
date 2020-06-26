@@ -58,8 +58,8 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.ObservationEncoder;
@@ -300,7 +300,7 @@ public class SosGetObservationOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.GET_OBSERVATION;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.GET_OBSERVATION;
     }
 }

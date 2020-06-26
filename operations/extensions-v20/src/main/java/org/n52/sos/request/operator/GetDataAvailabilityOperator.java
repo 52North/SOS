@@ -28,9 +28,12 @@
  */
 package org.n52.sos.request.operator;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.namespace.QName;
 
 import org.n52.shetland.ogc.ows.exception.CodedOwsException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -41,10 +44,11 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
+import org.n52.shetland.w3c.wsdl.Fault;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.ds.AbstractGetDataAvailabilityHandler;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
 
 /**
  * {@code IRequestOperator} to handle {@link GetDataAvailabilityRequest}s.
@@ -61,7 +65,23 @@ public class GetDataAvailabilityOperator extends
 
     private static final Set<String> CONFORMANCE_CLASSES =
             Collections.singleton(GetDataAvailabilityConstants.CONFORMANCE_CLASS);
+
     private static final String RESPONSE_FORMAT = "responseFormat";
+
+    private static final String OPERATION_PATH = GetDataAvailabilityConstants.NS_GDA_20 + "/";
+
+    private static final String RESPONSE = GetDataAvailabilityConstants.OPERATION_NAME + "Response";
+
+    private static final QName QN_GET_DATA_AVAILABILITY_REQUEST = new QName(GetDataAvailabilityConstants.NS_GDA_20,
+            GetDataAvailabilityConstants.OPERATION_NAME, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+
+    private static final URI GET_DATA_AVAILABILITY_REQUEST =
+            URI.create(OPERATION_PATH + GetDataAvailabilityConstants.OPERATION_NAME);
+
+    private static final QName QN_GET_DATA_AVAILABILITY_RESPONSE =
+            new QName(GetDataAvailabilityConstants.NS_GDA_20, RESPONSE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+
+    private static final URI GET_DATA_AVAILABILITY_RESPONSE = URI.create(OPERATION_PATH + RESPONSE);
 
     /**
      * Constructs a new {@code GetDataAvailabilityOperator}.
@@ -164,10 +184,14 @@ public class GetDataAvailabilityOperator extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        // TODO no schema available
-        // return GetDataAvailabilityConstants.WSDL_OPERATION;
-        return null;
+    public Metadata getSosOperationDefinition() {
+         return Metadata.newMetadata()
+                 .setName(GetDataAvailabilityConstants.OPERATION_NAME)
+                 .setVersion(Sos2Constants.SERVICEVERSION).setRequest(QN_GET_DATA_AVAILABILITY_REQUEST)
+                 .setRequestAction(GET_DATA_AVAILABILITY_REQUEST)
+                 .setResponse(QN_GET_DATA_AVAILABILITY_RESPONSE)
+                 .setResponseAction(GET_DATA_AVAILABILITY_RESPONSE)
+                 .setFaults(Fault.DEFAULT_FAULTS).build();
     }
 
     @Override

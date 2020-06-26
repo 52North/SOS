@@ -73,8 +73,8 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.decode.exception.DecodingException;
 
@@ -112,8 +112,8 @@ public class SosInsertSensorOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.INSERT_SENSOR;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.INSERT_SENSOR;
     }
 
     @Override

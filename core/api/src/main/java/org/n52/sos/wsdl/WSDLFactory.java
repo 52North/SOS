@@ -49,6 +49,7 @@ import org.n52.janmayen.Producer;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.service.OwsOperationKey;
 import org.n52.sos.request.operator.WSDLAwareRequestOperator;
+import org.n52.svalbard.encode.EncoderRepository;
 
 /**
  *
@@ -58,13 +59,16 @@ import org.n52.sos.request.operator.WSDLAwareRequestOperator;
  */
 @Configurable
 public class WSDLFactory implements Producer<String> {
-    
+
     @Inject
     private RequestOperatorRepository requestOperatorRepository;
-    
+
     @Inject
     private BindingRepository bindingRepository;
-    
+
+    @Inject
+    private EncoderRepository encoderRepository;
+
     private String serviceURL;
 
     @Override
@@ -79,7 +83,7 @@ public class WSDLFactory implements Producer<String> {
     }
 
     private String getWSDL() throws Exception {
-        final WSDLBuilder builder = new WSDLBuilder();
+        final WSDLBuilder builder = new WSDLBuilder(encoderRepository);
         if (isConfigured()) {
             final RequestOperatorRepository repo = getRequestOperatorRepository();
             final Set<RequestOperatorKey> requestOperators = repo.getActiveRequestOperatorKeys();
@@ -200,7 +204,7 @@ public class WSDLFactory implements Producer<String> {
     private BindingRepository getBindingRepository() {
         return bindingRepository;
     }
-    
+
     private String getServiceURL() {
         return serviceURL;
     }
@@ -214,8 +218,9 @@ public class WSDLFactory implements Producer<String> {
         }
         this.serviceURL = url;
     }
-    
+
     private boolean isConfigured() {
-        return getRequestOperatorRepository() != null && getBindingRepository() != null && getServiceURL() != null && !getServiceURL().isEmpty();
+        return getRequestOperatorRepository() != null && getBindingRepository() != null && getServiceURL() != null
+                && !getServiceURL().isEmpty();
     }
 }

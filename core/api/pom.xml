@@ -29,6 +29,10 @@
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard-xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
         </dependency>
         <dependency>
@@ -128,10 +132,17 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>java3d</groupId>
             <artifactId>vecmath</artifactId>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

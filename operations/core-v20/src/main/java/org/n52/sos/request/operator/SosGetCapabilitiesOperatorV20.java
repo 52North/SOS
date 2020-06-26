@@ -38,8 +38,8 @@ import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -71,8 +71,8 @@ public class SosGetCapabilitiesOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.GET_CAPABILITIES;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.GET_CAPABILITIES;
     }
 
     @Override

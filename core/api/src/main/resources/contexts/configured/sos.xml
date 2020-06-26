@@ -39,6 +39,9 @@
     <bean id="implementationVersionHeaderAdder"
           class="org.n52.sos.service.SosImplementationVersionHeaderAdder"/>
 
+    <bean id="wsdlFactory"
+          class="org.n52.sos.wsdl.WSDLFactory"/>
+
     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
         <description>Used to wire up SOS specific activation persistence.</description>
         <property name="listeners">

@@ -39,8 +39,8 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.ds.AbstractGetFeatureOfInterestHandler;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -142,8 +142,8 @@ public class SosGetFeatureOfInterestOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.GET_FEATURE_OF_INTEREST;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.GET_FEATURE_OF_INTEREST;
     }
 
 }

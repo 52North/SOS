@@ -26,10 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.web.common;
+package org.n52.sos.web.wsdl;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -41,6 +43,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.n52.faroe.ConfigurationError;
+import org.n52.sos.web.common.AbstractController;
+import org.n52.sos.web.common.ControllerConstants;
+import org.n52.sos.web.common.ControllerConstants.Paths;
 import org.n52.sos.wsdl.WSDLFactory;
 
 /**
@@ -53,11 +58,14 @@ import org.n52.sos.wsdl.WSDLFactory;
 @RequestMapping(ControllerConstants.Paths.WSDL)
 public class WsdlController extends AbstractController {
 
+    @Inject
+    private WSDLFactory factory;
+
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET)
     public void get(HttpServletRequest req, HttpServletResponse res) throws IOException, ConfigurationError {
         res.setContentType(MediaType.APPLICATION_XML_VALUE);
         res.setCharacterEncoding("UTF-8");
-        IOUtils.write(new WSDLFactory().get(), res.getOutputStream());
+        IOUtils.write(factory.get(), res.getOutputStream(), Charset.forName(res.getCharacterEncoding()));
     }
 }

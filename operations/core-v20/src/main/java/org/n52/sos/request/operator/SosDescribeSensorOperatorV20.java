@@ -74,8 +74,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.encode.exception.EncodingException;
 
@@ -190,8 +190,8 @@ public class SosDescribeSensorOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.DESCRIBE_SENSOR;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.DESCRIBE_SENSOR;
     }
 
     @Override

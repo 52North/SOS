@@ -43,8 +43,8 @@ import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.event.events.SensorModification;
 import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -120,7 +120,7 @@ public class SosUpdateSensorDescriptionOperatorV20 extends
     }
 
     @Override
-    public Operation getSosOperationDefinition() {
-        return WSDLConstants.Operations.UPDATE_SENSOR_DESCRIPTION;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.UPDATE_SENSOR_DESCRIPTION;
     }
 }

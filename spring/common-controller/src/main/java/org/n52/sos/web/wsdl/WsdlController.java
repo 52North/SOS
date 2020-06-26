@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.n52.faroe.ConfigurationError;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
-import org.n52.sos.web.common.ControllerConstants.Paths;
 import org.n52.sos.wsdl.WSDLFactory;
 
 /**

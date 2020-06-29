@@ -26,23 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.request.operator;
+package org.n52.sos.ds;
 
-import java.util.Map;
-
-import org.n52.iceland.request.operator.RequestOperator;
-import org.n52.sos.wsdl.Metadata;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
+ * @author Carsten Hollmann
  *
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
+ * @since 5.2.0
  */
-public interface WSDLAwareRequestOperator extends RequestOperator {
-    Metadata getSosOperationDefinition();
+public interface AbstractDeleteDeletedDataHandler {
 
-    Map<String, String> getAdditionalSchemaImports();
+    void deleteDeletedData() throws OwsExceptionReport;
 
-    Map<String, String> getAdditionalPrefixes();
 }

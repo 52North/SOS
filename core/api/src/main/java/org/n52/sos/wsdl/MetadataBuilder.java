@@ -34,6 +34,8 @@ import java.util.LinkedList;
 
 import javax.xml.namespace.QName;
 
+import org.n52.shetland.w3c.wsdl.Fault;
+
 /**
  * TODO JavaDoc
  *
@@ -41,68 +43,74 @@ import javax.xml.namespace.QName;
  *
  * @since 4.0.0
  */
-public class WSDLOperationBuilder {
+public class MetadataBuilder {
     private String name;
-    private String version;
-    private URI requestAction;
-    private URI responseAction;
-    private QName request;
-    private QName response;
-    private Collection<WSDLFault> faults = new LinkedList<>();
 
-    public WSDLOperationBuilder setName(String name) {
+    private String version;
+
+    private URI requestAction;
+
+    private URI responseAction;
+
+    private QName request;
+
+    private QName response;
+
+    private Collection<Fault> faults = new LinkedList<>();
+
+    public MetadataBuilder setName(String name) {
         this.name = name;
         return this;
     }
 
-    public WSDLOperationBuilder setVersion(String version) {
+    public MetadataBuilder setVersion(String version) {
         this.version = version;
         return this;
     }
 
-    public WSDLOperationBuilder setRequestAction(URI requestAction) {
+    public MetadataBuilder setRequestAction(URI requestAction) {
         this.requestAction = requestAction;
         return this;
     }
 
-    public WSDLOperationBuilder setResponseAction(URI responseAction) {
+    public MetadataBuilder setResponseAction(URI responseAction) {
         this.responseAction = responseAction;
         return this;
     }
 
-    public WSDLOperationBuilder setRequest(QName request) {
+    public MetadataBuilder setRequest(QName request) {
         this.request = request;
         return this;
     }
 
-    public WSDLOperationBuilder setRequest(String namespace, String localpart) {
+    public MetadataBuilder setRequest(String namespace, String localpart) {
         return setRequest(new QName(namespace, localpart));
     }
 
-    public WSDLOperationBuilder setResponse(QName response) {
+    public MetadataBuilder setResponse(QName response) {
         this.response = response;
         return this;
     }
 
-    public WSDLOperationBuilder setResponse(String namespace, String localpart) {
+    public MetadataBuilder setResponse(String namespace, String localpart) {
         return setResponse(new QName(namespace, localpart));
     }
 
-    public WSDLOperationBuilder setFaults(Collection<WSDLFault> faults) {
+    public MetadataBuilder setFaults(Collection<Fault> faults) {
         this.faults = new LinkedList<>(faults);
         return this;
     }
 
-    public WSDLOperationBuilder addFault(WSDLFault fault) {
+    public MetadataBuilder addFault(Fault fault) {
         this.faults.add(fault);
         return this;
     }
 
-    public WSDLOperationBuilder addFault(String name, URI action) {
-        return addFault(new WSDLFault(name, action));
+    public MetadataBuilder addFault(String name, URI action) {
+        return addFault(new Fault(name, action));
     }
 
-    public WSDLOperation build() {
-        return new WSDLOperation(name, version, requestAction, responseAction, request, response, faults);
+    public Metadata build() {
+        return new Metadata(name, version, requestAction, responseAction, request, response, faults);
     }
 }

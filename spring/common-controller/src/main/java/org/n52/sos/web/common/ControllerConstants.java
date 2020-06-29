@@ -213,6 +213,8 @@ public interface ControllerConstants {
 
         String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS = "/admin/datasource/deleteDeletedObservations";
 
+        String ADMIN_DATABASE_DELETE_DELETED_DATA = "/admin/datasource/deleteDeletedData";
+
         String ADMIN_DATABASE_LOAD_PREDEFINED_UNITS = "/admin/datasource/loadPredefinedUnits";
 
         String ADMIN_DATABASE_LOAD_PREDEFINED_PHENOMENA = "/admin/datasource/loadPredefinedPhenomena";

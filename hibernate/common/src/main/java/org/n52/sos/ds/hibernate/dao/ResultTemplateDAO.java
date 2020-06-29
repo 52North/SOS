@@ -95,6 +95,14 @@ public class ResultTemplateDAO {
             "The requested resultStructure is different from already inserted result "
                     + "template for procedure (%s) observedProperty  (%s) and offering (%s)!";
 
+    private static final String DELETE_PARAMETER = "delete ";
+
+    private static final String EQUAL_PARAMETER = " = :";
+
+    private static final String WHERE_PARAMETER = " where ";
+
+    private static final String AND_PARAMETER = " and ";
+
     private EncoderRepository encoderRepository;
 
     private DecoderRepository decoderRepository;
@@ -412,17 +420,41 @@ public class ResultTemplateDAO {
     }
 
     public void delete(ProcedureEntity procedure, Session session) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("delete ");
+        StringBuffer builder = new StringBuffer();
+        builder.append(DELETE_PARAMETER);
         builder.append(ResultTemplateEntity.class.getSimpleName());
-        builder.append(" where ").append(ResultTemplateEntity.PROPERTY_PROCEDURE).append(" = :")
-                .append(ResultTemplateEntity.PROPERTY_PROCEDURE);
+        builder.append(WHERE_PARAMETER);
+        add(builder, ResultTemplateEntity.PROPERTY_PROCEDURE);
         Query<?> q = session.createQuery(builder.toString());
         q.setParameter(ResultTemplateEntity.PROPERTY_PROCEDURE, procedure);
         int executeUpdate = q.executeUpdate();
-        LOGGER.debug("{} result templates were physically deleted!", executeUpdate);
+        logExecution(executeUpdate);
         session.flush();
 
     }
 
+    public void delete(DatasetEntity dataset, Session session) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(DELETE_PARAMETER);
+        buffer.append(ResultTemplateEntity.class.getSimpleName());
+        buffer.append(WHERE_PARAMETER);
+        add(buffer, ResultTemplateEntity.PROPERTY_PHENOMENON);
+        buffer.append(AND_PARAMETER);
+        add(buffer, ResultTemplateEntity.PROPERTY_OFFERING);
+        Query<?> q = session.createQuery(buffer.toString());
+        q.setParameter(ResultTemplateEntity.PROPERTY_PHENOMENON, dataset.getProcedure());
+        q.setParameter(ResultTemplateEntity.PROPERTY_OFFERING, dataset.getProcedure());
+        int executeUpdate = q.executeUpdate();
+        logExecution(executeUpdate);
+        session.flush();
+    }
+
+    private void logExecution(int executeUpdate) {
+        LOGGER.debug("\"{} result templates were physically deleted!\"", executeUpdate);
+    }
+
+    private StringBuffer add(StringBuffer buffer, String property) {
+        return buffer.append(property).append(EQUAL_PARAMETER)
+                .append(property);
+    }
 }

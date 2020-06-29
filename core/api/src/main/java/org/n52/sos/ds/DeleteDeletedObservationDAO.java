@@ -34,7 +34,9 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
+ * @deprecated see {@link AbstractDeleteDeletedDataHandler}
  */
+@Deprecated
 public interface DeleteDeletedObservationDAO {
 
     void deleteDeletedObservations() throws OwsExceptionReport;

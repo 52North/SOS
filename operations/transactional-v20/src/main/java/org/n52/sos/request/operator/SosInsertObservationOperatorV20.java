@@ -57,8 +57,8 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingExcep
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 public class SosInsertObservationOperatorV20 extends
@@ -244,8 +244,8 @@ public class SosInsertObservationOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return WSDLConstants.Operations.INSERT_OBSERVATION;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.INSERT_OBSERVATION;
     }
 
     private void createCompositePhenomenons(InsertObservationRequest request) {

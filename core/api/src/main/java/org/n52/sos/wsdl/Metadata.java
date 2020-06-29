@@ -31,15 +31,18 @@ package org.n52.sos.wsdl;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import javax.xml.namespace.QName;
+
+import org.n52.shetland.w3c.wsdl.Fault;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
  */
-public class WSDLOperation {
+public class Metadata {
 
     private final String name;
     private final String version;
@@ -47,17 +50,21 @@ public class WSDLOperation {
     private final URI responseAction;
     private final QName request;
     private final QName response;
-    private final Collection<WSDLFault> faults;
+    private final Collection<Fault> faults = new LinkedList<>();
 
-    public WSDLOperation(String name, String version, URI requestAction, URI responseAction, QName request,
-            QName response, Collection<WSDLFault> faults) {
+    public Metadata(String name, String version, URI requestAction, URI responseAction, QName request,
+            QName response, Collection<Fault> faults) {
         this.name = name;
         this.version = version;
         this.requestAction = requestAction;
         this.responseAction = responseAction;
         this.request = request;
         this.response = response;
-        this.faults = faults;
+        setFaults(faults);
+    }
+
+    public static MetadataBuilder newMetadata() {
+        return new MetadataBuilder();
     }
 
     public String getName() {
@@ -84,11 +91,32 @@ public class WSDLOperation {
         return version;
     }
 
-    public Collection<WSDLFault> getFaults() {
+    public Collection<Fault> getFaults() {
         return Collections.unmodifiableCollection(faults);
     }
 
-    public static WSDLOperationBuilder newWSDLOperation() {
-        return new WSDLOperationBuilder();
+    public Metadata addFault(Fault fault) {
+        if (fault != null) {
+            this.faults.add(fault);
+        }
+        return this;
+    }
+
+    public Metadata addFaults(Collection<Fault> faults) {
+        if (faults != null) {
+            faults.forEach(p -> {
+                addFault(p);
+            });
+        }
+        return this;
+    }
+
+    public Metadata setFaults(Collection<Fault> faults) {
+        this.faults.clear();
+        return addFaults(faults);
+    }
+
+    public boolean isSetFaults() {
+        return !getFaults().isEmpty();
     }
 }

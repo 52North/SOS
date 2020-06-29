@@ -27,5 +27,15 @@
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
          </dependency>
+         <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <scope>provided</scope>
+         </dependency>
+         <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <scope>provided</scope>
+         </dependency>
     </dependencies>
 </project>

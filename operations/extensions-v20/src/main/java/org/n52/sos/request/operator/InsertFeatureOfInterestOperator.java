@@ -28,9 +28,12 @@
  */
 package org.n52.sos.request.operator;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
@@ -43,9 +46,10 @@ import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestConstants;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.ifoi.InsertFeatureOfInterestResponse;
 import org.n52.shetland.util.IdGenerator;
+import org.n52.shetland.w3c.wsdl.Fault;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.event.events.FeatureInsertion;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
 
 /**
  * {@code IRequestOperator} to handle {@link InsertFeatureOfInterestRequest}s.
@@ -59,6 +63,22 @@ public class InsertFeatureOfInterestOperator extends
         InsertFeatureOfInterestRequest,
         InsertFeatureOfInterestResponse>
         implements WSDLAwareRequestOperator {
+
+    private static final String OPERATION_PATH = InsertFeatureOfInterestConstants.NS_IFOI + "/";
+
+    private static final String RESPONSE = InsertFeatureOfInterestConstants.OPERATION_NAME + "Response";
+
+    private static final QName QN_INSERT_FEATURE_OF_INTEREST_REQUEST =
+            new QName(InsertFeatureOfInterestConstants.NS_IFOI, InsertFeatureOfInterestConstants.OPERATION_NAME,
+                    InsertFeatureOfInterestConstants.NS_IFOI_PREFIX);
+
+    private static final URI INSERT_FEATURE_OF_INTEREST_REQUEST =
+            URI.create(OPERATION_PATH + InsertFeatureOfInterestConstants.OPERATION_NAME);
+
+    private static final QName QN_INSERT_FEATURE_OF_INTEREST_RESPONSE = new QName(
+            InsertFeatureOfInterestConstants.NS_IFOI, RESPONSE, InsertFeatureOfInterestConstants.NS_IFOI_PREFIX);
+
+    private static final URI INSERT_FEATURE_OF_INTEREST_RESPONSE = URI.create(OPERATION_PATH + RESPONSE);
 
     /**
      * Constructs a new {@code InsertFeatureOfInterestOperator}.
@@ -114,8 +134,14 @@ public class InsertFeatureOfInterestOperator extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return null;
+    public Metadata getSosOperationDefinition() {
+        return Metadata.newMetadata()
+                .setName(InsertFeatureOfInterestConstants.OPERATION_NAME)
+                .setVersion(Sos2Constants.SERVICEVERSION).setRequest(QN_INSERT_FEATURE_OF_INTEREST_REQUEST)
+                .setRequestAction(INSERT_FEATURE_OF_INTEREST_REQUEST)
+                .setResponse(QN_INSERT_FEATURE_OF_INTEREST_RESPONSE)
+                .setResponseAction(INSERT_FEATURE_OF_INTEREST_RESPONSE)
+                .setFaults(Fault.DEFAULT_FAULTS).build();
     }
 
     @Override

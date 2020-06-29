@@ -26,38 +26,55 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.web.common;
+package org.n52.sos.web.admin;
 
-import java.io.IOException;
+import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
-import org.springframework.http.MediaType;
+import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractDeleteDeletedDataHandler;
+import org.n52.sos.ds.DeleteDeletedObservationDAO;
+import org.n52.sos.web.common.ControllerConstants;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import org.n52.faroe.ConfigurationError;
-import org.n52.sos.wsdl.WSDLFactory;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
  * @since 4.0.0
  */
 @Controller
-@RequestMapping(ControllerConstants.Paths.WSDL)
-public class WsdlController extends AbstractController {
+@RequestMapping(value = { ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS,
+        ControllerConstants.Paths.ADMIN_DATABASE_DELETE_DELETED_DATA })
+public class AdminDeleteDeletedDataController extends AbstractAdminController {
+
+    @Inject
+    private Optional<AbstractDeleteDeletedDataHandler> handler;
+
+    private AbstractDeleteDeletedDataHandler getHandler()
+            throws NoImplementationFoundException {
+        if (!handler.isPresent()) {
+            throw new NoImplementationFoundException(DeleteDeletedObservationDAO.class);
+        }
+        return this.handler.get();
+    }
 
     @ResponseBody
-    @RequestMapping(method = RequestMethod.GET)
-    public void get(HttpServletRequest req, HttpServletResponse res) throws IOException, ConfigurationError {
-        res.setContentType(MediaType.APPLICATION_XML_VALUE);
-        res.setCharacterEncoding("UTF-8");
-        IOUtils.write(new WSDLFactory().get(), res.getOutputStream());
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(NoImplementationFoundException.class)
+    public String onError(NoImplementationFoundException e) {
+        return "The operation is not supported by this SOS";
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete() throws NoImplementationFoundException, OwsExceptionReport {
+        getHandler().deleteDeletedData();
     }
 }

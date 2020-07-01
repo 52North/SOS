@@ -5,4 +5,5 @@
 
     <bean id="settingsService" class="org.n52.faroe.SettingsServiceImpl" />
     <bean id="settingsEncoder" class="org.n52.faroe.json.JsonSettingsEncoder" />
+    <bean id="settingsDecoder" class="org.n52.faroe.json.JsonSettingsDecoder" />
 </beans>

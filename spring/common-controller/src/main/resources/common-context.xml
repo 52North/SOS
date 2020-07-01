@@ -8,4 +8,6 @@
 
     <ctx:component-scan base-package="org.n52.sos.web.common" />
 
+    <bean id="jsonConfigurationDao" class="org.n52.sos.json.JsonConfigurationDao" />
+
 </beans>

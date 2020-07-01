@@ -66,7 +66,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
-import org.n52.sos.service.profile.DefaultProfileHandler;
 import org.n52.sos.util.SosHelper;
 
 /**
@@ -233,7 +232,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             daoFactory.setSosHelper(sosHelper);
             // CALL
             OmObservationCreatorContext ctx = new OmObservationCreatorContext(null, null, daoFactory,
-                    new DefaultProfileHandler(), Mockito.mock(AdditionalObservationCreatorRepository.class), null,
+                    new ProfileHanlderMock(), Mockito.mock(AdditionalObservationCreatorRepository.class), null,
                     new FeatureQueryHandlerMock(), null, null, null, null, null,
                     Mockito.mock(BindingRepository.class));
             ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(

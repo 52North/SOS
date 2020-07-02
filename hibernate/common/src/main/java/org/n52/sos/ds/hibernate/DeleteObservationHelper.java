@@ -95,8 +95,9 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
             Session session) throws OwsExceptionReport {
         boolean temporalFilters = filters != null && !filters.isEmpty();
         Set<Long> modifiedDatasets = new HashSet<>();
-        for (Long s : getSeriesInlcudeChildObs(serieses.stream().map(DatasetEntity::getId).collect(Collectors.toSet()),
-                session)) {
+        for (Long s : getSeriesInlcudeChildObs(serieses.stream()
+                .map(DatasetEntity::getId)
+                .collect(Collectors.toSet()), session)) {
             Query<?> q = session.createQuery(getUpdateQueryString(filters, temporalFilters));
             q.setParameter(DataEntity.PROPERTY_DELETED, true);
             q.setParameter(DataEntity.PROPERTY_DATASET, s);
@@ -124,21 +125,36 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
 
     default void deleteObservation(DeleteObservationRequest request, Collection<TemporalFilter> filters,
             Session session) throws OwsExceptionReport {
-        deleteObservation(getDaoFactory().getSeriesDAO().getSeries(request.getProcedures(),
-                request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(), session),
+        deleteObservation(getDaoFactory().getSeriesDAO()
+                .getSeries(request.getProcedures(), request.getObservedProperties(), request.getFeatureIdentifiers(),
+                        request.getOfferings(), session),
                 filters, session);
     }
 
     default Set<Long> getSeriesInlcudeChildObs(Collection<Long> serieses, Session session) {
         StringBuilder builder = new StringBuilder();
-        builder.append("select distinct o2.").append(DataEntity.PROPERTY_DATASET_ID).append(FROM_PARAMETER);
-        builder.append(getDaoFactory().getObservationDAO().getObservationFactory().observationClass().getSimpleName())
+        builder.append("select distinct o2.")
+                .append(DataEntity.PROPERTY_DATASET_ID)
+                .append(FROM_PARAMETER);
+        builder.append(getDaoFactory().getObservationDAO()
+                .getObservationFactory()
+                .observationClass()
+                .getSimpleName())
                 .append(" o ");
         builder.append(" JOIN ")
-                .append(getDaoFactory().getObservationDAO().getObservationFactory().observationClass().getSimpleName())
+                .append(getDaoFactory().getObservationDAO()
+                        .getObservationFactory()
+                        .observationClass()
+                        .getSimpleName())
                 .append(" o2 ");
-        builder.append(" ON o.").append(DataEntity.PROPERTY_ID).append(" = o2.").append(DataEntity.PROPERTY_PARENT);
-        builder.append(WHERE_PARAMETER).append(" o.").append(DataEntity.PROPERTY_DATASET_ID).append(IN_PARAMETER)
+        builder.append(" ON o.")
+                .append(DataEntity.PROPERTY_ID)
+                .append(" = o2.")
+                .append(DataEntity.PROPERTY_PARENT);
+        builder.append(WHERE_PARAMETER)
+                .append(" o.")
+                .append(DataEntity.PROPERTY_DATASET_ID)
+                .append(IN_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         Query<?> q = session.createQuery(builder.toString());
         q.setParameter(DataEntity.PROPERTY_DATASET, serieses);
@@ -153,12 +169,21 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
             boolean temporalFilters, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
-        builder.append("select distinct ").append(DataEntity.PROPERTY_ID).append(FROM_PARAMETER);
-        builder.append(getDaoFactory().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET_ID).append(IN_PARAMETER)
+        builder.append("select distinct ")
+                .append(DataEntity.PROPERTY_ID)
+                .append(FROM_PARAMETER);
+        builder.append(getDaoFactory().getObservationDAO()
+                .getObservationFactory()
+                .observationClass()
+                .getSimpleName());
+        builder.append(WHERE_PARAMETER)
+                .append(DataEntity.PROPERTY_DATASET_ID)
+                .append(IN_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         if (temporalFilters) {
-            builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
+            builder.append(AND_PARAMETER)
+                    .append("(" + SosTemporalRestrictions.filterHql(filters)
+                            .toString())
                     .append(")");
         }
         Query<?> q = session.createQuery(builder.toString());
@@ -216,11 +241,18 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
         builder.append(DELETE_PARAMETER);
-        builder.append(getDaoFactory().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET_ID).append(IN_PARAMETER)
+        builder.append(getDaoFactory().getObservationDAO()
+                .getObservationFactory()
+                .observationClass()
+                .getSimpleName());
+        builder.append(WHERE_PARAMETER)
+                .append(DataEntity.PROPERTY_DATASET_ID)
+                .append(IN_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         if (temporalFilters) {
-            builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
+            builder.append(AND_PARAMETER)
+                    .append("(" + SosTemporalRestrictions.filterHql(filters)
+                            .toString())
                     .append(")");
         }
         return builder.toString();
@@ -230,8 +262,13 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
         builder.append(DELETE_PARAMETER);
-        builder.append(getDaoFactory().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_PARENT).append(IN_PARAMETER)
+        builder.append(getDaoFactory().getObservationDAO()
+                .getObservationFactory()
+                .observationClass()
+                .getSimpleName());
+        builder.append(WHERE_PARAMETER)
+                .append(DataEntity.PROPERTY_PARENT)
+                .append(IN_PARAMETER)
                 .append(DataEntity.PROPERTY_PARENT);
         return builder.toString();
     }
@@ -240,13 +277,22 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         StringBuilder builder = new StringBuilder();
         builder.append("update ");
-        builder.append(getDaoFactory().getObservationDAO().getObservationFactory().observationClass().getSimpleName());
-        builder.append(" set ").append(DataEntity.PROPERTY_DELETED).append(EQUAL_PARAMETER)
+        builder.append(getDaoFactory().getObservationDAO()
+                .getObservationFactory()
+                .observationClass()
+                .getSimpleName());
+        builder.append(" set ")
+                .append(DataEntity.PROPERTY_DELETED)
+                .append(EQUAL_PARAMETER)
                 .append(DataEntity.PROPERTY_DELETED);
-        builder.append(WHERE_PARAMETER).append(DataEntity.PROPERTY_DATASET_ID).append(EQUAL_PARAMETER)
+        builder.append(WHERE_PARAMETER)
+                .append(DataEntity.PROPERTY_DATASET_ID)
+                .append(EQUAL_PARAMETER)
                 .append(DataEntity.PROPERTY_DATASET);
         if (temporalFilters) {
-            builder.append(AND_PARAMETER).append("(" + SosTemporalRestrictions.filterHql(filters).toString())
+            builder.append(AND_PARAMETER)
+                    .append("(" + SosTemporalRestrictions.filterHql(filters)
+                            .toString())
                     .append(")");
         }
         return builder.toString();
@@ -255,25 +301,28 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
     default void deleteObservationsByIdentifier(DeleteObservationRequest request, DeleteObservationResponse response,
             Session session) throws OwsExceptionReport, ConverterException {
         Set<String> ids = request.getObservationIdentifiers();
-        List<DataEntity<?>> observations =
-                getDaoFactory().getObservationDAO().getObservationByIdentifiers(ids, session);
+        List<DataEntity<?>> observations = getDaoFactory().getObservationDAO()
+                .getObservationByIdentifiers(ids, session);
         if (CollectionHelper.isNotEmpty(observations)) {
             Set<DatasetEntity> modifiedDatasets = new HashSet<>();
             for (DataEntity<?> observation : observations) {
                 if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
-                    response.setObservationId(request.getObservationIdentifiers().iterator().next());
+                    response.setObservationId(request.getObservationIdentifiers()
+                            .iterator()
+                            .next());
                 }
                 modifiedDatasets.add(observation.getDataset());
                 delete(observation, session);
             }
             if (!modifiedDatasets.isEmpty()) {
-                checkSeriesForFirstLatest(
-                        modifiedDatasets.stream().map(DatasetEntity::getId).collect(Collectors.toSet()), session);
+                checkSeriesForFirstLatest(modifiedDatasets.stream()
+                        .map(DatasetEntity::getId)
+                        .collect(Collectors.toSet()), session);
             }
         } else {
             if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
-                throw new InvalidParameterValueException(DeleteObservationConstants.PARAM_OBSERVATION,
-                        Joiner.on(", ").join(request.getObservationIdentifiers()));
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAM_OBSERVATION, Joiner.on(", ")
+                        .join(request.getObservationIdentifiers()));
             }
         }
     }
@@ -302,12 +351,16 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
 
     default void checkForFirstLastReference(DataEntity<?> observation, Session session) {
         DatasetEntity dataset = observation.getDataset();
-        if (dataset.getFirstObservation() != null && dataset.getFirstObservation().getId() != null
-                && observation.getId() != null && dataset.getFirstObservation().getId().equals(observation.getId())) {
+        if (dataset.getFirstObservation() != null && dataset.getFirstObservation()
+                .getId() != null && observation.getId() != null && dataset.getFirstObservation()
+                        .getId()
+                        .equals(observation.getId())) {
             dataset.setFirstObservation(null);
         }
-        if (dataset.getLastObservation() != null && dataset.getLastObservation().getId() != null
-                && observation.getId() != null && dataset.getLastObservation().getId().equals(observation.getId())) {
+        if (dataset.getLastObservation() != null && dataset.getLastObservation()
+                .getId() != null && observation.getId() != null && dataset.getLastObservation()
+                        .getId()
+                        .equals(observation.getId())) {
             dataset.setLastObservation(null);
         }
         session.update(dataset);
@@ -322,17 +375,21 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
         for (TemporalFilter filter : filters) {
             if (filter.getTime() instanceof TimePeriod) {
                 TimePeriod tp = (TimePeriod) filter.getTime();
-                if (q.getComment().contains(":" + TemporalRestriction.START)) {
-                    q.setParameter(TemporalRestriction.START + count, tp.getStart().toDate(),
-                            UtcTimestampType.INSTANCE);
+                if (q.getComment()
+                        .contains(":" + TemporalRestriction.START)) {
+                    q.setParameter(TemporalRestriction.START + count, tp.getStart()
+                            .toDate(), UtcTimestampType.INSTANCE);
                 }
-                if (q.getComment().contains(":" + TemporalRestriction.END)) {
-                    q.setParameter(TemporalRestriction.END + count, tp.getEnd().toDate(), UtcTimestampType.INSTANCE);
+                if (q.getComment()
+                        .contains(":" + TemporalRestriction.END)) {
+                    q.setParameter(TemporalRestriction.END + count, tp.getEnd()
+                            .toDate(), UtcTimestampType.INSTANCE);
                 }
             }
             if (filter.getTime() instanceof TimeInstant) {
                 TimeInstant ti = (TimeInstant) filter.getTime();
-                q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue().toDate(), UtcTimestampType.INSTANCE);
+                q.setParameter(TemporalRestriction.INSTANT + count, ti.getValue()
+                        .toDate(), UtcTimestampType.INSTANCE);
             }
             count++;
         }
@@ -381,7 +438,8 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                                 observationDAO.getMaxObservation(series, extrema.getMaxPhenomenonTime(), session),
                                 session);
                         series.setLastObservation(o);
-                        if (series.getValueType().equals(ValueType.quantity)) {
+                        if (series.getValueType()
+                                .equals(ValueType.quantity)) {
                             series.setLastQuantityValue(((QuantityDataEntity) o).getValue());
 
                         }

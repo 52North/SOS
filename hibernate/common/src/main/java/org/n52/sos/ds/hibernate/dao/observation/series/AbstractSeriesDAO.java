@@ -47,6 +47,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Geometry;
+import org.n52.faroe.annotation.Setting;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
@@ -60,7 +61,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
-import org.n52.series.db.beans.sta.DatastreamEntity;
+import org.n52.series.db.beans.sta.DatasetAggregationEntity;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -77,6 +78,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.DeleteDataHelper;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
@@ -93,7 +95,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptionDAO {
+public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptionDAO implements DeleteDataHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesDAO.class);
 
@@ -104,8 +106,15 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
 
     private static final String FOI = "foi";
 
+    private Boolean deletePhysically;
+
     public AbstractSeriesDAO(DaoFactory daoFactory) {
         super(daoFactory);
+    }
+
+    @Setting("service.transactional.DeletePhysically")
+    public void setDeletePhysically(Boolean deletePhysically) {
+        this.deletePhysically = deletePhysically;
     }
 
     public Class<?> getSeriesClass() {
@@ -331,107 +340,95 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 "QUERY getOrInsertSeries(feature, observableProperty, procedure, offering, platform, category): {}",
                 HibernateHelper.getSqlString(criteria));
         List<DatasetEntity> datasets = (List<DatasetEntity>) criteria.list();
-        DatasetEntity series = datasets.isEmpty() ? null
+        DatasetEntity dataset = datasets.isEmpty() ? null
                 : datasets.stream().filter(d -> d.getCategory().equals(ctx.getCategory())).findFirst()
                         .orElse(datasets.iterator().next());
-        if (series == null || series.getDatasetType().equals(DatasetType.not_initialized)) {
-            series = preCheckDataset(ctx, observation, series, session);
-            if (series != null && series.isMobile()) {
-                series.setDatasetType(DatasetType.trajectory);
+        if (dataset == null || dataset.getDatasetType().equals(DatasetType.not_initialized)) {
+            dataset = preCheckDataset(ctx, observation, dataset, session);
+            if (dataset != null && dataset.isMobile()) {
+                dataset.setDatasetType(DatasetType.trajectory);
             }
         }
-        if (series == null || (series.isSetFeature() && ctx.isSetFeatureOfInterest()
-                && !series.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
-            series = (DatasetEntity) getDatasetFactory().visit(observation);
-            ctx.addValuesToSeries(series);
-            series.setDeleted(false);
-            series.setPublished(ctx.isPublish());
-        } else if (!series.isSetFeature()) {
-            ctx.addValuesToSeries(series);
-            series.setDeleted(false);
-            series.setPublished(ctx.isPublish());
-        } else if (!series.hasUnit() && ctx.isSetUnit()) {
-            series.setUnit(ctx.getUnit());
-            series.setDeleted(false);
-            series.setPublished(ctx.isPublish());
-        } else if (ctx.isPublish() && !series.isPublished()) {
-            series.setPublished(ctx.isPublish());
-        } else if (series.isDeleted()) {
-            series.setDeleted(false);
+        if (dataset == null || (dataset.isSetFeature() && ctx.isSetFeatureOfInterest()
+                && !dataset.getFeature().getIdentifier().equals(ctx.getFeatureOfInterest().getIdentifier()))) {
+            dataset = (DatasetEntity) getDatasetFactory().visit(observation);
+            ctx.addValuesToSeries(dataset);
+            dataset.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
+            addNameDesxcriptionForDatastream(dataset);
+            dataset.setDeleted(false);
+            dataset.setPublished(ctx.isPublish());
+        } else if (!dataset.isSetFeature()) {
+            ctx.addValuesToSeries(dataset);
+            addNameDesxcriptionForDatastream(dataset);
+            dataset.setDeleted(false);
+            dataset.setPublished(ctx.isPublish());
+        } else if (!dataset.hasUnit() && ctx.isSetUnit()) {
+            dataset.setUnit(ctx.getUnit());
+            dataset.setDeleted(false);
+            dataset.setPublished(ctx.isPublish());
+        } else if (ctx.isPublish() && !dataset.isPublished()) {
+            dataset.setPublished(ctx.isPublish());
+        } else if (dataset.isDeleted()) {
+            dataset.setDeleted(false);
         } else {
-            return series;
+            return dataset;
         }
-        session.saveOrUpdate(series);
+        session.saveOrUpdate(dataset);
         session.flush();
-        session.refresh(series);
-        processSta(series, session);
-        return series;
+        session.refresh(dataset);
+        return dataset;
     }
 
-    private void processSta(DatasetEntity dataset, Session session) {
-        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
-            if (dataset.getPlatform() != null) {
-                DatastreamEntity datastream = existsDatastream(dataset, session);
-                if (datastream == null) {
-                    datastream = new DatastreamEntity();
-                    datastream.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
-                    datastream.setName(createDatastreamName(dataset));
-                    datastream.setDescription(createDatastreamDescription(dataset));
-                    datastream.setProcedure(dataset.getProcedure());
-                    datastream.setObservableProperty(dataset.getObservableProperty());
-                    datastream.setThing(dataset.getPlatform());
-                    datastream.setUnit(dataset.getUnit());
-                    datastream.setObservationType(dataset.getOmObservationType());
+
+    private void updateSta(DatasetEntity dataset, DataEntity<?> observation, Session session) {
+        if (HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
+            if (dataset.isSetDatasetAggregation()) {
+                DatasetAggregationEntity datasetAggregationEntity = dataset.getDatasetAggregation();
+                if (observation.isSetGeometryEntity()) {
+                    if (datasetAggregationEntity.isSetGeometry()) {
+                        datasetAggregationEntity.getGeometryEntity()
+                                .setGeometry(datasetAggregationEntity.getGeometryEntity()
+                                        .getGeometry()
+                                        .union(observation.getGeometryEntity()
+                                                .getGeometry()));
+                    } else {
+                        datasetAggregationEntity.setGeometryEntity(observation.getGeometryEntity());
+                    }
+                } else if (observation.getDataset()
+                        .isSetFeature()
+                        && observation.getDataset()
+                                .getFeature()
+                                .isSetGeometry()) {
+                    if (datasetAggregationEntity.isSetGeometry()) {
+                        datasetAggregationEntity.getGeometryEntity()
+                                .getGeometry()
+                                .union(observation.getDataset()
+                                        .getFeature()
+                                        .getGeometryEntity()
+                                        .getGeometry());
+                    } else {
+                        datasetAggregationEntity.setGeometryEntity(observation.getDataset()
+                                .getFeature()
+                                .getGeometryEntity());
+                    }
                 }
-                datastream.addDataset(dataset);
-                session.saveOrUpdate(datastream);
+                session.saveOrUpdate(datasetAggregationEntity);
                 session.flush();
             }
         }
     }
 
-    private void updateSta(DatasetEntity dataset, DataEntity<?> observation, Session session) {
-        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
-            if (dataset.getPlatform() != null) {
-                DatastreamEntity datastream = existsDatastream(dataset, session);
-                if (datastream != null) {
-                    if (datastream.getSamplingTimeStart() == null || (datastream.getSamplingTimeStart() != null
-                            && datastream.getSamplingTimeStart().after(observation.getSamplingTimeStart()))) {
-                        datastream.setSamplingTimeStart(observation.getSamplingTimeStart());
-                    }
-                    if (datastream.getSamplingTimeEnd() == null || (datastream.getSamplingTimeEnd() != null
-                            && datastream.getSamplingTimeEnd().before(observation.getSamplingTimeEnd()))) {
-                        datastream.setSamplingTimeEnd(observation.getSamplingTimeEnd());
-                    }
-                    if (datastream.getResultTimeStart() == null || (datastream.getResultTimeStart() != null
-                            && datastream.getResultTimeStart().after(observation.getResultTime()))) {
-                        datastream.setResultTimeStart(observation.getResultTime());
-                    }
-                    if (datastream.getResultTimeEnd() == null || (datastream.getResultTimeEnd() != null
-                            && datastream.getResultTimeEnd().before(observation.getResultTime()))) {
-                        datastream.setResultTimeEnd(observation.getResultTime());
-                    }
-                    datastream.addDataset(dataset);
-                    session.saveOrUpdate(datastream);
-                    session.flush();
-                }
-            }
-        }
-    }
-
-    private DatastreamEntity existsDatastream(DatasetEntity dataset, Session session) {
-        Criteria c = session.createCriteria(DatastreamEntity.class)
-                .add(Restrictions.eq(DatastreamEntity.PROPERTY_OBSERVABLE_PROPERTY, dataset.getPhenomenon()))
-                .add(Restrictions.eq(DatastreamEntity.PROPERTY_THING, dataset.getPlatform()))
-                .add(Restrictions.eq(DatastreamEntity.PROPERTY_SENSOR, dataset.getProcedure()));
-        return (DatastreamEntity) c.uniqueResult();
+    private void addNameDesxcriptionForDatastream(DatasetEntity dataset) {
+        dataset.setName(createDatastreamName(dataset));
+        dataset.setDescription(createDatastreamDescription(dataset));
     }
 
     private String createDatastreamName(DatasetEntity dataset) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer("Datastream_");
         buffer.append(getNameOrIdentifier(dataset.getPlatform())).append("_")
                 .append(getNameOrIdentifier(dataset.getProcedure())).append("_")
-                .append(getNameOrIdentifier(dataset.getPhenomenon()));
+                .append(getNameOrIdentifier(dataset.getPhenomenon())).append("_")
+                .append(getNameOrIdentifier(dataset.getFeature()));
         return buffer.toString();
     }
 
@@ -439,12 +436,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         StringBuffer buffer = new StringBuffer();
         buffer.append("Datastream for Thing '").append(getNameOrIdentifier(dataset.getPlatform()))
                 .append("' and Sensor '").append(getNameOrIdentifier(dataset.getProcedure()))
-                .append("' and ObservedProperty '").append(getNameOrIdentifier(dataset.getPhenomenon())).append("'.");
+                .append("' and ObservedProperty '").append(getNameOrIdentifier(dataset.getPhenomenon()))
+                .append("' and FeatureOfInterest '").append(getNameOrIdentifier(dataset.getFeature()));
+        buffer.append("'.");
         return buffer.toString();
     }
 
     private String getNameOrIdentifier(DescribableEntity entity) {
-        return entity.isSetName() ? entity.getName() : entity.getIdentifier();
+        return entity != null ? entity.isSetName() ? entity.getName() : entity.getIdentifier() : "unknown";
     }
 
     private DatasetEntity preCheckDataset(ObservationContext ctx, DataEntity<?> observation, DatasetEntity dataset,
@@ -1320,8 +1319,9 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public List<DatasetEntity> delete(ProcedureEntity procedure, Session session) {
         Criteria c = getDefaultAllSeriesCriteria(session);
         addProcedureToCriteria(c, procedure);
-        List<DatasetEntity> series = c.list();
-        if (series != null && !series.isEmpty()) {
+        List<DatasetEntity> datasets = c.list();
+        if (datasets != null && !datasets.isEmpty()) {
+            deleteDatastream(datasets, session);
             StringBuilder builder = new StringBuilder();
             builder.append("delete ");
             builder.append(DatasetEntity.class.getSimpleName());
@@ -1333,7 +1333,21 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             LOGGER.debug("{} datasets were physically deleted!", executeUpdate);
             session.flush();
         }
-        return series;
+        return datasets;
+    }
+
+    private void deleteDatastream(List<DatasetEntity> datasets, Session session) {
+        datasets.forEach(d -> deleteDatastream(d, session));
+    }
+
+    @Override
+    public Logger getLogger() {
+        return LOGGER;
+    }
+
+    @Override
+    public boolean isDeletePhysically() {
+        return deletePhysically;
     }
 
 }

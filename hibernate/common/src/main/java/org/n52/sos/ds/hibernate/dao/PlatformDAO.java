@@ -36,7 +36,6 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.PlatformEntity;
-import org.n52.series.db.beans.sta.DatastreamEntity;
 import org.n52.series.db.beans.sta.HistoricalLocationEntity;
 import org.n52.series.db.beans.sta.LocationEntity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
@@ -106,7 +105,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
     }
 
     private void processSta(PlatformEntity platform, AbstractFeatureEntity<?> feature, Session session) {
-        if (HibernateHelper.isEntitySupported(DatastreamEntity.class)) {
+        if (HibernateHelper.isEntitySupported(LocationEntity.class)) {
             LocationEntity location = getOrInsertLocation(feature, session);
             platform.addLocationEntity(location);
             HistoricalLocationEntity historicalLocation = getOrInsertHistoricalLocation(platform, location, session);

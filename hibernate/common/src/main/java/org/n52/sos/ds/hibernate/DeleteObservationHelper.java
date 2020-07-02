@@ -59,6 +59,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesTimeExtrema;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
+import org.n52.sos.ds.hibernate.util.HibernateUnproxy;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
@@ -68,7 +69,7 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Joiner;
 
-public interface DeleteObservationHelper {
+public interface DeleteObservationHelper extends HibernateUnproxy {
 
     String DELETE_PARAMETER = "delete ";
 
@@ -114,7 +115,7 @@ public interface DeleteObservationHelper {
                 // TODO select all parent ids -> delete childs -> delete parents
                 Set<Long> parents = getParents(modifiedDatasets, filters, temporalFilters, session);
                 if (!parents.isEmpty()) {
-                    deleteDeletedChildObservations(parents, filters, temporalFilters, session);
+                    deleteDeletedChildObservations(parents, session);
                 }
                 deleteDeletedObservations(modifiedDatasets, filters, temporalFilters, session);
             }
@@ -169,8 +170,7 @@ public interface DeleteObservationHelper {
         return list != null ? new LinkedHashSet<>(list) : new LinkedHashSet<>();
     }
 
-    default void deleteDeletedChildObservations(Collection<Long> parents, Collection<TemporalFilter> filters,
-            boolean temporalFilters, Session session)
+    default void deleteDeletedChildObservations(Collection<Long> parents, Session session)
             throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
         Query<?> q = session.createQuery(getDeletChildQueryString(parents));
         q.setParameter(DataEntity.PROPERTY_PARENT, parents);
@@ -190,6 +190,25 @@ public interface DeleteObservationHelper {
         }
         int executeUpdate = q.executeUpdate();
         getLogger().debug("{} observations were physically deleted!", executeUpdate);
+        session.flush();
+    }
+
+    default void deleteDeletedObservations(Session session)
+            throws UnsupportedTimeException, UnsupportedValueReferenceException, UnsupportedOperatorException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(DELETE_PARAMETER);
+        builder.append(getDaoFactory().getObservationDAO()
+                .getObservationFactory()
+                .observationClass()
+                .getSimpleName());
+        builder.append(WHERE_PARAMETER)
+                .append(DatasetEntity.PROPERTY_DELETED)
+                .append(EQUAL_PARAMETER)
+                .append(DatasetEntity.PROPERTY_DELETED);
+        Query<?> q = session.createQuery(builder.toString());
+        q.setParameter(DatasetEntity.PROPERTY_DELETED, true);
+        int executeUpdate = q.executeUpdate();
+        getLogger().debug("{} deleted observations were physically deleted!", executeUpdate);
         session.flush();
     }
 
@@ -341,20 +360,26 @@ public interface DeleteObservationHelper {
                     SeriesTimeExtrema extrema = minMaxTimes.get(series.getId());
                     if (!series.isSetFirstValueAt() || (series.isSetFirstValueAt() && !DateTimeHelper
                             .makeDateTime(series.getFirstValueAt()).equals(extrema.getMinPhenomenonTime()))) {
-                        series.setFirstValueAt(extrema.getMinPhenomenonTime().toDate());
-                        DataEntity<?> o =
-                                observationDAO.getMinObservation(series, extrema.getMinPhenomenonTime(), session);
+                        series.setFirstValueAt(extrema.getMinPhenomenonTime()
+                                .toDate());
+                        DataEntity<?> o = unproxy(
+                                observationDAO.getMinObservation(series, extrema.getMinPhenomenonTime(), session),
+                                session);
                         series.setFirstObservation(o);
-                        if (series.getValueType().equals(ValueType.quantity)) {
+                        if (series.getValueType()
+                                .equals(ValueType.quantity)) {
                             series.setFirstQuantityValue(((QuantityDataEntity) o).getValue());
                         }
                         update = true;
                     }
-                    if (!series.isSetLastValueAt() || (series.isSetLastValueAt() && !DateTimeHelper
-                            .makeDateTime(series.getLastValueAt()).equals(extrema.getMaxPhenomenonTime()))) {
-                        series.setLastValueAt(extrema.getMaxPhenomenonTime().toDate());
-                        DataEntity<?> o =
-                                observationDAO.getMaxObservation(series, extrema.getMaxPhenomenonTime(), session);
+                    if (!series.isSetLastValueAt()
+                            || (series.isSetLastValueAt() && !DateTimeHelper.makeDateTime(series.getLastValueAt())
+                                    .equals(extrema.getMaxPhenomenonTime()))) {
+                        series.setLastValueAt(extrema.getMaxPhenomenonTime()
+                                .toDate());
+                        DataEntity<?> o = unproxy(
+                                observationDAO.getMaxObservation(series, extrema.getMaxPhenomenonTime(), session),
+                                session);
                         series.setLastObservation(o);
                         if (series.getValueType().equals(ValueType.quantity)) {
                             series.setLastQuantityValue(((QuantityDataEntity) o).getValue());

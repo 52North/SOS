@@ -13,7 +13,6 @@
     <modules>
         <module>api</module>
         <module>cache</module>
-        <module>profile</module>
         <module>test</module>
     </modules>
 </project>

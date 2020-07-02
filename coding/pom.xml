@@ -13,5 +13,6 @@
     <modules>
         <module>kvp</module>
         <module>netcdf</module>
+        <module>profile</module>
     </modules>
 </project>

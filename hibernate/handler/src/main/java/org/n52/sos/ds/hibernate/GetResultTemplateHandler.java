@@ -114,8 +114,9 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
             response.setService(request.getService());
             response.setVersion(request.getVersion());
             ResultTemplateEntity resultTemplate = supportsDatabaseEntities ? getDaoFactory().getResultTemplateDAO()
-                    .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), session) : null;
-            if (resultTemplate != null) {
+                    .getResultTemplateObjectForResponse(request.getOffering(), request.getObservedProperty(), session)
+                    : null;
+            if (resultTemplate != null && resultTemplate.isSetStructure() && resultTemplate.isSetEncoding()) {
                 response.setResultEncoding(createSosResultEncoding(resultTemplate.getEncoding()));
                 response.setResultStructure(createSosResultStructure(resultTemplate.getStructure()));
             } else {

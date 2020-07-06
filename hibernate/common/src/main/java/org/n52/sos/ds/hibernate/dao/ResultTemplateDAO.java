@@ -334,6 +334,8 @@ public class ResultTemplateDAO {
                             createSosResultEncoding(storedResultTemplate.getObservationEncoding());
 
                     if (request instanceof InternalInsertResultTemplateRequest) {
+                        ((InternalInsertResultTemplateRequest) request).getObservationStructure().clearXml();
+                        ((InternalInsertResultTemplateRequest) request).getObservationEncoding().clearXml();
                         if (storedObservationStructure != null && !storedObservationStructure
                                 .equals(((InternalInsertResultTemplateRequest) request).getObservationStructure())) {
                             throw new InvalidParameterValueException()

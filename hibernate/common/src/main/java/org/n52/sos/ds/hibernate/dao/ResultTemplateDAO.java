@@ -491,32 +491,16 @@ public class ResultTemplateDAO {
     private ResultTemplateEntity setObservationStructureEncoding(ResultTemplateEntity resultTemplate,
             InternalInsertResultTemplateRequest request) throws EncodingException {
         if (request.isSetObservationEncoding()) {
-            if (request.getObservationEncoding()
-                    .getXml()
-                    .isPresent()) {
-                resultTemplate.setObservationEncoding(request.getObservationEncoding()
-                        .getXml()
-                        .get());
-            } else {
                 resultTemplate.setObservationEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20,
                         request.getObservationEncoding()
                                 .get()
                                 .get()));
-            }
         }
         if (request.isSetObservationStructure()) {
-            if (request.getObservationStructure()
-                    .getXml()
-                    .isPresent()) {
-                resultTemplate.setObservationStructure(request.getObservationStructure()
-                        .getXml()
-                        .get());
-            } else {
                 resultTemplate.setObservationStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20,
                         request.getObservationStructure()
                                 .get()
                                 .get()));
-            }
         }
         return resultTemplate;
     }

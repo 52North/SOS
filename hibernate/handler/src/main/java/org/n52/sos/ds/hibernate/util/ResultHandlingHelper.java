@@ -168,7 +168,9 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 if (observation instanceof ProfileDataEntity) {
                     builder.append(createResultValuesFromObservations(((ProfileDataEntity) observation).getValue(),
                             sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false,
-                            ((ProfileDataEntity) observation).getDataset().getVerticalMetadata(), session));
+                            ((ProfileDataEntity) observation).getDataset()
+                                    .getVerticalMetadata(),
+                            session));
                     builder.append(blockSeparator);
                 } else {
                     for (final Entry<Integer, String> entry : valueOrder.entrySet()) {
@@ -194,9 +196,12 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                                 break;
                             case OM_PROCEDURE:
                                 if (observation.getDataset()
-                                        .getProcedure() != null && observation.getDataset().getProcedure()
+                                        .getProcedure() != null && observation.getDataset()
+                                                .getProcedure()
                                                 .isSetIdentifier()) {
-                                    builder.append(observation.getDataset().getProcedure().getIdentifier());
+                                    builder.append(observation.getDataset()
+                                            .getProcedure()
+                                            .getIdentifier());
                                 } else {
                                     builder.append("");
                                 }
@@ -540,15 +545,25 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 if (observation.hasParameters() && hasParameter(observation.getParameters(), order.getValue())) {
                     builder.append(getParameterValue(observation.getParameters(), order.getValue()))
                             .append(tokenSeparator);
-                } else if (vertical != null && (vertical.getVerticalFromName().equals(order.getValue())
-                        || vertical.getVerticalToName().equals(order.getValue()))) {
+                } else if (vertical != null && (vertical.getVerticalFromName()
+                        .equals(order.getValue())
+                        || vertical.getVerticalToName()
+                                .equals(order.getValue()))) {
                     if (vertical.areVerticalNamesEqual()) {
-                        builder.append(observation.getVerticalTo().toPlainString()).append(tokenSeparator);
+                        builder.append(observation.getVerticalTo()
+                                .toPlainString())
+                                .append(tokenSeparator);
                     } else {
-                        if (vertical.getVerticalFromName().equals(order.getValue())) {
-                            builder.append(observation.getVerticalFrom().toPlainString()).append(tokenSeparator);
-                        } else if (vertical.getVerticalToName().equals(order.getValue())) {
-                            builder.append(observation.getVerticalTo().toPlainString()).append(tokenSeparator);
+                        if (vertical.getVerticalFromName()
+                                .equals(order.getValue())) {
+                            builder.append(observation.getVerticalFrom()
+                                    .toPlainString())
+                                    .append(tokenSeparator);
+                        } else if (vertical.getVerticalToName()
+                                .equals(order.getValue())) {
+                            builder.append(observation.getVerticalTo()
+                                    .toPlainString())
+                                    .append(tokenSeparator);
                         }
                     }
                 } else {
@@ -699,7 +714,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         }
         record.addField(new SweField("resultTime", new SweTime().setUom(OmConstants.PHEN_UOM_ISO8601)
                 .setDefinition(OmConstants.RESULT_TIME)));
-        createObservedPropertyField(observation).stream().forEach(f -> record.addField(f));
+        createObservedPropertyField(observation).stream()
+                .forEach(f -> record.addField(f));
         if (procedure) {
             record.addField(new SweField("procedure", new SweText().setDefinition(OM_PROCEDURE)));
         }
@@ -723,11 +739,13 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                         .getObservationType()
                         .equals(ObservationType.profile)) {
             ProfileValue profile = (ProfileValue) new ObservationValueCreator(decoderRepository).visit(observation);
-            ProfileLevel level = profile.getValue().get(0);
+            ProfileLevel level = profile.getValue()
+                    .get(0);
             fields.add(createVerticalParameter(level));
             if (level.getValue()
                     .get(0) instanceof SweAbstractDataComponent) {
-                if (level.getValue().size() > 1) {
+                if (level.getValue()
+                        .size() > 1) {
                     SweDataRecord record = new SweDataRecord();
                     for (Value<?> v : level.getValue()) {
                         SweAbstractDataComponent dc = (SweAbstractDataComponent) v;
@@ -736,7 +754,9 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                     fields.add(new SweField(getNcNameName(phenomenon), record));
                     return fields;
                 } else {
-                    SweAbstractDataComponent swe = (SweAbstractDataComponent) level.getValue().get(0).setValue(null);
+                    SweAbstractDataComponent swe = (SweAbstractDataComponent) level.getValue()
+                            .get(0)
+                            .setValue(null);
                     swe.setDefinition(phenomenon.getIdentifier());
                     fields.add(new SweField(getNcNameName(phenomenon), swe));
                     return fields;
@@ -777,8 +797,6 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 createSweQuantityLatLon(SweCoordinateNames.LATITUDE, "lat")));
         coordinates.add(new SweCoordinate<>(SweCoordinateNames.LONGITUDE,
                 createSweQuantityLatLon(SweCoordinateNames.LONGITUDE, "lon")));
-//        coordinates.add(new SweCoordinate<>(SweCoordinateNames.ALTITUDE,
-//                createSweQuantity(SweCoordinateNames.ALTITUDE, "alt", "m")));
         vector.setCoordinates(coordinates);
         return vector;
     }
@@ -794,67 +812,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
     }
 
     private String getNcNameName(Describable entity) {
-       return NcName.makeValid(
-                entity.isSetName() ? entity.getName() : entity.getIdentifier());
+        return NcName.makeValid(entity.isSetName() ? entity.getName() : entity.getIdentifier());
     }
-
-//    @Override
-//    public QuantityValue visit(QuantityDataEntity o) {
-//        return visit(o, new QuantityValue((BigDecimal) null));
-//    }
-//
-//    @Override
-//    public UnknownValue visit(BlobDataEntity o) {
-//        return visit(o, new UnknownValue(null));
-//    }
-//
-//    @Override
-//    public BooleanValue visit(BooleanDataEntity o) {
-//        return visit(o, new BooleanValue(null));
-//    }
-//
-//    @Override
-//    public CategoryValue visit(CategoryDataEntity o) {
-//        return visit(o, new CategoryValue(null));
-//    }
-//
-//    @Override
-//    public ComplexValue visit(ComplexDataEntity o) throws OwsExceptionReport {
-//        SweAbstractDataComponentCreator visitor = new SweAbstractDataComponentCreator(getDecoderRepository(), true);
-//        SweDataRecord record = visitor.visit(o);
-//        return new ComplexValue(record);
-//    }
-//
-//    @Override
-//    public CountValue visit(CountDataEntity o) {
-//        return new CountValue(null);
-//    }
-//
-//    @Override
-//    public GeometryValue visit(GeometryDataEntity o) throws OwsExceptionReport {
-//        return visit(o, new GeometryValue((AbstractGeometry) null));
-//    }
-//
-//    @Override
-//    public TextValue visit(TextDataEntity o) {
-//        return visit(o, new TextValue(null));
-//    }
-//
-//    @Override
-//    public SweDataArrayValue visit(DataArrayDataEntity o) throws OwsExceptionReport {
-//        SweDataArray array = createSweDataArray(o);
-//        array.setEncoding(null);
-//        return new SweDataArrayValue(array);
-//    }
-//
-//    @Override
-//    public ProfileValue visit(ProfileDataEntity o) throws OwsExceptionReport {
-//        return new ProfileGeneratorSplitter(this).create(o);
-//    }
-//
-//    @Override
-//    public ReferenceValue visit(ReferencedDataEntity o) {
-//        return visit(o, new ReferenceValue(null));
-//    }
 
 }

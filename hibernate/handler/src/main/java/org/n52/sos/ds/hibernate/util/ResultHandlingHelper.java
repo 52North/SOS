@@ -52,6 +52,7 @@ import org.n52.series.db.beans.BooleanDataEntity;
 import org.n52.series.db.beans.CategoryDataEntity;
 import org.n52.series.db.beans.ComplexDataEntity;
 import org.n52.series.db.beans.CountDataEntity;
+import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.Describable;
 import org.n52.series.db.beans.GeometryDataEntity;
@@ -383,7 +384,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 } else {
                     addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
                 }
-            } else if (element instanceof SweVector) {
+            } else if (element instanceof SweVector || element instanceof SweDataArray) {
                 if (element.isSetDefinition()) {
                     addValueToValueOrderMap(valueOrder, tokenIndex, element.getDefinition());
                     tokenIndex.increment();
@@ -440,6 +441,9 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                         .getGeometry());
             } else if (observation instanceof BlobDataEntity) {
                 return String.valueOf(((BlobDataEntity) observation).getValue());
+            } else if (observation instanceof DataArrayDataEntity) {
+                DataArrayDataEntity o = (DataArrayDataEntity) observation;
+                return o.isSetStringValue() ? o.getStringValue() : "";
             }
         }
         return "";

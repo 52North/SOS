@@ -76,12 +76,9 @@ public abstract class AbstractValuedObservationCreator<T> implements ValuedObser
     protected SweDataArray createSweDataArray(DataArrayDataEntity o) throws CodedException {
         try {
             SweDataArray array = new SweDataArray();
-            decode(XmlHelper.parseXmlString(o.getResultTemplate().getEncoding()));
-            array.setEncoding(
-                    (SweAbstractEncoding) decode(XmlHelper.parseXmlString(o.getResultTemplate().getEncoding())));
-            array.setElementType(
-                    (SweAbstractDataComponent) decode(XmlHelper.parseXmlString(o.getResultTemplate().getStructure())));
-            if (isNoValues()) {
+            array.setEncoding(getEncoding(o));
+            array.setElementType(getStructure(o));
+            if (!isNoValues()) {
                 if (o.isSetStringValue()) {
                     array.setXml(null);
                     List<List<String>> values = new LinkedList<>();
@@ -123,6 +120,26 @@ public abstract class AbstractValuedObservationCreator<T> implements ValuedObser
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while creating SweDataArray from database entity!");
         }
+    }
+
+    private SweAbstractEncoding getEncoding(DataArrayDataEntity o) throws DecodingException {
+        String encoding;
+        if (o.getResultTemplate().isSetObservationEncoding()) {
+            encoding = o.getResultTemplate().getObservationEncoding();
+        } else {
+            encoding = o.getResultTemplate().getEncoding();
+        }
+        return (SweAbstractEncoding) decode(XmlHelper.parseXmlString(encoding));
+    }
+
+    private SweAbstractDataComponent getStructure(DataArrayDataEntity o) throws DecodingException {
+        String structure;
+        if (o.getResultTemplate().isSetObservationStructure()) {
+            structure = o.getResultTemplate().getObservationStructure();
+        } else {
+            structure = o.getResultTemplate().getStructure();
+        }
+        return (SweAbstractDataComponent) decode(XmlHelper.parseXmlString(structure));
     }
 
 }

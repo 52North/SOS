@@ -42,5 +42,5 @@ public interface SosSettings {
     String ALLOW_TEMPLATE_WITHOUT_PROCEDURE_FEATURE = "service.allowTemplateWithoutProcedureAndFeature";
     String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
     String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
-
+    String STA_SUPPORTS_URLS = "service.sta.supports.urls";
 }

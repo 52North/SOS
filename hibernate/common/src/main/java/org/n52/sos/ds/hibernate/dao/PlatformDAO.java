@@ -92,7 +92,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
         PlatformEntity platform = getPlatformForIdentifier(feature.getIdentifier(), session);
         if (platform == null) {
             platform = new PlatformEntity();
-            platform.setIdentifier(feature.getIdentifier());
+            platform.setIdentifier(feature.getIdentifier(), getDaoFactory().isStaSupportsUrls());
             platform.setIdentifierCodespace(feature.getIdentifierCodespace());
             platform.setName(feature.getName());
             platform.setNameCodespace(feature.getNameCodespace());
@@ -120,7 +120,10 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private LocationEntity getOrInsertLocation(AbstractFeatureEntity<?> feature, Session session) {
         LocationEntity location = new LocationEntity();
-        location.setIdentifier(feature.isSetIdentifier() ? feature.getIdentifier() : UUID.randomUUID().toString());
+        location.setIdentifier(feature.isSetIdentifier() ? feature.getIdentifier()
+                : UUID.randomUUID()
+                        .toString(),
+                getDaoFactory().isStaSupportsUrls());
         location.setIdentifierCodespace(feature.getIdentifierCodespace());
         location.setName(feature.isSetName() ? feature.getName() : location.getIdentifier());
         location.setNameCodespace(feature.getNameCodespace());
@@ -138,7 +141,7 @@ public class PlatformDAO extends AbstractIdentifierNameDescriptionDAO {
     private HistoricalLocationEntity getOrInsertHistoricalLocation(PlatformEntity platform, LocationEntity location,
             Session session) {
         HistoricalLocationEntity historicalLocation = new HistoricalLocationEntity();
-        historicalLocation.setIdentifier(UUID.randomUUID().toString());
+        historicalLocation.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
         historicalLocation.setThing(platform);
         historicalLocation.setTime(DateTime.now().toDate());
 

@@ -24,15 +24,4 @@
     <bean class="org.n52.sos.ds.hibernate.util.observation.InspireObservationCreator"/>
     <bean class="org.n52.sos.ds.hibernate.util.observation.WaterMLObservationCreator"/>
 
-    <!--
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
-    <bean class="org.n52.sos.ext.deleteobservation.HibernateDeleteObservationCacheFeederDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.InsertSensorDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.InsertResultDAO"/>
-    <bean class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
-    -->
-
 </beans>

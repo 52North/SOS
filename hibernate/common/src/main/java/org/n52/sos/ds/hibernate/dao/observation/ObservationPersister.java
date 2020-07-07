@@ -40,7 +40,6 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
-import org.n52.janmayen.NcName;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.ComplexDataEntity;
@@ -60,7 +59,6 @@ import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
-import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gwml.GWMLConstants;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -102,13 +100,8 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosResultEncoding;
 import org.n52.shetland.ogc.sos.SosResultStructure;
-import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
-import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweField;
-import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.shetland.ogc.swe.simpleType.SweTime;
-import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.IdGenerator;
 import org.n52.shetland.util.OMHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -120,6 +113,7 @@ import org.n52.sos.ds.hibernate.dao.PlatformDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.VerticalMetadataDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.request.InternalInsertResultTemplateRequest;
 import org.n52.sos.util.GeometryHandler;
 
 public class ObservationPersister
@@ -221,21 +215,32 @@ public class ObservationPersister
     @Override
     public DataEntity<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
         DataArrayDataEntity dataArray = observationFactory.sweDataEntityArray();
-        if (value.getValue().getElementType() instanceof SweAbstractDataRecord
-                && checkFields((SweAbstractDataRecord) value.getValue().getElementType())) {
-            dataArray = persist(dataArray, new HashSet<DataEntity<?>>());
-            persistChildren(value.getValue(), dataArray.getId());
-        } else {
-            dataArray.setStringValue(value.getValue().getValueAsString());
-            dataArray = (DataArrayDataEntity) persist((DataEntity) dataArray, new HashSet<DataEntity<?>>());
-        }
-        // creata result template
-        InsertResultTemplateRequest insertResultTemplateRequest = new InsertResultTemplateRequest();
-        insertResultTemplateRequest.setResultEncoding(
-                new SosResultEncoding(value.getValue().getEncoding(), value.getValue().getEncoding().getXml()));
-        insertResultTemplateRequest.setResultStructure(
-                new SosResultStructure(value.getValue().getElementType(), value.getValue().getElementType().getXml()));
-        insertResultTemplateRequest.setIdentifier(IdGenerator.generate(value.getValue().getElementType().getXml()));
+        // if (value.getValue().getElementType() instanceof
+        // SweAbstractDataRecord
+        // && checkFields((SweAbstractDataRecord)
+        // value.getValue().getElementType())) {
+        // dataArray = persist(dataArray, new HashSet<DataEntity<?>>());
+        // persistChildren(value.getValue(), dataArray.getId());
+        // } else {
+        dataArray.setStringValue(value.getValue()
+                .getValueAsString());
+        dataArray = (DataArrayDataEntity) persist((DataEntity) dataArray, new HashSet<DataEntity<?>>());
+        // }
+        // create result template
+        InternalInsertResultTemplateRequest insertResultTemplateRequest = new InternalInsertResultTemplateRequest();
+        insertResultTemplateRequest.setObservationEncoding(new SosResultEncoding(value.getValue()
+                .getEncoding(),
+                value.getValue()
+                        .getEncoding()
+                        .getXml()));
+        insertResultTemplateRequest.setObservationStructure(new SosResultStructure(value.getValue()
+                .getElementType(),
+                value.getValue()
+                        .getElementType()
+                        .getXml()));
+        insertResultTemplateRequest.setIdentifier("OBS_" + IdGenerator.generate(value.getValue()
+                .getElementType()
+                .getXml()));
         ResultTemplateEntity resultTemplate = daoFactory.getResultTemplateDAO()
                 .checkOrInsertResultTemplate(insertResultTemplateRequest, dataArray.getDataset(), session);
         dataArray.setResultTemplate(resultTemplate);
@@ -376,15 +381,15 @@ public class ObservationPersister
         return ValueType.not_initialized;
     }
 
-    private boolean checkFields(SweAbstractDataRecord sweAbstractDataRecord) {
-        return sweAbstractDataRecord.getFields().size() == 2
-                && sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
-                        .getElement() instanceof SweAbstractSimpleType
-                && (!(sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
-                        .getElement() instanceof SweTime
-                        || sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
-                                .getElement() instanceof SweTimeRange));
-    }
+//    private boolean checkFields(SweAbstractDataRecord sweAbstractDataRecord) {
+//        return sweAbstractDataRecord.getFields().size() == 2
+//                && sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
+//                        .getElement() instanceof SweAbstractSimpleType
+//                && (!(sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
+//                        .getElement() instanceof SweTime
+//                        || sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
+//                                .getElement() instanceof SweTimeRange));
+//    }
 
     private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, DataEntity dataEntity)
             throws HibernateException, OwsExceptionReport {
@@ -419,29 +424,29 @@ public class ObservationPersister
         return children;
     }
 
-    private Set<DataEntity<?>> persistChildren(SweDataArray value, Long parent) throws OwsExceptionReport {
-        Set<DataEntity<?>> children = new TreeSet<>();
-        if (value.getElementType() instanceof SweAbstractDataRecord) {
-            SweAbstractDataRecord dataRecord = (SweAbstractDataRecord) value.getElementType();
-            int i = getNotObservablePropertyField(dataRecord);
-            SweField field = dataRecord.getFieldByIdentifier(
-                    omObservation.getObservationConstellation().getObservablePropertyIdentifier());
-            for (List<String> block : value.getValues()) {
-                PhenomenonEntity observableProperty =
-                        getObservablePropertyForField(dataRecord.getFields().get(i), block.get(i));
-                Value<?> v = field.accept(ValueCreatingSweDataComponentVisitor.getInstance());
-                String observationType = OMHelper.getObservationTypeFor(v);
-                ObservationPersister childPersister =
-                        createChildPersister(observableProperty, observationType, parent);
-                children.add(v.accept(childPersister));
-            }
-        } else {
-            throw new NoApplicableCodeException().withMessage("Type '%s' is not yet supported!",
-                    value.getElementType().getClass().getSimpleName());
-        }
-        session.flush();
-        return children;
-    }
+//    private Set<DataEntity<?>> persistChildren(SweDataArray value, Long parent) throws OwsExceptionReport {
+//        Set<DataEntity<?>> children = new TreeSet<>();
+//        if (value.getElementType() instanceof SweAbstractDataRecord) {
+//            SweAbstractDataRecord dataRecord = (SweAbstractDataRecord) value.getElementType();
+//            int i = getNotObservablePropertyField(dataRecord);
+//            SweField field = dataRecord.getFieldByIdentifier(
+//                    omObservation.getObservationConstellation().getObservablePropertyIdentifier());
+//            for (List<String> block : value.getValues()) {
+//                PhenomenonEntity observableProperty =
+//                        getObservablePropertyForField(dataRecord.getFields().get(i), block.get(i));
+//                Value<?> v = field.accept(ValueCreatingSweDataComponentVisitor.getInstance());
+//                String observationType = OMHelper.getObservationTypeFor(v);
+//                ObservationPersister childPersister =
+//                        createChildPersister(observableProperty, observationType, parent);
+//                children.add(v.accept(childPersister));
+//            }
+//        } else {
+//            throw new NoApplicableCodeException().withMessage("Type '%s' is not yet supported!",
+//                    value.getElementType().getClass().getSimpleName());
+//        }
+//        session.flush();
+//        return children;
+//    }
 
     private int getNotObservablePropertyField(SweAbstractDataRecord dataRecord) {
         return dataRecord.getFieldIndexByIdentifier(
@@ -473,13 +478,13 @@ public class ObservationPersister
 
     }
 
-    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, String observationType,
-            Long id) throws OwsExceptionReport {
-        return new ObservationPersister(daoFactory, daos, caches, omObservation,
-                getObservationConstellation(observableProperty,
-                        getObservationType(observationType, session), dataset),
-                featureOfInterest, samplingGeometry, offerings, session, id);
-    }
+//    private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, String observationType,
+//            Long id) throws OwsExceptionReport {
+//        return new ObservationPersister(daoFactory, daos, caches, omObservation,
+//                getObservationConstellation(observableProperty,
+//                        getObservationType(observationType, session), dataset),
+//                featureOfInterest, samplingGeometry, offerings, session, id);
+//    }
 
     private ObservationPersister createChildPersister(PhenomenonEntity observableProperty, String observationType,
             DataEntity dataEntity) throws OwsExceptionReport {
@@ -522,20 +527,20 @@ public class ObservationPersister
         return getObservableProperty(new OmObservableProperty(definition));
     }
 
-    private PhenomenonEntity getObservablePropertyForField(SweField field, String value) {
-        String definition = field.getElement().getDefinition() + "_" + NcName.makeValid(value);
-        if (omObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
-            for (OmObservableProperty component : ((OmCompositePhenomenon) omObservation.getObservationConstellation()
-                    .getObservableProperty()).getPhenomenonComponents()) {
-                if (component.getIdentifier().equals(definition)) {
-                    getObservableProperty(component);
-                }
-            }
-        }
-        OmObservableProperty obsProp = new OmObservableProperty(definition);
-        obsProp.setName(new CodeType(value));
-        return getObservableProperty(obsProp);
-    }
+//    private PhenomenonEntity getObservablePropertyForField(SweField field, String value) {
+//        String definition = field.getElement().getDefinition() + "_" + NcName.makeValid(value);
+//        if (omObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
+//            for (OmObservableProperty component : ((OmCompositePhenomenon) omObservation.getObservationConstellation()
+//                    .getObservableProperty()).getPhenomenonComponents()) {
+//                if (component.getIdentifier().equals(definition)) {
+//                    getObservableProperty(component);
+//                }
+//            }
+//        }
+//        OmObservableProperty obsProp = new OmObservableProperty(definition);
+//        obsProp.setName(new CodeType(value));
+//        return getObservableProperty(obsProp);
+//    }
 
     private PhenomenonEntity getObservableProperty(AbstractPhenomenon observableProperty) {
         return daos.observableProperty().getOrInsertObservableProperty(observableProperty, session);
@@ -598,6 +603,7 @@ public class ObservationPersister
             daos.observation().addIdentifier(omObservation, observation, session, caches.codespaces);
         } else {
             observation.setParent(parent);
+            observation.setStaIdentifier(observation.generateUUID());
         }
 
         daos.observation().addName(omObservation, observation, session, caches.codespaces);
@@ -666,18 +672,7 @@ public class ObservationPersister
         session.save(observation);
         session.flush();
         session.refresh(observation);
-        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset,
-                (DataEntity<?>) checkForStaIdentifier(observation), session);
-        return observation;
-    }
-
-    private <V, T extends DataEntity<V>> T checkForStaIdentifier(T observation) {
-        if (daoFactory.isSetObservationIdentifierForSTA() && !observation.isSetIdentifier()) {
-            observation.setIdentifier(Long.toString(observation.getId()));
-            session.update(observation);
-            session.flush();
-            session.refresh(observation);
-        }
+        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, observation, session);
         return observation;
     }
 

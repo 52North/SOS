@@ -496,7 +496,7 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
         OfferingEntity offering = getTOfferingForIdentifier(assignedOffering.getIdentifier(), session);
         if (offering == null) {
             offering = new OfferingEntity();
-            offering.setIdentifier(assignedOffering.getIdentifier());
+            offering.setIdentifier(assignedOffering.getIdentifier(), getDaoFactory().isStaSupportsUrls());
             if (assignedOffering.isSetName()) {
                 offering.setName(assignedOffering.getFirstName().getValue());
             } else {

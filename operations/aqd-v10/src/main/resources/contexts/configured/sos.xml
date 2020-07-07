@@ -3,25 +3,30 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-    <!-- RequestOperator implementations from extensions/aqd/operation -->
-    <bean class="org.n52.sos.request.operator.AqdGetCapabilitiesOperatorV10"/>
-    <bean class="org.n52.sos.request.operator.AqdGetObservationOperatorV10"/>
-    <bean class="org.n52.sos.request.operator.AqdDescribeSensorOperatorV10"/>
+    <beans profile="ereporting">
+        <!-- RequestOperator implementations from extensions/aqd/operation -->
+        <bean
+            class="org.n52.sos.request.operator.AqdGetCapabilitiesOperatorV10" />
+        <bean
+            class="org.n52.sos.request.operator.AqdGetObservationOperatorV10" />
+        <bean
+            class="org.n52.sos.request.operator.AqdDescribeSensorOperatorV10" />
 
-    <!-- ServiceOperator implementations from extensions/aqd/operation -->
-    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
-        <constructor-arg value="AQD" />
-        <constructor-arg value="1.0.0" />
-    </bean>
+        <!-- ServiceOperator implementations from extensions/aqd/operation -->
+        <bean
+            class="org.n52.iceland.service.operator.GenericServiceOperator">
+            <constructor-arg value="AQD" />
+            <constructor-arg value="1.0.0" />
+        </bean>
 
-    <bean id="reportObligationRepository"
-      class="org.n52.sos.request.operator.ReportObligationRepository" />
+        <bean id="reportObligationRepository"
+            class="org.n52.sos.request.operator.ReportObligationRepository" />
 
+        <bean id="adminEReportingHeaderController"
+            class="org.n52.sos.aqd.web.admin.AdminEReportingHeaderController" />
 
-    <bean id="adminEReportingHeaderController"
-          class="org.n52.sos.web.admin.AdminEReportingHeaderController" />
-
-   <bean id="jsonReportingHeaderDao"
-          class="org.n52.sos.config.json.JsonReportingHeaderDao" />
+        <bean id="jsonReportingHeaderDao"
+            class="org.n52.sos.config.json.JsonReportingHeaderDao" />
+    </beans>
 
 </beans>

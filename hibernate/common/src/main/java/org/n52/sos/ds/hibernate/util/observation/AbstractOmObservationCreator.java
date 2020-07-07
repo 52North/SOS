@@ -53,14 +53,11 @@ import org.n52.shetland.iso.gmd.CiOnlineResource;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GenericMetaData;
-import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationStream;
-import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -237,14 +234,7 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<>();
-        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
-        namedValue.setName(referenceType);
-        // TODO add lat/long version
-        Geometry geometry = samplingGeometry;
-        namedValue.setValue(
-                new GeometryValue(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
-        return namedValue;
+        return new SpatialFilteringProfileCreator(getGeometryHandler()).create(samplingGeometry);
     }
 
     protected OmObservableProperty createObservableProperty(PhenomenonEntity observableProperty)

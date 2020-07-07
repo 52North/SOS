@@ -183,7 +183,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * Get {@link DataAvailability}s for each series
      *
      * @param entity
-     *            the {@link DatasetEntityEntity} to get
+     *            the {@link DatasetEntity} to get
      *            {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
@@ -204,7 +204,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * Get {@link DataAvailability}s for each offering of a series
      *
      * @param entity
-     *            the {@link DatasetEntityEntity} to get
+     *            the {@link DatasetEntity} to get
      *            {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s

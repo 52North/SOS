@@ -48,7 +48,6 @@ import org.n52.sos.util.GeometryHandler;
  * Fills the initial cache.
  * <p/>
  *
- * @see CompositePhenomenonCacheUpdate
  * @see ObservationTimeCacheUpdate
  * @see FeatureOfInterestCacheUpdate
  * @see ObservablePropertiesCacheUpdate

@@ -90,7 +90,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     public void addIdentifier(IdentifierNameDescriptionEntity entity, CodeWithAuthority identifier, Session session,
             Map<String, CodespaceEntity> localCache) {
         if (identifier != null && identifier.isSetValue()) {
-            entity.setIdentifier(identifier.getValue());
+            entity.setIdentifier(identifier.getValue(), getDaoFactory().isStaSupportsUrls());
             if (identifier.isSetCodeSpace()) {
                 if (localCache != null && localCache.containsKey(identifier.getCodeSpace())) {
                     entity.setIdentifierCodespace(localCache.get(identifier.getCodeSpace()));
@@ -99,6 +99,8 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
                             new CodespaceDAO().getOrInsertCodespace(identifier.getCodeSpace(), session));
                 }
             }
+        } else {
+            entity.setStaIdentifier(entity.generateUUID());
         }
     }
 

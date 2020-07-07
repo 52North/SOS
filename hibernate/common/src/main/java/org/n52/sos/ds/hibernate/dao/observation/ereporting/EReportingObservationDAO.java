@@ -173,15 +173,15 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO imple
                 throw new OptionNotSupportedException().withMessage(LOG_TEMPLATE, "null");
             } else {
                 switch (flow) {
-                case E1A:
-                case E2A:
-                    addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
-                    break;
-                case E1B:
-                    addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
-                    break;
-                default:
-                    throw new OptionNotSupportedException().withMessage(LOG_TEMPLATE, flow.name());
+                    case E1A:
+                    case E2A:
+                        addAssessmentType(c, AqdConstants.AssessmentType.Fixed.name());
+                        break;
+                    case E1B:
+                        addAssessmentType(c, AqdConstants.AssessmentType.Model.name());
+                        break;
+                    default:
+                        throw new OptionNotSupportedException().withMessage(LOG_TEMPLATE, flow.name());
                 }
             }
             // add quality restrictions

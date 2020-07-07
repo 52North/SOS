@@ -41,6 +41,11 @@
 <p class="pull-right">
 <jsp:include page="cache-reload.jsp" />
 </p>
+<div class="pull-right">
+    <div class="span3">
+        <a id="export" class="btn btn-block btn-info" href="configuration.json" target="_blank">Export Configuration</a>
+    </div>
+</div>
 
 <c:if test="${warning}">
     <script type="text/javascript">

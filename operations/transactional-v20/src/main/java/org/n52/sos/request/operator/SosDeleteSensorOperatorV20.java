@@ -41,8 +41,8 @@ import org.n52.sos.exception.ows.concrete.InvalidProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -110,7 +110,7 @@ public class SosDeleteSensorOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return WSDLConstants.Operations.DELETE_SENSOR;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.DELETE_SENSOR;
     }
 }

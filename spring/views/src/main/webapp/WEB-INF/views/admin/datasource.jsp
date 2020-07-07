@@ -49,7 +49,7 @@
     <h3>Maintenance</h3>
     <div class="btn-group">
         <button data-target="#confirmDialogAddSampledata" data-toggle="modal" title="Insert sample data" class="btn ">Insert sample data</button>
-        <button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Observations" class="btn btn-danger">Delete deleted Observations</button>
+        <button data-target="#confirmDialogDelete" data-toggle="modal" title="Delete deleted Data" class="btn btn-danger">Delete deleted Data</button>
         <button data-target="#confirmDialogClear" data-toggle="modal" title="Clear Datasource" class="btn btn-danger">Clear Datasource</button>
         <a href="<c:url value="/admin/reset" />" title="Reset Datasource Configuration" class="btn btn-warning">Reset Datasource Configuration</a>
     </div>
@@ -90,27 +90,6 @@
     </div>
 </div>
 
-<form id="form" action="" method="POST">
-    <h3>Query Examples</h3>
-    <p>Here are some raw SQL query examples which can be copied and executed in the appropriate database tool, e.g. pgAdmin.</p>
-    <p>The MySQL examples use 'sos' as schema. If you use another schema, please change the 'sos' definition to your schema. This can be easily done with a text editor by search for 'sos.' and replace with 'your_schema.'.</p>
-    <div class="controls-row">
-        <select id="input-query" class="span12 pull-right">
-            <option value="" disabled selected style="display: none;">Select a example query &hellip;</option>
-        </select>
-    </div>
-    <div class="controls-row">
-        <textarea id="editor" class="span12" rows="15"></textarea>
-    </div>
-    <br />
-    <%--<div class="controls-row">
-        <div class="pull-right">
-            <button id="send-button" type="button" class="btn btn-info inline">Send</button>
-        </div>
-    </div> --%>
-</form>
-<div id="result"></div>
-
 <div class="modal hide fade in" id="confirmDialogAddSampledata">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -149,7 +128,7 @@
         <h3>Are you really sure?</h3>
     </div>
     <div class="modal-body">
-        <p><span class="label label-important">Warning!</span> This will remove all deleted observations from the datasource!</p>
+        <p><span class="label label-important">Warning!</span> This will remove all deleted data from the datasource!</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
@@ -226,7 +205,7 @@
             $("#delete").click(function() {
                 $deleteDeletedDialog.find("button").attr("disabled", true);
                 $.ajax({
-                    "url": "<c:url value="/admin/datasource/deleteDeletedObservations" />",
+                    "url": "<c:url value="/admin/datasource/deleteDeletedData" />",
                     "type": "POST"
                 }).fail(function(error) {
                     if (error.responseText) {
@@ -238,7 +217,7 @@
                     $deleteDeletedDialog.find("button").removeAttr("disabled");
                     $deleteDeletedDialog.modal("hide");
                 }).done(function() {
-                    showSuccess("The deleted observation were deleted.");
+                    showSuccess("The deleted data were deleted.");
                     $deleteDeletedDialog.find("button").removeAttr("disabled");
                     $deleteDeletedDialog.modal("hide");
                 });

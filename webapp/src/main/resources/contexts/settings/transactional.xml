@@ -3,51 +3,53 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
-
-
-    <bean id="transactionalSecuritySettingsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
-        <property name="title" value="Transactional Security" />
-        <property name="description" value="Simple security settings to restrict access to transactional methods (InsertSensor, InsertObservation, etc.). Users requiring more control over security should use &lt;a href=&quot;http://52north.org/communities/security/wss/2.2/&quot;&gt;52&amp;deg;North &lt;abbr title=&quot;Web Security Service&quot;&gt;WSS&lt;/abbr&gt;&lt;/a&gt;." />
-        <property name="order" value="1.0" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.security.transactional.active" />
-        <property name="title" value="Transactional security active" />
-        <property name="description" value="Activate/Deactivate transactional security support. If true, allowed IPs or token should be defined! If allowed IPs and/or authorization token are defined, then incoming transactional requests are checked against them." />
-        <property name="order" value="0.0" />
-        <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
-        <property name="defaultValue" value="true" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="service.transactionalAllowedIps" />
-        <property name="title" value="Transactional Allowed IPs" />
-        <property name="description" value="Comma separated ranges of IPs that should be allowed to make transactional requests. Use CIDR notation or raw IP addresses (e.g. &lt;code&gt;127.0.0.1,192.168.0.0/16&lt;/code&gt;). Subnet notation is also supported (e.g. &lt;code&gt;192.168.0.0/255.255.0.0&lt;/code&gt;). Leading zeros are not allowed." />
-        <property name="order" value="1.0" />
-        <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
-        <property name="defaultValue" value="127.0.0.1" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="service.transactionalAllowedProxies" />
-        <property name="title" value="Allowed Proxy IPs" />
-        <property name="description" value="Comma seperated list of allowed proxy IP addresses. These will be used to authorize allowed transactional IP addresses behind proxy servers." />
-        <property name="order" value="2.0" />
-        <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
-        <property name="defaultValue" value="127.0.0.1" />
-    </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="service.transactionalToken" />
-        <property name="title" value="Transactional authorization token" />
-        <property name="description" value="Authorization token to require for transactional requests. Specified in the HTTP Authorization header (Authorization: {token})." />
-        <property name="order" value="3.0" />
-        <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
-        <property name="optional" value="true" />
-    </bean>
-    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-        <property name="key" value="service.transactional.DeletePhysically" />
-        <property name="title" value="Delete observation or procedure physically" />
-        <property name="description" value="Should the SOS delete the observation or procedure physically or only set deleted flag." />
-        <property name="order" value="6.0" />
-        <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
-        <property name="defaultValue" value="false" />
-    </bean>
+    <beans profile="transactional,ereporting">
+        <bean id="transactionalSecuritySettingsDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+            <property name="title" value="Transactional Security" />
+            <property name="description" value="Simple security settings to restrict access to transactional methods (InsertSensor, InsertObservation, etc.). Users requiring more control over security should use &lt;a href=&quot;http://52north.org/communities/security/wss/2.2/&quot;&gt;52&amp;deg;North &lt;abbr title=&quot;Web Security Service&quot;&gt;WSS&lt;/abbr&gt;&lt;/a&gt;." />
+            <property name="order" value="1.0" />
+        </bean>
+        <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="service.security.transactional.active" />
+            <property name="title" value="Transactional security active" />
+            <property name="description" value="Activate/Deactivate transactional security support. If true, allowed IPs or token should be defined! If allowed IPs and/or authorization token are defined, then incoming transactional requests are checked against them." />
+            <property name="order" value="0.0" />
+            <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
+            <property name="defaultValue" value="true" />
+        </bean>
+        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="service.transactionalAllowedIps" />
+            <property name="title" value="Transactional Allowed IPs" />
+            <property name="description" value="Comma separated ranges of IPs that should be allowed to make transactional requests. Use CIDR notation or raw IP addresses (e.g. &lt;code&gt;127.0.0.1,192.168.0.0/16&lt;/code&gt;). Subnet notation is also supported (e.g. &lt;code&gt;192.168.0.0/255.255.0.0&lt;/code&gt;). Leading zeros are not allowed." />
+            <property name="order" value="1.0" />
+            <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
+            <property name="defaultValue" value="127.0.0.1" />
+            <property name="optional" value="true" />
+        </bean>
+        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="service.transactionalAllowedProxies" />
+            <property name="title" value="Allowed Proxy IPs" />
+            <property name="description" value="Comma seperated list of allowed proxy IP addresses. These will be used to authorize allowed transactional IP addresses behind proxy servers. If not set &lt;code&gt;127.0.0.1&lt;/code&gt; would be set per default." />
+            <property name="order" value="2.0" />
+            <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
+            <property name="defaultValue" value="127.0.0.1" />
+            <property name="optional" value="true" />
+        </bean>
+        <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="service.transactionalToken" />
+            <property name="title" value="Transactional authorization token" />
+            <property name="description" value="Authorization token to require for transactional requests. Specified in the HTTP Authorization header (Authorization: {token})." />
+            <property name="order" value="3.0" />
+            <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
+            <property name="optional" value="true" />
+        </bean>
+        <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="service.transactional.DeletePhysically" />
+            <property name="title" value="Delete observation or procedure physically" />
+            <property name="description" value="Should the SOS delete the observation or procedure physically or only set deleted flag." />
+            <property name="order" value="6.0" />
+            <property name="group" ref="transactionalSecuritySettingsDefinitionGroup" />
+            <property name="defaultValue" value="false" />
+        </bean>
+    </beans>
 </beans>

@@ -29,7 +29,6 @@
 package org.n52.sos.request.operator;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,12 +38,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.faroe.ConfigurationError;
-import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -78,8 +74,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.util.SosHelper;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 import org.n52.svalbard.encode.exception.EncodingException;
 
@@ -109,7 +105,7 @@ public class SosDescribeSensorOperatorV20 extends
 
     private BindingRepository bindingRepository;
 
-    private String serviceURL;
+    private SosHelper sosHelper;
 
     private boolean encodeFullChildrenInDescribeSensor;
 
@@ -127,18 +123,13 @@ public class SosDescribeSensorOperatorV20 extends
         this.bindingRepository = bindingRepository;
     }
 
-    @Setting(ServiceSettings.SERVICE_URL)
-    public void setServiceURL(final URI serviceURL) throws ConfigurationError {
-        Validation.notNull("Service URL", serviceURL);
-        String url = serviceURL.toString();
-        if (url.contains("?")) {
-            url = url.split("[?]")[0];
-        }
-        this.serviceURL = url;
+    @Inject
+    public void setSosHelperL(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
     }
 
     private String getServiceURL() {
-        return serviceURL;
+        return sosHelper.getServiceURL();
     }
 
     @Setting(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
@@ -199,8 +190,8 @@ public class SosDescribeSensorOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return WSDLConstants.Operations.DESCRIBE_SENSOR;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.DESCRIBE_SENSOR;
     }
 
     @Override

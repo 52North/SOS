@@ -3,8 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
-
- <bean id="aqdEReportingSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+  <beans profile="ereporting">
+    <bean id="aqdEReportingSettingDefintionGroup" class="org.n52.faroe.SettingDefinitionGroup">
         <property name="title" value="eReporting" />
         <property name="description" value="Setting to define AQD e-Reporting related settings." />
         <property name="order" value="6.0" />
@@ -89,5 +89,5 @@
         <property name="group" ref="aqdEReportingSettingDefintionGroup" />
         <property name="optional" value="true" />
     </bean>
-
+  </beans>
 </beans>

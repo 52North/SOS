@@ -65,8 +65,8 @@ public final class SpatialFilterEsModel extends AbstractElasticsearchModel {
     }
 
     /**
+     *
      * Transform the geomtry to Elatisearch geo_shape type.
-     * {@see https://www.elastic.co/guide/en/elasticsearch/reference/1.6/mapping-geo-shape-type.html}
      *
      * If other the 4326 SRID coordinates are present it needed to be
      * transformed before conver in to Elasticsearch geo_shape

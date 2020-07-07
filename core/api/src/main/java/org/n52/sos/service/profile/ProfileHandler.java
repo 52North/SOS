@@ -46,7 +46,5 @@ public interface ProfileHandler extends Constructable {
 
     void activateProfile(String identifier);
 
-    void persist();
-
     void reloadProfiles();
 }

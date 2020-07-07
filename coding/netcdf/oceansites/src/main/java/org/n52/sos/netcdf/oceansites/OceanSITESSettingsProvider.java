@@ -29,8 +29,7 @@
 package org.n52.sos.netcdf.oceansites;
 
 /**
- * Implementation of {@link SettingDefinitionProvider} for OceanSITES netCDF
- * encoding settings.
+ * Interface for OceanSITES netCDF encoding settings.
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0

@@ -57,29 +57,21 @@ public final class TemporalRestrictions {
 
     /**
      * Marker for a value reference referencing the phenomenon time ({@value} ).
-     *
-     * @see #PHENOMENON_TIME_FIELDS
      */
     public static final String PHENOMENON_TIME_VALUE_REFERENCE = "phenomenonTime";
 
     /**
      * Marker for a value reference referencing the result time ({@value} ).
-     *
-     * @see #RESULT_TIME_FIELDS
      */
     public static final String RESULT_TIME_VALUE_REFERENCE = "resultTime";
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
-     *
-     * @see #VALID_TIME_FIELDS
      */
     public static final String VALID_TIME_VALUE_REFERENCE = "validTime";
 
     /**
      * Marker for a value reference referencing the valid time ({@value} ).
-     *
-     * @see #VALID_TIME_FIELDS
      */
     public static final String VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE = "validDescribeSensorTime";
 
@@ -193,7 +185,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion before(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion before(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.before(), property, value);
     }
 
@@ -278,7 +271,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion after(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion after(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.after(), property, value);
     }
 
@@ -363,7 +357,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion begins(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion begins(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.begins(), property, value);
     }
 
@@ -448,7 +443,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion ends(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion ends(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.ends(), property, value);
     }
 
@@ -533,7 +529,7 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion endedBy(TimePrimitiveFieldDescriptor property, Time value)
+    public static Criterion endedBy(AbstractTimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
         return filter(TemporalRestrictions.endedBy(), property, value);
     }
@@ -619,7 +615,7 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion begunBy(TimePrimitiveFieldDescriptor property, Time value)
+    public static Criterion begunBy(AbstractTimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
         return filter(TemporalRestrictions.begunBy(), property, value);
     }
@@ -705,7 +701,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion during(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion during(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.during(), property, value);
     }
 
@@ -791,7 +788,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion equals(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion equals(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.equals(), property, value);
     }
 
@@ -877,7 +875,7 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion contains(TimePrimitiveFieldDescriptor property, Time value)
+    public static Criterion contains(AbstractTimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
         return filter(TemporalRestrictions.contains(), property, value);
     }
@@ -965,7 +963,7 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion overlaps(TimePrimitiveFieldDescriptor property, Time value)
+    public static Criterion overlaps(AbstractTimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
         return filter(TemporalRestrictions.overlaps(), property, value);
     }
@@ -1051,7 +1049,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion meets(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion meets(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.meets(), property, value);
     }
 
@@ -1136,7 +1135,8 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion metBy(TimePrimitiveFieldDescriptor property, Time value) throws UnsupportedTimeException {
+    public static Criterion metBy(AbstractTimePrimitiveFieldDescriptor property, Time value)
+            throws UnsupportedTimeException {
         return filter(TemporalRestrictions.metBy(), property, value);
     }
 
@@ -1223,7 +1223,7 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion overlappedBy(TimePrimitiveFieldDescriptor property, Time value)
+    public static Criterion overlappedBy(AbstractTimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedTimeException {
         return filter(TemporalRestrictions.overlappedBy(), property, value);
     }
@@ -1291,13 +1291,13 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    private static Criterion filter(TemporalRestriction restriction, TimePrimitiveFieldDescriptor property, Time value)
-            throws UnsupportedTimeException {
+    private static Criterion filter(TemporalRestriction restriction, AbstractTimePrimitiveFieldDescriptor property,
+            Time value) throws UnsupportedTimeException {
         return filter(restriction, property, value, null);
     }
 
-    private static Criterion filter(TemporalRestriction restriction, TimePrimitiveFieldDescriptor property, Time value,
-            Integer count) throws UnsupportedTimeException {
+    private static Criterion filter(TemporalRestriction restriction, AbstractTimePrimitiveFieldDescriptor property,
+            Time value, Integer count) throws UnsupportedTimeException {
         Criterion c = restriction.getCriterion(property, value, count);
         if (c != null) {
             return c;
@@ -1355,12 +1355,12 @@ public final class TemporalRestrictions {
      *             if the value and property combination is not applicable for
      *             this restriction
      */
-    public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value)
+    public static Criterion filter(TimeOperator operator, AbstractTimePrimitiveFieldDescriptor property, Time value)
             throws UnsupportedOperatorException, UnsupportedTimeException {
         return filter(forOperator(operator), property, value, null);
     }
 
-    public static Criterion filter(TimeOperator operator, TimePrimitiveFieldDescriptor property, Time value,
+    public static Criterion filter(TimeOperator operator, AbstractTimePrimitiveFieldDescriptor property, Time value,
             Integer count) throws UnsupportedOperatorException, UnsupportedTimeException {
         return filter(forOperator(operator), property, value, count);
     }

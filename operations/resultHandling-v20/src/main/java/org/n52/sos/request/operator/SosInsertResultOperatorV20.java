@@ -40,8 +40,8 @@ import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesParameterException;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -110,7 +110,7 @@ public class SosInsertResultOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return WSDLConstants.Operations.INSERT_RESULT;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.INSERT_RESULT;
     }
 }

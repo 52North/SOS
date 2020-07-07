@@ -31,7 +31,7 @@ package org.n52.sos.request.operator;
 import java.util.Map;
 
 import org.n52.iceland.request.operator.RequestOperator;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
 
 /**
  *
@@ -40,7 +40,7 @@ import org.n52.sos.wsdl.WSDLOperation;
  * @since 4.0.0
  */
 public interface WSDLAwareRequestOperator extends RequestOperator {
-    WSDLOperation getSosOperationDefinition();
+    Metadata getSosOperationDefinition();
 
     Map<String, String> getAdditionalSchemaImports();
 

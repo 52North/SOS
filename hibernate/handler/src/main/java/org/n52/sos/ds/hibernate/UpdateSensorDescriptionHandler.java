@@ -74,7 +74,7 @@ public class UpdateSensorDescriptionHandler extends AbstractUpdateSensorDescript
         super(SosConstants.SOS);
     }
 
-   @Override
+    @Override
     public void init() {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }

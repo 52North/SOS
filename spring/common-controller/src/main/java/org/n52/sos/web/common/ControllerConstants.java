@@ -167,6 +167,8 @@ public interface ControllerConstants {
 
         String ADMIN_SETTINGS_DUMP = "/admin/settings.json";
 
+        String ADMIN_CONFIGURATION_DUMP = "/admin/configuration.json";
+
         String ADMIN_SETTINGS_UPDATE = "/admin/settings";
 
         String ADMIN_DATABASE = ADMIN_ROOT + DATASOURCE;
@@ -212,6 +214,8 @@ public interface ControllerConstants {
         String ADMIN_DATABASE_CLEAR = "/admin/datasource/clear";
 
         String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS = "/admin/datasource/deleteDeletedObservations";
+
+        String ADMIN_DATABASE_DELETE_DELETED_DATA = "/admin/datasource/deleteDeletedData";
 
         String ADMIN_DATABASE_LOAD_PREDEFINED_UNITS = "/admin/datasource/loadPredefinedUnits";
 

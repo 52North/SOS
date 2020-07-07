@@ -78,7 +78,7 @@ public class ProcedureHistoryDAO {
      *            Valid start time
      * @param session
      *            Hibernate session
-     * @return
+     * @return The inserted {@link ProcedureHistoryEntity}
      */
     public ProcedureHistoryEntity insert(ProcedureEntity procedure,
             FormatEntity procedureDescriptionFormat, String xmlDescription, DateTime validStartTime, Session session) {

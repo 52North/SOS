@@ -171,4 +171,7 @@ public interface HibernateConstants {
     int LIMIT_EXPRESSION_DEPTH = 1000;
 
     String FUNC_EXTENT = "extent";
+
+    String JDBC_TIME_ZONE = AvailableSettings.JDBC_TIME_ZONE;
+
 }

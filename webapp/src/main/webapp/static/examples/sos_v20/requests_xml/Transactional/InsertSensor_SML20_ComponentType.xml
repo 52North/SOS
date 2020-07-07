@@ -178,6 +178,21 @@
 		         </sml:output>
 		      </sml:OutputList>
 		   </sml:outputs>
+       <sml:parameters>
+            <sml:ParameterList>
+                <sml:parameter name="settings">
+                    <swe:Quantity definition="http://www.52north.org/test/parameter" updatable="false">
+                        <swe:label>Test parmeter</swe:label>
+                        <swe:uom code="test" />
+                        <swe:constraint>
+                            <swe:AllowedValues>
+                                <swe:interval>0.01 10.0</swe:interval>
+                            </swe:AllowedValues>
+                        </swe:constraint>
+                    </swe:Quantity>
+                </sml:parameter>
+            </sml:ParameterList>
+        </sml:parameters>
 		</sml:PhysicalComponent>
 	</swes:procedureDescription>
 	<!-- Not required for the insertion of a procedure/sensor type -->

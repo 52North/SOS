@@ -36,14 +36,16 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingValueFactory;
 import org.n52.iceland.ds.Datasource;
+import org.n52.sos.context.ContextSwitcher;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.base.Strings;
 
@@ -60,6 +62,12 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
 
     @Inject
     private Collection<Datasource> datasources;
+
+    @Inject
+    private ContextSwitcher contextSwitcher;
+
+    @Inject
+    private ConfigurableEnvironment env;
 
     @Override
     protected Step getStep() {
@@ -82,6 +90,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
             createTables = checkCreate(datasource, parameters, overwriteTables, c);
             forceUpdateTables = checkUpdate(datasource, parameters, overwriteTables, c);
             c.setDatabaseSettings(parseDatasourceSettings(datasource, parameters));
+            setProfiles(c);
             datasource.validateConnection(c.getDatabaseSettings());
             datasource.validatePrerequisites(c.getDatabaseSettings());
 
@@ -130,6 +139,13 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         }
     }
 
+    private void setProfiles(InstallationConfiguration c) {
+        String concept = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
+        env.setActiveProfiles(concept.toLowerCase());
+        contextSwitcher.loadSettings();
+        contextSwitcher.reloadContext();
+    }
+
     protected boolean checkOverwrite(Datasource datasource, Map<String, String> parameters,
                                      InstallationConfiguration settings) {
         boolean overwriteTables = false;
@@ -175,6 +191,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
     protected Map<String, Object> parseDatasourceSettings(Datasource datasource, Map<String, String> parameters) {
         return datasource.getSettingDefinitions().stream().collect(toMap(def -> def.getKey(),
             def -> this.settingValueFactory.newSettingValue(def, parameters.get(def.getKey())).getValue()));
+
     }
 
     protected Map<String, Datasource> getDatasources() {

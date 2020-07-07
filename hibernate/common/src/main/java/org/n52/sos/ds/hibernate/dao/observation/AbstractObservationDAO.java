@@ -150,7 +150,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation to add identifiers
      * @param session
      *            the session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -582,7 +582,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Map cache for format objects (to prevent redundant querying)
      * @param session
      *            Hibernate session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -615,7 +615,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            SOS observation to insert
      * @param session
      *            Hibernate session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -645,7 +645,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Map cache for format objects (to prevent redundant querying)
      * @param session
      *            Hibernate session
-     * @return
+     * @return The {@link DatasetEntity}
      *
      * @throws OwsExceptionReport
      *             If an error occurs

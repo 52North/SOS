@@ -36,6 +36,8 @@ import javax.servlet.ServletContext;
 
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.janmayen.Json;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.springframework.core.env.AbstractEnvironment;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -76,6 +78,16 @@ public final class JstlFunctions {
             return false;
         }
         return true;
+    }
+
+    public static boolean supportsEReporting(String c, ServletContext ctx) {
+        return hasClass(c) ? checkProfile(ctx, HibernateDatasourceConstants.DatabaseConcept.EREPORTING.name()
+                .toLowerCase()) : false;
+    }
+
+    private static boolean checkProfile(ServletContext ctx, String profile) {
+        String initParameter = ctx.getInitParameter(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME);
+        return initParameter != null && !initParameter.isEmpty() && initParameter.equalsIgnoreCase(profile);
     }
 
     /**

@@ -43,4 +43,12 @@ public class UnsupportedTimeException extends NoApplicableCodeException {
         withMessage("Time %s is not supported", time);
     }
 
+    public UnsupportedTimeException(TimeType referenced, TimeType requested) {
+        withMessage("%s is not supported with %s", referenced.name(), requested.name());
+    }
+
+    public enum TimeType {
+        TimePeriod, TimeInstant
+    }
+
 }

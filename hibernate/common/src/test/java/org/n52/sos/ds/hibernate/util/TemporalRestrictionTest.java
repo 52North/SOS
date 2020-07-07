@@ -36,7 +36,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.CriteriaQuery;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
@@ -52,9 +51,6 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
-import org.n52.sos.ds.hibernate.util.ScrollableIterable;
-import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**

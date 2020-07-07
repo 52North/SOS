@@ -135,7 +135,7 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
 
     private PhenomenonEntity convert(Phenomenon phenomenon) {
         PhenomenonEntity entity = new PhenomenonEntity();
-        entity.setIdentifier(phenomenon.getIdentifier());
+        entity.setIdentifier(phenomenon.getIdentifier(), daoFactory.isStaSupportsUrls());
         entity.setName(phenomenon.getName());
         entity.setDescription(phenomenon.getDescription());
         if (phenomenon.hasTranslations()) {
@@ -154,7 +154,7 @@ public class HibernatePredefinedInsertionHandler implements PredefinedInsertionH
 
     private UnitEntity convert(Unit unit) {
         UnitEntity entity = new UnitEntity();
-        entity.setSymbol(unit.getSymbol());
+        entity.setSymbol(unit.getSymbol(), getDaoFactory().isStaSupportsUrls());
         entity.setName(unit.getName());
         entity.setLink(unit.getLink());
         if (unit.hasTranslations()) {

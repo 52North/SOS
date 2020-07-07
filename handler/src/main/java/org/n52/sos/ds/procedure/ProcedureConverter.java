@@ -138,8 +138,6 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
      * procedureDescriptionFormat.
      *
      * @param identifier
-     *
-     * @param identifier
      *            the procedure identifier
      * @param requestedFormat
      *            requested procedureDescriptionFormat
@@ -180,7 +178,6 @@ public class ProcedureConverter extends AbstractProcedureConverter<ProcedureEnti
      * @param session
      *            the session
      *
-     * @see HibernateProcedureEnrichment
      * @throws OwsExceptionReport
      *             if the enrichment fails
      */

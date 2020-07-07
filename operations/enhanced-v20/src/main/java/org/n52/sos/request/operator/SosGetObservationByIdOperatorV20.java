@@ -39,8 +39,8 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -104,7 +104,7 @@ public class SosGetObservationByIdOperatorV20 extends
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return WSDLConstants.Operations.GET_OBSERVATION_BY_ID;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.GET_OBSERVATION_BY_ID;
     }
 }

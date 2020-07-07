@@ -130,6 +130,7 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/transactional/core/RelatedFeatureResource.hbm.xml");
             resources.add("/hbm/transactional/core/ResultTemplateResource.hbm.xml");
             resources.add("/hbm/transactional/core/UnitResource.hbm.xml");
+            resources.add("/hbm/transactional/core/TagResource.hbm.xml");
             resources.add("/hbm/transactional/core/VerticalMetadataResource.hbm.xml");
             // dataset
             resources.add("/hbm/transactional/dataset/DataResource.hbm.xml");

@@ -49,7 +49,10 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 4.0.0
+ *
+ * @deprecated see {@link DeleteDeletedDataHandler}
  */
+@Deprecated
 public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObservationDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(HibernateDeleteDeletedObservationsDAO.class);

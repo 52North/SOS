@@ -19,6 +19,10 @@
         <description>This calls SettingsManager#configure for all beans.</description>
     </bean>
 
+    <bean class="org.n52.iceland.config.spring.SettingsBeanPostProcessor">
+        <description>This calls SettingsManager#addSetting for all beans</description>
+    </bean>
+
     <!--  settings related beans -->
     <bean id="configLocationProvider" class="org.n52.iceland.service.ServletConfigLocationProvider" />
     <bean id="settingsService" class="org.n52.faroe.SettingsServiceImpl" />

@@ -171,8 +171,7 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
             response.setVersion(request.getVersion());
             final Set<String> featureIdentifier =
                     QueryHelper.getFeatures(getDaoFactory().getFeatureQueryHandler(), request, session);
-            final ResultTemplateEntity resultTemplate =
-                    queryResultTemplate(request, featureIdentifier, session);
+            final ResultTemplateEntity resultTemplate = queryResultTemplate(request, featureIdentifier, session);
             SosResultEncoding sosResultEncoding = null;
             SosResultStructure sosResultStructure = null;
             if (resultTemplate != null) {
@@ -180,14 +179,15 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
                 sosResultStructure = createSosResultStructure(resultTemplate.getStructure());
             } else {
                 sosResultEncoding = createSosResultEncoding();
-                sosResultStructure = generateSosResultStructure(request.getObservedProperty(),
-                        request.getOffering(), featureIdentifier, session);
+                sosResultStructure = generateSosResultStructure(request.getObservedProperty(), request.getOffering(),
+                        featureIdentifier, session);
             }
             final List<DataEntity<?>> observations;
             observations = querySeriesObservation(request, featureIdentifier, session);
             response.setResultValues(getResultHandlingHelper().createResultValuesFromObservations(observations,
                     sosResultEncoding, sosResultStructure, getProfileHandler().getActiveProfile()
-                            .getResponseNoDataPlaceholder(), session));
+                            .getResponseNoDataPlaceholder(),
+                    session));
             return response;
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
@@ -255,8 +255,8 @@ public class GetResultHandler extends AbstractGetResultHandler implements Abstra
             final Set<String> featureIdentifier, final Session session) {
         if (supportsDatabaseEntities) {
             List<ResultTemplateEntity> resultTemplates = getDaoFactory().getResultTemplateDAO()
-                    .getResultTemplateObject(request.getOffering(), request.getObservedProperty(), featureIdentifier,
-                            session);
+                    .getResultTemplateObjectForResponse(request.getOffering(), request.getObservedProperty(),
+                            featureIdentifier, session);
             if (!resultTemplates.isEmpty()) {
                 return resultTemplates.get(0);
             }

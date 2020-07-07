@@ -53,10 +53,12 @@ public class SOSDispatcherServlet
     public static final String UNCONFIGURED_CONFIG_LOCATION_PARAM = "unconfiguredConfigLocations";
     public static final String CONFIGURED_CONFIG_LOCATION_PARAM = "configuredConfigLocations";
     public static final String COMMON_CONFIG_LOCATION_PARAM = "commonConfigLocation";
+    public static final String SETTINGS_CONFIG_LOCATION_PARAM = "settingsConfigLocation";
     private static final Logger LOG = LoggerFactory.getLogger(SOSDispatcherServlet.class);
     private static final long serialVersionUID = -5390564503165988702L;
     private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     private boolean configured;
+    private boolean loadSettings;
 
     @Override
     public String getContextConfigLocation() {
@@ -66,10 +68,11 @@ public class SOSDispatcherServlet
     private String getConfigLocation(ServletContext servletContext) {
         String def = getDefaultConfigLocations();
         String com = getCommonConfigLocation(servletContext);
+        String set = isConfigured(servletContext) || loadSettings ? getSettingsConfigLocation(servletContext) : "";
         String add = isConfigured(servletContext)
                              ? getConfiguredConfigLocation(servletContext)
                              : getUnconfiguredConfigLocation(servletContext);
-        return def + " " + com + " " + add;
+        return def + " " + com + " " + set + " " + add;
     }
 
     private String getConfigLocation(ServletContext servletContext, String initParamName) {
@@ -88,6 +91,10 @@ public class SOSDispatcherServlet
         return getConfigLocation(servletContext, COMMON_CONFIG_LOCATION_PARAM);
     }
 
+    private String getSettingsConfigLocation(ServletContext servletContext) {
+        return getConfigLocation(servletContext, SETTINGS_CONFIG_LOCATION_PARAM);
+    }
+
     private String getUnconfiguredConfigLocation(ServletContext servletContext) {
         return getConfigLocation(servletContext, UNCONFIGURED_CONFIG_LOCATION_PARAM);
     }
@@ -102,9 +109,12 @@ public class SOSDispatcherServlet
     }
 
     protected boolean isConfigured(ServletContext servletContext) {
-        DatabaseSettingsHandler handler = new DatabaseSettingsHandler();
-        handler.setServletContext(servletContext);
-        return this.configured = handler.exists();
+        if (!configured) {
+            DatabaseSettingsHandler handler = new DatabaseSettingsHandler();
+            handler.setServletContext(servletContext);
+            this.configured = handler.exists();
+        }
+        return this.configured;
     }
 
     @Override
@@ -138,6 +148,12 @@ public class SOSDispatcherServlet
             throw new IllegalStateException("WebApplicationContext does not support refresh: " + applicationContext);
         }
         LOG.info("Reloading context");
+
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
+    }
+
+    @Override
+    public void loadSettings() {
+       this.loadSettings = true;
     }
 }

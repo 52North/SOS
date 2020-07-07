@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-parent</artifactId>
-        <version>5.1.0</version>
+        <version>5.2.0</version>
     </parent>
     <artifactId>sos-statistics</artifactId>
     <name>52°North SOS - OGC Statistics</name>

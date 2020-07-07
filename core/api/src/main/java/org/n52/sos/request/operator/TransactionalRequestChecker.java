@@ -65,8 +65,11 @@ public class TransactionalRequestChecker {
         } else if (!predicate.apply(rc)) {
             throw new NoApplicableCodeException().withMessage("Not authorized for transactional operations!")
                     .setStatus(HTTPStatus.UNAUTHORIZED);
-
         }
+    }
+
+    public boolean checkBoolean(OwsServiceRequestContext rc) {
+        return rc != null ? predicate.apply(rc) : true;
     }
 
     private Predicate<OwsServiceRequestContext> createTokenPredicate(TransactionalSecurityConfiguration config) {

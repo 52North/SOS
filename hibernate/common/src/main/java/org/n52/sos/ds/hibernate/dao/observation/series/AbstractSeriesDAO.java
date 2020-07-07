@@ -891,7 +891,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         List<DatasetEntity> hSeries = criteria.list();
         for (DatasetEntity series : hSeries) {
             series.setDeleted(deleteFlag);
-            series.setPublished(deleteFlag);
+            series.setPublished(!deleteFlag);
+            series.setDisabled(deleteFlag);
             series.setFirstObservation(null);
             series.setFirstValueAt(null);
             series.setLastObservation(null);
@@ -1317,8 +1318,10 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     public List<DatasetEntity> delete(ProcedureEntity procedure, Session session) {
-        List<DatasetEntity> series = getSeries(procedure.getIdentifier(), null, null, null, session);
-        if (series != null) {
+        Criteria c = getDefaultAllSeriesCriteria(session);
+        addProcedureToCriteria(c, procedure);
+        List<DatasetEntity> series = c.list();
+        if (series != null && !series.isEmpty()) {
             StringBuilder builder = new StringBuilder();
             builder.append("delete ");
             builder.append(DatasetEntity.class.getSimpleName());

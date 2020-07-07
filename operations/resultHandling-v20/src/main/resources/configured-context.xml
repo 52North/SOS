@@ -4,10 +4,10 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <!-- RequestOperator implementations from operations/resultHandling-v20 -->
-    <bean class="org.n52.sos.request.operator.SosInsertResultTemplateOperatorV20"/>
-    <bean class="org.n52.sos.request.operator.SosInsertResultOperatorV20"/>
     <bean class="org.n52.sos.request.operator.SosGetResultTemplateOperatorV20"/>
     <bean class="org.n52.sos.request.operator.SosGetResultOperatorV20"/>
-
-
+    <beans profile="transactional,ereporting">
+        <bean class="org.n52.sos.request.operator.SosInsertResultTemplateOperatorV20"/>
+        <bean class="org.n52.sos.request.operator.SosInsertResultOperatorV20"/>
+    </beans>
 </beans>

@@ -9,9 +9,6 @@
     <bean id="binaryAttachmentResponseWriterFactory"
           class="org.n52.sos.coding.encode.BinaryAttachmentResponseWriterFactory"/>
 
-    <bean id="batchOperationHandler"
-          class="org.n52.sos.ds.BatchOperationHandler"/>
-
     <bean id="capabilitiesExtensionService"
           class="org.n52.sos.config.json.JsonCapabilitiesExtensionService" />
 
@@ -39,14 +36,11 @@
     <bean id="procedureDescriptionSettings"
           class="org.n52.sos.service.ProcedureDescriptionSettings" />
 
-    <bean id="transactionalSecurityConfiguration"
-          class="org.n52.sos.service.TransactionalSecurityConfiguration" />
-
-    <bean id="batchRequestOperator"
-          class="org.n52.sos.request.operator.BatchRequestOperator"/>
-
     <bean id="implementationVersionHeaderAdder"
           class="org.n52.sos.service.SosImplementationVersionHeaderAdder"/>
+
+    <bean id="wsdlFactory"
+          class="org.n52.sos.wsdl.WSDLFactory"/>
 
     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
         <description>Used to wire up SOS specific activation persistence.</description>
@@ -63,4 +57,15 @@
             </map>
         </property>
     </bean>
+
+    <beans profile="transactional,ereporting">
+        <bean id="batchOperationHandler"
+            class="org.n52.sos.ds.BatchOperationHandler" />
+
+        <bean id="transactionalSecurityConfiguration"
+            class="org.n52.sos.service.TransactionalSecurityConfiguration" />
+
+        <bean id="batchRequestOperator"
+            class="org.n52.sos.request.operator.BatchRequestOperator" />
+    </beans>
 </beans>

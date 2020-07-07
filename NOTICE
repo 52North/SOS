@@ -56,7 +56,6 @@ This project includes:
   52°North SOS - Prefixed identifier convert module under GPLv2
   52°North SOS - Procedure Description Converter under GPLv2
   52°North SOS - Profile Coding Module under GPLv2
-  52°North SOS - Profile Module under GPLv2
   52°North SOS - SOS 1.0.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Enhanced Profile Operator under GPLv2
@@ -260,6 +259,7 @@ This project includes:
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC Sampling schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
+  OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS DeleteObservation schema 2.0 under The Apache Software License, Version 2.0
@@ -301,12 +301,12 @@ This project includes:
   org.apache.xmlgraphics:batik-transcoder under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-util under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-xml under The Apache Software License, Version 2.0
-  org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
+  org.locationtech.jts:jts-core under Eclipse Public License, Version 2.0 or Eclipse Distribution License - v 1.0
   parent-join under The Apache Software License, Version 2.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   PostGIS Geometry under GNU Lesser General Public License
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver - JDBC 4.2 under BSD-2-Clause
+  PostgreSQL JDBC Driver under BSD-2-Clause
   Protocol Buffers [Core] under 3-Clause BSD License
   QDox under The Apache Software License, Version 2.0
   quartz under The Apache Software License, Version 2.0

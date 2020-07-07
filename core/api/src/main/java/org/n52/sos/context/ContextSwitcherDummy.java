@@ -39,4 +39,8 @@ public class ContextSwitcherDummy implements ContextSwitcher {
         return false;
     }
 
+    @Override
+    public void loadSettings() {
+    }
+
 }

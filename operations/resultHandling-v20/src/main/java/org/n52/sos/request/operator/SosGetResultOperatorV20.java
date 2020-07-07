@@ -38,8 +38,8 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
 import org.n52.sos.ds.AbstractGetResultHandler;
-import org.n52.sos.wsdl.WSDLConstants;
-import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.sos.wsdl.Metadata;
+import org.n52.sos.wsdl.Metadatas;
 import org.n52.svalbard.ConformanceClasses;
 
 /**
@@ -107,7 +107,7 @@ public class SosGetResultOperatorV20
     }
 
     @Override
-    public WSDLOperation getSosOperationDefinition() {
-        return WSDLConstants.Operations.GET_RESULT;
+    public Metadata getSosOperationDefinition() {
+        return Metadatas.GET_RESULT;
     }
 }

@@ -41,16 +41,15 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
-import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -69,7 +68,6 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.TimeValuePair;
-import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -87,6 +85,7 @@ import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ds.hibernate.util.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
+import org.n52.sos.ds.hibernate.util.observation.SpatialFilteringProfileCreator;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,6 +117,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     private BindingRepository bindingRepository;
 
+    private final SpatialFilteringProfileCreator spatialFilteringProfileCreator;
+
     /**
      * constructor
      *
@@ -135,6 +136,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         this.daoFactory = daoFactory;
         this.helper = new EReportingHelper(daoFactory.getSweHelper());
         this.bindingRepository = bindingRepository;
+        this.spatialFilteringProfileCreator =  new SpatialFilteringProfileCreator(daoFactory.getGeometryHandler());
     }
 
     protected Session getSession() throws OwsExceptionReport {
@@ -345,19 +347,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         }
     }
 
-    @Deprecated
-    protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
-            throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<>();
-        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
-        namedValue.setName(referenceType);
-        // TODO add lat/long version
-        Geometry geometry = samplingGeometry;
-        namedValue.setValue(new GeometryValue(
-                daoFactory.getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
-        return namedValue;
-    }
-
     /**
      * Create a {@link TimeValuePair} from {@link DataEntity}
      *
@@ -438,7 +427,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         observation.setResultTime(createResutlTime(o.getResultTime()));
         observation.setValidTime(createValidTime(o.getValidTimeStart(), o.getValidTimeEnd()));
         if (o.isSetGeometryEntity()) {
-            observation.addParameter(createSpatialFilteringProfileParameter(o.getGeometryEntity().getGeometry()));
+            observation.addParameter(spatialFilteringProfileCreator.create(o.getGeometryEntity()
+                    .getGeometry()));
         }
         if (o.getDataset().hasVerticalMetadata()) {
             VerticalMetadataEntity verticalMetadata = o.getDataset().getVerticalMetadata();

@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-core</artifactId>
-        <version>5.1.0</version>
+        <version>5.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-api</artifactId>
@@ -29,6 +29,10 @@
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>svalbard-xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-utils</artifactId>
         </dependency>
         <dependency>
@@ -38,6 +42,10 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>faroe-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>faroe</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
@@ -124,10 +132,17 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>java3d</groupId>
             <artifactId>vecmath</artifactId>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

@@ -101,7 +101,8 @@ public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatur
             throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject =
                 new FeatureQueryHandlerQueryObject(session).setFeatures(request.getFeatureIdentifiers())
-                        .setVersion(request.getVersion()).setI18N(getRequestedLocale(request));
+                        .setVersion(request.getVersion()).setI18N(getRequestedLocale(request))
+                        .setSpatialFilters(request.getSpatialFilters());
         return featureQueryHandler.getFeatures(queryObject);
     }
 

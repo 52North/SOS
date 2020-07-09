@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.AbstractFeatureEntity;
@@ -243,7 +244,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         // }
     }
 
-    private DbQuery createDbQuery(GetFeatureOfInterestRequest req) {
+    private DbQuery createDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
         if (req.isSetFeatureOfInterestIdentifiers()) {
             map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
@@ -281,7 +282,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
-    private DbQuery createFoiDbQuery(GetFeatureOfInterestRequest req) {
+    private DbQuery createFoiDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
         Map<String, String> map = Maps.newHashMap();
         if (req.isSetFeatureOfInterestIdentifiers()) {
             map.put(IoParameters.FEATURES, listToString(req.getFeatureIdentifiers()));
@@ -313,11 +314,12 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 
-    private Envelope getEnvelope(EnvelopeOrGeometry geometry) {
-        if (geometry.isGeometry() && geometry.getGeometry().isPresent()) {
-            return geometry.getGeometry().get().getEnvelopeInternal();
-        } else if (geometry.isEnvelope() && geometry.getEnvelope().isPresent()) {
-            return geometry.getEnvelope().get().getEnvelope();
+    private Envelope getEnvelope(EnvelopeOrGeometry envelopeOrGeometry) throws OwsExceptionReport {
+        if (envelopeOrGeometry != null) {
+            Geometry geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(envelopeOrGeometry);
+            if (geometry != null) {
+                return geometry.getEnvelopeInternal();
+            }
         }
         return null;
     }

@@ -124,7 +124,6 @@ import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
 import org.n52.sos.service.ProcedureDescriptionSettings;
-import org.n52.sos.service.profile.DefaultProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -379,7 +378,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
                 contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class));
 
         observationCtx = new OmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository, daoFactory,
-                new DefaultProfileHandler(), additionalObservationCreatorRepository, contentCacheController,
+                new ProfileHanlderMock(), additionalObservationCreatorRepository, contentCacheController,
                 featureQueryHandler, converterRepository, factoryRepository, geometryHandler, decoderRepository, null,
                 bindingRepository);
         observationCtx.setDefaultLanguage("eng");
@@ -449,7 +448,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         getResultHandler.setConnectionProvider(this);
         getResultHandler.setDecoderRepository(decoderRepository);
         getResultHandler.setDaoFactory(daoFactory);
-        getResultHandler.setProfileHandler(new DefaultProfileHandler());
+        getResultHandler.setProfileHandler(new ProfileHanlderMock());
         getResultHandler.init();
     }
 

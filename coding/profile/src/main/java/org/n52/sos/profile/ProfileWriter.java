@@ -41,10 +41,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class ProfileWriter implements ProfileCoding {
 
     public JsonNode write(Collection<Profile> values) {
-        ObjectNode json = Json.nodeFactory().objectNode();
-        ArrayNode profiles = json.putArray(PROFILES);
+        ArrayNode json = Json.nodeFactory().arrayNode();
+//        ArrayNode profiles = json.putArray(PROFILES);
         for (Profile profile : values) {
-            ObjectNode node = profiles.addObject();
+            ObjectNode node = json.addObject();
             writeIdentifier(profile, node);
             writeActiveProfile(profile, node);
             writeDefinition(profile, node);
@@ -145,16 +145,16 @@ public class ProfileWriter implements ProfileCoding {
     }
 
     private void writeDefaultObservationTypesForEncoding(Profile profile, ObjectNode objectNode) {
-        if (profile.isSetDefaultObservationTypesForEncoding()) {
+        if (profile.isObservationTypesForEncoding()) {
             ObjectNode node = objectNode.putObject(DEFAULT_OBS_TYPE_FOR_ENCODING);
-            if (profile.getDefaultObservationTypesForEncoding().size() == 1) {
-                for (Entry<String, String> entry : profile.getDefaultObservationTypesForEncoding().entrySet()) {
+            if (profile.getObservationTypesForEncoding().size() == 1) {
+                for (Entry<String, String> entry : profile.getObservationTypesForEncoding().entrySet()) {
                     node.put(NAMESPACE, entry.getKey());
                     node.put(OBS_TYPE, entry.getValue());
                 }
             } else {
                 ArrayNode arrayNode = node.arrayNode();
-                for (Entry<String, String> entry : profile.getDefaultObservationTypesForEncoding().entrySet()) {
+                for (Entry<String, String> entry : profile.getObservationTypesForEncoding().entrySet()) {
                     ObjectNode addObject = arrayNode.addObject();
                     addObject.put(NAMESPACE, entry.getKey());
                     addObject.put(OBS_TYPE, entry.getValue());

@@ -47,7 +47,6 @@
     <sec:http pattern="/static/**" security="none" />
     <sec:http pattern="/install/**" security="none" />
     <sec:http pattern="/service" security="none" />
-    <sec:http pattern="/sos" security="none" />
 
     <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true">
         <sec:csrf disabled="true" />

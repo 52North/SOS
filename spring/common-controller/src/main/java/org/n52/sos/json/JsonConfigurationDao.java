@@ -26,55 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.service.profile;
+package org.n52.sos.json;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.json.AbstractJsonDao;
+import org.n52.janmayen.Json;
 
-/**
- * @since 4.0.0
- *
- */
-public class DefaultProfileHandler implements ProfileHandler {
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-    private Profile activeProfile;
+public class JsonConfigurationDao extends AbstractJsonDao {
 
-    private Map<String, Profile> availableProfiles = new HashMap<String, Profile>(1);
-
-    public DefaultProfileHandler() {
-        activeProfile = new DefaultProfile();
-        availableProfiles.put(activeProfile.getIdentifier(), activeProfile);
+    public ObjectNode getConfig() {
+        return getConfiguration();
     }
 
-    @Override
-    public void init() {
+    public String getConfigString() {
+        return Json.print(getConfiguration());
     }
 
-    @Override
-    public Profile getActiveProfile() {
-        return activeProfile;
+    public void writeConfig(ObjectNode configuration) {
+        if (configuration != null) {
+            configuration().set(configuration);
+            configuration().writeNow();
+        }
     }
 
-    @Override
-    public Map<String, Profile> getAvailableProfiles() {
-        return availableProfiles;
+    public void writeConfig(String configuration) {
+        if (configuration == null || configuration.isEmpty()) {
+            throw new ConfigurationError("The configuration string is null or empty!");
+        }
+        JsonNode node = Json.loadString(configuration);
+        if (!node.isObject()) {
+            throw new ConfigurationError("The configuration is not a JSON object!");
+        }
+        writeConfig((ObjectNode) node);
     }
-
-    @Override
-    public boolean isSetActiveProfile() {
-        return activeProfile != null;
-    }
-
-    @Override
-    public void activateProfile(String identifier) {
-        availableProfiles.get(identifier).setActiveProfile(true);
-
-    }
-
-    @Override
-    public void persist() {}
-
-    @Override
-    public void reloadProfiles() {}
-
 }

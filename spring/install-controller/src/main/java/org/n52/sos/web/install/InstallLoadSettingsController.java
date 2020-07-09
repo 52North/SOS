@@ -30,6 +30,7 @@ package org.n52.sos.web.install;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -48,13 +49,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.faroe.ConfigurationError;
+import org.n52.faroe.JSONSettingConstants;
 import org.n52.faroe.SettingDefinition;
+import org.n52.faroe.SettingValue;
 import org.n52.faroe.SettingsService;
+import org.n52.faroe.json.JsonSettingsDecoder;
 import org.n52.faroe.settings.MultilingualStringSettingDefinition;
 import org.n52.janmayen.Json;
+import org.n52.sos.json.JsonConfigurationDao;
 import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @since 4.0.0
@@ -69,12 +75,28 @@ public class InstallLoadSettingsController extends AbstractInstallController {
     @Inject
     private SettingsService settingsManager;
 
+    @Inject
+    private JsonConfigurationDao jsonConfigurationDao;
+
+    @Inject
+    private JsonSettingsDecoder jsonSettingsDecoder;
+
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void post(@RequestBody String config, HttpServletRequest req) throws ConfigurationError, IOException {
         final HttpSession session = req.getSession();
         InstallationConfiguration c = getSettings(session);
-        JsonNode settings = Json.loadString(config);
+        JsonNode configuration = Json.loadString(config);
+        JsonNode settings = configuration.path(JSONSettingConstants.SETTINGS_KEY);
+        if (settings.isMissingNode()) {
+            loadSettings(settings, c, session);
+        } else {
+            loadConfigSettings(settings, c, session);
+            jsonConfigurationDao.writeConfig((ObjectNode) configuration);
+        }
+    }
+
+    private void loadSettings(JsonNode settings, InstallationConfiguration c, HttpSession session) {
         Iterator<String> i = settings.fieldNames();
         while (i.hasNext()) {
             String value;
@@ -91,7 +113,7 @@ public class InstallLoadSettingsController extends AbstractInstallController {
             }
             SettingDefinition<?> def = settingsManager.getDefinitionByKey(key);
             if (def == null) {
-                LOG.warn("No definition for setting with key {}", key);
+                logWarn(key);
                 continue;
             }
             if (def instanceof MultilingualStringSettingDefinition) {
@@ -102,6 +124,24 @@ public class InstallLoadSettingsController extends AbstractInstallController {
             }
         }
         setSettings(session, c);
+    }
+
+    private void loadConfigSettings(JsonNode settings, InstallationConfiguration c, HttpSession session) {
+        Set<SettingValue<?>> decode = jsonSettingsDecoder.decode(settings);
+        for (SettingValue<?> value : decode) {
+           String key = value.getKey();
+            SettingDefinition<?> def = settingsManager.getDefinitionByKey(key);
+            if (def == null) {
+                logWarn(key);
+                continue;
+            }
+            c.setSetting(def, value);
+        }
+        setSettings(session, c);
+    }
+
+    private void logWarn(String key) {
+        LOG.warn("No definition for setting with key {}", key);
     }
 
     @ResponseBody

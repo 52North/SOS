@@ -30,14 +30,19 @@ package org.n52.sos.profile;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.faroe.json.JsonConfiguration;
+import org.n52.iceland.service.ServletConfigLocationProvider;
+import org.n52.janmayen.ConfigLocationProvider;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
-import org.n52.sos.service.profile.DefaultProfile;
+import org.n52.sos.profile.ProfileHandlerImplTest.TargetTestConfigLocationProvider;
 import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.Profiles;
 
-public class ProfileHandlerImplTest {
+public class ProfileHandlerImplTest implements Profiles {
 
     private static final String PROFILE_SOS = "SOS_20_PROFILE";
 
@@ -47,11 +52,23 @@ public class ProfileHandlerImplTest {
 
     private ProfileHandlerImpl phi;
 
+    private JsonConfiguration jsonConfiguration;
+
     @Before
     public void setup() {
         this.phi = new ProfileHandlerImpl();
+        jsonConfiguration = new JsonConfiguration();
+        jsonConfiguration.setConfigLocationProvider(new TargetTestConfigLocationProvider());
+        jsonConfiguration.init();
+        this.phi.setConfiguration(jsonConfiguration);
         this.phi.init();
     }
+
+    @After
+    public void teardown() {
+        jsonConfiguration.delete();
+    }
+
 
     @Test
     public void is_aktive_profile_SOS_20_PROFILE() {
@@ -59,13 +76,13 @@ public class ProfileHandlerImplTest {
     }
 
     @Test
-    public void is_two_profles_available() {
+    public void is_three_profles_available() {
         MatcherAssert.assertThat(phi.getAvailableProfiles().size(), Is.is(3));
     }
 
     @Test
     public void check_DEFAULT_PROFILE() {
-        testSosProfile(new DefaultProfile());
+        testSosProfile(createSosProfile());
     }
 
     @Test
@@ -116,10 +133,10 @@ public class ProfileHandlerImplTest {
         MatcherAssert.assertThat(
                 profile.isEncodeProcedureInObservation("http://www.opengis.net/waterml/2.0/observationProcess"),
                 Is.is(true));
-        MatcherAssert.assertThat(profile.getDefaultObservationTypesForEncoding().isEmpty(), Is.is(false));
-        MatcherAssert.assertThat(profile.getDefaultObservationTypesForEncoding().containsKey(WaterMLConstants.NS_WML_20),
+        MatcherAssert.assertThat(profile.getObservationTypesForEncoding().isEmpty(), Is.is(false));
+        MatcherAssert.assertThat(profile.getObservationTypesForEncoding().containsKey(WaterMLConstants.NS_WML_20),
                 Is.is(true));
-        MatcherAssert.assertThat(profile.getDefaultObservationTypesForEncoding().get(WaterMLConstants.NS_WML_20),
+        MatcherAssert.assertThat(profile.getObservationTypesForEncoding().get(WaterMLConstants.NS_WML_20),
                 Is.is("http://www.opengis.net/def/observationType/waterml/2.0/MeasurementTimeseriesTVPObservation"));
     }
 
@@ -127,15 +144,28 @@ public class ProfileHandlerImplTest {
     public void check_persist() {
         phi.activateProfile(PROFILE_HYDRO);
         phi.persist();
+        jsonConfiguration.writeNow();
         phi.reloadProfiles();
         MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_HYDRO).isActiveProfile(), Is.is(true));
         MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_SOS).isActiveProfile(), Is.is(false));
+        MatcherAssert.assertThat(phi.getActiveProfile().getIdentifier(), Is.is(PROFILE_HYDRO));
 
         phi.activateProfile(PROFILE_SOS);
         phi.persist();
+        jsonConfiguration.writeNow();
         phi.reloadProfiles();
         MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_HYDRO).isActiveProfile(), Is.is(false));
         MatcherAssert.assertThat(phi.getAvailableProfiles().get(PROFILE_SOS).isActiveProfile(), Is.is(true));
+        MatcherAssert.assertThat(phi.getActiveProfile().getIdentifier(), Is.is(PROFILE_SOS));
+
+    }
+
+    public class TargetTestConfigLocationProvider implements ConfigLocationProvider {
+
+        @Override
+        public String get() {
+            return "target/";
+        }
 
     }
 }

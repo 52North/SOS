@@ -45,8 +45,7 @@ import com.google.common.collect.Sets;
 public class ProfileParser implements ProfileCoding {
 
     public Profile parseProfile(JsonNode node) {
-        ProfileImpl profile = new ProfileImpl();
-        profile.setIdentifier(parseIdentifier(node));
+        Profile profile = new Profile(parseIdentifier(node));
         profile.setActiveProfile(parseActiveProfile(node));
         profile.setDefinition(parseDefinition(node));
         profile.setListFeatureOfInterestsInOfferings(parseListFeatureOfInterestsInOfferings(node));
@@ -130,7 +129,7 @@ public class ProfileParser implements ProfileCoding {
         return parseBoolean(node.path(MERGE_VALUES));
     }
 
-    private void parseNoDataPlaceholder(ProfileImpl profile, JsonNode node) {
+    private void parseNoDataPlaceholder(Profile profile, JsonNode node) {
         if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER))) {
             if (isNotMissingNode(node.path(NO_DATA_PLACEHOLDER).path(RESPONSE_PLACEHOLDER))) {
                 profile.setResponseNoDataPlaceholder(
@@ -159,7 +158,7 @@ public class ProfileParser implements ProfileCoding {
         return parseBoolean(node.path(RETURN_LATEST_VALUE));
     }
 
-    private void parseEncodeProcedure(ProfileImpl profile, JsonNode node) {
+    private void parseEncodeProcedure(Profile profile, JsonNode node) {
         if (isNotMissingNode(node.path(ENCODE_PROCEDURE))) {
             JsonNode epNode = node.path(ENCODE_PROCEDURE);
             if (epNode.isArray()) {
@@ -172,11 +171,11 @@ public class ProfileParser implements ProfileCoding {
         }
     }
 
-    private void parseEncodeProcedureElement(ProfileImpl profile, JsonNode node) {
+    private void parseEncodeProcedureElement(Profile profile, JsonNode node) {
         profile.addEncodeProcedureInObservation(parseText(node.path(NAMESPACE)), parseBoolean(node.path(ENCCODE)));
     }
 
-    private void parseDefaultObservationTypesForEncoding(ProfileImpl profile, JsonNode node) {
+    private void parseDefaultObservationTypesForEncoding(Profile profile, JsonNode node) {
         if (isNotMissingNode(node.path(DEFAULT_OBS_TYPE_FOR_ENCODING))) {
             JsonNode epNode = node.path(DEFAULT_OBS_TYPE_FOR_ENCODING);
             if (epNode.isArray()) {
@@ -189,8 +188,8 @@ public class ProfileParser implements ProfileCoding {
         }
     }
 
-    private void parseDefaultObservationTypesForEncodingElement(ProfileImpl profile, JsonNode node) {
-        profile.addDefaultObservationTypesForEncoding(parseText(node.path(NAMESPACE)), parseText(node.path(OBS_TYPE)));
+    private void parseDefaultObservationTypesForEncodingElement(Profile profile, JsonNode node) {
+        profile.addObservationTypesForEncoding(parseText(node.path(NAMESPACE)), parseText(node.path(OBS_TYPE)));
     }
 
 }

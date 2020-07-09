@@ -31,7 +31,10 @@ package org.n52.sos.web.admin;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.n52.faroe.ConfigurationError;
+import org.n52.sos.json.JsonConfigurationDao;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.MetaDataHandler;
@@ -42,6 +45,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -49,12 +53,16 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping({ ControllerConstants.Paths.ADMIN_INDEX,
-                  ControllerConstants.Paths.ADMIN_ROOT })
+//@RequestMapping({ ControllerConstants.Paths.ADMIN_INDEX,
+//                  ControllerConstants.Paths.ADMIN_ROOT })
 public class AdminIndexController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminIndexController.class);
 
-    @RequestMapping(method = RequestMethod.GET)
+    @Inject
+    private JsonConfigurationDao jsonConfigurationDao;
+
+    @RequestMapping(value = { ControllerConstants.Paths.ADMIN_INDEX,
+            ControllerConstants.Paths.ADMIN_ROOT }, method = RequestMethod.GET)
     public ModelAndView get() {
         boolean warn = false;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -76,5 +84,18 @@ public class AdminIndexController extends AbstractController {
         model.put("metadata", metadata);
         model.put("warning", warn);
         return new ModelAndView(ControllerConstants.Views.ADMIN_INDEX, model);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = ControllerConstants.Paths.ADMIN_CONFIGURATION_DUMP,
+                    method = RequestMethod.GET,
+                    produces = "application/json; charset=UTF-8")
+    public String configDump() {
+        try {
+            return jsonConfigurationDao.getConfigString();
+        } catch (Exception ex) {
+            LOG.error("Could not load configuration", ex);
+            throw new RuntimeException(ex);
+        }
     }
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-spring</artifactId>
-        <version>5.1.1-SNAPSHOT</version>
+        <version>5.2.2-SNAPSHOT</version>
     </parent>
     <artifactId>sos-common-controller</artifactId>
     <name>52°North SOS - Web Common Controller</name>

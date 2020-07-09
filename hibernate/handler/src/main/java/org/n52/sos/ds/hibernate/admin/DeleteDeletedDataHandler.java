@@ -40,15 +40,12 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.AbstractDeleteDeletedDataHandler;
 import org.n52.sos.ds.hibernate.DeleteDataHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,13 +82,8 @@ public class DeleteDeletedDataHandler implements AbstractDeleteDeletedDataHandle
                 for (DatasetEntity dataset : list) {
                     deleteDataset(dataset, session);
                 }
-            } else {
-                try (ScrollableIterable<DataEntity<?>> sr = ScrollableIterable.fromCriteria(getCriteria(session))) {
-                    for (DataEntity<?> o : sr) {
-                        session.delete(o);
-                    }
-                }
             }
+            deleteDeletedObservations(session);
             session.flush();
             transaction.commit();
         } catch (HibernateException he) {
@@ -102,20 +94,6 @@ public class DeleteDeletedDataHandler implements AbstractDeleteDeletedDataHandle
         } finally {
             getHibernateSessionHolder().returnSession(session);
         }
-    }
-
-    /**
-     * Get Hibernate Criteria for deleted observations and supported concept
-     *
-     * @param session
-     *            Hibernate session
-     * @return Criteria to query deleted observations
-     */
-    private Criteria getCriteria(Session session) {
-        final Criteria criteria = session.createCriteria(DataEntity.class);
-        criteria.add(Restrictions.eq(DataEntity.PROPERTY_DELETED, true));
-        LOG.trace("QUERY getCriteria(): {}", HibernateHelper.getSqlString(criteria));
-        return criteria;
     }
 
     @Override

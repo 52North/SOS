@@ -59,6 +59,7 @@ import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.request.InternalInsertResultTemplateRequest;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -150,19 +151,7 @@ public class ResultTemplateDAO {
     @SuppressWarnings("unchecked")
     public List<ResultTemplateEntity> getResultTemplateObject(final String offering, final String observedProperty,
             final Collection<String> featureOfInterest, final Session session) {
-        final Criteria rtc =
-                session.createCriteria(ResultTemplateEntity.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
-        if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
-            rtc.createAlias(ResultTemplateEntity.PROPERTY_FEATURE, "foi", JoinType.LEFT_OUTER_JOIN);
-            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplateEntity.PROPERTY_FEATURE),
-                    Restrictions.in("foi." + AbstractFeatureEntity.IDENTIFIER, featureOfInterest)));
-            // rtc.createCriteria(ResultTemplate.FEATURE_OF_INTEREST).add(
-            // Restrictions.in(FeatureOfInterest.IDENTIFIER,
-            // featureOfInterest));
-        }
+        final Criteria rtc = getBasicCriteria(offering, observedProperty, featureOfInterest, session);
         LOGGER.trace("QUERY getResultTemplateObject(offering, observedProperty, featureOfInterest): {}",
                 HibernateHelper.getSqlString(rtc));
         return rtc.list();
@@ -183,15 +172,65 @@ public class ResultTemplateDAO {
     @SuppressWarnings("unchecked")
     public ResultTemplateEntity getResultTemplateObject(final String offering, final String observedProperty,
             final Session session) {
-        final Criteria rtc = session.createCriteria(ResultTemplateEntity.class).setMaxResults(1);
-        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING).add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
-        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
-                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
+        final Criteria rtc = getBasicCriteria(offering, observedProperty, session);
         /* there can be multiple but equal result templates... */
         LOGGER.trace("QUERY getResultTemplateObject(offering, observedProperty): {}",
                 HibernateHelper.getSqlString(rtc));
         final List<ResultTemplateEntity> templates = rtc.list();
-        return templates.isEmpty() ? null : templates.iterator().next();
+        return templates.isEmpty() ? null
+                : templates.iterator()
+                        .next();
+    }
+
+    @SuppressWarnings("unchecked")
+    public ResultTemplateEntity getResultTemplateObjectForResponse(final String offering,
+            final String observedProperty, final Session session) {
+        final Criteria rtc = getBasicCriteria(offering, observedProperty, session);
+        rtc.add(Restrictions.isNotNull(ResultTemplateEntity.RESULT_STRUCTURE));
+        rtc.add(Restrictions.isNotNull(ResultTemplateEntity.RESULT_ENCODING));
+        /* there can be multiple but equal result templates... */
+        LOGGER.trace("QUERY getResultTemplateObjectForResponse(offering, observedProperty): {}",
+                HibernateHelper.getSqlString(rtc));
+        final List<ResultTemplateEntity> templates = rtc.list();
+        return templates.isEmpty() ? null
+                : templates.iterator()
+                        .next();
+    }
+
+    public List<ResultTemplateEntity> getResultTemplateObjectForResponse(final String offering,
+            final String observedProperty, final Collection<String> featureOfInterest, final Session session) {
+        Criteria rtc = getBasicCriteria(offering, observedProperty, featureOfInterest, session);
+        rtc.add(Restrictions.isNotNull(ResultTemplateEntity.RESULT_STRUCTURE));
+        rtc.add(Restrictions.isNotNull(ResultTemplateEntity.RESULT_ENCODING));
+        LOGGER.trace("QUERY getResultTemplateObjectForResponse(offering, observedProperty, featureOfInterest): {}",
+                HibernateHelper.getSqlString(rtc));
+        return rtc.list();
+    }
+
+    public Criteria getBasicCriteria(final String offering, final String observedProperty, final Session session) {
+        final Criteria rtc = session.createCriteria(ResultTemplateEntity.class)
+                .setMaxResults(1);
+        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
+        return rtc;
+    }
+
+    public Criteria getBasicCriteria(final String offering, final String observedProperty,
+            final Collection<String> featureOfInterest, final Session session) {
+        final Criteria rtc = session.createCriteria(ResultTemplateEntity.class)
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        rtc.createCriteria(DatasetEntity.PROPERTY_OFFERING)
+                .add(Restrictions.eq(OfferingEntity.IDENTIFIER, offering));
+        rtc.createCriteria(DatasetEntity.PROPERTY_PHENOMENON)
+                .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, observedProperty));
+        if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
+            rtc.createAlias(ResultTemplateEntity.PROPERTY_FEATURE, "foi", JoinType.LEFT_OUTER_JOIN);
+            rtc.add(Restrictions.or(Restrictions.isNull(ResultTemplateEntity.PROPERTY_FEATURE),
+                    Restrictions.in("foi." + AbstractFeatureEntity.IDENTIFIER, featureOfInterest)));
+        }
+        return rtc;
     }
 
     /**
@@ -206,7 +245,8 @@ public class ResultTemplateDAO {
         return session.createCriteria(ResultTemplateEntity.class)
                 .setFetchMode(ResultTemplateEntity.PROPERTY_OFFERING, FetchMode.JOIN)
                 .setFetchMode(ResultTemplateEntity.PROPERTY_PHENOMENON, FetchMode.JOIN)
-                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN).list();
+                .setFetchMode(ResultTemplateEntity.PROPERTY_FEATURE, FetchMode.JOIN)
+                .list();
     }
 
     /**
@@ -220,8 +260,11 @@ public class ResultTemplateDAO {
      */
     public ResultTemplateEntity getResultTemplateObjectsForObservationConstellation(
             final DatasetEntity observationConstellation, final Session session) {
-        return getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
-                observationConstellation.getObservableProperty().getIdentifier(), session);
+        return getResultTemplateObject(observationConstellation.getOffering()
+                .getIdentifier(),
+                observationConstellation.getObservableProperty()
+                        .getIdentifier(),
+                session);
     }
 
     /**
@@ -239,9 +282,13 @@ public class ResultTemplateDAO {
     public List<ResultTemplateEntity> getResultTemplateObjectsForObservationConstellationAndFeature(
             final DatasetEntity observationConstellation, final AbstractFeature sosAbstractFeature,
             final Session session) {
-        return getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
-                observationConstellation.getObservableProperty().getIdentifier(),
-                Lists.newArrayList(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue()), session);
+        return getResultTemplateObject(observationConstellation.getOffering()
+                .getIdentifier(),
+                observationConstellation.getObservableProperty()
+                        .getIdentifier(),
+                Lists.newArrayList(sosAbstractFeature.getIdentifierCodeWithAuthority()
+                        .getValue()),
+                session);
     }
 
     /**
@@ -265,8 +312,10 @@ public class ResultTemplateDAO {
             ProcedureEntity procedure, AbstractFeatureEntity featureOfInterest, Session session)
             throws OwsExceptionReport {
         try {
-            String offering = dataset.getOffering().getIdentifier();
-            String observableProperty = dataset.getObservableProperty().getIdentifier();
+            String offering = dataset.getOffering()
+                    .getIdentifier();
+            String observableProperty = dataset.getObservableProperty()
+                    .getIdentifier();
 
             List<ResultTemplateEntity> resultTemplates =
                     getResultTemplateObject(offering, observableProperty, null, session);
@@ -279,25 +328,62 @@ public class ResultTemplateDAO {
                     storedIdentifiers.add(storedResultTemplate.getIdentifier());
                     SosResultStructure storedStructure = createSosResultStructure(storedResultTemplate.getStructure());
                     SosResultEncoding storedEncoding = createSosResultEncoding(storedResultTemplate.getEncoding());
+                    SosResultStructure storedObservationStructure =
+                            createSosResultStructure(storedResultTemplate.getObservationStructure());
+                    SosResultEncoding storedObservationEncoding =
+                            createSosResultEncoding(storedResultTemplate.getObservationEncoding());
 
-                    if (!storedStructure.equals(request.getResultStructure())) {
-                        throw new InvalidParameterValueException()
-                                .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
-                                .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty, offering);
-                    }
+                    if (request instanceof InternalInsertResultTemplateRequest) {
+                        ((InternalInsertResultTemplateRequest) request).getObservationStructure().clearXml();
+                        ((InternalInsertResultTemplateRequest) request).getObservationEncoding().clearXml();
+                        if (storedObservationStructure != null && !storedObservationStructure
+                                .equals(((InternalInsertResultTemplateRequest) request).getObservationStructure())) {
+                            throw new InvalidParameterValueException()
+                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                    .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty,
+                                            offering);
+                        }
+                        if (storedObservationEncoding != null && !storedObservationEncoding
+                                .equals(((InternalInsertResultTemplateRequest) request).getObservationEncoding())) {
+                            throw new InvalidParameterValueException()
+                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                    .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty,
+                                            offering);
+                        }
+                    } else {
+                        if (storedStructure != null && !storedStructure.equals(request.getResultStructure())) {
+                            throw new InvalidParameterValueException()
+                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                    .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty,
+                                            offering);
+                        }
 
-                    if (!storedEncoding.equals(request.getResultEncoding())) {
-                        throw new InvalidParameterValueException()
-                                .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
-                                .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty, offering);
+                        if (storedEncoding != null && !storedEncoding.equals(request.getResultEncoding())) {
+                            throw new InvalidParameterValueException()
+                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                    .withMessage(LOG_TEMPLATE, procedure.getIdentifier(), observableProperty,
+                                            offering);
+                        }
                     }
                 }
-                if (request.getIdentifier() != null && request.getIdentifier().isSetValue()
-                        && !storedIdentifiers.contains(request.getIdentifier().getValue())) {
-                    /* save it only if the identifier is different */
-                    return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, session);
+                if (request.getIdentifier() != null && request.getIdentifier()
+                        .isSetValue()) {
+                    if (!resultTemplates.isEmpty() && request instanceof InternalInsertResultTemplateRequest
+                            && request.getIdentifier()
+                                    .getValue()
+                                    .startsWith("OBS_")) {
+                        updateTemplates(resultTemplates, (InternalInsertResultTemplateRequest) request, session);
+                        return resultTemplates.iterator()
+                                .next();
+                    }
+                    if (!storedIdentifiers.contains(request.getIdentifier()
+                            .getValue())) {
+                        /* save it only if the identifier is different */
+                        return createAndSaveResultTemplate(request, dataset, procedure, featureOfInterest, session);
+                    }
                 }
-                return resultTemplates.iterator().next();
+                return resultTemplates.iterator()
+                        .next();
             }
         } catch (EncodingException | DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
@@ -343,7 +429,8 @@ public class ResultTemplateDAO {
             final DatasetEntity observationConstellation, ProcedureEntity procedure,
             final AbstractFeatureEntity featureOfInterest, final Session session) throws EncodingException {
         final ResultTemplateEntity resultTemplate = new ResultTemplateEntity();
-        resultTemplate.setIdentifier(request.getIdentifier().getValue());
+        resultTemplate.setIdentifier(request.getIdentifier()
+                .getValue());
         resultTemplate.setPhenomenon(observationConstellation.getObservableProperty());
         resultTemplate.setOffering(observationConstellation.getOffering());
         if (procedure != null) {
@@ -353,17 +440,34 @@ public class ResultTemplateDAO {
             resultTemplate.setFeature(featureOfInterest);
         }
 
-        if (request.getResultEncoding().getXml().isPresent()) {
-            resultTemplate.setEncoding(request.getResultEncoding().getXml().get());
-        } else {
-            resultTemplate.setEncoding(
-                    encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultEncoding().get().get()));
+        if (request.isSetResultEncoding()) {
+            if (request.getResultEncoding()
+                    .getXml()
+                    .isPresent()) {
+                resultTemplate.setEncoding(request.getResultEncoding()
+                        .getXml()
+                        .get());
+            } else {
+                resultTemplate.setEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultEncoding()
+                        .get()
+                        .get()));
+            }
         }
-        if (request.getResultStructure().getXml().isPresent()) {
-            resultTemplate.setStructure(request.getResultStructure().getXml().get());
-        } else {
-            resultTemplate.setStructure(
-                    encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultStructure().get().get()));
+        if (request.isSetResultStructure()) {
+            if (request.getResultStructure()
+                    .getXml()
+                    .isPresent()) {
+                resultTemplate.setStructure(request.getResultStructure()
+                        .getXml()
+                        .get());
+            } else {
+                resultTemplate.setStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultStructure()
+                        .get()
+                        .get()));
+            }
+        }
+        if (request instanceof InternalInsertResultTemplateRequest) {
+            setObservationStructureEncoding(resultTemplate, (InternalInsertResultTemplateRequest) request);
         }
 
         session.save(resultTemplate);
@@ -372,12 +476,45 @@ public class ResultTemplateDAO {
         return resultTemplate;
     }
 
+    private void updateTemplates(List<ResultTemplateEntity> resultTemplates,
+            InternalInsertResultTemplateRequest request, Session session) throws EncodingException {
+        for (ResultTemplateEntity resultTemplate : resultTemplates) {
+            if (!resultTemplate.isSetObservationEncoding() || !resultTemplate.isSetObservationStructure()) {
+                setObservationStructureEncoding(resultTemplate, request);
+                session.update(resultTemplate);
+                session.flush();
+                session.refresh(resultTemplate);
+            }
+        }
+    }
+
+    private ResultTemplateEntity setObservationStructureEncoding(ResultTemplateEntity resultTemplate,
+            InternalInsertResultTemplateRequest request) throws EncodingException {
+        if (request.isSetObservationEncoding()) {
+                resultTemplate.setObservationEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20,
+                        request.getObservationEncoding()
+                                .get()
+                                .get()));
+        }
+        if (request.isSetObservationStructure()) {
+                resultTemplate.setObservationStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20,
+                        request.getObservationStructure()
+                                .get()
+                                .get()));
+        }
+        return resultTemplate;
+    }
+
     private SosResultEncoding createSosResultEncoding(String resultEncoding) throws DecodingException {
-        return new SosResultEncoding((SweAbstractEncoding) decodeXmlObject(resultEncoding), resultEncoding);
+        return resultEncoding != null && !resultEncoding.isEmpty()
+                ? new SosResultEncoding((SweAbstractEncoding) decodeXmlObject(resultEncoding), resultEncoding)
+                : null;
     }
 
     private SosResultStructure createSosResultStructure(String resultStructure) throws DecodingException {
-        return new SosResultStructure((SweAbstractDataComponent) decodeXmlObject(resultStructure), resultStructure);
+        return resultStructure != null && !resultStructure.isEmpty()
+                ? new SosResultStructure((SweAbstractDataComponent) decodeXmlObject(resultStructure), resultStructure)
+                : null;
     }
 
     private String encodeObjectToXmlText(String namespace, Object object) throws EncodingException {
@@ -401,8 +538,9 @@ public class ResultTemplateDAO {
         DecoderKey key = CodingHelper.getDecoderKey(xbObject);
         Decoder<T, XmlObject> decoder = decoderRepository.getDecoder(key);
         if (decoder == null) {
-            DecoderKey schemaTypeKey =
-                    new XmlNamespaceDecoderKey(xbObject.schemaType().getName().getNamespaceURI(), xbObject.getClass());
+            DecoderKey schemaTypeKey = new XmlNamespaceDecoderKey(xbObject.schemaType()
+                    .getName()
+                    .getNamespaceURI(), xbObject.getClass());
             decoder = decoderRepository.getDecoder(schemaTypeKey);
         }
         if (decoder == null) {
@@ -454,7 +592,8 @@ public class ResultTemplateDAO {
     }
 
     private StringBuffer add(StringBuffer buffer, String property) {
-        return buffer.append(property).append(EQUAL_PARAMETER)
+        return buffer.append(property)
+                .append(EQUAL_PARAMETER)
                 .append(property);
     }
 }

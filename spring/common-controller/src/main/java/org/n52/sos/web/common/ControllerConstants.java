@@ -167,6 +167,8 @@ public interface ControllerConstants {
 
         String ADMIN_SETTINGS_DUMP = "/admin/settings.json";
 
+        String ADMIN_CONFIGURATION_DUMP = "/admin/configuration.json";
+
         String ADMIN_SETTINGS_UPDATE = "/admin/settings";
 
         String ADMIN_DATABASE = ADMIN_ROOT + DATASOURCE;

@@ -196,8 +196,11 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             for (final SpatialFilter filter : filters) {
                 if (filter != null && (filter.getGeometry().getGeometry().isPresent()
                         || filter.getGeometry().getEnvelope().isPresent())) {
-                    disjunction.add(SpatialRestrictions.filter(AbstractFeatureEntity.GEOMETRY, filter.getOperator(),
-                            filter.getGeometry().toGeometry()));
+                    disjunction.add(SpatialRestrictions.filter(
+                            AbstractFeatureEntity.PROPERTY_GEOMETRY_ENTITY + "."
+                                    + AbstractFeatureEntity.PROPERTY_GEOMETRY,
+                            filter.getOperator(), filter.getGeometry()
+                                    .toGeometry()));
                 }
             }
             c.add(disjunction);

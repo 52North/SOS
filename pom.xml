@@ -856,7 +856,7 @@
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
                 <artifactId>jts-core</artifactId>
-                <version>1.17.0</version>
+                <version>${version.jts}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -1880,7 +1880,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+   <bean id="helgolandApiSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
+        <property name="title" value="Helgoland-API" />
+        <property name="order" value="10.0" />
+        <property name="description" value="Some Settings for the HelgolandAPI" />
+    </bean>
+    <bean class="org.n52.faroe.settings.UriSettingDefinition">
+        <property name="key" value="helgoland.externa.url" />
+        <property name="title" value="External HelgolandAPI URL" />
+        <property name="description" value="The endpoint URL of this HelgolandAPI." />
+        <property name="order" value="0.0" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="http://localhost:8080/52n-sos-webapp" />
+    </bean>
+    <!-- Service -->
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="helgoland.service.id" />
+        <property name="title" value="Id of the service in the HelgolandAPI" />
+        <property name="description" value="The ID of the service entity provided by the HelgolandAPI." />
+        <property name="order" value="1.0" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="1" />
+    </bean>
+     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.service.name" />
+        <property name="title" value="Name of the service" />
+        <property name="description" value="The name of the service" />
+        <property name="order" value="1.1" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="My RESTful Dataset Service" />
+    </bean>
+     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.service.version" />
+        <property name="title" value="Service version" />
+        <property name="description" value="The version of this service" />
+        <property name="order" value="1.2" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="3.0" />
+    </bean>
+     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.service.nodatavalues" />
+        <property name="title" value="No data values" />
+        <property name="description" value="Definition of the no data values. Multiple values are possible separated by comma!" />
+        <property name="order" value="1.3" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="-9999.0,99999,NO_DATA" />
+    </bean>
+    <!-- Request interval restriction -->
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.request.interval.restriction" />
+        <property name="title" value="Request interval restriction" />
+        <property name="description" value="Definition of the request interval restriction. Defined in ISO-8601 duration (&lt;code&gt;https://en.wikipedia.org/wiki/ISO_8601#Durations&lt;/code&gt;) notation!" />
+        <property name="order" value="2.0" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="optional" value="true" />
+        <property name="defaultValue" value="P370D" />
+    </bean>
+    <!-- Scheduler -->
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="helgoland.job.scheduler.enable" />
+        <property name="title" value="En-/disable the job scheduler" />
+        <property name="description" value="Enable or disable the job scheduler which executes tasks" />
+        <property name="order" value="3.0" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="helgoland.job.scheduler.startup.delay" />
+        <property name="title" value="StartUp delay in seconds" />
+        <property name="description" value="Define the startup delay for the job scheduler in seconds" />
+        <property name="order" value="3.1" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="5" />
+    </bean>
+    <!-- Prerendering job -->
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="helgoland.job.prerendering.enable" />
+        <property name="title" value="En-/disable the pre-rednering job" />
+        <property name="description" value="Enable or disable the pre-rendering job" />
+        <property name="order" value="4.0" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.job.prerendering.config.file" />
+        <property name="title" value="Pre-rendering config file" />
+        <property name="description" value="Define the configuration file name for the pre-rendering job. Start with '/' to place config under 'WEB-INF/classes' folder" />
+        <property name="order" value="4.1" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="/config-task-prerendering.json" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.job.prerendering.trigger.name" />
+        <property name="title" value="Trigger name" />
+        <property name="description" value="Define the name of the pre-rendering trigger." />
+        <property name="order" value="4.2" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="preRenderingV1_dailyAt_03:00am" />
+    </bean>
+    <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+        <property name="key" value="helgoland.job.prerendering.trigger.startup" />
+        <property name="title" value="Trigger the execution on startup" />
+        <property name="description" value="Define if the job should be executed on startup." />
+        <property name="order" value="4.3" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="true" />
+    </bean>
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.job.prerendering.cron.expression" />
+        <property name="title" value="Cron expression for execution" />
+        <property name="description" value="Definition the cron expression for the execution of the prerendering job. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
+        <property name="order" value="4.4" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="defaultValue" value="0 0 03 * * ?" />
+    </bean>
+</beans>

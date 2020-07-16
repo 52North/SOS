@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <ctx:annotation-config />
+
+    <bean id="jobScheduler" class="org.n52.io.task.JobScheduler" init-method="init" destroy-method="shutdown">
+        <property name="scheduler">
+            <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+                <property name="jobFactory">
+                    <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
+                </property>
+            </bean>
+        </property>
+        <property name="scheduledJobs">
+            <list>
+                <ref bean="preRenderingJob" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="preRenderingJob" class="org.n52.io.PreRenderingJob">
+        <property name="jobName" value="Prerendering Job" />
+        <property name="jobDescription" value="Job prerendering charts." />
+    </bean>
+
+</beans>

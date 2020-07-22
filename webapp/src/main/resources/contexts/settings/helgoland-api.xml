@@ -68,7 +68,7 @@
         <property name="description" value="Enable or disable the job scheduler which executes tasks" />
         <property name="order" value="3.0" />
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
-        <property name="defaultValue" value="true" />
+        <property name="defaultValue" value="false" />
     </bean>
     <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
         <property name="key" value="helgoland.job.scheduler.startup.delay" />
@@ -81,7 +81,7 @@
     <!-- Prerendering job -->
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="helgoland.job.prerendering.enable" />
-        <property name="title" value="En-/disable the pre-rednering job" />
+        <property name="title" value="En-/disable the pre-rendering job" />
         <property name="description" value="Enable or disable the pre-rendering job" />
         <property name="order" value="4.0" />
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
@@ -95,19 +95,11 @@
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="defaultValue" value="/config-task-prerendering.json" />
     </bean>
-    <bean class="org.n52.faroe.settings.StringSettingDefinition">
-        <property name="key" value="helgoland.job.prerendering.trigger.name" />
-        <property name="title" value="Trigger name" />
-        <property name="description" value="Define the name of the pre-rendering trigger." />
-        <property name="order" value="4.2" />
-        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
-        <property name="defaultValue" value="preRenderingV1_dailyAt_03:00am" />
-    </bean>
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
         <property name="key" value="helgoland.job.prerendering.trigger.startup" />
         <property name="title" value="Trigger the execution on startup" />
         <property name="description" value="Define if the job should be executed on startup." />
-        <property name="order" value="4.3" />
+        <property name="order" value="4.2" />
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="defaultValue" value="true" />
     </bean>
@@ -115,7 +107,7 @@
         <property name="key" value="helgoland.job.prerendering.cron.expression" />
         <property name="title" value="Cron expression for execution" />
         <property name="description" value="Definition the cron expression for the execution of the prerendering job. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
-        <property name="order" value="4.4" />
+        <property name="order" value="4.3" />
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="defaultValue" value="0 0 03 * * ?" />
     </bean>

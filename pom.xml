@@ -94,7 +94,7 @@
         <version.hibernate>5.4.18.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
-        <version.geotools>23.1</version.geotools>
+        <version.geotools>23.2</version.geotools>
         <version.jackson>2.11.1</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
@@ -108,7 +108,7 @@
         <version.db-model>3.0.0</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.3.RELEASE</version.springframework.security>
-        <version.springframework>5.2.7.RELEASE</version.springframework>
+        <version.springframework>5.2.8.RELEASE</version.springframework>
         <version.aspectj>1.9.5</version.aspectj>
         <version.saxon>10.1</version.saxon>
         <version.elasticsearch>7.8.0</version.elasticsearch>
@@ -771,7 +771,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.4.0</version>
+                <version>3.4.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>

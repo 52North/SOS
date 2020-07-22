@@ -108,7 +108,7 @@
         <version.db-model>3.0.0</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.3.RELEASE</version.springframework.security>
-        <version.springframework>5.2.7.RELEASE</version.springframework>
+        <version.springframework>5.2.8.RELEASE</version.springframework>
         <version.aspectj>1.9.5</version.aspectj>
         <version.saxon>10.1</version.saxon>
         <version.elasticsearch>7.8.0</version.elasticsearch>

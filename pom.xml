@@ -103,8 +103,8 @@
         <!-- 52N dependency versions -->
         <version.arctic-sea>7.6.1</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.helgoland.api>3.2.1</version.helgoland.api>
-        <version.dao-impl>3.2.1</version.dao-impl>
+        <version.helgoland.api>3.3.0</version.helgoland.api>
+        <version.dao-impl>3.3.0</version.dao-impl>
         <version.db-model>3.0.0</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.3.RELEASE</version.springframework.security>

@@ -99,6 +99,7 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     public FeatureQueryHandlerQueryObject setSpatialFilters(List<SpatialFilter> spatialFilters) {
+        this.spatialFilters.clear();
         if (spatialFilters != null) {
             this.spatialFilters.addAll(spatialFilters);
         }

@@ -109,7 +109,7 @@
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.3.RELEASE</version.springframework.security>
         <version.springframework>5.2.8.RELEASE</version.springframework>
-        <version.aspectj>1.9.5</version.aspectj>
+        <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.1</version.saxon>
         <version.elasticsearch>7.8.0</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>

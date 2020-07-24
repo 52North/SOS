@@ -10,24 +10,22 @@
 
     <ctx:annotation-config />
 
-    <bean id="jobScheduler" class="org.n52.io.task.JobScheduler" init-method="init" destroy-method="shutdown">
-        <property name="scheduler">
-            <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-                <property name="jobFactory">
-                    <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
-                </property>
-            </bean>
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobFactory">
+            <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
         </property>
+    </bean>
+    <bean id="jobScheduler" class="org.n52.io.task.JobScheduler" init-method="init" destroy-method="shutdown">
+        <property name="scheduler" ref="scheduler" />
         <property name="scheduledJobs">
             <list>
                 <ref bean="preRenderingJob" />
             </list>
         </property>
     </bean>
-
-    <bean id="preRenderingJob" class="org.n52.io.PreRenderingJob">
+    <bean id="preRenderingJobConfig" class="org.n52.io.task.PreRenderingJobConfig" />
+    <bean id="preRenderingJob" class="org.n52.io.task.PreRenderingJob">
         <property name="jobName" value="Prerendering Job" />
         <property name="jobDescription" value="Job prerendering charts." />
     </bean>
-
 </beans>

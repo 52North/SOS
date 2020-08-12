@@ -101,7 +101,7 @@
         <version.netcdf>5.3.3</version.netcdf>
         <version.jts>1.16.1</version.jts>
         <!-- 52N dependency versions -->
-        <version.arctic-sea>7.6.1</version.arctic-sea>
+        <version.arctic-sea>7.6.2</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.helgoland.api>3.3.0</version.helgoland.api>
         <version.dao-impl>3.3.0</version.dao-impl>

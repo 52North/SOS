@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.2.2</version>
+    <version>5.3.0</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -20,7 +20,7 @@
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>v5.2.2</tag>
+        <tag>v5.3.0</tag>
     </scm>
 
     <issueManagement>
@@ -87,31 +87,31 @@
         <version.postgresql>42.2.14</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>19.7.0.0</version.ojdbc8>
-        <version.sqljdbc>8.2.2.jre8</version.sqljdbc>
+        <version.sqljdbc>8.4.0.jre8</version.sqljdbc>
         <version.mysql>8.0.21</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.4.18.Final</version.hibernate>
+        <version.hibernate>5.4.20.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
         <version.geotools>23.2</version.geotools>
-        <version.jackson>2.11.1</version.jackson>
+        <version.jackson>2.11.2</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.3</version.netcdf>
         <version.jts>1.16.1</version.jts>
         <!-- 52N dependency versions -->
-        <version.arctic-sea>7.6.1</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.helgoland.api>3.3.0</version.helgoland.api>
-        <version.dao-impl>3.3.0</version.dao-impl>
-        <version.db-model>3.0.0</version.db-model>
+        <version.arctic-sea>8.0.0</version.arctic-sea>
+        <version.helgoland.api>3.4.0</version.helgoland.api>
+        <version.dao-impl>3.4.0</version.dao-impl>
+        <version.db-model>3.0.1</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-        <version.springframework.security>5.3.3.RELEASE</version.springframework.security>
+        <version.springframework.security>5.3.4.RELEASE</version.springframework.security>
         <version.springframework>5.2.8.RELEASE</version.springframework>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.1</version.saxon>
-        <version.elasticsearch>7.8.0</version.elasticsearch>
+        <version.elasticsearch>7.8.1</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.13</version.httpcore>
         <version.httpcoponents>4.5.12</version.httpcoponents>
@@ -765,13 +765,13 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.1.0</version>
+                <version>7.3.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.4.4</version>
+                <version>3.4.6</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -787,7 +787,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.13</version>
+                 <version>1.10.14</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1536,7 +1536,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.0.6</version>
+                <version>4.1.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -2019,7 +2019,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.30.v20200611</version>
+                    <version>9.4.31.v20200723</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -2029,7 +2029,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.7.15</version>
+                    <version>1.7.16</version>
                 </plugin>
 
                 <plugin>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-converter</artifactId>
-        <version>5.3.0</version>
+        <version>5.3.1-SNAPSHOT</version>
     </parent>
     <artifactId>sos-transformation</artifactId>
     <packaging>pom</packaging>

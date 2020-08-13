@@ -103,7 +103,7 @@
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>8.0.0</version.arctic-sea>
-        <version.helgoland.api>3.3.0</version.helgoland.api>
+        <version.helgoland.api>3.4.0</version.helgoland.api>
         <version.dao-impl>3.3.0</version.dao-impl>
         <version.db-model>3.0.0</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->

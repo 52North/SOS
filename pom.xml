@@ -84,7 +84,7 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.2.14</version.postgresql>
+        <version.postgresql>42.2.15</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>19.7.0.0</version.ojdbc8>
         <version.sqljdbc>8.4.0.jre8</version.sqljdbc>
@@ -1566,6 +1566,10 @@
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
                         <artifactId>jsr305</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.checkerframework</groupId>
+                        <artifactId>checker-qual</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

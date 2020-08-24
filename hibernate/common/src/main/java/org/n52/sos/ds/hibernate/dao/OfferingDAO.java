@@ -56,6 +56,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
@@ -729,17 +730,19 @@ public class OfferingDAO extends AbstractIdentifierNameDescriptionDAO implements
         }
         if (observation.isSetGeometryEntity()) {
             if (offering.isSetGeometry()) {
-                offering.getGeometryEntity().setGeometry(offering.getGeometryEntity().getGeometry()
-                        .union(observation.getGeometryEntity().getGeometry()));
+                offering.getGeometryEntity()
+                        .union(observation.getGeometryEntity());
             } else {
-                offering.setGeometryEntity(observation.getGeometryEntity());
+                offering.setGeometryEntity(new GeometryEntity().copy(observation.getGeometryEntity()));
             }
         } else if (observation.getDataset().isSetFeature() && observation.getDataset().getFeature().isSetGeometry()) {
             if (offering.isSetGeometry()) {
-                offering.getGeometryEntity().getGeometry()
-                        .union(observation.getDataset().getFeature().getGeometryEntity().getGeometry());
+                offering.getGeometryEntity()
+                        .union(observation.getDataset().getFeature().getGeometryEntity());
             } else {
-                offering.setGeometryEntity(observation.getDataset().getFeature().getGeometryEntity());
+                offering.setGeometryEntity(new GeometryEntity().copy(observation.getDataset()
+                        .getFeature()
+                        .getGeometryEntity()));
             }
         }
         session.saveOrUpdate(offering);

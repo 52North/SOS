@@ -352,7 +352,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
         final Set<String> offerings = Sets.newHashSet(resultTemplate.getOffering().getIdentifier());
         String observationType = null;
         for (DatasetEntity obsConst : obsConsts) {
-            if (observationType == null && obsConst.isSetOmObservationType()) {
+            if (observationType == null && obsConst.isSetOMObservationType()) {
                 observationType = obsConst.getOmObservationType().getFormat();
             }
         }

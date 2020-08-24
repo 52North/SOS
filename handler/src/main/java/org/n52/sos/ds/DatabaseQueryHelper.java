@@ -46,7 +46,7 @@ public interface DatabaseQueryHelper {
 
     default String getObservationType(DatasetEntity dataset) {
         if (dataset != null) {
-            if (dataset.isSetOmObservationType()) {
+            if (dataset.isSetOMObservationType()) {
                 return dataset.getOmObservationType().getFormat();
             } else if (dataset.getDatasetType().equals(DatasetType.profile)
                     || dataset.getObservationType().equals(ObservationType.profile)) {

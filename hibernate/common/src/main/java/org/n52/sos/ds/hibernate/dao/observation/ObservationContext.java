@@ -257,10 +257,10 @@ public class ObservationContext {
         if (contextual.getPlatform() == null && isSetCategory()) {
             contextual.setPlatform(getPlatform());
         }
-        if (!contextual.isSetOmObservationType() && isSetObservationType()) {
+        if (!contextual.isSetOMObservationType() && isSetObservationType()) {
             contextual.setOmObservationType(getObservationType());
         }
-        if (!contextual.hasUnit() && isSetUnit()) {
+        if (!contextual.isSetUnit() && isSetUnit()) {
             contextual.setUnit(getUnit());
         }
         if (!contextual.hasVerticalMetadata() && isSetVerticalMetadata()) {

@@ -431,7 +431,7 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
     }
 
     protected String queryUnit(DatasetEntity series) {
-        if (series.hasUnit()) {
+        if (series.isSetUnit()) {
             return series.getUnit().getUnit();
         } else if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_UNIT_FOR_OBSERVABLE_PROPERTY_PROCEDURE_SERIES,
                 getSession())) {

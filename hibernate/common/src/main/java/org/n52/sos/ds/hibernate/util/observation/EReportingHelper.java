@@ -145,7 +145,7 @@ public class EReportingHelper {
     private String getUnit(OmObservation omObservation, DataEntity observation) {
         if (omObservation.isSetValue() && omObservation.getValue().getValue().isSetUnit()) {
             return omObservation.getValue().getValue().getUnit();
-        } else if (observation.getDataset().hasUnit()) {
+        } else if (observation.getDataset().isSetUnit()) {
             return observation.getDataset().getUnit().getUnit();
         }
         return null;

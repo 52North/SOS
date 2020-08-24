@@ -201,7 +201,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
         return new TimePeriod(validProcedureTime.getStartTime(), validProcedureTime.getEndTime());
     }
 
-    private String getFormat(HasProcedureDescriptionFormat<?> hpdf) {
+    private String getFormat(HasProcedureDescriptionFormat hpdf) {
         if (hpdf.getFormat() != null && hpdf.getFormat().isSetFormat()) {
             return hpdf.getFormat().getFormat();
         }
@@ -227,9 +227,9 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
      *             If procedureDescriptionFormats are invalid
      */
     @VisibleForTesting
-    boolean checkOutputFormatWithDescriptionFormat(String identifier, HasProcedureDescriptionFormat<?> procedure,
+    boolean checkOutputFormatWithDescriptionFormat(String identifier, HasProcedureDescriptionFormat procedure,
             String requestedFormat, String descriptionFormat) throws OwsExceptionReport {
-        if ((procedure instanceof HasXml && descriptionFormat != null && ((HasXml<?>) procedure).isSetXml())
+        if ((procedure instanceof HasXml && descriptionFormat != null && ((HasXml) procedure).isSetXml())
                 || checkForDescriptionFile(procedure)) {
             if (requestedFormat.equalsIgnoreCase(descriptionFormat)
                     || existConverter(descriptionFormat, requestedFormat)) {
@@ -246,7 +246,7 @@ public class HibernateProcedureConverter extends AbstractProcedureConverter<Proc
                 .setStatus(HTTPStatus.BAD_REQUEST);
     }
 
-    private boolean checkForDescriptionFile(HasProcedureDescriptionFormat<?> procedure) {
+    private boolean checkForDescriptionFile(HasProcedureDescriptionFormat procedure) {
         if (procedure instanceof ProcedureEntity) {
             return ((ProcedureEntity) procedure).isSetDescription();
         }

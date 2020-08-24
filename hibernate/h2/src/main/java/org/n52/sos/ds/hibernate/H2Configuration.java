@@ -115,7 +115,6 @@ public final class H2Configuration implements ConnectionProvider {
             // core
             resources.add("/hbm/transactional/core/CategoryResource.hbm.xml");
             resources.add("/hbm/transactional/core/CodespaceResource.hbm.xml");
-            resources.add("/hbm/transactional/core/DatasetAggregationResource.hbm.xml");
             resources.add("/hbm/transactional/core/FeatureResource.hbm.xml");
             resources.add("/hbm/transactional/core/FormatResource.hbm.xml");
             resources.add("/hbm/transactional/core/LocationResource.hbm.xml");

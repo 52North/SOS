@@ -70,112 +70,154 @@ public abstract class DatasetFactory {
 
     public DatasetEntity blob()
             throws OwsExceptionReport {
-        return instantiate(blobClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.blob);
+        DatasetEntity blob = instantiate(blobClass());
+        blob.setDatasetType(DatasetType.timeseries);
+        blob.setObservationType(ObservationType.simple);
+        blob.setValueType(ValueType.blob);
+        return blob;
     }
 
     public abstract Class<? extends DatasetEntity> truthClass();
 
     public DatasetEntity truth()
             throws OwsExceptionReport {
-        return instantiate(truthClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.bool);
+        DatasetEntity truth = instantiate(blobClass());
+        truth.setDatasetType(DatasetType.timeseries);
+        truth.setObservationType(ObservationType.simple);
+        truth.setValueType(ValueType.bool);
+        return truth;
     }
 
     public abstract Class<? extends DatasetEntity> categoryClass();
 
     public DatasetEntity category()
             throws OwsExceptionReport {
-        return instantiate(categoryClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.category);
+        DatasetEntity category = instantiate(blobClass());
+        category.setDatasetType(DatasetType.timeseries);
+        category.setObservationType(ObservationType.simple);
+        category.setValueType(ValueType.category);
+        return category;
     }
 
     public abstract Class<? extends DatasetEntity> countClass();
 
     public DatasetEntity count()
             throws OwsExceptionReport {
-        return instantiate(countClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.count);
+        DatasetEntity count = instantiate(blobClass());
+        count.setDatasetType(DatasetType.timeseries);
+        count.setObservationType(ObservationType.simple);
+        count.setValueType(ValueType.count);
+        return count;
     }
 
     public abstract Class<? extends DatasetEntity> geometryClass();
 
     public DatasetEntity geometry()
             throws OwsExceptionReport {
-        return instantiate(geometryClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.geometry);
+        DatasetEntity geometry = instantiate(blobClass());
+        geometry.setDatasetType(DatasetType.timeseries);
+        geometry.setObservationType(ObservationType.simple);
+        geometry.setValueType(ValueType.geometry);
+        return geometry;
     }
 
     public abstract Class<? extends DatasetEntity> numericClass();
 
     public DatasetEntity numeric()
             throws OwsExceptionReport {
-        return instantiate(numericClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.quantity);
+        DatasetEntity quantity = instantiate(blobClass());
+        quantity.setDatasetType(DatasetType.timeseries);
+        quantity.setObservationType(ObservationType.simple);
+        quantity.setValueType(ValueType.quantity);
+        return quantity;
     }
 
     public abstract Class<? extends DatasetEntity> sweDataArrayClass();
 
     public DatasetEntity sweDataArray()
             throws OwsExceptionReport {
-        return instantiate(sweDataArrayClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.dataarray);
+        DatasetEntity dataarray = instantiate(blobClass());
+        dataarray.setDatasetType(DatasetType.timeseries);
+        dataarray.setObservationType(ObservationType.simple);
+        dataarray.setValueType(ValueType.dataarray);
+        return dataarray;
     }
 
     public abstract Class<? extends DatasetEntity> textClass();
 
     public DatasetEntity text()
             throws OwsExceptionReport {
-        return instantiate(textClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.text);
+        DatasetEntity text = instantiate(blobClass());
+        text.setDatasetType(DatasetType.timeseries);
+        text.setObservationType(ObservationType.simple);
+        text.setValueType(ValueType.text);
+        return text;
     }
 
     public abstract Class<? extends DatasetEntity> complexClass();
 
     public DatasetEntity complex()
             throws OwsExceptionReport {
-        return instantiate(complexClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.complex);
+        DatasetEntity complex = instantiate(blobClass());
+        complex.setDatasetType(DatasetType.timeseries);
+        complex.setObservationType(ObservationType.simple);
+        complex.setValueType(ValueType.complex);
+        return complex;
     }
 
     public abstract Class<? extends DatasetEntity> profileClass();
 
     public DatasetEntity profile()
             throws OwsExceptionReport {
-        return instantiate(profileClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.profile).setValueType(ValueType.not_initialized);
+        DatasetEntity profile = instantiate(blobClass());
+        profile.setDatasetType(DatasetType.timeseries);
+        profile.setObservationType(ObservationType.profile);
+        profile.setValueType(ValueType.not_initialized);
+        return profile;
     }
 
     public abstract Class<? extends DatasetEntity> textProfileClass();
 
     public DatasetEntity textProfile()
             throws OwsExceptionReport {
-        return instantiate(textProfileClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.profile).setValueType(ValueType.text);
+        DatasetEntity profile = instantiate(blobClass());
+        profile.setDatasetType(DatasetType.timeseries);
+        profile.setObservationType(ObservationType.profile);
+        profile.setValueType(ValueType.text);
+        return profile;
     }
 
     public abstract Class<? extends DatasetEntity> categoryProfileClass();
 
     public DatasetEntity categoryProfile()
             throws OwsExceptionReport {
-        return instantiate(categoryProfileClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.profile).setValueType(ValueType.category);
+        DatasetEntity profile = instantiate(blobClass());
+        profile.setDatasetType(DatasetType.timeseries);
+        profile.setObservationType(ObservationType.profile);
+        profile.setValueType(ValueType.category);
+        return profile;
     }
 
     public abstract Class<? extends DatasetEntity> quantityProfileClass();
 
     public DatasetEntity quantityProfile()
             throws OwsExceptionReport {
-        return instantiate(quantityProfileClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.profile).setValueType(ValueType.quantity);
+        DatasetEntity profile = instantiate(blobClass());
+        profile.setDatasetType(DatasetType.timeseries);
+        profile.setObservationType(ObservationType.profile);
+        profile.setValueType(ValueType.quantity);
+        return profile;
     }
 
     public abstract Class<? extends DatasetEntity> referenceClass();
 
     public DatasetEntity reference()
             throws OwsExceptionReport {
-        return instantiate(referenceClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.referenced);
+        DatasetEntity referenced = instantiate(blobClass());
+        referenced.setDatasetType(DatasetType.timeseries);
+        referenced.setObservationType(ObservationType.simple);
+        referenced.setValueType(ValueType.referenced);
+        return referenced;
     }
 
     private <T extends DatasetEntity> T instantiate(Class<T> c)

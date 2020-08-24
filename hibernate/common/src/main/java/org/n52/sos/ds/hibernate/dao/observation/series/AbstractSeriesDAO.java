@@ -29,6 +29,8 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,12 +50,15 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.query.Query;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.faroe.annotation.Setting;
+import org.n52.series.db.beans.AbstractDatasetEntity;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetAggregationEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.FormatEntity;
+import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
@@ -61,7 +66,6 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
-import org.n52.series.db.beans.sta.DatasetAggregationEntity;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -362,7 +366,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             addNameDesxcriptionForDatastream(dataset);
             dataset.setDeleted(false);
             dataset.setPublished(ctx.isPublish());
-        } else if (!dataset.hasUnit() && ctx.isSetUnit()) {
+        } else if (!dataset.isSetUnit() && ctx.isSetUnit()) {
             dataset.setUnit(ctx.getUnit());
             dataset.setDeleted(false);
             dataset.setPublished(ctx.isPublish());
@@ -379,44 +383,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return dataset;
     }
 
-
-    private void updateSta(DatasetEntity dataset, DataEntity<?> observation, Session session) {
-        if (HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
-            if (dataset.isSetDatasetAggregation()) {
-                DatasetAggregationEntity datasetAggregationEntity = dataset.getDatasetAggregation();
-                if (observation.isSetGeometryEntity()) {
-                    if (datasetAggregationEntity.isSetGeometry()) {
-                        datasetAggregationEntity.getGeometryEntity()
-                                .setGeometry(datasetAggregationEntity.getGeometryEntity()
-                                        .getGeometry()
-                                        .union(observation.getGeometryEntity()
-                                                .getGeometry()));
-                    } else {
-                        datasetAggregationEntity.setGeometryEntity(observation.getGeometryEntity());
-                    }
-                } else if (observation.getDataset()
-                        .isSetFeature()
-                        && observation.getDataset()
-                                .getFeature()
-                                .isSetGeometry()) {
-                    if (datasetAggregationEntity.isSetGeometry()) {
-                        datasetAggregationEntity.getGeometryEntity()
-                                .getGeometry()
-                                .union(observation.getDataset()
-                                        .getFeature()
-                                        .getGeometryEntity()
-                                        .getGeometry());
-                    } else {
-                        datasetAggregationEntity.setGeometryEntity(observation.getDataset()
-                                .getFeature()
-                                .getGeometryEntity());
-                    }
-                }
-                session.saveOrUpdate(datasetAggregationEntity);
-                session.flush();
-            }
-        }
-    }
 
     private void addNameDesxcriptionForDatastream(DatasetEntity dataset) {
         dataset.setName(createDatastreamName(dataset));
@@ -869,6 +835,87 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
+    @Deprecated
+    public void updateSeriesWithFirstLatestValues(AbstractDatasetEntity dataset, DataEntity<?> observation,
+            Session session) {
+        updateDatasetWithObservation(dataset, observation, session);
+    }
+
+    /**
+     * Update series values which will be used by the Timeseries API. Can be
+     * later used by the SOS.
+     *
+     * @param dataset
+     *            Series object
+     * @param hObservation
+     *            Observation object
+     * @param session
+     *            Hibernate session
+     */
+    public void updateDatasetWithObservation(AbstractDatasetEntity dataset, DataEntity<?> observation,
+            Session session) {
+        boolean minChanged = false;
+        boolean maxChanged = false;
+        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt() && dataset.getFirstValueAt()
+                .after(observation.getSamplingTimeStart()))) {
+            minChanged = true;
+            dataset.setFirstValueAt(observation.getSamplingTimeStart());
+            dataset.setFirstObservation(observation);
+        }
+        if (!dataset.isSetLastValueAt() || (dataset.isSetLastValueAt() && dataset.getLastValueAt()
+                .before(observation.getSamplingTimeEnd()))) {
+            maxChanged = true;
+            dataset.setLastValueAt(observation.getSamplingTimeEnd());
+            dataset.setLastObservation(observation);
+        }
+        if (observation instanceof QuantityDataEntity) {
+            if (minChanged) {
+                dataset.setFirstQuantityValue(((QuantityDataEntity) observation).getValue());
+            }
+            if (maxChanged) {
+                dataset.setLastQuantityValue(((QuantityDataEntity) observation).getValue());
+            }
+        }
+        if (!dataset.isSetResultTimeStart() || (dataset.isSetResultTimeStart() && dataset.getResultTimeStart()
+                .after(observation.getResultTime()))) {
+            dataset.setResultTimeStart(observation.getResultTime());
+        }
+        if (!dataset.isSetResultTimeEnd() || (dataset.isSetResultTimeEnd() && dataset.getResultTimeEnd()
+                .before(observation.getResultTime()))) {
+            dataset.setResultTimeEnd(observation.getResultTime());
+        }
+        if (observation.isSetGeometryEntity()) {
+            if (dataset.isSetGeometry()) {
+                dataset.getGeometryEntity()
+                        .union(observation.getGeometryEntity());
+            } else {
+                dataset.setGeometryEntity(new GeometryEntity().copy(observation.getGeometryEntity()));
+            }
+        } else if (observation.getDataset().isSetFeature()
+                && observation.getDataset()
+                        .getFeature()
+                        .isSetGeometry()) {
+            if (dataset.isSetGeometry()) {
+                dataset.getGeometryEntity()
+                        .union(observation.getDataset()
+                                .getFeature()
+                                .getGeometryEntity());
+            } else {
+                dataset.setGeometryEntity(new GeometryEntity().copy(observation.getDataset()
+                        .getFeature()
+                        .getGeometryEntity()));
+            }
+        }
+        session.saveOrUpdate(dataset);
+        session.flush();
+        session.refresh(dataset);
+        if (HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
+            if (dataset.isSetAggregation()) {
+                updateDatasetWithObservation(dataset.getAggregation(), observation, session);
+            }
+        }
+    }
+
     /**
      * Update Series for procedure by setting deleted flag and return changed
      * series
@@ -907,95 +954,105 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     /**
-     * Update series values which will be used by the Timeseries API. Can be
-     * later used by the SOS.
-     *
-     * @param dataset
-     *            Series object
-     * @param hObservation
-     *            Observation object
-     * @param session
-     *            Hibernate session
-     */
-    public void updateSeriesWithFirstLatestValues(DatasetEntity dataset, DataEntity<?> hObservation, Session session) {
-        boolean minChanged = false;
-        boolean maxChanged = false;
-        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
-                && dataset.getFirstValueAt().after(hObservation.getSamplingTimeStart()))) {
-            minChanged = true;
-            dataset.setFirstValueAt(hObservation.getSamplingTimeStart());
-            dataset.setFirstObservation(hObservation);
-        }
-        if (!dataset.isSetLastValueAt()
-                || (dataset.isSetLastValueAt() && dataset.getLastValueAt().before(hObservation.getSamplingTimeEnd()))) {
-            maxChanged = true;
-            dataset.setLastValueAt(hObservation.getSamplingTimeEnd());
-            dataset.setLastObservation(hObservation);
-        }
-        if (hObservation instanceof QuantityDataEntity) {
-            if (minChanged) {
-                dataset.setFirstQuantityValue(((QuantityDataEntity) hObservation).getValue());
-            }
-            if (maxChanged) {
-                dataset.setLastQuantityValue(((QuantityDataEntity) hObservation).getValue());
-            }
-        }
-        session.saveOrUpdate(dataset);
-        session.flush();
-        session.refresh(dataset);
-        updateSta(dataset, hObservation, session);
-    }
-
-    /**
      * Check {@link DatasetEntity} if the deleted observation time stamp
      * corresponds to the first/last series time stamp
      *
-     * @param series
+     * @param dataset
      *            Series to update
      * @param observation
      *            Deleted observation
      * @param session
      *            Hibernate session
      */
-    public void updateSeriesAfterObservationDeletion(DatasetEntity series, DataEntity<?> observation,
+    public void updateSeriesAfterObservationDeletion(DatasetEntity dataset, DataEntity<?> observation,
             Session session) {
         SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO(getDaoFactory());
-        if (series.isSetFirstValueAt() && series.getFirstValueAt().equals(observation.getSamplingTimeStart())) {
-            DataEntity<?> firstDataEntity = seriesObservationDAO.getFirstObservationFor(series, session);
+        if (dataset.isSetFirstValueAt() && dataset.getFirstValueAt().equals(observation.getSamplingTimeStart())) {
+            DataEntity<?> firstDataEntity = seriesObservationDAO.getFirstObservationFor(dataset, session);
             if (firstDataEntity != null) {
-                series.setFirstValueAt(firstDataEntity.getSamplingTimeStart());
+                dataset.setFirstValueAt(firstDataEntity.getSamplingTimeStart());
                 if (firstDataEntity instanceof QuantityDataEntity) {
-                    series.setFirstQuantityValue(((QuantityDataEntity) firstDataEntity).getValue());
+                    dataset.setFirstQuantityValue(((QuantityDataEntity) firstDataEntity).getValue());
                 }
-                series.setFirstObservation(firstDataEntity);
+                dataset.setFirstObservation(firstDataEntity);
             } else {
-                series.setFirstValueAt(null);
-                series.setFirstObservation(null);
+                dataset.setFirstValueAt(null);
+                dataset.setFirstObservation(null);
                 if (observation instanceof QuantityDataEntity) {
-                    series.setFirstQuantityValue(null);
+                    dataset.setFirstQuantityValue(null);
                 }
             }
         }
-        if (series.isSetLastValueAt() && series.getLastValueAt().equals(observation.getSamplingTimeEnd())) {
-            DataEntity<?> latestDataEntity = seriesObservationDAO.getLastObservationFor(series, session);
+        if (dataset.isSetLastValueAt() && dataset.getLastValueAt().equals(observation.getSamplingTimeEnd())) {
+            DataEntity<?> latestDataEntity = seriesObservationDAO.getLastObservationFor(dataset, session);
             if (latestDataEntity != null) {
-                series.setLastValueAt(latestDataEntity.getSamplingTimeEnd());
+                dataset.setLastValueAt(latestDataEntity.getSamplingTimeEnd());
                 if (latestDataEntity instanceof QuantityDataEntity) {
-                    series.setLastQuantityValue(((QuantityDataEntity) latestDataEntity).getValue());
+                    dataset.setLastQuantityValue(((QuantityDataEntity) latestDataEntity).getValue());
                 }
-                series.setLastObservation(latestDataEntity);
+                dataset.setLastObservation(latestDataEntity);
             } else {
-                series.setLastValueAt(null);
-                series.setLastObservation(null);
+                dataset.setLastValueAt(null);
+                dataset.setLastObservation(null);
                 if (observation instanceof QuantityDataEntity) {
-                    series.setLastQuantityValue(null);
+                    dataset.setLastQuantityValue(null);
                 }
             }
         }
-        if (!series.isSetFirstValueAt() && !series.isSetLastValueAt()) {
-            series.setUnit(null);
+        if (!dataset.isSetFirstValueAt() && !dataset.isSetLastValueAt()) {
+            dataset.setUnit(null);
+            dataset.setGeometry(null);
         }
-        session.saveOrUpdate(series);
+        //restultTime
+        if (dataset.isSetResultTimeStart() && dataset.getResultTimeStart().equals(observation.getResultTime())) {
+            DataEntity<?> firstDataEntity = seriesObservationDAO.getFirstObservationFor(dataset, session);
+            if (firstDataEntity != null) {
+                dataset.setResultTimeStart(firstDataEntity.getResultTime());
+            } else {
+                dataset.setResultTimeStart(null);
+            }
+        }
+        if (dataset.isSetResultTimeEnd() && dataset.getResultTimeEnd().equals(observation.getResultTime())) {
+            DataEntity<?> latestDataEntity = seriesObservationDAO.getLastObservationFor(dataset, session);
+            if (latestDataEntity != null) {
+                dataset.setResultTimeEnd(latestDataEntity.getSamplingTimeEnd());
+            } else {
+                dataset.setResultTimeEnd(null);
+            }
+        }
+        session.saveOrUpdate(dataset);
+        if (HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
+            if (dataset.isSetAggregation()) {
+                updateStaAfterObservationDeletion(dataset.getAggregation(), session);
+            }
+        }
+    }
+
+    private void updateStaAfterObservationDeletion(AbstractDatasetEntity dataset, Session session) {
+        if (dataset instanceof DatasetAggregationEntity) {
+            DatasetAggregationEntity aggregation = (DatasetAggregationEntity) dataset;
+            Set<Date> samplingTimeStart = new LinkedHashSet<>();
+            Set<Date> samplingTimeEnd = new LinkedHashSet<>();
+            Set<Date> resultTimeStart = new LinkedHashSet<>();
+            Set<Date> resultTimeEnd = new LinkedHashSet<>();
+            GeometryEntity geom = new GeometryEntity();
+            if (aggregation.isSetDatasets()) {
+                for (AbstractDatasetEntity ade : aggregation.getDatasets()) {
+                    samplingTimeStart.add(ade.getSamplingTimeStart());
+                    samplingTimeEnd.add(ade.getSamplingTimeEnd());
+                    resultTimeStart.add(ade.getResultTimeStart());
+                    resultTimeEnd.add(ade.getResultTimeEnd());
+                    if (ade.getGeometry() != null) {
+                        geom.union(ade.getGeometryEntity());
+                    }
+                }
+                aggregation.setSamplingTimeStart(Collections.min(samplingTimeStart));
+                aggregation.setSamplingTimeEnd(Collections.max(samplingTimeEnd));
+                aggregation.setResultTimeStart(Collections.min(resultTimeStart));
+                aggregation.setResultTimeEnd(Collections.max(resultTimeEnd));
+                session.saveOrUpdate(aggregation);
+            }
+        }
     }
 
     public TimeExtrema getProcedureTimeExtrema(Session session, String procedure) {
@@ -1228,7 +1285,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     public boolean checkObservationType(DatasetEntity dataset, String observationType, Session session) {
-        String hObservationType = dataset.isSetOmObservationType() ? dataset.getOmObservationType().getFormat() : null;
+        String hObservationType = dataset.isSetOMObservationType() ? dataset.getOmObservationType().getFormat() : null;
         if (hObservationType == null || hObservationType.isEmpty() || hObservationType.equals("NOT_DEFINED")) {
             updateSeries(dataset, observationType, session);
         } else if (!hObservationType.equals(observationType)) {
@@ -1289,7 +1346,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      */
     public String getUnit(long series, Session session) throws OwsExceptionReport {
         DatasetEntity dataset = (DatasetEntity) session.get(getSeriesClass(), series);
-        if (dataset != null && dataset.hasUnit()) {
+        if (dataset != null && dataset.isSetUnit()) {
             return dataset.getUnit().getIdentifier();
         }
         return null;
@@ -1309,7 +1366,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public String getUnit(Set<Long> series, Session session) throws OwsExceptionReport {
         for (Long s : series) {
             DatasetEntity dataset = (DatasetEntity) session.get(getSeriesClass(), s);
-            if (dataset != null && dataset.hasUnit()) {
+            if (dataset != null && dataset.isSetUnit()) {
                 return dataset.getUnit().getIdentifier();
             }
         }

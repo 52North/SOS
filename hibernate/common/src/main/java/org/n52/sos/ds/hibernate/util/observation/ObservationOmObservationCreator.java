@@ -321,7 +321,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         if (!Strings.isNullOrEmpty(getResultModel())) {
             obsConst.setObservationType(getResultModel());
         }
-        if (hObservation.getDataset().isSetOmObservationType()) {
+        if (hObservation.getDataset().isSetOMObservationType()) {
             obsConst.setObservationType(hObservation.getDataset().getOmObservationType().getFormat());
         }
         observationConstellations.put(hashCode, obsConst);

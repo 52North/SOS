@@ -225,7 +225,7 @@ public class SweAbstractDataComponentCreator
                 component.setName(op.getName());
             }
 
-            if (valuedObservation.getDataset().hasUnit() &&
+            if (valuedObservation.getDataset().isSetUnit() &&
                 component instanceof SweAbstractUomType) {
                 SweAbstractUomType<?> uomType = (SweAbstractUomType<?>) component;
                 uomType.setUom(valuedObservation.getDataset().getUnit().getUnit());

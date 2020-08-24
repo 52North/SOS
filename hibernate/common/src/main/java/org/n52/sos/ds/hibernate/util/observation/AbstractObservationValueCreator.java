@@ -121,21 +121,21 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     }
 
     public QuantityValue visit(QuantityDataEntity o, QuantityValue v) {
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
     }
 
     public UnknownValue visit(BlobDataEntity o, UnknownValue v) {
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
     }
 
     public BooleanValue visit(BooleanDataEntity o, BooleanValue v) {
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
@@ -144,14 +144,14 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     public CategoryValue visit(CategoryDataEntity o, CategoryValue v) {
         addAdditonalDataEntity(o, v);
         addDefinitionFromObservableProperty(o, v);
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
     }
 
     public GeometryValue visit(GeometryDataEntity o, GeometryValue v) throws OwsExceptionReport {
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
@@ -160,7 +160,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
     public TextValue visit(TextDataEntity o, TextValue v) {
         addAdditonalDataEntity(o, v);
         addDefinitionFromObservableProperty(o, v);
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;
@@ -170,7 +170,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
         if (o.hasValueName()) {
             v.getValue().setTitle(o.getValueName());
         }
-        if (o.getDataset().hasUnit()) {
+        if (o.getDataset().isSetUnit()) {
             v.setUnit(getUnit(o.getDataset().getUnit()));
         }
         return v;

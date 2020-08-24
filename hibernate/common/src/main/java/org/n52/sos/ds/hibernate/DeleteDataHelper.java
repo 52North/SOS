@@ -35,10 +35,10 @@ import java.util.stream.Collectors;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.n52.series.db.beans.DatasetAggregationEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.beans.sta.DatasetAggregationEntity;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -160,7 +160,7 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
     }
 
     default void deleteDatastream(DatasetEntity dataset, Session session) {
-        if (dataset.isSetDatasetAggregation() && HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
+        if (dataset.isSetAggregation() && HibernateHelper.isEntitySupported(DatasetAggregationEntity.class)) {
             StringBuilder builder = new StringBuilder();
             builder.append(DELETE_PARAMETER);
             builder.append(DatasetAggregationEntity.class.getSimpleName());
@@ -169,7 +169,7 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
             builder.append(EQUAL_PARAMETER);
             builder.append(DatasetAggregationEntity.PROPERTY_ID);
             Query<?> q = session.createQuery(builder.toString());
-            q.setParameter(DatasetAggregationEntity.PROPERTY_ID, dataset.getDatasetAggregation()
+            q.setParameter(DatasetAggregationEntity.PROPERTY_ID, dataset.getAggregation()
                     .getId());
             int executeUpdate = q.executeUpdate();
             logExecution(executeUpdate);

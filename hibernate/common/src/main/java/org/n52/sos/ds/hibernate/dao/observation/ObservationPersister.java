@@ -547,7 +547,7 @@ public class ObservationPersister
     }
 
     private <V, T extends DataEntity<V>> T setUnitAndPersist(T observation, Value<V> value) throws OwsExceptionReport {
-        if (!dataset.hasUnit()) {
+        if (!dataset.isSetUnit()) {
             dataset.setUnit(getUnit(value));
         }
         return persist(observation, value.getValue());
@@ -753,7 +753,7 @@ public class ObservationPersister
     }
 
     private boolean isProfileObservation(DatasetEntity observationConstellation) {
-        return observationConstellation.isSetOmObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
+        return observationConstellation.isSetOMObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
                 .equals(observationConstellation.getOmObservationType().getFormat())
                 || GWMLConstants.OBS_TYPE_GEOLOGY_LOG
                         .equals(observationConstellation.getOmObservationType().getFormat())
@@ -762,7 +762,7 @@ public class ObservationPersister
     }
 
     private boolean isDataArrayObservation(DatasetEntity observationConstellation) {
-        return observationConstellation.isSetOmObservationType() && (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
+        return observationConstellation.isSetOMObservationType() && (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
                 .equals(observationConstellation.getOmObservationType().getFormat()));
     }
 

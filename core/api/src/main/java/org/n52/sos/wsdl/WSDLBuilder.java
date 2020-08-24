@@ -178,7 +178,7 @@ public class WSDLBuilder {
 
     private Param addParamValues(Param param, Message message) {
         param.setName(message.getName());
-        param.setMessage(message.getQName());
+        param.setMessage(new QName(WSDLConstants.NS_SOSW, message.getName(), WSDLConstants.NS_SOSW_PREFIX));
         return param;
     }
 
@@ -252,7 +252,7 @@ public class WSDLBuilder {
 
     private PortType getGetPortType() {
         if (this.getPortType == null) {
-            this.getPortType = new PortType(WSDLConstants.EN_SOSW_SOS_POST_PORT_TYPE);
+            this.getPortType = new PortType(WSDLConstants.EN_SOSW_SOS_GET_PORT_TYPE);
             getDefinitions().addPortType(this.getPortType);
         }
         return this.getPortType;
@@ -317,7 +317,6 @@ public class WSDLBuilder {
 
     private Message getFaultMessage() {
         if (this.faultMessage == null) {
-
             Part part = new Part("fault");
             part.setElement(OWSConstants.QN_EXCEPTION);
             this.faultMessage = new Message("ExceptionMessage");
@@ -463,7 +462,7 @@ public class WSDLBuilder {
     private void addSoapPort() {
         if (this.soapPort == null) {
             this.soapPort = new Port();
-            this.soapPort.setBinding(getSoap12Binding());
+            this.soapPort.setBinding(WSDLConstants.QN_SOSW_SOAP_BINDING);
             this.soapPort.setName(SOS_SOAP_12_PORT);
             this.soapPort.addExtensibilityElement(new SoapAddress(getSoapEndpoint()));
             getService().addPort(this.soapPort);
@@ -473,7 +472,7 @@ public class WSDLBuilder {
     private void addSoap12Port() {
         if (this.soapPort == null) {
             this.soapPort = new Port();
-            this.soapPort.setBinding(getSoap12Binding());
+            this.soapPort.setBinding(WSDLConstants.QN_SOSW_SOAP_BINDING);
             this.soapPort.setName(SOS_SOAP_12_PORT);
             this.soapPort.addExtensibilityElement(new SoapAddress(getSoapEndpoint()));
             getService().addPort(this.soapPort);
@@ -483,7 +482,7 @@ public class WSDLBuilder {
     private void addPoxPort() {
         if (this.poxPort == null) {
             this.poxPort = new Port();
-            this.poxPort.setBinding(getPoxBinding());
+            this.poxPort.setBinding(WSDLConstants.QN_SOSW_POX_BINDING);
             this.poxPort.setName(SOS_POX_PORT);
             this.poxPort.addExtensibilityElement(new HttpAddress(getPoxEndpoint()));
             getService().addPort(this.poxPort);
@@ -493,7 +492,7 @@ public class WSDLBuilder {
     private void addKvpPort() {
         if (this.kvpPort == null) {
             this.kvpPort = new Port();
-            this.kvpPort.setBinding(getKvpBinding());
+            this.kvpPort.setBinding(WSDLConstants.QN_SOSW_KVP_BINDING);
             this.kvpPort.setName(SOS_KVP_PORT);
             this.kvpPort.addExtensibilityElement(new HttpAddress(getKvpEndpoint()));
             getService().addPort(this.kvpPort);
@@ -593,9 +592,10 @@ public class WSDLBuilder {
 
     private Binding getSoapBinding() {
         if (this.soapBinding == null) {
-            this.soapBinding = new Binding(WSDLConstants.QN_SOSW_SOAP_BINDING);
-            this.soapBinding.addExtensibilityElement(new SoapBinding(
-                    WSDLConstants.SOAP_DOCUMENT_STYLE, WSDLConstants.SOAP_BINDING_HTTP_TRANSPORT));
+            this.soapBinding =
+                    new Binding(WSDLConstants.EN_SOSW_SOS_SOAP_BINDING, WSDLConstants.QN_SOSW_POST_PORT_TYPE);
+            this.soapBinding.addExtensibilityElement(
+                    new SoapBinding(WSDLConstants.SOAP_DOCUMENT_STYLE, WSDLConstants.SOAP_BINDING_HTTP_TRANSPORT));
             getDefinitions().addBinding(this.soapBinding);
         }
         return this.soapBinding;
@@ -603,9 +603,10 @@ public class WSDLBuilder {
 
     private Binding getSoap12Binding() {
         if (this.soapBinding == null) {
-            this.soapBinding = new Binding(WSDLConstants.QN_SOSW_SOAP_BINDING);
-            this.soapBinding.addExtensibilityElement(new SoapBinding(
-                    WSDLConstants.SOAP_DOCUMENT_STYLE, WSDLConstants.SOAP_12_BINDING_HTTP_TRANSPORT));
+            this.soapBinding =
+                    new Binding(WSDLConstants.EN_SOSW_SOS_SOAP_BINDING, WSDLConstants.QN_SOSW_POST_PORT_TYPE);
+            this.soapBinding.addExtensibilityElement(
+                    new SoapBinding(WSDLConstants.SOAP_DOCUMENT_STYLE, WSDLConstants.SOAP_12_BINDING_HTTP_TRANSPORT));
             getDefinitions().addBinding(this.soapBinding);
         }
         return this.soapBinding;
@@ -613,7 +614,7 @@ public class WSDLBuilder {
 
     private Binding getPoxBinding() {
         if (this.poxBinding == null) {
-            this.poxBinding = new Binding(WSDLConstants.QN_SOSW_POX_BINDING);
+            this.poxBinding = new Binding(WSDLConstants.EN_SOSW_SOS_POX_BINDING, WSDLConstants.QN_SOSW_POST_PORT_TYPE);
             this.poxBinding.addExtensibilityElement(new HttpBinding(WSDLConstants.POX_HTTP_VERB));
             getDefinitions().addBinding(this.poxBinding);
         }
@@ -622,7 +623,7 @@ public class WSDLBuilder {
 
     private Binding getKvpBinding() {
         if (this.kvpBinding == null) {
-            this.kvpBinding = new Binding(WSDLConstants.QN_SOSW_KVP_BINDING);
+            this.kvpBinding = new Binding(WSDLConstants.EN_SOSW_SOS_KVP_BINDING, WSDLConstants.QN_SOSW_GET_PORT_TYPE);
             this.kvpBinding.addExtensibilityElement(new HttpBinding(WSDLConstants.KVP_HTTP_VERB));
             getDefinitions().addBinding(this.kvpBinding);
         }

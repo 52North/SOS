@@ -41,9 +41,8 @@ import org.quartz.PersistJobDataAfterExecution;
 public class HibernateDataSourceHarvesterJob extends ScheduledJob implements Job {
 
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void executeInternal(JobExecutionContext context) throws JobExecutionException {
         // TODO Auto-generated method stub
-
     }
 
     @Override

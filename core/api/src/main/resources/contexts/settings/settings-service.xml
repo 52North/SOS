@@ -9,7 +9,7 @@
     <bean class="org.n52.faroe.settings.UriSettingDefinition">
         <property name="key" value="service.serviceURL" />
         <property name="title" value="SOS URL" />
-        <property name="description" value="The endpoint URL of this sos which will be shown in the GetCapabilities response (e.g. &lt;code&gt;http://localhost:8080/52nSOS/sos&lt;/code&gt; or &lt;code&gt;http://localhost:8080/52nSOS/service&lt;/code&gt;). The path to a specific binding (like &lt;code&gt;/soap&lt;/code&gt;) will appended to this URL. For detailed information, please read the &lt;a href=&quot;https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation&quot;&gt;documentation&lt;/a&gt;" />
+        <property name="description" value="The endpoint URL of this sos which will be shown in the GetCapabilities response (e.g. &lt;code&gt;http://localhost:8080/52nSOS/service&lt;/code&gt;). For detailed information, please read the &lt;a href=&quot;https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceVDocumentation&quot;&gt;documentation&lt;/a&gt;" />
         <property name="order" value="0.0" />
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="http://localhost:8080/52n-sos-webapp/service" />

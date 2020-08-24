@@ -29,7 +29,6 @@
 package org.n52.sos.request.operator;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +49,8 @@ import org.n52.shetland.w3c.wsdl.Fault;
 import org.n52.sos.ds.AbstractInsertFeatureOfInterestHandler;
 import org.n52.sos.event.events.FeatureInsertion;
 import org.n52.sos.wsdl.Metadata;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * {@code IRequestOperator} to handle {@link InsertFeatureOfInterestRequest}s.
@@ -146,11 +147,16 @@ public class InsertFeatureOfInterestOperator extends
 
     @Override
     public Map<String, String> getAdditionalSchemaImports() {
-        return Collections.emptyMap();
+        return ImmutableMap.<String, String> builder()
+                .put(InsertFeatureOfInterestConstants.NS_IFOI,
+                        InsertFeatureOfInterestConstants.SCHEMA_LOCATION_URL_INSERT_FEATURE_OF_INTEREST)
+                .build();
     }
 
     @Override
     public Map<String, String> getAdditionalPrefixes() {
-        return Collections.emptyMap();
+        return ImmutableMap.<String, String> builder()
+                .put(InsertFeatureOfInterestConstants.NS_IFOI_PREFIX, InsertFeatureOfInterestConstants.NS_IFOI)
+                .build();
     }
 }

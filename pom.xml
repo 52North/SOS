@@ -84,7 +84,7 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.2.15</version.postgresql>
+        <version.postgresql>42.2.16</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>19.7.0.0</version.ojdbc8>
         <version.sqljdbc>8.4.0.jre8</version.sqljdbc>
@@ -771,7 +771,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.5</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>

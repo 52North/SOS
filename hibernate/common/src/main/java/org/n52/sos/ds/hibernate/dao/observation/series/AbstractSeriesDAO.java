@@ -934,23 +934,26 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             Session session) {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         addProcedureToCriteria(criteria, procedure);
-        List<DatasetEntity> hSeries = criteria.list();
-        for (DatasetEntity series : hSeries) {
-            series.setDeleted(deleteFlag);
-            series.setPublished(!deleteFlag);
-            series.setDisabled(deleteFlag);
-            series.setFirstObservation(null);
-            series.setFirstValueAt(null);
-            series.setLastObservation(null);
-            series.setLastValueAt(null);
-            if (series.getValueType().equals(ValueType.quantity)) {
-                series.setFirstQuantityValue(null);
-                series.setLastQuantityValue(null);
+        List<DatasetEntity> datasets = criteria.list();
+        for (DatasetEntity dataset : datasets) {
+            dataset.setDeleted(deleteFlag);
+            dataset.setPublished(!deleteFlag);
+            dataset.setDisabled(deleteFlag);
+            dataset.setFirstObservation(null);
+            dataset.setFirstValueAt(null);
+            dataset.setLastObservation(null);
+            dataset.setLastValueAt(null);
+            dataset.setResultTimeStart(null);
+            dataset.setResultTimeEnd(null);
+            dataset.setGeometryEntity(null);
+            if (dataset.getValueType().equals(ValueType.quantity)) {
+                dataset.setFirstQuantityValue(null);
+                dataset.setLastQuantityValue(null);
             }
-            session.saveOrUpdate(series);
+            session.saveOrUpdate(dataset);
         }
         session.flush();
-        return hSeries;
+        return datasets;
     }
 
     /**

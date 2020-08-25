@@ -205,9 +205,9 @@ public interface DeleteDataHelper extends DeleteObservationHelper {
     default void setDeleteSensorFlag(String identifier, boolean deleteFlag, Session session)
             throws OwsExceptionReport {
         if (identifier != null && !identifier.isEmpty()) {
-            List<DatasetEntity> series = getDaoFactory().getSeriesDAO()
+            List<DatasetEntity> dataset = getDaoFactory().getSeriesDAO()
                     .updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag, session);
-            deleteObservation(series, Collections.<TemporalFilter> emptyList(), session);
+            deleteObservation(dataset, Collections.<TemporalFilter> emptyList(), session);
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }

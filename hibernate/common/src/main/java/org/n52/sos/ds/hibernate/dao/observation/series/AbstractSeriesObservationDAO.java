@@ -117,12 +117,12 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     protected DatasetEntity addObservationContextToObservation(ObservationContext ctx, DataEntity<?> observation,
             Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = getDaoFactory().getSeriesDAO();
-        DatasetEntity series = seriesDAO.getOrInsertSeries(ctx, observation, session);
-        ((DataEntity) observation).setDataset(series);
+        DatasetEntity dataset = seriesDAO.getOrInsertSeries(ctx, observation, session);
+        ((DataEntity) observation).setDataset(dataset);
 
         OfferingDAO offeringDAO = getDaoFactory().getOfferingDAO();
-        offeringDAO.updateOfferingMetadata(series.getOffering(), observation, session);
-        return series;
+        offeringDAO.updateOfferingMetadata(dataset.getOffering(), observation, session);
+        return dataset;
     }
 
     @Override
@@ -958,9 +958,12 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     public Map<Long, SeriesTimeExtrema> getMinMaxSeriesTimesById(Set<Long> serieses, Session session) {
         Criteria c = getDefaultObservationTimeCriteria(session);
         c.add(Restrictions.in(DataEntity.PROPERTY_DATASET_ID, serieses));
-        c.setProjection(Projections.projectionList().add(Projections.groupProperty(DataEntity.PROPERTY_DATASET_ID))
+        c.setProjection(Projections.projectionList()
+                .add(Projections.groupProperty(DataEntity.PROPERTY_DATASET_ID))
                 .add(Projections.min(DataEntity.PROPERTY_SAMPLING_TIME_START))
-                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END)));
+                .add(Projections.max(DataEntity.PROPERTY_SAMPLING_TIME_END))
+                .add(Projections.min(DataEntity.PROPERTY_RESULT_TIME))
+                .add(Projections.max(DataEntity.PROPERTY_RESULT_TIME)));
         c.setResultTransformer(transformer);
 
         Map<Long, SeriesTimeExtrema> map = Maps.newHashMap();
@@ -996,6 +999,10 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 seriesTimeExtrema.setSeries((Long) tuple[0]);
                 seriesTimeExtrema.setMinPhenomenonTime(DateTimeHelper.makeDateTime(tuple[1]));
                 seriesTimeExtrema.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(tuple[2]));
+                if (tuple.length == 5) {
+                    seriesTimeExtrema.setMinResultTime(DateTimeHelper.makeDateTime(tuple[3]));
+                    seriesTimeExtrema.setMaxResultTime(DateTimeHelper.makeDateTime(tuple[4]));
+                }
             }
             return seriesTimeExtrema;
         }

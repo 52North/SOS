@@ -135,34 +135,11 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         return new ModelAndView(ControllerConstants.Views.ADMIN_DATASOURCE, model);
     }
 
+    @Deprecated
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_EXECUTE, method = RequestMethod.POST)
     public String processQuery(@RequestBody String querySQL) {
-        try {
-            if (this.generalQueryDAO.isPresent()) {
-                String q = URLDecoder.decode(querySQL, "UTF-8");
-                LOG.info("Query: {}", q);
-                GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.get().query(q);
-                ObjectNode j = Json.nodeFactory().objectNode();
-                if (rs.getMessage() != null) {
-                    j.put(rs.isError() ? "error" : "message", rs.getMessage());
-                    return Json.print(j);
-                }
-                j.putArray(ROWS).addAll(Json.toJSON(rs.getColumnNames()));
-                ArrayNode names = j.putArray(NAMES);
-                for (GeneralQueryDAO.Row row : rs.getRows()) {
-                    names.addArray().addAll(Json.toJSON(row.getValues()));
-                }
-                return Json.print(j);
-            }
-            return "No general query dao available!";
-        } catch (UnsupportedEncodingException ex) {
-            LOG.error("Could not decode String", ex);
-            return "Could not decode String: " + ex.getMessage();
-        } catch (SQLException | IOException ex) {
-            LOG.error("Query unsuccesfull.", ex);
-            return "Query unsuccesful. Cause: " + ex.getMessage();
-        }
+        return "Not supported!";
     }
 
     @ResponseBody

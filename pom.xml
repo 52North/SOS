@@ -99,13 +99,13 @@
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.3</version.netcdf>
-        <version.jts>1.16.1</version.jts>
+        <version.jts>1.17.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>8.0.0</version.arctic-sea>
         <version.helgoland.api>3.4.0</version.helgoland.api>
         <version.dao-impl>3.4.0</version.dao-impl>
-        <version.db-model>3.0.1</version.db-model>
+        <version.db-model>3.0.2</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.4.RELEASE</version.springframework.security>
         <version.springframework>5.2.8.RELEASE</version.springframework>

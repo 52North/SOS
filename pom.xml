@@ -87,7 +87,7 @@
         <version.postgresql>42.2.16</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>19.7.0.0</version.ojdbc8>
-        <version.sqljdbc>8.4.0.jre8</version.sqljdbc>
+        <version.sqljdbc>8.4.1.jre8</version.sqljdbc>
         <version.mysql>8.0.21</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
@@ -99,7 +99,7 @@
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.3</version.netcdf>
-        <version.jts>1.16.1</version.jts>
+        <version.jts>1.17.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>8.0.0</version.arctic-sea>

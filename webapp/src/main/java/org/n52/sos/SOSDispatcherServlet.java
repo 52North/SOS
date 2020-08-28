@@ -156,4 +156,9 @@ public class SOSDispatcherServlet
     public void loadSettings() {
        this.loadSettings = true;
     }
+
+    @Override
+    public void reset() {
+       this.configured = false;
+    }
 }

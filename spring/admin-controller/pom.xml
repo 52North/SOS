@@ -93,7 +93,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>

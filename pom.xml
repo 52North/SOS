@@ -99,7 +99,7 @@
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.3</version.netcdf>
-        <version.jts>1.16.1</version.jts>
+        <version.jts>1.17.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>8.0.1</version.arctic-sea>

@@ -30,9 +30,7 @@ package org.n52.sos.web.admin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -56,8 +54,8 @@ import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
-import org.n52.sos.ds.PredefinedInsertionHandler;
 import org.n52.sos.ds.GeneralQueryDAO;
+import org.n52.sos.ds.PredefinedInsertionHandler;
 import org.n52.sos.exception.MissingServiceOperatorException;
 import org.n52.sos.predefined.AbstractPredefined;
 import org.n52.sos.predefined.PhenomenonPredefined;
@@ -82,8 +80,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 /**

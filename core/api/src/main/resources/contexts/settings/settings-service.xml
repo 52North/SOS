@@ -168,4 +168,39 @@
         <property name="group" ref="serviceSettingDefintionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="service.security.login.attempt" />
+        <property name="title" value="Admin login attempt" />
+        <property name="description" value="Set the number of login attempts for the admin interface" />
+        <property name="order" value="30.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="5" />
+        <property name="minimum" value="1" />
+    </bean>
+     <bean class="org.n52.faroe.settings.ChoiceSettingDefinition">
+        <property name="key" value="service.security.login.lock.timeunit" />
+        <property name="title" value="The time unit for the lock duration" />
+        <property name="description" value="The time unit for the admin login lock duration. Default is 'Days'." />
+        <property name="order" value="31.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="Hours" />
+        <property name="options">
+            <map>
+                <entry key="HOURS" value="Hours" />
+                <entry key="DAYS" value="Days" />
+            </map>
+        </property>
+    </bean>
+    <bean class="org.n52.faroe.settings.IntegerSettingDefinition">
+        <property name="key" value="service.security.login.lock.duration" />
+        <property name="title" value="Login lock duration" />
+        <property name="description" value="Set the login lock duration time." />
+        <property name="order" value="32.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="1" />
+        <property name="minimum" value="1" />
+    </bean>
 </beans>

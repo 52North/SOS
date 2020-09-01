@@ -38,6 +38,10 @@
             <artifactId>faroe-json</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.arctic-sea</groupId>
+            <artifactId>faroe-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -103,6 +107,11 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

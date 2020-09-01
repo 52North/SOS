@@ -28,20 +28,14 @@
  */
 package org.n52.sos.web.common.auth;
 
-import org.n52.sos.web.common.ControllerConstants;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
- */
-class AdministratorAuthority implements GrantedAuthority {
-    private static final long serialVersionUID = 5103351149817795492L;
+public class AuthenticationFailureListener extends AbstractAuthenticationEventListener
+        implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
-    @Override
-    public String getAuthority() {
-        return ControllerConstants.ROLE_ADMIN;
+    public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
+        getService().loginFailed(getRemoteAddress(event));
     }
 
 }

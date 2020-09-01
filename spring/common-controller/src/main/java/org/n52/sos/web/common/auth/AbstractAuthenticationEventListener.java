@@ -28,20 +28,26 @@
  */
 package org.n52.sos.web.common.auth;
 
-import org.n52.sos.web.common.ControllerConstants;
-import org.springframework.security.core.GrantedAuthority;
+import javax.inject.Inject;
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
- */
-class AdministratorAuthority implements GrantedAuthority {
-    private static final long serialVersionUID = 5103351149817795492L;
+import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-    @Override
-    public String getAuthority() {
-        return ControllerConstants.ROLE_ADMIN;
+public abstract class AbstractAuthenticationEventListener {
+
+    @Inject
+    private LimitLoginAttemptService service;
+
+    protected String getRemoteAddress(AbstractAuthenticationEvent event) {
+        return getDetails(event).getRemoteAddress();
     }
 
+    private WebAuthenticationDetails getDetails(AbstractAuthenticationEvent event) {
+        return  (WebAuthenticationDetails) event.getAuthentication()
+                .getDetails();
+    }
+
+    protected LimitLoginAttemptService getService() {
+        return service;
+    }
 }

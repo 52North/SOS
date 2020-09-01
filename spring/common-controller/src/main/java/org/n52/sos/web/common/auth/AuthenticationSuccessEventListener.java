@@ -28,20 +28,13 @@
  */
 package org.n52.sos.web.common.auth;
 
-import org.n52.sos.web.common.ControllerConstants;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 
-/**
- * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
- *
- * @since 4.0.0
- */
-class AdministratorAuthority implements GrantedAuthority {
-    private static final long serialVersionUID = 5103351149817795492L;
+public class AuthenticationSuccessEventListener extends AbstractAuthenticationEventListener
+        implements ApplicationListener<AuthenticationSuccessEvent> {
 
-    @Override
-    public String getAuthority() {
-        return ControllerConstants.ROLE_ADMIN;
+    public void onApplicationEvent(AuthenticationSuccessEvent event) {
+        getService().loginSucceeded(getRemoteAddress(event));
     }
-
 }

@@ -47,7 +47,7 @@ import org.hibernate.mapping.Table;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.settings.StringSettingDefinition;
-import org.n52.hibernate.spatial.dialect.sqlserver.TimestampWithTimeZoneSqlServer2008SpatialDialect;
+import org.n52.hibernate.spatial.dialect.sqlserver.TimestampWithTimeZoneSqlServer2012SpatialDialect;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.slf4j.Logger;
@@ -160,7 +160,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     @Override
     protected Dialect createDialect() {
-        return new TimestampWithTimeZoneSqlServer2008SpatialDialect();
+        return new TimestampWithTimeZoneSqlServer2012SpatialDialect();
     }
 
     @Override

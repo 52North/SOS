@@ -38,10 +38,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.config.AdminUserService;
@@ -61,11 +63,16 @@ public class SosAuthenticationProvider implements AuthenticationProvider {
 
     private AdminUserService adminUserService;
     private PasswordEncoder passwordEncoder;
+    private LimitLoginAttemptService loginAttemptService;
 
     @Override
     public UsernamePasswordAuthenticationToken authenticate(Authentication authentication)
             throws AuthenticationException {
         UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) authentication;
+        String ip = getClientIP(auth);
+        if (loginAttemptService.isBlocked(ip)) {
+            throw new LockedException("locked");
+        }
         AdministratorUser user = authenticate((String) auth.getPrincipal(), (String) auth.getCredentials());
         boolean isDefaultAdmin = user instanceof DefaultAdministratorUser;
         AdministratorUserPrinciple principle = new AdministratorUserPrinciple(user, isDefaultAdmin);
@@ -73,7 +80,6 @@ public class SosAuthenticationProvider implements AuthenticationProvider {
     }
 
     public AdministratorUser authenticate(String username, String password) throws AuthenticationException {
-
         if (username == null || password == null) {
             throw new BadCredentialsException(BAD_CREDENTIALS);
         }
@@ -129,6 +135,15 @@ public class SosAuthenticationProvider implements AuthenticationProvider {
 
     public PasswordEncoder getPasswordEncoder() {
         return passwordEncoder;
+    }
+
+    private String getClientIP(UsernamePasswordAuthenticationToken auth) {
+        return ((WebAuthenticationDetails) auth.getDetails()).getRemoteAddress();
+    }
+
+    @Inject
+    public void setLoginAttemptService(LimitLoginAttemptService loginAttemptService) {
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Inject

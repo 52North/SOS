@@ -34,6 +34,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.ConfigurationError;
+import org.n52.iceland.config.AdminUserService;
+import org.n52.iceland.config.AdministratorUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -44,10 +47,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-
-import org.n52.faroe.ConfigurationError;
-import org.n52.iceland.config.AdminUserService;
-import org.n52.iceland.config.AdministratorUser;
 
 /**
  * @since 4.0.0

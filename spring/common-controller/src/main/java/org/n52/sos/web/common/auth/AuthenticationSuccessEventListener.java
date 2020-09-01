@@ -28,18 +28,13 @@
  */
 package org.n52.sos.web.common.auth;
 
-import javax.inject.Inject;
-
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 
 public class AuthenticationSuccessEventListener extends AbstractAuthenticationEventListener
         implements ApplicationListener<AuthenticationSuccessEvent> {
 
-    @Inject
-    private LimitLoginAttemptService service;
-
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-        service.loginSucceeded(getDetails(event).getRemoteAddress());
+        getService().loginSucceeded(getRemoteAddress(event));
     }
 }

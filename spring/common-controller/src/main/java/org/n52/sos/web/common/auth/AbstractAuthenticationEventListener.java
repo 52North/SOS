@@ -28,13 +28,26 @@
  */
 package org.n52.sos.web.common.auth;
 
+import javax.inject.Inject;
+
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 public abstract class AbstractAuthenticationEventListener {
 
-    protected WebAuthenticationDetails getDetails(AbstractAuthenticationEvent event) {
+    @Inject
+    private LimitLoginAttemptService service;
+
+    protected String getRemoteAddress(AbstractAuthenticationEvent event) {
+        return getDetails(event).getRemoteAddress();
+    }
+
+    private WebAuthenticationDetails getDetails(AbstractAuthenticationEvent event) {
         return  (WebAuthenticationDetails) event.getAuthentication()
                 .getDetails();
+    }
+
+    protected LimitLoginAttemptService getService() {
+        return service;
     }
 }

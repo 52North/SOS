@@ -28,9 +28,8 @@
  */
 package org.n52.sos.web.common.auth;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import org.n52.sos.web.common.ControllerConstants;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>

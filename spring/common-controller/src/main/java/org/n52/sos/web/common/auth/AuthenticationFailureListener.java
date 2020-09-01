@@ -28,19 +28,14 @@
  */
 package org.n52.sos.web.common.auth;
 
-import javax.inject.Inject;
-
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 
 public class AuthenticationFailureListener extends AbstractAuthenticationEventListener
         implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
-    @Inject
-    private LimitLoginAttemptService service;
-
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
-        service.loginFailed(getDetails(event).getRemoteAddress());
+        getService().loginFailed(getRemoteAddress(event));
     }
 
 }

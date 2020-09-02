@@ -28,7 +28,7 @@
 
 ### 4.4.x
 
-[![Downloads](https://img.shields.io/github/downloads/52North/SOS/v4.4.0/total)](https://github.com/52North/SOS/releases/tag/v4.4.15)
+[![Downloads](https://img.shields.io/github/downloads/52North/SOS/v4.4.15/total)](https://github.com/52North/SOS/releases/tag/v4.4.15)
 
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v4.4.14/total)](https://github.com/52North/SOS/releases/tag/v4.4.14)
 

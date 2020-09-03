@@ -1,5 +1,9 @@
 # Downloads
 
+## Docker
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/52north/sos)](https://hub.docker.com/r/52north/sos)
+
 ## Releases
 
 ### 5.3.x

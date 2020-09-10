@@ -107,7 +107,7 @@
         <version.dao-impl>3.4.0</version.dao-impl>
         <version.db-model>3.0.3-SNAPSHOT</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
-        <version.springframework.security>5.3.4.RELEASE</version.springframework.security>
+        <version.springframework.security>5.4.0</version.springframework.security>
         <version.springframework>5.2.8.RELEASE</version.springframework>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.2</version.saxon>

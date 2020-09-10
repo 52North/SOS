@@ -6,18 +6,12 @@
         <artifactId>sos-parent</artifactId>
         <version>5.3.1-SNAPSHOT</version>
     </parent>
-    <artifactId>sos-hibernate</artifactId>
+    <artifactId>sos-proxy</artifactId>
     <packaging>pom</packaging>
-    <name>52°North SOS - Hibernate Module</name>
-    <description>52°North SOS Hibernate Module</description>
+    <name>52°North SOS - Proxy Module</name>
+    <description>52°North SOS Proxy Module</description>
     <modules>
-        <module>session-factory</module>
-        <module>common</module>
-        <module>handler</module>
-        <module>feature</module>
-        <module>h2</module>
         <module>datasource</module>
-        <module>utils</module>
-        <module>c3p0</module>
+        <module>harvest</module>
     </modules>
 </project>

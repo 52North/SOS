@@ -174,4 +174,6 @@ public interface HibernateConstants {
 
     String JDBC_TIME_ZONE = AvailableSettings.JDBC_TIME_ZONE;
 
+    String SPRING_PROFILE = "hibernate";
+
 }

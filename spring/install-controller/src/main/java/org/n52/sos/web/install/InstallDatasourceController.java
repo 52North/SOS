@@ -90,7 +90,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
             createTables = checkCreate(datasource, parameters, overwriteTables, c);
             forceUpdateTables = checkUpdate(datasource, parameters, overwriteTables, c);
             c.setDatabaseSettings(parseDatasourceSettings(datasource, parameters));
-            setProfiles(c);
+            setProfiles(c, datasource);
             datasource.validateConnection(c.getDatabaseSettings());
             datasource.validatePrerequisites(c.getDatabaseSettings());
 
@@ -139,7 +139,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         }
     }
 
-    private void setProfiles(InstallationConfiguration c) {
+    private void setProfiles(InstallationConfiguration c, Datasource datasource) {
         String concept = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
         env.setActiveProfiles(concept.toLowerCase());
         contextSwitcher.loadSettings();

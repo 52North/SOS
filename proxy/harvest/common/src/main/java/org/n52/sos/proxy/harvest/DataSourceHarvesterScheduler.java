@@ -1,36 +1,8 @@
-/*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
- *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
- *
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- */
-package org.n52.sos.ds.hibernate.cache.proxy;
+package org.n52.sos.proxy.harvest;
 
-import java.util.ArrayList;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.util.Date;
-import java.util.List;
 
 import org.joda.time.DateTime;
 import org.n52.io.task.ScheduledJob;
@@ -39,15 +11,12 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HibernateDataSourceHarvesterScheduler implements Destroyable {
+public class DataSourceHarvesterScheduler implements Destroyable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateDataSourceHarvesterScheduler.class);
-
-    private List<ScheduledJob> scheduledJobs = new ArrayList<>();
+    private final static Logger LOGGER = LoggerFactory.getLogger(DataSourceHarvesterScheduler.class);
 
     private int startupDelayInSeconds = 5;
 
@@ -58,20 +27,9 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
     public void init() {
         if (!enabled) {
             LOGGER.info(
-                    "Job schedular disabled. No jobs will be triggered. "
-                    + "This is also true for particularly enabled jobs.");
+                    "Job schedular disabled. No jobs will be triggered. This is also true for particularly enabled jobs.");
             return;
         }
-
-        for (ScheduledJob scheduledJob : scheduledJobs) {
-            // LOGGER.info(dataSourceConfig.getItemName() + " " +
-            // dataSourceConfig.getUrl());
-            // HibernateDataSourceHarvesterJob dataSourceJob = new
-            // HibernateDataSourceHarvesterJob();
-            // dataSourceJob.init(dataSourceConfig);
-            scheduleJob(scheduledJob);
-        }
-
         try {
             scheduler.startDelayed(startupDelayInSeconds);
             LOGGER.info("Scheduler will start jobs in {}s ...", startupDelayInSeconds);
@@ -95,7 +53,7 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
             LOGGER.debug("Schedule job '{}' will be executed at '{}'!", details.getKey(), new DateTime(nextExecution));
             if (taskToSchedule.isTriggerAtStartup()) {
                 LOGGER.debug("Schedule job '{}' to run once at startup.", details.getKey());
-                Trigger onceAtStartup = TriggerBuilder.newTrigger().withIdentity(details.getKey() + "_onceAtStartup")
+                Trigger onceAtStartup = newTrigger().withIdentity(details.getKey() + "_onceAtStartup")
                         .forJob(details.getKey()).build();
                 Date startupExecution = scheduler.scheduleJob(onceAtStartup);
                 LOGGER.debug("Schedule job '{}' will be executed on startup at '{}'!", details.getKey(),
@@ -111,7 +69,7 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
      */
     public void shutdown() {
         try {
-            scheduler.shutdown(true);
+            scheduler.shutdown(false);
             LOGGER.info("Shutdown scheduler");
         } catch (SchedulerException e) {
             LOGGER.error("Could not scheduler.", e);
@@ -121,17 +79,6 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
     @Override
     public void destroy() {
         shutdown();
-    }
-
-    public List<ScheduledJob> getScheduledJobs() {
-        return scheduledJobs;
-    }
-
-    public void setScheduledJobs(List<ScheduledJob> scheduledJobs) {
-        this.scheduledJobs.clear();
-        if (scheduledJobs != null) {
-            this.scheduledJobs.addAll(scheduledJobs);
-        }
     }
 
     public int getStartupDelayInSeconds() {
@@ -157,4 +104,5 @@ public class HibernateDataSourceHarvesterScheduler implements Destroyable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
 }

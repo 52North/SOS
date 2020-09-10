@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <ctx:annotation-config />
+    <beans profile="proxy">
+        <bean id="httpClientHandler" class="org.n52.sos.web.HttpClientHandler" />
+
+        <bean id="insertionRepository" class="org.n52.sos.proxy.da.InsertionRepository" />
+
+        <bean id="harvesterJobFactory" class="org.n52.sos.proxy.harvest.DataSourceHarvesterJobFactory"/>
+        <bean id="dataSourceHarvesterScheduler" class="org.n52.sos.proxy.harvest.DataSourceHarvesterScheduler"" init-method="init" destroy-method="shutdown">
+            <property name="scheduler">
+                <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+                    <property name="jobFactory">
+                        <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
+                    </property>
+                </bean>
+            </property>
+        </bean>
+    </beans>
+</beans>

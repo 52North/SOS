@@ -30,19 +30,19 @@
 
     <bean id="sessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
 
-    <bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
         depends-on="sessionFactoryProvider">
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
-    <tx:annotation-driven proxy-target-class="true" transaction-manager="txManager" />
+    <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager" />
 
     <!-- #################################### AOP CONFIGURATION ######################################### -->
 
     <!-- http://docs.spring.io/autorepo/docs/spring/4.2.x/spring-framework-reference/html/transaction.html#transaction-declarative -->
 
     <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
-    <tx:advice id="txAdvice" transaction-manager="txManager">
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="get*" read-only="true" />
             <tx:method name="searchFor" read-only="true" />

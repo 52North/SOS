@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="controllerConfig" class="org.n52.dataset.ControllerConfig"/>
+    <bean id="spiImplConfig" class="org.n52.dataset.SpiImplConfig"/>
+
+    <!-- local.configFile overrides defaults from application.properties -->
+    <!-- <ctx:property-placeholder location="classpath:/application.properties,file://src/main/resources/application.properties"
+        ignore-resource-not-found="true" ignore-unresolvable="false" /> -->
+    <ctx:property-placeholder location="classpath:/application.properties"
+        ignore-resource-not-found="true" ignore-unresolvable="false" />
+
+</beans>

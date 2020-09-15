@@ -35,7 +35,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

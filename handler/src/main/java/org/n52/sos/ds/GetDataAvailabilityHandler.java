@@ -41,13 +41,13 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.old.DataAccessException;
+import org.n52.series.db.old.HibernateSessionStore;
+import org.n52.series.db.old.dao.DatasetDao;
+import org.n52.series.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;

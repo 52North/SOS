@@ -111,9 +111,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected static final String DATABASE_EXTENSION_DESCRIPTION = "Select the database extension this SOS should use";
 
-    protected static final String DATABASE_EXTENSION_KEY = "sos.database.extension";
-
-    protected static final String DATABASE_EXTENSION_DEFAULT_VALUE = DatabaseExtension.DEFAULT.name();
+    protected static final String DATABASE_EXTENSION_DEFAULT_VALUE = DatabaseExtension.DATASOURCE.name();
 
     protected static final String FEATURE_CONCEPT_TITLE = "Feature concept";
 
@@ -223,11 +221,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         def.setGroup(ADVANCED_GROUP);
         def.setOrder(3);
         def.setKey(DATABASE_EXTENSION_KEY);
-        def.addOption(DatabaseExtension.DEFAULT.name(),
-                    DatabaseExtension.DEFAULT.getDisplayName());
+        def.addOption(DatabaseExtension.DATASOURCE.name(),
+                    DatabaseExtension.DATASOURCE.getDisplayName());
         def.addOption(DatabaseExtension.SAMPLING.name(),
                     DatabaseExtension.SAMPLING.getDisplayName());
-        def.setDefaultValue(DatabaseExtension.DEFAULT.name());
+        def.setDefaultValue(DatabaseExtension.DATASOURCE.name());
         return def;
     }
 
@@ -396,7 +394,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String basePath = getDatabaseConceptBasePath(settings);
         HashSet<String> mappings = Sets.newHashSet();
         switch (getDatabaseExtension(settings)) {
-            case DEFAULT:
+            case DATASOURCE:
                 mappings.add(basePath + HIBERNATE_MAPPING_DATASET_PATH);
                 break;
             case SAMPLING:
@@ -413,7 +411,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         String extension = (String) settings.get(this.databaseExtensionDefinition.getKey());
         if (extension == null || extension.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
-            extension = DatabaseExtension.DEFAULT.name();
+            extension = DatabaseExtension.DATASOURCE.name();
             if (hibernateDirectories.contains(HIBERNATE_MAPPING_SAMPLING_PATH)) {
                 extension = DatabaseExtension.SAMPLING.name();
             }

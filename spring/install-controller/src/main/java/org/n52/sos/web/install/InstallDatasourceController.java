@@ -141,7 +141,22 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
 
     private void setProfiles(InstallationConfiguration c, Datasource datasource) {
         String concept = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
-        env.setActiveProfiles(concept.toLowerCase());
+        boolean set = false;
+        if (concept != null && !concept.isEmpty()) {
+            env.setActiveProfiles(concept.toLowerCase());
+            set = true;
+        }
+        String extension = (String) c.getDatabaseSetting(HibernateDatasourceConstants.DATABASE_EXTENSION_KEY);
+        if (extension != null && !extension.isEmpty()) {
+            if (set) {
+                env.addActiveProfile(extension.toLowerCase());
+            } else {
+                env.setActiveProfiles(extension.toLowerCase());
+            }
+        }
+        if (datasource.getSpringProfiles() != null && !datasource.getSpringProfiles().isEmpty()) {
+            datasource.getSpringProfiles().forEach(sp -> env.addActiveProfile(sp));
+        }
         contextSwitcher.loadSettings();
         contextSwitcher.reloadContext();
     }

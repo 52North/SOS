@@ -112,6 +112,8 @@ public interface HibernateDatasourceConstants {
 
     String DATABASE_CONCEPT_KEY = "sos.database.concept";
 
+    String DATABASE_EXTENSION_KEY = "sos.database.extension";
+
     enum DatabaseConcept {
         SIMPLE("Simple database model"), TRANSACTIONAL("Transactional database model"), EREPORTING(
                 "eReporting database model");
@@ -128,7 +130,7 @@ public interface HibernateDatasourceConstants {
     }
 
     enum DatabaseExtension {
-        DEFAULT("Default database model"), SAMPLING("Extended model to support Samplings/MeasuringPrograms");
+        DATASOURCE("Default database model"), SAMPLING("Extended model to support Samplings/MeasuringPrograms");
 
         private final String displayName;
 

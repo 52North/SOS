@@ -118,6 +118,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_RELEASE_MODE, HibernateConstants.CONNECTION_RELEASE_MODE_AFTER_TRANSACTION);
         p.put(HibernateConstants.CURRENT_SESSION_CONTEXT, HibernateConstants.THREAD_LOCAL_SESSION_CONTEXT);
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
+        p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -130,6 +131,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         settings.put(DATABASE_KEY, matcher.group(1));
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         return settings;
     }
 

@@ -38,6 +38,8 @@ import org.n52.iceland.ds.DatasourceCallback;
 
 public class MockDatasource implements Datasource {
 
+    private static final long serialVersionUID = -7798123898348967576L;
+
     @Override
     public String getDialectName() {
         // TODO Auto-generated method stub
@@ -201,7 +203,7 @@ public class MockDatasource implements Datasource {
     }
 
     @Override
-    public String getSpringProfile() {
+    public Set<String> getSpringProfiles() {
         // TODO Auto-generated method stub
         return null;
     }

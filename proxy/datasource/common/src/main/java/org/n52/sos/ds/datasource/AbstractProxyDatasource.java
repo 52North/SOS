@@ -28,7 +28,16 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.util.Map;
+import java.util.Set;
+
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
+
+import com.google.common.collect.Sets;
+
 public abstract class AbstractProxyDatasource extends AbstractH2Datasource {
+
+    public static final String SPRING_PROFILE = "proxy";
 
     public static final String PROXY_HOST_KEY = "proxy.host";
 
@@ -45,8 +54,17 @@ public abstract class AbstractProxyDatasource extends AbstractH2Datasource {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public String getSpringProfile() {
-        return ProxyConstants.SPRING_PROFILE;
+    public Set<String> getSpringProfiles() {
+        return Sets.newHashSet(SPRING_PROFILE);
     }
 
+    @Override
+    public void validatePrerequisites(Map<String, Object> settings) {
+        settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.TRANSACTIONAL.name());
+        settings.put(FEATURE_CONCEPT_KEY, FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        settings.put(DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
+        settings.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
+        settings.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
+        super.validatePrerequisites(settings);
+    }
 }

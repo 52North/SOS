@@ -29,34 +29,30 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.Properties;
-import javax.inject.Inject;
 
+import javax.inject.Inject;
 
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.n52.faroe.ConfigurationError;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.ds.DatasourceCallback;
-import org.n52.faroe.ConfigurationError;
-import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.service.DatabaseSettingsHandler;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-//import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
-//import org.n52.sos.ds.hibernate.type.IsoTimeStringType;
-//import org.n52.sos.ds.hibernate.type.UtcTimestampType;
-//import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.service.DriverCleanupListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class UnspecifiedSessionFactoryProvider
         extends AbstractSessionFactoryProvider
@@ -68,6 +64,8 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     private static SessionFactory sessionFactory;
     private static Configuration configuration;
+    private static StandardServiceRegistry serviceRegistry;
+
     private DriverCleanupListener driverCleanupListener;
     private DatabaseSettingsHandler databaseSettingsHandler;
 
@@ -83,6 +81,10 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     protected Configuration getConfiguration() {
         return configuration;
+    }
+
+    protected ServiceRegistry getServiceRegistry() {
+        return serviceRegistry;
     }
 
     protected abstract Configuration getConfiguration(Properties properties);
@@ -162,13 +164,7 @@ public abstract class UnspecifiedSessionFactoryProvider
             LOGGER.debug("Instantiating configuration and session factory");
             configuration = getConfiguration(properties);
             configuration.mergeProperties(properties);
-
-            /*
-             * set timestamp mapping to a special type to ensure time is always
-             * queried in defined time zone
-             */
-//            registerTimestampMapping(configuration, properties);
-            ServiceRegistry serviceRegistry =
+            UnspecifiedSessionFactoryProvider.serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             UnspecifiedSessionFactoryProvider.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
             Session s = UnspecifiedSessionFactoryProvider.sessionFactory.openSession();
@@ -185,27 +181,5 @@ public abstract class UnspecifiedSessionFactoryProvider
             throw new ConfigurationError(exceptionText, he);
         }
     }
-
-//    private void registerTimestampMapping(Configuration configuration, Properties properties) {
-//        if ((properties.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)
-//                && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)
-//                        .isEmpty())
-//                || (properties.containsKey(HibernateConstants.JDBC_TIME_ZONE)
-//                        && !properties.getProperty(HibernateConstants.JDBC_TIME_ZONE)
-//                                .isEmpty())) {
-//            configuration.registerTypeOverride(
-//                    new ConfigurableTimestampType(properties.containsKey(HibernateConstants.JDBC_TIME_ZONE)
-//                            ? properties.getProperty(HibernateConstants.JDBC_TIME_ZONE)
-//                            : properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
-//        } else {
-//            configuration.registerTypeOverride(new UtcTimestampType());
-//        }
-//        configuration.registerTypeOverride(new IsoTimeStringType(
-//                properties.containsKey(HibernateConstants.JDBC_TIME_ZONE)
-//                        ? properties.getProperty(HibernateConstants.JDBC_TIME_ZONE)
-//                        : properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE),
-//                properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT),
-//                Boolean.valueOf(properties.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z))));
-//    }
 
 }

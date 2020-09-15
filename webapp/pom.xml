@@ -174,11 +174,8 @@
                             </includes>
                             <excludes>
                                 <exclude>WEB-INF/classes/application.properties</exclude>
-                                <exclude>WEB-INF/**/series-database-config.xml</exclude>
-                                <exclude>WEB-INF/**/services-beans.xml</exclude>
+                                <exclude>WEB-INF/**/*.xml</exclude>
                                 <exclude>WEB-INF/**/series-hibernate.cfg.xml</exclude>
-                                <exclude>WEB-INF/**/dispatcher.xml</exclude>
-                                <exclude>WEB-INF/**/spi-impl-dao_tasks.xm</exclude>
                             </excludes>
                         </overlay>
                     </overlays>
@@ -802,7 +799,6 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.helgoland</groupId>
           <artifactId>helgoland-io</artifactId>
-          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -841,7 +837,6 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.helgoland</groupId>
           <artifactId>helgoland-rest</artifactId>
-          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -876,7 +871,6 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.helgoland</groupId>
          <artifactId>helgoland-spi</artifactId>
-          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -916,7 +910,6 @@
         <dependency>
           <groupId>org.n52.sensorweb-server.dao-impl</groupId>
           <artifactId>dao-impl-dao</artifactId>
-          <scope>runtime</scope>
           <exclusions>
             <exclusion>
               <groupId>org.geotools</groupId>
@@ -966,6 +959,20 @@
               <artifactId>gt-metadata</artifactId>
             </exclusion>
           </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>

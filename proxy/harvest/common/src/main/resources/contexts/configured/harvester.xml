@@ -15,7 +15,7 @@
         <bean id="insertionRepository" class="org.n52.sos.proxy.da.InsertionRepository" />
 
         <bean id="harvesterJobFactory" class="org.n52.sos.proxy.harvest.DataSourceHarvesterJobFactory"/>
-        <bean id="dataSourceHarvesterScheduler" class="org.n52.sos.proxy.harvest.DataSourceHarvesterScheduler"" init-method="init" destroy-method="shutdown">
+        <bean id="dataSourceHarvesterScheduler" class="org.n52.sos.proxy.harvest.DataSourceHarvesterScheduler" init-method="init" destroy-method="shutdown">
             <property name="scheduler">
                 <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
                     <property name="jobFactory">

@@ -1,12 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:ctx="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
     <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
 
     <bean id="sessionFactoryProvider" class="org.n52.sos.ds.hibernate.SessionFactoryProvider" scope="singleton" />
 
+    <bean id="hibernateConfig" class="org.n52.sos.ds.hibernate.HibernateConfig"/>
+
     <bean id="sessionStore" class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
 
+    <bean id="txManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+        depends-on="sessionFactoryProvider">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <tx:annotation-driven proxy-target-class="true" transaction-manager="txManager" />
+
+    <!-- #################################### AOP CONFIGURATION ######################################### -->
+
+    <!-- http://docs.spring.io/autorepo/docs/spring/4.2.x/spring-framework-reference/html/transaction.html#transaction-declarative -->
+
+    <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="searchFor" read-only="true" />
+            <!--<tx:method name="*" />-->
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- ensure that the above transactional advices run for any execution of an operation defined by the DAO interfaces -->
+    <aop:config>
+        <aop:pointcut id="serviceOperation" expression="execution(* org.n52.series.db.da.dao.v1.*Dao.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+    </aop:config>
+
+    <!-- ############################################################################################### -->
+    <beans profile="sampling">
+        <jpa:repositories base-package="org.n52.series.db.repositories.sampling" />
+    </beans>
 </beans>

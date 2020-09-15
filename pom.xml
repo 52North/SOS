@@ -2185,8 +2185,8 @@
         <profile>
             <id>debug</id>
             <properties>
-                <config.logger.level.main.global>ERROR</config.logger.level.main.global>
-                <config.logger.level.main.n52>ERROR</config.logger.level.main.n52>
+                <config.logger.level.main.global>DEBUG</config.logger.level.main.global>
+                <config.logger.level.main.n52>DEBUG</config.logger.level.main.n52>
                 <config.logger.level>TRACE</config.logger.level>
             </properties>
         </profile>

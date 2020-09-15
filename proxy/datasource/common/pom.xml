@@ -8,12 +8,29 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-proxy-datasource-common</artifactId>
     <packaging>jar</packaging>
-    <name>52°North SOS - Proxy Common Datasource</name>
-    <description>52°North Sensor Observation Service Proxy common datasource module</description>
+    <name>52°North SOS - Proxy Datasource Common</name>
+    <description>52°North Sensor Observation Service Proxy datasource common module</description>
     <dependencies>
-         <dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-hibernate-session-factory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-hibernate-datasource-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sos-hibernate-datasource-h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava
+            </artifactId>
         </dependency>
     </dependencies>
 </project>

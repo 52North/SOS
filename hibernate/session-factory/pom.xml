@@ -56,6 +56,10 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
         <!-- Hibernate Core Dependencies -->
         <dependency>
             <groupId>org.hibernate</groupId>

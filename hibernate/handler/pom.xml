@@ -66,10 +66,6 @@
         </dependency>
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
-            <artifactId>faroe-utils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.arctic-sea</groupId>
             <artifactId>shetland</artifactId>
             <exclusions>
                 <exclusion>
@@ -81,20 +77,6 @@
         <dependency>
             <groupId>org.n52.arctic-sea</groupId>
             <artifactId>janmayen</artifactId>
-        </dependency>
-        <!-- 
-        <dependency>
-            <groupId>org.n52.sensorweb-server.helgoland</groupId>
-            <artifactId>proxy-dao</artifactId>
-        </dependency>
-         -->
-        <dependency>
-            <groupId>org.n52.sensorweb-server.helgoland</groupId>
-            <artifactId>helgoland-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>

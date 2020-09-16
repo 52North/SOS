@@ -200,4 +200,10 @@ public class MockDatasource implements Datasource {
         return null;
     }
 
+    @Override
+    public Set<String> getSpringProfiles() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

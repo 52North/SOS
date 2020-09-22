@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.hibernate.boot.Metadata;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
@@ -47,6 +48,7 @@ import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
 import org.n52.hibernate.spatial.dialect.h2geodb.TimestampWithTimeZoneGeoDBDialect;
 import org.n52.iceland.ds.DatasourceCallback;
+import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import geodb.GeoDB;
 
@@ -139,6 +141,12 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
         } catch (SQLException ex) {
             throw new ConfigurationError("Could not init GeoDB", ex);
         }
+    }
+
+    @Override
+    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
+        settings.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
+        settings.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
     }
 
     public static int find(String[] array, Pattern pattern) {

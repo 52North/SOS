@@ -119,6 +119,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CURRENT_SESSION_CONTEXT, HibernateConstants.THREAD_LOCAL_SESSION_CONTEXT);
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
+        p.put(SPRING_PROFILE_KEY,  String.join(",", getSpringProfiles()));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -177,10 +178,6 @@ public class H2FileDatasource extends AbstractH2Datasource {
             close(conn);
             close(stmt);
         }
-    }
-
-    @Override
-    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override

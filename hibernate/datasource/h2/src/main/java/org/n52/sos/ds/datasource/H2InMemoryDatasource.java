@@ -83,6 +83,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.HBM2DDL_AUTO, HibernateConstants.HBM2DDL_CREATE);
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
+        p.put(SPRING_PROFILE_KEY,  String.join(",", getSpringProfiles()));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -99,10 +100,6 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         return settings;
-    }
-
-    @Override
-    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
     }
 
     @Override

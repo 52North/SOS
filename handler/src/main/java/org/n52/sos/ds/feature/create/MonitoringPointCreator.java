@@ -26,15 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.feature.create;
 
-import org.n52.janmayen.component.ComponentFactory;
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.series.wml.WmlMonitoringPoint;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-/**
- *
- * @author Christian Autermann
- */
-public interface AdditionalObservationCreatorFactory
-        extends ComponentFactory<AdditionalObservationCreatorKey, AdditionalObservationCreator> {
+public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<MonitoringPointEntity> {
+
+    public MonitoringPointCreator(FeatureVisitorContext context) {
+        super(context);
+    }
+
+    @Override
+    public AbstractFeature create(MonitoringPointEntity f)
+            throws OwsExceptionReport {
+        AbstractFeature absFeat = createFeature(f);
+        if (absFeat instanceof WmlMonitoringPoint) {
+            WmlMonitoringPoint mp = (WmlMonitoringPoint) absFeat;
+            addMonitoringFeatureData(mp, f);
+        }
+        return absFeat;
+    }
+
+    @Override
+    public Geometry createGeometry(MonitoringPointEntity f) throws OwsExceptionReport {
+        return createGeometryFrom(f);
+    }
+
+    @Override
+    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
+        return new WmlMonitoringPoint(identifier);
+    }
 
 }

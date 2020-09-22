@@ -26,34 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.feature.create;
 
-import org.hibernate.Session;
-import org.n52.janmayen.component.Component;
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.DatasetEntity;
-import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.locationtech.jts.geom.Geometry;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
+public interface FeatureCreator<T extends FeatureEntity> {
 
-    OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException;
+    AbstractFeature create(T f)
+            throws OwsExceptionReport;
 
-    OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
-            throws CodedException;
-
-    default OmObservation create(OmObservation omObservation, DatasetEntity series) throws CodedException {
-        return omObservation;
-    }
-
-    default OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException {
-        return omObservation;
-    }
-
-    OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
-
-    default OmObservation add(OmObservation sosObservation, DataEntity<?> observation) throws CodedException {
-        return sosObservation;
-    }
-
+    Geometry createGeometry(T f) throws OwsExceptionReport;
 }

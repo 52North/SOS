@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.feature.create;
 
 import java.net.URI;
 

@@ -26,31 +26,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util;
+package org.n52.sos.ds.observation;
 
-import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.util.observation.ParameterVisitor;
+import org.hibernate.Session;
+import org.n52.janmayen.component.Component;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 
-public class FeatureParameterAdder {
+public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
 
-    private ParameterVisitor visitor = new ParameterVisitor();
-    private AbstractSamplingFeature abstractSamplingFeature;
-    private FeatureEntity feature;
+    OmObservation create(OmObservation omObservation, DatasetEntity series, Session session) throws CodedException;
 
-    public FeatureParameterAdder(AbstractSamplingFeature abstractSamplingFeature, FeatureEntity feature) {
-        this.abstractSamplingFeature = abstractSamplingFeature;
-        this.feature = feature;
+    OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
+            throws CodedException;
+
+    default OmObservation create(OmObservation omObservation, DatasetEntity series) throws CodedException {
+        return omObservation;
     }
 
-    public void add() throws OwsExceptionReport {
-        if (feature.hasParameters()) {
-            for (ParameterEntity parameter : feature.getParameters()) {
-                abstractSamplingFeature.addParameter(visitor.visit(parameter));
-            }
-        }
+    default OmObservation create(OmObservation omObservation, DataEntity<?> observation) throws CodedException {
+        return omObservation;
+    }
+
+    OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session) throws CodedException;
+
+    default OmObservation add(OmObservation sosObservation, DataEntity<?> observation) throws CodedException {
+        return sosObservation;
     }
 
 }

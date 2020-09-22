@@ -26,30 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.feature;
 
-import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
-public class ParameterAdder {
+public interface FeatureVisitor<T extends AbstractFeature> {
 
-    private ParameterVisitor visitor = new ParameterVisitor();
-    private OmObservation observation;
-    private DataEntity<?> hObservation;
-
-    public ParameterAdder(OmObservation observation, DataEntity hObservation) {
-        this.observation = observation;
-        this.hObservation = hObservation;
-    }
-
-    public void add() throws OwsExceptionReport {
-        if (hObservation.hasParameters()) {
-            for (ParameterEntity parameter : hObservation.getParameters()) {
-                observation.addParameter(visitor.visit(parameter));
-            }
+    default T visit(AbstractFeatureEntity<?> f) throws OwsExceptionReport {
+        if (f instanceof SpecimenEntity) {
+            return visit((SpecimenEntity) f);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            return visit((EnvironmentalMonitoringFacilityEntity) f);
+        } else if (f instanceof MonitoringPointEntity) {
+            return visit((MonitoringPointEntity) f);
+        } else if (f instanceof FeatureEntity) {
+            return visit((FeatureEntity) f);
         }
+        return null;
     }
 
+    T visit(FeatureEntity f) throws OwsExceptionReport;
+
+    T visit(SpecimenEntity f) throws OwsExceptionReport;
+
+    T visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport;
+
+    T visit(MonitoringPointEntity f) throws OwsExceptionReport;
 }

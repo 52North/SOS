@@ -26,35 +26,48 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.feature.create;
 
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.series.db.beans.feature.SpecimenEntity;
+import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
+import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.feature.GeometryVisitor;
 
-public class FeatureOfInterestCreator extends AbstractFeatureOfInerestCreator<FeatureEntity> {
+public class GeometryVisitorImpl
+        implements GeometryVisitor {
 
-    public FeatureOfInterestCreator(FeatureVisitorContext context) {
-        super(context);
+    private FeatureVisitorContext context;
+
+    public GeometryVisitorImpl(FeatureVisitorContext context) {
+        this.context = context;
+    }
+
+    public Geometry visit(FeatureEntity f) throws OwsExceptionReport {
+        if (f instanceof SpecimenEntity) {
+            return visit((SpecimenEntity) f);
+        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
+            return visit((EnvironmentalMonitoringFacilityEntity) f);
+        }
+        return new FeatureOfInterestCreator(context).createGeometry(f);
+    }
+
+    public Geometry visit(SpecimenEntity f) throws OwsExceptionReport {
+        return new SpecimenCreator(context).createGeometry(f);
+    }
+
+    public Geometry visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport {
+        return new EnvironmentalMonitoringFacilityCreator(context)
+                .createGeometry(f);
     }
 
     @Override
-    public AbstractFeature create(FeatureEntity f)
+    public Geometry visit(MonitoringPointEntity f)
             throws OwsExceptionReport {
-        return createFeature(f);
-    }
-
-    @Override
-    public Geometry createGeometry(FeatureEntity feature) throws OwsExceptionReport {
-        return createGeometryFrom(feature);
-    }
-
-    @Override
-    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
-        return new SamplingFeature(identifier);
+        return new MonitoringPointCreator(context)
+                .createGeometry(f);
     }
 
 }

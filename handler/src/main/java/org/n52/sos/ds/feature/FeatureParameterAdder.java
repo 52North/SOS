@@ -26,40 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.feature;
 
-import org.locationtech.jts.geom.Geometry;
-import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.om.series.wml.WmlMonitoringPoint;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.observation.ParameterVisitor;
 
-public class MonitoringPointCreator extends AbstractMonitoringFeatureCreator<MonitoringPointEntity> {
+public class FeatureParameterAdder {
 
-    public MonitoringPointCreator(FeatureVisitorContext context) {
-        super(context);
+    private ParameterVisitor visitor = new ParameterVisitor();
+    private AbstractSamplingFeature abstractSamplingFeature;
+    private FeatureEntity feature;
+
+    public FeatureParameterAdder(AbstractSamplingFeature abstractSamplingFeature, FeatureEntity feature) {
+        this.abstractSamplingFeature = abstractSamplingFeature;
+        this.feature = feature;
     }
 
-    @Override
-    public AbstractFeature create(MonitoringPointEntity f)
-            throws OwsExceptionReport {
-        AbstractFeature absFeat = createFeature(f);
-        if (absFeat instanceof WmlMonitoringPoint) {
-            WmlMonitoringPoint mp = (WmlMonitoringPoint) absFeat;
-            addMonitoringFeatureData(mp, f);
+    public void add() throws OwsExceptionReport {
+        if (feature.hasParameters()) {
+            for (ParameterEntity parameter : feature.getParameters()) {
+                abstractSamplingFeature.addParameter(visitor.visit(parameter));
+            }
         }
-        return absFeat;
-    }
-
-    @Override
-    public Geometry createGeometry(MonitoringPointEntity f) throws OwsExceptionReport {
-        return createGeometryFrom(f);
-    }
-
-    @Override
-    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
-        return new WmlMonitoringPoint(identifier);
     }
 
 }

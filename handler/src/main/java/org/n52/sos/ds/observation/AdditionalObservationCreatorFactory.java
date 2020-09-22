@@ -26,17 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.observation;
 
-import org.locationtech.jts.geom.Geometry;
-import org.n52.series.db.beans.FeatureEntity;
-import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.component.ComponentFactory;
 
-public interface FeatureCreator<T extends FeatureEntity> {
+/**
+ *
+ * @author Christian Autermann
+ */
+public interface AdditionalObservationCreatorFactory
+        extends ComponentFactory<AdditionalObservationCreatorKey, AdditionalObservationCreator> {
 
-    AbstractFeature create(T f)
-            throws OwsExceptionReport;
-
-    Geometry createGeometry(T f) throws OwsExceptionReport;
 }

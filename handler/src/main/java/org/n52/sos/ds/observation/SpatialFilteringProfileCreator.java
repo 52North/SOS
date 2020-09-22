@@ -26,36 +26,37 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ds.observation;
 
 import org.locationtech.jts.geom.Geometry;
-import org.n52.series.db.beans.AbstractFeatureEntity;
-import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.feature.SpecimenEntity;
-import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
-import org.n52.series.db.beans.feature.wml.MonitoringPointEntity;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.util.GeometryHandler;
 
-public interface GeometryVisitor {
+public class SpatialFilteringProfileCreator {
 
-    default Geometry visit(AbstractFeatureEntity<?> f) throws OwsExceptionReport {
-        if (f instanceof SpecimenEntity) {
-            return visit((SpecimenEntity) f);
-        } else if (f instanceof EnvironmentalMonitoringFacilityEntity) {
-            return visit((EnvironmentalMonitoringFacilityEntity) f);
-        } else if (f instanceof MonitoringPointEntity) {
-            return visit((MonitoringPointEntity) f);
-        } else if (f instanceof FeatureEntity) {
-            return visit((FeatureEntity) f);
-        }
-        return null;
+    private final GeometryHandler geometryHandler;
+
+    public SpatialFilteringProfileCreator(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
     }
 
-    Geometry visit(FeatureEntity f) throws OwsExceptionReport;
+    public NamedValue<?> create(Geometry samplingGeometry) throws OwsExceptionReport {
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
+        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
+        namedValue.setName(referenceType);
+        // TODO add lat/long version
+        Geometry geometry = samplingGeometry;
+        namedValue.setValue(
+                new GeometryValue(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
+        return namedValue;
+    }
 
-    Geometry visit(SpecimenEntity f) throws OwsExceptionReport;
+    private GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
 
-    Geometry visit(EnvironmentalMonitoringFacilityEntity f) throws OwsExceptionReport;
-
-    Geometry visit(MonitoringPointEntity f) throws OwsExceptionReport;
 }

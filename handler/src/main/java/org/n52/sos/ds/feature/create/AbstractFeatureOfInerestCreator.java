@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.feature.create;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.DatabaseQueryHelper;
-import org.n52.sos.ds.hibernate.util.FeatureParameterAdder;
+import org.n52.sos.ds.feature.FeatureParameterAdder;
 import org.n52.sos.util.SosHelper;
 
 public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> extends AbstractFeatureCreator<T>
@@ -70,7 +70,7 @@ public abstract class AbstractFeatureOfInerestCreator<T extends FeatureEntity> e
             if (parentFeatures != null && !parentFeatures.isEmpty()) {
                 final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
                 for (final AbstractFeatureEntity parentFeature : parentFeatures) {
-                    sampledFeatures.add(new HibernateFeatureVisitor(getContext()).visit(parentFeature));
+                    sampledFeatures.add(new FeatureVisitorImpl(getContext()).visit(parentFeature));
                 }
                 absSampFeat.setSampledFeatures(sampledFeatures);
             }

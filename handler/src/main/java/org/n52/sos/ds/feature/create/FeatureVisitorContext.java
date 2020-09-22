@@ -26,15 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.feature.create;
 
 import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.SosHelper;
 
 public class FeatureVisitorContext {
     private Session session;
@@ -45,7 +45,7 @@ public class FeatureVisitorContext {
 
     private GeometryHandler geometryHandler;
 
-    private DaoFactory daoFactory;
+    private SosHelper sosHelper;
 
     private Locale defaultLanguage;
 
@@ -134,8 +134,8 @@ public class FeatureVisitorContext {
     /**
      * @return the daoFactory
      */
-    public DaoFactory getDaoFactory() {
-        return daoFactory;
+    public SosHelper getSosHelper() {
+        return sosHelper;
     }
 
     /**
@@ -143,8 +143,8 @@ public class FeatureVisitorContext {
      *            the daoFactory to set
      * @return This {@link FeatureVisitorContext}
      */
-    public FeatureVisitorContext setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    public FeatureVisitorContext setSosHelper(SosHelper sosHelper) {
+        this.sosHelper = sosHelper;
         return this;
     }
 
@@ -270,7 +270,7 @@ public class FeatureVisitorContext {
     }
 
     public String getServiceURL() {
-        return getDaoFactory().getServiceURL();
+        return getSosHelper().getServiceURL();
     }
 
 }

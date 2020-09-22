@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.create;
+package org.n52.sos.ds.feature.create;
 
 import java.net.URI;
 import java.util.Map;
@@ -36,6 +36,7 @@ import java.util.Set;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.IdentifierNameDescriptionEntity;
 import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
 import org.n52.series.db.beans.feature.inspire.MediaMonitored;
 import org.n52.shetland.inspire.base.Identifier;
@@ -72,7 +73,7 @@ public class EnvironmentalMonitoringFacilityCreator
         // new SimpleAttrs().setHref(f.getUrl()));
         // }
         if (f != null) {
-            final CodeWithAuthority identifier = getContext().getDaoFactory().getFeatureDAO().getIdentifier(f);
+            final CodeWithAuthority identifier = getIdentifier(f);
             if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(f.getIdentifier(), getContext().getVersion())) {
                 identifier.setValue(null);
             }
@@ -202,5 +203,13 @@ public class EnvironmentalMonitoringFacilityCreator
     private String addParameter(String url, String parameter, Set<String> offerings) {
         return new StringBuilder(url).append('&').append(parameter).append('=').append(Joiner.on(',').join(offerings))
                 .toString();
+    }
+
+    private CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {
+        CodeWithAuthority identifier = new CodeWithAuthority(entity.getIdentifier());
+        if (entity.isSetIdentifierCodespace()) {
+            identifier.setCodeSpace(entity.getIdentifierCodespace().getName());
+        }
+        return identifier;
     }
 }

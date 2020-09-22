@@ -26,37 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.feature.create;
 
 import org.locationtech.jts.geom.Geometry;
-import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.om.OmConstants;
-import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.util.GeometryHandler;
 
-public class SpatialFilteringProfileCreator {
+public class FeatureOfInterestCreator extends AbstractFeatureOfInerestCreator<FeatureEntity> {
 
-    private final GeometryHandler geometryHandler;
-
-    public SpatialFilteringProfileCreator(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
+    public FeatureOfInterestCreator(FeatureVisitorContext context) {
+        super(context);
     }
 
-    public NamedValue<?> create(Geometry samplingGeometry) throws OwsExceptionReport {
-        final NamedValue<Geometry> namedValue = new NamedValue<>();
-        final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
-        namedValue.setName(referenceType);
-        // TODO add lat/long version
-        Geometry geometry = samplingGeometry;
-        namedValue.setValue(
-                new GeometryValue(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
-        return namedValue;
+    @Override
+    public AbstractFeature create(FeatureEntity f)
+            throws OwsExceptionReport {
+        return createFeature(f);
     }
 
-    private GeometryHandler getGeometryHandler() {
-        return geometryHandler;
+    @Override
+    public Geometry createGeometry(FeatureEntity feature) throws OwsExceptionReport {
+        return createGeometryFrom(feature);
+    }
+
+    @Override
+    protected AbstractFeature createFeature(CodeWithAuthority identifier) {
+        return new SamplingFeature(identifier);
     }
 
 }

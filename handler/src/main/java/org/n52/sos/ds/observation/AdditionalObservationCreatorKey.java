@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.observation;
 
 import org.n52.janmayen.ClassHelper;
 import org.n52.janmayen.similar.Similar;

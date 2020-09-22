@@ -934,6 +934,32 @@
           </exclusions>
          </dependency>
          <dependency>
+          <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+          <artifactId>dao-impl-repo</artifactId>
+          <exclusions>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-main</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-epsg-hsql</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-opengis</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.geotools</groupId>
+              <artifactId>gt-metadata</artifactId>
+            </exclusion>
+          </exclusions>
+         </dependency>
+         <dependency>
           <groupId>org.n52.sensorweb-server.db-model</groupId>
           <artifactId>db-model-entities</artifactId>
           <scope>runtime</scope>

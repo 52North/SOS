@@ -107,6 +107,7 @@ This project includes:
   Apache Log4j API under Apache License, Version 2.0
   Apache Thrift under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
+  AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ tools under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
@@ -137,6 +138,7 @@ This project includes:
   EXIficient-Core under MIT License
   EXIficient-Grammars under MIT License
   Extended StAX API under Dual license consisting of the CDDL v1.1 and GPL v2
+  Failsafe under Apache License, Version 2.0
   fastinfoset under Apache License, Version 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under MIT license, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
@@ -338,6 +340,8 @@ This project includes:
   Spring Context under Apache License, Version 2.0
   Spring Context Support under Apache License, Version 2.0
   Spring Core under Apache License, Version 2.0
+  Spring Data Core under Apache License, Version 2.0
+  Spring Data JPA under Apache License, Version 2.0
   Spring Expression Language (SpEL) under Apache License, Version 2.0
   Spring JDBC under Apache License, Version 2.0
   Spring Object/Relational Mapping under Apache License, Version 2.0
@@ -345,6 +349,8 @@ This project includes:
   Spring Transaction under Apache License, Version 2.0
   Spring Web under Apache License, Version 2.0
   Spring Web MVC under Apache License, Version 2.0
+  spring-boot under Apache License, Version 2.0
+  spring-boot-autoconfigure under Apache License, Version 2.0
   spring-security-acl under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0

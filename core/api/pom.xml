@@ -132,11 +132,18 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>tech.units</groupId>
+            <artifactId>indriya</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>si.uom</groupId>
+            <artifactId>si-quantity</artifactId>
+        </dependency>
+        <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>java3d</groupId>
             <artifactId>vecmath</artifactId>

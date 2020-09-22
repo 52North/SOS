@@ -132,7 +132,7 @@ public class FeatureVisitorContext {
     }
 
     /**
-     * @return the daoFactory
+     * @return the sosHelper
      */
     public SosHelper getSosHelper() {
         return sosHelper;
@@ -140,7 +140,7 @@ public class FeatureVisitorContext {
 
     /**
      * @param daoFactory
-     *            the daoFactory to set
+     *            the sosHelper to set
      * @return This {@link FeatureVisitorContext}
      */
     public FeatureVisitorContext setSosHelper(SosHelper sosHelper) {

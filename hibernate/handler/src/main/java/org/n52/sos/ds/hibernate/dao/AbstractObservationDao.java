@@ -172,7 +172,9 @@ public abstract class AbstractObservationDao implements HibernateDao {
     public void checkMaxNumberOfReturnedTimeSeries(Collection<? extends DataEntity<?>> seriesObservations,
             int metadataObservationsCount) throws CodedException {
         if (getMaxNumberOfReturnedTimeSeries() > 0) {
-            Set<Long> seriesIds = seriesObservations.stream().map(DataEntity::getDataset).map(DatasetEntity::getId)
+            Set<Long> seriesIds = seriesObservations.stream()
+                    .map(DataEntity::getDataset)
+                    .map(DatasetEntity::getId)
                     .collect(Collectors.toSet());
             checkMaxNumberOfReturnedSeriesSize(seriesIds.size() + metadataObservationsCount);
         }
@@ -245,8 +247,8 @@ public abstract class AbstractObservationDao implements HibernateDao {
     }
 
     public OmObservation toSosObservation(DataEntity<?> observation, AbstractObservationRequest request,
-            Locale language, String pdf, HibernateOmObservationCreatorContext observationCreatorContext, Session session)
-            throws OwsExceptionReport, ConverterException {
+            Locale language, String pdf, HibernateOmObservationCreatorContext observationCreatorContext,
+            Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(
@@ -276,8 +278,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
             BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) resultFilter;
             Junction junction;
             if (null == binaryLogicFilter.getOperator()) {
-                throw new NoApplicableCodeException()
-                        .withMessage(LOG_BINARY_LOGIC_INVALID);
+                throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);
             }
             switch (binaryLogicFilter.getOperator()) {
                 case And:
@@ -287,8 +288,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
                     junction = Restrictions.disjunction();
                     break;
                 default:
-                    throw new NoApplicableCodeException()
-                        .withMessage(LOG_BINARY_LOGIC_INVALID);
+                    throw new NoApplicableCodeException().withMessage(LOG_BINARY_LOGIC_INVALID);
             }
             for (Filter<?> filterPredicate : binaryLogicFilter.getFilterPredicates()) {
                 if (!(filterPredicate instanceof ComparisonFilter)) {
@@ -326,7 +326,9 @@ public abstract class AbstractObservationDao implements HibernateDao {
         } else {
             throw new NoApplicableCodeException().withMessage(
                     "The requested comparison filter {} is not supported! Only {} is supported!",
-                    resultFilter.getOperator().name(), FilterConstants.ComparisonOperator.PropertyIsLike.name());
+                    resultFilter.getOperator()
+                            .name(),
+                    FilterConstants.ComparisonOperator.PropertyIsLike.name());
         }
     }
 
@@ -342,13 +344,16 @@ public abstract class AbstractObservationDao implements HibernateDao {
      */
     public String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
         String value = resultFilter.getValue();
-        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals("%")) {
+        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar()
+                .equals("%")) {
             value = value.replace(resultFilter.getSingleChar(), "_");
         }
-        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard().equals("_")) {
+        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard()
+                .equals("_")) {
             value = value.replace(resultFilter.getWildCard(), "_");
         }
-        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString().equals("$")) {
+        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString()
+                .equals("$")) {
             value = value.replace(resultFilter.getWildCard(), "_");
         }
         return value;
@@ -390,7 +395,8 @@ public abstract class AbstractObservationDao implements HibernateDao {
      */
     public List<DatasetEntity> getObservationConstellations(final Session session, final GetObservationRequest request,
             DaoFactory daoFactory) throws OwsExceptionReport {
-        return daoFactory.getSeriesDAO().getSeries(request, request.getFeatureIdentifiers(), session);
+        return daoFactory.getSeriesDAO()
+                .getSeries(request, request.getFeatureIdentifiers(), session);
     }
 
     /**

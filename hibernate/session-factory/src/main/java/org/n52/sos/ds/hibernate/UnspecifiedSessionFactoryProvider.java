@@ -83,11 +83,11 @@ public abstract class UnspecifiedSessionFactoryProvider
         return configuration;
     }
 
+    protected abstract Configuration getConfiguration(Properties properties);
+
     protected ServiceRegistry getServiceRegistry() {
         return serviceRegistry;
     }
-
-    protected abstract Configuration getConfiguration(Properties properties);
 
     @Override
     protected SessionFactory getSessionFactory() {

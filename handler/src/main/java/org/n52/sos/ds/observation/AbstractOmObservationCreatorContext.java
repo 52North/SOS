@@ -154,6 +154,7 @@ public abstract class AbstractOmObservationCreatorContext {
     public String getDecimalSeparator() {
         return decimalSeparator;
     }
+
     /**
      * @return the profileHandler
      */

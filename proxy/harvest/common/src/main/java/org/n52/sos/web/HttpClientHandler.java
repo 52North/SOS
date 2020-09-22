@@ -81,13 +81,19 @@ import net.jodah.failsafe.RetryPolicy;
 public class HttpClientHandler implements Constructable, Destroyable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientHandler.class);
-    private static final RetryPolicy<HttpResponse> RETRY_POLICY = new RetryPolicy<HttpResponse>()
-            .withDelay(10, 900, ChronoUnit.SECONDS)
-            .handle(ConnectException.class);
+
+    private static final RetryPolicy<HttpResponse> RETRY_POLICY =
+            new RetryPolicy<HttpResponse>().withDelay(10, 900, ChronoUnit.SECONDS)
+                    .handle(ConnectException.class);
+
     private CacheConfig cacheConfig;
+
     private RequestConfig requestConfig;
+
     private PoolingHttpClientConnectionManager cm;
+
     private CloseableHttpClient client;
+
     private DatabaseSettingsHandler databaseSettingsHandler;
 
     @Inject
@@ -103,18 +109,20 @@ public class HttpClientHandler implements Constructable, Destroyable {
         } else if (request instanceof AbstractDeleteRequest) {
             return doDelete(url, (AbstractDeleteRequest) request);
         }
-        throw new NoApplicableCodeException().withMessage("The request type '%s' is unknown!", request.getClass().getTypeName());
+        throw new NoApplicableCodeException().withMessage("The request type '%s' is unknown!", request.getClass()
+                .getTypeName());
     }
 
     protected Response doGet(URI url, AbstractGetRequest request) throws OwsExceptionReport {
         try {
             HttpGet httpGet = new HttpGet(getGetUrl(url, request.getPath(), request.getQueryParameters()));
             if (request.hasHeader()) {
-                for (Entry<String, String> entry : request.getHeader().entrySet()) {
+                for (Entry<String, String> entry : request.getHeader()
+                        .entrySet()) {
                     httpGet.addHeader(entry.getKey(), entry.getValue());
                 }
             }
-            LOGGER.debug("Request: {}", getGetUrl(url, request.getPath(), request.getQueryParameters()));
+            logRequest(getGetUrl(url, request.getPath(), request.getQueryParameters()));
             return getContent(executeHttpRequest(httpGet));
         } catch (URISyntaxException | IOException e) {
             throw new NoApplicableCodeException().causedBy(e);
@@ -130,7 +138,7 @@ public class HttpClientHandler implements Constructable, Destroyable {
                     httpGet.addHeader(entry.getKey(), entry.getValue());
                 }
             }
-            LOGGER.debug("Request: {}", getGetUrl(url, path, parameter));
+            logRequest(getGetUrl(url, path, parameter));
             return getContent(executeHttpRequest(httpGet));
         } catch (URISyntaxException | IOException e) {
             throw new NoApplicableCodeException().causedBy(e);
@@ -141,28 +149,15 @@ public class HttpClientHandler implements Constructable, Destroyable {
         try {
             HttpPost httpPost = new HttpPost(getPathUrl(url, request.getPath()));
             if (request.hasHeader()) {
-                for (Entry<String, String> entry : request.getHeader().entrySet()) {
+                for (Entry<String, String> entry : request.getHeader()
+                        .entrySet()) {
                     httpPost.addHeader(entry.getKey(), entry.getValue());
                 }
             }
             String content = request.getContent();
-            LOGGER.debug("SOS request: {}", content);
+            logRequest(content);
             httpPost.setEntity(new StringEntity(content));
-            int counter = 4;
-            CloseableHttpResponse response = null;
-            do {
-                try {
-                    response = client.execute(httpPost);
-                } catch (IOException e) {
-                    if (counter == 0) {
-                        throw new NoApplicableCodeException().causedBy(e);
-                    } else {
-                        LOGGER.info("Error while querying data '{}'. {} retries before throwing exception", e, counter);
-                    }
-                    counter--;
-                }
-            } while (response == null && counter >= 0);
-            return getContent(response);
+            return getContent(executeHttpRequest(httpPost));
         } catch (IOException | URISyntaxException e) {
             throw new NoApplicableCodeException().causedBy(e);
         }
@@ -173,23 +168,8 @@ public class HttpClientHandler implements Constructable, Destroyable {
             HttpPost httpPost = new HttpPost(url);
             httpPost.addHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
             LOGGER.debug("SOS request: {}", content);
-            httpPost.setEntity(
-                    new StringEntity(content));
-            int counter = 4;
-            CloseableHttpResponse response = null;
-            do {
-                try {
-                    response = executeHttpRequest(httpPost);
-                } catch (IOException e) {
-                    if (counter == 0) {
-                        throw new NoApplicableCodeException().causedBy(e);
-                    } else {
-                        LOGGER.info("Error while querying data '{}'. {} retries before throwing exception", e, counter);
-                    }
-                    counter--;
-                }
-            } while (response == null && counter >= 0);
-            return getContent(response);
+            httpPost.setEntity(new StringEntity(content));
+            return getContent(executeHttpRequest(httpPost));
         } catch (IOException e) {
             throw new NoApplicableCodeException().causedBy(e);
         }
@@ -198,7 +178,7 @@ public class HttpClientHandler implements Constructable, Destroyable {
     protected Response doDelete(URI url, AbstractDeleteRequest request) throws CodedException {
         try {
             HttpDelete httpDelete = new HttpDelete(getPathUrl(url, request.getPath()));
-            LOGGER.debug("Request: {}", getPathUrl(url, request.getPath()));
+            logRequest(getPathUrl(url, request.getPath()));
             return getContent(executeHttpRequest(httpDelete));
         } catch (URISyntaxException | IOException e) {
             throw new NoApplicableCodeException().causedBy(e);
@@ -206,16 +186,24 @@ public class HttpClientHandler implements Constructable, Destroyable {
     }
 
     private CloseableHttpResponse executeHttpRequest(HttpRequestBase request) throws IOException {
-        return Failsafe.with(RETRY_POLICY)
-                .onFailure(ex -> LOGGER.warn("Could not connect to host; retrying", ex))
-                .get(() -> getClient().execute(request));
+        int counter = 4;
+        CloseableHttpResponse response = null;
+        do {
+            response = Failsafe.with(RETRY_POLICY)
+                    .onFailure(ex -> LOGGER.warn("Could not connect to host; retrying", ex))
+                    .get(() -> getClient().execute(request));
+        } while (response == null && counter >= 0);
+        return response;
     }
 
     private Response getContent(CloseableHttpResponse response) throws IOException {
         try {
-            LOGGER.trace(cm.getTotalStats().toString());
-            return new Response(response.getStatusLine().getStatusCode(),
-                    response.getEntity() != null ? EntityUtils.toString(response.getEntity(), "UTF-8") : null);
+            LOGGER.trace(cm.getTotalStats()
+                    .toString());
+            return response != null ? new Response(response.getStatusLine()
+                    .getStatusCode(),
+                    response.getEntity() != null ? EntityUtils.toString(response.getEntity(), "UTF-8") : null)
+                    : new Response(200, null);
         } finally {
             if (response != null) {
                 response.close();
@@ -249,12 +237,21 @@ public class HttpClientHandler implements Constructable, Destroyable {
 
     private HttpHost getHost() {
         Properties properties = this.databaseSettingsHandler.getAll();
-        String host = properties.getProperty(AbstractProxyDatasource.PROXY_HOST_KEY, AbstractProxyDatasource.PROXY_HOST_DEFAULT_VALUE);
+        String host = properties.getProperty(AbstractProxyDatasource.PROXY_HOST_KEY,
+                AbstractProxyDatasource.PROXY_HOST_DEFAULT_VALUE);
         return new HttpHost(host, 80);
     }
 
     private CloseableHttpClient getClient() {
         return client;
+    }
+
+    private void logRequest(URI request) {
+        logRequest(request.toString());
+    }
+
+    private void logRequest(String request) {
+        LOGGER.debug("Request: {}", request);
     }
 
     @Override

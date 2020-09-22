@@ -104,7 +104,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         ObservationStream resultList = HibernateObservationUtilities.createSosObservationFromObservationConstellation(
-                null, null, null, null, null, new HibernateOmObservationCreatorContext(null, null, null, null, null, null, null,
+                null, null, null, null, null, new HibernateOmObservationCreatorContext(null, null, null, null, null, null, null, null,
                         null, null, null, null, null, null),
                 null);
         assertThat("result is null", resultList, is(not(nullValue())));
@@ -232,8 +232,8 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             daoFactory.setSosHelper(sosHelper);
             // CALL
             HibernateOmObservationCreatorContext ctx = new HibernateOmObservationCreatorContext(null, null, daoFactory,
-                    new ProfileHanlderMock(), Mockito.mock(AdditionalObservationCreatorRepository.class), null,
-                    new FeatureQueryHandlerMock(), null, null, null, null, null,
+                    sosHelper, new ProfileHanlderMock(), Mockito.mock(AdditionalObservationCreatorRepository.class),
+                    null, new FeatureQueryHandlerMock(), null, null, null, null, null,
                     Mockito.mock(BindingRepository.class));
             ObservationStream resultList = HibernateObservationUtilities.createSosObservationsFromObservations(
                     observationsFromDataBase, request, Locale.ENGLISH, null, ctx, session);

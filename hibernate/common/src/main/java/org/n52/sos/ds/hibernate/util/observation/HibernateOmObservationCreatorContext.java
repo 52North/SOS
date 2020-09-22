@@ -44,6 +44,7 @@ import org.n52.sos.ds.observation.AbstractOmObservationCreatorContext;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.SosHelper;
 import org.n52.svalbard.decode.DecoderRepository;
 
 @Configurable
@@ -58,6 +59,7 @@ public class HibernateOmObservationCreatorContext extends AbstractOmObservationC
             OwsServiceMetadataRepository serviceMetadataRepository,
             I18NDAORepository i18nr,
             DaoFactory daoFactory,
+            SosHelper sosHelper,
             ProfileHandler profileHandler,
             AdditionalObservationCreatorRepository additionalObservationCreatorRepository,
             ContentCacheController contentCacheController,
@@ -68,7 +70,7 @@ public class HibernateOmObservationCreatorContext extends AbstractOmObservationC
             DecoderRepository decoderRepository,
             HibernateProcedureConverter procedureConverter,
             BindingRepository bindingRepository) {
-        super(serviceMetadataRepository, i18nr, profileHandler, daoFactory.getSosHelper(), additionalObservationCreatorRepository,
+        super(serviceMetadataRepository, i18nr, profileHandler, sosHelper, additionalObservationCreatorRepository,
                 contentCacheController, featureQueryHandler, converterRepository, geometryHandler, decoderRepository,
                 bindingRepository);
         this.daoFactory = daoFactory;

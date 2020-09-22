@@ -120,6 +120,7 @@ import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
+import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
@@ -329,7 +330,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GEOMETRY.setSRID(4326);
         SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
         holder.setConnectionProvider(this);
-        daoFactory.setSweHelper(new SweHelper());
+        SweHelper sweHelper = new SweHelper();
+        daoFactory.setSweHelper(sweHelper);
         SosHelper sosHelper = new SosHelper();
         sosHelper.setServiceURL(URI.create("http://test.org"));
         daoFactory.setSosHelper(sosHelper);
@@ -341,6 +343,14 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         featureQueryHandler.setI18NDAORepository(i18NDAORepository);
         featureQueryHandler.setGeometryHandler(geometryHandler);
         featureQueryHandler.setContentCacheController(contentCacheController);
+        ObservationHelper observationHelper = new ObservationHelper();
+        observationHelper.setBindingRepository(bindingRepository);
+        observationHelper.setDecoderRepository(decoderRepository);
+        observationHelper.setGeometryHandler(geometryHandler);
+        observationHelper.setSosHelper(sosHelper);
+        observationHelper.setSweHelper(sweHelper);
+        observationHelper.init();
+        daoFactory.setObservationHelper(observationHelper);
         daoFactory.setFeatureQueryHandler(featureQueryHandler);
         daoFactory.setDecoderRepository(decoderRepository);
         daoFactory.setEncoderRepository(encoderRepository);
@@ -378,7 +388,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
                 contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class));
 
         observationCtx = new HibernateOmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository, daoFactory,
-                new ProfileHanlderMock(), additionalObservationCreatorRepository, contentCacheController,
+                sosHelper, new ProfileHanlderMock(), additionalObservationCreatorRepository, contentCacheController,
                 featureQueryHandler, converterRepository, factoryRepository, geometryHandler, decoderRepository, null,
                 bindingRepository);
         observationCtx.setDefaultLanguage("eng");

@@ -36,7 +36,6 @@ import java.util.Set;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.beans.IdentifierNameDescriptionEntity;
 import org.n52.series.db.beans.feature.inspire.EnvironmentalMonitoringFacilityEntity;
 import org.n52.series.db.beans.feature.inspire.MediaMonitored;
 import org.n52.shetland.inspire.base.Identifier;
@@ -205,11 +204,4 @@ public class EnvironmentalMonitoringFacilityCreator
                 .toString();
     }
 
-    private CodeWithAuthority getIdentifier(IdentifierNameDescriptionEntity entity) {
-        CodeWithAuthority identifier = new CodeWithAuthority(entity.getIdentifier());
-        if (entity.isSetIdentifierCodespace()) {
-            identifier.setCodeSpace(entity.getIdentifierCodespace().getName());
-        }
-        return identifier;
-    }
 }

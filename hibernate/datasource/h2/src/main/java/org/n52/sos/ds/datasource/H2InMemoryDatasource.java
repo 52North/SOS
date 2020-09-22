@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.hibernate.boot.Metadata;
 import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

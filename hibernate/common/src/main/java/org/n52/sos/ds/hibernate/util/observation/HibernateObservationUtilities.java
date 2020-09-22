@@ -159,8 +159,8 @@ public final class HibernateObservationUtilities {
     }
 
     public static ObservationStream createSosObservationFromEReportingSeries(DatasetEntity dataset,
-            AbstractObservationRequest r, Locale l, String pdf, HibernateOmObservationCreatorContext ctx, Session session)
-            throws OwsExceptionReport, ConverterException {
+            AbstractObservationRequest r, Locale l, String pdf, HibernateOmObservationCreatorContext ctx,
+            Session session) throws OwsExceptionReport, ConverterException {
         return new EReportingSeriesOmObservationCreator(dataset, r, l, pdf, ctx, session).create();
     }
 
@@ -172,7 +172,9 @@ public final class HibernateObservationUtilities {
      * @return Observation ids as Set
      */
     public static Set<Long> getObservationIds(Collection<DataEntity<?>> observations) {
-        return observations.stream().map(DataEntity::getId).collect(toSet());
+        return observations.stream()
+                .map(DataEntity::getId)
+                .collect(toSet());
     }
 
 }

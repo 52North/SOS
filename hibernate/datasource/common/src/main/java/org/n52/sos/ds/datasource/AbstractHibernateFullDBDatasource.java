@@ -194,6 +194,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_Z)) {
             settings.put(TIME_STRING_Z_KEY, Boolean.valueOf(current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z)));
         }
+        if (current.containsKey(SPRING_PROFILE_KEY)) {
+            settings.put(SPRING_PROFILE_KEY, current.getProperty(SPRING_PROFILE_KEY));
+        }
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
 
         final String[] parsed = parseURL(url);

@@ -42,7 +42,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.boot.Metadata;
 import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;

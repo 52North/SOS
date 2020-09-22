@@ -47,7 +47,7 @@ public abstract class AbstractGetRequest extends AbstractRequest {
      */
     public abstract Map<String, String> getQueryParameters();
 
-    public String toCSV(Collection<String> values) {
+    protected String toCSV(Collection<String> values) {
         return String.join(",", values);
     }
 }

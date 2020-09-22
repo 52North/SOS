@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.n52.io.request.IoParameters;
 import org.n52.series.db.assembler.core.CategoryAssembler;
 import org.n52.series.db.assembler.core.DatasetAssembler;
 import org.n52.series.db.assembler.core.FeatureAssembler;
@@ -32,7 +33,10 @@ import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.TagEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.old.dao.DbQueryFactory;
+import org.n52.series.db.query.DatasetQuerySpecifications;
 import org.n52.series.db.repositories.core.DataRepository;
+import org.n52.series.db.repositories.core.DatasetRepository;
+import org.n52.series.db.repositories.core.UnitRepository;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -72,10 +76,10 @@ public class InsertionRepository {
     private DatasetAssembler<?> datasetAssembler;
 
     @Inject
-    private org.n52.series.db.repositories.core.DatasetRepository datasetRepository;
+    private DatasetRepository datasetRepository;
 
     @Inject
-    private org.n52.series.db.repositories.core.UnitRepository unitRepository;
+    private UnitRepository unitRepository;
 
     @Inject
     private DataRepository dataRepository;
@@ -127,7 +131,7 @@ public class InsertionRepository {
         return categoryAssembler.getOrInsertInstance(category);
     }
 
-    private AbstractFeatureEntity<?> insertFeature(AbstractFeatureEntity<?> feature) {
+    private AbstractFeatureEntity<?> insertFeature(AbstractFeatureEntity feature) {
         return featureAssembler.getOrInsertInstance(feature);
     }
 
@@ -158,23 +162,39 @@ public class InsertionRepository {
         return null;
     }
 
-    public DataEntity<?> insertData(DatasetEntity dataset, DataEntity<?> data) {
+    public synchronized <T extends DataEntity<?>> T insertData(DatasetEntity dataset, T  data) {
         data.setDataset(dataset);
-        DataEntity<?> insertedData = (DataEntity<?>) dataRepository.saveAndFlush(data);
         boolean minChanged = false;
         boolean maxChanged = false;
         if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
-                && dataset.getFirstValueAt().after(insertedData.getSamplingTimeStart()))) {
+                && dataset.getFirstValueAt().after(data.getSamplingTimeStart()))) {
             minChanged = true;
-            dataset.setFirstValueAt(insertedData.getSamplingTimeStart());
-            dataset.setFirstObservation(insertedData);
+            dataset.setFirstValueAt(data.getSamplingTimeStart());
         }
         if (!dataset.isSetLastValueAt() || (dataset.isSetLastValueAt()
-                && dataset.getLastValueAt().before(insertedData.getSamplingTimeEnd()))) {
+                && dataset.getLastValueAt().before(data.getSamplingTimeEnd()))) {
             maxChanged = true;
-            dataset.setLastValueAt(insertedData.getSamplingTimeEnd());
-            dataset.setLastObservation(insertedData);
+            dataset.setLastValueAt(data.getSamplingTimeEnd());
         }
+        DataEntity<?> insertedData = null;
+        if (minChanged) {
+            if (dataset.getFirstObservation() != null) {
+                data.setId(dataset.getFirstObservation().getId());
+            }
+            insertedData = (DataEntity<?>) dataRepository.saveAndFlush(data);
+            dataset.setFirstObservation(insertedData);
+        }
+        if (maxChanged) {
+            if (insertedData != null) {
+                dataset.setLastObservation(insertedData);
+            } else {
+                if (dataset.getLastObservation() != null) {
+                    data.setId(dataset.getLastObservation().getId());
+                }
+                dataset.setLastObservation(((DataEntity<?>) dataRepository.saveAndFlush(data)));
+            }
+        }
+
         if (insertedData instanceof QuantityDataEntity) {
             if (minChanged) {
                 dataset.setFirstQuantityValue(((QuantityDataEntity) insertedData).getValue());
@@ -186,7 +206,25 @@ public class InsertionRepository {
         if (minChanged && maxChanged) {
             datasetRepository.saveAndFlush(dataset);
         }
-        return insertedData;
+        return (T) insertedData;
+    }
+
+    public synchronized DatasetEntity updateData(DatasetEntity dataset, DataEntity<?> data) {
+        dataRepository.saveAndFlush(data);
+        return updateDataset(dataset);
+    }
+
+    public synchronized DatasetEntity updateDataset(DatasetEntity dataset) {
+        return datasetRepository.saveAndFlush(dataset);
+    }
+
+    public DatasetQuerySpecifications getDatasetQuerySpecification() {
+        return getDatasetQuerySpecification(IoParameters.createDefaults());
+    }
+
+    public DatasetQuerySpecifications getDatasetQuerySpecification(IoParameters parameters) {
+        return DatasetQuerySpecifications.of(dbQueryFactory.createFrom(IoParameters.createDefaults()),
+                datasetAssembler.getEntityManager());
     }
 
 }

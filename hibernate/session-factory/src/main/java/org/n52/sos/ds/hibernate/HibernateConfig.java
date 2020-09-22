@@ -1,13 +1,8 @@
 package org.n52.sos.ds.hibernate;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;

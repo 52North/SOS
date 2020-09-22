@@ -12,21 +12,23 @@ import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.io.task.ScheduledJob;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Configurable
-public class DataSourceHarvesterJobFactory {
+public class DataSourceHarvesterJobFactory implements Constructable {
 
     public final static String PROXY_FULL_HARVEST_UPDATE = "proxy.harvest.full";
     public final static String PROXY_TEMPORAL_HARVEST_UPDATE = "proxy.harvest.temporal";
     private final static Logger LOGGER = LoggerFactory.getLogger(DataSourceHarvesterJobFactory.class);
-    private String cronFullExpression;
-    private String cronTemporalExpression;
+    private String cronFullExpression = "0 0 03 * * ?";
+    private String cronTemporalExpression = "0 0/5 * * * ?";
     private DataSourceHarvesterScheduler scheduler;
     private Set<String> jobs = new HashSet<>();
     private List<AbstractHarvesterJob> scheduledJobs = new ArrayList<>();
+    private boolean initialized;
 
     @Inject
     public void setDataSourceHarvesterScheduler(DataSourceHarvesterScheduler scheduler) {
@@ -92,23 +94,52 @@ public class DataSourceHarvesterJobFactory {
     }
 
     private void reschedule() {
-        for (ScheduledJob job : getScheduledJobs()) {
-            if (jobs.contains(job.getJobName())) {
-                try {
+        reschedule(true);
+    }
+
+    private void reschedule(boolean update) {
+        if ((!initialized && !update) || (initialized && update)) {
+            for (ScheduledJob job : getScheduledJobs()) {
+                if (jobs.contains(job.getJobName())) {
+                    boolean updateJob = false;
+                    if (job instanceof FullHarvesterJob) {
+                        updateJob = checkCronExpression(job, getFullCronExpression());
+                    } else if (job instanceof TemporalHarvesterJob) {
+                        updateJob = checkCronExpression(job, getTemporalCronExpression());
+                    }
+                    if (updateJob) {
+                        try {
+                            scheduler.updateJob(job);
+                        } catch (SchedulerException e) {
+                            LOGGER.error("Error while updating a job!", e);
+                        }
+                    }
+                } else {
                     if (job instanceof FullHarvesterJob) {
                         job.setCronExpression(getFullCronExpression());
-                        scheduler.updateJob(job);
                     } else if (job instanceof TemporalHarvesterJob) {
                         job.setCronExpression(getTemporalCronExpression());
-                        scheduler.updateJob(job);
                     }
-                } catch (SchedulerException e) {
-                    LOGGER.error("Error while updating a job!", e);
+                    scheduler.scheduleJob(job);
                 }
-            } else {
-                scheduler.scheduleJob(job);
+                jobs.add(job.getJobName());
             }
-            jobs.add(job.getJobName());
         }
+    }
+
+    private boolean checkCronExpression(ScheduledJob job, String cronExpression) {
+        if (job.getCronExpression() == null || (job.getCronExpression() != null && !job.getCronExpression()
+                .isEmpty() && !job.getCronExpression()
+                        .equals(cronExpression))) {
+            job.setCronExpression(cronExpression);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void init() {
+        reschedule(false);
+        this.initialized = true;
     }
 }

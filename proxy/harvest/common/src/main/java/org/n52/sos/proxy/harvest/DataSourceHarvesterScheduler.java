@@ -26,13 +26,13 @@ public class DataSourceHarvesterScheduler implements Destroyable {
 
     public void init() {
         if (!enabled) {
-            LOGGER.info(
+            LOGGER.debug(
                     "Job schedular disabled. No jobs will be triggered. This is also true for particularly enabled jobs.");
             return;
         }
         try {
             scheduler.startDelayed(startupDelayInSeconds);
-            LOGGER.info("Scheduler will start jobs in {}s ...", startupDelayInSeconds);
+            LOGGER.debug("Scheduler will start jobs in {}s ...", startupDelayInSeconds);
         } catch (SchedulerException e) {
             LOGGER.error("Could not start scheduler.", e);
         }
@@ -51,7 +51,7 @@ public class DataSourceHarvesterScheduler implements Destroyable {
             Trigger trigger = taskToSchedule.createTrigger(details.getKey());
             Date nextExecution = scheduler.scheduleJob(details, trigger);
             LOGGER.debug("Schedule job '{}' will be executed at '{}'!", details.getKey(), new DateTime(nextExecution));
-            if (taskToSchedule.isTriggerAtStartup()) {
+            if (taskToSchedule.isTriggerAtStartup() || taskToSchedule instanceof FullHarvesterJob) {
                 LOGGER.debug("Schedule job '{}' to run once at startup.", details.getKey());
                 Trigger onceAtStartup = newTrigger().withIdentity(details.getKey() + "_onceAtStartup")
                         .forJob(details.getKey()).build();
@@ -70,7 +70,7 @@ public class DataSourceHarvesterScheduler implements Destroyable {
     public void shutdown() {
         try {
             scheduler.shutdown(false);
-            LOGGER.info("Shutdown scheduler");
+            LOGGER.debug("Shutdown scheduler");
         } catch (SchedulerException e) {
             LOGGER.error("Could not scheduler.", e);
         }

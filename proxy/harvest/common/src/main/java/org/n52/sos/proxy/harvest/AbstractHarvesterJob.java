@@ -5,10 +5,14 @@ import javax.inject.Inject;
 import org.n52.io.task.ScheduledJob;
 import org.n52.janmayen.event.EventBus;
 import org.n52.sos.proxy.da.InsertionRepository;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.PersistJobDataAfterExecution;
 
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
 public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
 
     @Inject

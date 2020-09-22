@@ -12,7 +12,7 @@
     <beans profile="proxy">
         <bean id="proxySettingDefinitionGroup"
             class="org.n52.faroe.SettingDefinitionGroup">
-            <property name="title" value="PegelOnline" />
+            <property name="title" value="Proxy" />
             <property name="order" value="15.0" />
         </bean>
         <bean class="org.n52.faroe.settings.StringSettingDefinition">
@@ -29,7 +29,7 @@
             <property name="description" value="Definition the cron expression for the execution of the temporal update. See &lt;code&gt;http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html&lt;/code&gt;" />
             <property name="order" value="1.1" />
             <property name="group" ref="proxySettingDefinitionGroup" />
-            <property name="defaultValue" value="0 0/120 * * * ?" />
+            <property name="defaultValue" value="0 0/5 * * * ?" />
         </bean>
     </beans>
 </beans>

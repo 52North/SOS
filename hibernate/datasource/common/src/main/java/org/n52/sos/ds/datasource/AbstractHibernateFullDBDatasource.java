@@ -156,6 +156,9 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (settings.containsKey(TIME_STRING_Z_KEY)) {
             p.put(HIBERNATE_DATASOURCE_TIME_STRING_Z, settings.get(TIME_STRING_Z_KEY).toString());
         }
+        if (getSpringProfiles() != null && !getSpringProfiles().isEmpty()) {
+            p.put(SPRING_PROFILE_KEY,  String.join(",", getSpringProfiles()));
+        }
         addMappingFileDirectories(settings, p);
 
         return p;

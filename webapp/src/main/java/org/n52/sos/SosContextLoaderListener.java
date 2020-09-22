@@ -73,12 +73,15 @@ public class SosContextLoaderListener extends ContextLoaderListener {
      *            the context
      */
     private void setProfile(DatabaseSettingsHandler handler, ServletContext sc) {
-        String concept = (String) handler.getAll()
+        String concept = handler.getAll()
                 .getProperty(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY);
-        String extension = (String) handler.getAll()
-                .getProperty(HibernateDatasourceConstants.DATABASE_CONCEPT_KEY, DatabaseExtension.DATASOURCE.name());
-        sc.setInitParameter(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME,
-                String.join(",", concept.toLowerCase(), extension.toLowerCase()));
+        String extension = handler.getAll()
+                .getProperty(HibernateDatasourceConstants.DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
+        String profiles = handler.getAll()
+                .getProperty(HibernateDatasourceConstants.SPRING_PROFILE_KEY, DatabaseExtension.DATASOURCE.name());
+        sc.setInitParameter(
+                AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME,
+                String.join(",", concept.toLowerCase(), extension.toLowerCase(), profiles.toLowerCase()));
     }
 
     @Override

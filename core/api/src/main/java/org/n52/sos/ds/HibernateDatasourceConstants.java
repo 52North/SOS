@@ -114,6 +114,8 @@ public interface HibernateDatasourceConstants {
 
     String DATABASE_EXTENSION_KEY = "sos.database.extension";
 
+    String SPRING_PROFILE_KEY = "sos.datasource.spring.profiles";
+
     enum DatabaseConcept {
         SIMPLE("Simple database model"), TRANSACTIONAL("Transactional database model"), EREPORTING(
                 "eReporting database model");

@@ -43,7 +43,7 @@ public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCre
                                                 AbstractObservationRequest request,
                                                 Locale i18n,
                                                 String pdf,
-                                                OmObservationCreatorContext creatorContext,
+                                                HibernateOmObservationCreatorContext creatorContext,
                                                 Session session) {
         super(series, request, i18n, pdf, creatorContext, session);
     }

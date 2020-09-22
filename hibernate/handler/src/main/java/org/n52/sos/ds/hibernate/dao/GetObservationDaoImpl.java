@@ -65,7 +65,7 @@ import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.service.profile.ProfileHandler;
@@ -90,7 +90,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
 
     private DaoFactory daoFactory;
 
-    private OmObservationCreatorContext observationCreatorContext;
+    private HibernateOmObservationCreatorContext observationCreatorContext;
 
     private boolean overallExtrema;
 
@@ -112,7 +112,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
     }
 
     @Inject
-    public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
+    public void setOmObservationCreatorContext(HibernateOmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
     }
 
@@ -300,7 +300,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), observationCreatorContext.getBindingRepository(), getChunkSize());
+                            series.getId(), getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);

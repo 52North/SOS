@@ -34,7 +34,6 @@ import java.util.Iterator;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.DataEntity;
@@ -83,9 +82,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *             If an error occurs
      */
     public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
-            AbstractObservationRequest request, long series, BindingRepository bindingRepository, int chunkSize)
+            AbstractObservationRequest request, long series, int chunkSize)
             throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, series, bindingRepository);
+        super(connectionProvider, daoFactory, request, series);
         this.chunkSize = chunkSize;
     }
 
@@ -120,7 +119,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             if (hasNext()) {
                 DataEntity<?> resultObject = seriesValuesResult.next();
-                TimeValuePair value = createTimeValuePairFrom(resultObject);
+                TimeValuePair value = getDaoFactory().getObservationHelper().createTimeValuePairFrom(resultObject);
                 getSession().evict(resultObject);
                 return value;
             }
@@ -138,7 +137,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             if (hasNext()) {
                 OmObservation observation = getObservationTemplate().cloneTemplate();
                 DataEntity<?> resultObject = seriesValuesResult.next();
-                addValuesToObservation(resultObject, observation, getResponseFormat());
+                getObservationHelper().addValuesToObservation(resultObject, observation, getResponseFormat());
                 checkForModifications(observation);
                 getSession().evict(resultObject);
                 return observation;

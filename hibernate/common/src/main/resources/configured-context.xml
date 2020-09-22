@@ -10,8 +10,7 @@
     <bean class="org.n52.sos.ds.hibernate.dao.DaoFactory"/>
 
     <bean class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
-    <bean class="org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext"/>
-    <bean class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+    <bean class="org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext"/>
 
     <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext"/>
     <bean class="org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter"/>

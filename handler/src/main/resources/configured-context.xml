@@ -11,6 +11,8 @@
     <bean id="getObservationByIdHandler" class="org.n52.sos.ds.GetObservationByIdHandler"/>
     <bean id="cacheFeederHandler" class="org.n52.sos.ds.SosCacheFeederHandler"/>
 
+    <bean class="org.n52.sos.ds.observation.AdditionalObservationCreatorRepository" />
+
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository" />
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml101"/>
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml20"/>
@@ -19,5 +21,8 @@
 
     <bean class="org.n52.sos.ds.procedure.ProcedureConverter"/>
     <bean class="org.n52.sos.ds.procedure.ProcedureCreationContext"/>
+
+    <bean class="org.n52.sos.ds.observation.ObservationHelper"/>
+    <bean class="org.n52.sos.ds.observation.OmObservationCreatorContext"/>
 
 </beans>

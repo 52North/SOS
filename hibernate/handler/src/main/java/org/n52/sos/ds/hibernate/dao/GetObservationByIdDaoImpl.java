@@ -59,7 +59,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.svalbard.encode.Encoder;
@@ -82,7 +82,7 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
 
     private OwsServiceMetadataRepository serviceMetadataRepository;
 
-    private OmObservationCreatorContext observationCreatorContext;
+    private HibernateOmObservationCreatorContext observationCreatorContext;
 
     private DaoFactory daoFactory;
 
@@ -111,7 +111,7 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
     }
 
     @Inject
-    public void setOmObservationCreatorContext(OmObservationCreatorContext observationCreatorContext) {
+    public void setOmObservationCreatorContext(HibernateOmObservationCreatorContext observationCreatorContext) {
         this.observationCreatorContext = observationCreatorContext;
     }
 
@@ -223,7 +223,7 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), observationCreatorContext.getBindingRepository(), getChunkSize());
+                            series.getId(), getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);

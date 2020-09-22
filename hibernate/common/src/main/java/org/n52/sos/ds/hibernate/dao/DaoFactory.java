@@ -62,6 +62,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.SosSettings;
 import org.n52.sos.util.GeometryHandler;
@@ -93,6 +94,7 @@ public class DaoFactory {
     private boolean includeChildObservableProperties;
     private boolean staSupportsUrls;
     private SosHelper sosHelper;
+    private ObservationHelper observationHelper;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -139,6 +141,11 @@ public class DaoFactory {
     @Inject
     public void setSosHelper(SosHelper sosHelper) {
         this.sosHelper = sosHelper;
+    }
+
+    @Inject
+    public void setObservationHelper(ObservationHelper observationHelper) {
+        this.observationHelper = observationHelper;
     }
 
     public boolean isIncludeChildObservableProperties() {
@@ -298,6 +305,10 @@ public class DaoFactory {
 
     public SosHelper getSosHelper() {
         return sosHelper;
+    }
+
+    public ObservationHelper getObservationHelper() {
+        return observationHelper;
     }
 
     public FeatureQueryHandler getFeatureQueryHandler() {

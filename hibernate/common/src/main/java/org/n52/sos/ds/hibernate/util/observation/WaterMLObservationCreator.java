@@ -37,6 +37,9 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.sos.ds.observation.AdditionalObservationCreator;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorKey;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 
 import com.google.common.collect.Sets;
 

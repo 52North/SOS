@@ -41,6 +41,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
+import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.svalbard.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +77,9 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      * @throws OwsExceptionReport If an error occurs
      */
     public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
-            AbstractObservationRequest request, long series, BindingRepository bindingRepository)
+            AbstractObservationRequest request, long series)
             throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, bindingRepository);
+        super(connectionProvider, daoFactory, request);
         this.series = series;
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();

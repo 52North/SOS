@@ -67,6 +67,10 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.util.HibernateUnproxy;
+import org.n52.sos.ds.observation.ObservationValueCreator;
+import org.n52.sos.ds.observation.ParameterAdder;
+import org.n52.sos.ds.observation.PhenomenonTimeCreator;
+import org.n52.sos.ds.observation.RelatedObservationAdder;
 import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +100,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private List<OmObservation> observationCollection;
 
     public ObservationOmObservationCreator(Collection<? extends DataEntity<?>> observations,
-            AbstractObservationRequest request, Locale i18n, String pdf, OmObservationCreatorContext creatorContext,
+            AbstractObservationRequest request, Locale i18n, String pdf, HibernateOmObservationCreatorContext creatorContext,
             Session session) {
         super(request, i18n, pdf, creatorContext, session);
         this.request = request;

@@ -63,9 +63,9 @@ import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.util.SosHelper;
 
 /**
@@ -104,7 +104,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         ObservationStream resultList = HibernateObservationUtilities.createSosObservationFromObservationConstellation(
-                null, null, null, null, null, new OmObservationCreatorContext(null, null, null, null, null, null, null,
+                null, null, null, null, null, new HibernateOmObservationCreatorContext(null, null, null, null, null, null, null,
                         null, null, null, null, null, null),
                 null);
         assertThat("result is null", resultList, is(not(nullValue())));
@@ -231,7 +231,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             DaoFactory daoFactory = new DaoFactory();
             daoFactory.setSosHelper(sosHelper);
             // CALL
-            OmObservationCreatorContext ctx = new OmObservationCreatorContext(null, null, daoFactory,
+            HibernateOmObservationCreatorContext ctx = new HibernateOmObservationCreatorContext(null, null, daoFactory,
                     new ProfileHanlderMock(), Mockito.mock(AdditionalObservationCreatorRepository.class), null,
                     new FeatureQueryHandlerMock(), null, null, null, null, null,
                     Mockito.mock(BindingRepository.class));

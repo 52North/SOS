@@ -168,7 +168,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Spatial Envelope
         ReferencedEnvelope envelop = getEnvelopeForOffering(offering);
         getCache().setEnvelopeForOffering(identifier, envelop);
-        getCache().updateGlobalEnvelope(envelop.getEnvelope());
+        if (envelop.isSetEnvelope()) {
+            getCache().updateGlobalEnvelope(envelop.getEnvelope());
+        }
 
         // Temporal extent
         // TODO get from datasets

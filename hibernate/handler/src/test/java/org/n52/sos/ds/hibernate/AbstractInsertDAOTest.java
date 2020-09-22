@@ -115,11 +115,11 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.n52.sos.event.events.SensorDeletion;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.request.operator.SosInsertObservationOperatorV20;
@@ -303,7 +303,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected HibernateProcedureCreationContext ctx;
 
-    protected OmObservationCreatorContext observationCtx;
+    protected HibernateOmObservationCreatorContext observationCtx;
 
     protected final SosCacheFeederHandler cacheFeeder = new SosCacheFeederHandler();
 
@@ -377,7 +377,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
                 i18NDAORepository, daoFactory, converterRepository, null, bindingRepository, null,
                 contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class));
 
-        observationCtx = new OmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository, daoFactory,
+        observationCtx = new HibernateOmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository, daoFactory,
                 new ProfileHanlderMock(), additionalObservationCreatorRepository, contentCacheController,
                 featureQueryHandler, converterRepository, factoryRepository, geometryHandler, decoderRepository, null,
                 bindingRepository);

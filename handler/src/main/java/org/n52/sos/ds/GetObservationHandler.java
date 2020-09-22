@@ -38,12 +38,10 @@ import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.old.DataAccessException;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -85,29 +83,23 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) && request.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();
         }
-        // if (request.isSetResultFilter()) {
-        // throw new NotYetSupportedException("result filtering");
-        // }
+        GetObservationResponse response = new GetObservationResponse();
+        response.setService(request.getService());
+        response.setVersion(request.getVersion());
+        response.setResponseFormat(request.getResponseFormat());
+        response.setResultModel(request.getResultModel());
         Session session = sessionStore.getSession();
         try {
-            GetObservationResponse response = new GetObservationResponse();
-            response.setService(request.getService());
-            response.setVersion(request.getVersion());
-            response.setResponseFormat(request.getResponseFormat());
-            response.setResultModel(request.getResultModel());
             List<FeatureEntity> features = new FeatureDao(session).getAllInstances(createDbQuery(request));
             if (features == null || features.isEmpty()) {
                 return response;
             }
             request.setFeatureIdentifiers(features.stream().map(f -> f.getIdentifier()).collect(Collectors.toList()));
-            dao.queryObservationData(request, response);
-            return response;
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for GetObservation!");
         } finally {
             sessionStore.returnSession(session);
         }
+        dao.queryObservationData(request, response);
+        return response;
     }
 
     @Override
@@ -151,13 +143,6 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
-    }
-
-    private Double[] toArray(double x, double y) {
-        Double[] array = new Double[2];
-        array[0] = x;
-        array[1] = y;
-        return array;
     }
 
 }

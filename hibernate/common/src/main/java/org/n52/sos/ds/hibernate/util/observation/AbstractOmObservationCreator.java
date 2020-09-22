@@ -74,6 +74,10 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository;
+import org.n52.sos.ds.observation.AdditionalObservationCreator;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorKey;
+import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
+import org.n52.sos.ds.observation.SpatialFilteringProfileCreator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -104,10 +108,10 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
 
     private final String pdf;
 
-    private final OmObservationCreatorContext creatorContext;
+    private final HibernateOmObservationCreatorContext creatorContext;
 
     public AbstractOmObservationCreator(AbstractObservationRequest request, Locale i18n, String pdf,
-            OmObservationCreatorContext creatorContext, Session session) {
+            HibernateOmObservationCreatorContext creatorContext, Session session) {
         this.creatorContext = creatorContext;
         this.request = request;
         this.session = session;
@@ -115,7 +119,7 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
         this.pdf = pdf;
     }
 
-    protected OmObservationCreatorContext getCreatorContext() {
+    protected HibernateOmObservationCreatorContext getCreatorContext() {
         return creatorContext;
     }
 

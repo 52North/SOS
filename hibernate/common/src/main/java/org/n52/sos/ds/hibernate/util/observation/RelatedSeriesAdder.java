@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.observation.PhenomenonTimeCreator;
 
 public class RelatedSeriesAdder {
 

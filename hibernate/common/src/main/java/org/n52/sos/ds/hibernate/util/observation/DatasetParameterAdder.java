@@ -34,6 +34,7 @@ import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ds.observation.ParameterVisitor;
 
 public class DatasetParameterAdder {
 

@@ -68,7 +68,7 @@ import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.util.observation.OmObservationCreatorContext;
+import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingSettings;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -230,7 +230,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
 
     public ObservationStream toSosObservation(Collection<DataEntity<?>> observations,
             AbstractObservationRequest request, Locale language, String pdf,
-            OmObservationCreatorContext observationCreatorContext, Session session)
+            HibernateOmObservationCreatorContext observationCreatorContext, Session session)
             throws OwsExceptionReport, ConverterException {
         if (observations.isEmpty()) {
             return ObservationStream.empty();
@@ -245,7 +245,7 @@ public abstract class AbstractObservationDao implements HibernateDao {
     }
 
     public OmObservation toSosObservation(DataEntity<?> observation, AbstractObservationRequest request,
-            Locale language, String pdf, OmObservationCreatorContext observationCreatorContext, Session session)
+            Locale language, String pdf, HibernateOmObservationCreatorContext observationCreatorContext, Session session)
             throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();

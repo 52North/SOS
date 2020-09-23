@@ -39,7 +39,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.old.HibernateSessionStore;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;

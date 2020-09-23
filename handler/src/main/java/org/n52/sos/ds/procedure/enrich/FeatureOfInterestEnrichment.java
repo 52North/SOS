@@ -39,7 +39,7 @@ import java.util.Set;
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.old.DataAccessException;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;

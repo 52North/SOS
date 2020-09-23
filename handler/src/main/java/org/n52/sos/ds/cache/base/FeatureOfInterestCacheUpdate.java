@@ -38,7 +38,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;

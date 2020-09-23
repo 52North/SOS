@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.PhenomenonEntity;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;

@@ -49,7 +49,7 @@ import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.i18n.I18nEntity;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;

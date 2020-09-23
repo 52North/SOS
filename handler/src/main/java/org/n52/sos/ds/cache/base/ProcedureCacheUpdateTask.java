@@ -40,7 +40,7 @@ import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.SosContentCache;

@@ -48,7 +48,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;

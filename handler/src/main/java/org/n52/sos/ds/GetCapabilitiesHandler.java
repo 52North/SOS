@@ -65,7 +65,7 @@ import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.old.DataAccessException;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.OfferingDao;
 import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.series.db.old.dao.ProcedureDao;

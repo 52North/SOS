@@ -33,7 +33,7 @@ import org.n52.io.request.IoParameters;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.RelatedFeatureEntity;
 import org.n52.series.db.old.DataAccessException;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.RelatedFeatureDao;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.ds.cache.AbstractThreadableDatasourceCacheUpdate;

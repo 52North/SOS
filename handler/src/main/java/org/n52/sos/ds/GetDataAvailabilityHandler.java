@@ -47,7 +47,7 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.old.DataAccessException;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;

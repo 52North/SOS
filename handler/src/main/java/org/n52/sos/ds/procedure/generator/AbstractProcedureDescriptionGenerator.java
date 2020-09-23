@@ -46,7 +46,7 @@ import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.old.DataAccessException;
-import org.n52.series.db.old.dao.DbQuery;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;

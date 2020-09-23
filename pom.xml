@@ -786,7 +786,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.15</version>
+                 <version>1.10.16</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

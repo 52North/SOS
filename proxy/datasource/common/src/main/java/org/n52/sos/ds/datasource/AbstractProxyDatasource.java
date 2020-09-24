@@ -60,7 +60,7 @@ public abstract class AbstractProxyDatasource extends AbstractH2Datasource {
 
     @Override
     public void validatePrerequisites(Map<String, Object> settings) {
-        settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.TRANSACTIONAL.name());
+        settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.PROXY.name());
         settings.put(FEATURE_CONCEPT_KEY, FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
         settings.put(DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
         settings.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);

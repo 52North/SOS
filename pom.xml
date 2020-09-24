@@ -2232,7 +2232,7 @@
         <profile>
             <id>debug</id>
             <properties>
-                <config.logger.level.main.global>DEBUG</config.logger.level.main.global>
+                <config.logger.level.main.global>INFO</config.logger.level.main.global>
                 <config.logger.level.main.n52>DEBUG</config.logger.level.main.n52>
                 <config.logger.level>TRACE</config.logger.level>
             </properties>

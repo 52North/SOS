@@ -349,6 +349,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             case TRANSACTIONAL:
                 mappings.add(HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH);
                 break;
+            case PROXY:
+                mappings.add(HIBERNATE_MAPPING_PROXY_CORE_PATH);
+                break;
             default:
                 mappings.add(HIBERNATE_MAPPING_SIMPLE_CORE_PATH);
                 break;
@@ -365,6 +368,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 concept = DatabaseConcept.EREPORTING.name();
             } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
                 concept = DatabaseConcept.TRANSACTIONAL.name();
+            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH)) {
+                concept = DatabaseConcept.PROXY.name();
             }
             LOG.error(SETTING_NOT_FOUND_TEMPLATE,
                     databaseConceptDefinition.getKey(), HibernateDatasourceConstants.HIBERNATE_DIRECTORY, concept,
@@ -385,6 +390,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 return HIBERNATE_MAPPING_EREPORTING_CONCEPT_PATH;
             case TRANSACTIONAL:
                 return HIBERNATE_MAPPING_TRANSACTIONAL_CONCEPT_PATH;
+            case PROXY:
+                return HIBERNATE_MAPPING_PROXY_CONCEPT_PATH;
             default:
                 return HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH;
         }

@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -43,11 +42,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
@@ -75,22 +71,15 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 @Configurable
-public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao, HibernateDao {
+public class GetDataAvailabilityDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetDataAvailabilityDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetDataAvailabilityDaoImpl.class);
 
     private HibernateSessionHolder sessionHolder;
 
-    private Locale defaultLanguage;
-
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -234,8 +223,4 @@ public class GetDataAvailabilityDaoImpl implements org.n52.sos.ds.dao.GetDataAva
         return null;
     }
 
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
-    }
 }

@@ -47,9 +47,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -94,8 +92,6 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
 
     private boolean overallExtrema;
 
-    private Locale defaultLanguage;
-
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
         this.daoFactory = daoFactory;
@@ -119,11 +115,6 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
     @Setting("profile.hydrology.overallExtrema")
     public void setOverallExtrema(boolean overallExtrema) {
         this.overallExtrema = overallExtrema;
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -327,8 +318,4 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         return null;
     }
 
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
-    }
 }

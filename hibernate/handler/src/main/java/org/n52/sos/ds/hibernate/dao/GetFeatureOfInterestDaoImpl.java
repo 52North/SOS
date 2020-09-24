@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -36,11 +35,8 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -50,13 +46,11 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 
 @Configurable
-public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao, HibernateDao {
+public class GetFeatureOfInterestDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.GetFeatureOfInterestDao {
 
     private HibernateSessionHolder sessionHolder;
 
     private FeatureQueryHandler featureQueryHandler;
-
-    private Locale defaultLanguage;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -66,11 +60,6 @@ public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatur
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -104,11 +93,6 @@ public class GetFeatureOfInterestDaoImpl implements org.n52.sos.ds.dao.GetFeatur
                         .setVersion(request.getVersion()).setI18N(getRequestedLocale(request))
                         .setSpatialFilters(request.getSpatialFilters());
         return featureQueryHandler.getFeatures(queryObject);
-    }
-
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
     }
 
 }

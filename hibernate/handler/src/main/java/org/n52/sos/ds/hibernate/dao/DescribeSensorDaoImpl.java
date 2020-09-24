@@ -39,14 +39,11 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.faroe.annotation.Configurable;
-import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProcedureHistoryEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -64,7 +61,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Configurable
-public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorDao, HibernateDao {
+public class DescribeSensorDaoImpl extends AbstractDaoImpl implements org.n52.sos.ds.dao.DescribeSensorDao {
 
     private static final String LOG_PARAMETER_PROCEDURE_NOT_NULL = "Parameter 'procedure' should not be null!";
 
@@ -77,8 +74,6 @@ public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorD
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;
 
     private DaoFactory daoFactory;
-
-    private Locale defaultLanguage;
 
     @Inject
     public void setDaoFactory(DaoFactory daoFactory) {
@@ -103,11 +98,6 @@ public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorD
     @Inject
     public void setHibernateProcedureConverter(HibernateProcedureConverter procedureConverter) {
         this.procedureConverter = procedureConverter;
-    }
-
-    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
     @Override
@@ -275,11 +265,6 @@ public class DescribeSensorDaoImpl implements org.n52.sos.ds.dao.DescribeSensorD
             }
         }
         return procedureDescription;
-    }
-
-    @Override
-    public Locale getDefaultLanguage() {
-        return defaultLanguage;
     }
 
 }

@@ -110,9 +110,13 @@ import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.cache.ctrl.DefaultContentModificationListener;
 import org.n52.sos.cache.ctrl.SosContentCacheControllerImpl;
+import org.n52.sos.ds.GetResultHandler;
+import org.n52.sos.ds.GetResultTemplateHandler;
 import org.n52.sos.ds.SosCacheFeederHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl;
+import org.n52.sos.ds.hibernate.dao.GetResultDaoImpl;
+import org.n52.sos.ds.hibernate.dao.GetResultTemplateDaoImpl;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateOmObservationCreatorContext;
@@ -274,6 +278,10 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
     protected final InsertResultHandler insertResultDAO = new InsertResultHandler();
 
     protected final GetObservationDaoImpl getObsDAO = new GetObservationDaoImpl();
+
+    protected final GetResultTemplateDaoImpl getResultTemplateDAO = new GetResultTemplateDaoImpl();
+
+    protected final GetResultDaoImpl getResultDAO = new GetResultDaoImpl();
 
     protected final GetResultTemplateHandler getResultTemplateHandler = new GetResultTemplateHandler();
 
@@ -451,15 +459,26 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         getObsDAO.setEncoderRepository(encoderRepository);
         getObsDAO.setDefaultLanguage("eng");
         getObsDAO.setOmObservationCreatorContext(observationCtx);
-        getResultTemplateHandler.setConnectionProvider(this);
+        getResultTemplateDAO.setConnectionProvider(this);
+        getResultTemplateDAO.setDecoderRepository(decoderRepository);
+        getResultTemplateDAO.setDaoFactory(daoFactory);
+        getResultTemplateDAO.init();
+        getResultDAO.setConnectionProvider(this);
+        getResultDAO.setProfileHandler(new ProfileHanlderMock());
+        getResultDAO.setGetResultTemplateHandler(getResultTemplateHandler);
+        getResultDAO.setDaoFactory(daoFactory);
+        SOSHibernateSessionHolder sessionHolder = new SOSHibernateSessionHolder();
+        sessionHolder.setConnectionProvider(this);
+        getResultTemplateHandler.setConnectionProvider(sessionHolder);
         getResultTemplateHandler.setDecoderRepository(decoderRepository);
-        getResultTemplateHandler.setDaoFactory(daoFactory);
-        getResultTemplateHandler.init();
-        getResultHandler.setConnectionProvider(this);
+        getResultTemplateHandler.setGeometryHandler(daoFactory.getGeometryHandler());
+        getResultTemplateHandler.setSweHelper(daoFactory.getSweHelper());
+        getResultTemplateHandler.setGetResultTemplateDao(Optional.of(getResultTemplateDAO));
+        getResultTemplateHandler.setGetResultHandler(getResultHandler);
+        getResultHandler.setConnectionProvider(sessionHolder);
         getResultHandler.setDecoderRepository(decoderRepository);
-        getResultHandler.setDaoFactory(daoFactory);
+        getResultHandler.setGetResultDao(Optional.of(getResultDAO));
         getResultHandler.setProfileHandler(new ProfileHanlderMock());
-        getResultHandler.init();
     }
 
     private void initEncoder() {

@@ -94,8 +94,8 @@ import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
+import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,40 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ds;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.hibernate.Session;
+import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.old.dao.DatasetDao;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosResultEncoding;
 import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.swe.SweDataRecord;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.HibernateUnproxy;
-import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.utils.HibernateUnproxy;
+import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.n52.sos.exception.sos.concrete.NoSweCommonEncodingForOfferingObservablePropertyCombination;
 import org.n52.svalbard.util.SweHelper;
 
-public interface AbstractResultHandler extends HibernateUnproxy {
+import com.google.common.collect.Maps;
+
+public interface AbstractResultHandler extends HibernateUnproxy, ApiQueryHelper {
 
     SweHelper getSweHelper();
 
     ResultHandlingHelper getResultHandlingHelper();
-
-    DaoFactory getDaoFactory();
 
     default SosResultEncoding createSosResultEncoding() {
         return new SosResultEncoding(getSweHelper().createDefaultTextEncoding());
     }
 
     default SosResultStructure generateSosResultStructure(String observedProperty, String offering,
-            Set<String> featureIdentifier, Session session) throws OwsExceptionReport {
-        List<DatasetEntity> datasets = getDaoFactory().getSeriesDAO()
-                .getSeries(null, observedProperty, offering, null, session);
+            Collection<String> featureIdentifier, Session session) throws OwsExceptionReport {
+
+        List<DatasetEntity> datasets = new DatasetDao<>(session)
+                .getAllInstances(createDbQuery(observedProperty, offering, featureIdentifier));
         if (datasets != null && !datasets.isEmpty()) {
             boolean procedure = checkForProcedures(datasets);
             boolean feature = checkForFeatures(datasets);
@@ -87,5 +91,20 @@ public interface AbstractResultHandler extends HibernateUnproxy {
                         .getId())
                 .collect(Collectors.toSet())
                 .size() > 1;
+    }
+
+    default DbQuery createDbQuery(String observedProperty, String offering, Collection<String> featureIdentifier) {
+        Map<String, String> map = Maps.newHashMap();
+        if (featureIdentifier != null && !featureIdentifier.isEmpty()) {
+            map.put(IoParameters.FEATURES, listToString(featureIdentifier));
+        }
+        if (observedProperty != null && !observedProperty.isEmpty()) {
+            map.put(IoParameters.PHENOMENA, listToString(observedProperty));
+        }
+        if (offering != null && !offering.isEmpty()) {
+            map.put(IoParameters.OFFERINGS, listToString(offering));
+        }
+        map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 }

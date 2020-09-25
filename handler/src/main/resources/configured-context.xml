@@ -9,6 +9,8 @@
     <bean id="getDataAvailabilityHandler" class="org.n52.sos.ds.GetDataAvailabilityHandler"/>
     <bean id="getFeatureOfInterestHandler" class="org.n52.sos.ds.GetFeatureOfInterestHandler"/>
     <bean id="getObservationByIdHandler" class="org.n52.sos.ds.GetObservationByIdHandler"/>
+    <bean id="getResultHandler" class="org.n52.sos.ds.GetResultHandler"/>
+    <bean id="getResultTemplateHandler" class="org.n52.sos.ds.GetResultTemplateHandler"/>
     <bean id="cacheFeederHandler" class="org.n52.sos.ds.SosCacheFeederHandler"/>
 
     <bean class="org.n52.sos.ds.observation.AdditionalObservationCreatorRepository" />

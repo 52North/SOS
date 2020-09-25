@@ -20,13 +20,13 @@
     <bean id="getDataAvailabilityDao"
           class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDaoImpl"/>
 
-    <bean id="getResultTemplateHandler"
-        class="org.n52.sos.ds.hibernate.GetResultTemplateHandler" />
+    <bean id="getResultTemplateDao"
+        class="org.n52.sos.ds.hibernate.dao.GetResultTemplateDaoImpl" />
 
-    <bean id="getResultHandler"
-        class="org.n52.sos.ds.hibernate.GetResultHandler" />
+    <bean id="getResultDao"
+        class="org.n52.sos.ds.hibernate.dao.GetResultDaoImpl" />
 
-    <bean id="dbQueryFactory" class="org.n52.series.db.old.dao.DefaultDbQueryFactory"/>
+    <bean id="dbQueryFactory" class="org.n52.sensorweb.server.db.old.dao.DefaultDbQueryFactory"/>
 
     <!--
     <bean id="insertRepository"

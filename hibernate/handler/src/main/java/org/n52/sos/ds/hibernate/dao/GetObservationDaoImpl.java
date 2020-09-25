@@ -130,7 +130,6 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         } finally {
             sessionHolder.returnSession(session);
         }
-
     }
 
     @Override

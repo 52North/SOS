@@ -42,6 +42,10 @@ public interface ApiQueryHelper {
         return Joiner.on(",").join(values);
     }
 
+    default String listToString(String... values) {
+        return Joiner.on(",").join(values);
+    }
+
     default Set<String> toStringSet(Collection<FormatEntity> formats) {
         return formats.stream().map(FormatEntity::getFormat).collect(Collectors.toSet());
     }

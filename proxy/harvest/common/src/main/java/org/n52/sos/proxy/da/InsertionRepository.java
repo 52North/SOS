@@ -217,8 +217,8 @@ public class InsertionRepository {
             } else {
                 if (dataset.getLastObservation() != null && (dataset.getFirstObservation() == null
                         || (dataset.getFirstObservation() != null && dataset.getFirstObservation()
-                                .getId() != dataset.getLastObservation()
-                                        .getId()))) {
+                                .getId().equals(dataset.getLastObservation()
+                                        .getId())))) {
                     data.setId(dataset.getLastObservation()
                             .getId());
                 }

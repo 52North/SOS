@@ -26,24 +26,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate;
+package org.n52.sos.ds;
+
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.series.db.beans.ResultTemplateEntity;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
-import org.n52.sos.ds.AbstractGetResultTemplateHandler;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.dao.GetResultTemplateDao;
+import org.n52.sos.ds.utils.ResultHandlingHelper;
+import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.SweHelper;
 
 /**
@@ -53,72 +53,83 @@ import org.n52.svalbard.util.SweHelper;
  *
  */
 public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
-        implements AbstractResultHandler, Constructable {
-    private HibernateSessionHolder sessionHolder;
+        implements AbstractResultHandler {
 
-    private DaoFactory daoFactory;
+    private HibernateSessionStore sessionStore;
+
+    private Optional<GetResultTemplateDao> dao;
+
+    private DecoderRepository decodingRepository;
 
     private ResultHandlingHelper resultHandlingHelper;
 
-    private boolean supportsDatabaseEntities;
+    private GeometryHandler geometryHandler;
+
+    private SweHelper sweHelper;
+
+    private GetResultHandler getResultHandler;
 
     public GetResultTemplateHandler() {
         super(SosConstants.SOS);
     }
 
     @Inject
-    public void setDaoFactory(DaoFactory daoFactory) {
-        this.daoFactory = daoFactory;
+    public void setConnectionProvider(HibernateSessionStore sessionStore) {
+        this.sessionStore = sessionStore;
     }
 
     @Inject
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+    public void setGetResultHandler(GetResultHandler getResultHandler) {
+        this.getResultHandler = getResultHandler;
     }
 
-    @Override
-    public void init() {
-        this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
+    @Inject
+    public void setGetResultTemplateDao(Optional<GetResultTemplateDao> getResultTemplateDao) {
+        this.dao = getResultTemplateDao;
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decodingRepository) {
+        this.decodingRepository = decodingRepository;
+    }
+
+    @Inject
+    public void setGeometryHandler(GeometryHandler geometryHandler) {
+        this.geometryHandler = geometryHandler;
+    }
+
+    @Inject
+    public void setSweHelper(SweHelper sweHelper) {
+        this.sweHelper = sweHelper;
     }
 
     @Override
     public boolean isSupported() {
-        return true;
+        return getResultHandler.isSupported();
     }
 
-    @Override
-    public SweHelper getSweHelper() {
-        return getDaoFactory().getSweHelper();
-    }
 
     @Override
     public ResultHandlingHelper getResultHandlingHelper() {
         if (resultHandlingHelper == null) {
-            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(),
-                    getDaoFactory().getSweHelper(), getDaoFactory().getDecoderRepository());
+            this.resultHandlingHelper = new ResultHandlingHelper(getGeometryHandler(),
+                    getSweHelper(), getDecoderRepository());
         }
         return resultHandlingHelper;
     }
 
     @Override
-    public DaoFactory getDaoFactory() {
-        return daoFactory;
-    }
-
-    @Override
     public GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request) throws OwsExceptionReport {
+        GetResultTemplateResponse response = new GetResultTemplateResponse();
+        response.setService(request.getService());
+        response.setVersion(request.getVersion());
         Session session = null;
         try {
-            session = sessionHolder.getSession();
-            GetResultTemplateResponse response = new GetResultTemplateResponse();
-            response.setService(request.getService());
-            response.setVersion(request.getVersion());
-            ResultTemplateEntity resultTemplate = supportsDatabaseEntities ? getDaoFactory().getResultTemplateDAO()
-                    .getResultTemplateObjectForResponse(request.getOffering(), request.getObservedProperty(), session)
-                    : null;
-            if (resultTemplate != null && resultTemplate.isSetStructure() && resultTemplate.isSetEncoding()) {
-                response.setResultEncoding(createSosResultEncoding(resultTemplate.getEncoding()));
-                response.setResultStructure(createSosResultStructure(resultTemplate.getStructure()));
+            session = sessionStore.getSession();
+            GetResultTemplateResponse reponse = dao.isPresent() ? dao.get()
+                    .queryResultTemplate(request, response) : null;
+            if (response != null && response.getResultStructure() != null && response.getResultEncoding() != null) {
+                return reponse;
             } else {
                 response.setResultEncoding(createSosResultEncoding());
                 response.setResultStructure(generateSosResultStructure(request.getObservedProperty(),
@@ -129,8 +140,21 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
             throw new NoApplicableCodeException().causedBy(he)
                     .withMessage("Error while querying data result template data!");
         } finally {
-            sessionHolder.returnSession(session);
+            sessionStore.returnSession(session);
         }
+    }
+
+    @Override
+    public SweHelper getSweHelper() {
+        return sweHelper;
+    }
+
+    private DecoderRepository getDecoderRepository() {
+        return decodingRepository;
+    }
+
+    private GeometryHandler getGeometryHandler() {
+        return geometryHandler;
     }
 
 }

@@ -345,12 +345,15 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 break;
             case EREPORTING:
                 mappings.add(HIBERNATE_MAPPING_EREPORTING_CORE_PATH);
+                mappings.add(HIBERNATE_MAPPING_PARAMETER_PATH);
                 break;
             case TRANSACTIONAL:
                 mappings.add(HIBERNATE_MAPPING_TRANSACTIONAL_CORE_PATH);
+                mappings.add(HIBERNATE_MAPPING_PARAMETER_PATH);
                 break;
             case PROXY:
                 mappings.add(HIBERNATE_MAPPING_PROXY_CORE_PATH);
+                mappings.add(HIBERNATE_MAPPING_PARAMETER_PATH);
                 break;
             default:
                 mappings.add(HIBERNATE_MAPPING_SIMPLE_CORE_PATH);

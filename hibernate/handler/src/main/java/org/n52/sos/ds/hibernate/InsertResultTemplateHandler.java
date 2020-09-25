@@ -60,7 +60,7 @@ import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.service.SosSettings;
 

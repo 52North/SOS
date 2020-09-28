@@ -528,13 +528,6 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     feature.setFeatureType(new FormatDAO().getOrInsertFormatEntity(
                             ((FeatureWithFeatureType) abstractFeature).getFeatureType(), session));
                 }
-                if (abstractFeature instanceof AbstractSamplingFeature
-                        && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
-                    Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
-                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(
-                            ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, session);
-                    feature.setParameters(parameter);
-                }
                 if (abstractFeature instanceof AbstractSamplingFeature) {
                     AbstractSamplingFeature samplingFeature = (AbstractSamplingFeature) abstractFeature;
                     if (samplingFeature.isSetSampledFeatures()) {
@@ -558,6 +551,13 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 session.saveOrUpdate(feature);
                 session.flush();
                 session.refresh(feature);
+                if (abstractFeature instanceof AbstractSamplingFeature
+                        && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
+                    Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
+                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(
+                            ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, feature, session);
+                    feature.setParameters(parameter);
+                }
             }
             return feature;
         }

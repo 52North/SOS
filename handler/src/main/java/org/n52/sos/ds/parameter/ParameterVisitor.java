@@ -26,33 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.observation;
+package org.n52.sos.ds.parameter;
 
 import java.math.BigDecimal;
 
+import org.n52.series.db.beans.HibernateRelations.HasName;
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.parameter.ParameterBooleanEntity;
-import org.n52.series.db.beans.parameter.ParameterCategoryEntity;
-import org.n52.series.db.beans.parameter.ParameterCountEntity;
+import org.n52.series.db.beans.parameter.BooleanParameterEntity;
+import org.n52.series.db.beans.parameter.CategoryParameterEntity;
+import org.n52.series.db.beans.parameter.ComplexParameterEntity;
+import org.n52.series.db.beans.parameter.CountParameterEntity;
+import org.n52.series.db.beans.parameter.JsonParameterEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.series.db.beans.parameter.ParameterQuantityEntity;
-import org.n52.series.db.beans.parameter.ParameterTextEntity;
+import org.n52.series.db.beans.parameter.QuantityParameterEntity;
+import org.n52.series.db.beans.parameter.TextParameterEntity;
+import org.n52.series.db.beans.parameter.XmlParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweDataRecord;
 
 public class ParameterVisitor {
 
     @SuppressWarnings("rawtypes")
-    public NamedValue visit(ParameterQuantityEntity p) throws OwsExceptionReport {
+    public NamedValue visit(QuantityParameterEntity p) throws OwsExceptionReport {
         NamedValue<BigDecimal> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new QuantityValue(p.getValue()));
@@ -61,7 +68,7 @@ public class ParameterVisitor {
     }
 
     @SuppressWarnings("rawtypes")
-    public NamedValue visit(ParameterBooleanEntity p) throws OwsExceptionReport {
+    public NamedValue visit(BooleanParameterEntity p) throws OwsExceptionReport {
         NamedValue<Boolean> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new BooleanValue(p.getValue()));
@@ -69,7 +76,7 @@ public class ParameterVisitor {
     }
 
     @SuppressWarnings("rawtypes")
-    public NamedValue visit(ParameterCategoryEntity p) throws OwsExceptionReport {
+    public NamedValue visit(CategoryParameterEntity p) throws OwsExceptionReport {
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new CategoryValue(p.getValue()));
@@ -78,7 +85,7 @@ public class ParameterVisitor {
     }
 
     @SuppressWarnings("rawtypes")
-    public NamedValue visit(ParameterCountEntity p) throws OwsExceptionReport {
+    public NamedValue visit(CountParameterEntity p) throws OwsExceptionReport {
         NamedValue<Integer> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new CountValue(p.getValue()));
@@ -86,30 +93,54 @@ public class ParameterVisitor {
     }
 
     @SuppressWarnings("rawtypes")
-    public NamedValue visit(ParameterTextEntity p) throws OwsExceptionReport {
+    public NamedValue visit(TextParameterEntity p) throws OwsExceptionReport {
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new TextValue(p.getValue()));
         return namedValue;
     }
 
-    // @SuppressWarnings("rawtypes")
-    // public NamedValue visit(Para p) throws OwsExceptionReport {
-    // NamedValue<XmlObject> namedValue = new NamedValue<>();
-    // addName(namedValue, p);
-    // namedValue.setValue(new XmlValue(p.getValueAsXml()));
-    // return namedValue;
-    // }
+    @SuppressWarnings("rawtypes")
+    public NamedValue visit(XmlParameterEntity p) throws OwsExceptionReport {
+        NamedValue<String> namedValue = new NamedValue<>();
+        addName(namedValue, p);
+        namedValue.setValue(new TextValue(p.getValue()));
+        return namedValue;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public NamedValue visit(JsonParameterEntity p) throws OwsExceptionReport {
+        NamedValue<String> namedValue = new NamedValue<>();
+        addName(namedValue, p);
+        namedValue.setValue(new TextValue(p.getValue()));
+        return namedValue;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public NamedValue visit(ComplexParameterEntity p) throws OwsExceptionReport {
+        NamedValue<SweAbstractDataRecord> namedValue = new NamedValue<>();
+        addName(namedValue, p);
+        ParameterSweAbstractDataComponentCreator visitor = new ParameterSweAbstractDataComponentCreator();
+        SweDataRecord record = visitor.visit(p);
+        namedValue.setValue(new ComplexValue(record));
+        return namedValue;
+    }
 
     public NamedValue<?> visit(ParameterEntity parameter) throws OwsExceptionReport {
-        if (parameter instanceof ParameterQuantityEntity) {
-            return visit((ParameterQuantityEntity) parameter);
-        } else if (parameter instanceof ParameterCountEntity) {
-            return visit((ParameterCountEntity) parameter);
-        } else if (parameter instanceof ParameterBooleanEntity) {
-            return visit((ParameterBooleanEntity) parameter);
-        } else if (parameter instanceof ParameterCategoryEntity) {
-            return visit((ParameterCategoryEntity) parameter);
+        if (parameter instanceof QuantityParameterEntity) {
+            return visit((QuantityParameterEntity) parameter);
+        } else if (parameter instanceof CountParameterEntity) {
+            return visit((CountParameterEntity) parameter);
+        } else if (parameter instanceof BooleanParameterEntity) {
+            return visit((BooleanParameterEntity) parameter);
+        } else if (parameter instanceof CategoryParameterEntity) {
+            return visit((CategoryParameterEntity) parameter);
+        } else if (parameter instanceof XmlParameterEntity) {
+            return visit((XmlParameterEntity) parameter);
+        } else if (parameter instanceof JsonParameterEntity) {
+            return visit((JsonParameterEntity) parameter);
+        } else if (parameter instanceof ComplexParameterEntity) {
+            return visit((ComplexParameterEntity) parameter);
         }
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, parameter);
@@ -117,9 +148,9 @@ public class ParameterVisitor {
         return namedValue;
     }
 
-    protected void addUnit(ParameterEntity<?> vp, Value<?> v) {
-        if (!v.isSetUnit() && vp instanceof HasUnit && ((HasUnit) vp).isSetUnit()) {
-            UnitEntity unit = ((HasUnit) vp).getUnit();
+    protected void addUnit(HasUnit vp, Value<?> v) {
+        if (!v.isSetUnit() && vp.isSetUnit()) {
+            UnitEntity unit = vp.getUnit();
             UoM uom = new UoM(unit.getUnit());
             if (unit.isSetName()) {
                 uom.setName(unit.getName());
@@ -131,7 +162,7 @@ public class ParameterVisitor {
         }
     }
 
-    protected NamedValue<?> addName(NamedValue<?> namedValue, ParameterEntity<?> p) {
+    protected NamedValue<?> addName(NamedValue<?> namedValue, HasName p) {
         ReferenceType referenceType = new ReferenceType(p.getName());
         namedValue.setName(referenceType);
         return namedValue;

@@ -26,14 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util;
+package org.n52.sos.ds.hibernate.util.parameter;
 
-import org.n52.series.db.beans.parameter.ParameterBooleanEntity;
-import org.n52.series.db.beans.parameter.ParameterCategoryEntity;
-import org.n52.series.db.beans.parameter.ParameterCountEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.series.db.beans.parameter.ParameterQuantityEntity;
-import org.n52.series.db.beans.parameter.ParameterTextEntity;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
@@ -60,50 +55,51 @@ import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
+@Deprecated
 public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
 
     protected ParameterFactory() {
     }
 
-    public Class<? extends ParameterBooleanEntity> truthClass() {
-        return ParameterBooleanEntity.class;
-    }
-
-    public ParameterBooleanEntity truth() throws OwsExceptionReport {
-        return instantiate(truthClass());
-    }
-
-    public Class<? extends ParameterCategoryEntity> categoryClass() {
-        return ParameterCategoryEntity.class;
-    }
-
-    public ParameterCategoryEntity category() throws OwsExceptionReport {
-        return instantiate(categoryClass());
-    }
-
-    public Class<? extends ParameterCountEntity> countClass() {
-        return ParameterCountEntity.class;
-    }
-
-    public ParameterCountEntity count() throws OwsExceptionReport {
-        return instantiate(countClass());
-    }
-
-    public Class<? extends ParameterQuantityEntity> quantityClass() {
-        return ParameterQuantityEntity.class;
-    }
-
-    public ParameterQuantityEntity quantity() throws OwsExceptionReport {
-        return instantiate(quantityClass());
-    }
-
-    public Class<? extends ParameterTextEntity> textClass() {
-        return ParameterTextEntity.class;
-    }
-
-    public ParameterTextEntity text() throws OwsExceptionReport {
-        return instantiate(textClass());
-    }
+//    public Class<? extends ParameterEntity> truthClass() {
+//        return ParameterEntity.class;
+//    }
+//
+//    public BooleanParameterEntity truth(DescribableEntity entity) throws OwsExceptionReport {
+//        return instantiate(truthClass());
+//    }
+//
+//    public Class<? extends ParameterCategoryEntity> categoryClass() {
+//        return ParameterCategoryEntity.class;
+//    }
+//
+//    public ParameterCategoryEntity category() throws OwsExceptionReport {
+//        return instantiate(categoryClass());
+//    }
+//
+//    public Class<? extends ParameterCountEntity> countClass() {
+//        return ParameterCountEntity.class;
+//    }
+//
+//    public ParameterCountEntity count() throws OwsExceptionReport {
+//        return instantiate(countClass());
+//    }
+//
+//    public Class<? extends ParameterQuantityEntity> quantityClass() {
+//        return ParameterQuantityEntity.class;
+//    }
+//
+//    public ParameterQuantityEntity quantity() throws OwsExceptionReport {
+//        return instantiate(quantityClass());
+//    }
+//
+//    public Class<? extends ParameterTextEntity> textClass() {
+//        return ParameterTextEntity.class;
+//    }
+//
+//    public ParameterTextEntity text() throws OwsExceptionReport {
+//        return instantiate(textClass());
+//    }
 
     // public Class<? extends XmlParameter> xmlClass() {
     // return XmlParameter.class;
@@ -112,25 +108,25 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
     // public XmlParameter xml() throws OwsExceptionReport {
     // return instantiate(xmlClass());
     // }
-
-    private <T extends ParameterEntity<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
-
-        try {
-            return c.newInstance();
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new NoApplicableCodeException().causedBy(ex)
-                    .withMessage("Error while creating parameter instance for %s", c);
-        }
-    }
+//
+//    private <T extends ParameterEntity<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
+//
+//        try {
+//            return c.newInstance();
+//        } catch (InstantiationException | IllegalAccessException ex) {
+//            throw new NoApplicableCodeException().causedBy(ex)
+//                    .withMessage("Error while creating parameter instance for %s", c);
+//        }
+//    }
 
     @Override
     public ParameterEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
-        return truth();
+        throw notSupported(value);
     }
 
     @Override
     public ParameterEntity<?> visit(CategoryValue value) throws OwsExceptionReport {
-        return category();
+        throw notSupported(value);
     }
 
     @Override
@@ -140,7 +136,7 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
 
     @Override
     public ParameterEntity<?> visit(CountValue value) throws OwsExceptionReport {
-        return count();
+        throw notSupported(value);
     }
 
     @Override
@@ -160,7 +156,7 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
 
     @Override
     public ParameterEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
-        return quantity();
+        throw notSupported(value);
     }
 
     @Override
@@ -180,7 +176,7 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
 
     @Override
     public ParameterEntity<?> visit(TextValue value) throws OwsExceptionReport {
-        return text();
+        throw notSupported(value);
     }
 
     @Override

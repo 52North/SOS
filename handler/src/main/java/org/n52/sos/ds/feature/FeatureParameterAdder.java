@@ -32,7 +32,7 @@ import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.ds.observation.ParameterVisitor;
+import org.n52.sos.ds.parameter.ParameterVisitor;
 
 public class FeatureParameterAdder {
 

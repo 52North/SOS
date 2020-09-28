@@ -119,7 +119,6 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/transactional/core/FormatResource.hbm.xml");
             resources.add("/hbm/transactional/core/LocationResource.hbm.xml");
             resources.add("/hbm/transactional/core/OfferingResource.hbm.xml");
-            resources.add("/hbm/transactional/core/ParameterResource.hbm.xml");
             resources.add("/hbm/transactional/core/PhenomenonResource.hbm.xml");
             resources.add("/hbm/transactional/core/PlatformResource.hbm.xml");
             resources.add("/hbm/transactional/core/ProcedureHistoryResource.hbm.xml");
@@ -131,6 +130,15 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/transactional/core/UnitResource.hbm.xml");
             resources.add("/hbm/transactional/core/TagResource.hbm.xml");
             resources.add("/hbm/transactional/core/VerticalMetadataResource.hbm.xml");
+
+            resources.add("/hbm/parameter/DatasetParameterResource.hbm.xml");
+            resources.add("/hbm/parameter/FeatureParameterResource.hbm.xml");
+            resources.add("/hbm/parameter/LocationParameterResource.hbm.xml");
+            resources.add("/hbm/parameter/ObservationParameterResource.hbm.xml");
+            resources.add("/hbm/parameter/PhenomenonParameterResource.hbm.xml");
+            resources.add("/hbm/parameter/PlatformParameterResource.hbm.xml");
+            resources.add("/hbm/parameter/ProcedureParameterResource.hbm.xml");
+
             // dataset
             resources.add("/hbm/transactional/dataset/DataResource.hbm.xml");
             resources.add("/hbm/transactional/dataset/DatasetResource.hbm.xml");

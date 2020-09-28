@@ -658,7 +658,6 @@ public class ObservationPersister
             observationContext.setPlatform(daos.platform().getOrInsertPlatform(featureOfInterest, session));
         }
         daos.observation().fillObservationContext(observationContext, omObservation, session);
-        checkForParameter(observation, omObservation.getParameterHolder(), observationContext, session);
         if (observationContext.isSetVertical()) {
             observationContext.setVertical(
                     daos.verticalMetadata().getOrInsertVerticalMetadata(observationContext.getVertical(), session));
@@ -672,6 +671,7 @@ public class ObservationPersister
         session.save(observation);
         session.flush();
         session.refresh(observation);
+        checkForParameter(observation, omObservation.getParameterHolder(), observationContext, session);
         daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, observation, session);
         return observation;
     }
@@ -744,8 +744,8 @@ public class ObservationPersister
                 parameterHolder.removeParameter(parameter);
             }
             if (parameterHolder.isSetParameter()) {
-                Set<ParameterEntity<?>> insertParameter =
-                        daos.parameter().insertParameter(parameterHolder.getParameter(), caches.units, session);
+                Set<ParameterEntity<?>> insertParameter = daos.parameter()
+                        .insertParameter(parameterHolder.getParameter(), caches.units, observation, session);
                 observation.setParameters(insertParameter);
             }
         }

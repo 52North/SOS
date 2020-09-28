@@ -33,15 +33,29 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.RootEntityResultTransformer;
+import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.parameter.BooleanParameterEntity;
+import org.n52.series.db.beans.parameter.CategoryParameterEntity;
+import org.n52.series.db.beans.parameter.ComplexParameterEntity;
+import org.n52.series.db.beans.parameter.CountParameterEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.series.db.beans.parameter.ParameterFactory;
+import org.n52.series.db.beans.parameter.ParameterFactory.ValueType;
+import org.n52.series.db.beans.parameter.observation.ObservationParameterEntity;
+import org.n52.series.db.beans.sta.ObservationEntity;
+import org.n52.series.db.beans.parameter.QuantityParameterEntity;
+import org.n52.series.db.beans.parameter.TextParameterEntity;
 import org.n52.series.db.beans.parameter.ValuedParameter;
+import org.n52.series.db.beans.parameter.XmlParameterEntity;
+import org.n52.series.db.beans.parameter.feature.FeatureParameterEntity;
 import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -69,8 +83,9 @@ import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ParameterFactory;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.sos.ds.hibernate.dao.observation.ValueCreatingSweDataComponentVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,11 +100,11 @@ public class ParameterDAO {
     private static final Logger LOG = LoggerFactory.getLogger(ParameterDAO.class);
 
     public Set<ParameterEntity<?>> insertParameter(Collection<NamedValue<?>> parameter, Map<UoM, UnitEntity> unitCache,
-            Session session) throws OwsExceptionReport {
+           DescribableEntity entity, Session session) throws OwsExceptionReport {
         Set<ParameterEntity<?>> parameters = new HashSet<>();
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                ParameterPersister persister = new ParameterPersister(this, namedValue, unitCache, session);
+                ParameterPersister persister = new ParameterPersister(this, namedValue, unitCache, entity, session);
                 parameters.add(namedValue.getValue().accept(persister));
             }
         }
@@ -133,10 +148,6 @@ public class ParameterDAO {
         }
     }
 
-    public ParameterFactory getParameterFactory() {
-        return ParameterFactory.getInstance();
-    }
-
     public static class ParameterPersister implements ValueVisitor<ParameterEntity<?>, OwsExceptionReport> {
         private final Caches caches;
 
@@ -146,39 +157,58 @@ public class ParameterDAO {
 
         private final DAOs daos;
 
-        private final ParameterFactory parameterFactory;
+        private DescribableEntity entity;
+
+        private Long parent;
 
         public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, Map<UoM, UnitEntity> unitCache,
-                Session session) {
-            this(new DAOs(parameterDAO), new Caches(unitCache), namedValue, session);
+                DescribableEntity entity, Session session) {
+            this(new DAOs(parameterDAO), new Caches(unitCache), namedValue, entity, session);
         }
 
-        public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, Session session) {
+        public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, DescribableEntity entity,
+                Session session) {
+           this(daos, namedValue, caches, entity, null, session);
+        }
+
+        public ParameterPersister(DAOs daos, NamedValue<?> namedValue, Caches caches,
+                DescribableEntity entity, Long parent, Session session) {
             this.caches = caches;
             this.session = session;
             this.daos = daos;
             this.namedValue = namedValue;
-            this.parameterFactory = daos.parameter.getParameterFactory();
+            this.entity = entity;
+            this.parent = parent;
         }
 
         @Override
         public ParameterEntity<?> visit(BooleanValue value) throws OwsExceptionReport {
-            return persist(parameterFactory.truth(), value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.BOOLEAN);
+            ((BooleanParameterEntity) param).setValue(value.getValue());
+            return persist(param);
         }
 
         @Override
         public ParameterEntity<?> visit(CategoryValue value) throws OwsExceptionReport {
-            return setUnitAndPersist(parameterFactory.category(), value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.CATEGORY);
+            ((CategoryParameterEntity) param).setValue(value.getValue());
+            return setUnitAndPersist(param, value);
         }
 
         @Override
         public ParameterEntity<?> visit(ComplexValue value) throws OwsExceptionReport {
-            throw notSupported(value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.COMPLEX);
+            ((ComplexParameterEntity) param).setValue(new HashSet<ValuedParameter<?>>());
+            ParameterEntity<?> complexyDataEntity = persist(param);
+            persistChildren(value.getValue(), complexyDataEntity);
+            return param;
         }
 
         @Override
         public ParameterEntity<?> visit(CountValue value) throws OwsExceptionReport {
-            return persist(parameterFactory.count(), value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.COUNT);
+            ((CountParameterEntity) param).setValue(value.getValue());
+            return persist(param);
         }
 
         @Override
@@ -198,12 +228,16 @@ public class ParameterDAO {
 
         @Override
         public ParameterEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
-            return setUnitAndPersist(parameterFactory.quantity(), value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.COUNT);
+            ((QuantityParameterEntity) param).setValue(value.getValue());
+            return setUnitAndPersist(param, value);
         }
 
         @Override
         public ParameterEntity<?> visit(ReferenceValue value) throws OwsExceptionReport {
-            return persist(parameterFactory.category(), value.getValue().getHref());
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.TEXT);
+            ((TextParameterEntity) param).setValue(value.getValue().getHref());
+            return persist(param);
         }
 
         @Override
@@ -218,7 +252,9 @@ public class ParameterDAO {
 
         @Override
         public ParameterEntity<?> visit(TextValue value) throws OwsExceptionReport {
-            return persist(parameterFactory.text(), value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.TEXT);
+            ((TextParameterEntity) param).setValue(value.getValue());
+            return persist(param);
         }
 
         @Override
@@ -258,7 +294,9 @@ public class ParameterDAO {
 
         @Override
         public ParameterEntity<?> visit(XmlValue<?> value) throws OwsExceptionReport {
-            throw notSupported(value);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.XML);
+            ((XmlParameterEntity) param).setValue(value.getValue().toString());
+            return persist(param);
         }
 
         @Override
@@ -266,44 +304,55 @@ public class ParameterDAO {
             throw notSupported(value);
         }
 
+        private void persistChildren(SweAbstractDataRecord dataRecord, ParameterEntity<?> parameter)
+                throws HibernateException, OwsExceptionReport {
+            for (SweField field : dataRecord.getFields()) {
+                String name = field.getName().getValue();
+                Value<?> value = field.accept(ValueCreatingSweDataComponentVisitor.getInstance());
+                ParameterPersister childPersister =
+                        createChildPersister(new NamedValue<>(new ReferenceType(name), value), parameter);
+                value.accept(childPersister);
+            }
+            session.flush();
+        }
+
+        private ParameterPersister createChildPersister(NamedValue<?> namedValue, ParameterEntity<?> parameter) {
+            return new ParameterPersister(this.daos, namedValue, caches, entity, parameter.getId(), session);
+        }
+
+
         private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
             throw new NoApplicableCodeException().withMessage("Unsupported om:parameter value %s",
                     value.getClass().getCanonicalName());
         }
 
-        private <V, T extends ParameterEntity<V>> T setUnitAndPersist(T parameter, Value<V> value)
+        private ParameterEntity<?> setUnitAndPersist(ParameterEntity<?> param, Value<?> value)
                 throws OwsExceptionReport {
-            if (parameter instanceof HasUnit) {
-                ((HasUnit) parameter).setUnit(getUnit(value));
+            if (param instanceof HasUnit) {
+                ((HasUnit) param).setUnit(getUnit(value));
             }
-            return persist(parameter, value.getValue());
+            return persist(param);
         }
 
         private UnitEntity getUnit(Value<?> value) {
             return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
         }
 
-        private <V, T extends ParameterEntity<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
-            return persist(parameter, value.getValue());
-        }
 
-        private <V, T extends ParameterEntity<V>> T persist(T parameter, V value) throws OwsExceptionReport {
-            Criteria c = session.createCriteria(parameter.getClass())
-                    .setResultTransformer(RootEntityResultTransformer.INSTANCE)
-                    .add(Restrictions.eq(ValuedParameter.NAME, namedValue.getName().getHref()))
-                    .add(Restrictions.eq(ValuedParameter.VALUE, value));
-            if (parameter instanceof HasUnit && !((HasUnit) parameter).isSetUnit()
-                    && getUnit(namedValue.getValue()) != null) {
-                ((HasUnit) parameter).setUnit(getUnit(namedValue.getValue()));
-                c.add(Restrictions.eq(HasUnit.UNIT, ((HasUnit) parameter).getUnit()));
+        private ParameterEntity<?> persist(ParameterEntity<?> parameter) throws OwsExceptionReport {
+            if (parameter instanceof ObservationParameterEntity && entity instanceof DataEntity) {
+                ObservationEntity observationEntity = new ObservationEntity<>();
+                observationEntity.setId(entity.getId());
+                ((ObservationParameterEntity) parameter).setObservation(observationEntity);
+            } else if (parameter instanceof FeatureParameterEntity && entity instanceof AbstractFeatureEntity) {
+                ((FeatureParameterEntity) parameter).setFeature((AbstractFeatureEntity) entity);
+            } else {
+                throw new NoApplicableCodeException().withMessage("Unable to insert parameter!");
             }
-            LOG.trace("QUERY parameter: {}", HibernateHelper.getSqlString(c));
-            ParameterEntity p = (ParameterEntity) c.uniqueResult();
-            if (p != null) {
-                return (T) p;
+            if (parent != null) {
+                parameter.setParent(parent);
             }
             parameter.setName(namedValue.getName().getHref());
-            parameter.setValue(value);
             session.saveOrUpdate(parameter);
             return parameter;
         }

@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ds.parameter.ParameterVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

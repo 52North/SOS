@@ -658,6 +658,7 @@ public class ObservationPersister
             observationContext.setPlatform(daos.platform().getOrInsertPlatform(featureOfInterest, session));
         }
         daos.observation().fillObservationContext(observationContext, omObservation, session);
+        checkVerticalParameter(observation, omObservation.getParameterHolder(), observationContext, session);
         if (observationContext.isSetVertical()) {
             observationContext.setVertical(
                     daos.verticalMetadata().getOrInsertVerticalMetadata(observationContext.getVertical(), session));
@@ -665,14 +666,13 @@ public class ObservationPersister
         if (dataset != null && dataset.hasVerticalMetadata()) {
             observationContext.setVertical(dataset.getVerticalMetadata());
         }
-
         DatasetEntity persitedDataset =
                 daos.observation().addObservationContextToObservation(observationContext, observation, session);
         session.save(observation);
         session.flush();
         session.refresh(observation);
-        checkForParameter(observation, omObservation.getParameterHolder(), observationContext, session);
-        daos.dataset.updateSeriesWithFirstLatestValues(persitedDataset, observation, session);
+        persistParameter(observation, omObservation.getParameterHolder(), observationContext, session);
+        daos.dataset.updateDatasetWithObservation(persitedDataset, observation, session);
         return observation;
     }
 
@@ -684,9 +684,8 @@ public class ObservationPersister
         return caches.formats().get(observationType);
     }
 
-    private <T extends DataEntity<?>> T checkForParameter(T observation, ParameterHolder parameterHolder,
+    private <T extends DataEntity<?>> T checkVerticalParameter(T observation, ParameterHolder parameterHolder,
             ObservationContext ctx, Session session) throws OwsExceptionReport {
-
         if (parameterHolder.isSetParameter()) {
             if (parameterHolder.isSetFromToParameter()) {
                 NamedValue<BigDecimal> fromParameter = parameterHolder.getFromParameter();
@@ -713,7 +712,6 @@ public class ObservationPersister
                     }
                 }
                 ctx.setVertical(verticalMetadata);
-
                 parameterHolder.removeParameter(fromParameter);
                 parameterHolder.removeParameter(toParameter);
             } else if (parameterHolder.isSetHeightDepthParameter()) {
@@ -740,14 +738,18 @@ public class ObservationPersister
                             .setVerticalUnit(getUnit(parameter.getValue().getUnitObject(), caches.units, session));
                 }
                 ctx.setVertical(verticalMetadata);
-
                 parameterHolder.removeParameter(parameter);
             }
-            if (parameterHolder.isSetParameter()) {
-                Set<ParameterEntity<?>> insertParameter = daos.parameter()
-                        .insertParameter(parameterHolder.getParameter(), caches.units, observation, session);
-                observation.setParameters(insertParameter);
-            }
+        }
+        return observation;
+    }
+
+    private <T extends DataEntity<?>> T persistParameter(T observation, ParameterHolder parameterHolder,
+            ObservationContext ctx, Session session) throws OwsExceptionReport {
+        if (parameterHolder.isSetParameter()) {
+            Set<ParameterEntity<?>> insertParameter = daos.parameter()
+                    .insertParameter(parameterHolder.getParameter(), caches.units, observation, session);
+            observation.setParameters(insertParameter);
         }
         return observation;
     }

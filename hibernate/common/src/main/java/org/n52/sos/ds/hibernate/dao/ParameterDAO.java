@@ -47,13 +47,12 @@ import org.n52.series.db.beans.parameter.CountParameterEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.series.db.beans.parameter.ParameterFactory;
 import org.n52.series.db.beans.parameter.ParameterFactory.ValueType;
-import org.n52.series.db.beans.parameter.observation.ObservationParameterEntity;
-import org.n52.series.db.beans.sta.ObservationEntity;
 import org.n52.series.db.beans.parameter.QuantityParameterEntity;
 import org.n52.series.db.beans.parameter.TextParameterEntity;
 import org.n52.series.db.beans.parameter.ValuedParameter;
 import org.n52.series.db.beans.parameter.XmlParameterEntity;
 import org.n52.series.db.beans.parameter.feature.FeatureParameterEntity;
+import org.n52.series.db.beans.parameter.observation.ObservationParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -228,7 +227,7 @@ public class ParameterDAO {
 
         @Override
         public ParameterEntity<?> visit(QuantityValue value) throws OwsExceptionReport {
-            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.COUNT);
+            ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.QUANTITY);
             ((QuantityParameterEntity) param).setValue(value.getValue());
             return setUnitAndPersist(param, value);
         }
@@ -341,9 +340,7 @@ public class ParameterDAO {
 
         private ParameterEntity<?> persist(ParameterEntity<?> parameter) throws OwsExceptionReport {
             if (parameter instanceof ObservationParameterEntity && entity instanceof DataEntity) {
-                ObservationEntity observationEntity = new ObservationEntity<>();
-                observationEntity.setId(entity.getId());
-                ((ObservationParameterEntity) parameter).setObservation(observationEntity);
+                ((ObservationParameterEntity) parameter).setObservation((DataEntity) entity);
             } else if (parameter instanceof FeatureParameterEntity && entity instanceof AbstractFeatureEntity) {
                 ((FeatureParameterEntity) parameter).setFeature((AbstractFeatureEntity) entity);
             } else {

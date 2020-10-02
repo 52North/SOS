@@ -48,7 +48,9 @@ import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.series.db.beans.parameter.ParameterFactory;
 import org.n52.series.db.beans.parameter.ParameterFactory.ValueType;
 import org.n52.series.db.beans.parameter.QuantityParameterEntity;
+import org.n52.series.db.beans.parameter.TemporalParameterEntity;
 import org.n52.series.db.beans.parameter.TextParameterEntity;
+import org.n52.series.db.beans.parameter.TimeRange;
 import org.n52.series.db.beans.parameter.ValuedParameter;
 import org.n52.series.db.beans.parameter.XmlParameterEntity;
 import org.n52.series.db.beans.parameter.feature.FeatureParameterEntity;
@@ -75,6 +77,7 @@ import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.TimeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.XmlValue;
@@ -255,10 +258,26 @@ public class ParameterDAO {
             ((TextParameterEntity) param).setValue(value.getValue());
             return persist(param);
         }
+        
+        @Override
+        public ParameterEntity<?> visit(TimeValue value) throws OwsExceptionReport {
+            ParameterEntity<?> param = ParameterFactory.from(entity, ValueType.TEMPORAL);
+            ((TemporalParameterEntity) param).setValue(new TimeRange(value.getValue()
+                    .toDate()));
+            return persist(param);
+        }
+
 
         @Override
         public ParameterEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
-            throw notSupported(value);
+            ParameterEntity<?> param = ParameterFactory.from(entity, ValueType.TEMPORAL);
+            ((TemporalParameterEntity) param).setValue(new TimeRange(value.getValue()
+                    .getRangeStart()
+                    .toDate(),
+                    value.getValue()
+                            .getRangeEnd()
+                            .toDate()));
+            return persist(param);
         }
 
         @Override

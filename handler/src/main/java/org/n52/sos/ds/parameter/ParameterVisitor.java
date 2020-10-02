@@ -30,6 +30,7 @@ package org.n52.sos.ds.parameter;
 
 import java.math.BigDecimal;
 
+import org.joda.time.DateTime;
 import org.n52.series.db.beans.HibernateRelations.HasName;
 import org.n52.series.db.beans.HibernateRelations.HasUnit;
 import org.n52.series.db.beans.UnitEntity;
@@ -40,7 +41,9 @@ import org.n52.series.db.beans.parameter.CountParameterEntity;
 import org.n52.series.db.beans.parameter.JsonParameterEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.series.db.beans.parameter.QuantityParameterEntity;
+import org.n52.series.db.beans.parameter.TemporalParameterEntity;
 import org.n52.series.db.beans.parameter.TextParameterEntity;
+import org.n52.series.db.beans.parameter.ValuedParameter;
 import org.n52.series.db.beans.parameter.XmlParameterEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -51,10 +54,15 @@ import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.om.values.CountValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.TimeValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.RangeValue;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.util.DateTimeHelper;
 
 public class ParameterVisitor {
 
@@ -64,6 +72,7 @@ public class ParameterVisitor {
         addName(namedValue, p);
         namedValue.setValue(new QuantityValue(p.getValue()));
         addUnit(p, namedValue.getValue());
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -72,6 +81,7 @@ public class ParameterVisitor {
         NamedValue<Boolean> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new BooleanValue(p.getValue()));
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -81,6 +91,7 @@ public class ParameterVisitor {
         addName(namedValue, p);
         namedValue.setValue(new CategoryValue(p.getValue()));
         addUnit(p, namedValue.getValue());
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -89,6 +100,7 @@ public class ParameterVisitor {
         NamedValue<Integer> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new CountValue(p.getValue()));
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -97,6 +109,7 @@ public class ParameterVisitor {
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new TextValue(p.getValue()));
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -105,6 +118,7 @@ public class ParameterVisitor {
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new TextValue(p.getValue()));
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -113,6 +127,7 @@ public class ParameterVisitor {
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, p);
         namedValue.setValue(new TextValue(p.getValue()));
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 
@@ -124,6 +139,28 @@ public class ParameterVisitor {
         SweDataRecord record = visitor.visit(p);
         namedValue.setValue(new ComplexValue(record));
         return namedValue;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    public NamedValue visit(TemporalParameterEntity p) throws OwsExceptionReport {
+        if (p.isSetValue() && p.getValue().isPeriod()) {
+            NamedValue<RangeValue<DateTime>> namedValue = new NamedValue<>();
+            addName(namedValue, p);
+            namedValue.setValue(new TimeRangeValue(new RangeValue<DateTime>(DateTimeHelper.makeDateTime(p.getValue()
+                    .getFrom()), DateTimeHelper.makeDateTime(
+                            p.getValue()
+                                    .getTo()))));
+            addDescription(namedValue.getValue(), p);
+            return namedValue;
+        } else {
+            NamedValue<DateTime> namedValue = new NamedValue<>();
+            addName(namedValue, p);
+            namedValue.setValue(new TimeValue(DateTimeHelper.makeDateTime(p.getValue()
+                    .getInstant())));
+            addDescription(namedValue.getValue(), p);
+            return namedValue;
+
+        }
     }
 
     public NamedValue<?> visit(ParameterEntity parameter) throws OwsExceptionReport {
@@ -141,11 +178,22 @@ public class ParameterVisitor {
             return visit((JsonParameterEntity) parameter);
         } else if (parameter instanceof ComplexParameterEntity) {
             return visit((ComplexParameterEntity) parameter);
+        } else if (parameter instanceof TemporalParameterEntity) {
+            return visit((TemporalParameterEntity) parameter);
         }
         NamedValue<String> namedValue = new NamedValue<>();
         addName(namedValue, parameter);
-        namedValue.setValue(new TextValue(parameter.getValue().toString()));
+        TextValue value = new TextValue(parameter.getValue().toString());
+        addDescription(value, parameter);
+        namedValue.setValue(value);
         return namedValue;
+    }
+
+    private void addDescription(Value<?> value, ValuedParameter p) {
+        if (p.isSetDescription()
+                && value instanceof SweAbstractDataComponent) {
+            ((SweAbstractDataComponent) value).setDescription(((ParameterEntity) p).getDescription());
+        }
     }
 
     protected void addUnit(HasUnit vp, Value<?> v) {

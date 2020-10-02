@@ -48,6 +48,7 @@ import org.n52.shetland.ogc.om.values.TLVTValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
+import org.n52.shetland.ogc.om.values.TimeValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.XmlValue;
@@ -206,6 +207,11 @@ public class ParameterFactory implements ValueVisitor<ParameterEntity<?>, OwsExc
 
     @Override
     public ParameterEntity<?> visit(ProfileValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ParameterEntity<?> visit(TimeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

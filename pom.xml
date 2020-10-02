@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.3.1-SNAPSHOT</version>
+    <version>5.3.2-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -96,7 +96,7 @@
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
         <version.geotools>24.0</version.geotools>
-        <version.jackson>2.11.2</version.jackson>
+        <version.jackson>2.11.3</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.3.3</version.netcdf>
@@ -2154,7 +2154,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.31.v20200723</version>
+                    <version>9.4.32.v20200930</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

@@ -258,15 +258,6 @@ public class ParameterDAO {
             ((TextParameterEntity) param).setValue(value.getValue());
             return persist(param);
         }
-        
-        @Override
-        public ParameterEntity<?> visit(TimeValue value) throws OwsExceptionReport {
-            ParameterEntity<?> param = ParameterFactory.from(entity, ValueType.TEMPORAL);
-            ((TemporalParameterEntity) param).setValue(new TimeRange(value.getValue()
-                    .toDate()));
-            return persist(param);
-        }
-
 
         @Override
         public ParameterEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {

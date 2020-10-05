@@ -346,11 +346,6 @@ public class ObservationPersister
     public DataEntity<?> visit(XmlValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
-    
-    @Override
-    public DataEntity<?> visit(TimeValue value) throws OwsExceptionReport {
-        throw notSupported(value);
-    }
 
     @Override
     public DataEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {

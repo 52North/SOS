@@ -140,28 +140,6 @@ public class ParameterVisitor {
         namedValue.setValue(new ComplexValue(record));
         return namedValue;
     }
-    
-    @SuppressWarnings("rawtypes")
-    public NamedValue visit(TemporalParameterEntity p) throws OwsExceptionReport {
-        if (p.isSetValue() && p.getValue().isPeriod()) {
-            NamedValue<RangeValue<DateTime>> namedValue = new NamedValue<>();
-            addName(namedValue, p);
-            namedValue.setValue(new TimeRangeValue(new RangeValue<DateTime>(DateTimeHelper.makeDateTime(p.getValue()
-                    .getFrom()), DateTimeHelper.makeDateTime(
-                            p.getValue()
-                                    .getTo()))));
-            addDescription(namedValue.getValue(), p);
-            return namedValue;
-        } else {
-            NamedValue<DateTime> namedValue = new NamedValue<>();
-            addName(namedValue, p);
-            namedValue.setValue(new TimeValue(DateTimeHelper.makeDateTime(p.getValue()
-                    .getInstant())));
-            addDescription(namedValue.getValue(), p);
-            return namedValue;
-
-        }
-    }
 
     public NamedValue<?> visit(ParameterEntity parameter) throws OwsExceptionReport {
         if (parameter instanceof QuantityParameterEntity) {

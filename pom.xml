@@ -113,7 +113,7 @@
         <version.elasticsearch>7.9.2</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.13</version.httpcore>
-        <version.httpcoponents>4.5.12</version.httpcoponents>
+        <version.httpcoponents>4.5.13</version.httpcoponents>
     </properties>
 
     <dependencyManagement>

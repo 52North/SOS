@@ -1284,7 +1284,7 @@
             <dependency>
                 <groupId>org.opengeo</groupId>
                 <artifactId>geodb</artifactId>
-                <version>0.8</version>
+                <version>0.9</version>
                 <exclusions>
                   <exclusion>
                       <groupId>com.vividsolutions</groupId>
@@ -1840,11 +1840,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>boundlessgeo</id>
-            <name>Boundless Cloud Repository</name>
-            <url>https://boundless.artifactoryonline.com/boundless/main</url>
         </repository>
     </repositories>
     <profiles>

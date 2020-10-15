@@ -39,6 +39,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
 import org.n52.sos.ogc.filter.TemporalFilter;
@@ -68,7 +69,13 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
 
     private static final String END_TIME = "2012-11-19T14:15:00+01:00";
 
-    private static final String EVENT_TIME = "om:phenomenonTime," + START_TIME + "/" + END_TIME;
+    private static final String TIME_PERIOD = "PT15M";
+
+    private static final String EVENT_TIME_START_TIME_END_TIME = "om:phenomenonTime," + START_TIME + "/" + END_TIME;
+
+    private static final String EVENT_TIME_START_TIME_PERIOD = "om:phenomenonTime," + START_TIME + "/" + TIME_PERIOD;
+
+    private static final String EVENT_TIME_PERIOD_END_TIME = "om:phenomenonTime," + TIME_PERIOD + "/" + END_TIME;
 
     private static final String SPATIAL_FILTER_VALUE_REFERENCE = "om:featureOfInterest/*/sams:shape";
 
@@ -105,11 +112,45 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     }
 
     @Test
-    public void eventTime() throws OwsExceptionReport {
+    public void eventTime_startTime_endTime() throws OwsExceptionReport {
         Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
                         RESPONSE_FORMAT);
-        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME);
+        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME_START_TIME_END_TIME);
+        GetObservationRequest req = decoder.decode(map);
+        assertThat(req.getTemporalFilters().size(), is(1));
+        TemporalFilter temporalFilter = req.getTemporalFilters().get(0);
+        assertThat(temporalFilter.getTime(), instanceOf(TimePeriod.class));
+        TimePeriod timePeriod = (TimePeriod) temporalFilter.getTime();
+        assertThat(timePeriod.getStart().getMillis(), is(new DateTime(START_TIME).getMillis()));
+        assertThat(timePeriod.getEnd().getMillis(), is(new DateTime(END_TIME).plusMillis(999).getMillis()));
+        assertThat(timePeriod.getStartIndet(), nullValue());
+        assertThat(timePeriod.getEndIndet(), nullValue());
+    }
+
+    @Test
+    public void eventTime_startTime_period() throws OwsExceptionReport {
+        Map<String, String> map =
+                createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
+                        RESPONSE_FORMAT);
+        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME_START_TIME_PERIOD);
+        GetObservationRequest req = decoder.decode(map);
+        assertThat(req.getTemporalFilters().size(), is(1));
+        TemporalFilter temporalFilter = req.getTemporalFilters().get(0);
+        assertThat(temporalFilter.getTime(), instanceOf(TimePeriod.class));
+        TimePeriod timePeriod = (TimePeriod) temporalFilter.getTime();
+        assertThat(timePeriod.getStart().getMillis(), is(new DateTime(START_TIME).getMillis()));
+        assertThat(timePeriod.getEnd().getMillis(), is(new DateTime(END_TIME).getMillis()));
+        assertThat(timePeriod.getStartIndet(), nullValue());
+        assertThat(timePeriod.getEndIndet(), nullValue());
+    }
+
+    @Test
+    public void eventTime_period_endTime() throws OwsExceptionReport {
+        Map<String, String> map =
+                createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
+                        RESPONSE_FORMAT);
+        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME_PERIOD_END_TIME);
         GetObservationRequest req = decoder.decode(map);
         assertThat(req.getTemporalFilters().size(), is(1));
         TemporalFilter temporalFilter = req.getTemporalFilters().get(0);

@@ -44,6 +44,7 @@ import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
@@ -67,12 +68,18 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
 
     private static final String END_TIME = "2012-11-19T14:15:00+01:00";
 
-    private static final String EVENT_TIME = "om:phenomenonTime," + START_TIME + "/" + END_TIME;
+    private static final String TIME_PERIOD = "PT15M";
+
+    private static final String EVENT_TIME_START_TIME_END_TIME = "om:phenomenonTime," + START_TIME + "/" + END_TIME;
+
+    private static final String EVENT_TIME_START_TIME_PERIOD = "om:phenomenonTime," + START_TIME + "/" + TIME_PERIOD;
+
+    private static final String EVENT_TIME_PERIOD_END_TIME = "om:phenomenonTime," + TIME_PERIOD + "/" + END_TIME;
 
     private static final String SPATIAL_FILTER_VALUE_REFERENCE = "om:featureOfInterest/*/sams:shape";
 
-    private static final String SPATIAL_FILTER = SPATIAL_FILTER_VALUE_REFERENCE
-            + ",0.0,0.0,60.0,60.0,urn:ogc:def:crs:EPSG::4326";
+    private static final String SPATIAL_FILTER =
+            SPATIAL_FILTER_VALUE_REFERENCE + ",0.0,0.0,60.0,60.0,urn:ogc:def:crs:EPSG::4326";
 
     private static final String ADDITIONAL_PARAMETER = "additionalParameter";
 
@@ -92,11 +99,11 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
 
     @Test
     public void basic() throws DecodingException {
-        GetObservationRequest req =
-                decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
-                        OBSERVED_PROPERTY, RESPONSE_FORMAT));
+        GetObservationRequest req = decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING,
+                PROCEDURE, OBSERVED_PROPERTY, RESPONSE_FORMAT));
         MatcherAssert.assertThat(req, CoreMatchers.is(CoreMatchers.notNullValue()));
-        MatcherAssert.assertThat(req.getOperationName(), CoreMatchers.is(SosConstants.Operations.GetObservation.name()));
+        MatcherAssert.assertThat(req.getOperationName(),
+                CoreMatchers.is(SosConstants.Operations.GetObservation.name()));
         MatcherAssert.assertThat(req.getService(), CoreMatchers.is(SosConstants.SOS));
         MatcherAssert.assertThat(req.getVersion(), CoreMatchers.is(Sos1Constants.SERVICEVERSION));
         MatcherAssert.assertThat(req.getOfferings().size(), CoreMatchers.is(1));
@@ -105,21 +112,56 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         MatcherAssert.assertThat(req.getProcedures().get(0), CoreMatchers.is(PROCEDURE));
         MatcherAssert.assertThat(req.getObservedProperties().size(), CoreMatchers.is(1));
         MatcherAssert.assertThat(req.getObservedProperties().get(0), CoreMatchers.is(OBSERVED_PROPERTY));
-        MatcherAssert.assertThat(MediaType.parse(req.getResponseFormat()), CoreMatchers.is(MediaType.parse(RESPONSE_FORMAT)));
+        MatcherAssert.assertThat(MediaType.parse(req.getResponseFormat()),
+                CoreMatchers.is(MediaType.parse(RESPONSE_FORMAT)));
     }
 
-    @Test
-    public void eventTime() throws DecodingException {
-        Map<String, String> map =
-                createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
-                        RESPONSE_FORMAT);
-        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME);
+    public void eventTime_startTime_endTime() throws OwsExceptionReport, DecodingException {
+        Map<String, String> map = createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
+                OBSERVED_PROPERTY, RESPONSE_FORMAT);
+        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME_START_TIME_END_TIME);
         GetObservationRequest req = decoder.decode(map);
         MatcherAssert.assertThat(req.getTemporalFilters().size(), CoreMatchers.is(1));
         TemporalFilter temporalFilter = req.getTemporalFilters().get(0);
         MatcherAssert.assertThat(temporalFilter.getTime(), CoreMatchers.instanceOf(TimePeriod.class));
         TimePeriod timePeriod = (TimePeriod) temporalFilter.getTime();
-        MatcherAssert.assertThat(timePeriod.getStart().getMillis(), CoreMatchers.is(new DateTime(START_TIME).getMillis()));
+        MatcherAssert.assertThat(timePeriod.getStart().getMillis(),
+                CoreMatchers.is(new DateTime(START_TIME).getMillis()));
+        MatcherAssert.assertThat(timePeriod.getEnd().getMillis(),
+                CoreMatchers.is(new DateTime(END_TIME).plusMillis(999).getMillis()));
+        MatcherAssert.assertThat(timePeriod.getStartIndet(), CoreMatchers.nullValue());
+        MatcherAssert.assertThat(timePeriod.getEndIndet(), CoreMatchers.nullValue());
+    }
+
+    @Test
+    public void eventTime_startTime_period() throws OwsExceptionReport, DecodingException {
+        Map<String, String> map = createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
+                OBSERVED_PROPERTY, RESPONSE_FORMAT);
+        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME_START_TIME_PERIOD);
+        GetObservationRequest req = decoder.decode(map);
+        MatcherAssert.assertThat(req.getTemporalFilters().size(), CoreMatchers.is(1));
+        TemporalFilter temporalFilter = req.getTemporalFilters().get(0);
+        MatcherAssert.assertThat(temporalFilter.getTime(), CoreMatchers.instanceOf(TimePeriod.class));
+        TimePeriod timePeriod = (TimePeriod) temporalFilter.getTime();
+        MatcherAssert.assertThat(timePeriod.getStart().getMillis(),
+                CoreMatchers.is(new DateTime(START_TIME).getMillis()));
+        MatcherAssert.assertThat(timePeriod.getEnd().getMillis(), CoreMatchers.is(new DateTime(END_TIME).getMillis()));
+        MatcherAssert.assertThat(timePeriod.getStartIndet(), CoreMatchers.nullValue());
+        MatcherAssert.assertThat(timePeriod.getEndIndet(), CoreMatchers.nullValue());
+    }
+
+    @Test
+    public void eventTime_period_endTime() throws OwsExceptionReport, DecodingException {
+        Map<String, String> map = createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
+                OBSERVED_PROPERTY, RESPONSE_FORMAT);
+        map.put(Sos1Constants.GetObservationParams.eventTime.name(), EVENT_TIME_PERIOD_END_TIME);
+        GetObservationRequest req = decoder.decode(map);
+        MatcherAssert.assertThat(req.getTemporalFilters().size(), CoreMatchers.is(1));
+        TemporalFilter temporalFilter = req.getTemporalFilters().get(0);
+        MatcherAssert.assertThat(temporalFilter.getTime(), CoreMatchers.instanceOf(TimePeriod.class));
+        TimePeriod timePeriod = (TimePeriod) temporalFilter.getTime();
+        MatcherAssert.assertThat(timePeriod.getStart().getMillis(),
+                CoreMatchers.is(new DateTime(START_TIME).getMillis()));
         MatcherAssert.assertThat(timePeriod.getEnd().getMillis(),
                 CoreMatchers.is(new DateTime(END_TIME).plusMillis(999).getMillis()));
         MatcherAssert.assertThat(timePeriod.getStartIndet(), CoreMatchers.nullValue());
@@ -134,7 +176,8 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         GetObservationRequest req = decoder.decode(map);
         MatcherAssert.assertThat(req.getSpatialFilter().getSrid(), CoreMatchers.is(EPSG_WGS84));
         MatcherAssert.assertThat(req.getSpatialFilter().getOperator(), CoreMatchers.is(SpatialOperator.BBOX));
-        MatcherAssert.assertThat(req.getSpatialFilter().getValueReference(), CoreMatchers.is(SPATIAL_FILTER_VALUE_REFERENCE));
+        MatcherAssert.assertThat(req.getSpatialFilter().getValueReference(),
+                CoreMatchers.is(SPATIAL_FILTER_VALUE_REFERENCE));
         MatcherAssert.assertThat(req.getSpatialFilter().getGeometry().getSRID(), CoreMatchers.is(EPSG_WGS84));
         MatcherAssert.assertThat(req.getSpatialFilter().getGeometry().isGeometry(), CoreMatchers.is(true));
         Geometry geometry = req.getSpatialFilter().getGeometry().getGeometry().get();
@@ -154,15 +197,14 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
 
     @Test(expected = DecodingException.class)
     public void additionalParameter() throws DecodingException {
-        final Map<String, String> map =
-                createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
-                        RESPONSE_FORMAT);
+        final Map<String, String> map = createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
+                OBSERVED_PROPERTY, RESPONSE_FORMAT);
         map.put(ADDITIONAL_PARAMETER, ADDITIONAL_PARAMETER);
         decoder.decode(map);
     }
 
-    private Map<String, String> createMap(String service, String version, String offering,
-                                          String procedure, String observedProperty, String responseFormat) {
+    private Map<String, String> createMap(String service, String version, String offering, String procedure,
+            String observedProperty, String responseFormat) {
         Map<String, String> map = new HashMap<>(7);
         map.put(RequestParams.service.name(), service);
         map.put(RequestParams.request.name(), SosConstants.Operations.GetObservation.name());

@@ -107,7 +107,7 @@
         <version.dao-impl>3.4.1</version.dao-impl>
         <version.db-model>3.0.3</version.db-model>
         <version.springframework.security>5.4.1</version.springframework.security>
-        <version.springframework>5.2.9.RELEASE</version.springframework>
+        <version.springframework>5.3.0</version.springframework>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.2</version.saxon>
         <version.elasticsearch>7.9.3</version.elasticsearch>

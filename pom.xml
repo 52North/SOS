@@ -94,7 +94,7 @@
         <version.hibernate>5.4.24.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
-        <version.geotools>24.0</version.geotools>
+        <version.geotools>24.1</version.geotools>
         <version.jackson>2.11.3</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>

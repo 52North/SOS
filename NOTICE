@@ -178,6 +178,7 @@ This project includes:
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
+  jakarta.annotation API under EPL 2.0 or GPL2 w/ CPE
   janino under New BSD License
   Java Annotation Indexer under Apache License, Version 2.0
   Java archiving library under Apache 2
@@ -209,19 +210,19 @@ This project includes:
   lang-mustache under The Apache Software License, Version 2.0
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
-  Lucene Common Analyzers under Apache 2
+  Lucene Common Analyzers under Apache License, Version 2.0
   Lucene Core under Apache 2
-  Lucene Grouping under Apache 2
-  Lucene Highlighter under Apache 2
-  Lucene Join under Apache 2
-  Lucene Memory under Apache 2
-  Lucene Miscellaneous under Apache 2
-  Lucene Queries under Apache 2
-  Lucene QueryParsers under Apache 2
-  Lucene Sandbox under Apache 2
-  Lucene Spatial 3D under Apache 2
-  Lucene Spatial Extras under Apache 2
-  Lucene Suggest under Apache 2
+  Lucene Grouping under Apache License, Version 2.0
+  Lucene Highlighter under Apache License, Version 2.0
+  Lucene Join under Apache License, Version 2.0
+  Lucene Memory under Apache License, Version 2.0
+  Lucene Miscellaneous under Apache License, Version 2.0
+  Lucene Queries under Apache License, Version 2.0
+  Lucene QueryParsers under Apache License, Version 2.0
+  Lucene Sandbox under Apache License, Version 2.0
+  Lucene Spatial 3D under Apache License, Version 2.0
+  Lucene Spatial Extras under Apache License, Version 2.0
+  Lucene Suggest under Apache License, Version 2.0
   Main module under Lesser General Public License (LGPL)
   mapper-extras under The Apache Software License, Version 2.0
   MaxMind DB Reader under Apache License 2.0
@@ -301,7 +302,7 @@ This project includes:
   org.apache.xmlgraphics:batik-transcoder under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-util under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-xml under The Apache Software License, Version 2.0
-  org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
+  org.locationtech.jts:jts-core under Eclipse Public License, Version 2.0 or Eclipse Distribution License - v 1.0
   parent-join under The Apache Software License, Version 2.0
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   PostGIS Geometry under GNU Lesser General Public License
@@ -326,7 +327,7 @@ This project includes:
   Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
   server under The Apache Software License, Version 2.0
   SI Quantities under BSD
-  SI Units for Java SE 8 under BSD
+  SI Units under BSD
   SLF4J API Module under MIT License
   SnakeYAML under Apache License, Version 2.0
   SpotBugs Annotations under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
@@ -353,10 +354,10 @@ This project includes:
   T-Digest under The Apache Software License, Version 2.0
   TXW2 Runtime under CDDL+GPL License
   udunits under BSD 3-Clause License
-  Units of Measurement API under BSD
-  Units of Measurement Common Library under BSD
-  Units of Measurement Common Unit Systems for Java 8 under BSD
-  Units of Measurement Implementation for Java SE under BSD
+  Units of Measurement API under BSD 3-Clause
+  Units of Measurement Common Library for Java under BSD
+  Units of Measurement Common Unit Systems under BSD
+  Units of Measurement Reference Implementation under BSD 3-Clause
   W3C SOAP specification recommondation (v1.1) under The Apache Software License, Version 2.0
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0

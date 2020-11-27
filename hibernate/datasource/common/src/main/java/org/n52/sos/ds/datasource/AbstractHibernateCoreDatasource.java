@@ -492,6 +492,11 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         return getDatasourceProperties(mergeProperties(current, changed));
     }
 
+    @Override
+    public Set<String> getSpringProfiles() {
+        return null;
+    }
+
     /**
      * Merge current properties with changed settings
      *

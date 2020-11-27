@@ -91,10 +91,10 @@
         <version.mysql>8.0.22</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.4.23.Final</version.hibernate>
+        <version.hibernate>5.4.24.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
-        <version.geotools>24.0</version.geotools>
+        <version.geotools>24.1</version.geotools>
         <version.jackson>2.11.3</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
@@ -110,7 +110,7 @@
         <version.springframework>5.3.1</version.springframework>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.3</version.saxon>
-        <version.elasticsearch>7.9.3</version.elasticsearch>
+        <version.elasticsearch>7.10.0</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.13</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -321,7 +321,7 @@
             <dependency>
                 <groupId>org.locationtech.spatial4j</groupId>
                 <artifactId>spatial4j</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
             </dependency>
             <!-- <dependency> <groupId>org.n52.sensorweb-server.helgoland</groupId> <artifactId>proxy-dao</artifactId> 
                 <version>${dataset.proxy.version}</version> <exclusions> <exclusion> <groupId>org.springframework</groupId> 
@@ -776,7 +776,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.28</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -2072,7 +2072,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.34.v20201102</version>
+                    <version>9.4.35.v20201120</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

@@ -315,7 +315,7 @@
             <dependency>
                 <groupId>org.locationtech.spatial4j</groupId>
                 <artifactId>spatial4j</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
             </dependency>
             <!-- <dependency> <groupId>org.n52.sensorweb-server.helgoland</groupId> <artifactId>proxy-dao</artifactId> 
                 <version>${dataset.proxy.version}</version> <exclusions> <exclusion> <groupId>org.springframework</groupId> 

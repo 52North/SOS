@@ -37,13 +37,12 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.HibernateSessionStore;
+
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.beans.FeatureEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.FeatureDao;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -102,9 +101,6 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
             request.setFeatureIdentifiers(features.stream().map(f -> f.getIdentifier()).collect(Collectors.toList()));
             dao.queryObservationData(request, response);
             return response;
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for GetObservation!");
         } finally {
             sessionStore.returnSession(session);
         }

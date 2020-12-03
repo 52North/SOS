@@ -44,6 +44,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -182,6 +183,11 @@ public class SweAbstractDataComponentCreator
     @Override
     public SweAbstractDataComponent visit(ProfileDataEntity o) throws OwsExceptionReport {
         return new ProfileGeneratorSplitter(new ObservationValueCreator(getDecoderRepository())).createValue(o);
+    }
+
+    @Override
+    public SweAbstractDataComponent visit(TrajectoryDataEntity o) throws OwsExceptionReport {
+        return new TrajectoryGeneratorSplitter(new ObservationValueCreator(getDecoderRepository())).createValue(o);
     }
 
     @Override

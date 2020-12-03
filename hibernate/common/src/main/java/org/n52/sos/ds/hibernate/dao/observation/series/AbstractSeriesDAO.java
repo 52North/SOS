@@ -847,7 +847,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      *
      * @param dataset
      *            Series object
-     * @param hObservation
+     * @param observation
      *            Observation object
      * @param session
      *            Hibernate session

@@ -41,17 +41,15 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.DataAccessException;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.dao.DatasetDao;
-import org.n52.series.db.dao.DbQuery;
+import org.n52.series.db.old.dao.DatasetDao;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
@@ -133,9 +131,6 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 return checkForDuplictation(context.getDataAvailabilityList());
             }
             return context.getDataAvailabilityList();
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for GetDataAvailability!");
         } finally {
             sessionStore.returnSession(session);
         }

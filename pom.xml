@@ -104,7 +104,7 @@
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>8.1.0-SNAPSHOT</version.arctic-sea>
         <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
-        <version.dao-impl>3.5.0-SNAPSHOT</version.dao-impl>
+        <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.4.RELEASE</version.springframework.security>
@@ -333,6 +333,21 @@
             <dependency>
                 <groupId>org.n52.sensorweb-server.dao-impl</groupId>
                 <artifactId>dao-impl-dao</artifactId>
+                <version>${version.dao-impl}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-tx</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-codec</groupId>
+                        <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb-server.dao-impl</groupId>
+                <artifactId>dao-impl-repo</artifactId>
                 <version>${version.dao-impl}</version>
                 <exclusions>
                     <exclusion>

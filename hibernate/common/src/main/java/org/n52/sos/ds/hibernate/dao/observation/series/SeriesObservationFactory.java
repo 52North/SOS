@@ -41,6 +41,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 
 /**
@@ -116,6 +117,11 @@ public class SeriesObservationFactory extends ObservationFactory {
     @Override
     public Class<? extends ProfileDataEntity> profileClass() {
         return ProfileDataEntity.class;
+    }
+
+    @Override
+    public Class<? extends TrajectoryDataEntity> trajectoryClass() {
+        return TrajectoryDataEntity.class;
     }
 
     @Override

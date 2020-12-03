@@ -531,7 +531,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                 if (abstractFeature instanceof AbstractSamplingFeature
                         && ((AbstractSamplingFeature) abstractFeature).isSetParameter()) {
                     Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
-                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(
+                    Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(feature,
                             ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, session);
                     feature.setParameters(parameter);
                 }

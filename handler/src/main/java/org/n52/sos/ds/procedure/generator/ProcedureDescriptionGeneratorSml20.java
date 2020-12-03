@@ -35,11 +35,9 @@ import java.util.Set;
 import org.hibernate.Session;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.series.db.DataAccessException;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
@@ -76,27 +74,22 @@ class ProcedureDescriptionGeneratorSml20 extends AbstractProcedureDescriptionGen
     public SosProcedureDescription<?> generateProcedureDescription(ProcedureEntity procedure, Locale i18n,
             Session session) throws OwsExceptionReport {
         setLocale(i18n);
-        try {
-            // 2 try to get position from entity
-            if (isStation(procedure, session)) {
-                // 2.1 if position is available -> system -> own class <- should
-                // be compliant with SWE lightweight profile
-                if (procedure.hasChildren()) {
-                    return new SosProcedureDescription<>(createPhysicalSystem(procedure, session));
-                } else {
-                    return new SosProcedureDescription<>(createPhysicalComponent(procedure, session));
-                }
+        // 2 try to get position from entity
+        if (isStation(procedure, session)) {
+            // 2.1 if position is available -> system -> own class <- should
+            // be compliant with SWE lightweight profile
+            if (procedure.hasChildren()) {
+                return new SosProcedureDescription<>(createPhysicalSystem(procedure, session));
             } else {
-                // 2.2 if no position is available -> SimpleProcess -> own class
-                if (procedure.hasChildren()) {
-                    return new SosProcedureDescription<>(createAggregateProcess(procedure, session));
-                } else {
-                    return new SosProcedureDescription<>(createSimpleProcess(procedure, session));
-                }
+                return new SosProcedureDescription<>(createPhysicalComponent(procedure, session));
             }
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying data for DescribeSensor document!");
+        } else {
+            // 2.2 if no position is available -> SimpleProcess -> own class
+            if (procedure.hasChildren()) {
+                return new SosProcedureDescription<>(createAggregateProcess(procedure, session));
+            } else {
+                return new SosProcedureDescription<>(createSimpleProcess(procedure, session));
+            }
         }
     }
 

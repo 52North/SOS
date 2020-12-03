@@ -32,7 +32,7 @@ import java.util.Locale;
 
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.sos.ds.cache.base.FeatureOfInterestCacheUpdate;
 import org.n52.sos.ds.cache.base.I18NCacheUpdate;
 import org.n52.sos.ds.cache.base.ObservablePropertiesCacheUpdate;

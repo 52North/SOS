@@ -33,10 +33,10 @@ import java.util.Locale;
 
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.dao.DbQuery;
-import org.n52.series.db.dao.OfferingDao;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.series.db.old.dao.OfferingDao;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.cache.AbstractQueueingDatasourceCacheUpdate;

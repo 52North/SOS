@@ -93,7 +93,6 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernate.util.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.ResultFilterClasses;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions;
 import org.n52.sos.ds.hibernate.util.ResultFilterRestrictions.SubQueryIdentifier;
@@ -101,6 +100,7 @@ import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SosTemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.n52.sos.ds.hibernate.util.observation.ObservationParameterFactory;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
 import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
@@ -1450,8 +1450,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
-    public ParameterFactory getParameterFactory() {
-        return ParameterFactory.getInstance();
+    public ObservationParameterFactory getParameterFactory() {
+        return ObservationParameterFactory.getInstance();
     }
 
     private GeometryHandler getGeometryHandler() {

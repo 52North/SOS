@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,6 +43,8 @@ import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.TrajectoryElement;
+import org.n52.shetland.ogc.om.values.TrajectoryValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
@@ -52,10 +53,10 @@ import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
-import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.SweVector;
@@ -106,7 +107,7 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         try {
             session = getSession();
             HibernateMetadataCache.init(session);
-            insertSensor(PROCEDURE3, OFFERING3, OBSPROP3, null, OmConstants.OBS_TYPE_MEASUREMENT);
+            insertSensor(PROCEDURE3, OFFERING3, OBSPROP3, null, OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
         } finally {
             returnSession(session);
         }
@@ -187,50 +188,57 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
                 + "2013-07-18T07:00:00.000Z,2013-07-18T07:00:00.000Z,5.0000000000,53.1,7.56"));
     }
 
-    private List<OmObservation> createDefaultObservation() throws OwsExceptionReport, ConverterException {
+    private OmObservation createDefaultObservation() throws OwsExceptionReport, ConverterException {
         OmObservation obs = new OmObservation();
 
         Session session = null;
         try {
             session = getSession();
             obs.setObservationConstellation(getOmObsConst(PROCEDURE3, OBSPROP3, TEMP_UNIT, OFFERING3, FEATURE3,
-                    OmConstants.OBS_TYPE_MEASUREMENT, session));
+                    OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION, session));
         } finally {
             returnSession(session);
         }
-        List<OmObservation> observations = new LinkedList<>();
-        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_1, TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1));
-        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_2, TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2));
-        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
-        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
-        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
-        return observations;
+        TrajectoryValue value = new TrajectoryValue("");
+        value.addValue(createData(TRAJ_GEOMETRY_1, TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1));
+        value.addValue(createData(TRAJ_GEOMETRY_2, TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2));
+        value.addValue(createData(TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
+        value.addValue(createData(TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
+        value.addValue(createData(TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
+
+        SingleObservationValue<List<TrajectoryElement>> obsVal = new SingleObservationValue<List<TrajectoryElement>>();
+        obsVal.setValue(value);
+        obs.setValue(obsVal);
+//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_1, TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1));
+//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_2, TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2));
+//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
+//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
+//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
+        return obs;
     }
 
     private void inserObservationData() throws OwsExceptionReport, ConverterException {
         InsertObservationRequest req = new InsertObservationRequest();
         req.setAssignedSensorId(PROCEDURE3);
         req.setOfferings(Lists.newArrayList(OFFERING3));
-        req.setObservation(createDefaultObservation());
+        req.addObservation(createDefaultObservation());
         InsertObservationResponse resp = insertObservationDAO.insertObservation(req);
         this.serviceEventBus.submit(new ObservationInsertion(req, resp));
     }
 
-    private OmObservation addData(OmObservation obs, Geometry geometry, DateTime time, Double value) {
-        obs.addParameter(createSamplingGeometry(geometry));
-        obs.setResultTime(new TimeInstant(time));
-        SingleObservationValue<BigDecimal> obsVal = new SingleObservationValue<BigDecimal>();
-        obsVal.setPhenomenonTime(new TimeInstant(time));
-        obsVal.setValue(new QuantityValue(Double.valueOf(value), TEMP_UNIT));
-        obs.setValue(obsVal);
-        return obs;
+    private TrajectoryElement createData(Geometry geometry, DateTime time, Double value) {
+        TrajectoryElement elem = new TrajectoryElement();
+        elem.setLocation(geometry);
+        elem.setPhenomenonTime(new TimeInstant(time));
+        elem.addValue(new QuantityValue(Double.valueOf(value), TEMP_UNIT));
+        return elem;
     }
 
     @Override
     protected void assertInsertionAftermath(boolean afterCacheUpdate) throws OwsExceptionReport {
      // check observation types
         assertThat(getCache().getObservationTypesForOffering(OFFERING3),
-                contains(OmConstants.OBS_TYPE_MEASUREMENT));
+                contains(OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION));
 
         // check offerings for procedure
         assertThat(getCache().getOfferingsForProcedure(PROCEDURE3), containsInAnyOrder(OFFERING3));
@@ -241,7 +249,7 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
 
         // check allowed observation types for offering
         assertThat(getCache().getAllowedObservationTypesForOffering(OFFERING3),
-                contains(OmConstants.OBS_TYPE_MEASUREMENT));
+                contains(OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION));
 
         // check parent procedures
         assertThat(getCache().getParentProcedures(PROCEDURE3, true, false), empty());

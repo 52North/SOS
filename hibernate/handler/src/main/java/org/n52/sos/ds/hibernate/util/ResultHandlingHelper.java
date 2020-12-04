@@ -164,7 +164,16 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             final String blockSeparator = getBlockSeparator(sosResultEncoding.get()
                     .get());
             if (addCount) {
-                addElementCount(builder, observations.size(), blockSeparator);
+                long size = observations.size();
+                if (observations.iterator()
+                        .next() instanceof TrajectoryDataEntity) {
+                    size = 0;
+                    for (DataEntity<?> observation : observations) {
+                        size += ((TrajectoryDataEntity) observation).getValue()
+                                .size();
+                    }
+                }
+                addElementCount(builder, size, blockSeparator);
             }
             for (final DataEntity<?> obs : observations) {
                 DataEntity<?> observation = unproxy(obs, session);
@@ -177,8 +186,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                     builder.append(blockSeparator);
                 } else if (observation instanceof TrajectoryDataEntity) {
                     builder.append(createResultValuesFromObservations(((TrajectoryDataEntity) observation).getValue(),
-                            sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false,
-                            null,
+                            sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false, null,
                             session));
                     builder.append(blockSeparator);
                 } else {
@@ -335,7 +343,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         return -1;
     }
 
-    private void addElementCount(final StringBuilder builder, final int size, final String blockSeparator) {
+    private void addElementCount(final StringBuilder builder, final long size, final String blockSeparator) {
         builder.append(String.valueOf(size));
         builder.append(blockSeparator);
     }
@@ -777,7 +785,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 || observation.getDataset()
                         .getObservationType()
                         .equals(ObservationType.trajectory)) {
-            TrajectoryValue trajectory = (TrajectoryValue) new ObservationValueCreator(decoderRepository).visit(observation);
+            TrajectoryValue trajectory =
+                    (TrajectoryValue) new ObservationValueCreator(decoderRepository).visit(observation);
             TrajectoryElement element = trajectory.getValue()
                     .get(0);
             if (element.getValue()

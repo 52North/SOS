@@ -44,6 +44,8 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_PATH = "/hbm";
 
+    String HIBERNATE_MAPPING_PARAMETER_PATH = HIBERNATE_MAPPING_PATH + "/parameter";
+
     // Database concept paths
     String HIBERNATE_MAPPING_SIMPLE_CONCEPT_PATH = HIBERNATE_MAPPING_PATH + "/simple";
 

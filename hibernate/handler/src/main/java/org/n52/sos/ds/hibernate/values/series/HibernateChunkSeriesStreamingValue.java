@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate.values.series;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -38,6 +40,10 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.series.db.beans.DataEntity;
+import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
+import org.n52.series.db.beans.dataset.DatasetType;
+import org.n52.series.db.beans.dataset.ObservationType;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.ows.exception.CodedException;
@@ -83,9 +89,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *             If an error occurs
      */
     public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
-            AbstractObservationRequest request, long series, BindingRepository bindingRepository, int chunkSize)
-            throws OwsExceptionReport {
-        super(connectionProvider, daoFactory, request, series, bindingRepository);
+            AbstractObservationRequest request, DatasetEntity dataset, BindingRepository bindingRepository,
+            int chunkSize) throws OwsExceptionReport {
+        super(connectionProvider, daoFactory, request, dataset, bindingRepository);
         this.chunkSize = chunkSize;
     }
 
@@ -127,7 +133,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             return null;
         } catch (final HibernateException he) {
             returnSession(getSession());
-            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -146,7 +153,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
             return null;
         } catch (final HibernateException he) {
             returnSession(getSession());
-            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -172,18 +180,31 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
                         getSession()));
             }
             currentRow += chunkSize;
+            if (DatasetType.trajectory.equals(dataset.getDatasetType())
+                    || ObservationType.trajectory.equals(dataset.getObservationType())) {
+                List<DataEntity<?>> list = new LinkedList<>();
+                for (DataEntity<?> dataEntity : resutltValues) {
+                    if (dataEntity instanceof TrajectoryDataEntity) {
+                        list.addAll(((TrajectoryDataEntity) dataEntity).getValue());
+                    } else {
+                        list.add(dataEntity);
+                    }
+                }
+                resutltValues = list;
+            }
             checkMaxNumberOfReturnedValues(resutltValues.size());
             setSeriesValuesResult(resutltValues);
         } catch (final HibernateException he) {
             returnSession(session);
-            throw new NoApplicableCodeException().causedBy(he).withMessage(ERROR_LOG)
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage(ERROR_LOG)
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Check the queried {@link DataEntity}s for null and set
-     * them as iterator to local variable.
+     * Check the queried {@link DataEntity}s for null and set them as iterator
+     * to local variable.
      *
      * @param seriesValuesResult
      *            Queried {@link DataEntity}s

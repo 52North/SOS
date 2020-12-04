@@ -300,7 +300,7 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), observationCreatorContext.getBindingRepository(), getChunkSize());
+                            series, observationCreatorContext.getBindingRepository(), getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);

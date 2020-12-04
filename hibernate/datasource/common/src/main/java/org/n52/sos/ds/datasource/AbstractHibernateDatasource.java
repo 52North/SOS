@@ -312,6 +312,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         for (String resource : getDatabaseExtensionMappingDirectory(settings)) {
             paths.add(resource(resource));
         }
+        String parameterMappingDirectory = getParameterMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(parameterMappingDirectory)) {
+            paths.add(resource(parameterMappingDirectory));
+        }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
             paths.add(resource(featureConceptMappingDirectory));
@@ -336,6 +340,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 return HIBERNATE_MAPPING_FEATURE_PATH;
             default:
                 return null;
+        }
+    }
+
+    protected String getParameterMappingDirectory(Map<String, Object> settings) {
+        switch (getDatabaseConcept(settings)) {
+            case EREPORTING:
+            case TRANSACTIONAL:
+                return HIBERNATE_MAPPING_PARAMETER_PATH;
+            default:
+                return "";
         }
     }
 
@@ -839,6 +853,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
             }
             builder.append(path);
+        }
+        String parameterMappingDirectory = getParameterMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(parameterMappingDirectory)) {
+            if (builder.length() != 0) {
+                builder.append(HibernateDatasourceConstants.PATH_SEPERATOR);
+            }
+            builder.append(parameterMappingDirectory);
         }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {

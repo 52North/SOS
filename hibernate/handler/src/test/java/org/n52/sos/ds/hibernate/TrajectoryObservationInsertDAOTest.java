@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -39,12 +38,14 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TrajectoryElement;
 import org.n52.shetland.ogc.om.values.TrajectoryValue;
+import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
@@ -79,6 +80,11 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
     public static final Geometry TRAJ_GEOMETRY_4 = FACTORY.createPoint(new Coordinate(53.0, 7.55));
 
     public static final Geometry TRAJ_GEOMETRY_5 = FACTORY.createPoint(new Coordinate(53.1, 7.56));
+
+    public static final Geometry TRAJ_GEOMETRY_ROUTE = FACTORY.createLineString(Lists
+            .newArrayList(TRAJ_GEOMETRY_1.getCoordinate(), TRAJ_GEOMETRY_2.getCoordinate(),
+                    TRAJ_GEOMETRY_3.getCoordinate(), TRAJ_GEOMETRY_4.getCoordinate(), TRAJ_GEOMETRY_5.getCoordinate())
+            .toArray(new Coordinate[5]));
 
     public static final DateTime TRAJ_OBS_TIME_1 = new DateTime("2013-07-18T03:00:00Z");
 
@@ -117,10 +123,12 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
     protected void modifySystem(System system) {
         SmlCapabilities caps = new SmlCapabilities("metadata");
         SmlCapability insitu = new SmlCapability("insitu");
-        insitu.setAbstractDataComponent(new SweBoolean().setValue(true).setDefinition("insitu"));
+        insitu.setAbstractDataComponent(new SweBoolean().setValue(true)
+                .setDefinition("insitu"));
         caps.addCapability(insitu);
         SmlCapability mobile = new SmlCapability("mobile");
-        mobile.setAbstractDataComponent(new SweBoolean().setValue(true).setDefinition("mobile"));
+        mobile.setAbstractDataComponent(new SweBoolean().setValue(true)
+                .setDefinition("mobile"));
         caps.addCapability(mobile);
         system.addCapabilities(Lists.newArrayList(caps));
     }
@@ -129,21 +137,40 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
     public void testInsertObservation() throws OwsExceptionReport, InterruptedException, ConverterException {
         inserObservationData();
         assertInsertionAftermathBeforeAndAfterCacheReload();
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1, TRAJ_GEOMETRY_1),
-                TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_2, TRAJ_GEOMETRY_2),
-                TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_3, TRAJ_GEOMETRY_3),
-                TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_4, TRAJ_GEOMETRY_4),
-                TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
-        checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
-                TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+
+        OmObservation observation = checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1,
+                TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_ROUTE);
+        TrajectoryValue value = (TrajectoryValue) observation.getValue()
+                .getValue();
+        checkValue(value.getValue()
+                .get(0), TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
+        checkValue(value.getValue()
+                .get(1), TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
+        checkValue(value.getValue()
+                .get(2), TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
+        checkValue(value.getValue()
+                .get(3), TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
+        checkValue(value.getValue()
+                .get(4), TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+        // FEATURE3, TRAJ_OBS_TIME_1, TRAJ_GEOMETRY_1),
+        // TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
+        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+        // FEATURE3, TRAJ_OBS_TIME_2, TRAJ_GEOMETRY_2),
+        // TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
+        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+        // FEATURE3, TRAJ_OBS_TIME_3, TRAJ_GEOMETRY_3),
+        // TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
+        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+        // FEATURE3, TRAJ_OBS_TIME_4, TRAJ_GEOMETRY_4),
+        // TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
+        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+        // FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
+        // TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
     }
 
     @Test
-    public void testGeneratedGetResultTemplate()
-            throws OwsExceptionReport, ConverterException, EncodingException {
+    public void testGeneratedGetResultTemplate() throws OwsExceptionReport, ConverterException, EncodingException {
         inserObservationData();
         GetResultTemplateRequest request = new GetResultTemplateRequest();
         request.setObservedProperty(OBSPROP3);
@@ -151,20 +178,30 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetResultTemplateResponse response = getResultTemplateHandler.getResultTemplate(request);
         assertThat(response, notNullValue());
         assertThat(response.getResultStructure(), notNullValue());
-        assertThat(response.getResultStructure().get().isPresent(), is(true));
-        SweAbstractDataComponent sweAbstractDataComponent = response.getResultStructure().get().get();
+        assertThat(response.getResultStructure()
+                .get()
+                .isPresent(), is(true));
+        SweAbstractDataComponent sweAbstractDataComponent = response.getResultStructure()
+                .get()
+                .get();
         assertThat(sweAbstractDataComponent, instanceOf(SweDataRecord.class));
         SweDataRecord record = (SweDataRecord) sweAbstractDataComponent;
-        assertThat(record.getFields().size(), is(4));
+        assertThat(record.getFields()
+                .size(), is(4));
         SweField samp = record.getFieldByIdentifier("samplingGeometry");
         assertThat(samp, notNullValue());
         assertThat(samp.getElement(), notNullValue());
         assertThat(samp.getElement(), instanceOf(SweVector.class));
         SweVector sampVector = (SweVector) samp.getElement();
         assertThat(sampVector.getDefinition(), is(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));
-        assertThat(sampVector.getCoordinates().size(), is(2));
-        assertThat(sampVector.getCoordinates().get(0).getName(), is(SweCoordinateNames.LATITUDE));
-        assertThat(sampVector.getCoordinates().get(1).getName(), is(SweCoordinateNames.LONGITUDE));
+        assertThat(sampVector.getCoordinates()
+                .size(), is(2));
+        assertThat(sampVector.getCoordinates()
+                .get(0)
+                .getName(), is(SweCoordinateNames.LATITUDE));
+        assertThat(sampVector.getCoordinates()
+                .get(1)
+                .getName(), is(SweCoordinateNames.LONGITUDE));
         SweField field = record.getFieldByIdentifier(OBSPROP3);
         assertThat(field, notNullValue());
         assertThat(field.getElement(), notNullValue());
@@ -180,12 +217,29 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         GetResultResponse response = getResultHandler.getResult(request);
         assertThat(response, notNullValue());
         String resultValues = response.getResultValues();
-        assertThat(resultValues, is(
-                "5#2013-07-18T03:00:00.000Z,2013-07-18T03:00:00.000Z,1.0000000000,52.7,7.52#"
-                + "2013-07-18T04:00:00.000Z,2013-07-18T04:00:00.000Z,2.0000000000,52.8,7.53#"
-                + "2013-07-18T05:00:00.000Z,2013-07-18T05:00:00.000Z,3.0000000000,52.9,7.54#"
-                + "2013-07-18T06:00:00.000Z,2013-07-18T06:00:00.000Z,4.0000000000,53.0,7.55#"
-                + "2013-07-18T07:00:00.000Z,2013-07-18T07:00:00.000Z,5.0000000000,53.1,7.56"));
+        assertThat(resultValues,
+                is("5#2013-07-18T03:00:00.000Z,2013-07-18T07:00:00.000Z,1.0000000000,52.7,7.52#"
+                        + "2013-07-18T04:00:00.000Z,2013-07-18T07:00:00.000Z,2.0000000000,52.8,7.53#"
+                        + "2013-07-18T05:00:00.000Z,2013-07-18T07:00:00.000Z,3.0000000000,52.9,7.54#"
+                        + "2013-07-18T06:00:00.000Z,2013-07-18T07:00:00.000Z,4.0000000000,53.0,7.55#"
+                        + "2013-07-18T07:00:00.000Z,2013-07-18T07:00:00.000Z,5.0000000000,53.1,7.56"));
+    }
+
+    protected void checkValue(TrajectoryElement element, DateTime time, Double obsVal, String obsUnit) {
+        assertThat(element.getValue(), notNullValue());
+        List<Value<?>> values = element.getValue();
+        assertThat(values.size(), is(1));
+        Value<?> value = values.get(0);
+        // ObservationValue<?> value = element.getValue();
+        assertThat(value, instanceOf(QuantityValue.class));
+        assertThat(element.getPhenomenonTime(), instanceOf(TimeInstant.class));
+        TimeInstant timeInstant = (TimeInstant) element.getPhenomenonTime();
+        assertThat(timeInstant.getValue()
+                .toDate(), is(time.toDate()));
+        QuantityValue quantityValue = (QuantityValue) value;
+        assertThat(quantityValue.getValue()
+                .doubleValue(), is(obsVal));
+        assertThat(quantityValue.getUnit(), is(obsUnit));
     }
 
     private OmObservation createDefaultObservation() throws OwsExceptionReport, ConverterException {
@@ -205,15 +259,20 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         value.addValue(createData(TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
         value.addValue(createData(TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
         value.addValue(createData(TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
-
         SingleObservationValue<List<TrajectoryElement>> obsVal = new SingleObservationValue<List<TrajectoryElement>>();
         obsVal.setValue(value);
         obs.setValue(obsVal);
-//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_1, TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1));
-//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_2, TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2));
-//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
-//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
-//        observations.add(addData(obs.copyTo(new OmObservation()), TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
+        obs.addParameter(createSamplingGeometry(value.getGeometry()));
+        // observations.add(addData(obs.copyTo(new OmObservation()),
+        // TRAJ_GEOMETRY_1, TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1));
+        // observations.add(addData(obs.copyTo(new OmObservation()),
+        // TRAJ_GEOMETRY_2, TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2));
+        // observations.add(addData(obs.copyTo(new OmObservation()),
+        // TRAJ_GEOMETRY_3, TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3));
+        // observations.add(addData(obs.copyTo(new OmObservation()),
+        // TRAJ_GEOMETRY_4, TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4));
+        // observations.add(addData(obs.copyTo(new OmObservation()),
+        // TRAJ_GEOMETRY_5, TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5));
         return obs;
     }
 
@@ -236,7 +295,7 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
 
     @Override
     protected void assertInsertionAftermath(boolean afterCacheUpdate) throws OwsExceptionReport {
-     // check observation types
+        // check observation types
         assertThat(getCache().getObservationTypesForOffering(OFFERING3),
                 contains(OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION));
 
@@ -256,7 +315,6 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
 
         // check child procedures
         assertThat(getCache().getChildProcedures(PROCEDURE3, true, false), empty());
-
 
         if (afterCacheUpdate) {
             // check features of interest for offering

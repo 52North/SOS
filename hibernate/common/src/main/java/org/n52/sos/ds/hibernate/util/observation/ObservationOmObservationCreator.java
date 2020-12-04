@@ -45,7 +45,7 @@ import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.series.db.beans.DetectionLimitEntity;
-import org.n52.shetland.inspire.omso.TrajectoryObservation;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -148,8 +148,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
                 // // String offeringID =
                 // // hoc.getOffering().getIdentifier();
                 // // String mimeType = SosConstants.PARAMETER_NOT_SET;
-                if (hObservation instanceof TrajectoryObservation) {
-                    for (DataEntity<?> observation : ((TrajectoryObservation) hObservation).getValue()) {
+                if (hObservation instanceof TrajectoryDataEntity) {
+                    for (DataEntity<?> observation : ((TrajectoryDataEntity) hObservation).getValue()) {
                         observationCollection.add(createObservation(observation));
                     }
                 } else {

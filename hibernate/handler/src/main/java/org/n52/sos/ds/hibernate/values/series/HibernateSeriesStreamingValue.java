@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.values.series;
 import org.hibernate.Session;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
@@ -62,6 +63,8 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
 
     protected final AbstractSeriesDAO seriesDAO;
 
+    protected DatasetEntity dataset;
+
     protected long series;
 
     /**
@@ -76,10 +79,11 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      * @throws OwsExceptionReport If an error occurs
      */
     public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, DaoFactory daoFactory,
-            AbstractObservationRequest request, long series, BindingRepository bindingRepository)
+            AbstractObservationRequest request, DatasetEntity dataset, BindingRepository bindingRepository)
             throws OwsExceptionReport {
         super(connectionProvider, daoFactory, request, bindingRepository);
-        this.series = series;
+        this.dataset = dataset;
+        this.series = dataset.getId();
         this.seriesValueDAO = daoFactory.getValueDAO();
         this.seriesValueTimeDAO = daoFactory.getValueTimeDAO();
         this.seriesDAO = daoFactory.getSeriesDAO();

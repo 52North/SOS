@@ -26,7 +26,7 @@
     <bean id="getResultHandler"
         class="org.n52.sos.ds.hibernate.GetResultHandler" />
 
-    <bean class="org.n52.series.db.dao.DefaultDbQueryFactory"/>
+    <bean class="org.n52.sensorweb.server.db.old.dao.DefaultDbQueryFactory"/>
 
     <!--
     <bean id="insertRepository"

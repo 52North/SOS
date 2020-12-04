@@ -375,7 +375,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             } else {
                 omObservation.setResultTime(new TimeInstant(DateTime.now()));
             }
-           
+
         }
         DataEntity trajectoryDataEntity = persist((DataEntity) trajectory, new HashSet<DataEntity<?>>());
         persistTrajectoryChildren(value.getValue(), trajectoryDataEntity.getId());
@@ -760,8 +760,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         observationContext.setObservationType(getObservationType(observationType, session));
 
         if (dataset != null) {
-            if ((!isTrajectoryObservation(dataset) && !isProfileObservation(dataset) && !isDataArrayObservation(dataset))
-                    || (isProfileObservation(dataset) && parent == null)
+            if ((!isTrajectoryObservation(dataset) && !isProfileObservation(dataset)
+                    && !isDataArrayObservation(dataset)) || (isProfileObservation(dataset) && parent == null)
                     || (isTrajectoryObservation(dataset) && parent == null)
                     || (isDataArrayObservation(dataset) && parent == null)) {
                 offerings.add(dataset.getOffering());
@@ -818,7 +818,9 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         session.flush();
         session.refresh(observation);
         persitParameter(observation, omObservation.getParameterHolder(), session);
-        daos.dataset.updateDatasetWithObservation(persitedDataset, observation, session);
+        if (!(observation instanceof TrajectoryDataEntity)) {
+            daos.dataset.updateDatasetWithObservation(persitedDataset, observation, session);
+        }
         return observation;
     }
 
@@ -931,11 +933,13 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(observationConstellation.getOmObservationType()
                         .getFormat()));
     }
-    
-    private boolean isTrajectoryObservation(DatasetEntity observationConstellation) {
-        return observationConstellation.isSetOMObservationType() && (OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION
-                .equals(observationConstellation.getOmObservationType()
-                        .getFormat()));
+
+    private boolean isTrajectoryObservation(DatasetEntity dataset) {
+        return dataset.isSetOMObservationType()
+                && OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(dataset.getOmObservationType()
+                        .getFormat());
+//                        && (DatasetType.trajectory.equals(dataset.getDatasetType())
+//                                || ObservationType.trajectory.equals(dataset.getObservationType())));
     }
 
     private boolean isDataArrayObservation(DatasetEntity observationConstellation) {

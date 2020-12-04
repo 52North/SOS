@@ -39,6 +39,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.values.BooleanValue;
 import org.n52.shetland.ogc.om.values.CategoryValue;
@@ -50,6 +51,7 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.SweDataArrayValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.TrajectoryValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataRecord;
@@ -116,6 +118,11 @@ public class ObservationValueCreator extends AbstractObservationValueCreator {
     @Override
     public ProfileValue visit(ProfileDataEntity o) throws OwsExceptionReport {
         return new ProfileGeneratorSplitter(this).create(o);
+    }
+
+    @Override
+    public TrajectoryValue visit(TrajectoryDataEntity o) throws OwsExceptionReport {
+        return new TrajectoryGeneratorSplitter(this).create(o);
     }
 
     @Override

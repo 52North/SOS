@@ -41,6 +41,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.om.values.BooleanValue;
@@ -114,6 +115,8 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
             return visit((DataArrayDataEntity) o);
         } else if (o instanceof ProfileDataEntity) {
             return visit((ProfileDataEntity) o);
+        } else if (o instanceof TrajectoryDataEntity) {
+            return visit((TrajectoryDataEntity) o);
         } else if (o instanceof ReferencedDataEntity) {
             return visit((ReferencedDataEntity) o);
         }

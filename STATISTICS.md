@@ -12,6 +12,10 @@
 
 ### 5.2.x
 
+[![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.2.4/total)](https://github.com/52North/SOS/releases/tag/v5.2.4)
+
+[![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.2.3/total)](https://github.com/52North/SOS/releases/tag/v5.2.3)
+
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.2.2/total)](https://github.com/52North/SOS/releases/tag/v5.2.2)
 
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.2.1/total)](https://github.com/52North/SOS/releases/tag/v5.2.1)

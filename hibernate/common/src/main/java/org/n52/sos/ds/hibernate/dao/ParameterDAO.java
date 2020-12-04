@@ -78,6 +78,7 @@ import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.TimeRangeValue;
 import org.n52.shetland.ogc.om.values.TimeValue;
+import org.n52.shetland.ogc.om.values.TrajectoryValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.XmlValue;
@@ -120,7 +121,8 @@ public class ParameterDAO {
      *            Unit
      * @param localCache
      *            Cache (possibly null)
-     * @param session the session
+     * @param session
+     *            the session
      * @return Unit
      */
     protected UnitEntity getUnit(String unit, Map<UoM, UnitEntity> localCache, Session session) {
@@ -134,7 +136,8 @@ public class ParameterDAO {
      *            Unit
      * @param localCache
      *            Cache (possibly null)
-     * @param session the session
+     * @param session
+     *            the session
      * @return Unit
      */
     protected UnitEntity getUnit(UoM unit, Map<UoM, UnitEntity> localCache, Session session) {
@@ -178,6 +181,7 @@ public class ParameterDAO {
             this.caches = caches;
             this.session = session;
             this.daos = daos;
+            this.entity = entity;
             this.namedValue = namedValue;
             this.entity = entity;
             this.parent = parent;
@@ -260,6 +264,11 @@ public class ParameterDAO {
         }
 
         @Override
+        public ParameterEntity<?> visit(TimeValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
         public ParameterEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
             ParameterEntity<?> param = ParameterFactory.from(entity, ValueType.TEMPORAL);
             ((TemporalParameterEntity) param).setValue(new TimeRange(value.getValue()
@@ -302,6 +311,11 @@ public class ParameterDAO {
         }
 
         @Override
+        public ParameterEntity<?> visit(TrajectoryValue value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
         public ParameterEntity<?> visit(XmlValue<?> value) throws OwsExceptionReport {
             ParameterEntity<?> param =  ParameterFactory.from(entity, ValueType.XML);
             ((XmlParameterEntity) param).setValue(value.getValue().toString());
@@ -331,8 +345,8 @@ public class ParameterDAO {
 
 
         private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
-            throw new NoApplicableCodeException().withMessage("Unsupported om:parameter value %s",
-                    value.getClass().getCanonicalName());
+            throw new NoApplicableCodeException().withMessage("Unsupported om:parameter value %s", value.getClass()
+                    .getCanonicalName());
         }
 
         private ParameterEntity<?> setUnitAndPersist(ParameterEntity<?> param, Value<?> value)
@@ -344,7 +358,8 @@ public class ParameterDAO {
         }
 
         private UnitEntity getUnit(Value<?> value) {
-            return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
+            return value.isSetUnit() ? daos.parameter()
+                    .getUnit(value.getUnitObject(), caches.units(), session) : null;
         }
 
 
@@ -360,6 +375,7 @@ public class ParameterDAO {
                 parameter.setParent(parent);
             }
             parameter.setName(namedValue.getName().getHref());
+            parameter.setDescribeableEntity(entity);
             session.saveOrUpdate(parameter);
             return parameter;
         }

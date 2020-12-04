@@ -60,6 +60,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ObservationType;
@@ -67,6 +68,8 @@ import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.values.ProfileLevel;
 import org.n52.shetland.ogc.om.values.ProfileValue;
+import org.n52.shetland.ogc.om.values.TrajectoryElement;
+import org.n52.shetland.ogc.om.values.TrajectoryValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -161,7 +164,16 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             final String blockSeparator = getBlockSeparator(sosResultEncoding.get()
                     .get());
             if (addCount) {
-                addElementCount(builder, observations.size(), blockSeparator);
+                long size = observations.size();
+                if (observations.iterator()
+                        .next() instanceof TrajectoryDataEntity) {
+                    size = 0;
+                    for (DataEntity<?> observation : observations) {
+                        size += ((TrajectoryDataEntity) observation).getValue()
+                                .size();
+                    }
+                }
+                addElementCount(builder, size, blockSeparator);
             }
             for (final DataEntity<?> obs : observations) {
                 DataEntity<?> observation = unproxy(obs, session);
@@ -170,6 +182,11 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                             sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false,
                             ((ProfileDataEntity) observation).getDataset()
                                     .getVerticalMetadata(),
+                            session));
+                    builder.append(blockSeparator);
+                } else if (observation instanceof TrajectoryDataEntity) {
+                    builder.append(createResultValuesFromObservations(((TrajectoryDataEntity) observation).getValue(),
+                            sosResultEncoding, sosResultStructure, noDataPlaceholder, valueOrder, false, null,
                             session));
                     builder.append(blockSeparator);
                 } else {
@@ -326,7 +343,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
         return -1;
     }
 
-    private void addElementCount(final StringBuilder builder, final int size, final String blockSeparator) {
+    private void addElementCount(final StringBuilder builder, final long size, final String blockSeparator) {
         builder.append(String.valueOf(size));
         builder.append(blockSeparator);
     }
@@ -755,6 +772,36 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                     return fields;
                 } else {
                     SweAbstractDataComponent swe = (SweAbstractDataComponent) level.getValue()
+                            .get(0)
+                            .setValue(null);
+                    swe.setDefinition(phenomenon.getIdentifier());
+                    fields.add(new SweField(getNcNameName(phenomenon), swe));
+                    return fields;
+                }
+            }
+        } else if (observation.getDataset()
+                .getDatasetType()
+                .equals(DatasetType.trajectory)
+                || observation.getDataset()
+                        .getObservationType()
+                        .equals(ObservationType.trajectory)) {
+            TrajectoryValue trajectory =
+                    (TrajectoryValue) new ObservationValueCreator(decoderRepository).visit(observation);
+            TrajectoryElement element = trajectory.getValue()
+                    .get(0);
+            if (element.getValue()
+                    .get(0) instanceof SweAbstractDataComponent) {
+                if (element.getValue()
+                        .size() > 1) {
+                    SweDataRecord record = new SweDataRecord();
+                    for (Value<?> v : element.getValue()) {
+                        SweAbstractDataComponent dc = (SweAbstractDataComponent) v;
+                        record.addField(new SweField(NcName.makeValid(dc.getDefinition()), dc));
+                    }
+                    fields.add(new SweField(getNcNameName(phenomenon), record));
+                    return fields;
+                } else {
+                    SweAbstractDataComponent swe = (SweAbstractDataComponent) element.getValue()
                             .get(0)
                             .setValue(null);
                     swe.setDefinition(phenomenon.getIdentifier());

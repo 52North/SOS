@@ -73,6 +73,7 @@ import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationValue;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -735,6 +736,21 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         return omObservation;
     }
 
+    protected OmObservation checkSamplingGeometry(String offering, String procedure, String obsprop, String feature,
+            DateTime timeStart, DateTime timeEnd, Geometry geometry) throws OwsExceptionReport {
+        GetObservationRequest getObsReq =
+                createDefaultGetObservationRequest(offering, procedure, obsprop, timeStart, timeEnd, feature);
+        GetObservationResponse getObsResponse =
+                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+        assertThat(getObsResponse, notNullValue());
+        OmObservation omObservation = getObservation(getObsResponse);
+        assertThat(omObservation.isSetParameter(), is(true));
+        assertThat(omObservation.isSetSpatialFilteringProfileParameter(), is(true));
+        checkNamedValue(omObservation.getSpatialFilteringProfileParameter(), OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
+                geometry, null);
+        return omObservation;
+    }
+
     protected GetObservationRequest createDefaultGetObservationRequest(String reqOffering, String reqProcedure,
             String reqObsProp, DateTime time, String obsFeature) {
         GetObservationRequest getObsReq = new GetObservationRequest();
@@ -748,6 +764,25 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         getObsReq.setResponseFormat(OmConstants.NS_OM_2);
         TemporalFilter tempFilter = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals, new TimeInstant(time),
                 TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE);
+        getObsReq.setTemporalFilters(CollectionHelper.list(tempFilter));
+        getObsReq.setService(SosConstants.SOS);
+        getObsReq.setVersion(Sos2Constants.SERVICEVERSION);
+        return getObsReq;
+    }
+
+    protected GetObservationRequest createDefaultGetObservationRequest(String reqOffering, String reqProcedure,
+            String reqObsProp, DateTime timeStart, DateTime timeEnd, String obsFeature) {
+        GetObservationRequest getObsReq = new GetObservationRequest();
+        getObsReq.setOfferings(
+                getCache().getChildOfferings(reqOffering, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setProcedures(
+                getCache().getChildProcedures(reqProcedure, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setObservedProperties(CollectionHelper.list(reqObsProp));
+        getObsReq.setFeatureIdentifiers(
+                getCache().getChildFeatures(obsFeature, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setResponseFormat(OmConstants.NS_OM_2);
+        TemporalFilter tempFilter = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
+                new TimePeriod(timeStart, timeEnd), TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE);
         getObsReq.setTemporalFilters(CollectionHelper.list(tempFilter));
         getObsReq.setService(SosConstants.SOS);
         getObsReq.setVersion(Sos2Constants.SERVICEVERSION);

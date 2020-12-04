@@ -130,7 +130,10 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/transactional/core/UnitResource.hbm.xml");
             resources.add("/hbm/transactional/core/TagResource.hbm.xml");
             resources.add("/hbm/transactional/core/VerticalMetadataResource.hbm.xml");
-
+            // dataset
+            resources.add("/hbm/transactional/dataset/DataResource.hbm.xml");
+            resources.add("/hbm/transactional/dataset/DatasetResource.hbm.xml");
+            // parameter
             resources.add("/hbm/parameter/DatasetParameterResource.hbm.xml");
             resources.add("/hbm/parameter/FeatureParameterResource.hbm.xml");
             resources.add("/hbm/parameter/LocationParameterResource.hbm.xml");
@@ -138,10 +141,6 @@ public final class H2Configuration implements ConnectionProvider {
             resources.add("/hbm/parameter/PhenomenonParameterResource.hbm.xml");
             resources.add("/hbm/parameter/PlatformParameterResource.hbm.xml");
             resources.add("/hbm/parameter/ProcedureParameterResource.hbm.xml");
-
-            // dataset
-            resources.add("/hbm/transactional/dataset/DataResource.hbm.xml");
-            resources.add("/hbm/transactional/dataset/DatasetResource.hbm.xml");
             return resources;
         }
     };

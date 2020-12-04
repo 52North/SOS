@@ -32,9 +32,8 @@ import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.n52.io.request.IoParameters;
-import org.n52.series.db.beans.OfferingEntity;
-import org.n52.series.db.old.DataAccessException;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
+import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.old.dao.OfferingDao;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -70,7 +69,7 @@ public class ObservationTimeCacheUpdate extends AbstractThreadableDatasourceCach
             getCache().setMaxPhenomenonTime(phenomenonTime.getEnd());
             getCache().setMinResultTime(resultTime.getStart());
             getCache().setMaxResultTime(resultTime.getEnd());
-        } catch (HibernateException | DataAccessException dae) {
+        } catch (HibernateException dae) {
             getErrors().add(new NoApplicableCodeException().causedBy(dae)
                     .withMessage("Error while updating observation time cache!"));
         }

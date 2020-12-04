@@ -212,7 +212,7 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
             OmObservation observationTemplate = createSosObservationFromSeries.next();
             HibernateSeriesStreamingValue streamingValue =
                     new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), daoFactory, request,
-                            series.getId(), getChunkSize());
+                            series, getChunkSize());
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setObservationTemplate(observationTemplate);
             observationTemplate.setValue(streamingValue);

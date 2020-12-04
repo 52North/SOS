@@ -43,6 +43,7 @@ import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.series.db.beans.parameter.QuantityParameterEntity;
 import org.n52.series.db.beans.parameter.TemporalParameterEntity;
 import org.n52.series.db.beans.parameter.TextParameterEntity;
+import org.n52.series.db.beans.parameter.TimeRange;
 import org.n52.series.db.beans.parameter.ValuedParameter;
 import org.n52.series.db.beans.parameter.XmlParameterEntity;
 import org.n52.shetland.ogc.UoM;
@@ -138,6 +139,24 @@ public class ParameterVisitor {
         ParameterSweAbstractDataComponentCreator visitor = new ParameterSweAbstractDataComponentCreator();
         SweDataRecord record = visitor.visit(p);
         namedValue.setValue(new ComplexValue(record));
+        return namedValue;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public NamedValue visit(TemporalParameterEntity p) throws OwsExceptionReport {
+        TimeRange value = p.getValue();
+        NamedValue namedValue = new NamedValue<>();
+        if (value.isPeriod()) {
+            namedValue
+                    .setValue(new TimeRangeValue(new RangeValue<DateTime>(DateTimeHelper.makeDateTime(value.getFrom()),
+                            DateTimeHelper.makeDateTime(value.getTo()))));
+
+        } else {
+            namedValue = new NamedValue<>();
+            namedValue.setValue(new TimeValue(DateTimeHelper.makeDateTime(value.getInstant())));
+        }
+        addName(namedValue, p);
+        addDescription(namedValue.getValue(), p);
         return namedValue;
     }
 

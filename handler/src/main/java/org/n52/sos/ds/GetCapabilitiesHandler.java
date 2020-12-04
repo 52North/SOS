@@ -57,15 +57,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.io.request.IoParameters;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
-import org.n52.series.db.old.DataAccessException;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.OfferingDao;
 import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.series.db.old.dao.ProcedureDao;
@@ -198,7 +197,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
             }
 
             return sosOfferings;
-        } catch (HibernateException | DataAccessException e) {
+        } catch (HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage(ERROR_QUERYING_CAPABILITIES);
         } finally {
@@ -317,7 +316,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
             }
 
             return sosOfferings;
-        } catch (HibernateException | DataAccessException e) {
+        } catch (HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage(ERROR_QUERYING_CAPABILITIES);
         } finally {
@@ -344,7 +343,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     private Collection<? extends SosObservationOffering> createAndGetParentOfferings(
             Collection<OfferingEntity> offerings, SectionSpecificContentObject sectionSpecificContentObject,
             Map<String, List<SosObservationOfferingExtension>> extensions, Session session)
-            throws OwsExceptionReport, DataAccessException {
+            throws OwsExceptionReport {
         Map<OfferingEntity, Set<OfferingEntity>> parentChilds = getParentOfferings(offerings);
 
         List<SosObservationOffering> sosOfferings = new ArrayList<>(parentChilds.size());
@@ -468,27 +467,26 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
 
     protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings,
-            Collection<ProcedureEntity> procedures, SosObservationOffering sosObservationOffering, Session session)
-            throws DataAccessException {
+            Collection<ProcedureEntity> procedures, SosObservationOffering sosObservationOffering, Session session) {
         for (ProcedureEntity procedure : procedures) {
             setUpPhenomenaForOffering(allOfferings, procedure, sosObservationOffering, session);
         }
     }
 
     protected void setUpPhenomenaForOffering(OfferingEntity offering, Collection<ProcedureEntity> procedures,
-            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
-            setUpPhenomenaForOffering(Sets.newHashSet(offering), procedures, sosObservationOffering, session);
+            SosObservationOffering sosObservationOffering, Session session) {
+        setUpPhenomenaForOffering(Sets.newHashSet(offering), procedures, sosObservationOffering, session);
     }
 
     protected void setUpPhenomenaForOffering(Collection<OfferingEntity> allOfferings, ProcedureEntity procedure,
-            SosObservationOffering sosObservationOffering, Session session) throws DataAccessException {
+            SosObservationOffering sosObservationOffering, Session session) {
         for (OfferingEntity offering : allOfferings) {
             setUpPhenomenaForOffering(offering, procedure, sosObservationOffering, session);
         }
     }
 
     protected void setUpPhenomenaForOffering(OfferingEntity offering, ProcedureEntity procedure,
-            SosObservationOffering sosOffering, Session session) throws DataAccessException {
+            SosObservationOffering sosOffering, Session session) {
         Map<String, String> map = new HashMap<>();
         map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
         map.put(IoParameters.PROCEDURES, Long.toString(procedure.getId()));
@@ -562,7 +560,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
 
     private Collection<ProcedureEntity> getProceduresForOfferingEntity(
             Entry<OfferingEntity, Set<OfferingEntity>> entry, Session session)
-            throws OwsExceptionReport, DataAccessException {
+            throws OwsExceptionReport {
         Collection<ProcedureEntity> procedures = new HashSet<>();
         for (OfferingEntity offering : entry.getValue()) {
             procedures.addAll(getProceduresForOfferingEntity(offering, session));
@@ -572,7 +570,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
     }
 
     private Collection<ProcedureEntity> getProceduresForOfferingEntity(OfferingEntity offering, Session session)
-            throws OwsExceptionReport, DataAccessException {
+            throws OwsExceptionReport {
         Map<String, String> map = new HashMap<>(1);
         map.put(IoParameters.OFFERINGS, Long.toString(offering.getId()));
         return new ProcedureDao(session).get(new DbQuery(IoParameters.createFromSingleValueMap(map)));

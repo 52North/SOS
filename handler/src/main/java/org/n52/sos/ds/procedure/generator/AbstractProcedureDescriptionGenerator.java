@@ -43,14 +43,12 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.old.DataAccessException;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.PhenomenonDao;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
@@ -188,13 +186,8 @@ public abstract class AbstractProcedureDescriptionGenerator
 
     protected List<PhenomenonEntity> getObservablePropertiesForProcedure(ProcedureEntity procedure, Session session)
             throws OwsExceptionReport {
-        try {
-            PhenomenonDao dao = new PhenomenonDao(session);
-            return dao.getAllInstances(createDbQuery(procedure));
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying observable properties for sensor description!");
-        }
+        PhenomenonDao dao = new PhenomenonDao(session);
+        return dao.getAllInstances(createDbQuery(procedure));
     }
 
     protected TreeSet<String> getIdentifierList(Collection<PhenomenonEntity> observableProperties) {

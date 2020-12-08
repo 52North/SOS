@@ -43,7 +43,6 @@ import org.n52.shetland.ogc.sos.request.InsertResultRequest;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
-import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
@@ -54,9 +53,6 @@ import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.svalbard.encode.exception.EncodingException;
-
-import net.opengis.swe.x20.DataRecordDocument;
-import net.opengis.swe.x20.TextEncodingDocument;
 
 public class InsertResultInsertDAOTest extends AbstractObservationInsertDAOTest {
 

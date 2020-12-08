@@ -42,6 +42,7 @@ import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.series.db.beans.AbstractFeatureEntity;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.CodespaceEntity;
 import org.n52.series.db.beans.ComplexDataEntity;
 import org.n52.series.db.beans.DataArrayDataEntity;
@@ -111,8 +112,10 @@ import org.n52.shetland.ogc.sos.SosResultEncoding;
 import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.IdGenerator;
 import org.n52.shetland.util.OMHelper;
+import org.n52.sos.ds.hibernate.dao.CategoryDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
@@ -155,7 +158,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
             Map<String, FormatEntity> formatCache, Set<OfferingEntity> hOfferings, Session session)
             throws OwsExceptionReport {
-        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache, formatCache),
+        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache, formatCache, null),
                 sosObservation, hDataset, hFeature, null, hOfferings, session, null);
     }
 
@@ -792,6 +795,18 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 observationContext.setValueType(dataset.getValueType());
             }
         }
+        if (caches.category() == null) {
+            if (omObservation.isSetCategoryParameter()) {
+                NamedValue<String> categoryParameter = (NamedValue<String>) omObservation.getCategoryParameter();
+                caches.setCategory(daos.category()
+                        .getOrInsertCategory((SweText) categoryParameter.getValue(), session));
+                omObservation.removeCategoryParameter();
+            } else {
+                caches.setCategory(daos.category()
+                        .getOrInsertCategory(daoFactory.getDefaultCategory(), session));
+            }
+        }
+        observationContext.setCategory(caches.category());
         // currently only profiles with one observedProperty are supported
         if (parent != null && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
@@ -988,16 +1003,16 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private static class Caches {
         private final Map<String, CodespaceEntity> codespaces;
-
         private final Map<UoM, UnitEntity> units;
-
         private final Map<String, FormatEntity> formats;
+        private CategoryEntity category;
 
         Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units,
-                Map<String, FormatEntity> formats) {
+                Map<String, FormatEntity> formats, CategoryEntity category) {
             this.codespaces = codespaces;
             this.units = units;
             this.formats = formats;
+            this.category = category;
         }
 
         public Map<String, CodespaceEntity> codespaces() {
@@ -1010,6 +1025,14 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         public Map<String, FormatEntity> formats() {
             return formats;
+        }
+
+        public CategoryEntity category() {
+            return category;
+        }
+
+        public void setCategory(CategoryEntity category) {
+          this.category = category;
         }
 
     }
@@ -1027,6 +1050,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         private final PlatformDAO platform;
 
+        private final CategoryDAO category;
+
         private final AbstractSeriesDAO dataset;
 
         private final UnitDAO unit;
@@ -1040,6 +1065,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             this.parameter = daoFactory.getParameterDAO();
             this.feature = daoFactory.getFeatureOfInterestDAO();
             this.platform = daoFactory.getPlatformDAO();
+            this.category = daoFactory.getCategoryDAO();
             this.dataset = daoFactory.getSeriesDAO();
             this.unit = daoFactory.getUnitDAO();
             this.verticalMetadata = daoFactory.getVerticalMetadataDAO();
@@ -1067,6 +1093,10 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         public PlatformDAO platform() {
             return this.platform;
+        }
+
+        public CategoryDAO category() {
+            return this.category;
         }
 
         public AbstractSeriesDAO dataset() {

@@ -207,7 +207,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                             }
 
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
-                                CategoryEntity hCategory = getCategory(hObservableProperty, request, session);
+                                CategoryEntity hCategory = getCategory(request, session);
                                 ObservationContext ctx = new ObservationContext().setCategory(hCategory)
                                         .setOffering(hOffering).setPhenomenon(hObservableProperty)
                                         .setProcedure(hProcedure).setPublish(false)
@@ -449,20 +449,18 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
         }
     }
 
-    private CategoryEntity getCategory(PhenomenonEntity hObservableProperty, InsertSensorRequest request,
-            Session session) {
+    private CategoryEntity getCategory(InsertSensorRequest request, Session session) {
         if (request.hasExtension(CATEGORY)) {
             Optional<Extension<?>> extension = request.getExtension(CATEGORY);
-            if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
-                return getDaoFactory().getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(),
-                        session);
+            if (extension.isPresent() && extension.get()
+                    .getValue() instanceof SweText) {
+                return getDaoFactory().getCategoryDAO()
+                        .getOrInsertCategory((SweText) extension.get()
+                                .getValue(), session);
             }
         }
-        return getDaoFactory().getCategoryDAO().getOrInsertCategory(SosConstants.SOS, SosConstants.SOS,
-                "Default SOS category", session);
-        // return
-        // getDaoFactory().getCategoryDAO().getOrInsertCategory(hObservableProperty,
-        // session);
+        return getDaoFactory().getCategoryDAO()
+                .getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
     }
 
     private Set<String> getAllParentOfferings(ProcedureEntity hProcedure) {

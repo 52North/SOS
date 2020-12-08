@@ -165,6 +165,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             hResultTemplateEntity.setOffering(hOffering);
             hResultTemplateEntity.setPhenomenon(hObservableProperty);
             hResultTemplateEntity.setProcedure(hProcedure);
+            hResultTemplateEntity.setCategory(hCategory);
             hResultTemplateEntity.setIdentifier("test-rt-1");
             hResultTemplateEntity.setEncoding(
                     "<swe:TextEncoding xmlns:swe=\"http://www.opengis.net/swe/2.0\" "

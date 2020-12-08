@@ -47,11 +47,20 @@ public interface DatabaseQueryHelper {
     default String getObservationType(DatasetEntity dataset) {
         if (dataset != null) {
             if (dataset.isSetOMObservationType()) {
-                return dataset.getOmObservationType().getFormat();
-            } else if (dataset.getDatasetType().equals(DatasetType.profile)
-                    || dataset.getObservationType().equals(ObservationType.profile)) {
+                return dataset.getOmObservationType()
+                        .getFormat();
+            } else if (dataset.getDatasetType()
+                    .equals(DatasetType.profile)
+                    || dataset.getObservationType()
+                            .equals(ObservationType.profile)) {
                 return OmConstants.OBS_TYPE_PROFILE_OBSERVATION;
-            } else if (!dataset.getValueType().equals(ValueType.not_initialized)) {
+            } else if (dataset.getDatasetType()
+                    .equals(DatasetType.trajectory)
+                    || dataset.getObservationType()
+                            .equals(ObservationType.trajectory)) {
+                return OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION;
+            } else if (!dataset.getValueType()
+                    .equals(ValueType.not_initialized)) {
                 return getObservationTypeForValueType(dataset.getValueType());
             }
         }

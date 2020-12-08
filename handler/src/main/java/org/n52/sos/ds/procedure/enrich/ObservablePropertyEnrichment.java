@@ -56,7 +56,6 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
 
     @Override
     public void enrich() throws OwsExceptionReport {
-
         List<PhenomenonEntity> phens = new PhenomenonDao(getSession()).getAllInstances(
                 createDbQuery(checkForPublished(getCache().getObservablePropertiesForProcedure(getIdentifier()))));
         for (PhenomenonEntity phen : phens) {

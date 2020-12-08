@@ -86,6 +86,17 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
         return category;
     }
 
+    public CategoryEntity getOrInsertCategory(CategoryEntity categoryEntity, Session session) {
+        CategoryEntity category = getCategoryForIdentifier(categoryEntity.getIdentifier(), session);
+        if (category == null) {
+            category = categoryEntity;
+            session.save(category);
+            session.flush();
+            session.refresh(category);
+        }
+        return category;
+    }
+
     public CategoryEntity getOrInsertCategory(PhenomenonEntity obsProp, Session session) {
         CategoryEntity category = getCategoryForIdentifier(obsProp.getIdentifier(), session);
         if (category == null) {

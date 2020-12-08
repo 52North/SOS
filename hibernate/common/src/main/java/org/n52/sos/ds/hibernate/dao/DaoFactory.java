@@ -40,10 +40,12 @@ import javax.inject.Inject;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.EReportingSetting;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
@@ -329,6 +331,14 @@ public class DaoFactory {
 
     public EncoderRepository getEncoderRepository() {
         return encoderRepository;
+    }
+
+    public CategoryEntity getDefaultCategory() {
+        CategoryEntity categoryEntity = new CategoryEntity();
+        categoryEntity.setIdentifier(SosConstants.SOS);
+        categoryEntity.setName(SosConstants.SOS);
+        categoryEntity.setDescription("Default SOS category");
+        return categoryEntity;
     }
 
 }

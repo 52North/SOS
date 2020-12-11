@@ -206,8 +206,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                                 offeringDAO.updateParentOfferings(parentOfferings, hOffering, session);
                             }
 
+                            CategoryEntity hCategory = getCategory(request, session);
                             for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
-                                CategoryEntity hCategory = getCategory(request, session);
                                 ObservationContext ctx = new ObservationContext().setCategory(hCategory)
                                         .setOffering(hOffering).setPhenomenon(hObservableProperty)
                                         .setProcedure(hProcedure).setPublish(false)

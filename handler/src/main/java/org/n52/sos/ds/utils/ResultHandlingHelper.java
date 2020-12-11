@@ -779,12 +779,12 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                     return fields;
                 }
             }
-        } else if (observation.getDataset()
+        } else if ((observation.getDataset()
                 .getDatasetType()
                 .equals(DatasetType.trajectory)
                 || observation.getDataset()
                         .getObservationType()
-                        .equals(ObservationType.trajectory)) {
+                        .equals(ObservationType.trajectory)) && observation instanceof TrajectoryDataEntity) {
             TrajectoryValue trajectory =
                     (TrajectoryValue) new ObservationValueCreator(decoderRepository).visit(observation);
             TrajectoryElement element = trajectory.getValue()

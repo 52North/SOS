@@ -288,7 +288,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected final GetResultHandler getResultHandler = new GetResultHandler();
 
-    protected final SosInsertObservationOperatorV20 insertObservationOperatorv2 = new SosInsertObservationOperatorV20();
+    protected final SosInsertObservationOperatorV20 insertObservationOperatorv2 =
+            new SosInsertObservationOperatorV20();
 
     protected final I18NDAORepository i18NDAORepository = new I18NDAORepository();
 
@@ -396,10 +397,10 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
                 i18NDAORepository, daoFactory, converterRepository, null, bindingRepository, null,
                 contentCacheController, Mockito.mock(ProcedureDescriptionSettings.class));
 
-        observationCtx = new HibernateOmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository, daoFactory,
-                sosHelper, new ProfileHanlderMock(), additionalObservationCreatorRepository, contentCacheController,
-                featureQueryHandler, converterRepository, factoryRepository, geometryHandler, decoderRepository, null,
-                bindingRepository);
+        observationCtx = new HibernateOmObservationCreatorContext(serviceMetadataRepository, i18NDAORepository,
+                daoFactory, sosHelper, new ProfileHanlderMock(), additionalObservationCreatorRepository,
+                contentCacheController, featureQueryHandler, converterRepository, factoryRepository, geometryHandler,
+                decoderRepository, null, bindingRepository);
         observationCtx.setDefaultLanguage("eng");
         Session session = null;
         try {
@@ -542,8 +543,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         decoderRepository.init();
     }
 
-    protected void insertSensor(String procedure, String offering, String obsProp, String parentProcedure, String observationType)
-            throws OwsExceptionReport, EncodingException {
+    protected void insertSensor(String procedure, String offering, String obsProp, String parentProcedure,
+            String observationType) throws OwsExceptionReport, EncodingException {
         InsertSensorRequest req = new InsertSensorRequest();
         req.setAssignedProcedureIdentifier(procedure);
         List<SosOffering> assignedOfferings = Lists.newLinkedList();
@@ -563,7 +564,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
             procedureDescription.setParentProcedure(new ReferenceType(parentProcedure, parentProcedure));
         }
         SystemDocument xbSystemDoc = SystemDocument.Factory.newInstance();
-        xbSystemDoc.addNewSystem().set(encodeObjectToXml(SensorMLConstants.NS_SML, system));
+        xbSystemDoc.addNewSystem()
+                .set(encodeObjectToXml(SensorMLConstants.NS_SML, system));
         system.setXml(xbSystemDoc.xmlText());
         req.setProcedureDescription(procedureDescription);
         req.setAssignedOfferings(assignedOfferings);
@@ -586,24 +588,28 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected String createTextEncodingString(SweTextEncoding textEncoding) throws EncodingException {
         TextEncodingDocument xbTextEncDoc = TextEncodingDocument.Factory.newInstance();
-        xbTextEncDoc.addNewTextEncoding().set(encodeObjectToXml(SweConstants.NS_SWE_20, textEncoding));
+        xbTextEncDoc.addNewTextEncoding()
+                .set(encodeObjectToXml(SweConstants.NS_SWE_20, textEncoding));
         return xbTextEncDoc.xmlText();
     }
 
     protected String createDataRecordString(SweDataRecord dataRecord) throws EncodingException {
         DataRecordDocument xbDataRecordDoc = DataRecordDocument.Factory.newInstance();
-        xbDataRecordDoc.addNewDataRecord().set(encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord));
+        xbDataRecordDoc.addNewDataRecord()
+                .set(encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord));
         return xbDataRecordDoc.xmlText();
     }
 
     protected String createQuantityString(SweQuantity quantity) throws EncodingException {
         QuantityDocument xbQuantitydDoc = QuantityDocument.Factory.newInstance();
-        xbQuantitydDoc.addNewQuantity().set(encodeObjectToXml(SweConstants.NS_SWE_20, quantity));
+        xbQuantitydDoc.addNewQuantity()
+                .set(encodeObjectToXml(SweConstants.NS_SWE_20, quantity));
         return xbQuantitydDoc.xmlText();
     }
 
     protected XmlObject encodeObjectToXml(String ns, Object o) throws EncodingException {
-        return (XmlObject) encoderRepository.getEncoder(CodingHelper.getEncoderKey(ns, o)).encode(o);
+        return (XmlObject) encoderRepository.getEncoder(CodingHelper.getEncoderKey(ns, o))
+                .encode(o);
     }
 
     @SuppressWarnings("unused")
@@ -626,7 +632,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
             String offeringId, String featureId, String obsType, Session session)
             throws OwsExceptionReport, ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
-        ProcedureEntity procedure = daoFactory.getProcedureDAO().getProcedureForIdentifier(procedureId, session);
+        ProcedureEntity procedure = daoFactory.getProcedureDAO()
+                .getProcedureForIdentifier(procedureId, session);
         OwsServiceProviderFactory serviceProviderFactory = Mockito.mock(OwsServiceProviderFactory.class);
         SosProcedureDescription spd = new HibernateProcedureConverter(ctx).createSosProcedureDescription(procedure,
                 SensorMLConstants.NS_SML, Sos2Constants.SERVICEVERSION, session);
@@ -645,7 +652,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected abstract void assertInsertionAftermath(boolean afterCacheUpdate) throws OwsExceptionReport;
 
-    protected void assertInsertionAftermathBeforeAndAfterCacheReload() throws OwsExceptionReport, InterruptedException {
+    protected void assertInsertionAftermathBeforeAndAfterCacheReload()
+            throws OwsExceptionReport, InterruptedException {
         // check once for cache changes triggered by sos event
         assertInsertionAftermath(false);
 
@@ -671,23 +679,31 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationResponse getObsResponse =
                 getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        assertThat(getObsResponse.getObservationCollection()
+                .hasNext(), is(true));
 
         OmObservation omObservation = getObservation(getObsResponse);
         assertThat(omObservation.isSetParameter(), is(true));
-        assertThat(omObservation.getParameter().size(), is(5));
+        assertThat(omObservation.getParameter()
+                .size(), is(5));
         for (NamedValue<?> namedValue : omObservation.getParameter()) {
             assertThat(namedValue.isSetName(), is(true));
-            assertThat(namedValue.getName().isSetHref(), is(true));
-            if (BOOLEAN_PARAM_NAME.equals(namedValue.getName().getHref())) {
+            assertThat(namedValue.getName()
+                    .isSetHref(), is(true));
+            if (BOOLEAN_PARAM_NAME.equals(namedValue.getName()
+                    .getHref())) {
                 checkNamedValue(namedValue, BOOLEAN_PARAM_NAME, BOOLEAN_PARAM_VALUE, null);
-            } else if (CATEGORY_PARAM_NAME.equals(namedValue.getName().getHref())) {
+            } else if (CATEGORY_PARAM_NAME.equals(namedValue.getName()
+                    .getHref())) {
                 checkNamedValue(namedValue, CATEGORY_PARAM_NAME, CATEGORY_PARAM_VALUE, CATEGORY_PARAM_UNIT);
-            } else if (COUNT_PARAM_NAME.equals(namedValue.getName().getHref())) {
+            } else if (COUNT_PARAM_NAME.equals(namedValue.getName()
+                    .getHref())) {
                 checkNamedValue(namedValue, COUNT_PARAM_NAME, COUNT_PARAM_VALUE, null);
-            } else if (QUANTITY_PARAM_NAME.equals(namedValue.getName().getHref())) {
+            } else if (QUANTITY_PARAM_NAME.equals(namedValue.getName()
+                    .getHref())) {
                 checkNamedValue(namedValue, QUANTITY_PARAM_NAME, QUANTITY_PARAM_VALUE, QUANTITY_PARAM_UNIT);
-            } else if (TEXT_PARAM_NAME.equals(namedValue.getName().getHref())) {
+            } else if (TEXT_PARAM_NAME.equals(namedValue.getName()
+                    .getHref())) {
                 checkNamedValue(namedValue, TEXT_PARAM_NAME, TEXT_PARAM_VALUE, null);
             }
         }
@@ -695,7 +711,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
 
     protected OmObservation getObservation(GetObservationResponse getObsResponse)
             throws NoSuchElementException, OwsExceptionReport {
-        OmObservation observation = getObsResponse.getObservationCollection().next();
+        OmObservation observation = getObsResponse.getObservationCollection()
+                .next();
         if (observation.getValue() instanceof StreamingValue) {
             assertThat(((StreamingValue) observation.getValue()).hasNext(), is(true));
             OmObservation omObservation = ((StreamingValue) observation.getValue()).next();
@@ -721,19 +738,30 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         return namedValue;
     }
 
-    protected OmObservation checkSamplingGeometry(String offering, String procedure, String obsprop, String feature,
-            DateTime time, Geometry geometry) throws OwsExceptionReport {
+    protected GetObservationResponse queryObservation(String offering, String procedure, String obsprop,
+            String feature, DateTime time) throws OwsExceptionReport {
         GetObservationRequest getObsReq =
                 createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
         GetObservationResponse getObsResponse =
                 getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
         assertThat(getObsResponse, notNullValue());
-        OmObservation omObservation = getObservation(getObsResponse);
-        assertThat(omObservation.isSetParameter(), is(true));
-        assertThat(omObservation.isSetSpatialFilteringProfileParameter(), is(true));
-        checkNamedValue(omObservation.getSpatialFilteringProfileParameter(), OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
-                geometry, null);
-        return omObservation;
+        return getObsResponse;
+    }
+
+    protected GetObservationResponse queryObservation(String offering, String procedure, String obsprop,
+            String feature, DateTime timeStart, DateTime timeEnd) throws OwsExceptionReport {
+        GetObservationRequest getObsReq =
+                createDefaultGetObservationRequest(offering, procedure, obsprop, timeStart, timeEnd, feature);
+        GetObservationResponse getObsResponse =
+                getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
+        assertThat(getObsResponse, notNullValue());
+        return getObsResponse;
+    }
+
+    protected OmObservation checkSamplingGeometry(String offering, String procedure, String obsprop, String feature,
+            DateTime time, Geometry geometry) throws OwsExceptionReport {
+        OmObservation omObservation = getObservation(queryObservation(offering, procedure, obsprop, feature, time));
+        return checkSamplingGeometry(omObservation, geometry);
     }
 
     protected OmObservation checkSamplingGeometry(String offering, String procedure, String obsprop, String feature,
@@ -744,6 +772,10 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
                 getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
         assertThat(getObsResponse, notNullValue());
         OmObservation omObservation = getObservation(getObsResponse);
+        return checkSamplingGeometry(omObservation, geometry);
+    }
+
+    protected OmObservation checkSamplingGeometry(OmObservation omObservation, Geometry geometry) throws OwsExceptionReport {
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.isSetSpatialFilteringProfileParameter(), is(true));
         checkNamedValue(omObservation.getSpatialFilteringProfileParameter(), OmConstants.PARAM_NAME_SAMPLING_GEOMETRY,
@@ -754,13 +786,16 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
     protected GetObservationRequest createDefaultGetObservationRequest(String reqOffering, String reqProcedure,
             String reqObsProp, DateTime time, String obsFeature) {
         GetObservationRequest getObsReq = new GetObservationRequest();
-        getObsReq.setOfferings(
-                getCache().getChildOfferings(reqOffering, true, true).stream().collect(Collectors.toList()));
-        getObsReq.setProcedures(
-                getCache().getChildProcedures(reqProcedure, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setOfferings(getCache().getChildOfferings(reqOffering, true, true)
+                .stream()
+                .collect(Collectors.toList()));
+        getObsReq.setProcedures(getCache().getChildProcedures(reqProcedure, true, true)
+                .stream()
+                .collect(Collectors.toList()));
         getObsReq.setObservedProperties(CollectionHelper.list(reqObsProp));
-        getObsReq.setFeatureIdentifiers(
-                getCache().getChildFeatures(obsFeature, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setFeatureIdentifiers(getCache().getChildFeatures(obsFeature, true, true)
+                .stream()
+                .collect(Collectors.toList()));
         getObsReq.setResponseFormat(OmConstants.NS_OM_2);
         TemporalFilter tempFilter = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals, new TimeInstant(time),
                 TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE);
@@ -773,13 +808,16 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
     protected GetObservationRequest createDefaultGetObservationRequest(String reqOffering, String reqProcedure,
             String reqObsProp, DateTime timeStart, DateTime timeEnd, String obsFeature) {
         GetObservationRequest getObsReq = new GetObservationRequest();
-        getObsReq.setOfferings(
-                getCache().getChildOfferings(reqOffering, true, true).stream().collect(Collectors.toList()));
-        getObsReq.setProcedures(
-                getCache().getChildProcedures(reqProcedure, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setOfferings(getCache().getChildOfferings(reqOffering, true, true)
+                .stream()
+                .collect(Collectors.toList()));
+        getObsReq.setProcedures(getCache().getChildProcedures(reqProcedure, true, true)
+                .stream()
+                .collect(Collectors.toList()));
         getObsReq.setObservedProperties(CollectionHelper.list(reqObsProp));
-        getObsReq.setFeatureIdentifiers(
-                getCache().getChildFeatures(obsFeature, true, true).stream().collect(Collectors.toList()));
+        getObsReq.setFeatureIdentifiers(getCache().getChildFeatures(obsFeature, true, true)
+                .stream()
+                .collect(Collectors.toList()));
         getObsReq.setResponseFormat(OmConstants.NS_OM_2);
         TemporalFilter tempFilter = new TemporalFilter(FilterConstants.TimeOperator.TM_Equals,
                 new TimePeriod(timeStart, timeEnd), TemporalRestrictions.PHENOMENON_TIME_VALUE_REFERENCE);
@@ -797,12 +835,15 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GetObservationResponse getObsResponse =
                 getObsDAO.queryObservationData(getObsReq, getGetObservationRequest(getObsReq));
         assertThat(getObsResponse, notNullValue());
-        assertThat(getObsResponse.getObservationCollection().hasNext(), is(true));
+        assertThat(getObsResponse.getObservationCollection()
+                .hasNext(), is(true));
         OmObservation omObservation = getObservation(getObsResponse);
         assertThat(omObservation.getObservationConstellation(), notNullValue());
         OmObservationConstellation obsConst = omObservation.getObservationConstellation();
-        assertThat(obsConst.getProcedure().getIdentifier(), is(obsProcedure));
-        assertThat(obsConst.getObservableProperty().getIdentifier(), is(obsObsProp));
+        assertThat(obsConst.getProcedure()
+                .getIdentifier(), is(obsProcedure));
+        assertThat(obsConst.getObservableProperty()
+                .getIdentifier(), is(obsObsProp));
 
         // TODO this fails
         // assertThat(obsConst.getFeatureOfInterest().getIdentifier().getValue(),
@@ -817,26 +858,36 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         assertThat(value.getValue(), instanceOf(QuantityValue.class));
         assertThat(value.getPhenomenonTime(), instanceOf(TimeInstant.class));
         TimeInstant timeInstant = (TimeInstant) value.getPhenomenonTime();
-        assertThat(timeInstant.getValue().toDate(), is(time.toDate()));
+        assertThat(timeInstant.getValue()
+                .toDate(), is(time.toDate()));
         QuantityValue quantityValue = (QuantityValue) value.getValue();
-        assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
+        assertThat(quantityValue.getValue()
+                .doubleValue(), is(obsVal));
         assertThat(quantityValue.getUnit(), is(obsUnit));
     }
 
     protected void checkNamedValue(NamedValue<?> namedValue, String name, Object value, String unit) {
         assertThat(namedValue.isSetName(), is(true));
-        assertThat(namedValue.getName().isSetHref(), is(true));
-        assertThat(namedValue.getName().getHref(), is(name));
+        assertThat(namedValue.getName()
+                .isSetHref(), is(true));
+        assertThat(namedValue.getName()
+                .getHref(), is(name));
         assertThat(namedValue.isSetValue(), is(true));
-        assertThat(namedValue.getValue().isSetValue(), is(true));
-        if (namedValue.getValue().getValue() instanceof BigDecimal) {
-            assertTrue(((BigDecimal) namedValue.getValue().getValue()).compareTo((BigDecimal) value) == 0);
+        assertThat(namedValue.getValue()
+                .isSetValue(), is(true));
+        if (namedValue.getValue()
+                .getValue() instanceof BigDecimal) {
+            assertTrue(((BigDecimal) namedValue.getValue()
+                    .getValue()).compareTo((BigDecimal) value) == 0);
         } else {
-            assertThat(namedValue.getValue().getValue(), is(value));
+            assertThat(namedValue.getValue()
+                    .getValue(), is(value));
         }
         if (!Strings.isNullOrEmpty(unit)) {
-            assertThat(namedValue.getValue().isSetUnit(), is(true));
-            assertThat(namedValue.getValue().getUnit(), is(unit));
+            assertThat(namedValue.getValue()
+                    .isSetUnit(), is(true));
+            assertThat(namedValue.getValue()
+                    .getUnit(), is(unit));
         }
     }
 
@@ -883,7 +934,8 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
     protected void printXml(Object o, String namespace) throws EncodingException {
         Encoder<XmlObject, Object> encoder = encoderRepository.getEncoder(new XmlEncoderKey(namespace, o.getClass()));
         if (encoder != null) {
-            System.out.println(encoder.encode(o).xmlText(new XmlOptions()));
+            System.out.println(encoder.encode(o)
+                    .xmlText(new XmlOptions()));
         }
     }
 

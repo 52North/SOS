@@ -72,7 +72,7 @@ public class ObservationContext {
     private boolean mobile;
     private boolean insitu = true;
     private ValueType valueType;
-
+    private boolean includeCategory;
 
     /**
      * Indicates that the series of the observation should be published
@@ -116,7 +116,16 @@ public class ObservationContext {
      *            the category to set
      */
     public ObservationContext setCategory(CategoryEntity category) {
+        return setCategory(category, false);
+    }
+
+    /**
+     * @param category
+     *            the category to set
+     */
+    public ObservationContext setCategory(CategoryEntity category, boolean include) {
         this.category = category;
+        this.includeCategory = include;
         return this;
     }
 
@@ -326,5 +335,19 @@ public class ObservationContext {
 
     public boolean isSetValueType() {
         return getValueType() != null;
+    }
+
+    /**
+     * @return the includeCategory
+     */
+    public boolean isIncludeCategory() {
+        return includeCategory;
+    }
+
+    /**
+     * @param includeCategory the includeCategory to set
+     */
+    public void setIncludeCategory(boolean includeCategory) {
+        this.includeCategory = includeCategory;
     }
 }

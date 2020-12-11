@@ -348,6 +348,26 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
         }
 
         @Override
+        public Class<? extends DatasetEntity> trajectoryClass() {
+            return DatasetEntity.class;
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> textTrajectoryClass() {
+            return trajectoryClass();
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> categoryTrajectoryClass() {
+            return trajectoryClass();
+        }
+
+        @Override
+        public Class<? extends DatasetEntity> quantityTrajectoryClass() {
+            return trajectoryClass();
+        }
+
+        @Override
         public Class<? extends DatasetEntity> referenceClass() {
             return DatasetEntity.class;
         }

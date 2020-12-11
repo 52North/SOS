@@ -367,7 +367,6 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     @Override
     public DataEntity<?> visit(TrajectoryValue value) throws OwsExceptionReport {
         TrajectoryDataEntity trajectory = observationFactory.trajectory();
-
         if (value.isSetPhenomenonTime()) {
             omObservation.getValue()
                     .setPhenomenonTime(value.getPhenomenonTime());
@@ -378,8 +377,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             } else {
                 omObservation.setResultTime(new TimeInstant(DateTime.now()));
             }
-
         }
+        dataset.setValueType(getTrajectoryValueType(value));
         DataEntity trajectoryDataEntity = persist((DataEntity) trajectory, new HashSet<DataEntity<?>>());
         persistTrajectoryChildren(value.getValue(), trajectoryDataEntity.getId());
         return trajectoryDataEntity;
@@ -414,6 +413,39 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private ValueType getProfileValueType(ProfileValue value) {
         for (ProfileLevel level : value.getValue()) {
+            if (level.getValue()
+                    .size() == 1) {
+                Value<?> v = level.getValue()
+                        .iterator()
+                        .next();
+                if (v instanceof QuantityValue) {
+                    return ValueType.quantity;
+                } else if (v instanceof BooleanValue) {
+                    return ValueType.bool;
+                } else if (v instanceof CategoryValue) {
+                    return ValueType.category;
+                } else if (v instanceof SweAbstractDataRecord) {
+                    return ValueType.complex;
+                } else if (v instanceof CountValue) {
+                    return ValueType.count;
+                } else if (v instanceof SweDataArrayValue) {
+                    return ValueType.dataarray;
+                } else if (v instanceof GeometryValue) {
+                    return ValueType.geometry;
+                } else if (v instanceof ReferenceValue) {
+                    return ValueType.referenced;
+                } else if (v instanceof TextValue) {
+                    return ValueType.text;
+                }
+            } else {
+                return ValueType.complex;
+            }
+        }
+        return ValueType.not_initialized;
+    }
+
+    private ValueType getTrajectoryValueType(TrajectoryValue value) {
+        for (TrajectoryElement level : value.getValue()) {
             if (level.getValue()
                     .size() == 1) {
                 Value<?> v = level.getValue()
@@ -801,12 +833,13 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 caches.setCategory(daos.category()
                         .getOrInsertCategory((SweText) categoryParameter.getValue(), session));
                 omObservation.removeCategoryParameter();
+                observationContext.setCategory(caches.category(), true);
             } else {
                 caches.setCategory(daos.category()
                         .getOrInsertCategory(daoFactory.getDefaultCategory(), session));
+                observationContext.setCategory(caches.category());
             }
         }
-        observationContext.setCategory(caches.category());
         // currently only profiles with one observedProperty are supported
         if (parent != null && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
@@ -979,6 +1012,16 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                         .getValue()).isSetGeometry()) {
             return geometryHandler
                     .switchCoordinateAxisFromToDatasourceIfNeeded(((ProfileValue) sosObservation.getValue()
+                            .getValue()).getGeometry());
+        }
+        if (sosObservation.isSetValue() && sosObservation.getValue()
+                .isSetValue()
+                && sosObservation.getValue()
+                        .getValue() instanceof TrajectoryValue
+                && ((TrajectoryValue) sosObservation.getValue()
+                        .getValue()).isSetGeometry()) {
+            return geometryHandler
+                    .switchCoordinateAxisFromToDatasourceIfNeeded(((TrajectoryValue) sosObservation.getValue()
                             .getValue()).getGeometry());
         }
         NamedValue<org.locationtech.jts.geom.Geometry> spatialFilteringProfileParameter =

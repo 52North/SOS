@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -38,10 +39,11 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
-import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TrajectoryElement;
 import org.n52.shetland.ogc.om.values.TrajectoryValue;
@@ -53,6 +55,7 @@ import org.n52.shetland.ogc.sensorML.elements.SmlCapability;
 import org.n52.shetland.ogc.sos.request.GetResultRequest;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.GetResultResponse;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
@@ -138,35 +141,68 @@ public class TrajectoryObservationInsertDAOTest extends AbstractInsertDAOTest {
         inserObservationData();
         assertInsertionAftermathBeforeAndAfterCacheReload();
 
-        OmObservation observation = checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1,
-                TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_ROUTE);
-        TrajectoryValue value = (TrajectoryValue) observation.getValue()
-                .getValue();
-        checkValue(value.getValue()
-                .get(0), TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
-        checkValue(value.getValue()
-                .get(1), TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
-        checkValue(value.getValue()
-                .get(2), TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
-        checkValue(value.getValue()
-                .get(3), TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
-        checkValue(value.getValue()
-                .get(4), TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
-        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
-        // FEATURE3, TRAJ_OBS_TIME_1, TRAJ_GEOMETRY_1),
-        // TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
-        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
-        // FEATURE3, TRAJ_OBS_TIME_2, TRAJ_GEOMETRY_2),
-        // TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
-        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
-        // FEATURE3, TRAJ_OBS_TIME_3, TRAJ_GEOMETRY_3),
-        // TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
-        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
-        // FEATURE3, TRAJ_OBS_TIME_4, TRAJ_GEOMETRY_4),
-        // TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
-        // checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
-        // FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
-        // TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+        GetObservationResponse response = queryObservation(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1,
+                TRAJ_OBS_TIME_5);
+        List<OmObservation> observationCollection = response.getObservationCollection().toStream()
+                .collect(Collectors.toList());
+        for (OmObservation o : observationCollection) {
+            if (o.getValue() instanceof StreamingValue) {
+                StreamingValue v = (StreamingValue) o.getValue();
+                while (v.hasNext()) {
+                    OmObservation next = v.next();
+                    DateTime time = getTime(next);
+                    if (time.equals(TRAJ_OBS_TIME_1)) {
+                        checkValue(checkSamplingGeometry(next, TRAJ_GEOMETRY_1), TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
+                    } else  if (time.equals(TRAJ_OBS_TIME_2)) {
+                        checkValue(checkSamplingGeometry(next, TRAJ_GEOMETRY_2), TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
+                    } else  if (time.equals(TRAJ_OBS_TIME_3)) {
+                        checkValue(checkSamplingGeometry(next, TRAJ_GEOMETRY_3), TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
+                    } else  if (time.equals(TRAJ_OBS_TIME_4)) {
+                        checkValue(checkSamplingGeometry(next, TRAJ_GEOMETRY_4), TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
+                    } else  if (time.equals(TRAJ_OBS_TIME_5)) {
+                        checkValue(checkSamplingGeometry(next, TRAJ_GEOMETRY_5), TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+                    }
+                }
+            }
+        }
+//        OmObservation observation = checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3, FEATURE3, TRAJ_OBS_TIME_1,
+//                TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_ROUTE);
+//        TrajectoryValue value = (TrajectoryValue) observation.getValue()
+//                .getValue();
+//        checkValue(value.getValue()
+//                .get(0), TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
+//        checkValue(value.getValue()
+//                .get(1), TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
+//        checkValue(value.getValue()
+//                .get(2), TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
+//        checkValue(value.getValue()
+//                .get(3), TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
+//        checkValue(value.getValue()
+//                .get(4), TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+//         checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+//         FEATURE3, TRAJ_OBS_TIME_1, TRAJ_GEOMETRY_1),
+//         TRAJ_OBS_TIME_1, TRAJ_OBS_VALUE_1, TEMP_UNIT);
+//         checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+//         FEATURE3, TRAJ_OBS_TIME_2, TRAJ_GEOMETRY_2),
+//         TRAJ_OBS_TIME_2, TRAJ_OBS_VALUE_2, TEMP_UNIT);
+//         checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+//         FEATURE3, TRAJ_OBS_TIME_3, TRAJ_GEOMETRY_3),
+//         TRAJ_OBS_TIME_3, TRAJ_OBS_VALUE_3, TEMP_UNIT);
+//         checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+//         FEATURE3, TRAJ_OBS_TIME_4, TRAJ_GEOMETRY_4),
+//         TRAJ_OBS_TIME_4, TRAJ_OBS_VALUE_4, TEMP_UNIT);
+//         checkValue(checkSamplingGeometry(OFFERING3, PROCEDURE3, OBSPROP3,
+//         FEATURE3, TRAJ_OBS_TIME_5, TRAJ_GEOMETRY_5),
+//         TRAJ_OBS_TIME_5, TRAJ_OBS_VALUE_5, TEMP_UNIT);
+    }
+
+    private DateTime getTime(OmObservation next) {
+        if (next.getPhenomenonTime() instanceof TimePeriod) {
+            return ((TimePeriod) next.getPhenomenonTime()).getStart();
+        } else if (next.getPhenomenonTime() instanceof TimeInstant) {
+            return ((TimeInstant) next.getPhenomenonTime()).getValue();
+        }
+        return null;
     }
 
     @Test

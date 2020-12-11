@@ -43,6 +43,7 @@ import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.TextDataEntity;
+import org.n52.series.db.beans.TrajectoryDataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ObservationType;
 import org.n52.series.db.beans.dataset.ValueType;
@@ -209,6 +210,50 @@ public abstract class DatasetFactory {
         return profile;
     }
 
+    public abstract Class<? extends DatasetEntity> trajectoryClass();
+
+    public DatasetEntity trajectory()
+            throws OwsExceptionReport {
+        DatasetEntity trajectory = instantiate(blobClass());
+        trajectory.setDatasetType(DatasetType.trajectory);
+        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setValueType(ValueType.not_initialized);
+        return trajectory;
+    }
+
+    public abstract Class<? extends DatasetEntity> textTrajectoryClass();
+
+    public DatasetEntity textTrajectory()
+            throws OwsExceptionReport {
+        DatasetEntity trajectory = instantiate(blobClass());
+        trajectory.setDatasetType(DatasetType.trajectory);
+        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setValueType(ValueType.text);
+        return trajectory;
+    }
+
+    public abstract Class<? extends DatasetEntity> categoryTrajectoryClass();
+
+    public DatasetEntity categoryTrajectory()
+            throws OwsExceptionReport {
+        DatasetEntity trajectory = instantiate(blobClass());
+        trajectory.setDatasetType(DatasetType.trajectory);
+        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setValueType(ValueType.category);
+        return trajectory;
+    }
+
+    public abstract Class<? extends DatasetEntity> quantityTrajectoryClass();
+
+    public DatasetEntity quantityTrajectory()
+            throws OwsExceptionReport {
+        DatasetEntity trajectory = instantiate(blobClass());
+        trajectory.setDatasetType(DatasetType.trajectory);
+        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setValueType(ValueType.quantity);
+        return trajectory;
+    }
+
     public abstract Class<? extends DatasetEntity> referenceClass();
 
     public DatasetEntity reference()
@@ -299,6 +344,18 @@ public abstract class DatasetFactory {
                     }
                 }
                 return profile();
+            } else if (o instanceof TrajectoryDataEntity) {
+                Optional<DataEntity<?>> value = ((TrajectoryDataEntity) o).getValue().stream().findFirst();
+                if (value.isPresent()) {
+                    if (value.get() instanceof QuantityDataEntity) {
+                        return quantityTrajectory();
+                    } else if (value.get() instanceof CategoryDataEntity) {
+                        return categoryTrajectory();
+                    } else if (value.get() instanceof TextDataEntity) {
+                        return textTrajectory();
+                    }
+                }
+                return trajectory();
             } else if (o instanceof ReferencedDataEntity) {
                 return reference();
             }

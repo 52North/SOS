@@ -277,6 +277,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, omObsConst.getObservablePropertyIdentifier()));
         criteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
                 .add(Restrictions.in(OfferingEntity.IDENTIFIER, omObsConst.getOfferings()));
+//        if (omObsConst.isSetCategoryParameter()) {
+//            criteria.createCriteria(DatasetEntity.PROPERTY_CATEGORY)
+//                    .add(Restrictions.in(CategoryEntity.IDENTIFIER, omObsConst.getCategoryParameter()
+//                            .getValue()
+//                            .getValue()));
+//        }
         // criteria.createAlias(DatasetEntity.PROPERTY_FEATURE, "f");
         // criteria.add(Restrictions.or(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE),
         // Restrictions
@@ -284,6 +290,19 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         // omObsConst.getFeatureOfInterestIdentifier())));
         LOGGER.trace("QUERY getObservationConstellation(omObservationConstellation): {}",
                 HibernateHelper.getSqlString(criteria));
+        if (omObsConst.isSetCategoryParameter()) {
+            List<DatasetEntity> datasets = criteria.list();
+            return datasets.stream()
+                    .filter(d -> d.getCategory()
+                            .getIdentifier()
+                            .equals(omObsConst.getCategoryParameter()
+                                    .getValue()
+                                    .getValue()))
+                    .findFirst()
+                    .orElse(datasets.iterator()
+                            .next());
+
+        }
         return (DatasetEntity) criteria.uniqueResult();
     }
 
@@ -337,7 +356,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     protected DatasetEntity getOrInsert(ObservationContext ctx, DataEntity<?> observation, Session session)
             throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
-        ctx.addIdentifierRestrictionsToCritera(criteria, true, false);
+        ctx.addIdentifierRestrictionsToCritera(criteria, true, ctx.isIncludeCategory());
         // criteria.setMaxResults(1);
         // TODO: check for Unit if available!!!
         LOGGER.trace(
@@ -351,6 +370,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             dataset = preCheckDataset(ctx, observation, dataset, session);
             if (dataset != null && dataset.isMobile()) {
                 dataset.setDatasetType(DatasetType.trajectory);
+                ctx.setMobile(true);
             }
         }
         if (dataset == null || (dataset.isSetFeature() && ctx.isSetFeatureOfInterest()

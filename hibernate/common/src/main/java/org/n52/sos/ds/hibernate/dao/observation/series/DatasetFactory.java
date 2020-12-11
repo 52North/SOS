@@ -216,7 +216,7 @@ public abstract class DatasetFactory {
             throws OwsExceptionReport {
         DatasetEntity trajectory = instantiate(blobClass());
         trajectory.setDatasetType(DatasetType.trajectory);
-        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setObservationType(ObservationType.simple);
         trajectory.setValueType(ValueType.not_initialized);
         return trajectory;
     }
@@ -227,7 +227,7 @@ public abstract class DatasetFactory {
             throws OwsExceptionReport {
         DatasetEntity trajectory = instantiate(blobClass());
         trajectory.setDatasetType(DatasetType.trajectory);
-        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setObservationType(ObservationType.simple);
         trajectory.setValueType(ValueType.text);
         return trajectory;
     }
@@ -238,7 +238,7 @@ public abstract class DatasetFactory {
             throws OwsExceptionReport {
         DatasetEntity trajectory = instantiate(blobClass());
         trajectory.setDatasetType(DatasetType.trajectory);
-        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setObservationType(ObservationType.simple);
         trajectory.setValueType(ValueType.category);
         return trajectory;
     }
@@ -249,7 +249,7 @@ public abstract class DatasetFactory {
             throws OwsExceptionReport {
         DatasetEntity trajectory = instantiate(blobClass());
         trajectory.setDatasetType(DatasetType.trajectory);
-        trajectory.setObservationType(ObservationType.trajectory);
+        trajectory.setObservationType(ObservationType.simple);
         trajectory.setValueType(ValueType.quantity);
         return trajectory;
     }

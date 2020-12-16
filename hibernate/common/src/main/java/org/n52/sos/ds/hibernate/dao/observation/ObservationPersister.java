@@ -844,6 +844,12 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         if (parent != null && !isProfileObservation(dataset)) {
             observationContext.setHiddenChild(true);
         }
+        if (isTrajectoryObservation(dataset)) {
+            observationContext.setMobile(dataset.isMobile());
+            if (!observationContext.isSetValueType()) {
+                observationContext.setValueType(dataset.getValueType());
+            }
+        }
         observationContext.setFeatureOfInterest(featureOfInterest);
         if (!observationContext.isSetPlatform()) {
             observationContext.setPlatform(daos.platform()

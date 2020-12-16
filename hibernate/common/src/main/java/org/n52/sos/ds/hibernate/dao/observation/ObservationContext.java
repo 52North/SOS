@@ -46,6 +46,7 @@ import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
+import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
 
 /**
@@ -278,6 +279,10 @@ public class ObservationContext {
         contextual.setHidden(isHiddenChild());
         contextual.setMobile(isMobile());
         contextual.setInsitu(isInsitu());
+        if (DatasetType.trajectory.equals(contextual.getDatasetType())
+                && ValueType.not_initialized.equals(contextual.getValueType())) {
+            contextual.setValueType(getValueType());
+        }
     }
 
     private boolean isSetVerticalMetadata() {

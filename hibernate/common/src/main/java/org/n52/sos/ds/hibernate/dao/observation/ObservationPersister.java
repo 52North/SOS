@@ -761,6 +761,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         }
     }
 
+    @SuppressWarnings("NP_NULL_PARAM_DEREF")
     private <V, T extends DataEntity<V>> T persist(T observation, V value) throws OwsExceptionReport {
         observation.setDeleted(false);
 
@@ -984,7 +985,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     private boolean isTrajectoryObservation(DatasetEntity dataset) {
-        return dataset.isSetOMObservationType()
+        return dataset != null && dataset.isSetOMObservationType()
                 && OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(dataset.getOmObservationType()
                         .getFormat());
 //                        && (DatasetType.trajectory.equals(dataset.getDatasetType())

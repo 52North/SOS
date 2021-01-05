@@ -92,7 +92,7 @@
         <version.mysql>8.0.22</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.4.25.Final</version.hibernate>
+        <version.hibernate>5.4.27.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>3.4.5</version.hikaricp>
         <version.geotools>24.1</version.geotools>
@@ -853,7 +853,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.10.18</version>
+                 <version>1.10.19</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1491,7 +1491,7 @@
             <dependency>
                 <groupId>com.thetransactioncompany</groupId>
                 <artifactId>cors-filter</artifactId>
-                <version>2.9</version>
+                <version>2.9.1</version>
                 <scope>runtime</scope>
             </dependency>
             <!-- required for common test classes -->
@@ -2194,7 +2194,7 @@
                 <plugin>
                     <groupId>org.codehaus.cargo</groupId>
                     <artifactId>cargo-maven2-plugin</artifactId>
-                    <version>1.8.2</version>
+                    <version>1.8.4</version>
                 </plugin>
 
                 <plugin>

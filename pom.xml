@@ -87,7 +87,7 @@
 
         <version.postgresql>42.2.18</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
-        <version.ojdbc8>19.8.0.0</version.ojdbc8>
+        <version.ojdbc8>19.9.0.0</version.ojdbc8>
         <version.sqljdbc>8.4.1.jre8</version.sqljdbc>
         <version.mysql>8.0.22</version.mysql>
         <version.h2>1.4.200</version.h2>
@@ -100,7 +100,7 @@
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
         <version.netcdf>5.4.1</version.netcdf>
-        <version.jts>1.17.1</version.jts>
+        <version.jts>1.18.0</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>8.1.0</version.arctic-sea>
@@ -928,7 +928,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.8</version>
+                <version>2.10.9</version>
             </dependency>
             <!-- Hibernate Core Dependencies -->
             <dependency>
@@ -1908,7 +1908,7 @@
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.12.0</version>
+                <version>2.12.1</version>
             </dependency>
             <dependency>
                 <groupId>xml-apis</groupId>

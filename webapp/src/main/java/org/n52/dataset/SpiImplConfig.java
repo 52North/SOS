@@ -28,8 +28,8 @@
  */
 package org.n52.dataset;
 
-import org.n52.series.db.AnnotationBasedDataRepositoryFactory;
-import org.n52.series.db.DataRepositoryTypeFactory;
+import org.n52.sensorweb.server.db.factory.AnnotationBasedDataRepositoryFactory;
+import org.n52.sensorweb.server.db.factory.DataRepositoryTypeFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -38,7 +38,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "org.n52.sensorweb.server.db")
-@ComponentScan(basePackages = {"org.n52.series.db", "org.n52.sensorweb.server.db", "org.n52.series.srv"})
+@ComponentScan(basePackages = {"org.n52.sensorweb.server.db", "org.n52.series.srv"})
 public class SpiImplConfig {
 
     @Bean

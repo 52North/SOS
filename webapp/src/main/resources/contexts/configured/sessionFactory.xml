@@ -58,6 +58,6 @@
 
     <!-- ############################################################################################### -->
     <beans profile="sampling">
-        <jpa:repositories base-package="org.n52.series.db.repositories.sampling" />
+        <jpa:repositories base-package="org.n52.sensorweb.server.db.repositories.sampling" />
     </beans>
 </beans>

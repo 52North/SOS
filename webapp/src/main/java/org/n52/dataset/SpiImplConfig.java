@@ -38,7 +38,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "org.n52.sensorweb.server.db")
-@ComponentScan(basePackages = {"org.n52.sensorweb.server.db", "org.n52.series.srv"})
+@ComponentScan(basePackages = {"org.n52.sensorweb.server.db", "org.n52.sensorweb.server.srv"})
 public class SpiImplConfig {
 
     @Bean

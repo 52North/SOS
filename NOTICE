@@ -211,7 +211,7 @@ This project includes:
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Lucene Common Analyzers under Apache License, Version 2.0
-  Lucene Core under Apache 2
+  Lucene Core under Apache License, Version 2.0
   Lucene Grouping under Apache License, Version 2.0
   Lucene Highlighter under Apache License, Version 2.0
   Lucene Join under Apache License, Version 2.0

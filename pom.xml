@@ -106,7 +106,7 @@
         <version.helgoland.api>3.4.1-SNAPSHOT</version.helgoland.api>
         <version.dao-impl>3.4.2-SNAPSHOT</version.dao-impl>
         <version.db-model>3.0.6-SNAPSHOT</version.db-model>
-        <version.springframework.security>5.4.4</version.springframework.security>
+        <version.springframework.security>5.4.5</version.springframework.security>
         <version.springframework>5.3.4</version.springframework>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.3</version.saxon>

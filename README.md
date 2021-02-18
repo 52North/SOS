@@ -199,7 +199,7 @@ You can get support via the community mailing list:
 
 The 52N SOS is licensed under the [GNU General Public License v2 (GPLv2)](http://www.gnu.org/licenses/gpl-2.0.html).
 
-The 3rd party libraries used and their licenses are listed in the [NOITICE file](https://github.com/52North/SOS/blob/develop/NOTICE)
+The 3rd party libraries used and their licenses are listed in the [NOTICE file](https://github.com/52North/SOS/blob/develop/NOTICE)
 
 ## Contribute
 

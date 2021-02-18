@@ -133,7 +133,6 @@ This project includes:
   embedded-elasticsearch under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   error-prone annotations under Apache 2.0
-  EXIficient under MIT License
   EXIficient-Core under MIT License
   EXIficient-Grammars under MIT License
   Extended StAX API under Dual license consisting of the CDDL v1.1 and GPL v2
@@ -279,8 +278,6 @@ This project includes:
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC XML schemas under The Apache Software License, Version 2.0
-  Old JAXB Core under CDDL 1.1 or GPL2 w/ CPE
-  Old JAXB Runtime under CDDL 1.1 or GPL2 w/ CPE
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Open Web Services Model under Lesser General Public License (LGPL)
   org.apache.xmlgraphics:batik-anim under The Apache Software License, Version 2.0
@@ -366,7 +363,6 @@ This project includes:
   Xlink Model under Lesser General Public License (LGPL)
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
-  XML Pull Parsing API under Public Domain
   XmlBeans under The Apache Software License, Version 2.0
   XmlBeansXPath under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License

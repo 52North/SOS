@@ -37,7 +37,7 @@ package org.n52.sos.ds.datasource;
  */
 public class PostgresCustomDatasource extends PostgresCoreDatasource {
 
-    private static final String DIALECT_NAME = "PostgreSQL/PostGIS Custom Core";
+    private static final String DIALECT_NAME = "PostgreSQL/PostGIS Custom";
 
     public PostgresCustomDatasource() {
         super();

@@ -166,6 +166,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate i
     private DbQuery createDatasetDbQuery(Long procedure) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.PROCEDURES, Long.toString(procedure));
+        map.put(IoParameters.EXPANDED, "true");
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 

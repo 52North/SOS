@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -200,21 +201,6 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                     feature = resultTemplate.getFeature();
                 } else {
                     feature = getFeature(omObsConst.getFeatureOfInterest(), featureEntityMap, session);
-                    // if
-                    // (featureEntityMap.containsKey(omObsConst.getFeatureOfInterestIdentifier()))
-                    // {
-                    // feature =
-                    // featureEntityMap.get(omObsConst.getFeatureOfInterestIdentifier());
-                    // } else {
-                    // FeatureOfInterestDAO featureOfInterestDAO =
-                    // getDaoFactory() .getFeatureOfInterestDAO();
-                    // feature =
-                    // featureOfInterestDAO.checkOrInsert(omObsConst.getFeatureOfInterest(),
-                    // session);
-                    // featureOfInterestDAO.checkOrInsertRelatedFeatureRelation(feature,
-                    // obsConst.getOffering(), session);
-                    // featureEntityMap.put(feature.getIdentifier(), feature);
-                    // }
                 }
                 try {
                     if (observation.getValue() instanceof SingleObservationValue) {
@@ -224,11 +210,18 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
                         observationDAO.insertObservationMultiValue(obsConst, feature, observation, codespaceCache,
                                 unitCache, formatCache, session);
                     }
-                } catch (NoApplicableCodeException nace) {
+                    if (!abortInsertResultForExistingObservations()) {
+                        transaction.commit();
+                        transaction = session.beginTransaction();
+                    }
+                } catch (PersistenceException pe) {
                     if (abortInsertResultForExistingObservations()) {
-                        throw nace;
+                        throw pe;
                     } else {
-                        LOGGER.debug("Already existing observation would be ignored!", nace);
+                        transaction.rollback();
+                        session.clear();
+                        transaction = session.beginTransaction();
+                        LOGGER.debug("Already existing observation would be ignored!", pe);
                     }
                 }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {

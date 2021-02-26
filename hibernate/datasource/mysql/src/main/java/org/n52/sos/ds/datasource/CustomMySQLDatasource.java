@@ -37,7 +37,7 @@ package org.n52.sos.ds.datasource;
  *
  */
 public class CustomMySQLDatasource extends MySQLCoreDatasource {
-    private static final String DIALECT_NAME = "MySQL/MariaDB Custom Core";
+    private static final String DIALECT_NAME = "MySQL/MariaDB Custom";
 
     public CustomMySQLDatasource() {
         super();

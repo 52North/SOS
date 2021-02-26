@@ -37,7 +37,7 @@ package org.n52.sos.ds.datasource;
  */
 public class SqlServerCustomDatasource extends SqlServerCoreDatasource {
 
-    private static final String DIALECT_NAME = "SQL Server Custom Core";
+    private static final String DIALECT_NAME = "SQL Server Custom";
 
     public SqlServerCustomDatasource() {
         super();

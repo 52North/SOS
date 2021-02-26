@@ -308,6 +308,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     private DbQuery createDatasetDbQuery(Long offering) {
         Map<String, String> map = Maps.newHashMap();
         map.put(IoParameters.OFFERINGS, Long.toString(offering));
+        map.put(IoParameters.EXPANDED, "true");
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 

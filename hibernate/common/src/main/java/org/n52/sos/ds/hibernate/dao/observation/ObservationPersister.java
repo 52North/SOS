@@ -402,22 +402,12 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     @Override
-    public DataEntity<?> visit(TrajectoryValue value) throws OwsExceptionReport {
-        throw notSupported(value);
-    }
-
-    @Override
     public DataEntity<?> visit(TimeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 
     @Override
     public DataEntity<?> visit(TimeRangeValue value) throws OwsExceptionReport {
-        throw notSupported(value);
-    }
-
-    @Override
-    public DataEntity<?> visit(TimeValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
 

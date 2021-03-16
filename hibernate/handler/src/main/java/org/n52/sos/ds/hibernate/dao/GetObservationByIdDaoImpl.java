@@ -205,8 +205,11 @@ public class GetObservationByIdDaoImpl extends AbstractObservationDao
         List<DatasetEntity> serieses = daoFactory.getSeriesDAO().getSeries(request, session);
         checkMaxNumberOfReturnedSeriesSize(serieses.size());
         for (DatasetEntity series : serieses) {
-            ObservationStream createSosObservationFromSeries =
-                    HibernateObservationUtilities.createSosObservationFromSeries(series, request,
+            ObservationStream createSosObservationFromSeries = series.hasEreportingProfile()
+                    ? HibernateObservationUtilities.createSosObservationFromEReportingSeries(series, request,
+                            getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext,
+                            session)
+                    : HibernateObservationUtilities.createSosObservationFromSeries(series, request,
                             getProcedureDescriptionFormat(request.getResponseFormat()), observationCreatorContext,
                             session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();

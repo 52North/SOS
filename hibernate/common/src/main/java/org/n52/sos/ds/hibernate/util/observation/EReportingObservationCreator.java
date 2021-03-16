@@ -40,6 +40,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.observation.AdditionalObservationCreator;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorKey;
 import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
@@ -48,8 +49,10 @@ import org.n52.svalbard.util.SweHelper;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
-    private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository
-            .encoderKeysForElements(AqdConstants.NS_AQD, DataEntity.class, EReportingQualityEntity.class);
+    private static final Set<AdditionalObservationCreatorKey> KEYS = CollectionHelper.union(
+            AdditionalObservationCreatorRepository.encoderKeysForElements(AqdConstants.NS_AQD, DataEntity.class,
+                    EReportingQualityEntity.class),
+            AdditionalObservationCreatorRepository.encoderKeysForElements(AqdConstants.NS_AQD, DatasetEntity.class));
 
     private final EReportingObservationHelper helper = new EReportingObservationHelper();
 
@@ -77,17 +80,17 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, DatasetEntity series) {
-        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series.getEreportingProfile())) {
+    public OmObservation create(OmObservation omObservation, DatasetEntity dataset) {
+        for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(dataset.getPlatform())) {
             omObservation.addParameter(namedValue);
         }
         return omObservation;
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session)
+    public OmObservation create(OmObservation omObservation, DatasetEntity dataset, Session session)
             throws CodedException {
-        return create(omObservation, series);
+        return create(omObservation, dataset);
     }
 
     @Override

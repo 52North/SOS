@@ -39,6 +39,8 @@ import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
+    private final EReportingObservationHelper helper = new EReportingObservationHelper();
+
     public EReportingSeriesOmObservationCreator(DatasetEntity series,
                                                 AbstractObservationRequest request,
                                                 Locale i18n,

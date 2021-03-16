@@ -42,7 +42,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.AssessmentTypeEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -175,14 +175,14 @@ public class DaoFactory {
     }
 
     public AbstractSeriesDAO getSeriesDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingSeriesDAO(this);
         }
         return new SeriesDAO(this);
     }
 
     public boolean isSeriesDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return true;
         } else {
             return HibernateHelper.isEntitySupported(DataEntity.class);
@@ -198,28 +198,28 @@ public class DaoFactory {
      * @throws OwsExceptionReport If no Hibernate Observation data access is supported
      */
     public AbstractSeriesObservationDAO getObservationDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingObservationDAO(this.verificationFlags, this.validityFlags, this);
         }
         return new SeriesObservationDAO(this);
     }
 
     public AbstractObservationTimeDAO getObservationTimeDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingObservationTimeDAO();
         }
         return new SeriesObservationTimeDAO();
     }
 
     public AbstractSeriesValueDAO getValueDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingValueDAO(this.verificationFlags, this.validityFlags, this);
         }
         return new SeriesValueDAO(this);
     }
 
     public AbstractSeriesValueTimeDAO getValueTimeDAO() {
-        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+        if (HibernateHelper.isEntitySupported(AssessmentTypeEntity.class)) {
             return new EReportingValueTimeDAO(this.verificationFlags, this.validityFlags, this);
         }
         return new SeriesValueTimeDAO(this);

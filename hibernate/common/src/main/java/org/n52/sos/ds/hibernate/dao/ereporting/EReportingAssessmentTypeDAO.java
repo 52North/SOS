@@ -33,7 +33,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
+import org.n52.series.db.beans.AssessmentTypeEntity;
 import org.n52.shetland.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
@@ -46,35 +46,35 @@ public class EReportingAssessmentTypeDAO {
     private static final String LOG_TEMPLATE = "QUERY getEReportingAssessmentTypes(): {}";
 
     @SuppressWarnings("unchecked")
-    public List<EReportingAssessmentTypeEntity> getEReportingAssessmentTypes(Session session) {
+    public List<AssessmentTypeEntity> getEReportingAssessmentTypes(Session session) {
         Criteria c = getDefaultCriteria(session);
         LOGGER.trace(LOG_TEMPLATE, HibernateHelper.getSqlString(c));
-        return (List<EReportingAssessmentTypeEntity>) c.list();
+        return (List<AssessmentTypeEntity>) c.list();
     }
 
-    public EReportingAssessmentTypeEntity getEReportingAssessmentType(AssessmentType assessmentType, Session session) {
+    public AssessmentTypeEntity getEReportingAssessmentType(AssessmentType assessmentType, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingAssessmentTypeEntity.ID, assessmentType.getId()));
+        c.add(Restrictions.eq(AssessmentTypeEntity.PROPERTY_ID, assessmentType.getId()));
         LOGGER.trace(LOG_TEMPLATE, HibernateHelper.getSqlString(c));
-        return (EReportingAssessmentTypeEntity) c.uniqueResult();
+        return (AssessmentTypeEntity) c.uniqueResult();
     }
 
-    public EReportingAssessmentTypeEntity getEReportingAssessmentType(String assessmentType, Session session) {
+    public AssessmentTypeEntity getEReportingAssessmentType(String assessmentType, Session session) {
         Criteria c = getDefaultCriteria(session);
-        c.add(Restrictions.eq(EReportingAssessmentTypeEntity.ID, assessmentType));
+        c.add(Restrictions.eq(AssessmentTypeEntity.PROPERTY_ID, assessmentType));
         LOGGER.trace(LOG_TEMPLATE, HibernateHelper.getSqlString(c));
-        return (EReportingAssessmentTypeEntity) c.uniqueResult();
+        return (AssessmentTypeEntity) c.uniqueResult();
     }
 
     private Criteria getDefaultCriteria(Session session) {
-        return session.createCriteria(EReportingAssessmentTypeEntity.class).setResultTransformer(
+        return session.createCriteria(AssessmentTypeEntity.class).setResultTransformer(
                 Criteria.DISTINCT_ROOT_ENTITY);
     }
 
-    public EReportingAssessmentTypeEntity getOrInsert(AssessmentType assessmentType, Session session) {
-        EReportingAssessmentTypeEntity eReportingAssessmentType = getEReportingAssessmentType(assessmentType, session);
+    public AssessmentTypeEntity getOrInsert(AssessmentType assessmentType, Session session) {
+        AssessmentTypeEntity eReportingAssessmentType = getEReportingAssessmentType(assessmentType, session);
         if (eReportingAssessmentType == null) {
-            eReportingAssessmentType = new EReportingAssessmentTypeEntity();
+            eReportingAssessmentType = new AssessmentTypeEntity();
             eReportingAssessmentType.setAssessmentType(assessmentType.getId());
             eReportingAssessmentType.setUri(assessmentType.getConceptURI());
             session.saveOrUpdate(eReportingAssessmentType);

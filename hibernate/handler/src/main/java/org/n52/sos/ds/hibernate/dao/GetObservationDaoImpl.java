@@ -283,8 +283,11 @@ public class GetObservationDaoImpl extends AbstractObservationDao implements org
         checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = getMaxNumberOfValuesPerSeries(serieses.size());
         for (DatasetEntity series : serieses) {
-            ObservationStream createSosObservationFromSeries =
-                    HibernateObservationUtilities.createSosObservationFromSeries(series, request,
+            ObservationStream createSosObservationFromSeries = series.hasEreportingProfile()
+                    ? HibernateObservationUtilities.createSosObservationFromEReportingSeries(series, request,
+                            getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()),
+                            observationCreatorContext, session)
+                    : HibernateObservationUtilities.createSosObservationFromSeries(series, request,
                             getRequestedLocale(request), getProcedureDescriptionFormat(request.getResponseFormat()),
                             observationCreatorContext, session);
             OmObservation observationTemplate = createSosObservationFromSeries.next();

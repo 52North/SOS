@@ -37,10 +37,10 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.n52.series.db.beans.AssessmentTypeEntity;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.ereporting.EReportingAssessmentTypeEntity;
-import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.PlatformEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
@@ -192,8 +192,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
      *            EReportingSamplingPoint identifier to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, String samplingPoint) {
-        c.createCriteria(getSamplingPointAssociationPath())
-                .add(Restrictions.eq(EReportingSamplingPointEntity.IDENTIFIER, samplingPoint));
+        c.createCriteria(DatasetEntity.PROPERTY_PLATFORM)
+                .add(Restrictions.eq(PlatformEntity.IDENTIFIER, samplingPoint));
 
     }
 
@@ -205,8 +205,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
      * @param samplingPoint
      *            EReportingSamplingPoint to add
      */
-    public void addEReportingSamplingPointToCriteria(Criteria c, EReportingSamplingPointEntity samplingPoint) {
-        c.add(Restrictions.eq(getSamplingPointAssociationPath(), samplingPoint));
+    public void addEReportingSamplingPointToCriteria(Criteria c, PlatformEntity samplingPoint) {
+        c.add(Restrictions.eq(DatasetEntity.PROPERTY_PLATFORM, samplingPoint));
     }
 
     /**
@@ -218,8 +218,8 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
      *            EReportingSamplingPoint identifiers to add
      */
     public void addEReportingSamplingPointToCriteria(Criteria c, Collection<String> samplingPoints) {
-        c.createCriteria(getSamplingPointAssociationPath())
-                .add(Restrictions.in(EReportingSamplingPointEntity.IDENTIFIER, samplingPoints));
+        c.createCriteria(DatasetEntity.PROPERTY_PLATFORM)
+                .add(Restrictions.in(PlatformEntity.IDENTIFIER, samplingPoints));
     }
 
     @Override
@@ -252,9 +252,9 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO implements EReporting
     }
 
     private void addAssessmentType(Criteria c, String assessmentType) {
-        c.createCriteria(getSamplingPointAssociationPath())
-                .createCriteria(EReportingSamplingPointEntity.ASSESSMENTTYPE)
-                .add(Restrictions.ilike(EReportingAssessmentTypeEntity.ASSESSMENT_TYPE, assessmentType));
+        c.createCriteria(DatasetEntity.PROPERTY_PLATFORM)
+                .createCriteria(PlatformEntity.PROPERTY_ASSESSMENT_TYPE)
+                .add(Restrictions.ilike(AssessmentTypeEntity.PROPERTY_ASSESSMENT_TYPE, assessmentType));
     }
 
     @Override

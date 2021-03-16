@@ -87,7 +87,7 @@ public final class JstlFunctions {
 
     private static boolean checkProfile(ServletContext ctx, String profile) {
         String initParameter = ctx.getInitParameter(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME);
-        return initParameter != null && !initParameter.isEmpty() && initParameter.equalsIgnoreCase(profile);
+        return initParameter != null && !initParameter.isEmpty() && initParameter.contains(profile);
     }
 
     /**

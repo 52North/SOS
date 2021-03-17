@@ -108,8 +108,8 @@
         <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
         <version.springframework.security>5.4.5</version.springframework.security>
-        <version.springframework.data>2.4.2</version.springframework.data>
         <version.springframework>5.3.5</version.springframework>
+        <version.springframework.data>2.4.5</version.springframework.data>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.3</version.saxon>
         <version.elasticsearch>7.11.1</version.elasticsearch>
@@ -117,8 +117,6 @@
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
         <version.junit>5.6.2</version.junit>
-        <version.exificient>1.0.4</version.exificient>
-        <version.jaxb>2.3.0</version.jaxb>
         <version.exificient>1.0.4</version.exificient>
         <version.jaxb>2.3.0</version.jaxb>
     </properties>

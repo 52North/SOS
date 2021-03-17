@@ -87,8 +87,6 @@ This project includes:
   aggs-matrix-stats under Server Side Public License, v 1 or Elastic License 2.0
   ANTLR 4 Runtime under The BSD License
   AntLR Parser Generator under BSD License
-  Apache Ant Core under The Apache Software License, Version 2.0
-  Apache Ant Launcher under The Apache Software License, Version 2.0
   Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
   Apache Commons CSV under Apache License, Version 2.0

@@ -104,8 +104,8 @@
         <version.arctic-sea>7.6.1</version.arctic-sea>
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.helgoland.api>3.3.3</version.helgoland.api>
-        <version.dao-impl>3.3.3</version.dao-impl>
-        <version.db-model>3.0.5</version.db-model>
+        <version.dao-impl>3.3.4</version.dao-impl>
+        <version.db-model>3.0.6</version.db-model>
         <!-- <dataset.proxy.version>1.0.0-SNAPSHOT</dataset.proxy.version> -->
         <version.springframework.security>5.3.3.RELEASE</version.springframework.security>
         <version.springframework>5.2.8.RELEASE</version.springframework>
@@ -375,6 +375,12 @@
                 <groupId>org.n52.sensorweb-server.db-model</groupId>
                 <artifactId>db-model-entities</artifactId>
                 <version>${version.db-model}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.neovisionaries</groupId>
+                        <artifactId>nv-i18n</artifactId>
+                      </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb-server.db-model</groupId>

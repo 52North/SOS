@@ -3,11 +3,11 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-extensions</artifactId>
-        <version>5.2.8</version>
+        <version>5.2.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-inspire</artifactId>
-     <version>5.2.8</version>
+     <version>5.2.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>52°North SOS - SOS 2.0 Inspire extension</name>
     <description>52°North Sensor Observation Service Inspire extension module</description>

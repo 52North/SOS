@@ -784,7 +784,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.9.0</version>
+                <version>3.10.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>

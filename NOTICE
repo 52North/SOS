@@ -160,6 +160,7 @@ This project includes:
   Hibernate ORM - hibernate-spatial under GNU Library General Public License v2.1 or later
   HikariCP under The Apache Software License, Version 2.0
   HPPC Collections under The Apache Software License, Version 2.0
+  HTTP Clients under Lesser General Public License (LGPL)
   httpservices under BSD 3-Clause License
   HyperSQL Database under HSQLDB License, a BSD open source license
   INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
@@ -180,6 +181,7 @@ This project includes:
   J2ObjC Annotations under The Apache Software License, Version 2.0
   Jackson dataformat: CBOR under The Apache Software License, Version 2.0
   Jackson dataformat: Smile under The Apache Software License, Version 2.0
+  Jackson datatype: Joda under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0

@@ -41,14 +41,14 @@
 <hr/>
 <p>The 52&deg;North SOS documentation is available in the <a href="https://wiki.52north.org/" target="_blank" title="52&deg;North Wiki">52&deg;North Wiki</a>.</p>
 
-<p>The user guide, including installation and configuration documentation, can be found <a href="https://wiki.52north.org/SensorWeb/SensorObservationServiceIVDocumentation" target="_blank" title="User guide">here</a>.</p>
+<p>The user guide, including installation and configuration documentation, can be found <a href="https://wiki.52north.org/SensorWeb/SensorObservationServiceDocumentation" target="_blank" title="User guide">here</a>.</p>
 
 <p>The developer guide can be found <a href="https://wiki.52north.org/SensorWeb/SensorObservationServiceDeveloperGuide" target="_blank" title="Developer guide">here</a>.</p>
 
 <h4>Other Documentations</h4>
 
 <p>Sensor Web Server Helgoland
-	<a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="Sensor Web Server Helgoland/develop/" />">
+	<a id="rest-menuitem" class="menu-item4" target="_blank" href="<c:url value="https://52north.github.io/sensorweb-server-helgoland/develop/" />">
 	    <span class="menu-title">documentation</span>
 	</a>
 </p>

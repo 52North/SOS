@@ -26,7 +26,7 @@
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="defaultValue" value="1" />
     </bean>
-     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="helgoland.service.name" />
         <property name="title" value="Name of the service" />
         <property name="description" value="The name of the service" />
@@ -34,7 +34,7 @@
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="defaultValue" value="My RESTful Dataset Service" />
     </bean>
-     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="helgoland.service.version" />
         <property name="title" value="Service version" />
         <property name="description" value="The version of this service" />
@@ -42,7 +42,7 @@
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="defaultValue" value="3.0" />
     </bean>
-     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+    <bean class="org.n52.faroe.settings.StringSettingDefinition">
         <property name="key" value="helgoland.service.nodatavalues" />
         <property name="title" value="No data values" />
         <property name="description" value="Definition of the no data values. Multiple values are possible separated by comma!" />
@@ -60,6 +60,15 @@
         <property name="group" ref="helgolandApiSettingDefinitionGroup" />
         <property name="optional" value="true" />
         <property name="defaultValue" value="P370D" />
+    </bean>
+     <bean class="org.n52.faroe.settings.StringSettingDefinition">
+        <property name="key" value="helgoland.request.default.locale" />
+        <property name="title" value="Default locale" />
+        <property name="description" value="Definition of the default locale in ISO-639-1" />
+        <property name="order" value="2.1" />
+        <property name="group" ref="helgolandApiSettingDefinitionGroup" />
+        <property name="optional" value="false" />
+        <property name="defaultValue" value="en" />
     </bean>
     <!-- Scheduler -->
     <bean class="org.n52.faroe.settings.BooleanSettingDefinition">

@@ -87,7 +87,7 @@
         <version.postgresql>42.2.20</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>21.1.0.0</version.ojdbc8>
-        <version.sqljdbc>9.2.0.jre8</version.sqljdbc>
+        <version.sqljdbc>9.2.1.jre8</version.sqljdbc>
         <version.mysql>8.0.25</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
@@ -105,7 +105,7 @@
         <version.arctic-sea>8.2.1</version.arctic-sea>
         <version.helgoland.api>3.4.1-SNAPSHOT</version.helgoland.api>
         <version.dao-impl>3.4.2-SNAPSHOT</version.dao-impl>
-        <version.db-model>3.0.6-SNAPSHOT</version.db-model>
+        <version.db-model>3.0.7-SNAPSHOT</version.db-model>
         <version.springframework.security>5.5.0</version.springframework.security>
         <version.springframework>5.3.7</version.springframework>
         <version.aspectj>1.9.6</version.aspectj>

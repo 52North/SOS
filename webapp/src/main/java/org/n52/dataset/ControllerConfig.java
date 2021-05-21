@@ -28,71 +28,19 @@
  */
 package org.n52.dataset;
 
-import javax.persistence.EntityManager;
-
-import org.n52.io.extension.RenderingHintsExtension;
-import org.n52.io.extension.StatusIntervalsExtension;
-import org.n52.io.extension.metadata.DatabaseMetadataExtension;
-import org.n52.io.extension.metadata.MetadataAssembler;
-import org.n52.io.extension.resulttime.ResultTimeAssembler;
-import org.n52.io.extension.resulttime.ResultTimeExtension;
-import org.n52.io.extension.resulttime.ResultTimeService;
 import org.n52.io.handler.DefaultIoFactory;
-import org.n52.io.response.ParameterOutput;
 import org.n52.io.response.dataset.AbstractValue;
 import org.n52.io.response.dataset.DatasetOutput;
-import org.n52.io.response.extension.LicenseExtension;
-import org.n52.sensorweb.server.db.old.dao.DbQueryFactory;
-import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
-import org.n52.web.ctrl.DatasetController;
-import org.n52.web.ctrl.ParameterController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "org.n52.web.ctrl")
+@ComponentScan(basePackages = {"org.n52.web.ctrl", "org.n52.io.extension", "org.n52.io.response.extension"})
 public class ControllerConfig {
-
-    private <T extends ParameterController<ParameterOutput>> T withLicenseExtension(T controller) {
-        controller.addMetadataExtension(new LicenseExtension());
-        return controller;
-    }
 
     @Bean
     public DefaultIoFactory<DatasetOutput<AbstractValue<?>>, AbstractValue<?>> defaultIoFactory() {
         return new DefaultIoFactory<>();
     }
-
-    @Bean
-    public DatabaseMetadataExtension databaseMetadataExtension(DatasetRepository datasetRepository,
-            DbQueryFactory dbQueryFactory) {
-        MetadataAssembler repository = new MetadataAssembler(datasetRepository, dbQueryFactory);
-        return new DatabaseMetadataExtension(repository);
-    }
-
-    @Bean
-    public ResultTimeExtension resultTimeExtension(EntityManager entityManager, DatasetRepository datasetRepository,
-            DbQueryFactory dbQueryFactory, DatasetController datasetController) {
-        ResultTimeAssembler repository = new ResultTimeAssembler(entityManager, datasetRepository, dbQueryFactory);
-        ResultTimeService resultTimeService = new ResultTimeService(repository);
-        ResultTimeExtension extension = new ResultTimeExtension(resultTimeService);
-        datasetController.addMetadataExtension(extension);
-        return extension;
-    }
-
-    @Bean
-    public StatusIntervalsExtension<DatasetOutput<?>> statusIntervalExtension(DatasetController datasetController) {
-        StatusIntervalsExtension<DatasetOutput<?>> extension = new StatusIntervalsExtension<>();
-        datasetController.addMetadataExtension(extension);
-        return extension;
-    }
-
-    @Bean
-    public RenderingHintsExtension<DatasetOutput<?>> renderingHintsExtension(DatasetController datasetController) {
-        RenderingHintsExtension<DatasetOutput<?>> extension = new RenderingHintsExtension<>();
-        datasetController.addMetadataExtension(extension);
-        return extension;
-    }
-
 }

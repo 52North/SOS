@@ -55,6 +55,7 @@ import org.n52.sos.ds.observation.AdditionalObservationCreatorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -93,6 +94,9 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         sosObservation.setTupleSeparator(getTupleSeparator());
         sosObservation.setDecimalSeparator(getDecimalSeparator());
         sosObservation.setObservationConstellation(obsConst);
+        if (obsConst.isSetObservationType()) {
+            sosObservation.setResultType(obsConst.getObservationType());
+        }
         checkForAdditionalObservationCreator(dataset, sosObservation);
         final NilTemplateValue value = new NilTemplateValue();
         value.setUnit(obsProp.getUnit());
@@ -127,6 +131,9 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
                 // obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
                 // obsConst.getProcedure().getIdentifier())));
             }
+        }
+        if (!Strings.isNullOrEmpty(getResultModel())) {
+            obsConst.setObservationType(getResultModel());
         }
         if (getSeries().isSetIdentifier()) {
             addIdentifier(obsConst, getSeries());

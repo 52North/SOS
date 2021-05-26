@@ -337,7 +337,7 @@ This project includes:
   Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
   server under Server Side Public License, v 1 or Elastic License 2.0
-  SI Quantities under BSD
+  SI Quantities under BSD 3-Clause
   SI Units under BSD
   SLF4J API Module under MIT License
   SnakeYAML under Apache License, Version 2.0
@@ -360,6 +360,8 @@ This project includes:
   Spring Web MVC under Apache License, Version 2.0
   spring-boot under Apache License, Version 2.0
   spring-boot-autoconfigure under Apache License, Version 2.0
+  spring-security-acl under Apache License, Version 2.0
+  spring-security-config under Apache License, Version 2.0
   spring-security-acl under Apache License, Version 2.0
   spring-security-config under Apache License, Version 2.0
   spring-security-core under Apache License, Version 2.0

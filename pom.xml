@@ -95,7 +95,7 @@
         <version.hibernate>5.4.31.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>25.0</version.geotools>
+        <version.geotools>25.1</version.geotools>
         <version.jackson>2.12.3</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.30</version.slf4j>
@@ -112,7 +112,7 @@
         <version.springframework.data>2.4.8</version.springframework.data>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.5</version.saxon>
-        <version.elasticsearch>7.12.1</version.elasticsearch>
+        <version.elasticsearch>7.13.0</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -792,7 +792,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.8.0</version>
+                <version>2.9.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -1727,7 +1727,7 @@
             <dependency>
                 <groupId>org.geolatte</groupId>
                 <artifactId>geolatte-geom</artifactId>
-                <version>1.8.0</version>
+                <version>1.8.1</version>
             </dependency>
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
@@ -1891,7 +1891,7 @@
             <dependency>
                 <groupId>si.uom</groupId>
                 <artifactId>si-quantity</artifactId>
-                <version>2.0.1</version>
+                <version>2.1</version>
                 <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
@@ -2225,7 +2225,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.2</version>
+                    <version>11.0.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

@@ -111,10 +111,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return observations;
     }
 
-    private String getResultModel() {
-        return request.getResultModel();
-    }
-
     private AbstractFeature getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }

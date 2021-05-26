@@ -181,6 +181,10 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
         addMetadata(o);
     }
 
+    protected String getResultModel() {
+        return request.getResultModel();
+    }
+
     public abstract ObservationStream create() throws OwsExceptionReport, ConverterException;
 
     private void addMetadata(OmObservation o) {

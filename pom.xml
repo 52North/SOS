@@ -109,7 +109,7 @@
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
         <version.springframework.security>5.5.0</version.springframework.security>
         <version.springframework>5.3.7</version.springframework>
-        <version.springframework.data>2.4.8</version.springframework.data>
+        <version.springframework.data>2.5.1</version.springframework.data>
         <version.aspectj>1.9.6</version.aspectj>
         <version.saxon>10.5</version.saxon>
         <version.elasticsearch>7.13.0</version.elasticsearch>

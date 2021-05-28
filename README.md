@@ -222,4 +222,4 @@ This project is managed with Maven3. Simply run `mvn clean install`
 to create a deployable .WAR file.
 
 
-52°North Inititative for Geospatial Open Source Software GmbH, Germany
+52°North Spatial Information Research GmbH, Germany

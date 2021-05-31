@@ -28,6 +28,7 @@
 package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 public class EReportingObservationContext extends ObservationContext {
 

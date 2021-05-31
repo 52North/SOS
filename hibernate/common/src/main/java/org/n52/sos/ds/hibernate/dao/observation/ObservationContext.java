@@ -47,6 +47,9 @@ import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.beans.dataset.ValueType;
+import org.n52.series.db.beans.sampling.SamplingEntity;
+import org.n52.series.db.beans.sampling.SamplingProfileDatasetEntity;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -281,6 +284,9 @@ public class ObservationContext {
         if (DatasetType.trajectory.equals(contextual.getDatasetType())
                 && ValueType.not_initialized.equals(contextual.getValueType())) {
             contextual.setValueType(getValueType());
+        }
+        if (HibernateHelper.isEntitySupported(SamplingEntity.class)) {
+            contextual.setSamplingProfile(new SamplingProfileDatasetEntity());
         }
     }
 

@@ -46,6 +46,9 @@ import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.ValueType;
+import org.n52.series.db.beans.sampling.SamplingEntity;
+import org.n52.series.db.beans.sampling.SamplingProfileDatasetEntity;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -268,6 +271,9 @@ public class ObservationContext {
         contextual.setHidden(isHiddenChild());
         contextual.setMobile(isMobile());
         contextual.setInsitu(isInsitu());
+        if (HibernateHelper.isEntitySupported(SamplingEntity.class)) {
+            contextual.setSamplingProfile(new SamplingProfileDatasetEntity());
+        }
     }
 
     private boolean isSetVerticalMetadata() {

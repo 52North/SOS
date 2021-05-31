@@ -32,7 +32,9 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.series.db.beans.sampling.SamplingProfileDatasetEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 
 public class EReportingObservationContext extends ObservationContext {
@@ -69,8 +71,11 @@ public class EReportingObservationContext extends ObservationContext {
     @Override
     public void addValuesToSeries(DatasetEntity contextual) {
         super.addValuesToSeries(contextual);
-        if (isSetSamplingPoint()) {
-            contextual.setEreportingProfile(new EReportingProfileDatasetEntity().setSamplingPoint(getSamplingPoint()));
+        if (HibernateHelper.isEntitySupported(EReportingSamplingPointEntity.class)) {
+            contextual.setEreportingProfile(new EReportingProfileDatasetEntity());
+            if (isSetSamplingPoint()) {
+                contextual.getEreportingProfile().setSamplingPoint(getSamplingPoint());
+            }
         }
     }
 }

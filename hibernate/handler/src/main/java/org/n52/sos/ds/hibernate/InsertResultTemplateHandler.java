@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -27,6 +26,9 @@
  * Public License for more details.
  */
 package org.n52.sos.ds.hibernate;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -176,7 +178,9 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
         // TODO modify or remove if complex field elements are supported
         final SweDataRecord record = setRecordFrom(resultStructure.get().get());
 
+        List<String> definitions = new LinkedList<>();
         for (final SweField swefield : record.getFields()) {
+            checkDuplicateDefinitions(definitions, swefield);
             if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>) || helper.isDataRecord(swefield)
                     || helper.isVector(swefield) || helper.isDataArray(swefield))) {
                 throw new NoApplicableCodeException().withMessage(
@@ -223,6 +227,16 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                             OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty,
                             OmConstants.PARAM_NAME_SAMPLING_GEOMETRY, ResultHandlingHelper.OM_FEATURE_OF_INTEREST,
                             ResultHandlingHelper.OM_PROCEDURE, OmConstants.OM_PARAMETER);
+        }
+    }
+
+    private void checkDuplicateDefinitions(List<String> definitions, SweField swefield) throws CodedException {
+        if (definitions.contains(swefield.getElement().getDefinition())) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("The definition '%s' is already defined! Please check your insert result template!",
+                            swefield.getElement().getDefinition());
+        } else {
+            definitions.add(swefield.getElement().getDefinition());
         }
     }
 

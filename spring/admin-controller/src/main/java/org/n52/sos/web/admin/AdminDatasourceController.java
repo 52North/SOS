@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -30,9 +29,7 @@ package org.n52.sos.web.admin;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -56,8 +53,8 @@ import org.n52.janmayen.Json;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
-import org.n52.sos.ds.PredefinedInsertionHandler;
 import org.n52.sos.ds.GeneralQueryDAO;
+import org.n52.sos.ds.PredefinedInsertionHandler;
 import org.n52.sos.exception.MissingServiceOperatorException;
 import org.n52.sos.predefined.AbstractPredefined;
 import org.n52.sos.predefined.PhenomenonPredefined;
@@ -82,8 +79,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Maps;
 
 /**
@@ -135,34 +130,11 @@ public class AdminDatasourceController extends AbstractDatasourceController {
         return new ModelAndView(ControllerConstants.Views.ADMIN_DATASOURCE, model);
     }
 
+    @Deprecated
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_EXECUTE, method = RequestMethod.POST)
     public String processQuery(@RequestBody String querySQL) {
-        try {
-            if (this.generalQueryDAO.isPresent()) {
-                String q = URLDecoder.decode(querySQL, "UTF-8");
-                LOG.info("Query: {}", q);
-                GeneralQueryDAO.QueryResult rs = this.generalQueryDAO.get().query(q);
-                ObjectNode j = Json.nodeFactory().objectNode();
-                if (rs.getMessage() != null) {
-                    j.put(rs.isError() ? "error" : "message", rs.getMessage());
-                    return Json.print(j);
-                }
-                j.putArray(ROWS).addAll(Json.toJSON(rs.getColumnNames()));
-                ArrayNode names = j.putArray(NAMES);
-                for (GeneralQueryDAO.Row row : rs.getRows()) {
-                    names.addArray().addAll(Json.toJSON(row.getValues()));
-                }
-                return Json.print(j);
-            }
-            return "No general query dao available!";
-        } catch (UnsupportedEncodingException ex) {
-            LOG.error("Could not decode String", ex);
-            return "Could not decode String: " + ex.getMessage();
-        } catch (SQLException | IOException ex) {
-            LOG.error("Query unsuccesfull.", ex);
-            return "Query unsuccesful. Cause: " + ex.getMessage();
-        }
+        return "Not supported!";
     }
 
     @ResponseBody

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -41,6 +40,8 @@ import java.util.RandomAccess;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -81,6 +82,8 @@ import org.n52.svalbard.CodingSettings;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.odata.ODataFesParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -94,8 +97,10 @@ import com.google.common.base.Strings;
 @Configurable
 public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends AbstractKvpDecoder<R> {
 
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractSosKvpDecoder.class);
     private static final String FILTER = "$filter";
     private static final String OM_FEATURE = "om:featureOfInterest";
+    private static final String ISO_8601_DURATION_INDICATOR = "P";
 
     private static ODataFesParser odataFesParser = new ODataFesParser();
 
@@ -221,11 +226,36 @@ public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends
 
     private TimePeriod decodeTimePeriod(String name, String[] times) throws DecodingException {
         try {
-            return new TimePeriod(DateTimeHelper.parseIsoString2DateTime(times[0]),
-                    DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(times[1]));
+            LOGGER.debug("Parsing temporal filter, start: {}, end: {}", times[0], times[1]);
+            DateTime start = null;
+            DateTime end = null;
+            if (times[0].startsWith(ISO_8601_DURATION_INDICATOR)) {
+                Period periodBeforeEndTime = Period.parse(times[0]);
+                // check if end time is a full ISO 8106 string
+                int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
+                DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
+                end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
+                start = origEnd.minus(periodBeforeEndTime);
+
+            } else if (times[1].startsWith(ISO_8601_DURATION_INDICATOR)) {
+                start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                Period periodAfterStartTime = Period.parse(times[1]);
+                end = start.plus(periodAfterStartTime);
+            } else {
+                start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                end = parseEndTime(times[1]);
+            }
+            return new TimePeriod(start, end);
         } catch (DateTimeParseException ex) {
             throw new DecodingException(ex, name);
         }
+    }
+
+    private DateTime parseEndTime(final String time) throws DateTimeParseException {
+        // check if end time is a full ISO 8106 string
+        int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(time);
+        DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(time);
+        return DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(origEnd, timeLength);
     }
 
     private TimeInstant decodeTimeInstant(String name, String time) throws DecodingException {

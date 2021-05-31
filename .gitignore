@@ -16,3 +16,5 @@ console.log
 coding/sos-v100/configuration.db
 docker/.build/
 .checkstyle
+*.iml
+.idea

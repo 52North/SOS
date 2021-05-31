@@ -1,7 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
-    Software GmbH
+    Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License version 2 as published
@@ -93,7 +92,7 @@
         <small>Copyright &copy;
             <script type="text/javascript">document.write(new Date().getFullYear());</script>
             <noscript>2012</noscript>
-            52&deg;North Initiative for Geospatial Open Source Software GmbH. All Rights Reserved.
+            52&deg;North Spatial Information Research GmbH. All Rights Reserved.
         </small>
     </div>
 </div>

@@ -229,7 +229,8 @@
 	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_6</swes:observableProperty>
 	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_7</swes:observableProperty>
 	<swes:observableProperty>http://www.52north.org/test/observableProperty/9_8</swes:observableProperty>
-    <swes:observableProperty>http://www.52north.org/test/observableProperty/9_9</swes:observableProperty>
+  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_9</swes:observableProperty>
+  <swes:observableProperty>http://www.52north.org/test/observableProperty/9_10</swes:observableProperty>
 	<swes:metadata>
 		<sos:SosInsertionMetadata>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
@@ -240,7 +241,8 @@
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation</sos:observationType>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation</sos:observationType>
 			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation</sos:observationType>
-            <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation</sos:observationType>
+      <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ReferenceObservation</sos:observationType>
+      <sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ProfileObservation</sos:observationType>
 			<!-- multiple values possible -->
 			<sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</sos:featureOfInterestType>
 		</sos:SosInsertionMetadata>

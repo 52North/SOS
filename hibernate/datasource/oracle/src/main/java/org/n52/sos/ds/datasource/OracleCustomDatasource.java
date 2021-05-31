@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -37,7 +36,7 @@ package org.n52.sos.ds.datasource;
 public class OracleCustomDatasource extends OracleCoreDatasource {
 
     private static final long serialVersionUID = -7359398930412826037L;
-    private static final String DIALECT_NAME = "Oracle Spatial Custom Core";
+    private static final String DIALECT_NAME = "Oracle Spatial Custom";
 
     public OracleCustomDatasource() {
         super();

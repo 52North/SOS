@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -39,6 +38,7 @@ import org.n52.sos.context.ContextSwitcher;
 import org.n52.sos.web.common.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -56,6 +56,9 @@ public class AdminResetController extends AbstractReloadContextController {
 
     @Inject
     private ContextSwitcher contextSwitcher;
+
+    @Inject
+    private ConfigurableEnvironment env;
 
     @Inject
     private SettingsService settingsManager;
@@ -83,6 +86,9 @@ public class AdminResetController extends AbstractReloadContextController {
             persistenceStrategy.remove();
         }
 
+        env.setActiveProfiles("undefined");
+        contextSwitcher.reset();
+        contextSwitcher.loadSettings();
         reloadContext();
 
         return new RedirectView(ControllerConstants.Paths.ROOT, true);

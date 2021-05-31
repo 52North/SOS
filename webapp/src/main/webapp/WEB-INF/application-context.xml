@@ -30,6 +30,10 @@
 
     <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
     <bean id="authenticationProvider" class="org.n52.sos.web.common.auth.SosAuthenticationProvider"/>
+    <bean id="limitLoginAttemps" class="org.n52.sos.web.common.auth.LimitLoginAttemptService"/>
+    <bean id="authenticationSuccessEventListener" class="org.n52.sos.web.common.auth.AuthenticationSuccessEventListener"/>
+    <bean id="authenticationFailureListener" class="org.n52.sos.web.common.auth.AuthenticationFailureListener"/>
+
 
     <sec:authentication-manager alias="authenticationManager">
         <sec:authentication-provider ref="authenticationProvider" />
@@ -47,6 +51,7 @@
     <sec:http pattern="/static/**" security="none" />
     <sec:http pattern="/install/**" security="none" />
     <sec:http pattern="/service" security="none" />
+    <sec:http pattern="/api" security="none" />
 
     <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true">
         <sec:csrf disabled="true" />

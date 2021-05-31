@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -109,10 +108,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
 
     private Collection<? extends DataEntity<?>> getObservations() {
         return observations;
-    }
-
-    private String getResultModel() {
-        return request.getResultModel();
     }
 
     private AbstractFeature getProcedure(String procedureId) {

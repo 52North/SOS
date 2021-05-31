@@ -1,7 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
-    Software GmbH
+    Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of the GNU General Public License version 2 as published
@@ -118,6 +117,21 @@
 <br/>
 
 <table style="background-color:white;width:100%;">
+  <tr>
+    <td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://cos4cloud-eosc.eu/"><img alt="Cos4Cloud - Co-designed citizen observatories for the EOS-Cloud" align="middle" width="172" src="<c:url value="/static/images/funding/cos4cloud.png"/>"/></a></td>
+    <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">European Union’s Horizon 2020</a> research project <a target="_blank" href="https://cos4cloud-eosc.eu/">Cos4Cloud</a> (co-funded by the European Commission under the grant agreement n&deg;863463)</td>
+  </tr>
+  <tr>
+    <td align="center" style="padding:3px;width:30%;">
+      <a target="_blank" href="https://www.bmbf.de/"><img alt="BMBF" align="middle" width="130" src="<c:url value="static/images/funding/bmbf_logo_en.png"/>"/></a>
+      <a target="_blank" href="http://tamis.kn.e-technik.tu-dortmund.de/"><img alt="TaMIS - Das Talsperren-Mess-Informations-System" width="110" src="<c:url value="/static/images/funding/TaMIS_Logo_small.png"/>"/></a>
+    </td>
+      <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://www.bmbf.de"> German Federal Ministry of Education and Research</a> research project <a target="_blank" href="http://tamis.kn.e-technik.tu-dortmund.de/">TaMIS</a> (co-funded by the German Federal Ministry of Education and Research, programme Geotechnologien, under grant agreement no. 03G0854)</td>
+   </tr>
+   <tr>
+    <td align="center" style="padding:3px;width:30%;"><a target="_blank" href="https://www.jerico-ri.eu/"><img alt="JERICO-S3 - Science - Services- Sustainability" align="middle" width="172" src="<c:url value="/static/images/funding/jerico_s3.png"/>"/></a></td>
+    <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="https://ec.europa.eu/programmes/horizon2020/">European Union’s Horizon 2020</a> research project <a target="_blank" href="https://www.jerico-ri.eu/">JERICO-S3</a> (co-funded by the European Commission under the grant agreement n&deg;871153)</td>
+  </tr>
   <tr>
     <td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.nexosproject.eu/"><img alt="NeXOS - Next generation, Cost-effective, Compact, Multifunctional Web Enabled Ocean Sensor Systems Empowering Marine, Maritime and Fisheries Management" align="middle" width="172" src="<c:url value="/static/images/funding/logo_nexos.png"/>"/></a></td>
     <td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a target="_blank" href="http://www.nexosproject.eu/">NeXOS</a> (co-funded by the European Commission under the grant agreement n&deg;614102)</td>

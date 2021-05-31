@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -102,6 +101,7 @@ import org.n52.shetland.ogc.sos.SosCapabilities;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
@@ -206,6 +206,12 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
             createStaticCapabilitiesWithId(request, response);
         } else {
             createDynamicCapabilities(request, response, showTransactionalOperations);
+        }
+        if (getCache().getLastUpdateTime() != null && response.getCapabilities() != null && !response.getCapabilities()
+                .getUpdateSequence()
+                .isPresent()) {
+            response.getCapabilities()
+                    .setUpdateSequence(DateTimeHelper.formatDateTime2IsoString(getCache().getLastUpdateTime()));
         }
         return response;
     }

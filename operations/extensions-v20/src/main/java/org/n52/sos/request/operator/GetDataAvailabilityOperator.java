@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2012-2020 52°North Initiative for Geospatial Open Source
- * Software GmbH
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published
@@ -49,6 +48,8 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityRequest;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.ds.AbstractGetDataAvailabilityHandler;
 import org.n52.sos.wsdl.Metadata;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * {@code IRequestOperator} to handle {@link GetDataAvailabilityRequest}s.
@@ -196,11 +197,16 @@ public class GetDataAvailabilityOperator extends
 
     @Override
     public Map<String, String> getAdditionalSchemaImports() {
-        return Collections.emptyMap();
+        return ImmutableMap.<String, String> builder()
+                .put(GetDataAvailabilityConstants.NS_GDA,
+                        GetDataAvailabilityConstants.SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY)
+                .build();
     }
 
     @Override
     public Map<String, String> getAdditionalPrefixes() {
-        return Collections.emptyMap();
+        return ImmutableMap.<String, String> builder()
+                .put(GetDataAvailabilityConstants.NS_GDA_PREFIX, GetDataAvailabilityConstants.NS_GDA)
+                .build();
     }
 }

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-spring</artifactId>
-        <version>5.2.2</version>
+        <version>5.4.0</version>
     </parent>
     <artifactId>sos-admin-controller</artifactId>
     <name>52°North SOS - Web Admin Controller</name>
@@ -93,7 +93,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>

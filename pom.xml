@@ -20,7 +20,7 @@
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>v5.2.3</tag>
+        <tag>v5.3.1</tag>
     </scm>
 
     <issueManagement>

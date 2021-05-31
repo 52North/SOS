@@ -32,10 +32,8 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingProfileDatasetEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
-import org.n52.series.db.beans.sampling.SamplingProfileDatasetEntity;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-
 
 public class EReportingObservationContext extends ObservationContext {
     private EReportingSamplingPointEntity samplingPoint;

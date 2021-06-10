@@ -25,7 +25,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.values.series;
+package org.n52.sos.ds.hibernate.values.dataset;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +52,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
 /**
- * Hibernate series streaming value implementation for chunk results
+ * Hibernate dataset streaming value implementation for chunk results
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
@@ -81,8 +81,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            the DAO factory
      * @param request
      *            {@link AbstractObservationRequest}
-     * @param series
-     *            Datasource series id
+     * @param dataset
+     *            Datasource dataset id
+     * @param chunkSize
+     *            size of the chunk
      * @throws CodedException
      *             If an error occurs
      */

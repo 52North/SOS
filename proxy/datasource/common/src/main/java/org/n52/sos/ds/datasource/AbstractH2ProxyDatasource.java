@@ -28,33 +28,34 @@
 package org.n52.sos.ds.datasource;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.Properties;
 
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
-import com.google.common.collect.Sets;
-
-public abstract class AbstractProxyDatasource extends AbstractH2Datasource {
-
-    public static final String SPRING_PROFILE = "proxy";
-
-    public static final String PROXY_HOST_KEY = "proxy.host";
-
-    public static final String PROXY_HOST_DEFAULT_VALUE = "http://localhost";
-
-    public static final String PROXY_PATH_KEY = "proxy.path";
-
-    public static final String PROXY_PATH_DEFAULT_VALUE = "/path";
-
-    protected static final String PROXY_HOST_TITLE = "Proxy host";
-
-    protected static final String PROXY_PATH_TITLE = "Proxy path";
+public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource implements ProxyDatasource {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Set<String> getSpringProfiles() {
-        return Sets.newHashSet(SPRING_PROFILE);
+    public Properties getDatasourceProperties(Map<String, Object> settings) {
+        precheck(settings);
+        final Properties p = new Properties();
+        p.put(HibernateConstants.CONNECTION_URL, toURL(settings));
+        p.put(HibernateConstants.DRIVER_CLASS, H2_DRIVER_CLASS);
+        p.put(HibernateConstants.DIALECT, H2_DIALECT_CLASS);
+        p.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
+        p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
+        p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
+        p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
+        p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
+        addMappingFileDirectories(settings, p);
+        return p;
+    }
+
+    private void precheck(Map<String, Object> settings) {
+        settings.put(DATABASE_CONCEPT_KEY, DatabaseConcept.PROXY.name());
+        settings.put(FEATURE_CONCEPT_KEY, FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        settings.put(DATABASE_EXTENSION_KEY, DatabaseExtension.DATASOURCE.name());
     }
 
     @Override

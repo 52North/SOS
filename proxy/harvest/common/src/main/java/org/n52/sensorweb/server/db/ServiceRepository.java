@@ -29,11 +29,10 @@ package org.n52.sensorweb.server.db;
 
 import org.n52.sensorweb.server.db.repositories.ParameterDataRepository;
 import org.n52.series.db.beans.ServiceEntity;
-import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-@Profile("proxy")
 public interface ServiceRepository extends ParameterDataRepository<ServiceEntity> {
 
+    ServiceEntity findByNameAndUrlAndType(String name, String url, String type);
 }

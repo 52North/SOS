@@ -13,5 +13,6 @@
     <modules>
         <module>datasource</module>
         <module>harvest</module>
+        <module>aquarius</module>
     </modules>
 </project>

@@ -2,17 +2,27 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:repo="http://www.springframework.org/schema/data/repository"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+        http://www.springframework.org/schema/data/repository
+        http://www.springframework.org/schema/data/repository/spring-repository.xsd">
 
     <ctx:annotation-config />
     <beans profile="proxy">
+        <import resource="classpath*:**/sessionFactory.xml"/>
         <bean id="httpClientHandler" class="org.n52.sos.web.HttpClientHandler" />
 
         <bean id="insertionRepository" class="org.n52.sos.proxy.da.InsertionRepository" />
+        <jpa:repositories base-package="org.n52.sensorweb.server.db">
+          <repo:include-filter type="regex" expression=".ServiceRepository" />
+        </jpa:repositories>
 
         <bean id="harvesterJobFactory" class="org.n52.sos.proxy.harvest.DataSourceHarvesterJobFactory"/>
         <bean id="dataSourceHarvesterScheduler" class="org.n52.sos.proxy.harvest.DataSourceHarvesterScheduler" init-method="init" destroy-method="shutdown">
@@ -24,5 +34,6 @@
                 </bean>
             </property>
         </bean>
+
     </beans>
 </beans>

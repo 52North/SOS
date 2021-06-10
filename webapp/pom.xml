@@ -420,6 +420,14 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
@@ -571,6 +579,18 @@
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc8</artifactId>
             <scope>provided</scope>
+        </dependency>
+        
+        <!-- proxy -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-proxy-aquarius-datasource</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sos-proxy-aquarius-handler</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- CONVERTER -->

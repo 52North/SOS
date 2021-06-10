@@ -577,12 +577,12 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>sos-proxy-pegelonline-datasource</artifactId>
+                <artifactId>sos-proxy-aquarius-datasource</artifactId>
                  <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>sos-proxy-pegelonline-handler</artifactId>
+                <artifactId>sos-proxy-aquarius-handler</artifactId>
                  <version>${project.version}</version>
             </dependency>
             <dependency>

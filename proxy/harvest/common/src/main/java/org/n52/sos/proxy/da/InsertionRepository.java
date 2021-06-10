@@ -64,11 +64,7 @@ import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
 import org.n52.sensorweb.server.db.repositories.core.UnitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 
-@Component
-@Profile("proxy")
 public class InsertionRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertionRepository.class);

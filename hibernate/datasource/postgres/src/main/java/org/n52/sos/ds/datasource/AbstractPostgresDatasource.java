@@ -59,6 +59,8 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
+    protected static final String POSTGRES_DIALECT_CLASS = TimestampWithTimeZonePostgisPG95Dialect.class.getName();
+
     protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:postgresql://([^:]+):([0-9]+)/(.*)$");
 
     protected static final String USERNAME_DESCRIPTION =

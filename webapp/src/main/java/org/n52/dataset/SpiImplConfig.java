@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "org.n52.sensorweb.server.db")
+@EnableJpaRepositories(basePackages = "org.n52.sensorweb.server.db.repositories.core")
 @ComponentScan(basePackages = {"org.n52.sensorweb.server.db", "org.n52.sensorweb.server.srv"})
 public class SpiImplConfig {
 
@@ -44,4 +44,5 @@ public class SpiImplConfig {
     public DataRepositoryTypeFactory dataRepositoryFactory(ApplicationContext appContext) {
         return new AnnotationBasedDataRepositoryFactory(appContext);
     }
+
 }

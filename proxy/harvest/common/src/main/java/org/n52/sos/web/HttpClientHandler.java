@@ -63,7 +63,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ds.datasource.AbstractProxyDatasource;
+import org.n52.sos.ds.datasource.AbstractH2ProxyDatasource;
 import org.n52.sos.proxy.Response;
 import org.n52.sos.proxy.request.AbstractDeleteRequest;
 import org.n52.sos.proxy.request.AbstractGetRequest;
@@ -236,8 +236,8 @@ public class HttpClientHandler implements Constructable, Destroyable {
 
     private HttpHost getHost() {
         Properties properties = this.databaseSettingsHandler.getAll();
-        String host = properties.getProperty(AbstractProxyDatasource.PROXY_HOST_KEY,
-                AbstractProxyDatasource.PROXY_HOST_DEFAULT_VALUE);
+        String host = properties.getProperty(AbstractH2ProxyDatasource.PROXY_HOST_KEY,
+                AbstractH2ProxyDatasource.PROXY_HOST_DEFAULT_VALUE);
         return new HttpHost(host, 80);
     }
 

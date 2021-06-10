@@ -1,0 +1,129 @@
+/*
+ * Copyright (C) 2012-2021 52°North Spatial Information Research GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+package org.n52.sos.aquarius.requests;
+
+import java.util.Map;
+
+import org.n52.sos.aquarius.AquariusConstants;
+import org.n52.sos.aquarius.pojo.ExtendedFilters;
+import org.n52.sos.proxy.request.AbstractGetRequest;
+
+public class GetLocationDescriptionList extends AbstractGetRequest {
+
+    private String locationName;
+
+    private String locationIdentifier;
+
+    private ExtendedFilters extendedFilter;
+
+    public GetLocationDescriptionList(boolean addExtendedFilterForSOS) {
+        if (addExtendedFilterForSOS) {
+            setExtendedFilter(new ExtendedFilters().addFilter("SOS_SYNC", Boolean.toString(true)));
+        }
+    }
+
+    @Override
+    public Map<String, String> getQueryParameters() {
+        Map<String, String> parameter = createMap();
+        if (hasLocationName()) {
+            parameter.put(AquariusConstants.Parameters.LOCATION_NAME, getLocationName());
+        }
+        if (hasLocationIdentifier()) {
+            parameter.put(AquariusConstants.Parameters.LOCATION_IDENTIFIER, getLocationIdentifier());
+        }
+        if (hasExtendedFilters()) {
+            parameter.put(AquariusConstants.Parameters.EXTENDED_FILTERS, getExtendedFilter().encodeFilters());
+        }
+        return parameter;
+    }
+
+    @Override
+    public String getPath() {
+        return AquariusConstants.Paths.GET_LOCATION_DESCRIPTION_LIST;
+    }
+
+    /**
+     * @return the locationName
+     */
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public boolean hasLocationName() {
+        return getLocationName() != null && !getLocationName().isEmpty();
+    }
+
+    /**
+     * @param locationName
+     *            the locationName to set
+     */
+    public GetLocationDescriptionList setLocationName(String locationName) {
+        this.locationName = locationName;
+        return this;
+    }
+
+    /**
+     * @return the locationIdentifier
+     */
+    public String getLocationIdentifier() {
+        return locationIdentifier;
+    }
+
+    public boolean hasLocationIdentifier() {
+        return getLocationIdentifier() != null && !getLocationIdentifier().isEmpty();
+    }
+
+    /**
+     * @param locationIdentifier
+     *            the locationIdentifier to set
+     */
+    public GetLocationDescriptionList setLocationIdentifier(String locationIdentifier) {
+        this.locationIdentifier = locationIdentifier;
+        return this;
+    }
+
+    /**
+     * @return the extendedFilter
+     */
+    public ExtendedFilters getExtendedFilter() {
+        return extendedFilter;
+    }
+
+    /**
+     * @param extendedFilter
+     *            the extendedFilter to set
+     */
+    public GetLocationDescriptionList setExtendedFilter(ExtendedFilters extendedFilter) {
+        this.extendedFilter = extendedFilter;
+        return this;
+    }
+
+    public boolean hasExtendedFilters() {
+        return getExtendedFilter() != null && getExtendedFilter().hasFilters();
+    }
+}

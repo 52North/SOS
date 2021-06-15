@@ -27,7 +27,6 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -43,22 +42,17 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.parameter.ParameterEntity;
-import org.n52.series.db.beans.DetectionLimitEntity;
-import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
-import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
-import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -158,7 +152,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
         Set<String> offerings = createOfferingSet(hObservation, procedureId, phenomenonId);
-        final Value<?> value = new ObservationValueCreator(getCreatorContext().getDecoderRepository())
+        ObservationValueCreator creator = new ObservationValueCreator(getCreatorContext().getDaoFactory());
+        final Value<?> value = creator
                 .visit(unproxy(hObservation, getSession()));
         OmObservation sosObservation = null;
         if (value != null) {
@@ -178,10 +173,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // TODO check for ScrollableResult vs
             // setFetchSize/setMaxResult
             // + setFirstResult
-            if (!value.isSetValue() && hObservation.hasDetectionLimit()) {
-                sosObservation
-                        .addParameter(createDetectionLimit(hObservation.getDetectionLimit(), value.getUnitObject()));
-            }
+            creator.checkDetectionLimit(value, sosObservation, request.getResponseFormat());
         }
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done in {} ms.", System.currentTimeMillis() - start);
@@ -292,15 +284,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         offerings.add(hObservation.getDataset().getOffering().getIdentifier());
         LOGGER.trace("Creating Offerings done in {} ms.", System.currentTimeMillis() - start);
         return offerings;
-    }
-
-    private NamedValue<?> createDetectionLimit(DetectionLimitEntity detectionLimit, UoM uoM) {
-        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
-        final ReferenceType referenceType =
-                new ReferenceType(detectionLimit.getFlag() > 0 ? "exceed limit" : "below limit");
-        namedValue.setName(referenceType);
-        namedValue.setValue(new QuantityValue(detectionLimit.getDetectionLimit(), uoM));
-        return namedValue;
     }
 
     private OmObservationConstellation createObservationConstellation(DataEntity<?> hObservation, String procedureId,

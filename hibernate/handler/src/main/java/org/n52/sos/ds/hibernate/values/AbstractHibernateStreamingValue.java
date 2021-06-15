@@ -45,14 +45,12 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.series.db.beans.DataArrayDataEntity;
 import org.n52.series.db.beans.DataEntity;
-import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.ereporting.EReportingQualityEntity;
 import org.n52.shetland.aqd.AqdConstants;
 import org.n52.shetland.aqd.ReportObligationType;
 import org.n52.shetland.aqd.ReportObligations;
-import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
@@ -135,7 +133,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         this.daoFactory = daoFactory;
         this.helper = new EReportingHelper(daoFactory.getSweHelper());
         this.bindingRepository = bindingRepository;
-        this.spatialFilteringProfileCreator =  new SpatialFilteringProfileCreator(daoFactory.getGeometryHandler());
+        this.spatialFilteringProfileCreator = new SpatialFilteringProfileCreator(daoFactory.getGeometryHandler());
     }
 
     protected Session getSession() throws OwsExceptionReport {
@@ -170,7 +168,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 }
             }
             mergeValueToObservation(nextEntity, observation, getResponseFormat());
-            sessionHolder.getSession().evict(nextEntity);
+            sessionHolder.getSession()
+                    .evict(nextEntity);
         }
         return ObservationStream.of(observations.values());
     }
@@ -243,8 +242,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     /**
-     * Create phenomenon time from min and max
-     * {@link DataEntity}s
+     * Create phenomenon time from min and max {@link DataEntity}s
      *
      * @param minTime
      *            minimum {@link DataEntity}
@@ -269,8 +267,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      * Create result time from {@link DataEntity}
      *
      * @param maxTime
-     *            {@link DataEntity} to create result
-     *            time from
+     *            {@link DataEntity} to create result time from
      * @return result time
      */
     protected TimeInstant createResutlTime(DataEntity<?> maxTime) {
@@ -291,8 +288,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     }
 
     /**
-     * Create valid time from min and max
-     * {@link DataEntity}s
+     * Create valid time from min and max {@link DataEntity}s
      *
      * @param minTime
      *            minimum {@link DataEntity}
@@ -350,24 +346,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
      * Create a {@link TimeValuePair} from {@link DataEntity}
      *
      * @param abstractValue
-     *            {@link DataEntity} to create
-     *            {@link TimeValuePair} from
+     *            {@link DataEntity} to create {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
     protected TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(abstractValue),
-                new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(abstractValue));
-    }
-
-    protected NamedValue<?> createDetectionLimit(DetectionLimitEntity detectionLimit, UoM uoM) {
-        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
-        final ReferenceType referenceType =
-                new ReferenceType(detectionLimit.getFlag() > 0 ? "exceed limit" : "below limit");
-        namedValue.setName(referenceType);
-        namedValue.setValue(new QuantityValue(detectionLimit.getDetectionLimit(), uoM));
-        return namedValue;
+                new ObservationValueCreator(daoFactory).visit(abstractValue));
     }
 
     public DaoFactory getDaoFactory() {
@@ -390,7 +376,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (!observation.isSetIdentifier() && o.isSetIdentifier()) {
             CodeWithAuthority identifier = new CodeWithAuthority(o.getIdentifier());
             if (o.isSetIdentifierCodespace()) {
-                identifier.setCodeSpace(o.getIdentifierCodespace().getName());
+                identifier.setCodeSpace(o.getIdentifierCodespace()
+                        .getName());
             }
             observation.setIdentifier(identifier);
         }
@@ -398,10 +385,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
             CodeType name = new CodeType(o.getName());
             if (o.isSetNameCodespace()) {
                 try {
-                    name.setCodeSpace(new URI(o.getNameCodespace().getName()));
+                    name.setCodeSpace(new URI(o.getNameCodespace()
+                            .getName()));
                 } catch (URISyntaxException e) {
-                    throw new NoApplicableCodeException().causedBy(e).withMessage("Invalid codespace value: {}",
-                            o.getNameCodespace().getName());
+                    throw new NoApplicableCodeException().causedBy(e)
+                            .withMessage("Invalid codespace value: {}", o.getNameCodespace()
+                                    .getName());
                 }
             }
             observation.setName(name);
@@ -409,19 +398,20 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         if (!observation.isSetDescription() && o.isSetDescription()) {
             observation.setDescription(o.getDescription());
         }
-        Value<?> value = new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(o);
-        if (!value.isSetUnit()
-                && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
-                && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
-                        .isSetUnit()) {
-            value.setUnit(((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
-                    .getUnit());
+        ObservationValueCreator creator = new ObservationValueCreator(daoFactory);
+        Value<?> value = creator.visit(o);
+        creator.checkDetectionLimit(value, observation, responseFormat);
+        if (!value.isSetUnit() && observation.getObservationConstellation()
+                .getObservableProperty() instanceof OmObservableProperty
+                && ((OmObservableProperty) observation.getObservationConstellation()
+                        .getObservableProperty()).isSetUnit()) {
+            value.setUnit(((OmObservableProperty) observation.getObservationConstellation()
+                    .getObservableProperty()).getUnit());
         }
-        if (!value.isSetValue() && o.hasDetectionLimit()) {
-            observation.addParameter(createDetectionLimit(o.getDetectionLimit(), value.getUnitObject()));
-        }
-        if (!observation.getObservationConstellation().isSetObservationType()) {
-            observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
+        if (!observation.getObservationConstellation()
+                .isSetObservationType()) {
+            observation.getObservationConstellation()
+                    .setObservationType(OMHelper.getObservationTypeFor(value));
         }
         observation.setResultTime(createResutlTime(o.getResultTime()));
         observation.setValidTime(createValidTime(o.getValidTimeStart(), o.getValidTimeEnd()));
@@ -429,8 +419,10 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
             observation.addParameter(spatialFilteringProfileCreator.create(o.getGeometryEntity()
                     .getGeometry()));
         }
-        if (o.getDataset().hasVerticalMetadata()) {
-            VerticalMetadataEntity verticalMetadata = o.getDataset().getVerticalMetadata();
+        if (o.getDataset()
+                .hasVerticalMetadata()) {
+            VerticalMetadataEntity verticalMetadata = o.getDataset()
+                    .getVerticalMetadata();
             if (o.hasVerticalInterval()) {
                 observation.addParameter(createParameter(getVerticalFromName(verticalMetadata), o.getVerticalFrom(),
                         verticalMetadata.getVerticalUnit()));
@@ -476,9 +468,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
             if (ReportObligations.hasFlow(extensions)) {
                 ReportObligationType flow = ReportObligations.getFlow(extensions);
                 if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
-                    int year = DateTimeHelper.makeDateTime(o.getSamplingTimeStart()).getYear();
+                    int year = DateTimeHelper.makeDateTime(o.getSamplingTimeStart())
+                            .getYear();
                     EReportingQualityEntity eReportingQuality = new EReportingQualityDAO().getEReportingQuality(
-                            o.getDataset().getId(), year, o.getEreportingProfile().getPrimaryObservation(), session);
+                            o.getDataset()
+                                    .getId(),
+                            year, o.getEreportingProfile()
+                                    .getPrimaryObservation(),
+                            session);
                     if (eReportingQuality != null) {
                         observation.setResultQuality(helper.getGmdDomainConsistency(eReportingQuality, true));
                     } else {
@@ -517,11 +514,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 addValuesToObservation(o, observation, responseFormat);
             } else {
                 checkTime(o, observation);
-                helper.mergeValues((SweDataArray) observation.getValue().getValue().getValue(),
-                        helper.createSweDataArray(observation, o));
+                helper.mergeValues((SweDataArray) observation.getValue()
+                        .getValue()
+                        .getValue(), helper.createSweDataArray(observation, o));
             }
-            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
-                    .equals(observation.getObservationConstellation().getObservationType())) {
+            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                    .getObservationType())) {
                 observation.getObservationConstellation()
                         .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
@@ -531,13 +529,13 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 addValuesToObservation(o, observation, responseFormat);
             } else {
                 // TODO
-                if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
-                        .equals(observation.getObservationConstellation().getObservationType())) {
+                if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                        .getObservationType())) {
                     observation.getObservationConstellation()
                             .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
                 }
                 observation.mergeWithObservation(getSingleObservationValue(o,
-                        new ObservationValueCreator(daoFactory.getDecoderRepository()).visit(o)));
+                        new ObservationValueCreator(daoFactory).visit(o)));
             }
         }
         return observation;
@@ -546,8 +544,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
     public void addObservationValueToObservation(DataEntity<?> o, OmObservation observation, Value<?> value,
             String responseFormat) throws OwsExceptionReport {
         if (checkResponseFormat(responseFormat)) {
-            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
-                    .equals(observation.getObservationConstellation().getObservationType())) {
+            if (!OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observation.getObservationConstellation()
+                    .getObservationType())) {
                 observation.getObservationConstellation()
                         .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
@@ -555,6 +553,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
         } else {
             observation.setValue(getSingleObservationValue(o, value));
         }
+
     }
 
     private boolean checkResponseFormat(String responseFormat) {
@@ -563,14 +562,16 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
 
     public String getDiscriminator(DataEntity<?> o) {
         if (o.hasEreportingProfile()) {
-            return o.getEreportingProfile().getPrimaryObservation();
+            return o.getEreportingProfile()
+                    .getPrimaryObservation();
         }
         return null;
     }
 
     private void checkTime(DataEntity<?> o, OmObservation observation) {
         if (observation.isSetValue()) {
-            Time obsPhenTime = observation.getValue().getPhenomenonTime();
+            Time obsPhenTime = observation.getValue()
+                    .getPhenomenonTime();
             Time valuePhenTime = createPhenomenonTime(o);
             if (obsPhenTime != null) {
                 TimePeriod timePeriod;
@@ -581,19 +582,24 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                     timePeriod.extendToContain(obsPhenTime);
                 }
                 timePeriod.extendToContain(valuePhenTime);
-                observation.getValue().setPhenomenonTime(timePeriod);
+                observation.getValue()
+                        .setPhenomenonTime(timePeriod);
             } else {
-                observation.getValue().setPhenomenonTime(valuePhenTime);
+                observation.getValue()
+                        .setPhenomenonTime(valuePhenTime);
             }
         }
         TimeInstant rt = createResutlTime(o.getResultTime());
-        if (observation.getResultTime().getValue().isBefore(rt.getValue())) {
+        if (observation.getResultTime()
+                .getValue()
+                .isBefore(rt.getValue())) {
             observation.setResultTime(rt);
         }
         if (isSetValidTime()) {
             TimePeriod vt = createValidTime(o.getValidTimeStart(), o.getValidTimeEnd());
             if (observation.isSetValidTime()) {
-                observation.getValidTime().extendToContain(vt);
+                observation.getValidTime()
+                        .extendToContain(vt);
             } else {
                 observation.setValidTime(vt);
             }

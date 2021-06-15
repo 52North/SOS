@@ -89,6 +89,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ds.hibernate.util.observation.SweAbstractDataComponentCreator;
 import org.n52.sos.util.GeometryHandler;
@@ -110,17 +111,27 @@ public class ResultHandlingHelper implements HibernateUnproxy {
 
     public static final String PHENOMENON_TIME = "phenomenonTime";
 
-    private final SweHelper helper;
+    private DaoFactory daoFactory;
 
+    @Deprecated
+    private SweHelper helper;
+
+    @Deprecated
     private GeometryHandler geometryHandler;
 
+    @Deprecated
     private DecoderRepository decoderRepository;
 
+    @Deprecated
     public ResultHandlingHelper(GeometryHandler geometryHandler, SweHelper sweHelper,
             DecoderRepository decoderRepository) {
         this.decoderRepository = decoderRepository;
         this.geometryHandler = geometryHandler;
         this.helper = sweHelper;
+    }
+
+    public ResultHandlingHelper(DaoFactory daoFactory) {
+        this.daoFactory = daoFactory;
     }
 
     /**
@@ -428,7 +439,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                     return value;
                 }
             }
-        } else if (observedProperty.equals(definition)) {
+        } else if (observedProperty.equals(definition) && observation.hasValue()) {
             if (observation instanceof QuantityDataEntity) {
                 return String.valueOf(((QuantityDataEntity) observation).getValue());
             } else if (observation instanceof BooleanDataEntity) {
@@ -470,15 +481,15 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 final String definition = entry.getValue();
                 if (samplingGeometry != null && samplingGeometry instanceof Point) {
                     Coordinate coordinate = samplingGeometry.getCoordinate();
-                    if (helper.hasAltitudeName(definition) && checkCoordinate(coordinate.getZ())) {
+                    if (getSweHelper().hasAltitudeName(definition) && checkCoordinate(coordinate.getZ())) {
                         builder.append(coordinate.getZ());
-                    } else if (helper.hasNorthingName(definition)) {
+                    } else if (getSweHelper().hasNorthingName(definition)) {
                         if (getGeomtryHandler().isNorthingFirstEpsgCode(samplingGeometry.getSRID())) {
                             builder.append(coordinate.x);
                         } else {
                             builder.append(coordinate.y);
                         }
-                    } else if (helper.hasEastingName(definition)) {
+                    } else if (getSweHelper().hasEastingName(definition)) {
                         if (getGeomtryHandler().isNorthingFirstEpsgCode(samplingGeometry.getSRID())) {
                             builder.append(coordinate.y);
                         } else {
@@ -697,10 +708,6 @@ public class ResultHandlingHelper implements HibernateUnproxy {
 
     }
 
-    private GeometryHandler getGeomtryHandler() {
-        return geometryHandler;
-    }
-
     public SweDataRecord createDataRecordForResultTemplate(DataEntity<?> observation, boolean procedure,
             boolean feature) throws OwsExceptionReport {
         SweDataRecord record = new SweDataRecord();
@@ -737,7 +744,8 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                 || observation.getDataset()
                         .getObservationType()
                         .equals(ObservationType.profile)) {
-            ProfileValue profile = (ProfileValue) new ObservationValueCreator(decoderRepository).visit(observation);
+            ProfileValue profile =
+                    (ProfileValue) new ObservationValueCreator(getDecoderRepository()).visit(observation);
             ProfileLevel level = profile.getValue()
                     .get(0);
             fields.add(createVerticalParameter(level));
@@ -763,7 +771,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
             }
         } else {
             SweAbstractDataComponent value =
-                    new SweAbstractDataComponentCreator(decoderRepository, true).visit(observation);
+                    new SweAbstractDataComponentCreator(getDecoderRepository(), true).visit(observation);
             fields.add(new SweField(getNcNameName(phenomenon), (SweAbstractDataComponent) value));
             return fields;
         }
@@ -812,6 +820,22 @@ public class ResultHandlingHelper implements HibernateUnproxy {
 
     private String getNcNameName(Describable entity) {
         return NcName.makeValid(entity.isSetName() ? entity.getName() : entity.getIdentifier());
+    }
+
+    private DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
+    private SweHelper getSweHelper() {
+        return getDaoFactory() != null ? getDaoFactory().getSweHelper() : helper;
+    }
+
+    private GeometryHandler getGeomtryHandler() {
+        return getDaoFactory() != null ? getDaoFactory().getGeometryHandler() : geometryHandler;
+    }
+
+    private DecoderRepository getDecoderRepository() {
+        return getDaoFactory() != null ? getDaoFactory().getDecoderRepository() : decoderRepository;
     }
 
 }

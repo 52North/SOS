@@ -41,6 +41,7 @@ import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.shetland.util.JavaHelper;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
@@ -48,20 +49,36 @@ import org.n52.svalbard.util.XmlHelper;
 
 public abstract class AbstractValuedObservationCreator<T> implements ValuedObservationVisitor<T> {
 
+    private DaoFactory daoFactory;
     private DecoderRepository decoderRepository;
     private boolean noValues;
 
+    @Deprecated
     public AbstractValuedObservationCreator(DecoderRepository decoderRepository) {
         this(decoderRepository, false);
     }
 
+    @Deprecated
     public AbstractValuedObservationCreator(DecoderRepository decoderRepository, boolean noValues) {
         this.decoderRepository = decoderRepository;
         this.noValues = noValues;
     }
 
+    public AbstractValuedObservationCreator(DaoFactory daoFactory) {
+        this(daoFactory, false);
+    }
+
+    public AbstractValuedObservationCreator(DaoFactory daoFactory, boolean noValues) {
+        this.daoFactory = daoFactory;
+        this.noValues = noValues;
+    }
+
     protected DecoderRepository getDecoderRepository() {
-        return decoderRepository;
+        return getDaoFactory() != null ? getDaoFactory().getDecoderRepository() : this.decoderRepository;
+    }
+
+    protected DaoFactory getDaoFactory() {
+        return daoFactory;
     }
 
     protected boolean isNoValues() {

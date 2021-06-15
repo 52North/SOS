@@ -93,8 +93,7 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     @Override
     public ResultHandlingHelper getResultHandlingHelper() {
         if (resultHandlingHelper == null) {
-            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(),
-                    getDaoFactory().getSweHelper(), getDaoFactory().getDecoderRepository());
+            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory());
         }
         return resultHandlingHelper;
     }

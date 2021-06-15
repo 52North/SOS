@@ -52,6 +52,7 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.svalbard.decode.DecoderRepository;
 
 /**
@@ -63,6 +64,10 @@ public class ObservationValueCreator extends AbstractObservationValueCreator {
 
     public ObservationValueCreator(DecoderRepository decoderRepository) {
         super(decoderRepository);
+    }
+
+    public ObservationValueCreator(DaoFactory daoFactory) {
+        super(daoFactory);
     }
 
     @Override

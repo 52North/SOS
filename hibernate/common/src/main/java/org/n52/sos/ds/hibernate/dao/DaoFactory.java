@@ -41,6 +41,7 @@ import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ereporting.EReportingSamplingPointEntity;
+import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.EReportingSetting;
@@ -60,6 +61,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.util.DetectionLimitSettings;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.SosSettings;
@@ -92,6 +94,14 @@ public class DaoFactory {
     private boolean includeChildObservableProperties;
     private boolean staSupportsUrls;
     private SosHelper sosHelper;
+    private String qualifierDefinitionBelow = "http://www.example.com/sensors/lower_threshold";
+    private String qualifierDefinitionAbove = "http://www.example.com/sensors/upper_threshold";
+    private String qualifierDescriptionBelow = "Lower limit for sensor";
+    private String qualifierDescriptionAbove = "Upper limit for sensor";
+    private String censoredReasonHrefBelow = OGCConstants.BELOW_DETECTION_RANGE;
+    private String censoredReasonHrefAbove = OGCConstants.ABOVE_DETECTION_RANGE;
+    private String censoredReasonTitleBelow = "Below threshold of sensor";
+    private String censoredReasonTitleAbove = "Above threshold of sensor";
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -317,6 +327,78 @@ public class DaoFactory {
 
     public EncoderRepository getEncoderRepository() {
         return encoderRepository;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DEFINITION_BELOW_KEY, required = false)
+    public void setQualifierDefinitionBelow(String qualifierDefinitionBelow) {
+        this.qualifierDefinitionBelow = qualifierDefinitionBelow;
+    }
+
+    public String getQualifierDefinitionBelow() {
+        return qualifierDefinitionBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DEFINITION_ABOVE_KEY, required = false)
+    public void setQualifierDefinitionAbove(String qualifierDefinitionAbove) {
+        this.qualifierDefinitionAbove = qualifierDefinitionAbove;
+    }
+
+    public String getQualifierDefinitionAbove() {
+        return qualifierDefinitionAbove;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DESCRIPTION_BELOW_KEY, required = false)
+    public void setQualifierDescriptionBelow(String qualifierDescriptionBelow) {
+        this.qualifierDescriptionBelow = qualifierDescriptionBelow;
+    }
+
+    public String getQualifierDescriptionBelow() {
+        return qualifierDescriptionBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DESCRIPTION_ABOVE_KEY, required = false)
+    public void setQualifierDescriptionAbove(String qualifierDescriptionAbove) {
+        this.qualifierDescriptionAbove = qualifierDescriptionAbove;
+    }
+
+    public String getQualifierDescriptionAbove() {
+        return qualifierDescriptionAbove;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_HREF_BELOW_KEY, required = false)
+    public void setCensoredReasonHrefBelow(String censoredReasonHrefBelow) {
+        this.censoredReasonHrefBelow = censoredReasonHrefBelow;
+    }
+
+    public String getCensoredReasonHrefBelow() {
+        return censoredReasonHrefBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_HREF_ABOVE_KEY, required = false)
+    public void setCensoredReasonHrefAbove(String censoredReasonHrefAbove) {
+        this.censoredReasonHrefAbove = censoredReasonHrefAbove;
+    }
+
+    public String getCensoredReasonHrefAbove() {
+        return censoredReasonHrefAbove;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_TITLE_BELOW_KEY, required = false)
+    public void setCensoredReasonTitleBelow(String censoredReasonTitleBelow) {
+        this.censoredReasonTitleBelow = censoredReasonTitleBelow;
+    }
+
+    public String getCensoredReasonTitleBelow() {
+        return censoredReasonTitleBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_TITLE_ABOVE_KEY, required = false)
+    public void setCensoredReasonTitleAbove(String censoredReasonTitleAbove) {
+        this.censoredReasonTitleAbove = censoredReasonTitleAbove;
+    }
+
+    public String getCensoredReasonTitleAbove() {
+        return censoredReasonTitleAbove;
     }
 
 }

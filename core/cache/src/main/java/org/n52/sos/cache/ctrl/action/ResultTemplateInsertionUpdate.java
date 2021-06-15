@@ -29,12 +29,13 @@ package org.n52.sos.cache.ctrl.action;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.locationtech.jts.geom.Geometry;
 import org.n52.iceland.util.action.Action;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
@@ -89,6 +90,13 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
                     featureOfInterest.getFirstName().getValue());
             cache.addPublishedFeatureOfInterest(featureOfInterest.getIdentifier());
             cache.addFeatureOfInterest(featureOfInterest.getIdentifier());
+            if (featureOfInterest instanceof SamplingFeature && ((SamplingFeature) featureOfInterest).isSetGeometry()) {
+                Geometry geometry = ((SamplingFeature) featureOfInterest).getGeometry();
+                cache.updateGlobalEnvelope(geometry.getEnvelopeInternal());
+                for (String offering : request.getObservationTemplate().getOfferings()) {
+                    cache.updateEnvelopeForOffering(offering, geometry.getEnvelopeInternal());
+                }
+            }
         }
 
         AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();

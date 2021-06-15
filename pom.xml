@@ -84,7 +84,7 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.2.20</version.postgresql>
+        <version.postgresql>42.2.21</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>21.1.0.0</version.ojdbc8>
         <version.sqljdbc>9.2.1.jre8</version.sqljdbc>
@@ -756,7 +756,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.9.0</version>
+                <version>2.10.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -784,7 +784,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.11.0</version>
+                <version>3.11.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -800,7 +800,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.1</version>
+                 <version>1.11.2</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1617,7 +1617,7 @@
             <dependency>
                 <groupId>org.geolatte</groupId>
                 <artifactId>geolatte-geom</artifactId>
-                <version>1.8.1</version>
+                <version>1.8.2</version>
             </dependency>
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
@@ -2115,7 +2115,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.4</version>
+                    <version>11.0.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.harvest;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,15 +36,18 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.joda.time.DateTime;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -54,8 +58,10 @@ import org.n52.sos.aquarius.ds.AquariusHelper;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
+import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.data.Point;
+import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.AbstractHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
@@ -189,12 +195,37 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
     protected void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesDescription timeSeries,
             AquariusConnector connector) {
         try {
-            Point timeSeriesDataFirstPoint = connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
-            Point timeSeriesDataLastPoint = connector.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
-            updateDataset(dataset, timeSeriesDataFirstPoint, timeSeriesDataLastPoint);
+            TimeSeriesData firstTimeSeriesData = connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
+            TimeSeriesData lastTimeSeriesData = connector.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
+            updateDataset(dataset, firstTimeSeriesData, lastTimeSeriesData);
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error when updating dataset with first/last values", e);
         }
     }
 
+    protected DatasetEntity updateDataset(DatasetEntity entity, TimeSeriesData firstTimeSeriesData,
+            TimeSeriesData lastTimeSeriesDataLast) {
+        Point timeSeriesDataFirstPoint = null;
+        Point timeSeriesDataLastPoint = null;
+        if (firstTimeSeriesData != null) {
+            timeSeriesDataFirstPoint = aquariusHelper.applyQualifierChecker(firstTimeSeriesData)
+                    .getFirstPoint();
+        }
+        if (lastTimeSeriesDataLast != null) {
+            timeSeriesDataLastPoint = aquariusHelper.applyQualifierChecker(firstTimeSeriesData)
+                    .getLastPoint();
+        }
+        return updateDataset(entity, timeSeriesDataFirstPoint, timeSeriesDataLastPoint);
+    }
+
+    protected QuantityDataEntity createDataEntitiy(DateTime time, BigDecimal value, Long id, Qualifier qualifier) {
+        QuantityDataEntity entity = createDataEntitiy(time, value, id);
+        entity.setValue(value);
+        DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
+        detectionLimitEntity.setDetectionLimit(value);
+        detectionLimitEntity.setFlag(null);
+        entity.setDetectionLimit(detectionLimitEntity);
+
+        return entity;
+    }
 }

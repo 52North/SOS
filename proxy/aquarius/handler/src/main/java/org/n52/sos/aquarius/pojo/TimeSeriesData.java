@@ -36,6 +36,7 @@ import java.util.Map;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.n52.sos.aquarius.ds.QualifierChecker;
 import org.n52.sos.aquarius.pojo.data.Approval;
 import org.n52.sos.aquarius.pojo.data.GapTolerance;
 import org.n52.sos.aquarius.pojo.data.Grade;
@@ -52,6 +53,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.common.collect.Iterables;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "UniqueId", "Parameter", "Label", "LocationIdentifier", "NumPoints", "Unit", "Approvals",
@@ -116,7 +118,9 @@ public class TimeSeriesData implements Serializable {
     private String summary;
 
     @JsonIgnore
+    private QualifierChecker checker = new QualifierChecker();
 
+    @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
@@ -232,6 +236,11 @@ public class TimeSeriesData implements Serializable {
         this.qualifiers = qualifiers;
     }
 
+    @JsonIgnore
+    public boolean hasQualifiers() {
+        return getQualifiers() != null && !getQualifiers().isEmpty();
+    }
+
     @JsonProperty("Methods")
     public List<Method> getMethods() {
         return methods;
@@ -294,7 +303,7 @@ public class TimeSeriesData implements Serializable {
 
     @JsonProperty("Points")
     public List<Point> getPoints() {
-        return points;
+        return checker.check(points);
     }
 
     @JsonProperty("Points")
@@ -302,6 +311,7 @@ public class TimeSeriesData implements Serializable {
         this.points = points;
     }
 
+    @JsonIgnore
     public boolean hasPoints() {
         return getPoints() != null && !getPoints().isEmpty();
     }
@@ -344,6 +354,27 @@ public class TimeSeriesData implements Serializable {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @JsonIgnore
+    public Point getFirstPoint() {
+        return hasPoints() ? checker.check(Iterables.getFirst(getPoints(), null)) : null;
+    }
+
+    @JsonIgnore
+    public Point getLastPoint() {
+        return hasPoints() ? checker.check(Iterables.getLast(getPoints())) : null;
+    }
+
+    @JsonIgnore
+    public TimeSeriesData setQualifierChecker(QualifierChecker checker) {
+        this.checker = checker;
+        return this;
+    }
+
+    @JsonIgnore
+    private QualifierChecker getChecker() {
+        return checker;
     }
 
     @Override

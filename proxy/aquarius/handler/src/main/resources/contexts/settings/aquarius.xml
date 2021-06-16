@@ -83,5 +83,21 @@
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="defaultValue" value="true" />
           </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.detectionlimit.below" />
+            <property name="title" value="Definition of the qualifier identifier for below sensor limit" />
+            <property name="description" value="Define the qualifier identifier for below sensor limut, e.g. '<'." />
+            <property name="order" value="7.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.detectionlimit.above" />
+            <property name="title" value="Definition of the qualifier identifier for above sensor limit" />
+            <property name="description" value="Define the qualifier identifier for above sensor limit, e.g. '>'." />
+            <property name="order" value="7.1" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
     </beans>
 </beans>

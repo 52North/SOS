@@ -37,7 +37,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;
 import org.n52.series.db.beans.CategoryEntity;
+import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
@@ -51,17 +53,15 @@ import org.n52.series.db.beans.dataset.ObservationType;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.aquarius.ds.AquariusHelper;
+import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.data.Point;
+import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
 import org.n52.sos.proxy.harvest.EntityBuilder;
 
-public interface AquariusEntityBuilder extends EntityBuilder {
-
-    String TWENTY_FOUR = "T24:";
-
-    String TWENTY_THREE = "T23:";
+public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper {
 
     default OfferingEntity createOffering(Map<String, OfferingEntity> offerings, TimeSeriesDescription dataset,
             Parameter parameter, ProcedureEntity procedure, ServiceEntity service, AquariusHelper aquariusHelper) {
@@ -219,25 +219,46 @@ public interface AquariusEntityBuilder extends EntityBuilder {
         if (timeSeriesDataFirstPoint != null) {
             DateTime dateTime = checkDateTimeStringFor24(timeSeriesDataFirstPoint.getTimestamp());
             entity.setFirstValueAt(dateTime.toDate());
-            entity.setFirstObservation(createDataEntitiy(dateTime, timeSeriesDataFirstPoint.getValue()
-                    .getNumericAsBigDecimal(), null));
-            entity.setFirstQuantityValue(entity.getFirstObservation()
-                    .getValueQuantity());
+            entity.setFirstObservation(createDataEntitiy(dateTime, timeSeriesDataFirstPoint, null));
+            if (timeSeriesDataFirstPoint.hasQualifier()) {
+                entity.setFirstQuantityValue(null);
+            } else {
+                entity.setFirstQuantityValue(entity.getFirstObservation()
+                        .getValueQuantity());
+            }
         }
         if (timeSeriesDataLastPoint != null) {
             DateTime dateTime = checkDateTimeStringFor24(timeSeriesDataLastPoint.getTimestamp());
             entity.setLastValueAt(dateTime.toDate());
-            entity.setLastObservation(createDataEntitiy(dateTime, timeSeriesDataLastPoint.getValue()
-                    .getNumericAsBigDecimal(), null));
-            entity.setLastQuantityValue(entity.getLastObservation()
-                    .getValueQuantity());
+            entity.setLastObservation(createDataEntitiy(dateTime, timeSeriesDataLastPoint, null));
+            if (timeSeriesDataLastPoint.hasQualifier()) {
+                entity.setLastQuantityValue(null);
+            } else {
+                entity.setLastQuantityValue(entity.getLastObservation()
+                        .getValueQuantity());
+            }
         }
         return entity;
     }
 
-    default DateTime checkDateTimeStringFor24(String time) {
-        return time.contains(TWENTY_FOUR) ? new DateTime(time.replace(TWENTY_FOUR, TWENTY_THREE)).plusDays(1)
-                : new DateTime(time);
+    default DataEntity<?> createDataEntitiy(DateTime dateTime, Point point, Long id) {
+        if (point.hasQualifier()) {
+            DataEntity<?> entity = createDataEntitiy(dateTime, id);
+            entity.setDetectionLimit(createDetectionLimit(point));
+        }
+        return createDataEntitiy(dateTime, point.getValue()
+                .getNumericAsBigDecimal(), null);
+    }
+
+    default DetectionLimitEntity createDetectionLimit(Point point) {
+        DetectionLimitEntity entity = new DetectionLimitEntity();
+        entity.setFlag(Integer.valueOf(point.getQualifier()
+                .getKey()
+                .equals(QualifierKey.BELOW) ? -1 : 1)
+                .shortValue());
+        entity.setDetectionLimit(point.getValue()
+                .getNumericAsBigDecimal());
+        return entity;
     }
 
     default UnitEntity createUnit(String unit, ServiceEntity service) {

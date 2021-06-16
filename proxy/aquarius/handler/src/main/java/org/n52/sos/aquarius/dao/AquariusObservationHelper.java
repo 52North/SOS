@@ -34,10 +34,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
@@ -55,8 +55,11 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.features.samplingFeatures.AbstractSamplingFeature;
+import org.n52.shetland.ogc.om.series.tsml.TimeseriesMLConstants;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
@@ -67,15 +70,23 @@ import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweQuality;
+import org.n52.shetland.ogc.swe.simpleType.SweQualityHolder;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.aquarius.ds.AccessorConnector;
 import org.n52.sos.aquarius.ds.AquariusHelper;
+import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.data.Point;
+import org.n52.sos.aquarius.pojo.data.Qualifier;
+import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.svalbard.CodingSettings;
@@ -83,7 +94,7 @@ import org.n52.svalbard.CodingSettings;
 import com.google.common.base.Strings;
 
 @Configurable
-public class AquariusObservationHelper {
+public class AquariusObservationHelper implements AquariusTimeHelper {
 
     private Map<String, Location> locations = new HashMap<>();
 
@@ -104,6 +115,8 @@ public class AquariusObservationHelper {
     private ProfileHandler profileHandler;
 
     private AquariusHelper aquariusHelper;
+
+    private ObservationHelper observationHelper;
 
     @Setting(CodingSettings.TOKEN_SEPARATOR)
     public void setTokenSeparator(final String separator) throws ConfigurationError {
@@ -138,14 +151,21 @@ public class AquariusObservationHelper {
         this.aquariusHelper = aquariusHelper;
     }
 
+    @Inject
+    public void setObservationHelper(ObservationHelper observationHelper) {
+        this.observationHelper = observationHelper;
+    }
+
     public Collection<OmObservation> toSosObservation(Map<TimeSeriesDescription, List<Point>> dataSeries,
             Map<String, Location> locations, GetObservationRequest request,
             OperationHandlerRepository operationHandlerRepository, String pdf, AccessorConnector connection)
             throws OwsExceptionReport {
-        // this.locations = locations;
         clearCache();
         List<OmObservation> observations = new ArrayList<>();
         for (Entry<TimeSeriesDescription, List<Point>> ds : dataSeries.entrySet()) {
+            // get Qualifier
+            // create qualifier checker
+            // check Points with qualifier checker
             observations.addAll(createObservations(ds.getKey(), ds.getValue(), request, pdf,
                     operationHandlerRepository, connection));
         }
@@ -165,31 +185,100 @@ public class AquariusObservationHelper {
         List<OmObservation> observations = new ArrayList<>();
         OmObservation omObservation = createObservation(timeSeries, pdf, operationHandlerRepository, connection);
         for (Point timeSeriesPoint : timeSeriesPoints) {
-            ObservationValue<?> value = createValue(timeSeriesPoint, timeSeries.getUnit());
+            ObservationValue<?> value = createValue(timeSeriesPoint, timeSeries.getUnit(), request.getResponseFormat());
             if (value != null) {
                 OmObservation observation = omObservation.cloneTemplate();
                 observation.setValue(value);
+                checkDetectionLimit(value.getValue(), observation, request.getResponseFormat());
                 observations.add(observation);
             }
         }
         return observations;
     }
 
-    private ObservationValue<?> createValue(Point timeSeriesPoint, String unit) {
+    private ObservationValue<?> createValue(Point timeSeriesPoint, String unit, String responseFormat) {
         if (timeSeriesPoint != null) {
-            if (timeSeriesPoint.getValue()
-                    .isNumeric()) {
-                return new SingleObservationValue<>(new TimeInstant(new DateTime(timeSeriesPoint.getTimestamp())),
-                        new QuantityValue(getValue(timeSeriesPoint.getValue()
-                                .getNumeric()), unit));
-            } else if (timeSeriesPoint.getValue()
-                    .isDisplay()) {
-                return new SingleObservationValue<>(new TimeInstant(new DateTime(timeSeriesPoint.getTimestamp())),
-                        new TextValue(timeSeriesPoint.getValue()
-                                .getDisplay()));
+            TimeInstant timeInstant = new TimeInstant(checkDateTimeStringFor24(timeSeriesPoint.getTimestamp()));
+            if (timeSeriesPoint.getValue().isNumeric()) {
+                QuantityValue quantityValue = new QuantityValue();
+                quantityValue.setUnit(unit);
+                if (timeSeriesPoint.hasQualifier() && checkWaterML(responseFormat)) {
+                    quantityValue.setQuality(createDetectionLimitQuality(timeSeriesPoint, quantityValue));
+                }
+                return new SingleObservationValue<>(timeInstant, quantityValue);
+            } else if (timeSeriesPoint.getValue().isDisplay()) {
+                return new SingleObservationValue<>(timeInstant, new TextValue(timeSeriesPoint.getValue()
+                        .getDisplay()));
             }
         }
         return null;
+    }
+
+    private boolean checkWaterML(String responseFormat) {
+        return responseFormat != null && WaterMLConstants.NS_WML_20.endsWith(responseFormat)
+                || TimeseriesMLConstants.NS_TSML_10.equals(responseFormat);
+    }
+
+    private void checkDetectionLimit(Value<?> value, OmObservation observation, String responseFormat) {
+        if (!checkWaterML(responseFormat) && value != null && value instanceof SweAbstractSimpleType
+                && ((SweAbstractSimpleType) value).isSetQuality()) {
+            observation.addParameter(createDetectionLimitNamedValue(((SweAbstractSimpleType) value).getQuality()));
+        }
+    }
+
+    private NamedValue<?> createDetectionLimitNamedValue(SweQualityHolder quality) {
+        final NamedValue<BigDecimal> namedValue = new NamedValue<>();
+        if (quality.getReferences()
+                .containsKey(WaterMLConstants.EN_CENSORED_REASON)) {
+            namedValue.setName(quality.getReferences()
+                    .get(WaterMLConstants.EN_CENSORED_REASON));
+        } else {
+            return null;
+        }
+        Optional<SweQuality> qual = quality.getQuality()
+                .stream()
+                .filter(q -> q instanceof SweQuantity)
+                .findFirst();
+        if (qual.isPresent()) {
+            SweQuality sweQuality = qual.get();
+            if (sweQuality instanceof SweQuantity) {
+                namedValue.setValue(new QuantityValue(((SweQuantity) sweQuality).getValue(),
+                        ((SweQuantity) sweQuality).getUomObject()));
+            }
+        } else {
+            return null;
+        }
+        return namedValue;
+    }
+
+    private SweQualityHolder createDetectionLimitQuality(Point point, Value value) {
+        SweQualityHolder holder = new SweQualityHolder();
+        if (value instanceof SweQuantity) {
+            SweQuantity quantity = new SweQuantity(getValue(point.getValue()
+                    .getNumeric()), value.getUnitObject());
+            ReferenceType reference = new ReferenceType();
+            checkDetectionLimitDefinitions(point.getQualifier(), quantity, reference);
+            holder.addQuality(quantity);
+            holder.addReference(WaterMLConstants.EN_CENSORED_REASON, reference);
+        } else {
+            holder.addQuality(new TextValue(null));
+        }
+        return holder;
+    }
+
+    private void checkDetectionLimitDefinitions(Qualifier qualifier, SweQuantity quantity,
+            ReferenceType reference) {
+        if (QualifierKey.ABOVE.equals(qualifier.getKey())) {
+            quantity.setDefinition(getObservationHelper().getQualifierDefinitionAbove());
+            quantity.setDescription(getObservationHelper().getQualifierDescriptionAbove());
+            reference.setHref(getObservationHelper().getCensoredReasonHrefAbove());
+            reference.setTitle(getObservationHelper().getCensoredReasonTitleAbove());
+        } else if (QualifierKey.BELOW.equals(qualifier.getKey())) {
+            quantity.setDefinition(getObservationHelper().getQualifierDefinitionBelow());
+            quantity.setDescription(getObservationHelper().getQualifierDescriptionBelow());
+            reference.setHref(getObservationHelper().getCensoredReasonHrefBelow());
+            reference.setTitle(getObservationHelper().getCensoredReasonTitleBelow());
+        }
     }
 
     private BigDecimal getValue(Double value) {
@@ -357,6 +446,10 @@ public class AquariusObservationHelper {
 
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
+    }
+
+    private ObservationHelper getObservationHelper() {
+        return observationHelper;
     }
 
 }

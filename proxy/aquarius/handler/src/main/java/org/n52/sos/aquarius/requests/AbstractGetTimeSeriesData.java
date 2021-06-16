@@ -32,7 +32,6 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.aquarius.AquariusConstants.GetParts;
 import org.n52.sos.proxy.request.AbstractGetRequest;
 
 public abstract class AbstractGetTimeSeriesData extends AbstractGetRequest {
@@ -42,8 +41,6 @@ public abstract class AbstractGetTimeSeriesData extends AbstractGetRequest {
     private DateTime queryFrom;
 
     private DateTime queryTo;
-
-    private GetParts getParts = GetParts.PointsOnly;
 
     private Boolean applyRounding;
 
@@ -64,7 +61,6 @@ public abstract class AbstractGetTimeSeriesData extends AbstractGetRequest {
             queryParameters.put(AquariusConstants.Parameters.QUERY_TO,
                     DateTimeHelper.formatDateTime2IsoString(getQueryTo()));
         }
-        queryParameters.put(AquariusConstants.Parameters.GET_PARTS, getGetParts().name());
         if (hasApplyRounding()) {
             queryParameters.put(AquariusConstants.Parameters.APPLY_ROUNDING, getApplyRounding().toString());
         }
@@ -99,15 +95,6 @@ public abstract class AbstractGetTimeSeriesData extends AbstractGetRequest {
 
     public boolean hasQueryTo() {
         return getQueryTo() != null;
-    }
-
-    public GetParts getGetParts() {
-        return getParts;
-    }
-
-    public AbstractGetTimeSeriesData setGetParts(GetParts getParts) {
-        this.getParts = getParts;
-        return this;
     }
 
     public Boolean getApplyRounding() {

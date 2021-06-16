@@ -57,6 +57,9 @@ public class Point implements Serializable {
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    @JsonIgnore
+    private Qualifier qualifier;
+
     /**
      * No args constructor for use in serialization
      *
@@ -98,6 +101,22 @@ public class Point implements Serializable {
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @JsonIgnore
+    public Point setQualifier(Qualifier qualifier) {
+        this.qualifier = qualifier;
+        return this;
+    }
+
+    @JsonIgnore
+    public Qualifier getQualifier() {
+        return qualifier;
+    }
+
+    @JsonIgnore
+    public boolean hasQualifier() {
+        return getQualifier() != null;
     }
 
     @Override

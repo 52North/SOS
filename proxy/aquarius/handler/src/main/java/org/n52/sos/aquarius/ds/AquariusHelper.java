@@ -39,12 +39,17 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
+import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
+import org.n52.sos.aquarius.pojo.data.Qualifier;
+import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesCorrectedData;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesRawData;
+
+import com.google.common.base.Strings;
 
 @Configurable
 public class AquariusHelper {
@@ -62,6 +67,10 @@ public class AquariusHelper {
     private static final String SOS_SYNC = "proxy.aquarius.sosSync";
 
     private static final String SOS_SYNC_LOCATION = "proxy.aquarius.sosSync.location";
+
+    private static final String BELOW_IDENTIFIER = "proxy.aquarius.detectionlimit.below";
+
+    private static final String ABOVE_IDENTIFIER = "proxy.aquarius.detectionlimit.above";
 
     private Map<String, Parameter> parameters = new HashMap<>();
 
@@ -82,6 +91,10 @@ public class AquariusHelper {
     private boolean sosSync = Boolean.TRUE.booleanValue();
 
     private boolean sosSyncLocation = Boolean.TRUE.booleanValue();
+
+    private String belowQualifier;
+
+    private String aboveQualifier;
 
     @Setting(APPLY_ROUNDING)
     public AquariusHelper setApplyRoundig(boolean applyRounding) {
@@ -111,6 +124,34 @@ public class AquariusHelper {
     public AquariusHelper setSosSyncLocation(boolean sosSyncLocation) {
         this.sosSyncLocation = sosSyncLocation;
         return this;
+    }
+
+    @Setting(BELOW_IDENTIFIER)
+    public AquariusHelper setBelowQualifierIdentifier(String belowQualifier) {
+        this.belowQualifier = belowQualifier;
+        return this;
+    }
+
+    @Setting(ABOVE_IDENTIFIER)
+    public AquariusHelper setAboveQualifierIdentifier(String aboveQualifier) {
+        this.aboveQualifier = aboveQualifier;
+        return this;
+    }
+
+    public String getBelowQualifier() {
+        return belowQualifier;
+    }
+
+    public boolean isSetBelowQualifier() {
+        return !Strings.isNullOrEmpty(getAboveQualifier());
+    }
+
+    public String getAboveQualifier() {
+        return aboveQualifier;
+    }
+
+    public boolean isSetAboveQualifier() {
+        return !Strings.isNullOrEmpty(getAboveQualifier());
     }
 
     private boolean isSosSync() {
@@ -274,5 +315,22 @@ public class AquariusHelper {
             default:
                 return timeSeries.getRawStartTime() != null && timeSeries.getRawEndTime() != null;
         }
+    }
+
+    public TimeSeriesData applyQualifierChecker(TimeSeriesData timeSeriesData) {
+        QualifierChecker checker = new QualifierChecker();
+        if (isSetAboveQualifier() || isSetBelowQualifier() && timeSeriesData.hasQualifiers()) {
+            for (Qualifier qualifier : timeSeriesData.getQualifiers()) {
+                if (isSetAboveQualifier() && qualifier.getIdentifier()
+                        .equalsIgnoreCase(getAboveQualifier())) {
+                    checker.addQualifier(qualifier.setKey(QualifierKey.ABOVE));
+                }
+                if (isSetBelowQualifier() && qualifier.getIdentifier()
+                        .equalsIgnoreCase(getBelowQualifier())) {
+                    checker.addQualifier(qualifier.setKey(QualifierKey.BELOW));
+                }
+            }
+        }
+        return timeSeriesData.setQualifierChecker(checker);
     }
 }

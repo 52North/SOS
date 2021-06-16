@@ -49,7 +49,6 @@ import org.n52.sos.aquarius.pojo.Parameters;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescriptions;
-import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
 import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
@@ -61,7 +60,6 @@ import org.n52.sos.web.HttpClientHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 public class AquariusConnector implements AccessorConnector {
 
@@ -147,20 +145,22 @@ public class AquariusConnector implements AccessorConnector {
         }
     }
 
-    public List<Point> getTimeSeriesData(String timeSeriesUniqueId) throws OwsExceptionReport {
+
+    public TimeSeriesData getTimeSeriesData(String timeSeriesUniqueId) throws OwsExceptionReport {
         return getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId));
     }
 
-    public List<Point> getTimeSeriesData(AbstractGetTimeSeriesData request) throws OwsExceptionReport {
+    @Override
+    public TimeSeriesData getTimeSeriesData(AbstractGetTimeSeriesData request) throws OwsExceptionReport {
         try {
             Response response = query(request);
             if (response.getEntity() != null) {
                 TimeSeriesData timeSeriesData = om.readValue(response.getEntity(), TimeSeriesData.class);
                 if (timeSeriesData != null && timeSeriesData.hasPoints()) {
-                    return timeSeriesData.getPoints();
+                    return timeSeriesData;
                 }
             }
-            return Collections.emptyList();
+            return null;
         } catch (URISyntaxException | IOException e) {
             throw new NoApplicableCodeException().causedBy(e)
                     .withMessage("Error while querying time series data!");
@@ -168,7 +168,7 @@ public class AquariusConnector implements AccessorConnector {
     }
 
     @Override
-    public Point getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport {
+    public TimeSeriesData getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport {
         try {
             DateTime dateTime = getQueryToForFirstTimeSeriesData(timeSeriesUniqueId);
             if (dateTime != null) {
@@ -177,7 +177,7 @@ public class AquariusConnector implements AccessorConnector {
                 if (response.getEntity() != null) {
                     TimeSeriesData timeSeriesData = om.readValue(response.getEntity(), TimeSeriesData.class);
                     if (timeSeriesData.hasPoints()) {
-                        return Iterables.getFirst(timeSeriesData.getPoints(), null);
+                        return timeSeriesData;
                     }
                 }
             }
@@ -189,7 +189,7 @@ public class AquariusConnector implements AccessorConnector {
     }
 
     @Override
-    public Point getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport {
+    public TimeSeriesData getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport {
         try {
             DateTime dateTime = getQueryFromForLastTimeSeriesData(timeSeriesUniqueId);
             if (dateTime != null) {
@@ -198,7 +198,7 @@ public class AquariusConnector implements AccessorConnector {
                 if (response.getEntity() != null) {
                     TimeSeriesData timeSeriesData = om.readValue(response.getEntity(), TimeSeriesData.class);
                     if (timeSeriesData.hasPoints()) {
-                        return Iterables.getLast(timeSeriesData.getPoints());
+                        return timeSeriesData;
                     }
                 }
             }

@@ -34,6 +34,8 @@ import java.util.Map;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.joda.time.Interval;
+import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -44,7 +46,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "Identifier", "DateApplied", "User", "StartTime", "EndTime" })
-public class Qualifier implements Serializable {
+public class Qualifier implements Serializable, AquariusTimeHelper {
 
     private static final long serialVersionUID = -8429449365231482643L;
 
@@ -65,6 +67,12 @@ public class Qualifier implements Serializable {
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    @JsonIgnore
+    private QualifierKey key;
+
+    @JsonIgnore
+    private Interval interval;
 
     /**
      * No args constructor for use in serialization
@@ -142,6 +150,33 @@ public class Qualifier implements Serializable {
         this.additionalProperties.put(name, value);
     }
 
+    @JsonIgnore
+    public QualifierKey getKey() {
+        return key;
+    }
+
+    @JsonIgnore
+    public Qualifier setKey(QualifierKey key) {
+        this.key = key;
+        return this;
+    }
+
+    public Point applyQualifier(Point point) {
+        if (getInterval().contains(checkDateTimeStringFor24(point.getTimestamp()))) {
+            point.setQualifier(this);
+        }
+        return point;
+    }
+
+    @JsonIgnore
+    private Interval getInterval() {
+        if (interval == null) {
+            this.interval =
+                    new Interval(checkDateTimeStringFor24(getStartTime()), checkDateTimeStringFor24(getEndTime()));
+        }
+        return interval;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("identifier", identifier)
@@ -180,6 +215,10 @@ public class Qualifier implements Serializable {
                 .append(dateApplied, rhs.dateApplied)
                 .append(user, rhs.user)
                 .isEquals();
+    }
+
+    public enum QualifierKey {
+        BELOW, ABOVE;
     }
 
 }

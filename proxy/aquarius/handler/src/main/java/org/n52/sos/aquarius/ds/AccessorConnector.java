@@ -48,8 +48,8 @@ import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
+import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
 import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
@@ -100,11 +100,11 @@ public interface AccessorConnector {
     List<TimeSeriesDescription> getTimeSeriesDescriptions(GetTimeSeriesDescriptionList request)
             throws OwsExceptionReport;
 
-    List<Point> getTimeSeriesData(AbstractGetTimeSeriesData request) throws OwsExceptionReport;
+    TimeSeriesData getTimeSeriesData(AbstractGetTimeSeriesData request) throws OwsExceptionReport;
 
-    Point getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
+    TimeSeriesData getTimeSeriesDataFirstPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
 
-    Point getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
+    TimeSeriesData getTimeSeriesDataLastPoint(String timeSeriesUniqueId) throws OwsExceptionReport;
 
     // getParameterList
     default Parameters getParameterList() throws OwsExceptionReport {

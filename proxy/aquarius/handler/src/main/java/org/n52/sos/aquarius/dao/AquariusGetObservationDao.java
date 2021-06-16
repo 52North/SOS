@@ -27,7 +27,6 @@
  */
 package org.n52.sos.aquarius.dao;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -74,6 +73,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.aquarius.ds.AccessorConnector;
 import org.n52.sos.aquarius.ds.AquariusHelper;
 import org.n52.sos.aquarius.pojo.Location;
+import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
@@ -166,7 +166,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
      *
      * @param request
      *            GetObservation request
-     * @param connection Aquarius connection
+     * @param connection
+     *            Aquarius connection
      * @param session
      *            Hibernate session
      * @return List of internal Observations
@@ -185,29 +186,34 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
         getLocationsAndDataSets(request, locations, timeSeries, connection, session);
         Map<TimeSeriesDescription, List<Point>> observationMap = new HashMap<>();
         for (Entry<String, TimeSeriesDescription> dataSet : timeSeries.entrySet()) {
-            List<Point> observations;
-            if (observationMap.containsKey(dataSet.getValue())) {
-                observations = observationMap.get(dataSet.getValue());
-            } else {
-                observations = new LinkedList<>();
-            }
+            List<TimeSeriesData> observations = new LinkedList<>();
             if (request.hasTemporalFilters()) {
                 // query with temporal filter
                 for (IndeterminateValue temporalFilter : request.getFirstLatestTemporalFilter()) {
-                    observations.addAll(queryForTemporalFilter(dataSet.getValue(), temporalFilter, connection));
+                    observations.add(queryForTemporalFilter(dataSet.getValue(), temporalFilter, connection));
                 }
                 for (TemporalFilter temporalFilter : request.getNotFirstLatestTemporalFilter()) {
                     if (temporalFilter != null) {
-                        observations.addAll(queryForTemporalFilter(dataSet.getValue(), temporalFilter, connection));
+                        observations.add(queryForTemporalFilter(dataSet.getValue(), temporalFilter, connection));
                     }
                 }
             } else {
                 observations
-                        .addAll(connection.getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(dataSet.getValue()
+                        .add(connection.getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(dataSet.getValue()
                                 .getUniqueId())));
             }
             if (!observations.isEmpty()) {
-                observationMap.put(dataSet.getValue(), observations);
+                List<Point> points;
+                if (observationMap.containsKey(dataSet.getValue())) {
+                    points = observationMap.get(dataSet.getValue());
+                } else {
+                    points = new LinkedList<>();
+                }
+                for (TimeSeriesData timeSeriesData : observations) {
+                    points.addAll(aquariusHelper.applyQualifierChecker(timeSeriesData)
+                            .getPoints());
+                }
+                observationMap.put(dataSet.getValue(), points);
             }
         }
         LOGGER.debug("Time to query observations needs {} ms!", System.currentTimeMillis() - start);
@@ -289,24 +295,17 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
         return connection.getLocation(identifier);
     }
 
-    private Collection<Point> queryForTemporalFilter(TimeSeriesDescription timeSeries,
-            IndeterminateValue temporalFilter, AccessorConnector connection) throws OwsExceptionReport {
-        List<Point> values = new LinkedList<>();
+    private TimeSeriesData queryForTemporalFilter(TimeSeriesDescription timeSeries, IndeterminateValue temporalFilter,
+            AccessorConnector connection) throws OwsExceptionReport {
         if (ExtendedIndeterminateTime.FIRST.equals(temporalFilter)) {
-            Point point = connection.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
-            if (point != null) {
-                values.add(point);
-            }
+            return connection.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
         } else if (ExtendedIndeterminateTime.LATEST.equals(temporalFilter)) {
-            Point point = connection.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
-            if (point != null) {
-                values.add(point);
-            }
+            return connection.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
         }
-        return values;
+        return null;
     }
 
-    private List<Point> queryForTemporalFilter(TimeSeriesDescription timeSeries, TemporalFilter temporalFilter,
+    private TimeSeriesData queryForTemporalFilter(TimeSeriesDescription timeSeries, TemporalFilter temporalFilter,
             AccessorConnector connection) throws OwsExceptionReport {
         switch (temporalFilter.getOperator()) {
             case TM_During:
@@ -384,8 +383,9 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
                 }
             } else {
                 AccessorConnector connection = getConnector(null);
-                return Optional.of(convertTimeSeriesDataPoint(
-                        connection.getTimeSeriesDataFirstPoint(entity.getDomain()), entity.getId()));
+                TimeSeriesData timeSeriesData = connection.getTimeSeriesDataFirstPoint(entity.getIdentifier());
+                return Optional.of(convertTimeSeriesDataPoint(aquariusHelper.applyQualifierChecker(timeSeriesData)
+                        .getFirstPoint(), entity.getId()));
             }
         } catch (OwsExceptionReport | ConnectionProviderException e) {
             LOGGER.error("Error while querying first observation", e);
@@ -403,8 +403,9 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
                 }
             } else {
                 AccessorConnector connection = getConnector(null);
-                return Optional.of(convertTimeSeriesDataPoint(
-                        connection.getTimeSeriesDataLastPoint(entity.getIdentifier()), entity.getId()));
+                TimeSeriesData timeSeriesData = connection.getTimeSeriesDataLastPoint(entity.getIdentifier());
+                return Optional.of(convertTimeSeriesDataPoint(aquariusHelper.applyQualifierChecker(timeSeriesData)
+                        .getLastPoint(), entity.getId()));
             }
         } catch (OwsExceptionReport | ConnectionProviderException e) {
             LOGGER.error("Error while querying last observation", e);
@@ -427,9 +428,10 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
         return convertTimeSeriesData(accessorConnector.getTimeSeriesData(request), series.getId());
     }
 
-    private List<QuantityDataEntity> convertTimeSeriesData(List<Point> timeSeriesDataPoints, Long datasetId) {
+    private List<QuantityDataEntity> convertTimeSeriesData(TimeSeriesData timeSeriesData, Long datasetId) {
         List<QuantityDataEntity> measurements = new LinkedList<QuantityDataEntity>();
-        for (Point timeSeriesDataPoint : timeSeriesDataPoints) {
+        for (Point timeSeriesDataPoint : aquariusHelper.applyQualifierChecker(timeSeriesData)
+                .getPoints()) {
             measurements.add(convertTimeSeriesDataPoint(timeSeriesDataPoint, datasetId));
         }
         return measurements;

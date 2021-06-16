@@ -96,13 +96,18 @@ public interface EntityBuilder {
     }
 
     default QuantityDataEntity createDataEntitiy(DateTime time, BigDecimal value, Long id) {
+        QuantityDataEntity entity = createDataEntitiy(time, id);
+        entity.setValue(value);
+        return entity;
+    }
+
+    default QuantityDataEntity createDataEntitiy(DateTime time, Long id) {
         QuantityDataEntity entity = new QuantityDataEntity();
         if (id != null) {
             entity.setId(id);
         }
         entity.setSamplingTimeStart(time.toDate());
         entity.setSamplingTimeEnd(time.toDate());
-        entity.setValue(value);
         return entity;
     }
 

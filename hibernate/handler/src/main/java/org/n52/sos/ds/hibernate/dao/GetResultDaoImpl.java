@@ -110,8 +110,7 @@ public class GetResultDaoImpl extends AbstractDaoImpl implements GetResultDao {
 
     public ResultHandlingHelper getResultHandlingHelper() {
         if (resultHandlingHelper == null) {
-            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(),
-                    getDaoFactory().getSweHelper(), getDaoFactory().getDecoderRepository());
+            this.resultHandlingHelper = new ResultHandlingHelper(getDaoFactory().getObservationHelper());
         }
         return resultHandlingHelper;
     }

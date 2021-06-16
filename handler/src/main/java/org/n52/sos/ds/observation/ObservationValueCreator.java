@@ -54,7 +54,6 @@ import org.n52.shetland.ogc.om.values.TrajectoryValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataRecord;
-import org.n52.svalbard.decode.DecoderRepository;
 
 /**
  * TODO JavaDoc
@@ -63,8 +62,8 @@ import org.n52.svalbard.decode.DecoderRepository;
  */
 public class ObservationValueCreator extends AbstractObservationValueCreator {
 
-    public ObservationValueCreator(DecoderRepository decoderRepository) {
-        super(decoderRepository);
+    public ObservationValueCreator(ObservationHelper observationHelper) {
+        super(observationHelper);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class ObservationValueCreator extends AbstractObservationValueCreator {
 
     @Override
     public ComplexValue visit(ComplexDataEntity o) throws OwsExceptionReport {
-        SweAbstractDataComponentCreator visitor = new SweAbstractDataComponentCreator(getDecoderRepository());
+        SweAbstractDataComponentCreator visitor = new SweAbstractDataComponentCreator(getObservationHelper());
         SweDataRecord record = visitor.visit(o);
         return new ComplexValue(record);
     }

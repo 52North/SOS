@@ -128,7 +128,8 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
                 }
             }
             daoFactory.getObservationHelper().mergeValueToObservation(nextEntity, observation, getResponseFormat());
-            sessionHolder.getSession().evict(nextEntity);
+            sessionHolder.getSession()
+                    .evict(nextEntity);
         }
         return ObservationStream.of(observations.values());
     }
@@ -184,9 +185,14 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Dat
             if (ReportObligations.hasFlow(extensions)) {
                 ReportObligationType flow = ReportObligations.getFlow(extensions);
                 if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {
-                    int year = DateTimeHelper.makeDateTime(o.getSamplingTimeStart()).getYear();
+                    int year = DateTimeHelper.makeDateTime(o.getSamplingTimeStart())
+                            .getYear();
                     EReportingQualityEntity eReportingQuality = new EReportingQualityDAO().getEReportingQuality(
-                            o.getDataset().getId(), year, o.getEreportingProfile().getPrimaryObservation(), session);
+                            o.getDataset()
+                                    .getId(),
+                            year, o.getEreportingProfile()
+                                    .getPrimaryObservation(),
+                            session);
                     if (eReportingQuality != null) {
                         observation.setResultQuality(helper.getGmdDomainConsistency(eReportingQuality, true));
                     } else {

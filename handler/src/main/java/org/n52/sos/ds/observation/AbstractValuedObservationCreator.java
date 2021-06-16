@@ -48,20 +48,24 @@ import org.n52.svalbard.util.XmlHelper;
 
 public abstract class AbstractValuedObservationCreator<T> implements ValuedObservationVisitor<T> {
 
-    private DecoderRepository decoderRepository;
+    private ObservationHelper observationHelper;
     private boolean noValues;
 
-    public AbstractValuedObservationCreator(DecoderRepository decoderRepository) {
-        this(decoderRepository, false);
+    public AbstractValuedObservationCreator(ObservationHelper observationHelper) {
+        this(observationHelper, false);
     }
 
-    public AbstractValuedObservationCreator(DecoderRepository decoderRepository, boolean noValues) {
-        this.decoderRepository = decoderRepository;
+    public AbstractValuedObservationCreator(ObservationHelper observationHelper, boolean noValues) {
+        this.observationHelper = observationHelper;
         this.noValues = noValues;
     }
 
     protected DecoderRepository getDecoderRepository() {
-        return decoderRepository;
+        return getObservationHelper().getDecoderRepository();
+    }
+
+    protected ObservationHelper getObservationHelper() {
+        return observationHelper;
     }
 
     protected boolean isNoValues() {

@@ -40,6 +40,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.ds.dao.GetResultTemplateDao;
+import org.n52.sos.ds.observation.ObservationHelper;
 import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.decode.DecoderRepository;
@@ -58,15 +59,11 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
 
     private Optional<GetResultTemplateDao> dao;
 
-    private DecoderRepository decodingRepository;
-
     private ResultHandlingHelper resultHandlingHelper;
 
-    private GeometryHandler geometryHandler;
-
-    private SweHelper sweHelper;
-
     private GetResultHandler getResultHandler;
+
+    private ObservationHelper observationHelper;
 
     public GetResultTemplateHandler() {
         super(SosConstants.SOS);
@@ -88,18 +85,8 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     }
 
     @Inject
-    public void setDecoderRepository(DecoderRepository decodingRepository) {
-        this.decodingRepository = decodingRepository;
-    }
-
-    @Inject
-    public void setGeometryHandler(GeometryHandler geometryHandler) {
-        this.geometryHandler = geometryHandler;
-    }
-
-    @Inject
-    public void setSweHelper(SweHelper sweHelper) {
-        this.sweHelper = sweHelper;
+    public void setObservationHelper(ObservationHelper observationHelper) {
+        this.observationHelper = observationHelper;
     }
 
     @Override
@@ -111,8 +98,7 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     @Override
     public ResultHandlingHelper getResultHandlingHelper() {
         if (resultHandlingHelper == null) {
-            this.resultHandlingHelper = new ResultHandlingHelper(getGeometryHandler(),
-                    getSweHelper(), getDecoderRepository());
+            this.resultHandlingHelper = new ResultHandlingHelper(getObservationHelper());
         }
         return resultHandlingHelper;
     }
@@ -145,15 +131,20 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
 
     @Override
     public SweHelper getSweHelper() {
-        return sweHelper;
+        return getObservationHelper().getSweHelper();
     }
 
     private DecoderRepository getDecoderRepository() {
-        return decodingRepository;
+        return getObservationHelper().getDecoderRepository();
     }
 
     private GeometryHandler getGeometryHandler() {
-        return geometryHandler;
+        return getObservationHelper().getGeometryHandler();
     }
+
+    private ObservationHelper getObservationHelper() {
+        return observationHelper;
+    }
+
 
 }

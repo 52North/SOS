@@ -141,8 +141,7 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     @Override
     public void init() {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
-        helper = new ResultHandlingHelper(getDaoFactory().getGeometryHandler(), getDaoFactory().getSweHelper(),
-                getDaoFactory().getDecoderRepository());
+        helper = new ResultHandlingHelper(getDaoFactory().getObservationHelper());
     }
 
     @Override
@@ -370,9 +369,14 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             omObservationConstellation.setProcedure(createProcedure(resultTemplate.getProcedure()));
         }
         if (resultTemplate.isSetFeature()) {
-            omObservationConstellation
-                    .setFeatureOfInterest(new SamplingFeature(new CodeWithAuthority(resultTemplate.getFeature()
-                            .getIdentifier())));
+            SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(resultTemplate.getFeature()
+                    .getIdentifier()));
+            if (resultTemplate.getFeature()
+                    .isSetGeometry()) {
+                samplingFeature.setGeometry(resultTemplate.getFeature()
+                        .getGeometry());
+            }
+            omObservationConstellation.setFeatureOfInterest(samplingFeature);
         }
         return omObservationConstellation;
     }

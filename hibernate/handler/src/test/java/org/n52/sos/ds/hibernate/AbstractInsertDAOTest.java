@@ -339,7 +339,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         GEOMETRY.setSRID(4326);
         SOSHibernateSessionHolder holder = new SOSHibernateSessionHolder();
         holder.setConnectionProvider(this);
-        SweHelper sweHelper = new SweHelper();
+        SweHelper sweHelper = initSweHelper();
         daoFactory.setSweHelper(sweHelper);
         SosHelper sosHelper = new SosHelper();
         sosHelper.setServiceURL(URI.create("http://test.org"));
@@ -471,9 +471,7 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         SOSHibernateSessionHolder sessionHolder = new SOSHibernateSessionHolder();
         sessionHolder.setConnectionProvider(this);
         getResultTemplateHandler.setConnectionProvider(sessionHolder);
-        getResultTemplateHandler.setDecoderRepository(decoderRepository);
-        getResultTemplateHandler.setGeometryHandler(daoFactory.getGeometryHandler());
-        getResultTemplateHandler.setSweHelper(daoFactory.getSweHelper());
+        getResultTemplateHandler.setObservationHelper(daoFactory.getObservationHelper());
         getResultTemplateHandler.setGetResultTemplateDao(Optional.of(getResultTemplateDAO));
         getResultTemplateHandler.setGetResultHandler(getResultHandler);
         getResultHandler.setConnectionProvider(sessionHolder);

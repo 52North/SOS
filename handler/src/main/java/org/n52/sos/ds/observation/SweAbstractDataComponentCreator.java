@@ -29,6 +29,7 @@ package org.n52.sos.ds.observation;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.n52.janmayen.NcName;
 import org.n52.series.db.beans.BlobDataEntity;
 import org.n52.series.db.beans.BooleanDataEntity;
@@ -58,7 +59,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.svalbard.decode.DecoderRepository;
 
 /**
  * {@code ValuedObservationVisitor} to create {@link SweAbstractDataComponent}
@@ -69,12 +69,12 @@ import org.n52.svalbard.decode.DecoderRepository;
 public class SweAbstractDataComponentCreator
         extends AbstractValuedObservationCreator<SweAbstractDataComponent> {
 
-    public SweAbstractDataComponentCreator(DecoderRepository decoderRepository) {
-        super(decoderRepository);
+    public SweAbstractDataComponentCreator(ObservationHelper observationHelper) {
+        super(observationHelper);
     }
 
-    public SweAbstractDataComponentCreator(DecoderRepository decoderRepository, boolean noValues) {
-        super(decoderRepository, noValues);
+    public SweAbstractDataComponentCreator(ObservationHelper observationHelper, boolean noValues) {
+        super(observationHelper, noValues);
     }
 
     public SweAbstractDataComponent visit(DataEntity o) throws OwsExceptionReport {
@@ -181,12 +181,12 @@ public class SweAbstractDataComponentCreator
 
     @Override
     public SweAbstractDataComponent visit(ProfileDataEntity o) throws OwsExceptionReport {
-        return new ProfileGeneratorSplitter(new ObservationValueCreator(getDecoderRepository())).createValue(o);
+        return new ProfileGeneratorSplitter(new ObservationValueCreator(getObservationHelper())).createValue(o);
     }
 
     @Override
     public SweAbstractDataComponent visit(TrajectoryDataEntity o) throws OwsExceptionReport {
-        return new TrajectoryGeneratorSplitter(new ObservationValueCreator(getDecoderRepository())).createValue(o);
+        return new TrajectoryGeneratorSplitter(new ObservationValueCreator(getObservationHelper())).createValue(o);
     }
 
     @Override

@@ -39,6 +39,8 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.janmayen.lifecycle.Constructable;
@@ -47,6 +49,7 @@ import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.shetland.aqd.AqdConstants;
+import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.UoM;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -73,6 +76,7 @@ import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.GmlHelper;
 import org.n52.svalbard.util.SweHelper;
 
+@Configurable
 public class ObservationHelper implements Constructable {
 
     private DecoderRepository decoderRepository;
@@ -82,6 +86,15 @@ public class ObservationHelper implements Constructable {
     private SosHelper sosHelper;
     private EReportingHelper eReportingHelper;
     private SpatialFilteringProfileCreator spatialFilteringProfileCreator;
+
+    private String qualifierDefinitionBelow = "http://www.example.com/sensors/lower_threshold";
+    private String qualifierDefinitionAbove = "http://www.example.com/sensors/upper_threshold";
+    private String qualifierDescriptionBelow = "Lower limit for sensor";
+    private String qualifierDescriptionAbove = "Upper limit for sensor";
+    private String censoredReasonHrefBelow = OGCConstants.BELOW_DETECTION_RANGE;
+    private String censoredReasonHrefAbove = OGCConstants.ABOVE_DETECTION_RANGE;
+    private String censoredReasonTitleBelow = "Below threshold of sensor";
+    private String censoredReasonTitleAbove = "Above threshold of sensor";
 
     @Inject
     public void setDecoderRepository(DecoderRepository decoderRepository) {
@@ -114,6 +127,18 @@ public class ObservationHelper implements Constructable {
         this.spatialFilteringProfileCreator = new SpatialFilteringProfileCreator(geometryHandler);
     }
 
+    public DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    public GeometryHandler getGeometryHandler() {
+        return geometryHandler;
+    }
+
+    public SweHelper getSweHelper() {
+        return sweHelper;
+    }
+
     /**
      * Create a {@link TimeValuePair} from {@link DataEntity}
      *
@@ -126,7 +151,7 @@ public class ObservationHelper implements Constructable {
      */
     public TimeValuePair createTimeValuePairFrom(DataEntity<?> abstractValue) throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(abstractValue),
-                new ObservationValueCreator(decoderRepository).visit(abstractValue));
+                new ObservationValueCreator(this).visit(abstractValue));
     }
 
     /**
@@ -164,7 +189,7 @@ public class ObservationHelper implements Constructable {
         if (!observation.isSetDescription() && o.isSetDescription()) {
             observation.setDescription(o.getDescription());
         }
-        Value<?> value = new ObservationValueCreator(decoderRepository).visit(o);
+        Value<?> value = new ObservationValueCreator(this).visit(o);
         if (!value.isSetUnit()
                 && observation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty
                 && ((OmObservableProperty) observation.getObservationConstellation().getObservableProperty())
@@ -420,7 +445,7 @@ public class ObservationHelper implements Constructable {
                             .setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
                 }
                 observation.mergeWithObservation(getSingleObservationValue(o,
-                        new ObservationValueCreator(decoderRepository).visit(o)));
+                        new ObservationValueCreator(this).visit(o)));
             }
         }
         return observation;
@@ -481,6 +506,78 @@ public class ObservationHelper implements Constructable {
                 observation.setValidTime(vt);
             }
         }
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DEFINITION_BELOW_KEY, required = false)
+    public void setQualifierDefinitionBelow(String qualifierDefinitionBelow) {
+        this.qualifierDefinitionBelow = qualifierDefinitionBelow;
+    }
+
+    public String getQualifierDefinitionBelow() {
+        return qualifierDefinitionBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DEFINITION_ABOVE_KEY, required = false)
+    public void setQualifierDefinitionAbove(String qualifierDefinitionAbove) {
+        this.qualifierDefinitionAbove = qualifierDefinitionAbove;
+    }
+
+    public String getQualifierDefinitionAbove() {
+        return qualifierDefinitionAbove;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DESCRIPTION_BELOW_KEY, required = false)
+    public void setQualifierDescriptionBelow(String qualifierDescriptionBelow) {
+        this.qualifierDescriptionBelow = qualifierDescriptionBelow;
+    }
+
+    public String getQualifierDescriptionBelow() {
+        return qualifierDescriptionBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.QUALIFIER_DESCRIPTION_ABOVE_KEY, required = false)
+    public void setQualifierDescriptionAbove(String qualifierDescriptionAbove) {
+        this.qualifierDescriptionAbove = qualifierDescriptionAbove;
+    }
+
+    public String getQualifierDescriptionAbove() {
+        return qualifierDescriptionAbove;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_HREF_BELOW_KEY, required = false)
+    public void setCensoredReasonHrefBelow(String censoredReasonHrefBelow) {
+        this.censoredReasonHrefBelow = censoredReasonHrefBelow;
+    }
+
+    public String getCensoredReasonHrefBelow() {
+        return censoredReasonHrefBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_HREF_ABOVE_KEY, required = false)
+    public void setCensoredReasonHrefAbove(String censoredReasonHrefAbove) {
+        this.censoredReasonHrefAbove = censoredReasonHrefAbove;
+    }
+
+    public String getCensoredReasonHrefAbove() {
+        return censoredReasonHrefAbove;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_TITLE_BELOW_KEY, required = false)
+    public void setCensoredReasonTitleBelow(String censoredReasonTitleBelow) {
+        this.censoredReasonTitleBelow = censoredReasonTitleBelow;
+    }
+
+    public String getCensoredReasonTitleBelow() {
+        return censoredReasonTitleBelow;
+    }
+
+    @Setting(value = DetectionLimitSettings.CENSORED_REASONS_TITLE_ABOVE_KEY, required = false)
+    public void setCensoredReasonTitleAbove(String censoredReasonTitleAbove) {
+        this.censoredReasonTitleAbove = censoredReasonTitleAbove;
+    }
+
+    public String getCensoredReasonTitleAbove() {
+        return censoredReasonTitleAbove;
     }
 
 }

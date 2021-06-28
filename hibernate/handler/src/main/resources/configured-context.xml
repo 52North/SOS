@@ -4,108 +4,60 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
     <!-- Querying database used by proxy Handlers -->
-
-    <bean id="describeSensorDao"
-          class="org.n52.sos.ds.hibernate.dao.DescribeSensorDaoImpl"/>
-
-    <bean id="getObservationDao"
-          class="org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl"/>
-
-    <bean id="getFeatureOfInterestDao"
-          class="org.n52.sos.ds.hibernate.dao.GetFeatureOfInterestDaoImpl"/>
-
-    <bean id="getObservationByIdDao"
-          class="org.n52.sos.ds.hibernate.dao.GetObservationByIdDaoImpl"/>
-
-    <bean id="getDataAvailabilityDao"
-          class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDaoImpl"/>
-
-    <bean id="getResultTemplateDao"
-        class="org.n52.sos.ds.hibernate.dao.GetResultTemplateDaoImpl" />
-
-    <bean id="getResultDao"
-        class="org.n52.sos.ds.hibernate.dao.GetResultDaoImpl" />
-
-    <bean id="dbQueryFactory" class="org.n52.sensorweb.server.db.old.dao.DefaultDbQueryFactory"/>
-
-    <!--
-    <bean id="insertRepository"
-          class="org.n52.proxy.db.da.InsertRepository"/>
-
-    <bean id="harvestJobFactory"
-          class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvestJobFactory"/>
-
-    <bean id="dataSourceScheduler" class="org.n52.sos.ds.hibernate.cache.proxy.HibernateDataSourceHarvesterScheduler" init-method="init" destroy-method="shutdown">
-        <property name="scheduler">
-            <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-                <property name="jobFactory">
-                    <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
-                </property>
-            </bean>
-        </property>
-    </bean>
-    -->
-
-    <!-- <bean id="getFeatureOfInterestHandler"
-          class="org.n52.sos.ds.hibernate.GetFeatureOfInterestHandler"/> -->
-
-    <bean id="generalQueryHandler"
-          class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
-
-    <bean id="procedureFormatHandler"
-          class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
-
-    <bean id="renameHandler"
-          class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
-
-    <bean id="hibernateStreamingConfiguration"
-          class="org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration" />
-
+    <beans profile="hibernate">
+        <bean id="describeSensorDao"
+              class="org.n52.sos.ds.hibernate.dao.DescribeSensorDaoImpl"/>
+        <bean id="getObservationDao"
+              class="org.n52.sos.ds.hibernate.dao.GetObservationDaoImpl"/>
+        <bean id="getFeatureOfInterestDao"
+              class="org.n52.sos.ds.hibernate.dao.GetFeatureOfInterestDaoImpl"/>
+        <bean id="getObservationByIdDao"
+              class="org.n52.sos.ds.hibernate.dao.GetObservationByIdDaoImpl"/>
+        <bean id="getDataAvailabilityDao"
+              class="org.n52.sos.ds.hibernate.dao.GetDataAvailabilityDaoImpl"/>
+        <bean id="getResultTemplateDao"
+            class="org.n52.sos.ds.hibernate.dao.GetResultTemplateDaoImpl" />
+        <bean id="getResultDao"
+            class="org.n52.sos.ds.hibernate.dao.GetResultDaoImpl" />
+        <bean id="generalQueryHandler"
+            class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO" />
+        <bean id="procedureFormatHandler"
+            class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO" />
+        <bean id="renameHandler"
+            class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO" />
+        <bean id="hibernateStreamingConfiguration"
+            class="org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration" />
+    </beans>
     <!-- Querying database -->
     <beans profile="transactional,ereporting">
-
         <bean id="insertResultTemplateHandler"
               class="org.n52.sos.ds.hibernate.InsertResultTemplateHandler"/>
-
         <bean id="insertResultHandler"
               class="org.n52.sos.ds.hibernate.InsertResultHandler"/>
-
         <bean id="deleteSensorHandler"
               class="org.n52.sos.ds.hibernate.DeleteSensorHandler"/>
-
         <bean id="insertSensorHandler"
               class="org.n52.sos.ds.hibernate.InsertSensorHandler"/>
-
         <bean id="updateSensorDescriptionHandler"
               class="org.n52.sos.ds.hibernate.UpdateSensorDescriptionHandler"/>
-
         <bean id="insertObservationHandler"
               class="org.n52.sos.ds.hibernate.InsertObservationHandler"/>
-
         <bean id="insertFeatureOfInterestHandler"
               class="org.n52.sos.ds.hibernate.InsertFeatureOfInterestHandler"/>
-
         <bean id="deleteObservationHandler"
               class="org.n52.sos.ds.hibernate.DeleteObservationHandler"/>
-
         <bean id="deleteResultTemplateHandler"
               class="org.n52.sos.ds.hibernate.DeleteResultTemplateHandler"/>
-
         <bean id="deleteDeletedDataHandler"
               class="org.n52.sos.ds.hibernate.admin.DeleteDeletedDataHandler"/>
-
         <bean id="deleteDeletedObservationsHandler"
               class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
-
         <bean id="predefinedInsertionHandler"
               class="org.n52.sos.ds.hibernate.admin.HibernatePredefinedInsertionHandler" />
-
         <bean id="insertSensorCapabilitiesExtensionProvider"
               class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
-
         <bean id="insertResultCapabiltiesExtensionProvider"
               class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
-
         <bean id="insertResultTemplateCapabilitiesExtensionProvider"
               class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
     </beans>

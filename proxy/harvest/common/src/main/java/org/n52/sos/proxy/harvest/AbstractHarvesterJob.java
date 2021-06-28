@@ -31,6 +31,8 @@ import javax.inject.Inject;
 
 import org.n52.io.task.ScheduledJob;
 import org.n52.janmayen.event.EventBus;
+import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
+import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
 import org.n52.sos.proxy.da.InsertionRepository;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -40,10 +42,14 @@ import org.quartz.PersistJobDataAfterExecution;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
+public abstract class AbstractHarvesterJob extends ScheduledJob implements Job, HarvesterHelper {
 
     @Inject
     private InsertionRepository insertionRepository;
+    @Inject
+    private ServiceEntityFactory serviceEntityFactory;
+    @Inject
+    private DatasetRepository datasetRepository;
     @Inject
     private EventBus eventBus;
 
@@ -52,8 +58,16 @@ public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
         return JobBuilder.newJob(this.getClass()).withIdentity(getJobName()).build();
     }
 
-    protected InsertionRepository getInsertionRepository() {
+    public InsertionRepository getInsertionRepository() {
         return insertionRepository;
+    }
+
+    public ServiceEntityFactory getServiceEntityFactory() {
+        return serviceEntityFactory;
+    }
+
+    public DatasetRepository getDatasetRepository() {
+        return datasetRepository;
     }
 
     protected EventBus getEventBus() {

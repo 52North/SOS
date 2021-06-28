@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
@@ -116,6 +117,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
             } else {
                 response.addSensorDescription(createSensorDescription(entities.iterator().next(), request, session));
             }
+
             return response;
         } catch (final HibernateException e) {
             throw new NoApplicableCodeException().causedBy(e)
@@ -127,13 +129,13 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
 
     @Override
     public boolean isSupported() {
-        return true;
+        return dao != null;
     }
 
     private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,
             DescribeSensorRequest request, Session session) throws OwsExceptionReport {
-        return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
-                request.getVersion(), getRequestedLocale(request), session);
+        return procedureConverter.createSosProcedureDescription(Hibernate.unproxy(procedure, ProcedureEntity.class),
+                request.getProcedureDescriptionFormat(), request.getVersion(), getRequestedLocale(request), session);
     }
 
     private DbQuery createDbQuery(DescribeSensorRequest req) {
@@ -142,6 +144,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
             map.put(IoParameters.PROCEDURES, req.getProcedure());
         }
         map.put(IoParameters.MATCH_DOMAIN_IDS, Boolean.toString(true));
+        map.put(IoParameters.EXPANDED, Boolean.toString(true));
         return new DbQuery(IoParameters.createFromSingleValueMap(map));
     }
 }

@@ -27,10 +27,14 @@
  */
 package org.n52.sos.aquarius.harvest;
 
-import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
 import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.TemporalHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
 import org.slf4j.Logger;
@@ -41,21 +45,23 @@ import org.slf4j.LoggerFactory;
 public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob implements TemporalHarvesterJob {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusTemporalHarvesterJob.class);
-// private static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
-// private static final String EVERY_MINUTE = "1";
-// private static final String EVERY_QUATER_HOUR = "15";
-// private static final String EVERY_HALF_HOUR = "30";
-// private static final String EVERY_HOUR = "60";
 
+    private static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
 
-
-
-    private DatasetRepository datasetRepository;
+    @Inject
+    private AquariusTemporalUpdater updater;
 
     @Override
     protected void save(JobExecutionContext context, AquariusConnector connector) {
-        // TODO Auto-generated method stub
-
+        JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
+        DateTime now = DateTime.now();
+        updater.update(now, mergedJobDataMap, connector);
+        context.getJobDetail()
+                .getJobDataMap()
+                .put(LAST_UPDATE_TIME, now);
+        LOGGER.info(context.getJobDetail()
+                .getKey() + " execution ends.");
+        getEventBus().submit(new UpdateCache());
     }
 
 }

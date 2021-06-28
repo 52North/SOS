@@ -47,6 +47,13 @@ public class ExtendedFilters {
         return this;
     }
 
+    public ExtendedFilters addFilter(Map<String, String> filter) {
+        if (filter != null) {
+            filter.putAll(filter);
+        }
+        return this;
+    }
+
     public Map<String, String> getFilter() {
         return filter;
     }

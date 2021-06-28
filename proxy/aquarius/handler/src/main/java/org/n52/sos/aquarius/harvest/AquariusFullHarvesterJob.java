@@ -27,27 +27,16 @@
  */
 package org.n52.sos.aquarius.harvest;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.n52.sos.aquarius.pojo.Location;
-import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.proxy.harvest.FullHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class AquariusFullHarvesterJob extends AbstractAquariusHarvesterJob implements FullHarvesterJob {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AquariusFullHarvesterJob.class);
 
     @Override
     protected void save(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport {
@@ -58,25 +47,8 @@ public class AquariusFullHarvesterJob extends AbstractAquariusHarvesterJob imple
         parameters.clear();
         features.clear();
         platforms.clear();
-        Set<Location> locations = getLocationList(connector);
-        Map<String, Set<TimeSeriesDescription>> locationDataSets = new HashMap<>();
         parameters = getParameterList(connector);
-        ServiceEntity service = getServiceEntity();
-        for (Location location : locations) {
-            if (location.getLatitude() != null && location.getLongitude() != null) {
-                try {
-                    Set<TimeSeriesDescription> timeseries = getTimeSeries(location.getIdentifier(), connector);
-                    if (timeseries != null && !timeseries.isEmpty()) {
-                        locationDataSets.put(location.getIdentifier(), timeseries);
-                        harvestDatasets(location, timeseries, service, connector);
-                    }
-                } catch (OwsExceptionReport e) {
-                    LOGGER.error(
-                            String.format("Error harvesting timeseries for location '%s'!", location.getIdentifier()),
-                            e);
-                }
-            }
-        }
+        harvestDatasets(getLocations(connector), getTimeSeries(connector), getServiceEntity(), connector);
     }
 
 }

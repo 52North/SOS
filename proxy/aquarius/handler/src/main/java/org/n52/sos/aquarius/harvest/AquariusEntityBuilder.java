@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.harvest;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,7 @@ import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.UnitEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
@@ -58,6 +60,7 @@ import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.data.Point;
+import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
 import org.n52.sos.proxy.harvest.EntityBuilder;
 
@@ -138,8 +141,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     default FeatureEntity createFeature(Location location, Map<String, FeatureEntity> features, ServiceEntity service)
             throws CodedException {
         if (!features.containsKey(location.getIdentifier())) {
-            FeatureEntity entity = createFeature(location.getIdentifier(),
-                    createNameFromLocation(location), null, service);
+            FeatureEntity entity =
+                    createFeature(location.getIdentifier(), createNameFromLocation(location), null, service);
             entity.setGeometry(createGeometry(location));
             features.put(location.getIdentifier(), entity);
         }
@@ -149,8 +152,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     default PlatformEntity createPlatform(Location location, Map<String, PlatformEntity> platforms,
             ServiceEntity service) {
         if (!platforms.containsKey(location.getIdentifier())) {
-            PlatformEntity entity = createPlatform(location.getIdentifier(),
-                    createNameFromLocation(location), null, service);
+            PlatformEntity entity =
+                    createPlatform(location.getIdentifier(), createNameFromLocation(location), null, service);
             platforms.put(location.getIdentifier(), entity);
         }
         return platforms.get(location.getIdentifier());
@@ -219,7 +222,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         if (timeSeriesDataFirstPoint != null) {
             DateTime dateTime = checkDateTimeStringFor24(timeSeriesDataFirstPoint.getTimestamp());
             entity.setFirstValueAt(dateTime.toDate());
-            entity.setFirstObservation(createDataEntitiy(dateTime, timeSeriesDataFirstPoint, null));
+            entity.setFirstObservation(createDataEntity(dateTime, timeSeriesDataFirstPoint, null));
             if (timeSeriesDataFirstPoint.hasQualifier()) {
                 entity.setFirstQuantityValue(null);
             } else {
@@ -230,7 +233,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         if (timeSeriesDataLastPoint != null) {
             DateTime dateTime = checkDateTimeStringFor24(timeSeriesDataLastPoint.getTimestamp());
             entity.setLastValueAt(dateTime.toDate());
-            entity.setLastObservation(createDataEntitiy(dateTime, timeSeriesDataLastPoint, null));
+            entity.setLastObservation(createDataEntity(dateTime, timeSeriesDataLastPoint, null));
             if (timeSeriesDataLastPoint.hasQualifier()) {
                 entity.setLastQuantityValue(null);
             } else {
@@ -241,12 +244,23 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return entity;
     }
 
-    default DataEntity<?> createDataEntitiy(DateTime dateTime, Point point, Long id) {
+    default QuantityDataEntity createDataEntity(DateTime time, BigDecimal value, Long id, Qualifier qualifier) {
+        QuantityDataEntity entity = createDataEntity(time, value, id);
+        entity.setValue(value);
+        DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
+        detectionLimitEntity.setDetectionLimit(value);
+        detectionLimitEntity.setFlag(null);
+        entity.setDetectionLimit(detectionLimitEntity);
+
+        return entity;
+    }
+
+    default DataEntity<?> createDataEntity(DateTime dateTime, Point point, Long id) {
         if (point.hasQualifier()) {
-            DataEntity<?> entity = createDataEntitiy(dateTime, id);
+            DataEntity<?> entity = createDataEntity(dateTime, id);
             entity.setDetectionLimit(createDetectionLimit(point));
         }
-        return createDataEntitiy(dateTime, point.getValue()
+        return createDataEntity(dateTime, point.getValue()
                 .getNumericAsBigDecimal(), null);
     }
 

@@ -63,9 +63,9 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.I18nNameDescriptionAdder;
+import org.n52.sos.ds.feature.create.FeatureVisitorContext;
+import org.n52.sos.ds.feature.create.FeatureVisitorImpl;
 import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
@@ -307,12 +307,7 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
      *             If an error occurs
      */
     protected AbstractFeature createFeatureOfInterest(AbstractFeatureEntity foi) throws OwsExceptionReport {
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject(getSession());
-        queryObject.setFeatureObject(foi).addFeatureIdentifier(foi.getIdentifier()).setVersion(getVersion());
-        if (getRequest().isSetRequestedLanguage()) {
-            queryObject.setI18N(getRequestedLanguage());
-        }
-        final AbstractFeature feature = getFeatureQueryHandler().getFeatureByID(queryObject);
+        final AbstractFeature feature = new FeatureVisitorImpl(getFeatureVisitorContext()).visit(foi);
         if (getActiveProfile().getEncodingNamespaceForFeatureOfInterest() != null && !feature
                 .getDefaultElementEncoding().equals(getActiveProfile().getEncodingNamespaceForFeatureOfInterest())) {
             feature.setDefaultElementEncoding(getActiveProfile().getEncodingNamespaceForFeatureOfInterest());
@@ -324,8 +319,12 @@ public abstract class AbstractOmObservationCreator implements I18nNameDescriptio
         return feature;
     }
 
-    private FeatureQueryHandler getFeatureQueryHandler() {
-        return creatorContext.getFeatureQueryHandler();
+    protected FeatureVisitorContext getFeatureVisitorContext() {
+        FeatureVisitorContext context = new FeatureVisitorContext().setGeometryHandler(getGeometryHandler())
+                .setDefaultLanguage(getI18N())
+                .setI18NDAORepository(getI18NDAORepository())
+                .setCache(getCache());
+        return context;
     }
 
     protected void checkForAdditionalObservationCreator(DataEntity<?> hObservation, OmObservation sosObservation)

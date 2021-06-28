@@ -27,13 +27,13 @@
  */
 package org.n52.sos.ds;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -45,22 +45,25 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
+import org.n52.faroe.annotation.Setting;
+import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.I18NSettings;
 import org.n52.io.request.IoParameters;
+import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.AbstractFeatureEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.dataset.DatasetType;
 import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.series.db.old.dao.DatasetDao;
-import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.old.dao.FeatureDao;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.InvalidSridException;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -70,11 +73,13 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.shetland.util.EnvelopeOrGeometry;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
+import org.n52.sos.ds.feature.create.FeatureVisitorContext;
+import org.n52.sos.ds.feature.create.FeatureVisitorImpl;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -85,6 +90,14 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     private GetFeatureOfInterestDao dao;
 
     private GeometryHandler geometryHandler;
+
+    private Locale defaultLocale;
+
+    private boolean showAllLanguages;
+
+    private I18NDAORepository i18NDAORepository;
+
+    private ContentCacheController contentCacheController;
 
     public GetFeatureOfInterestHandler() {
         super(SosConstants.SOS);
@@ -105,6 +118,27 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
         if (getFeatureOfInterestDao.isPresent()) {
             this.dao = getFeatureOfInterestDao.get();
         }
+    }
+
+    @Inject
+    public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
+        this.i18NDAORepository = i18NDAORepository;
+    }
+
+
+    @Inject
+    public void setContentCacheController(ContentCacheController ctrl) {
+        this.contentCacheController = ctrl;
+    }
+
+    @Setting(I18NSettings.I18N_DEFAULT_LANGUAGE)
+    public void setDefaultLocale(String defaultLocale) {
+        this.defaultLocale = LocaleHelper.decode(defaultLocale);
+    }
+
+    @Setting(I18NSettings.I18N_SHOW_ALL_LANGUAGE_VALUES)
+    public void setShowAllLanguages(boolean showAllLanguages) {
+        this.showAllLanguages = showAllLanguages;
     }
 
     @Override
@@ -175,35 +209,21 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             throws InvalidSridException, OwsExceptionReport {
         final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
         for (final AbstractFeatureEntity feature : featureEntities) {
-            final AbstractFeature abstractFeature = createFeature(feature);
+            final AbstractFeature abstractFeature = new FeatureVisitorImpl(getDefaultContext()).visit(feature);
             map.put(abstractFeature.getIdentifier(), abstractFeature);
         }
         return map;
     }
 
-    private AbstractFeature createFeature(AbstractFeatureEntity feature)
-            throws InvalidSridException, OwsExceptionReport {
-        final SamplingFeature sampFeat = new SamplingFeature(new CodeWithAuthority(feature.getIdentifier()));
-        if (feature.isSetName()) {
-            sampFeat.addName(feature.getName());
-        }
-        if (!Strings.isNullOrEmpty(feature.getDescription())) {
-            sampFeat.setDescription(feature.getDescription());
-        }
-        if (feature.isSetGeometry() && !feature.getGeometryEntity().isEmpty()) {
-            sampFeat.setGeometry(getGeometryHandler()
-                    .switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeometryEntity().getGeometry()));
-        }
-        final Set<FeatureEntity> parentFeatures = feature.getParents();
-        if (parentFeatures != null && !parentFeatures.isEmpty()) {
-            final List<AbstractFeature> sampledFeatures = new ArrayList<>(parentFeatures.size());
-            for (final FeatureEntity parentFeature : parentFeatures) {
-                sampledFeatures.add(createFeature(parentFeature));
-            }
-            sampFeat.setSampledFeatures(sampledFeatures);
-        }
-        return sampFeat;
+    private FeatureVisitorContext getDefaultContext() {
+        FeatureVisitorContext context = new FeatureVisitorContext().setGeometryHandler(geometryHandler)
+                .setShowAllLanguages(showAllLanguages)
+                .setDefaultLanguage(defaultLocale)
+                .setI18NDAORepository(i18NDAORepository)
+                .setCache((SosContentCache) contentCacheController.getCache());
+        return context;
     }
+
 
     /**
      * Get featureOfInterest identifiers for requested parameters
@@ -236,11 +256,6 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             return features;
         }
         return Collections.emptySet();
-        // return new FeatureDao(session).getAllInstances(createDbQuery(req));
-        // } catch (DataAccessException dae) {
-        // throw new NoApplicableCodeException().causedBy(dae)
-        // .withMessage("Error while querying data for GetFeatureOfInterest!");
-        // }
     }
 
     private DbQuery createDbQuery(GetFeatureOfInterestRequest req) throws OwsExceptionReport {
@@ -321,13 +336,6 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             }
         }
         return null;
-    }
-
-    private Double[] toArray(double x, double y) {
-        Double[] array = new Double[2];
-        array[0] = x;
-        array[1] = y;
-        return array;
     }
 
     /**

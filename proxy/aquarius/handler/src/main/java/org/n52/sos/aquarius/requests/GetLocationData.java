@@ -30,9 +30,8 @@ package org.n52.sos.aquarius.requests;
 import java.util.Map;
 
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
-public class GetLocationData extends AbstractGetRequest {
+public class GetLocationData extends AbstractAquariusGetRequest {
 
     private final String locationIdentifier;
 
@@ -46,7 +45,7 @@ public class GetLocationData extends AbstractGetRequest {
 
     @Override
     public Map<String, String> getQueryParameters() {
-        Map<String, String> parameter = createMap();
+        Map<String, String> parameter = super.getQueryParameters();
         parameter.put(AquariusConstants.Parameters.LOCATION_IDENTIFIER, getLocationIdentifier());
         parameter.put(AquariusConstants.Parameters.INCLUDE_LOCATION_ATTACHMENTS, Boolean.toString(false));
         return parameter;

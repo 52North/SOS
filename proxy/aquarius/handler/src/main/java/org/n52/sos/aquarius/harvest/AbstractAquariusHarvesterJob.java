@@ -27,30 +27,28 @@
  */
 package org.n52.sos.aquarius.harvest;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.DetectionLimitEntity;
 import org.n52.series.db.beans.FeatureEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
-import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.dao.AquariusGetObservationDao;
 import org.n52.sos.aquarius.ds.AquariusConnectionFactory;
 import org.n52.sos.aquarius.ds.AquariusConnector;
@@ -58,10 +56,7 @@ import org.n52.sos.aquarius.ds.AquariusHelper;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
-import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.pojo.data.Point;
-import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.AbstractHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
@@ -73,7 +68,7 @@ import org.slf4j.LoggerFactory;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob implements AquariusEntityBuilder {
+public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob implements AquariusHarvesterHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAquariusHarvesterJob.class);
 
@@ -109,6 +104,15 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
         return serviceEntity;
     }
 
+    @Override
+    public String getConnectorName() {
+        return AquariusConstants.CONNECTOR;
+    }
+
+    public AquariusHelper getAquariusHelper() {
+        return aquariusHelper;
+    }
+
     protected AquariusConnector getConnector() throws ConnectionProviderException {
         return connectionFactory.getConnection();
     }
@@ -130,10 +134,10 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
 
     protected abstract void save(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport;
 
-    protected Set<Location> getLocationList(AquariusConnector connector) throws OwsExceptionReport {
-        Set<Location> locs = new HashSet<>();
-        for (Location location : connector.getLocations(aquariusHelper.getLocationDescriptionListRequest())) {
-            locs.add(location);
+    protected Map<String, Location> getLocations(AquariusConnector connector) throws OwsExceptionReport {
+        Map<String, Location> locs = new LinkedHashMap<>();
+        for (Location location : connector.getLocations(getAquariusHelper().getLocationDescriptionListRequest())) {
+            locs.put(location.getIdentifier(), location);
         }
         return locs;
     }
@@ -149,83 +153,65 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
         return paramMap;
     }
 
-    protected Set<TimeSeriesDescription> getTimeSeries(String locationIdentifier, AquariusConnector connector)
-            throws OwsExceptionReport {
+    protected Set<TimeSeriesDescription> getTimeSeries(AquariusConnector connector) throws OwsExceptionReport {
         Set<TimeSeriesDescription> set = new HashSet<>();
         for (TimeSeriesDescription timeSeries : connector
-                .getTimeSeriesDescriptions(aquariusHelper.getGetTimeSeriesDescriptionListRequest()
-                        .setLocationIdentifier(locationIdentifier))) {
+                .getTimeSeriesDescriptions(getAquariusHelper().getGetTimeSeriesDescriptionListRequest())) {
             set.add(timeSeries);
-            aquariusHelper.addDataset(timeSeries);
+            getAquariusHelper().addDataset(timeSeries);
         }
         return set;
     }
 
-    protected void harvestDatasets(Location location, Collection<TimeSeriesDescription> timeseries,
+    protected Set<TimeSeriesDescription> getTimeSeries(String locationIdentifier, AquariusConnector connector)
+            throws OwsExceptionReport {
+        Set<TimeSeriesDescription> set = new HashSet<>();
+        for (TimeSeriesDescription timeSeries : connector
+                .getTimeSeriesDescriptions(getAquariusHelper().getGetTimeSeriesDescriptionListRequest()
+                        .setLocationIdentifier(locationIdentifier))) {
+            set.add(timeSeries);
+            getAquariusHelper().addDataset(timeSeries);
+        }
+        return set;
+    }
+
+    protected void harvestDatasets(Map<String, Location> locations, Collection<TimeSeriesDescription> timeseries,
             ServiceEntity service, AquariusConnector connector) throws CodedException {
-        ProcedureEntity procedure = createProcedure(location, procedures, service);
-        FeatureEntity feature = createFeature(location, features, service);
-        PlatformEntity platform = createPlatform(location, platforms, service);
-        if (feature.isSetGeometry()) {
-            for (TimeSeriesDescription timeSeries : timeseries) {
-                try {
-                    if (aquariusHelper.checkForData(timeSeries)) {
-                        OfferingEntity offering = createOffering(offerings, timeSeries,
-                                parameters.get(timeSeries.getParameter()), procedure, service, aquariusHelper);
-                        DatasetEntity dataset = createDataset(procedure, offering, feature, platform, timeSeries,
-                                parameters.get(timeSeries.getParameter()), service);
-                        updateFirstLastObservation(dataset, timeSeries, connector);
-                        if (dataset != null) {
-                            aquariusHelper.addLocation(location);
-                            aquariusHelper.addParameter(parameters.get(timeSeries.getParameter()));
-                            PhenomenonEntity phen =
-                                    createPhenomenon(parameters.get(timeSeries.getParameter()), phenomenon, service);
-                            dataset.setPhenomenon(phen);
-                            dataset.setCategory(createCategory(phen, categories, service));
-                            getInsertionRepository().insertDataset(dataset);
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.error(String.format("Error harvesting timeseries '%s'!", timeSeries.getUniqueId()), e);
-                }
+        for (TimeSeriesDescription ts : timeseries) {
+            if (checkLocation(ts.getLocationIdentifier(), locations)) {
+                Location location = locations.get(ts.getLocationIdentifier());
+                ProcedureEntity procedure = createProcedure(location, procedures, service);
+                FeatureEntity feature = createFeature(location, features, service);
+                PlatformEntity platform = createPlatform(location, platforms, service);
+                harvestDatasets(location, ts, feature, procedure, platform, service, connector);
             }
         }
     }
 
-    protected void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesDescription timeSeries,
-            AquariusConnector connector) {
-        try {
-            TimeSeriesData firstTimeSeriesData = connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
-            TimeSeriesData lastTimeSeriesData = connector.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
-            updateDataset(dataset, firstTimeSeriesData, lastTimeSeriesData);
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error when updating dataset with first/last values", e);
+    protected void harvestDatasets(Location location, TimeSeriesDescription timeSeries, FeatureEntity feature,
+            ProcedureEntity procedure, PlatformEntity platform, ServiceEntity service, AquariusConnector connector) {
+        if (feature.isSetGeometry()) {
+            try {
+                if (getAquariusHelper().checkForData(timeSeries)) {
+                    OfferingEntity offering = createOffering(offerings, timeSeries,
+                            parameters.get(timeSeries.getParameter()), procedure, service, getAquariusHelper());
+                    DatasetEntity dataset = createDataset(procedure, offering, feature, platform, timeSeries,
+                            parameters.get(timeSeries.getParameter()), service);
+                    updateFirstLastObservation(dataset, timeSeries, connector);
+                    if (dataset != null) {
+                        getAquariusHelper().addLocation(location);
+                        getAquariusHelper().addParameter(parameters.get(timeSeries.getParameter()));
+                        PhenomenonEntity phen =
+                                createPhenomenon(parameters.get(timeSeries.getParameter()), phenomenon, service);
+                        dataset.setPhenomenon(phen);
+                        dataset.setCategory(createCategory(phen, categories, service));
+                        getInsertionRepository().insertDataset(dataset);
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.error(String.format("Error harvesting timeseries '%s'!", timeSeries.getUniqueId()), e);
+            }
         }
     }
 
-    protected DatasetEntity updateDataset(DatasetEntity entity, TimeSeriesData firstTimeSeriesData,
-            TimeSeriesData lastTimeSeriesDataLast) {
-        Point timeSeriesDataFirstPoint = null;
-        Point timeSeriesDataLastPoint = null;
-        if (firstTimeSeriesData != null) {
-            timeSeriesDataFirstPoint = aquariusHelper.applyQualifierChecker(firstTimeSeriesData)
-                    .getFirstPoint();
-        }
-        if (lastTimeSeriesDataLast != null) {
-            timeSeriesDataLastPoint = aquariusHelper.applyQualifierChecker(firstTimeSeriesData)
-                    .getLastPoint();
-        }
-        return updateDataset(entity, timeSeriesDataFirstPoint, timeSeriesDataLastPoint);
-    }
-
-    protected QuantityDataEntity createDataEntitiy(DateTime time, BigDecimal value, Long id, Qualifier qualifier) {
-        QuantityDataEntity entity = createDataEntitiy(time, value, id);
-        entity.setValue(value);
-        DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
-        detectionLimitEntity.setDetectionLimit(value);
-        detectionLimitEntity.setFlag(null);
-        entity.setDetectionLimit(detectionLimitEntity);
-
-        return entity;
-    }
 }

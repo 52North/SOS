@@ -113,7 +113,7 @@ public class InsertionRepository {
     public synchronized ServiceEntity insertService(ServiceEntity service) {
         return serviceAssembler.getOrInsertInstance(service);
     }
-    
+
     public synchronized void removeServiceRelatedData(ServiceEntity service) {
         DatasetQuerySpecifications dsQS = getDatasetQuerySpecification();
         for (DatasetEntity dataset : datasetRepository.findAll(dsQS.matchServices(Long.toString(service.getId())))) {

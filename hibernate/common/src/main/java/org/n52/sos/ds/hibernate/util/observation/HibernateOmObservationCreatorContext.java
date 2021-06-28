@@ -52,6 +52,7 @@ public class HibernateOmObservationCreatorContext extends AbstractOmObservationC
     private DaoFactory daoFactory;
     private HibernateProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository;
     private HibernateProcedureConverter procedureConverter;
+    private FeatureQueryHandler featureQueryHandler;
 
     @Inject
     public HibernateOmObservationCreatorContext(
@@ -70,11 +71,12 @@ public class HibernateOmObservationCreatorContext extends AbstractOmObservationC
             HibernateProcedureConverter procedureConverter,
             BindingRepository bindingRepository) {
         super(serviceMetadataRepository, i18nr, profileHandler, sosHelper, additionalObservationCreatorRepository,
-                contentCacheController, featureQueryHandler, converterRepository, geometryHandler, decoderRepository,
+                contentCacheController, converterRepository, geometryHandler, decoderRepository,
                 bindingRepository);
         this.daoFactory = daoFactory;
         this.procedureConverter = procedureConverter;
         this.procedureDescriptionGeneratorFactoryRepository = procedureDescriptionGeneratorFactoryRepository;
+        this.featureQueryHandler = featureQueryHandler;
 
     }
 
@@ -94,5 +96,12 @@ public class HibernateOmObservationCreatorContext extends AbstractOmObservationC
 
     public HibernateProcedureConverter getProcedureConverter() {
         return procedureConverter;
+    }
+
+    /**
+     * @return the featureQueryHandler
+     */
+    public FeatureQueryHandler getFeatureQueryHandler() {
+        return featureQueryHandler;
     }
 }

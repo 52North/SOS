@@ -30,9 +30,8 @@ package org.n52.sos.aquarius.requests;
 import java.util.Map;
 
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
-public class GetUnitList extends AbstractGetRequest {
+public class GetUnitList extends AbstractAquariusGetRequest {
 
     private String grouIdentifier;
 
@@ -53,7 +52,7 @@ public class GetUnitList extends AbstractGetRequest {
 
     @Override
     public Map<String, String> getQueryParameters() {
-        Map<String, String> parameter = createMap();
+        Map<String, String> parameter = super.getQueryParameters();
         if (hasGroupIdentifier()) {
             parameter.put(AquariusConstants.Parameters.GROUP_IDENTIFIER, getGrouIdentifier());
         }

@@ -32,9 +32,8 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
-public abstract class AbstractGetTimeSeriesData extends AbstractGetRequest {
+public abstract class AbstractGetTimeSeriesData extends AbstractAquariusGetRequest {
 
     private final String timeSeriesUniqueId;
 
@@ -51,7 +50,7 @@ public abstract class AbstractGetTimeSeriesData extends AbstractGetRequest {
 
     @Override
     public Map<String, String> getQueryParameters() {
-        Map<String, String> queryParameters = createMap();
+        Map<String, String> queryParameters = super.getQueryParameters();
         queryParameters.put(AquariusConstants.Parameters.TIME_SERIES_UNIQUE_ID, getTimeSeriesUniqueId());
         if (hasQueryFrom()) {
             queryParameters.put(AquariusConstants.Parameters.QUERY_FROM,

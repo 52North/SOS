@@ -68,7 +68,7 @@ public class ObservationValueCreator extends AbstractObservationValueCreator {
 
     @Override
     public QuantityValue visit(QuantityDataEntity o) {
-        return visit(o, new QuantityValue(o.hasValue() ? o.getValue().doubleValue() : null));
+        return visit(o, new QuantityValue(o.hasValue() ? o.getValue() : null));
     }
 
     @Override

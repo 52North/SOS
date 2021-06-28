@@ -30,16 +30,15 @@ package org.n52.sos.aquarius.requests;
 import java.util.Map;
 
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
-public class GetPublicKey extends AbstractGetRequest {
+public class GetPublicKey extends AbstractAquariusGetRequest {
 
     public GetPublicKey() {
     }
 
     @Override
     public Map<String, String> getQueryParameters() {
-        return createMap();
+        return super.getQueryParameters();
     }
 
     @Override

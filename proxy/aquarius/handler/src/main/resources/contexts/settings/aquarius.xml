@@ -14,21 +14,29 @@
             <property name="title" value="AQUARIUS" />
             <property name="order" value="10.0" />
           </bean>
-          <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-            <property name="key" value="proxy.aquarius.sosSync" />
-            <property name="title" value="Should only data be returned with extended attribute 'SOS_SYNC'?" />
-            <property name="description" value="Define whether the service should only return data with extended attribute 'SOS_SYNC'." />
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.key" />
+            <property name="title" value="Should only timeseries data be returned with extended attribute key?" />
+            <property name="description" value="Define whether the service should only return timeseries data with extended attribute key." />
             <property name="order" value="0.0" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
-            <property name="defaultValue" value="true" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.value" />
+            <property name="title" value="Should only timeseries data be returned with extended attribute value" />
+            <property name="description" value="Define whether the service should only return timeseries data with extended attribute value!" />
+            <property name="order" value="0.1" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
           </bean>
           <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
             <property name="key" value="proxy.aquarius.sosSync.location" />
-            <property name="title" value="Apply extended attribute 'SOS_SYNC' to location queries?" />
-            <property name="description" value="Define whether the service should apply extended attribute 'SOS_SYNC' to location queries." />
+            <property name="title" value="Apply extended attribute to location queries?" />
+            <property name="description" value="Define whether the service should apply the extended attribute to location queries." />
             <property name="order" value="1.0" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
-            <property name="defaultValue" value="true" />
+            <property name="defaultValue" value="false" />
           </bean>
           <bean class="org.n52.faroe.settings.ChoiceSettingDefinition ">
             <property name="key" value="proxy.aquarius.dataType" />

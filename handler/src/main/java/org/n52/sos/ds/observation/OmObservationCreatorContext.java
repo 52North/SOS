@@ -35,7 +35,6 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.OwsServiceMetadataRepository;
-import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
@@ -56,7 +55,6 @@ public class OmObservationCreatorContext extends AbstractOmObservationCreatorCon
             SosHelper sosHelper,
             AdditionalObservationCreatorRepository additionalObservationCreatorRepository,
             ContentCacheController contentCacheController,
-            FeatureQueryHandler featureQueryHandler,
             ConverterRepository converterRepository,
             ProcedureDescriptionGeneratorFactoryRepository procedureDescriptionGeneratorFactoryRepository,
             GeometryHandler geometryHandler,
@@ -64,7 +62,7 @@ public class OmObservationCreatorContext extends AbstractOmObservationCreatorCon
             ProcedureConverter procedureConverter,
             BindingRepository bindingRepository) {
         super(serviceMetadataRepository, i18nr, profileHandler, sosHelper, additionalObservationCreatorRepository,
-                contentCacheController, featureQueryHandler, converterRepository, geometryHandler, decoderRepository,
+                contentCacheController, converterRepository, geometryHandler, decoderRepository,
                 bindingRepository);
         this.procedureConverter = procedureConverter;
         this.procedureDescriptionGeneratorFactoryRepository = procedureDescriptionGeneratorFactoryRepository;

@@ -44,7 +44,6 @@ import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.i18n.LocaleHelper;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
@@ -61,7 +60,6 @@ public abstract class AbstractOmObservationCreatorContext {
     private ProfileHandler profileHandler;
     private AdditionalObservationCreatorRepository additionalObservationCreatorRepository;
     private ContentCacheController contentCacheController;
-    private FeatureQueryHandler featureQueryHandler;
     private ConverterRepository converterRepository;
     private GeometryHandler geometryHandler;
     private Locale defaultLanguage;
@@ -77,7 +75,6 @@ public abstract class AbstractOmObservationCreatorContext {
             SosHelper sosHelper,
             AdditionalObservationCreatorRepository additionalObservationCreatorRepository,
             ContentCacheController contentCacheController,
-            FeatureQueryHandler featureQueryHandler,
             ConverterRepository converterRepository,
             GeometryHandler geometryHandler,
             DecoderRepository decoderRepository,
@@ -89,7 +86,6 @@ public abstract class AbstractOmObservationCreatorContext {
         this.sosHelper = sosHelper;
         this.additionalObservationCreatorRepository = additionalObservationCreatorRepository;
         this.contentCacheController = contentCacheController;
-        this.featureQueryHandler = featureQueryHandler;
         this.converterRepository = converterRepository;
         this.geometryHandler = geometryHandler;
         this.decoderRepository = decoderRepository;
@@ -173,13 +169,6 @@ public abstract class AbstractOmObservationCreatorContext {
      */
     public SosContentCache getCache() {
         return (SosContentCache) contentCacheController.getCache();
-    }
-
-    /**
-     * @return the featureQueryHandler
-     */
-    public FeatureQueryHandler getFeatureQueryHandler() {
-        return featureQueryHandler;
     }
 
     /**

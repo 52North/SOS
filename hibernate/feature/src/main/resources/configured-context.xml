@@ -5,6 +5,9 @@
 
 
     <!-- FeatureQueryHandler implementations from hibernate/feature -->
-    <bean id="featureQueryHandler" class="org.n52.sos.ds.hibernate.HibernateFeatureQueryHandler"/>
+    <beans profile="hibernate">
+      <bean id="featureQueryHandler" class="org.n52.sos.ds.hibernate.HibernateFeatureQueryHandler"/>
+    </beans>
+
 
 </beans>

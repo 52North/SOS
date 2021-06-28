@@ -97,6 +97,6 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
 
     @Override
     public boolean isSupported() {
-        return true;
+        return dao != null;
     }
 }

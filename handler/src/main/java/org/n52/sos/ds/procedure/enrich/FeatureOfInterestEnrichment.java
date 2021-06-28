@@ -47,6 +47,8 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.ApiQueryHelper;
 import org.n52.sos.ds.I18nNameDescriptionAdder;
+import org.n52.sos.ds.feature.create.FeatureVisitorContext;
+import org.n52.sos.ds.feature.create.FeatureVisitorImpl;
 import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 import org.n52.sos.util.SosHelper;
 
@@ -122,10 +124,20 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment
             throws InvalidSridException, OwsExceptionReport {
         final Map<String, AbstractFeature> map = new HashMap<>(featureEntities.size());
         for (final FeatureEntity feature : featureEntities) {
-            final AbstractFeature abstractFeature = createFeature(feature);
+            final AbstractFeature abstractFeature = new FeatureVisitorImpl(getDefaultContext()).visit(feature);
             map.put(abstractFeature.getIdentifier(), abstractFeature);
         }
         return map;
+    }
+
+    private FeatureVisitorContext getDefaultContext() {
+        FeatureVisitorContext context =
+                new FeatureVisitorContext().setGeometryHandler(getProcedureCreationContext().getGeometryHandler())
+                        .setShowAllLanguages(getProcedureCreationContext().isShowAllLanguageValues())
+                        .setDefaultLanguage(getProcedureCreationContext().getDefaultLocale())
+                        .setI18NDAORepository(getProcedureCreationContext().getI18nr())
+                        .setCache(getProcedureCreationContext().getCache());
+        return context;
     }
 
     private AbstractFeature createFeature(FeatureEntity feature) throws InvalidSridException, OwsExceptionReport {

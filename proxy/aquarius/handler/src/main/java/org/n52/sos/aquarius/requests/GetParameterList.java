@@ -30,9 +30,8 @@ package org.n52.sos.aquarius.requests;
 import java.util.Map;
 
 import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
-public class GetParameterList extends AbstractGetRequest {
+public class GetParameterList extends AbstractAquariusGetRequest {
 
     public GetParameterList() {
         super();
@@ -45,7 +44,7 @@ public class GetParameterList extends AbstractGetRequest {
 
     @Override
     public Map<String, String> getQueryParameters() {
-        return createMap();
+        return super.getQueryParameters();
     }
 
 }

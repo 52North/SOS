@@ -103,7 +103,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
 
     @Override
     public boolean isSupported() {
-        return true;
+        return dao != null;
     }
 
     private DbQuery createDbQuery(GetObservationRequest request) {

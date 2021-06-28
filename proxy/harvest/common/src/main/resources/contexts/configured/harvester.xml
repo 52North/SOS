@@ -31,6 +31,7 @@
                     <property name="jobFactory">
                         <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
                     </property>
+                    <property name="transactionManager" ref="transactionManager"/>
                 </bean>
             </property>
         </bean>

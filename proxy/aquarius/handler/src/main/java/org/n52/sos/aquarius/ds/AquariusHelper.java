@@ -29,6 +29,7 @@ package org.n52.sos.aquarius.ds;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.geotools.util.Range;
@@ -64,7 +65,9 @@ public class AquariusHelper {
 
     public static final String PUBLISHED = "proxy.aquarius.published";
 
-    private static final String SOS_SYNC = "proxy.aquarius.sosSync";
+    private static final String EXTENDED_ATTRIBUTE_KEY = "proxy.aquarius.extendenattribute.key";
+
+    private static final String EXTENDED_ATTRIBUTE_VALUE = "proxy.aquarius.extendenattribute.value";
 
     private static final String SOS_SYNC_LOCATION = "proxy.aquarius.sosSync.location";
 
@@ -88,7 +91,9 @@ public class AquariusHelper {
 
     private Published published = Published.ALL;
 
-    private boolean sosSync = Boolean.TRUE.booleanValue();
+    private String extendedAttributeKey;
+
+    private String extendedAttributeValue;
 
     private boolean sosSyncLocation = Boolean.TRUE.booleanValue();
 
@@ -114,9 +119,15 @@ public class AquariusHelper {
         return this;
     }
 
-    @Setting(SOS_SYNC)
-    public AquariusHelper setSosSync(boolean sosSync) {
-        this.sosSync = sosSync;
+    @Setting(EXTENDED_ATTRIBUTE_KEY)
+    public AquariusHelper setextendedAttributeKey(String extendedAttributeKey) {
+        this.extendedAttributeKey = extendedAttributeKey;
+        return this;
+    }
+
+    @Setting(EXTENDED_ATTRIBUTE_VALUE)
+    public AquariusHelper setExtendedAttributeValue(String extendedAttributeValue) {
+        this.extendedAttributeValue = extendedAttributeValue;
         return this;
     }
 
@@ -154,8 +165,16 @@ public class AquariusHelper {
         return !Strings.isNullOrEmpty(getAboveQualifier());
     }
 
-    private boolean isSosSync() {
-        return sosSync;
+    private boolean isSetExtendedAttributeKey() {
+        return extendedAttributeKey != null && !extendedAttributeKey.isEmpty();
+    }
+
+    private boolean isSetExtendedAttributeValue() {
+        return extendedAttributeValue != null && !extendedAttributeValue.isEmpty();
+    }
+
+    private boolean isExtendendAttribute() {
+        return isSetExtendedAttributeKey() && isSetExtendedAttributeValue();
     }
 
     private boolean isSosSyncLocation() {
@@ -246,29 +265,49 @@ public class AquariusHelper {
     public GetLocationDescriptionList getLocationDescriptionListRequest() {
         switch (getPublished()) {
             case FALSE:
-                return (GetLocationDescriptionList) new GetLocationDescriptionList(isSosSync() && isSosSyncLocation())
+                return (GetLocationDescriptionList) getBaseLocationDescriptionListRequest()
                         .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.FALSE.toString());
             case TURE:
-                return (GetLocationDescriptionList) new GetLocationDescriptionList(isSosSync() && isSosSyncLocation())
+                return (GetLocationDescriptionList) getBaseLocationDescriptionListRequest()
                         .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.TRUE.toString());
             case ALL:
             default:
-                return new GetLocationDescriptionList(isSosSync() && isSosSyncLocation());
+                return getBaseLocationDescriptionListRequest();
         }
+    }
+
+    private GetLocationDescriptionList getBaseLocationDescriptionListRequest() {
+        if (isExtendendAttribute() && isSosSyncLocation()) {
+            return new GetLocationDescriptionList(getExtendedFilterMap());
+        }
+        return new GetLocationDescriptionList();
     }
 
     public GetTimeSeriesDescriptionList getGetTimeSeriesDescriptionListRequest() {
         switch (getPublished()) {
             case FALSE:
-                return (GetTimeSeriesDescriptionList) new GetTimeSeriesDescriptionList(isSosSync())
+                return (GetTimeSeriesDescriptionList) getBaseTimeSeriesDescriptionListRequest()
                         .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.FALSE.toString());
             case TURE:
-                return (GetTimeSeriesDescriptionList) new GetTimeSeriesDescriptionList(isSosSync())
+                return (GetTimeSeriesDescriptionList) getBaseTimeSeriesDescriptionListRequest()
                         .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.TRUE.toString());
             case ALL:
             default:
-                return new GetTimeSeriesDescriptionList(isSosSync());
+                return getBaseTimeSeriesDescriptionListRequest();
         }
+    }
+
+    private GetTimeSeriesDescriptionList getBaseTimeSeriesDescriptionListRequest() {
+        if (isExtendendAttribute() && isSosSyncLocation()) {
+            return new GetTimeSeriesDescriptionList(getExtendedFilterMap());
+        }
+        return new GetTimeSeriesDescriptionList();
+    }
+
+    private Map<String, String> getExtendedFilterMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        map.put(extendedAttributeKey, extendedAttributeValue);
+        return map;
     }
 
     public AbstractGetTimeSeriesData getTimeSeriesDataRequest(String timeSeriesUniqueId) {

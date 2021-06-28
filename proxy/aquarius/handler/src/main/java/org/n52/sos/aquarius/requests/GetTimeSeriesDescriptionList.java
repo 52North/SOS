@@ -31,9 +31,8 @@ import java.util.Map;
 
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.pojo.ExtendedFilters;
-import org.n52.sos.proxy.request.AbstractGetRequest;
 
-public class GetTimeSeriesDescriptionList extends AbstractGetRequest {
+public class GetTimeSeriesDescriptionList extends AbstractAquariusGetRequest {
 
     private String locationIdentifier;
 
@@ -41,15 +40,18 @@ public class GetTimeSeriesDescriptionList extends AbstractGetRequest {
 
     private ExtendedFilters extendedFilter;
 
-    public GetTimeSeriesDescriptionList(boolean addExtendedFilterForSOS) {
-        if (addExtendedFilterForSOS) {
-            setExtendedFilter(new ExtendedFilters().addFilter("SOS_SYNC", Boolean.toString(true)));
+    public GetTimeSeriesDescriptionList() {
+    }
+
+    public GetTimeSeriesDescriptionList(Map<String, String> filter) {
+        if (filter != null) {
+            setExtendedFilter(new ExtendedFilters().addFilter(filter));
         }
     }
 
     @Override
     public Map<String, String> getQueryParameters() {
-        Map<String, String> parameters = createMap();
+        Map<String, String> parameters = super.getQueryParameters();
         if (hasLocationIdentifier()) {
             parameters.put(AquariusConstants.Parameters.LOCATION_IDENTIFIER, getLocationIdentifier());
         }

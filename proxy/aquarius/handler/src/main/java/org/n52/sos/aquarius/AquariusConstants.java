@@ -33,6 +33,8 @@ public interface AquariusConstants {
 
     String FILTER = "filter";
 
+    String CONNECTOR = "AquariusConnector";
+
     public interface Paths {
         String SESSION = "session";
 
@@ -83,6 +85,18 @@ public interface AquariusConstants {
         String INCLUDE_GAP_MARKERS = "IncludeGapMarkers";
 
         String PUBLISHED = "Publish";
+
+        String CHANGES_SINCE_TOKEN = "ChangesSinceToken";
+
+        String FIRST_POINT_CHANGED = "firstPointChanged";
+
+        String CHANGE_EVENT_TYPE = "ChangeEventType";
+    }
+
+    interface ChangeEventTypes {
+        String ATTRIBUTE = "Attribute";
+
+        String DATA = "Data";
     }
 
     enum GetParts {

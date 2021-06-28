@@ -968,7 +968,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         if (parameterHolder.isSetParameter()) {
             Set<ParameterEntity<?>> insertParameter = daos.parameter()
                     .insertParameter(parameterHolder.getParameter(), caches.units, observation, session);
-            observation.setParameters(insertParameter);
+            observation.addParameters(insertParameter);
         }
         return observation;
     }

@@ -34,6 +34,7 @@ import org.joda.time.DateTime;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.DescribableEntity;
 import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.FormatEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
@@ -96,18 +97,29 @@ public interface EntityBuilder {
     }
 
     default QuantityDataEntity createDataEntitiy(DateTime time, BigDecimal value, Long id) {
-        QuantityDataEntity entity = createDataEntitiy(time, id);
+        QuantityDataEntity entity = createDataEntity(time, id);
         entity.setValue(value);
         return entity;
     }
+    
+    default FormatEntity createFormat(String format) {
+        FormatEntity entity = new FormatEntity();
+        entity.setFormat(format);
+        return entity;
+    }
 
-    default QuantityDataEntity createDataEntitiy(DateTime time, Long id) {
+    default QuantityDataEntity createDataEntitiy(DateTime time, BigDecimal value) {
+        return createDataEntitiy(time, value, null);
+    }
+    
+    default QuantityDataEntity createDataEntity(DateTime time, Long id) {
         QuantityDataEntity entity = new QuantityDataEntity();
         if (id != null) {
             entity.setId(id);
         }
         entity.setSamplingTimeStart(time.toDate());
         entity.setSamplingTimeEnd(time.toDate());
+        addDescribeableData(entity, null, null, null, null);
         return entity;
     }
 

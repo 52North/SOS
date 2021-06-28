@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.assembler.core.CategoryAssembler;
@@ -65,6 +66,7 @@ import org.n52.sensorweb.server.db.repositories.core.UnitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Transactional
 public class InsertionRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertionRepository.class);
@@ -111,6 +113,20 @@ public class InsertionRepository {
     public synchronized ServiceEntity insertService(ServiceEntity service) {
         return serviceAssembler.getOrInsertInstance(service);
     }
+    
+    public synchronized void removeServiceRelatedData(ServiceEntity service) {
+        DatasetQuerySpecifications dsQS = getDatasetQuerySpecification();
+        for (DatasetEntity dataset : datasetRepository.findAll(dsQS.matchServices(Long.toString(service.getId())))) {
+            dataRepository.deleteByDataset(datasetRepository.getById(dataset.getId()));
+        }
+        datasetRepository.deleteByService(service);
+        categoryAssembler.clearUnusedForService(service);
+        offeringAssembler.clearUnusedForService(service);
+        procedureAssembler.clearUnusedForService(service);
+        featureAssembler.clearUnusedForService(service);
+        phenomenonAssembler.clearUnusedForService(service);
+        platformAssembler.clearUnusedForService(service);
+    }
 
     public synchronized DatasetEntity insertDataset(DatasetEntity dataset) {
         ProcedureEntity procedure = insertProcedure(dataset.getProcedure());
@@ -121,7 +137,7 @@ public class InsertionRepository {
         PlatformEntity platform = insertPlatform(dataset.getPlatform());
         UnitEntity unit = insertUnit(dataset.getUnit());
         Set<TagEntity> insertTags = new LinkedHashSet<>();
-        if (dataset.hasTagss()) {
+        if (dataset.hasTags()) {
             insertTags = insertTags(dataset.getTags());
         }
         return insertDataset(dataset, category, procedure, offering, feature, phenomenon, platform, unit, insertTags);
@@ -144,27 +160,27 @@ public class InsertionRepository {
     }
 
     private OfferingEntity insertOffering(OfferingEntity offering) {
-        return offeringAssembler.getOrInsertInstance(offering);
+        return offeringAssembler.insertOrUpdateInstance(offering);
     }
 
     private ProcedureEntity insertProcedure(ProcedureEntity procedure) {
-        return procedureAssembler.getOrInsertInstance(procedure);
+        return procedureAssembler.insertOrUpdateInstance(procedure);
     }
 
     private CategoryEntity insertCategory(CategoryEntity category) {
-        return categoryAssembler.getOrInsertInstance(category);
+        return categoryAssembler.insertOrUpdateInstance(category);
     }
 
     private AbstractFeatureEntity<?> insertFeature(AbstractFeatureEntity feature) {
-        return featureAssembler.getOrInsertInstance(feature);
+        return featureAssembler.insertOrUpdateInstance(feature);
     }
 
     private PhenomenonEntity insertPhenomenon(PhenomenonEntity phenomenon) {
-        return phenomenonAssembler.getOrInsertInstance(phenomenon);
+        return phenomenonAssembler.insertOrUpdateInstance(phenomenon);
     }
 
     private PlatformEntity insertPlatform(PlatformEntity platform) {
-        return platformAssembler.getOrInsertInstance(platform);
+        return platformAssembler.insertOrUpdateInstance(platform);
     }
 
     private Set<TagEntity> insertTags(Collection<TagEntity> tags) {
@@ -172,7 +188,7 @@ public class InsertionRepository {
     }
 
     private TagEntity insertTag(TagEntity tag) {
-        return tagAssembler.getOrInsertInstance(tag);
+        return tagAssembler.insertOrUpdateInstance(tag);
     }
 
     private UnitEntity insertUnit(UnitEntity unit) {
@@ -190,20 +206,21 @@ public class InsertionRepository {
         data.setDataset(dataset);
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
-                && dataset.getFirstValueAt().after(data.getSamplingTimeStart()))) {
+        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt() && dataset.getFirstValueAt()
+                .after(data.getSamplingTimeStart()))) {
             minChanged = true;
             dataset.setFirstValueAt(data.getSamplingTimeStart());
         }
-        if (!dataset.isSetLastValueAt() || (dataset.isSetLastValueAt()
-                && dataset.getLastValueAt().before(data.getSamplingTimeEnd()))) {
+        if (!dataset.isSetLastValueAt() || (dataset.isSetLastValueAt() && dataset.getLastValueAt()
+                .before(data.getSamplingTimeEnd()))) {
             maxChanged = true;
             dataset.setLastValueAt(data.getSamplingTimeEnd());
         }
         DataEntity<?> insertedData = null;
         if (minChanged) {
             if (dataset.getFirstObservation() != null) {
-                data.setId(dataset.getFirstObservation().getId());
+                data.setId(dataset.getFirstObservation()
+                        .getId());
             }
             insertedData = (DataEntity<?>) dataRepository.saveAndFlush(data);
             dataset.setFirstObservation(insertedData);
@@ -213,8 +230,9 @@ public class InsertionRepository {
                 dataset.setLastObservation(insertedData);
             } else {
                 if (dataset.getLastObservation() != null && (dataset.getFirstObservation() == null
-                        || (dataset.getFirstObservation() != null && dataset.getFirstObservation()
-                                .getId().equals(dataset.getLastObservation()
+                        || (dataset.getFirstObservation() != null && !dataset.getFirstObservation()
+                                .getId()
+                                .equals(dataset.getLastObservation()
                                         .getId())))) {
                     data.setId(dataset.getLastObservation()
                             .getId());
@@ -232,7 +250,7 @@ public class InsertionRepository {
             }
         }
         if (minChanged || maxChanged) {
-            datasetRepository.saveAndFlush(dataset);
+            updateDataset(dataset);
         }
         return (T) insertedData;
     }

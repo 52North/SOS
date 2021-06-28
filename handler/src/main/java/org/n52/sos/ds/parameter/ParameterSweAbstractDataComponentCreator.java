@@ -65,6 +65,8 @@ public class ParameterSweAbstractDataComponentCreator {
             return visit((BooleanParameterEntity) parameter);
         } else if (parameter instanceof CategoryParameterEntity) {
             return visit((CategoryParameterEntity) parameter);
+        } else if (parameter instanceof TextParameterEntity) {
+            return visit((TextParameterEntity) parameter);
         } else if (parameter instanceof XmlParameterEntity) {
             return visit((XmlParameterEntity) parameter);
         } else if (parameter instanceof JsonParameterEntity) {
@@ -100,6 +102,9 @@ public class ParameterSweAbstractDataComponentCreator {
                 ParameterEntity param = (ParameterEntity) o;
                 String fieldName = getFieldName(param);
                 record.addField(new SweField(fieldName, this.visit(param)));
+                if (p.isSetDescription()) {
+                    record.setDescription(p.getDescription());
+                }
             }
         }
         return setCommonValues(record, p);

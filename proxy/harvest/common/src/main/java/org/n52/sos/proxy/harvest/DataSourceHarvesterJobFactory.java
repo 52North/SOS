@@ -101,7 +101,7 @@ public class DataSourceHarvesterJobFactory implements Constructable {
      * @return the updateDefinition
      */
     public String getTemporalCronExpression() {
-        return cronFullExpression;
+        return cronTemporalExpression;
     }
 
     /**

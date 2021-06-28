@@ -555,7 +555,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     Map<UoM, UnitEntity> unitCache = Maps.newHashMap();
                     Set<ParameterEntity<?>> parameter = new ParameterDAO().insertParameter(
                             ((AbstractSamplingFeature) abstractFeature).getParameters(), unitCache, feature, session);
-                    feature.setParameters(parameter);
+                    feature.addParameters(parameter);
                 }
             }
             return feature;

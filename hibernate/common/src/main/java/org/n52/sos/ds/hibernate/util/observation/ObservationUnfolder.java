@@ -420,22 +420,26 @@ public class ObservationUnfolder {
             throws CodedException {
         Value<?> observedValue = null;
         if (dataComponent instanceof SweQuantity) {
-            observedValue = new QuantityValue(Double.parseDouble(token));
+            observedValue = checkTokenNull(token) ? new QuantityValue() : new QuantityValue(Double.parseDouble(token));
             observedValue.setUnit(((SweQuantity) dataComponent).getUom());
         } else if (dataComponent instanceof SweBoolean) {
-            observedValue = new BooleanValue(Boolean.parseBoolean(token));
+            observedValue = checkTokenNull(token) ? new BooleanValue() : new BooleanValue(Boolean.parseBoolean(token));
         } else if (dataComponent instanceof SweText) {
-            observedValue = new TextValue(token);
+            observedValue = checkTokenNull(token) ? new TextValue() : new TextValue(token);
         } else if (dataComponent instanceof SweCategory) {
-            observedValue = new CategoryValue(token);
+            observedValue = checkTokenNull(token) ? new CategoryValue() : new CategoryValue(token);
             observedValue.setUnit(((SweCategory) dataComponent).getCodeSpace());
         } else if (dataComponent instanceof SweCount) {
-            observedValue = new CountValue(Integer.parseInt(token));
+            observedValue = checkTokenNull(token) ? new CountValue() : new CountValue(Integer.parseInt(token));
         } else {
             throw new NoApplicableCodeException().withMessage(SWE_FILE_NOT_SUPPORTTED_LOG_TEMPLATE,
                     dataComponent != null ? dataComponent.getClass().getName() : NULL);
         }
         return observedValue;
+    }
+
+    private boolean checkTokenNull(String token) {
+        return token == null || token.isEmpty() || token.equalsIgnoreCase(NULL) || token.equalsIgnoreCase("NaN");
     }
 
     private Value<?> parseSweDataRecord(SweDataRecord record, List<String> block, IncDecInteger tokenIndex,

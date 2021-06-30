@@ -42,7 +42,6 @@ import org.n52.shetland.ogc.sos.request.InsertResultRequest;
 import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
-import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
@@ -54,10 +53,10 @@ import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.svalbard.encode.exception.EncodingException;
 
-import net.opengis.swe.x20.DataRecordDocument;
-import net.opengis.swe.x20.TextEncodingDocument;
-
 public class InsertResultInsertDAOTest extends AbstractObservationInsertDAOTest {
+
+    private static final DateTime TIME4 = new DateTime("2013-07-18T03:00:00Z");;
+    private static final Double VAL4 = null;
 
     @Before
     public void setUp() throws OwsExceptionReport, ConverterException, EncodingException {
@@ -81,8 +80,8 @@ public class InsertResultInsertDAOTest extends AbstractObservationInsertDAOTest 
         insertResultTemplate(RESULT_TEMPLATE, PROCEDURE3, OFFERING3, OBSPROP3, FEATURE3);
         InsertResultRequest req = new InsertResultRequest();
         req.setTemplateIdentifier(RESULT_TEMPLATE);
-        req.setResultValues(makeResultValueString(CollectionHelper.list(TIME1, TIME2, TIME3),
-                CollectionHelper.list(VAL1, VAL2, VAL3)));
+        req.setResultValues(makeResultValueString(CollectionHelper.list(TIME1, TIME2, TIME3, TIME4),
+                CollectionHelper.list(VAL1, VAL2, VAL3, VAL4)));
         InsertResultResponse resp = insertResultDAO.insertResult(req);
         this.serviceEventBus.submit(new ResultInsertion(req, resp));
         assertInsertionAftermathBeforeAndAfterCacheReload();
@@ -90,6 +89,7 @@ public class InsertResultInsertDAOTest extends AbstractObservationInsertDAOTest 
         checkObservation(OFFERING1, PROCEDURE3, OBSPROP3, TIME1, PROCEDURE3, OBSPROP3, FEATURE3, VAL1, TEMP_UNIT);
         checkObservation(OFFERING2, PROCEDURE3, OBSPROP3, TIME2, PROCEDURE3, OBSPROP3, FEATURE3, VAL2, TEMP_UNIT);
         checkObservation(OFFERING3, PROCEDURE3, OBSPROP3, TIME3, PROCEDURE3, OBSPROP3, FEATURE3, VAL3, TEMP_UNIT);
+        checkObservation(OFFERING3, PROCEDURE3, OBSPROP3, TIME4, PROCEDURE3, OBSPROP3, FEATURE3, VAL4, TEMP_UNIT);
     }
 
     private void insertResultTemplate(String identifier, String procedureId, String offeringId, String obsPropId,
@@ -145,7 +145,9 @@ public class InsertResultInsertDAOTest extends AbstractObservationInsertDAOTest 
             }
             sb.append(times.get(i));
             sb.append(TOKEN_SEPARATOR);
-            sb.append(values.get(i));
+            if (values.get(i) != null) {
+                sb.append(values.get(i));
+            }
         }
         return sb.toString();
     }

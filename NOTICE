@@ -105,7 +105,7 @@ This project includes:
   Apache Log4j API under Apache License, Version 2.0
   Apache Thrift under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
-  AspectJ tools under Eclipse Public License - v 1.0
+  AspectJ Tools (Compiler) under Eclipse Public License - v 2.0
   AspectJ weaver under Eclipse Public License - v 1.0
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   cdm-core under BSD 3-Clause License
@@ -169,7 +169,6 @@ This project includes:
   INSPIRE OM Observation References schema (spec. v3.0) under The Apache Software License, Version 2.0
   INSPIRE OM Process schema (spec. v3.0) under The Apache Software License, Version 2.0
   INSPIRE OM Specialised Observation schema (spec. v3.0.1) under The Apache Software License, Version 2.0
-  IntelliJ IDEA Annotations under The Apache Software License, Version 2.0
   ISO 19139 CV_DiscreteCoverage model (spec. v0.2.2) under The Apache Software License, Version 2.0
   istack common utility code runtime under CDDL 1.1 or GPL2 w/ CPE
   J2ObjC Annotations under The Apache Software License, Version 2.0
@@ -208,10 +207,6 @@ This project includes:
   JSONLD Java :: Core under Revised BSD License
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
-  Kotlin Stdlib under The Apache License, Version 2.0
-  Kotlin Stdlib Common under The Apache License, Version 2.0
-  Kotlin Stdlib Jdk7 under The Apache License, Version 2.0
-  Kotlin Stdlib Jdk8 under The Apache License, Version 2.0
   lang-mustache under Server Side Public License, v 1 or Elastic License 2.0
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses

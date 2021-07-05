@@ -2180,7 +2180,7 @@
             <url>https://52north.org/maven/repo/releases</url>
         </repository>
         <repository>
-            <id>maven-snapshots</id>
+            <id>sonatype-nexus-snapshots</id>
             <name>Maven Central Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases>

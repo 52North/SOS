@@ -17,4 +17,4 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: mvn -fae -U -B clean license:check install -P check --file pom.xml
+      run: mvn -U -B clean install

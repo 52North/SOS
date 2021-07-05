@@ -103,7 +103,7 @@
         <version.jts>1.18.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>8.2.1</version.arctic-sea>
+        <version.arctic-sea>8.3.0-SNAPSHOT</version.arctic-sea>
         <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
         <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
@@ -1408,6 +1408,17 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
+                <version>${version.springframework.security}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
                 <version>${version.springframework.security}</version>
                 <exclusions>
                     <exclusion>

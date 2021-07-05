@@ -445,7 +445,7 @@ public class ResultHandlingHelper implements HibernateUnproxy {
                     return value;
                 }
             }
-        } else if (observedProperty.equals(definition)) {
+        } else if (observedProperty.equals(definition) && observation.hasValue()) {
             if (observation instanceof QuantityDataEntity) {
                 return String.valueOf(((QuantityDataEntity) observation).getValue());
             } else if (observation instanceof BooleanDataEntity) {

@@ -125,7 +125,7 @@ public class InsertionRepository {
         PlatformEntity platform = insertPlatform(dataset.getPlatform());
         UnitEntity unit = insertUnit(dataset.getUnit());
         Set<TagEntity> insertTags = new LinkedHashSet<>();
-        if (dataset.hasTagss()) {
+        if (dataset.hasTags()) {
             insertTags = insertTags(dataset.getTags());
         }
         return insertDataset(dataset, category, procedure, offering, feature, phenomenon, platform, unit, insertTags);

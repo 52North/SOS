@@ -29,6 +29,7 @@ package org.n52.sos.ds.hibernate;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -860,8 +861,12 @@ public abstract class AbstractInsertDAOTest extends HibernateTestCase {
         assertThat(timeInstant.getValue()
                 .toDate(), is(time.toDate()));
         QuantityValue quantityValue = (QuantityValue) value.getValue();
-        assertThat(quantityValue.getValue()
-                .doubleValue(), is(obsVal));
+        if (obsVal != null) {
+            assertTrue(quantityValue.isSetValue());
+            assertThat(quantityValue.getValue().doubleValue(), is(obsVal));
+        } else {
+            assertFalse(quantityValue.isSetValue());
+        }
         assertThat(quantityValue.getUnit(), is(obsUnit));
     }
 

@@ -160,27 +160,27 @@ public class InsertionRepository {
     }
 
     private OfferingEntity insertOffering(OfferingEntity offering) {
-        return offeringAssembler.insertOrUpdateInstance(offering);
+        return offeringAssembler.getOrInsertInstance(offering);
     }
 
     private ProcedureEntity insertProcedure(ProcedureEntity procedure) {
-        return procedureAssembler.insertOrUpdateInstance(procedure);
+        return procedureAssembler.getOrInsertInstance(procedure);
     }
 
     private CategoryEntity insertCategory(CategoryEntity category) {
-        return categoryAssembler.insertOrUpdateInstance(category);
+        return categoryAssembler.getOrInsertInstance(category);
     }
 
     private AbstractFeatureEntity<?> insertFeature(AbstractFeatureEntity feature) {
-        return featureAssembler.insertOrUpdateInstance(feature);
+        return featureAssembler.getOrInsertInstance(feature);
     }
 
     private PhenomenonEntity insertPhenomenon(PhenomenonEntity phenomenon) {
-        return phenomenonAssembler.insertOrUpdateInstance(phenomenon);
+        return phenomenonAssembler.getOrInsertInstance(phenomenon);
     }
 
     private PlatformEntity insertPlatform(PlatformEntity platform) {
-        return platformAssembler.insertOrUpdateInstance(platform);
+        return platformAssembler.getOrInsertInstance(platform);
     }
 
     private Set<TagEntity> insertTags(Collection<TagEntity> tags) {
@@ -188,7 +188,7 @@ public class InsertionRepository {
     }
 
     private TagEntity insertTag(TagEntity tag) {
-        return tagAssembler.insertOrUpdateInstance(tag);
+        return tagAssembler.getOrInsertInstance(tag);
     }
 
     private UnitEntity insertUnit(UnitEntity unit) {

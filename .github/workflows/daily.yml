@@ -1,23 +1,10 @@
-name: Java CI
+name: Daily Snapshot build
 
-on: [push]
+on:
+  schedule:
+    - cron:  '30 1 * * *'
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        java: [ 8, 9, 11, 15 ]
-    runs-on: ubuntu-latest
-    name: Java ${{ matrix.java }} compile
-    
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK ${{ matrix.java }}
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: Build with Maven
-      run: mvn -U -B clean install
   publish-snapshot:
     needs: build
     runs-on: ubuntu-latest

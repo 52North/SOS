@@ -33,19 +33,6 @@
         <url>https://travis-ci.org/52North/SOS</url>
     </ciManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>n52-releases-dist</id>
-            <name>repository for 52North releases</name>
-            <url>dav:https://52north.org/maven/repo/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>n52-snapshots-dist</id>
-            <name>repository for 52North snapshots</name>
-            <url>dav:https://52north.org/maven/repo/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <licenses>
         <license>
             <name>GPLv2</name>
@@ -85,7 +72,7 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.2.22</version.postgresql>
+        <version.postgresql>42.2.23</version.postgresql>
         <version.postgis>2.5.0</version.postgis>
         <version.ojdbc8>21.1.0.0</version.ojdbc8>
         <version.sqljdbc>9.2.1.jre8</version.sqljdbc>
@@ -96,7 +83,7 @@
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>25.1</version.geotools>
-        <version.jackson>2.12.3</version.jackson>
+        <version.jackson>2.12.4</version.jackson>
         <version.logback>1.2.3</version.logback>
         <version.slf4j>1.7.31</version.slf4j>
         <version.netcdf>5.4.1</version.netcdf>
@@ -2236,7 +2223,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.5</version>
+                    <version>11.0.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

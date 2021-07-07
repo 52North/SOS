@@ -33,19 +33,6 @@
         <url>https://travis-ci.org/52North/SOS</url>
     </ciManagement>
 
-    <distributionManagement>
-        <repository>
-            <id>n52-releases-dist</id>
-            <name>repository for 52North releases</name>
-            <url>dav:https://52north.org/maven/repo/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>n52-snapshots-dist</id>
-            <name>repository for 52North snapshots</name>
-            <url>dav:https://52north.org/maven/repo/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <licenses>
         <license>
             <name>GPLv2</name>

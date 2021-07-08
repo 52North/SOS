@@ -27,6 +27,7 @@
  */
 package org.n52.sos.proxy.harvest;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,11 +36,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.Validation;
 import org.n52.faroe.annotation.Configurable;
 import org.n52.faroe.annotation.Setting;
 import org.n52.io.task.ScheduledJob;
 import org.n52.janmayen.lifecycle.Constructable;
+import org.quartz.CronExpression;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +91,7 @@ public class DataSourceHarvesterJobFactory implements Constructable {
     @Setting(PROXY_FULL_HARVEST_UPDATE)
     public void setFullCronExpression(String cronExpression) {
         Validation.notNullOrEmpty("Cron expression for full update!", cronExpression);
+        validate(cronExpression);
         if (this.cronFullExpression == null) {
             this.cronFullExpression = cronExpression;
             reschedule();
@@ -111,6 +115,7 @@ public class DataSourceHarvesterJobFactory implements Constructable {
     @Setting(PROXY_TEMPORAL_HARVEST_UPDATE)
     public void setTemporalCronExpression(String cronExpression) {
         Validation.notNullOrEmpty("Cron expression for temporal update!", cronExpression);
+        validate(cronExpression);
         if (this.cronTemporalExpression == null) {
             this.cronTemporalExpression = cronExpression;
             reschedule();
@@ -162,6 +167,17 @@ public class DataSourceHarvesterJobFactory implements Constructable {
             return true;
         }
         return false;
+    }
+
+    private void validate(String cronExpression) {
+        try {
+            new CronExpression(cronExpression);
+        } catch (ParseException e) {
+            throw new ConfigurationError(String.format(
+                    "%s is invalid! Please check http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials"
+                    + "/tutorial-lesson-06.html",
+                    cronExpression));
+        }
     }
 
     @Override

@@ -166,7 +166,7 @@ public class HttpClientHandler implements Constructable, Destroyable {
         try {
             HttpPost httpPost = new HttpPost(url);
             httpPost.addHeader(HttpHeaders.CONTENT_TYPE, contentType.toString());
-            LOGGER.debug("SOS request: {}", content);
+            logRequest(content);
             httpPost.setEntity(new StringEntity(content));
             return getContent(executeHttpRequest(httpPost));
         } catch (IOException e) {
@@ -218,7 +218,6 @@ public class HttpClientHandler implements Constructable, Destroyable {
             }
         }
         URI uri = uriBuilder.build();
-        LOGGER.debug("Executing GET method '{}'", uri);
         return uri;
     }
 

@@ -49,10 +49,8 @@ import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ServiceEntity;
+import org.n52.series.db.beans.TextDataEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.beans.dataset.DatasetType;
-import org.n52.series.db.beans.dataset.ObservationType;
-import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.aquarius.ds.AquariusHelper;
 import org.n52.sos.aquarius.ds.AquariusTimeHelper;
@@ -62,6 +60,7 @@ import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
+import org.n52.sos.proxy.Counter;
 import org.n52.sos.proxy.harvest.EntityBuilder;
 
 public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper {
@@ -200,8 +199,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default DatasetEntity createDataset(ProcedureEntity procedure, OfferingEntity offering, FeatureEntity feature,
             PlatformEntity platform, TimeSeriesDescription timeSeries, Parameter parameter, ServiceEntity service) {
-        DatasetEntity entity = new DatasetEntity(DatasetType.timeseries, ObservationType.simple, ValueType.quantity);
-        addDescribeableData(entity, timeSeries.getUniqueId(), timeSeries.getIdentifier()
+        DatasetEntity entity = createDataset(timeSeries.getUniqueId(), timeSeries.getIdentifier()
                 .replaceAll(parameter.getIdentifier(), parameter.getDisplayName()), timeSeries.getIdentifier(),
                 service);
         entity.setProcedure(procedure);
@@ -209,38 +207,9 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         entity.setFeature(feature);
         entity.setPlatform(platform);
         // tags???
-        entity.setDeleted(Boolean.FALSE);
-        entity.setPublished(Boolean.TRUE);
         entity.setInsitu(Boolean.TRUE);
         entity.setMobile(Boolean.FALSE);
         entity.setUnit(createUnit(timeSeries.getUnit(), service));
-        return entity;
-    }
-
-    default DatasetEntity updateDataset(DatasetEntity entity, Point timeSeriesDataFirstPoint,
-            Point timeSeriesDataLastPoint) {
-        if (timeSeriesDataFirstPoint != null) {
-            DateTime dateTime = checkDateTimeStringFor24(timeSeriesDataFirstPoint.getTimestamp());
-            entity.setFirstValueAt(dateTime.toDate());
-            entity.setFirstObservation(createDataEntity(dateTime, timeSeriesDataFirstPoint, null));
-            if (timeSeriesDataFirstPoint.hasQualifier()) {
-                entity.setFirstQuantityValue(null);
-            } else {
-                entity.setFirstQuantityValue(entity.getFirstObservation()
-                        .getValueQuantity());
-            }
-        }
-        if (timeSeriesDataLastPoint != null) {
-            DateTime dateTime = checkDateTimeStringFor24(timeSeriesDataLastPoint.getTimestamp());
-            entity.setLastValueAt(dateTime.toDate());
-            entity.setLastObservation(createDataEntity(dateTime, timeSeriesDataLastPoint, null));
-            if (timeSeriesDataLastPoint.hasQualifier()) {
-                entity.setLastQuantityValue(null);
-            } else {
-                entity.setLastQuantityValue(entity.getLastObservation()
-                        .getValueQuantity());
-            }
-        }
         return entity;
     }
 
@@ -255,30 +224,82 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return entity;
     }
 
-    default DataEntity<?> createDataEntity(DateTime dateTime, Point point, Long id) {
-        if (point.hasQualifier()) {
-            DataEntity<?> entity = createDataEntity(dateTime, id);
-            entity.setDetectionLimit(createDetectionLimit(point));
-        }
-        return createDataEntity(dateTime, point.getValue()
-                .getNumericAsBigDecimal(), null);
+    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter) {
+        return createDataEntity(dataset, point, counter.next());
     }
 
-    default DetectionLimitEntity createDetectionLimit(Point point) {
-        DetectionLimitEntity entity = new DetectionLimitEntity();
-        entity.setFlag(Integer.valueOf(point.getQualifier()
-                .getKey()
-                .equals(QualifierKey.BELOW) ? -1 : 1)
-                .shortValue());
-        entity.setDetectionLimit(point.getValue()
-                .getNumericAsBigDecimal());
-        return entity;
+    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Long id) {
+        DateTime time = checkDateTimeStringFor24(point.getTimestamp());
+        if (point.getValue()
+                .isNumeric()) {
+            QuantityDataEntity dataEntity = createQuantityDataEntity(dataset, time, id);
+            if (point.hasQualifier()) {
+                addDetectionLimit(dataEntity, point);
+            } else {
+                dataEntity.setValue(getValue(point.getValue()
+                        .getNumeric()));
+            }
+            return dataEntity;
+        } else if (point.getValue()
+                .isDisplay()) {
+            TextDataEntity dataEntity = createTextDataEntity(dataset, time, id);
+            dataEntity.setValue(point.getValue()
+                    .getDisplay());
+            return dataEntity;
+        }
+        return null;
+    }
+
+    default QuantityDataEntity createQuantityDataEntity(Long datasetId) {
+        QuantityDataEntity mde = new QuantityDataEntity();
+        mde.setDatasetId(datasetId);
+        return mde;
+    }
+
+    default QuantityDataEntity createQuantityDataEntity(DatasetEntity dataset, DateTime time, Long id) {
+        return (QuantityDataEntity) addDefault(new QuantityDataEntity(), dataset, time, id);
+    }
+
+    default TextDataEntity createTextDataEntity(DatasetEntity dataset, DateTime time, Long id) {
+        return (TextDataEntity) addDefault(new TextDataEntity(), dataset, time, id);
+    }
+
+    default void addDetectionLimit(QuantityDataEntity dataEntity, Point point) {
+        DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
+        detectionLimitEntity.setDetectionLimit(getValue(point.getValue()
+                .getNumeric()));
+
+        if (QualifierKey.ABOVE.equals(point.getQualifier()
+                .getKey())) {
+            detectionLimitEntity.setFlag(Short.valueOf("1"));
+        } else if (QualifierKey.BELOW.equals(point.getQualifier()
+                .getKey())) {
+            detectionLimitEntity.setFlag(Short.valueOf("-1"));
+        }
+        dataEntity.setDetectionLimit(detectionLimitEntity);
+    }
+
+    default DataEntity<?> addDefault(DataEntity<?> data, DatasetEntity dataset, DateTime time, Long id) {
+        data.setId(id);
+        data.setDataset(dataset);
+        data.setDatasetId(dataset.getId());
+        data.setSamplingTimeStart(time.toDate());
+        data.setSamplingTimeEnd(time.toDate());
+        addDescribeableData(data, null, null, null, null);
+        return data;
     }
 
     default UnitEntity createUnit(String unit, ServiceEntity service) {
         UnitEntity entity = createUnit(unit, unit, null, service);
         addDescribeableData(entity, unit, unit, unit, service);
         return entity;
+    }
+
+    default BigDecimal getValue(Double value) {
+        if (value != null && !value.isNaN()) {
+            return BigDecimal.valueOf(value);
+        }
+        return null;
     }
 
 }

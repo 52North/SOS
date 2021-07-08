@@ -30,6 +30,7 @@ package org.n52.sos.aquarius.harvest;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
+import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.TemporalHarvesterJob;
@@ -46,8 +47,6 @@ public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob i
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusTemporalHarvesterJob.class);
 
-    private static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
-
     @Inject
     private AquariusTemporalUpdater updater;
 
@@ -55,10 +54,10 @@ public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob i
     protected void save(JobExecutionContext context, AquariusConnector connector) {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         DateTime now = DateTime.now();
-        updater.update(now, mergedJobDataMap, connector);
+        updater.update(mergedJobDataMap, connector);
         context.getJobDetail()
                 .getJobDataMap()
-                .put(LAST_UPDATE_TIME, now);
+                .put(AquariusConstants.LAST_UPDATE_TIME, now);
         LOGGER.info(context.getJobDetail()
                 .getKey() + " execution ends.");
         getEventBus().submit(new UpdateCache());

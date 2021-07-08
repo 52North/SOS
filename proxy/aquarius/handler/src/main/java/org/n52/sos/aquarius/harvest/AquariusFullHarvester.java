@@ -25,16 +25,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.requests;
+package org.n52.sos.aquarius.harvest;
 
-import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractDeleteRequest;
+import org.n52.series.db.beans.ServiceEntity;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
-public class DeleteRequest extends AbstractDeleteRequest {
+public class AquariusFullHarvester extends AbstractAquariusHarvester {
 
-    @Override
-    public String getPath() {
-        return AquariusConstants.Paths.SESSION;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AquariusFullHarvester.class);
+
+    @Transactional(rollbackFor = Exception.class)
+    public void harvest(AquariusConnector connector) {
+        procedures.clear();
+        phenomenon.clear();
+        categories.clear();
+        offerings.clear();
+        parameters.clear();
+        features.clear();
+        platforms.clear();
+        try {
+            ServiceEntity service = getOrInsertServiceEntity();
+            parameters = getParameterList(connector);
+            harvestDatasets(service, connector);
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while harvesting data!", e);
+        }
     }
 
 }

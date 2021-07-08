@@ -56,15 +56,15 @@ public interface AquariusDatasource extends ProxyDatasource {
 
     String CONNECTOR_KEY = "proxy.aquarius.connector";
 
-    String PROXY_USERNAME_TITLE = "User name";
+    String PROXY_USERNAME_TITLE = "Proxy Service User name";
 
-    String PROXY_USERNAME_DESCRIPTION = "Your database server user name. The default value for Aquarius is \"user\".";
+    String PROXY_USERNAME_DESCRIPTION = "Your proxy server user name. The default value for Aquarius is \"user\".";
 
     String AQUARIUS_USERNAME_DEFAULT_VALUE = "user";
 
-    String PROXY_PASSWORD_TITLE = "Password";
+    String PROXY_PASSWORD_TITLE = "Proxy Service Password";
 
-    String PROXY_PASSWORD_DESCRIPTION = "Your database server password. The default value is \"password\".";
+    String PROXY_PASSWORD_DESCRIPTION = "Your proxy server password. The default value is \"password\".";
 
     String AQUARIUS_PASSWORD_DEFAULT_VALUE = "passsword";
 
@@ -96,7 +96,7 @@ public interface AquariusDatasource extends ProxyDatasource {
     default StringSettingDefinition createServiceUsernameDefinition() {
         StringSettingDefinition sd = new StringSettingDefinition();
         sd.setGroup(BASE_GROUP);
-        sd.setOrder(1);
+        sd.setOrder(6);
         sd.setKey(PROXY_USERNAME_KEY);
         sd.setTitle(PROXY_USERNAME_TITLE);
         return sd;
@@ -115,7 +115,7 @@ public interface AquariusDatasource extends ProxyDatasource {
     default StringSettingDefinition createServiceHostDefinition() {
         StringSettingDefinition sd = new StringSettingDefinition();
         sd.setGroup(BASE_GROUP);
-        sd.setOrder(4);
+        sd.setOrder(8);
         sd.setKey(PROXY_HOST_KEY);
         sd.setTitle(PROXY_HOST_TITLE);
         return sd;
@@ -134,7 +134,7 @@ public interface AquariusDatasource extends ProxyDatasource {
     default StringSettingDefinition createServicePathDefinition() {
         StringSettingDefinition sd = new StringSettingDefinition();
         sd.setGroup(BASE_GROUP);
-        sd.setOrder(4);
+        sd.setOrder(9);
         sd.setKey(PROXY_PATH_KEY);
         sd.setTitle(PROXY_PATH_TITLE);
         return sd;
@@ -148,7 +148,7 @@ public interface AquariusDatasource extends ProxyDatasource {
     default StringSettingDefinition createServicePasswordDefinition() {
         StringSettingDefinition sd = new StringSettingDefinition();
         sd.setGroup(BASE_GROUP);
-        sd.setOrder(2);
+        sd.setOrder(7);
         sd.setKey(PROXY_PASSWORD_KEY);
         sd.setTitle(PROXY_PASSWORD_TITLE);
         return sd;

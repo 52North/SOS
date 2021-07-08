@@ -71,7 +71,8 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
 
     @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?>> newHashSet(createUsernameDefinition(usernameDefault),
+        return Sets.<SettingDefinition<?>> newHashSet(
+                createServiceUsernameDefinition(usernameDefault, usernameDescription),
                 createServicePasswordDefinition(passwordDefault, passwordDescription),
                 createServiceHostDefinition(hostDefault, hostDescription),
                 createServicePathDefinition(restPathDefault, restPathDescription));

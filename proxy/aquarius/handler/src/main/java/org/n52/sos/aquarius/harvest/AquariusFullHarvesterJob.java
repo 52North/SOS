@@ -27,28 +27,34 @@
  */
 package org.n52.sos.aquarius.harvest;
 
+import javax.inject.Inject;
+
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.FullHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class AquariusFullHarvesterJob extends AbstractAquariusHarvesterJob implements FullHarvesterJob {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AquariusFullHarvesterJob.class);
+
+    @Inject
+    private AquariusFullHarvester harvester;
+
     @Override
     protected void save(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport {
-        procedures.clear();
-        phenomenon.clear();
-        categories.clear();
-        offerings.clear();
-        parameters.clear();
-        features.clear();
-        platforms.clear();
-        parameters = getParameterList(connector);
-        harvestDatasets(getLocations(connector), getTimeSeries(connector), getServiceEntity(), connector);
+        harvester.harvest(connector);
+        LOGGER.info(context.getJobDetail()
+                .getKey() + " execution ends.");
+        getEventBus().submit(new UpdateCache());
+
     }
 
 }

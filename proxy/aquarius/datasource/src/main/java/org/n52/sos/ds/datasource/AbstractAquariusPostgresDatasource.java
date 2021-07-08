@@ -33,11 +33,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.n52.faroe.SettingDefinition;
-import org.n52.iceland.ds.DatasourceCallback;
 
-import com.google.common.collect.Sets;
-
-public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgresDatasource
+public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgresProxyDatasource
         implements AquariusDatasource {
     private static final long serialVersionUID = 1L;
 
@@ -70,21 +67,28 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
     }
 
     @Override
+    public Set<String> getSpringProfiles() {
+        return AquariusDatasource.super.getSpringProfiles();
+    }
+
+    @Override
     public Set<SettingDefinition<?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?>> newHashSet(createUsernameDefinition(usernameDefault),
-                createServicePasswordDefinition(passwordDefault, passwordDescription),
-                createServiceHostDefinition(hostDefault, hostDescription),
-                createServicePathDefinition(restPathDefault, restPathDescription));
+        Set<SettingDefinition<?>> settings = super.getSettingDefinitions();
+        settings.add(createServiceUsernameDefinition(usernameDefault, usernameDescription));
+        settings.add(createServicePasswordDefinition(passwordDefault, passwordDescription));
+        settings.add(createServiceHostDefinition(hostDefault, hostDescription));
+        settings.add(createServicePathDefinition(restPathDefault, restPathDescription));
+        return settings;
     }
 
     @Override
     public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
-        Map<String, Object> settings = parseDatasourceProperties(current);
-        return Sets.<SettingDefinition<?>> newHashSet(
-                createServiceUsernameDefinition((String) settings.get(PROXY_USERNAME_KEY), usernameDescription),
-                createServicePasswordDefinition((String) settings.get(PROXY_PASSWORD_KEY), passwordDescription),
-                createServiceHostDefinition((String) settings.get(PROXY_HOST_KEY), hostDescription),
-                createServicePathDefinition((String) settings.get(PROXY_PATH_KEY), restPathDescription));
+        Set<SettingDefinition<?>> settings = super.getChangableSettingDefinitions(current);
+        settings.add(createServiceUsernameDefinition((String) current.get(PROXY_USERNAME_KEY), usernameDescription));
+        settings.add(createServicePasswordDefinition((String) current.get(PROXY_PASSWORD_KEY), passwordDescription));
+        settings.add(createServiceHostDefinition((String) current.get(PROXY_HOST_KEY), hostDescription));
+        settings.add(createServicePathDefinition((String) current.get(PROXY_PATH_KEY), restPathDescription));
+        return settings;
     }
 
     @Override
@@ -120,56 +124,6 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
     @Override
     public void validateConnection(Properties current, Map<String, Object> changed) {
         validateConnection(mergeProperties(current, changed));
-    }
-
-    @Override
-    public boolean needsSchema() {
-        return false;
-    }
-
-    @Override
-    public boolean checkIfSchemaExists(Map<String, Object> settings) {
-        return false;
-    }
-
-    @Override
-    public boolean checkIfSchemaExists(Properties current, Map<String, Object> newSettings) {
-        return false;
-    }
-
-    @Override
-    public boolean checkSchemaCreation(Map<String, Object> settings) {
-        return false;
-    }
-
-    @Override
-    public String[] createSchema(Map<String, Object> settings) {
-        return new String[0];
-    }
-
-    @Override
-    public String[] dropSchema(Map<String, Object> settings) {
-        return new String[0];
-    }
-
-    @Override
-    public String[] updateSchema(Map<String, Object> settings) {
-        return new String[0];
-    }
-
-    @Override
-    public boolean supportsClear() {
-        return false;
-    }
-
-    @Override
-    public boolean isPostCreateSchema() {
-        return false;
-    }
-
-    @Override
-    public DatasourceCallback getCallback() {
-        return DatasourceCallback.nullCallback();
     }
 
     /**
@@ -229,63 +183,4 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
 
     }
 
-    /**
-     * Merge current properties with changed settings
-     *
-     * @param current
-     *            Current properties
-     * @param changed
-     *            Changed settings
-     * @return Updated settings
-     */
-    protected Map<String, Object> mergeProperties(Properties current, Map<String, Object> changed) {
-        Map<String, Object> settings = parseDatasourceProperties(current);
-        settings.putAll(changed);
-        return settings;
-    }
-
-    @Override
-    public void validatePrerequisites(Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void validatePrerequisites(Properties current, Map<String, Object> newSettings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void validateSchema(Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void validateSchema(Properties current, Map<String, Object> newSettings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void execute(String[] sql, Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void clear(Properties settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void prepare(Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void executePostCreateSchema(Map<String, Object> databaseSettings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void checkPostCreation(Properties properties) {
-        // TODO Auto-generated method stub
-    }
 }

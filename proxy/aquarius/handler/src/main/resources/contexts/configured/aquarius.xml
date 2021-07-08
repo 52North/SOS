@@ -10,36 +10,14 @@
 
     <ctx:annotation-config />
     <beans profile="aquarius">
-        <!--
-        <bean id="pegelOnlineConnectionFactory" class="org.n52.sos.pegelonline.ds.PegelOnlineConnectionFactory" />
-
-        <bean id="pegelOnlineFullHarvesterJob" class="org.n52.sos.pegelonline.harvest.PegelOnlineFullHarvesterJob" />
-        <bean id="pegelOnlineTemporalHarvesterJob" class="org.n52.sos.pegelonline.harvest.PegelOnlineTemporalHarvesterJob" />
-
-        <bean id="getObservationDao" class="org.n52.sos.pegelonline.dao.PegelOnlineGetObservationDao" />
-
-                <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler"/>
-
-          <bean id="harvestJobFactory" class="org.n52.sos.aquarius.cache.proxy.AquariusDataSourceHarvestJobFactory"/>
-            <bean id="dataSourceScheduler" class="org.n52.sos.aquarius.cache.proxy.AquariusDataSourceHarvesterScheduler" init-method="init" destroy-method="shutdown">
-                <property name="scheduler">
-                    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-                        <property name="jobFactory">
-                            <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
-                        </property>
-                    </bean>
-                </property>
-        </bean>
- -->
         <bean id="aquariusConnectionFactory" class="org.n52.sos.aquarius.ds.AquariusConnectionFactory" />
         <bean id="aquariusHelper" class="org.n52.sos.aquarius.ds.AquariusHelper" scope="singleton" />
-        <!-- <bean id="sessionHandler" class="org.n52.sos.aquarius.ds.SessionHandler" /> -->
 
-        <bean id="featureQueryHandler" class="org.n52.sos.aquarius.feature.AquariusFeatureQueryHandler"/>
-        <bean id="getObservationDao" class="org.n52.sos.aquarius.dao.AquariusGetObservationDao"/>
-        <bean id="niwaObservationHelper" class="org.n52.sos.aquarius.dao.AquariusObservationHelper"/>
+        <bean id="aquariusGetObservationDao" class="org.n52.sos.aquarius.dao.AquariusGetObservationDao"/>
 
         <bean id="aquariusFullHarvesterJob" class="org.n52.sos.aquarius.harvest.AquariusFullHarvesterJob" />
         <bean id="aquariusTemporalHarvesterJob" class="org.n52.sos.aquarius.harvest.AquariusTemporalHarvesterJob" />
+        <bean id="aquariusTemporalUpdater" class="org.n52.sos.aquarius.harvest.AquariusTemporalUpdater" />
+        <bean id="aquariusFullHarvester" class="org.n52.sos.aquarius.harvest.AquariusFullHarvester" />
     </beans>
 </beans>

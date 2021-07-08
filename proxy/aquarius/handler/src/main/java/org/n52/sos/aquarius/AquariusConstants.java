@@ -33,7 +33,7 @@ public interface AquariusConstants {
 
     String FILTER = "filter";
 
-    String CONNECTOR = "AquariusConnector";
+    String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
 
     public interface Paths {
         String SESSION = "session";

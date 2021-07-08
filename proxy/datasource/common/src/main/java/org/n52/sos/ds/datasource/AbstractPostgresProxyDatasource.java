@@ -29,18 +29,37 @@ package org.n52.sos.ds.datasource;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
-import org.n52.sos.ds.HibernateDatasourceConstants.DatabaseConcept;
-import org.n52.sos.ds.HibernateDatasourceConstants.DatabaseExtension;
-import org.n52.sos.ds.HibernateDatasourceConstants.FeatureConcept;
+import org.n52.faroe.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
+import com.google.common.collect.ImmutableSet;
+
 public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDatasource implements ProxyDatasource {
+
+    private static final Set<String> FILTER_KEYS =
+            ImmutableSet.of(BATCH_SIZE_KEY, DATABASE_CONCEPT_KEY, DATABASE_EXTENSION_KEY, FEATURE_CONCEPT_KEY,
+                    TIMEZONE_KEY, TIME_STRING_FORMAT_KEY, TIME_STRING_Z_KEY);
+
+    public AbstractPostgresProxyDatasource() {
+        super();
+    }
+
+    @Override
+    public Set<SettingDefinition<?>> getChangableSettingDefinitions(Properties current) {
+        return filter(super.getChangableSettingDefinitions(current), FILTER_KEYS);
+    }
+
+    @Override
+    public Set<SettingDefinition<?>> getSettingDefinitions() {
+        return filter(super.getSettingDefinitions(), FILTER_KEYS);
+    }
 
     @Override
     public Properties getDatasourceProperties(Map<String, Object> settings) {
         precheck(settings);
-        final Properties p = new Properties();
+        Properties p = super.getDatasourceProperties(settings);
         p.put(HibernateConstants.CONNECTION_URL, toURL(settings));
         p.put(HibernateConstants.DRIVER_CLASS, POSTGRES_DRIVER_CLASS);
         p.put(HibernateConstants.DIALECT, POSTGRES_DIALECT_CLASS);
@@ -49,8 +68,18 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
+        p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
+        p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
         addMappingFileDirectories(settings, p);
         return p;
+    }
+
+    @Override
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
+        final Map<String, Object> settings = super.parseDatasourceProperties(current);
+        settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
+        settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
+        return settings;
     }
 
     private void precheck(Map<String, Object> settings) {
@@ -69,4 +98,8 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
         super.validatePrerequisites(settings);
     }
 
+    @Override
+    public void validateConnection(Map<String, Object> settings) {
+        super.validateConnection(settings);
+    }
 }

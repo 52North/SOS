@@ -25,16 +25,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.requests;
+package org.n52.sos.proxy;
 
-import org.n52.sos.aquarius.AquariusConstants;
-import org.n52.sos.proxy.request.AbstractDeleteRequest;
+public final class Counter {
+    private long count = 1;
 
-public class DeleteRequest extends AbstractDeleteRequest {
-
-    @Override
-    public String getPath() {
-        return AquariusConstants.Paths.SESSION;
+    public long next() {
+        return count++;
     }
-
 }

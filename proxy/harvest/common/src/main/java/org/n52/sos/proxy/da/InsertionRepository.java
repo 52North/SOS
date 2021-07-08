@@ -237,7 +237,8 @@ public class InsertionRepository {
                     data.setId(dataset.getLastObservation()
                             .getId());
                 }
-                dataset.setLastObservation((DataEntity<?>) dataRepository.saveAndFlush(data));
+                insertedData = (DataEntity<?>) dataRepository.saveAndFlush(data);
+                dataset.setLastObservation(insertedData);
             }
         }
 

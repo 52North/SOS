@@ -21,8 +21,6 @@
         <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryWml20"/>
         <bean class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30"/>
 
-        <bean class="org.n52.sos.ds.hibernate.util.observation.InspireObservationCreator"/>
-        <bean class="org.n52.sos.ds.hibernate.util.observation.WaterMLObservationCreator"/>
     </beans>
 
 </beans>

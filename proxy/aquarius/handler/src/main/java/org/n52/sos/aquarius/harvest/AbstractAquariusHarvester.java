@@ -56,6 +56,8 @@ import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
+import org.n52.sos.aquarius.pojo.Unit;
+import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.proxy.da.InsertionRepository;
 import org.n52.sos.proxy.harvest.HarvesterHelper;
@@ -79,6 +81,8 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
     protected Map<String, PlatformEntity> platforms = new HashMap<>();
 
     protected Map<String, Parameter> parameters = new HashMap<>();
+
+    protected Map<String, Unit> units = new HashMap<>();
 
     @Inject
     private ServiceEntityFactory serviceEntityFactory;
@@ -135,6 +139,17 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
         return paramMap;
     }
 
+    protected Map<String, Unit> getUnitList(AquariusConnector connector) throws OwsExceptionReport {
+        Map<String, Unit> unitMap = new HashMap<>();
+        Units us = connector.getUnitList();
+        if (us.hasUnits()) {
+            for (Unit unit : us.getUnits()) {
+                unitMap.put(unit.getIdentifier(), unit);
+            }
+        }
+        return unitMap;
+    }
+
     protected Set<TimeSeriesDescription> getTimeSeries(AquariusConnector connector) throws OwsExceptionReport {
         Set<TimeSeriesDescription> set = new HashSet<>();
         for (TimeSeriesDescription timeSeries : connector
@@ -180,7 +195,7 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
                     OfferingEntity offering = createOffering(offerings, timeSeries,
                             parameters.get(timeSeries.getParameter()), procedure, service, getAquariusHelper());
                     DatasetEntity dataset = createDataset(procedure, offering, feature, platform, timeSeries,
-                            parameters.get(timeSeries.getParameter()), service);
+                            parameters.get(timeSeries.getParameter()), units.get(timeSeries.getUnit()), service);
                     if (dataset != null) {
                         getAquariusHelper().addLocation(location);
                         getAquariusHelper().addParameter(parameters.get(timeSeries.getParameter()));

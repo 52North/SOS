@@ -129,7 +129,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
 
     @Override
     public boolean isSupported() {
-        return dao != null;
+        return true;
     }
 
     private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,

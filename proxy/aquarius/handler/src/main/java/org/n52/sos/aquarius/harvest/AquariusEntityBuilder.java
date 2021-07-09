@@ -57,6 +57,7 @@ import org.n52.sos.aquarius.ds.AquariusTimeHelper;
 import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
+import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.pojo.data.Qualifier;
 import org.n52.sos.aquarius.pojo.data.Qualifier.QualifierKey;
@@ -169,9 +170,6 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
             geometryEntity.setLat(location.getLatitude());
             geometryEntity.setLon(location.getLongitude());
             Geometry geometry = geometryEntity.getGeometry();
-            if (location.getElevation() != null) {
-                geometry.getCoordinate().z = location.getElevation();
-            }
             return geometry;
         }
         return null;
@@ -198,7 +196,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     }
 
     default DatasetEntity createDataset(ProcedureEntity procedure, OfferingEntity offering, FeatureEntity feature,
-            PlatformEntity platform, TimeSeriesDescription timeSeries, Parameter parameter, ServiceEntity service) {
+            PlatformEntity platform, TimeSeriesDescription timeSeries, Parameter parameter, Unit unit,
+            ServiceEntity service) {
         DatasetEntity entity = createDataset(timeSeries.getUniqueId(), timeSeries.getIdentifier()
                 .replaceAll(parameter.getIdentifier(), parameter.getDisplayName()), timeSeries.getIdentifier(),
                 service);
@@ -209,7 +208,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         // tags???
         entity.setInsitu(Boolean.TRUE);
         entity.setMobile(Boolean.FALSE);
-        entity.setUnit(createUnit(timeSeries.getUnit(), service));
+        entity.setUnit(unit != null ? createUnit(unit, service) : createUnit(timeSeries.getUnit(), service));
         return entity;
     }
 
@@ -289,10 +288,12 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return data;
     }
 
+    default UnitEntity createUnit(Unit unit, ServiceEntity service) {
+        return createUnit(unit.getIdentifier(), unit.getSymbol(), unit.getDisplayName(), service);
+    }
+
     default UnitEntity createUnit(String unit, ServiceEntity service) {
-        UnitEntity entity = createUnit(unit, unit, null, service);
-        addDescribeableData(entity, unit, unit, unit, service);
-        return entity;
+        return createUnit(unit, unit, null, service);
     }
 
     default BigDecimal getValue(Double value) {

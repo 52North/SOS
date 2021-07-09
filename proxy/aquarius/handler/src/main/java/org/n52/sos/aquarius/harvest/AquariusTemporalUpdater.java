@@ -53,6 +53,7 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
     protected Set<TimeSeriesDescription> update(AquariusConnector connector, String changedSince) {
         Set<TimeSeriesDescription> set = new HashSet<>();
         try {
+            // unique id list with since
             for (TimeSeriesDescription timeSeries : connector.getTimeSeriesDescriptions(
                     (GetTimeSeriesDescriptionList) getAquariusHelper().getGetTimeSeriesDescriptionListRequest()
                             .withChangesSinceToken(changedSince.toString()))) {

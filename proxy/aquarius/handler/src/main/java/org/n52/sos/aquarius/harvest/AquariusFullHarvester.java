@@ -50,6 +50,7 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester {
         try {
             ServiceEntity service = getOrInsertServiceEntity();
             parameters = getParameterList(connector);
+            units = getUnitList(connector);
             harvestDatasets(service, connector);
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while harvesting data!", e);

@@ -28,12 +28,15 @@
 package org.n52.sos.aquarius.dao;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -46,21 +49,19 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.io.request.IoParameters;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.sensorweb.server.db.assembler.core.DatasetAssembler;
 import org.n52.sensorweb.server.db.assembler.value.ValueConnector;
 import org.n52.sensorweb.server.db.old.dao.DbQuery;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.UnitEntity;
-import org.n52.series.db.old.DataAccessException;
 import org.n52.series.db.old.HibernateSessionStore;
-import org.n52.series.db.old.dao.DatasetDao;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.ObservationStream;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.ExtendedIndeterminateTime;
@@ -85,6 +86,7 @@ import org.n52.svalbard.encode.ObservationEncoder;
 import org.n52.svalbard.encode.XmlEncoderKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -102,6 +104,13 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     private AquariusHelper aquariusHelper;
 
     private OmObservationCreatorContext observationCreatorContext;
+
+    private DatasetAssembler assembler;
+
+    @Inject
+    public void setDatasetAssembler(DatasetAssembler assembler) {
+        this.assembler = assembler;
+    }
 
     @Inject
     public void setConnectionProvider(HibernateSessionStore sessionStore) {
@@ -129,6 +138,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     }
 
     @Override
+    @Transactional
     public GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response)
             throws OwsExceptionReport {
         try {
@@ -139,36 +149,9 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     }
 
     @Override
+    @Transactional
     public GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response,
-            Object connection) throws OwsExceptionReport {
-        Session session = null;
-        try {
-            session = sessionStore.getSession();
-            response.setObservationCollection(
-                    ObservationStream.of(querySeriesObservation(request, getConnector(connection), session)));
-            return response;
-        } catch (ConnectionProviderException e) {
-            throw new NoApplicableCodeException().causedBy(e);
-        } finally {
-            sessionStore.returnSession(session);
-        }
-    }
-
-    /**
-     * Query observation if the series mapping is supported.
-     *
-     * @param request
-     *            GetObservation request
-     * @param connection
-     *            Aquarius connection
-     * @param session
-     *            Hibernate session
-     * @return List of internal Observations
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     */
-    protected List<OmObservation> querySeriesObservation(GetObservationRequest request, AccessorConnector connection,
-            Session session) throws OwsExceptionReport {
+            Object c) throws OwsExceptionReport {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
         }
@@ -176,9 +159,11 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
         final List<OmObservation> result = new LinkedList<>();
         Locale requestedLocale = getRequestedLocale(request);
         String pdf = getProcedureDescriptionFormat(request.getResponseFormat());
-
+        Session session = null;
         try {
-            List<DatasetEntity> datasets = getDataSets(request, session);
+            AccessorConnector connection = getConnector(c);
+            session = sessionStore.getSession();
+            List<DatasetEntity> datasets = getDatasets(createDbQuery(request)).collect(Collectors.toList());
             Counter counter = new Counter();
             for (DatasetEntity dataset : datasets) {
                 String identifier = dataset.getIdentifier();
@@ -186,15 +171,16 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
                 if (request.hasTemporalFilters()) {
                     // query with temporal filter
                     for (IndeterminateValue temporalFilter : request.getFirstLatestTemporalFilter()) {
-                        data.add(queryForTemporalFilter(identifier, temporalFilter, connection));
+                        checkAndAdd(data, queryForTemporalFilter(identifier, temporalFilter, connection));
                     }
                     for (TemporalFilter temporalFilter : request.getNotFirstLatestTemporalFilter()) {
                         if (temporalFilter != null) {
-                            data.add(queryForTemporalFilter(identifier, temporalFilter, connection));
+                            checkAndAdd(data, queryForTemporalFilter(identifier, temporalFilter, connection));
                         }
                     }
                 } else {
-                    data.add(connection.getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(identifier)));
+                    checkAndAdd(data,
+                            connection.getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(identifier)));
                 }
                 if (!data.isEmpty() || (data.isEmpty() && getProfileHandler().getActiveProfile()
                         .isShowMetadataOfEmptyObservations())) {
@@ -212,22 +198,32 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
                     result.add(observationTemplate);
                 }
             }
+        } catch (ConnectionProviderException e) {
+            throw new NoApplicableCodeException().causedBy(e);
         } catch (ConverterException ce) {
             throw new NoApplicableCodeException().causedBy(ce)
                     .withMessage("Error while processing observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            sessionStore.returnSession(session);
         }
+        response.setObservationCollection(ObservationStream.of(result));
         LOGGER.debug("Time to query and process observations needs {} ms!", System.currentTimeMillis() - start);
-        return result;
+        return response;
     }
 
-    private List<DatasetEntity> getDataSets(GetObservationRequest request, Session session) throws CodedException {
-        try {
-            return new DatasetDao<>(session).getAllInstances(createDbQuery(request));
-        } catch (DataAccessException e) {
-            throw new NoApplicableCodeException().causedBy(e)
-                    .withMessage("Error while querying datasets for observation!");
+    private void checkAndAdd(Collection<TimeSeriesData> data, TimeSeriesData ts) {
+        if (ts != null) {
+            data.add(ts);
         }
+    }
+
+    protected Stream<DatasetEntity> getDatasets(DbQuery query) {
+        return getDatasetAssembler().findAll(query);
+    }
+
+    protected DatasetAssembler getDatasetAssembler() {
+        return assembler;
     }
 
     private DbQuery createDbQuery(GetObservationRequest request) {
@@ -293,6 +289,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     }
 
     @Override
+    @Transactional
     public List<DataEntity<?>> getObservations(DatasetEntity entitiy, DbQuery parameters) {
         List<DataEntity<?>> measurements = Lists.newArrayList();
         try {
@@ -320,6 +317,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     }
 
     @Override
+    @Transactional
     public Optional<DataEntity<?>> getFirstObservation(DatasetEntity dataset) {
         try {
             if (dataset.getFirstObservation() != null) {
@@ -338,6 +336,7 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
     }
 
     @Override
+    @Transactional
     public Optional<DataEntity<?>> getLastObservation(DatasetEntity dataset) {
         try {
             if (dataset.getLastObservation() != null) {
@@ -372,8 +371,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
 
     private List<DataEntity<?>> convertTimeSeriesData(TimeSeriesData timeSeriesData, DatasetEntity dataset,
             Counter counter) {
-        return convertData(aquariusHelper.applyQualifierChecker(timeSeriesData)
-                .getPoints(), dataset, counter);
+        return timeSeriesData.hasPoints() ? convertData(aquariusHelper.applyQualifierChecker(timeSeriesData)
+                .getPoints(), dataset, counter) : Collections.emptyList();
     }
 
     private List<DataEntity<?>> convertData(List<Point> points, DatasetEntity dataset, Counter counter) {

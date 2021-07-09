@@ -49,11 +49,13 @@ import org.n52.sos.aquarius.pojo.Parameters;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescriptions;
+import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
 import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetParameterList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
+import org.n52.sos.aquarius.requests.GetUnitList;
 import org.n52.sos.proxy.Response;
 import org.n52.sos.proxy.request.AbstractRequest;
 import org.n52.sos.web.HttpClientHandler;
@@ -145,6 +147,17 @@ public class AquariusConnector implements AccessorConnector {
         }
     }
 
+    @Override
+    public Units getUnitList(GetUnitList request) throws OwsExceptionReport {
+        try {
+            Response response = query(request);
+            return response.getEntity() != null ? om.readValue(response.getEntity(), Units.class)
+                    : new Units();
+        } catch (URISyntaxException | IOException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying unit data");
+        }
+    }
 
     public TimeSeriesData getTimeSeriesData(String timeSeriesUniqueId) throws OwsExceptionReport {
         return getTimeSeriesData(aquariusHelper.getTimeSeriesDataRequest(timeSeriesUniqueId));

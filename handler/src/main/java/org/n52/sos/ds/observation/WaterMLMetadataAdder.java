@@ -25,7 +25,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.observation;
 
 import java.util.Optional;
 
@@ -90,6 +90,8 @@ public class WaterMLMetadataAdder {
             }
             observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
                     .setInterpolationtype(interpolationType);
+            observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
+            
             /*
              * Add cumulative
              */

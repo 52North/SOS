@@ -90,6 +90,10 @@ public class Units implements Serializable {
         this.units = units;
     }
 
+    public boolean hasUnits() {
+        return getUnits() != null && !getUnits().isEmpty();
+    }
+
     @JsonProperty("ResponseVersion")
     public Integer getResponseVersion() {
         return responseVersion;

@@ -27,6 +27,7 @@
  */
 package org.n52.sos.aquarius.harvest;
 
+import org.geolatte.geom.crs.Unit;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.ds.AquariusConnector;
@@ -47,6 +48,8 @@ public class AquariusFullHarvester extends AbstractAquariusHarvester {
         parameters.clear();
         features.clear();
         platforms.clear();
+        locations.clear();
+        units.clear();
         try {
             ServiceEntity service = getOrInsertServiceEntity();
             parameters = getParameterList(connector);

@@ -44,7 +44,7 @@ public class GetTimeSeriesDescriptionList extends AbstractAquariusGetRequest {
     }
 
     public GetTimeSeriesDescriptionList(Map<String, String> filter) {
-        if (filter != null) {
+        if (filter != null && !filter.isEmpty()) {
             setExtendedFilter(new ExtendedFilters().addFilter(filter));
         }
     }

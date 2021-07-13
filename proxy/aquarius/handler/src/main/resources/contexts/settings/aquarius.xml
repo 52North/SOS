@@ -15,7 +15,7 @@
             <property name="order" value="10.0" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
-            <property name="key" value="proxy.aquarius.extendenattribute.key" />
+            <property name="key" value="proxy.aquarius.extendenattribute.timeseries.key" />
             <property name="title" value="Should only timeseries data be returned with extended attribute key?" />
             <property name="description" value="Define whether the service should only return timeseries data with extended attribute key." />
             <property name="order" value="0.0" />
@@ -23,7 +23,7 @@
             <property name="optional" value="true" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
-            <property name="key" value="proxy.aquarius.extendenattribute.value" />
+            <property name="key" value="proxy.aquarius.extendenattribute.timeseries.value" />
             <property name="title" value="Should only timeseries data be returned with extended attribute value" />
             <property name="description" value="Define whether the service should only return timeseries data with extended attribute value!" />
             <property name="order" value="0.1" />
@@ -31,12 +31,28 @@
             <property name="optional" value="true" />
           </bean>
           <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-            <property name="key" value="proxy.aquarius.sosSync.location" />
-            <property name="title" value="Apply extended attribute to location queries?" />
-            <property name="description" value="Define whether the service should apply the extended attribute to location queries." />
+            <property name="key" value="proxy.aquarius.extendenattribute.location" />
+            <property name="title" value="Apply the same extended attribute of the timeseries to location queries?" />
+            <property name="description" value="Define whether the service should apply the same extended attribute of the timeseries to location queries." />
             <property name="order" value="1.0" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="defaultValue" value="false" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.location.key" />
+            <property name="title" value="Should only locations be returned with extended attribute key?" />
+            <property name="description" value="Define whether the service should only return locations with extended attribute key." />
+            <property name="order" value="1.1" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
+          </bean>
+          <bean class="org.n52.faroe.settings.StringSettingDefinition">
+            <property name="key" value="proxy.aquarius.extendenattribute.location.value" />
+            <property name="title" value="Should only locations be returned with extended attribute value" />
+            <property name="description" value="Define whether the service should only return locations with extended attribute value!" />
+            <property name="order" value="1.2" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="optional" value="true" />
           </bean>
           <bean class="org.n52.faroe.settings.ChoiceSettingDefinition ">
             <property name="key" value="proxy.aquarius.dataType" />
@@ -106,6 +122,14 @@
             <property name="order" value="7.1" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
+          </bean>
+           <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.aquarius.delete.physically" />
+            <property name="title" value="Should removed TimeSeries physically deleted from metadata" />
+            <property name="description" value="Define whether the TimeSeries should be physically deleted from metadata or only marked as deleted." />
+            <property name="order" value="8.0" />
+            <property name="group" ref="aquariusSettingDefinitionGroup" />
+            <property name="defaultValue" value="true" />
           </bean>
     </beans>
 </beans>

@@ -47,6 +47,7 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ServiceEntity;
+import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.dao.AquariusGetObservationDao;
 import org.n52.sos.aquarius.ds.AquariusConnector;
@@ -59,6 +60,7 @@ import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.pojo.data.Point;
+import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.proxy.da.InsertionRepository;
 import org.n52.sos.proxy.harvest.HarvesterHelper;
 import org.slf4j.Logger;
@@ -83,6 +85,8 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
     protected Map<String, Parameter> parameters = new HashMap<>();
 
     protected Map<String, Unit> units = new HashMap<>();
+
+    protected Map<String, Location> locations = new HashMap<>();
 
     @Inject
     private ServiceEntityFactory serviceEntityFactory;
@@ -121,11 +125,24 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
     }
 
     protected Map<String, Location> getLocations(AquariusConnector connector) throws OwsExceptionReport {
+        return getLocations(getAquariusHelper().getLocationDescriptionListRequest(), connector);
+    }
+
+    private Map<String, Location> getLocations(GetLocationDescriptionList request, AquariusConnector connector)
+            throws OwsExceptionReport {
         Map<String, Location> locs = new LinkedHashMap<>();
-        for (Location location : connector.getLocations(getAquariusHelper().getLocationDescriptionListRequest())) {
+        for (Location location : connector.getLocations(request)) {
             locs.put(location.getIdentifier(), location);
         }
-        return locs;
+        this.locations.putAll(locs);
+        return locations;
+    }
+
+    protected Location getLocation(String locationIdentifier, AquariusConnector connector) throws OwsExceptionReport {
+        if (!this.locations.containsKey(locationIdentifier)) {
+            getLocations(getAquariusHelper().getLocationDescriptionListRequest(locationIdentifier), connector);
+        }
+        return this.locations.get(locationIdentifier);
     }
 
     protected Map<String, Parameter> getParameterList(AquariusConnector connector) throws OwsExceptionReport {
@@ -136,7 +153,8 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
                 paramMap.put(param.getIdentifier(), param);
             }
         }
-        return paramMap;
+        this.parameters.putAll(paramMap);
+        return parameters;
     }
 
     protected Map<String, Unit> getUnitList(AquariusConnector connector) throws OwsExceptionReport {
@@ -147,7 +165,8 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
                 unitMap.put(unit.getIdentifier(), unit);
             }
         }
-        return unitMap;
+        this.units.putAll(unitMap);
+        return units;
     }
 
     protected Set<TimeSeriesDescription> getTimeSeries(AquariusConnector connector) throws OwsExceptionReport {
@@ -173,8 +192,9 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
     }
 
     protected void harvestDatasets(ServiceEntity service, AquariusConnector connector) throws OwsExceptionReport {
-        Map<String, Location> locations = getLocations(connector);
-        for (Entry<String, Location> entry : locations.entrySet()) {
+        Map<String, Location> locs = getLocations(connector);
+        Map<String, DatasetEntity> datasets = getIdentifierDatasetMap(service);
+        for (Entry<String, Location> entry : locs.entrySet()) {
             Location location = entry.getValue();
             if (checkLocation(location)) {
                 for (TimeSeriesDescription ts : getTimeSeries(location.getIdentifier(), connector)) {
@@ -182,6 +202,21 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
                     FeatureEntity feature = createFeature(location, features, service);
                     PlatformEntity platform = createPlatform(location, platforms, service);
                     harvestDatasets(location, ts, feature, procedure, platform, service, connector);
+                    datasets.remove(ts.getUniqueId());
+                }
+            }
+        }
+        if (!datasets.isEmpty()) {
+            LOGGER.debug("Start removing datasets/timeSeries!");
+            for (Entry<String, DatasetEntity> entry : datasets.entrySet()) {
+                LOGGER.debug("Removing timeSeries with id '{}' from metadata!", entry.getKey());
+                DatasetEntity dataset = entry.getValue();
+                if (getAquariusHelper().isDeletePhysically()) {
+                    getInsertionRepository().removeRelatedData(dataset);
+                    getDatasetRepository().delete(dataset);
+                } else {
+                    dataset.setDeleted(true);
+                    getDatasetRepository().saveAndFlush(dataset);
                 }
             }
         }

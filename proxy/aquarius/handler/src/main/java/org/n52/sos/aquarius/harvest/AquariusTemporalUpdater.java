@@ -27,48 +27,87 @@
  */
 package org.n52.sos.aquarius.harvest;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.joda.time.DateTime;
 import org.n52.series.db.beans.DatasetEntity;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.beans.PlatformEntity;
+import org.n52.series.db.beans.ProcedureEntity;
+import org.n52.series.db.beans.ServiceEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnector;
+import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
-import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
+import org.n52.sos.aquarius.pojo.TimeSeriesUniqueId;
+import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
+import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
+import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.quartz.JobDataMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusTemporalUpdater.class);
 
     @Transactional(rollbackFor = Exception.class)
-    public void update(JobDataMap mergedJobDataMap, AquariusConnector connector) {
-        update(connector, (String) mergedJobDataMap.get(AquariusConstants.LAST_UPDATE_TIME));
+    public String update(JobDataMap mergedJobDataMap, AquariusConnector connector) {
+        return update(connector, (DateTime) mergedJobDataMap.get(AquariusConstants.LAST_UPDATE_TIME));
     }
 
-    protected Set<TimeSeriesDescription> update(AquariusConnector connector, String changedSince) {
-        Set<TimeSeriesDescription> set = new HashSet<>();
+    protected String update(AquariusConnector connector, DateTime changedSince) {
         try {
-            // unique id list with since
-            for (TimeSeriesDescription timeSeries : connector.getTimeSeriesDescriptions(
-                    (GetTimeSeriesDescriptionList) getAquariusHelper().getGetTimeSeriesDescriptionListRequest()
-                            .withChangesSinceToken(changedSince.toString()))) {
-                try {
+            ServiceEntity service = null;
+            TimeSeriesUniqueIds timeSeriesUniqueIds = connector.getTimeSeriesUniqueIds(
+                    (GetTimeSeriesUniqueIdList) getAquariusHelper().getTimeSeriesUniqueIdsRequest()
+                            .withChangesSinceToken(changedSince.toString()));
+            if (timeSeriesUniqueIds.hasTimeSeriesUniqueIds()) {
+                for (TimeSeriesDescription timeSeries : getTimeSeriesDescriptions(
+                        timeSeriesUniqueIds.getTimeSeriesUniqueIds(), connector)) {
                     DatasetEntity dataset = getDatasetRepository().getOneByIdentifier(timeSeries.getUniqueId());
-                    updateFirstLastObservation(dataset, timeSeries, connector);
-                    getDatasetRepository().saveAndFlush(dataset);
-                } catch (OwsExceptionReport e) {
-                    LOGGER.error("Error while updating time series!", e);
+                    if (dataset != null) {
+                        updateFirstLastObservation(dataset, timeSeries, connector);
+                        getDatasetRepository().saveAndFlush(dataset);
+                    } else {
+                        if (service == null) {
+                            service = getOrInsertServiceEntity();
+                        }
+                        Location location = getLocation(timeSeries.getLocationIdentifier(), connector);
+                        ProcedureEntity procedure = createProcedure(location, procedures, service);
+                        FeatureEntity feature = createFeature(location, features, service);
+                        PlatformEntity platform = createPlatform(location, platforms, service);
+                        harvestDatasets(location, timeSeries, feature, procedure, platform, service, connector);
+                    }
                 }
             }
+            return timeSeriesUniqueIds.getNextToken();
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while updating!", e);
         }
-        return set;
+        return null;
+    }
+
+    private List<TimeSeriesDescription> getTimeSeriesDescriptions(List<TimeSeriesUniqueId> timeSeriesUniqueIds,
+            AquariusConnector connector) throws OwsExceptionReport {
+        List<String> ids = timeSeriesUniqueIds.stream()
+                .map(t -> t.getUniqueId())
+                .collect(Collectors.toList());
+        if (ids.size() > 50) {
+            List<TimeSeriesDescription> data = new LinkedList<>();
+            for (List<String> list : Lists.partition(ids, 50)) {
+                data.addAll(
+                        connector.getTimeSeriesDescriptionsByUniqueId(new GetTimeSeriesDescriptionsByUniqueId(list)));
+            }
+            return data;
+        }
+        return connector.getTimeSeriesDescriptionsByUniqueId(new GetTimeSeriesDescriptionsByUniqueId(ids));
     }
 
 }

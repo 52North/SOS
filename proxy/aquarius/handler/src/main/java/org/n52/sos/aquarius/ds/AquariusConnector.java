@@ -49,12 +49,15 @@ import org.n52.sos.aquarius.pojo.Parameters;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescriptions;
+import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
 import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetParameterList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
+import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
+import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.n52.sos.aquarius.requests.GetUnitList;
 import org.n52.sos.proxy.Response;
 import org.n52.sos.proxy.request.AbstractRequest;
@@ -134,6 +137,40 @@ public class AquariusConnector implements AccessorConnector {
                     .withMessage("Error while querying dataset data");
         }
     }
+
+    public List<TimeSeriesDescription> getTimeSeriesDescriptionsByUniqueId(
+            GetTimeSeriesDescriptionsByUniqueId request) throws OwsExceptionReport {
+        try {
+            Response response = query(request);
+            if (response.getEntity() != null) {
+                TimeSeriesDescriptions timeSeriesDescriptions =
+                        om.readValue(response.getEntity(), TimeSeriesDescriptions.class);
+                if (timeSeriesDescriptions.hasTimeSeriesDescriptions()) {
+                    return timeSeriesDescriptions.getTimeSeriesDescriptions();
+                }
+            }
+            return Collections.emptyList();
+        } catch (URISyntaxException | IOException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying dataset data by unique id");
+        }
+    }
+
+    @Override
+    public TimeSeriesUniqueIds getTimeSeriesUniqueIds(GetTimeSeriesUniqueIdList request)
+            throws OwsExceptionReport {
+        try {
+            Response response = query(request);
+            if (response.getEntity() != null) {
+                return  om.readValue(response.getEntity(), TimeSeriesUniqueIds.class);
+            }
+            return null;
+        } catch (URISyntaxException | IOException e) {
+            throw new NoApplicableCodeException().causedBy(e)
+                    .withMessage("Error while querying dataset data unique ids");
+        }
+    }
+
 
     @Override
     public Parameters getParameterList(GetParameterList request) throws OwsExceptionReport {

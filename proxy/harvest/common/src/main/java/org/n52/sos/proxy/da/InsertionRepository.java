@@ -128,6 +128,10 @@ public class InsertionRepository {
         platformAssembler.clearUnusedForService(service);
     }
 
+    public synchronized void removeRelatedData(DatasetEntity dataset) {
+        dataRepository.deleteByDataset(dataset);
+    }
+
     public synchronized DatasetEntity insertDataset(DatasetEntity dataset) {
         ProcedureEntity procedure = insertProcedure(dataset.getProcedure());
         CategoryEntity category = insertCategory(dataset.getCategory());

@@ -49,6 +49,7 @@ import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesCorrectedData;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesRawData;
+import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 
 import com.google.common.base.Strings;
 
@@ -65,15 +66,22 @@ public class AquariusHelper {
 
     public static final String PUBLISHED = "proxy.aquarius.published";
 
-    private static final String EXTENDED_ATTRIBUTE_KEY = "proxy.aquarius.extendenattribute.key";
+    private static final String EXTENDED_ATTRIBUTE_TIMESERIES_KEY = "proxy.aquarius.extendenattribute.timeseries.key";
 
-    private static final String EXTENDED_ATTRIBUTE_VALUE = "proxy.aquarius.extendenattribute.value";
+    private static final String EXTENDED_ATTRIBUTE_TIMESERIES_VALUE =
+            "proxy.aquarius.extendenattribute.timeseries.value";
 
-    private static final String SOS_SYNC_LOCATION = "proxy.aquarius.sosSync.location";
+    private static final String EXTENDED_ATTRIBUTE_LOCATION = "proxy.aquarius.extendenattribute.location";
+
+    private static final String EXTENDED_ATTRIBUTE_LOCATION_KEY = "proxy.aquarius.extendenattribute.location.key";
+
+    private static final String EXTENDED_ATTRIBUTE_LOCATION_VALUE = "proxy.aquarius.extendenattribute.location.value";
 
     private static final String BELOW_IDENTIFIER = "proxy.aquarius.detectionlimit.below";
 
     private static final String ABOVE_IDENTIFIER = "proxy.aquarius.detectionlimit.above";
+
+    private static final String DELETE_PYHSICALLY = "proxy.aquarius.delete.physically";
 
     private Map<String, Parameter> parameters = new HashMap<>();
 
@@ -87,15 +95,21 @@ public class AquariusHelper {
 
     private boolean includeGapMarkers = Boolean.TRUE.booleanValue();
 
+    private boolean deletePhysically = Boolean.TRUE.booleanValue();
+
     private DataType dataType = DataType.RAW;
 
     private Published published = Published.ALL;
 
-    private String extendedAttributeKey;
+    private String extendedAttributeTimeSeriesKey;
 
-    private String extendedAttributeValue;
+    private String extendedAttributeTimeSeriesValue;
 
-    private boolean sosSyncLocation = Boolean.TRUE.booleanValue();
+    private boolean extendedAttributeLocationAsTimeSeries = Boolean.FALSE.booleanValue();
+
+    private String extendedAttributeLocationKey;
+
+    private String extendedAttributeLocationValue;
 
     private String belowQualifier;
 
@@ -119,21 +133,33 @@ public class AquariusHelper {
         return this;
     }
 
-    @Setting(EXTENDED_ATTRIBUTE_KEY)
-    public AquariusHelper setextendedAttributeKey(String extendedAttributeKey) {
-        this.extendedAttributeKey = extendedAttributeKey;
+    @Setting(EXTENDED_ATTRIBUTE_TIMESERIES_KEY)
+    public AquariusHelper setextendedAttributeTimeseriesKey(String key) {
+        this.extendedAttributeTimeSeriesKey = key;
         return this;
     }
 
-    @Setting(EXTENDED_ATTRIBUTE_VALUE)
-    public AquariusHelper setExtendedAttributeValue(String extendedAttributeValue) {
-        this.extendedAttributeValue = extendedAttributeValue;
+    @Setting(EXTENDED_ATTRIBUTE_TIMESERIES_VALUE)
+    public AquariusHelper setExtendedAttributeTimeseriesValue(String value) {
+        this.extendedAttributeTimeSeriesValue = value;
         return this;
     }
 
-    @Setting(SOS_SYNC_LOCATION)
-    public AquariusHelper setSosSyncLocation(boolean sosSyncLocation) {
-        this.sosSyncLocation = sosSyncLocation;
+    @Setting(EXTENDED_ATTRIBUTE_LOCATION)
+    public AquariusHelper setExtendedAttributeLocationAsTimeSeries(boolean extendedAttributeLocationAsTimeSeries) {
+        this.extendedAttributeLocationAsTimeSeries = extendedAttributeLocationAsTimeSeries;
+        return this;
+    }
+
+    @Setting(EXTENDED_ATTRIBUTE_LOCATION_KEY)
+    public AquariusHelper setextendedAttributeLocationKey(String key) {
+        this.extendedAttributeLocationKey = key;
+        return this;
+    }
+
+    @Setting(EXTENDED_ATTRIBUTE_LOCATION_VALUE)
+    public AquariusHelper setExtendedAttributeLocationValue(String value) {
+        this.extendedAttributeLocationValue = value;
         return this;
     }
 
@@ -146,6 +172,12 @@ public class AquariusHelper {
     @Setting(ABOVE_IDENTIFIER)
     public AquariusHelper setAboveQualifierIdentifier(String aboveQualifier) {
         this.aboveQualifier = aboveQualifier;
+        return this;
+    }
+
+    @Setting(DELETE_PYHSICALLY)
+    public AquariusHelper setDeletePhysically(boolean deletePhysically) {
+        this.deletePhysically = deletePhysically;
         return this;
     }
 
@@ -165,20 +197,36 @@ public class AquariusHelper {
         return !Strings.isNullOrEmpty(getAboveQualifier());
     }
 
-    private boolean isSetExtendedAttributeKey() {
-        return extendedAttributeKey != null && !extendedAttributeKey.isEmpty();
+    public boolean isDeletePhysically() {
+        return deletePhysically;
     }
 
-    private boolean isSetExtendedAttributeValue() {
-        return extendedAttributeValue != null && !extendedAttributeValue.isEmpty();
+    private boolean isSetExtendedAttributeTimeSeriesKey() {
+        return extendedAttributeTimeSeriesKey != null && !extendedAttributeTimeSeriesKey.isEmpty();
     }
 
-    private boolean isExtendendAttribute() {
-        return isSetExtendedAttributeKey() && isSetExtendedAttributeValue();
+    private boolean isSetExtendedAttributeTimeSeriesValue() {
+        return extendedAttributeTimeSeriesValue != null && !extendedAttributeTimeSeriesValue.isEmpty();
     }
 
-    private boolean isSosSyncLocation() {
-        return sosSyncLocation;
+    private boolean isExtendendAttributeTimeSeries() {
+        return isSetExtendedAttributeTimeSeriesKey() && isSetExtendedAttributeTimeSeriesValue();
+    }
+
+    private boolean isSetExtendedAttributeLocationKey() {
+        return extendedAttributeLocationKey != null && !extendedAttributeLocationKey.isEmpty();
+    }
+
+    private boolean isSetExtendedAttributeLocationValue() {
+        return extendedAttributeLocationValue != null && !extendedAttributeLocationValue.isEmpty();
+    }
+
+    private boolean isExtendendAttributeLocation() {
+        return isSetExtendedAttributeLocationKey() && isSetExtendedAttributeLocationValue();
+    }
+
+    private boolean isExtendendAttributeLocationAsTimeseries() {
+        return extendedAttributeLocationAsTimeSeries;
     }
 
     @Setting(DATA_TYPE)
@@ -262,6 +310,12 @@ public class AquariusHelper {
         return datasets.containsKey(dataSetId);
     }
 
+    public GetLocationDescriptionList getLocationDescriptionListRequest(String locationIdentifier) {
+        GetLocationDescriptionList request = getLocationDescriptionListRequest();
+        request.setLocationIdentifier(locationIdentifier);
+        return request;
+    }
+
     public GetLocationDescriptionList getLocationDescriptionListRequest() {
         switch (getPublished()) {
             case FALSE:
@@ -277,8 +331,9 @@ public class AquariusHelper {
     }
 
     private GetLocationDescriptionList getBaseLocationDescriptionListRequest() {
-        if (isExtendendAttribute() && isSosSyncLocation()) {
-            return new GetLocationDescriptionList(getExtendedFilterMap());
+        if (isExtendendAttributeLocation()
+                || (isExtendendAttributeLocationAsTimeseries() && isExtendendAttributeTimeSeries())) {
+            return new GetLocationDescriptionList(getExtendedFilterMapLocation());
         }
         return new GetLocationDescriptionList();
     }
@@ -298,15 +353,49 @@ public class AquariusHelper {
     }
 
     private GetTimeSeriesDescriptionList getBaseTimeSeriesDescriptionListRequest() {
-        if (isExtendendAttribute() && isSosSyncLocation()) {
-            return new GetTimeSeriesDescriptionList(getExtendedFilterMap());
+        if (isExtendendAttributeTimeSeries()) {
+            return new GetTimeSeriesDescriptionList(getExtendedFilterMapTimeSeries());
         }
         return new GetTimeSeriesDescriptionList();
     }
 
-    private Map<String, String> getExtendedFilterMap() {
+    public GetTimeSeriesUniqueIdList getTimeSeriesUniqueIdsRequest() {
+        switch (getPublished()) {
+            case FALSE:
+                return (GetTimeSeriesUniqueIdList) getBaseTimeSeriesUnitqueIdsListRequest()
+                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.FALSE.toString());
+            case TURE:
+                return (GetTimeSeriesUniqueIdList) getBaseTimeSeriesUnitqueIdsListRequest()
+                        .addHeader(AquariusConstants.Parameters.PUBLISHED, Boolean.TRUE.toString());
+            case ALL:
+            default:
+                return getBaseTimeSeriesUnitqueIdsListRequest();
+        }
+    }
+
+    private GetTimeSeriesUniqueIdList getBaseTimeSeriesUnitqueIdsListRequest() {
+        if (isExtendendAttributeTimeSeries()) {
+            return new GetTimeSeriesUniqueIdList(getExtendedFilterMapTimeSeries());
+        }
+        return new GetTimeSeriesUniqueIdList();
+    }
+
+    private Map<String, String> getExtendedFilterMapTimeSeries() {
         Map<String, String> map = new LinkedHashMap<>();
-        map.put(extendedAttributeKey, extendedAttributeValue);
+        if (isExtendendAttributeTimeSeries()) {
+            map.put(extendedAttributeTimeSeriesKey, extendedAttributeTimeSeriesValue);
+        }
+        return map;
+    }
+
+    private Map<String, String> getExtendedFilterMapLocation() {
+        if (isExtendendAttributeLocationAsTimeseries() && isExtendendAttributeTimeSeries()) {
+            return getExtendedFilterMapTimeSeries();
+        }
+        Map<String, String> map = new LinkedHashMap<>();
+        if (isExtendendAttributeLocation()) {
+            map.put(extendedAttributeLocationKey, extendedAttributeLocationValue);
+        }
         return map;
     }
 

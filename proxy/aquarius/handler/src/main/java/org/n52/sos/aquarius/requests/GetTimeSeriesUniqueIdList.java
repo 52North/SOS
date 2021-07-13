@@ -32,18 +32,15 @@ import java.util.Map;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.pojo.ExtendedFilters;
 
-public class GetLocationDescriptionList extends AbstractAquariusGetRequest {
-
-    private String locationName;
-
-    private String locationIdentifier;
+public class GetTimeSeriesUniqueIdList extends AbstractAquariusGetRequest {
 
     private ExtendedFilters extendedFilter;
 
-    public GetLocationDescriptionList() {
+    public GetTimeSeriesUniqueIdList() {
+
     }
 
-    public GetLocationDescriptionList(Map<String, String> filter) {
+    public GetTimeSeriesUniqueIdList(Map<String, String> filter) {
         if (filter != null && !filter.isEmpty()) {
             setExtendedFilter(new ExtendedFilters().addFilter(filter));
         }
@@ -51,62 +48,16 @@ public class GetLocationDescriptionList extends AbstractAquariusGetRequest {
 
     @Override
     public Map<String, String> getQueryParameters() {
-        Map<String, String> parameter = super.getQueryParameters();
-        if (hasLocationName()) {
-            parameter.put(AquariusConstants.Parameters.LOCATION_NAME, getLocationName());
-        }
-        if (hasLocationIdentifier()) {
-            parameter.put(AquariusConstants.Parameters.LOCATION_IDENTIFIER, getLocationIdentifier());
-        }
+        Map<String, String> parameters = super.getQueryParameters();
         if (hasExtendedFilters()) {
-            parameter.put(AquariusConstants.Parameters.EXTENDED_FILTERS, getExtendedFilter().encodeFilters());
+            parameters.put(AquariusConstants.Parameters.EXTENDED_FILTERS, getExtendedFilter().encodeFilters());
         }
-        return parameter;
+        return parameters;
     }
 
     @Override
     public String getPath() {
-        return AquariusConstants.Paths.GET_LOCATION_DESCRIPTION_LIST;
-    }
-
-    /**
-     * @return the locationName
-     */
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public boolean hasLocationName() {
-        return getLocationName() != null && !getLocationName().isEmpty();
-    }
-
-    /**
-     * @param locationName
-     *            the locationName to set
-     */
-    public GetLocationDescriptionList setLocationName(String locationName) {
-        this.locationName = locationName;
-        return this;
-    }
-
-    /**
-     * @return the locationIdentifier
-     */
-    public String getLocationIdentifier() {
-        return locationIdentifier;
-    }
-
-    public boolean hasLocationIdentifier() {
-        return getLocationIdentifier() != null && !getLocationIdentifier().isEmpty();
-    }
-
-    /**
-     * @param locationIdentifier
-     *            the locationIdentifier to set
-     */
-    public GetLocationDescriptionList setLocationIdentifier(String locationIdentifier) {
-        this.locationIdentifier = locationIdentifier;
-        return this;
+        return AquariusConstants.Paths.GET_TIME_SERIES_UNIQUE_ID_LIST;
     }
 
     /**
@@ -120,7 +71,7 @@ public class GetLocationDescriptionList extends AbstractAquariusGetRequest {
      * @param extendedFilter
      *            the extendedFilter to set
      */
-    public GetLocationDescriptionList setExtendedFilter(ExtendedFilters extendedFilter) {
+    public GetTimeSeriesUniqueIdList setExtendedFilter(ExtendedFilters extendedFilter) {
         this.extendedFilter = extendedFilter;
         return this;
     }
@@ -128,4 +79,5 @@ public class GetLocationDescriptionList extends AbstractAquariusGetRequest {
     public boolean hasExtendedFilters() {
         return getExtendedFilter() != null && getExtendedFilter().hasFilters();
     }
+
 }

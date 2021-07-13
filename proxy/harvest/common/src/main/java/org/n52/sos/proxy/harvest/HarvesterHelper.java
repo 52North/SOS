@@ -27,7 +27,9 @@
  */
 package org.n52.sos.proxy.harvest;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.query.DatasetQuerySpecifications;
@@ -59,6 +61,14 @@ public interface HarvesterHelper {
 
     default List<DatasetEntity> getAllDatasets(ServiceEntity service) {
         return getDatasetRepository().findAll(getDatasetServicQS(service));
+    }
+
+    default Map<String, DatasetEntity> getIdentifierDatasetMap(ServiceEntity service) {
+        Map<String, DatasetEntity> datasets = new LinkedHashMap<>();
+        getAllDatasets(service).forEach(d -> {
+           datasets.put(d.getIdentifier(), d);
+        });
+        return datasets;
     }
 
     InsertionRepository getInsertionRepository();

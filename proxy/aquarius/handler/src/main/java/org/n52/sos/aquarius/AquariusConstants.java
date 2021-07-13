@@ -55,6 +55,8 @@ public interface AquariusConstants {
         String GET_TIME_SERIES_CORRECTED_DATA = "GetTimeSeriesCorrectedData";
 
         String GET_TIME_SERIES_RAW_DATA = "GetTimeSeriesRawData";
+
+        String GET_TIME_SERIES_UNIQUE_ID_LIST = "GetTimeSeriesUniqueIdList";
     }
 
     public interface Parameters {
@@ -71,6 +73,8 @@ public interface AquariusConstants {
         String PARAMETER = "Parameter";
 
         String TIME_SERIES_UNIQUE_ID = "TimeSeriesUniqueId";
+
+        String TIME_SERIES_UNIQUE_IDS = "TimeSeriesUniqueIds";
 
         String QUERY_FROM = "QueryFrom";
 

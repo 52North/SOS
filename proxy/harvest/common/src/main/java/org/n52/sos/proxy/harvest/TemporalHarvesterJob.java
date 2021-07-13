@@ -27,12 +27,24 @@
  */
 package org.n52.sos.proxy.harvest;
 
+import org.joda.time.DateTime;
+import org.n52.shetland.util.DateTimeHelper;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
+import org.quartz.JobExecutionContext;
 import org.quartz.PersistJobDataAfterExecution;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public interface TemporalHarvesterJob extends Job {
+
+    default DateTime getLastUpdateTime(JobExecutionContext context) {
+        if (context.getPreviousFireTime() != null) {
+            return new DateTime(context.getPreviousFireTime());
+        }
+        return new DateTime(context.getFireTime())
+                .minus(DateTimeHelper.getMinutesSince(new DateTime(context.getFireTime()),
+                        new DateTime(context.getNextFireTime())));
+    }
 
 }

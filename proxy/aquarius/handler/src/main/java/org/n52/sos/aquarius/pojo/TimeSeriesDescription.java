@@ -340,6 +340,10 @@ public class TimeSeriesDescription implements Serializable {
         this.computationIdentifier = computationIdentifier;
     }
 
+    public boolean hasComputationIdentifier() {
+        return getComputationIdentifier() != null && !getComputationIdentifier().isEmpty();
+    }
+
     @JsonProperty("ComputationPeriodIdentifier")
     public String getComputationPeriodIdentifier() {
         return computationPeriodIdentifier;
@@ -348,6 +352,10 @@ public class TimeSeriesDescription implements Serializable {
     @JsonProperty("ComputationPeriodIdentifier")
     public void setComputationPeriodIdentifier(String computationPeriodIdentifier) {
         this.computationPeriodIdentifier = computationPeriodIdentifier;
+    }
+
+    public boolean hasComputationPeriodIdentifier() {
+        return getComputationPeriodIdentifier() != null && !getComputationPeriodIdentifier().isEmpty();
     }
 
     @JsonProperty("SubLocationIdentifier")

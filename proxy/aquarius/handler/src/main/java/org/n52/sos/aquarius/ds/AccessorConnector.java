@@ -50,6 +50,7 @@ import org.n52.sos.aquarius.pojo.Parameter;
 import org.n52.sos.aquarius.pojo.Parameters;
 import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
+import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
 import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.requests.AbstractGetTimeSeriesData;
@@ -57,6 +58,7 @@ import org.n52.sos.aquarius.requests.GetLocationData;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.aquarius.requests.GetParameterList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
+import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.n52.sos.aquarius.requests.GetUnitList;
 
 import com.google.common.collect.Lists;
@@ -97,6 +99,9 @@ public interface AccessorConnector {
     default Location getLocation(String identifier) throws OwsExceptionReport {
         return getLocation(new GetLocationData(identifier));
     }
+
+    TimeSeriesUniqueIds getTimeSeriesUniqueIds(GetTimeSeriesUniqueIdList request)
+            throws OwsExceptionReport;
 
     List<TimeSeriesDescription> getTimeSeriesDescriptions() throws OwsExceptionReport;
 
@@ -147,7 +152,7 @@ public interface AccessorConnector {
             }
         }
         return null;
-    }
+     }
 
     default Map<String, String> createFilterForLocationQuery(Map<String, String> parameter) {
         if (parameter != null && !parameter.isEmpty()) {

@@ -43,13 +43,13 @@ public class ExtendedFilters {
     }
 
     public ExtendedFilters addFilter(String filterName, String FilterValue) {
-        filter.put(filterName, FilterValue);
+        this.filter.put(filterName, FilterValue);
         return this;
     }
 
     public ExtendedFilters addFilter(Map<String, String> filter) {
         if (filter != null) {
-            filter.putAll(filter);
+            this.filter.putAll(filter);
         }
         return this;
     }

@@ -99,7 +99,7 @@
         <version.springframework.data>2.5.1</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.5</version.saxon>
-        <version.elasticsearch>7.13.2</version.elasticsearch>
+        <version.elasticsearch>7.13.3</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -779,7 +779,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.10.0</version>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>

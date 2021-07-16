@@ -129,7 +129,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         matcher.find();
         settings.put(DATABASE_KEY, matcher.group(1));
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
-        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(DATABASE_CONCEPT_KEY, current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(DATABASE_EXTENSION_KEY, current.getProperty(DATABASE_EXTENSION_KEY));
         return settings;
     }

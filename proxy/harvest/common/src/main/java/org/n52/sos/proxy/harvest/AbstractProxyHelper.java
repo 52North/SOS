@@ -25,43 +25,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.aquarius.harvest;
+package org.n52.sos.proxy.harvest;
 
-import org.n52.series.db.beans.ServiceEntity;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
+import org.n52.faroe.annotation.Configurable;
+import org.n52.faroe.annotation.Setting;
 
-public class AquariusFullHarvester extends AbstractAquariusHarvester {
+@Configurable
+public abstract class AbstractProxyHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AquariusFullHarvester.class);
+    public static final String DELETE_PYHSICALLY = "proxy.harvest.delete.physically";
 
-    @Transactional(rollbackFor = Exception.class)
-    public void harvest(AquariusConnector connector) {
-        procedures.clear();
-        phenomenon.clear();
-        categories.clear();
-        offerings.clear();
-        parameters.clear();
-        features.clear();
-        platforms.clear();
-        locations.clear();
-        units.clear();
-        try {
-            ServiceEntity service = getOrInsertServiceEntity();
-            parameters = getParameterList(connector);
-            units = getUnitList(connector);
-            harvestDatasets(service, connector);
-        } catch (OwsExceptionReport e) {
-            LOGGER.error("Error while harvesting data!", e);
-        }
+    private boolean deletePhysically = Boolean.TRUE.booleanValue();
+
+    @Setting(DELETE_PYHSICALLY)
+    public AbstractProxyHelper setDeletePhysically(boolean deletePhysically) {
+        this.deletePhysically = deletePhysically;
+        return this;
     }
 
-    @Override
-    public Logger getLogger() {
-        return LOGGER;
+    public boolean isDeletePhysically() {
+        return deletePhysically;
     }
-
 }

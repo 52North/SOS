@@ -12,7 +12,7 @@
     <beans profile="aquarius">
         <bean id="aquariusSettingDefinitionGroup" class="org.n52.faroe.SettingDefinitionGroup">
             <property name="title" value="AQUARIUS" />
-            <property name="order" value="10.0" />
+            <property name="order" value="16.0" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
             <property name="key" value="proxy.aquarius.extendenattribute.timeseries.key" />
@@ -108,28 +108,20 @@
             <property name="defaultValue" value="true" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
-            <property name="key" value="proxy.aquarius.detectionlimit.below" />
-            <property name="title" value="Definition of the qualifier identifier for below sensor limit" />
-            <property name="description" value="Define the qualifier identifier for below sensor limut." />
+            <property name="key" value="proxy.aquarius.detectionlimit.above" />
+            <property name="title" value="Definition of the qualifier identifier for &lt;code&gt;above sensor limit&lt;/code&gt;" />
+            <property name="description" value="Define the qualifier identifier for &lt;code&gt;above sensor limit&lt;/code&gt;." />
             <property name="order" value="7.0" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
           </bean>
           <bean class="org.n52.faroe.settings.StringSettingDefinition">
-            <property name="key" value="proxy.aquarius.detectionlimit.above" />
-            <property name="title" value="Definition of the qualifier identifier for above sensor limit" />
-            <property name="description" value="Define the qualifier identifier for above sensor limit." />
+            <property name="key" value="proxy.aquarius.detectionlimit.below" />
+            <property name="title" value="Definition of the qualifier identifier for &lt;code&gt;below sensor limit&lt;/code&gt;" />
+            <property name="description" value="Define the qualifier identifier for &lt;code&gt;below sensor limut&lt;/code&gt;." />
             <property name="order" value="7.1" />
             <property name="group" ref="aquariusSettingDefinitionGroup" />
             <property name="optional" value="true" />
-          </bean>
-           <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
-            <property name="key" value="proxy.aquarius.delete.physically" />
-            <property name="title" value="Should removed TimeSeries physically deleted from metadata" />
-            <property name="description" value="Define whether the TimeSeries should be physically deleted from metadata or only marked as deleted." />
-            <property name="order" value="8.0" />
-            <property name="group" ref="aquariusSettingDefinitionGroup" />
-            <property name="defaultValue" value="true" />
           </bean>
     </beans>
 </beans>

@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.hibernate.boot.Metadata;
 import org.n52.faroe.AbstractSettingDefinition;
 import org.n52.faroe.ConfigurationError;
 import org.n52.faroe.SettingDefinition;
@@ -166,10 +165,6 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
     }
 
     @Override
-    protected void validatePrerequisites(Connection con, Metadata metadata, Map<String, Object> settings) {
-    }
-
-    @Override
     public void prepare(Map<String, Object> settings) {
         initGeoDB(settings);
     }
@@ -182,16 +177,6 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
     @Override
     protected String[] parseURL(String url) {
         return new String[0];
-    }
-
-    @Override
-    public void validateSchema(Map<String, Object> settings) {
-        /* can not be validated */
-    }
-
-    @Override
-    public void validateSchema(Properties current, Map<String, Object> changed) {
-        /* can not be validated */
     }
 
 }

@@ -171,8 +171,8 @@ public class Qualifier implements Serializable, AquariusTimeHelper {
     @JsonIgnore
     private Interval getInterval() {
         if (interval == null) {
-            this.interval =
-                    new Interval(checkDateTimeStringFor24(getStartTime()), checkDateTimeStringFor24(getEndTime()));
+            this.interval = new Interval(checkDateTimeStringFor24(getStartTime()),
+                    checkDateTimeStringFor24(getEndTime()).plusMillis(1));
         }
         return interval;
     }

@@ -30,6 +30,7 @@ package org.n52.sos.proxy.harvest;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.query.DatasetQuerySpecifications;
@@ -37,9 +38,10 @@ import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.sos.proxy.da.InsertionRepository;
+import org.slf4j.Logger;
 import org.springframework.data.jpa.domain.Specification;
 
-public interface HarvesterHelper {
+public interface Harvester {
 
     default ServiceEntity getServiceEntity() {
         ServiceEntity serviceEntity = getServiceEntityFactory().getServiceEntity();
@@ -56,7 +58,7 @@ public interface HarvesterHelper {
 
     default Specification<DatasetEntity> getDatasetServicQS(ServiceEntity service) {
         DatasetQuerySpecifications dQs = getInsertionRepository().getDatasetQuerySpecification();
-        return dQs.matchServices(Long.toString(service.getId()));
+        return dQs.matchServices(Long.toString(service.getId())).and(dQs.matchProcedures());
     }
 
     default List<DatasetEntity> getAllDatasets(ServiceEntity service) {
@@ -71,6 +73,26 @@ public interface HarvesterHelper {
         return datasets;
     }
 
+    default void deleteObsoleteData(Map<String, DatasetEntity> datasets) {
+        if (!datasets.isEmpty()) {
+            getLogger().debug("Start removing datasets/timeSeries!");
+            for (Entry<String, DatasetEntity> entry : datasets.entrySet()) {
+                getLogger().debug("Removing timeSeries with id '{}' from metadata!", entry.getKey());
+                DatasetEntity dataset = entry.getValue();
+                if (getProxyHelper().isDeletePhysically()) {
+                    getInsertionRepository().removeRelatedData(dataset);
+                    getDatasetRepository().delete(dataset);
+                } else {
+                    dataset.setDeleted(true);
+                    getDatasetRepository().saveAndFlush(dataset);
+                }
+            }
+            getLogger().debug("Finished removing datasets/timeSeries!");
+        }
+    }
+
+    <T> T unproxy(T entity);
+
     InsertionRepository getInsertionRepository();
 
     ServiceEntityFactory getServiceEntityFactory();
@@ -78,5 +100,9 @@ public interface HarvesterHelper {
     DatasetRepository getDatasetRepository();
 
     String getConnectorName();
+
+    AbstractProxyHelper getProxyHelper();
+
+    Logger getLogger();
 
 }

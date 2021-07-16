@@ -42,7 +42,7 @@ import org.quartz.PersistJobDataAfterExecution;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public abstract class AbstractHarvesterJob extends ScheduledJob implements Job, HarvesterHelper {
+public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
 
     @Inject
     private InsertionRepository insertionRepository;

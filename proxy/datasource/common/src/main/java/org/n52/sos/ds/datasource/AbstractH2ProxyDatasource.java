@@ -67,4 +67,9 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
         settings.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         super.validatePrerequisites(settings);
     }
+
+    @Override
+    public boolean needsSchema() {
+        return false;
+    }
 }

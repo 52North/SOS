@@ -129,6 +129,18 @@ public class InsertionRepository {
     }
 
     public synchronized void removeRelatedData(DatasetEntity dataset) {
+        if (dataset.hasReferenceValues()) {
+            for (DatasetEntity refDataset : dataset.getReferenceValues()) {
+                removeData(refDataset);
+            }
+        }
+        dataRepository.deleteByDataset(dataset);
+    }
+
+    private void removeData(DatasetEntity dataset) {
+        dataset.setFirstObservation(null);
+        dataset.setLastObservation(null);
+        datasetRepository.saveAndFlush(dataset);
         dataRepository.deleteByDataset(dataset);
     }
 

@@ -31,5 +31,13 @@
             <property name="group" ref="proxySettingDefinitionGroup" />
             <property name="defaultValue" value="0 0/5 * * * ?" />
         </bean>
+        <bean class="org.n52.faroe.settings.BooleanSettingDefinition">
+            <property name="key" value="proxy.harvest.delete.physically" />
+            <property name="title" value="Should removed datasets physically deleted from metadata" />
+            <property name="description" value="Define whether the datasets should be physically deleted from metadata or only marked as deleted." />
+            <property name="order" value="2.0" />
+            <property name="group" ref="proxySettingDefinitionGroup" />
+            <property name="defaultValue" value="true" />
+        </bean>
     </beans>
 </beans>

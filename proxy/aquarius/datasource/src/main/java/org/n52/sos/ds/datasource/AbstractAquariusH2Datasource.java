@@ -33,7 +33,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.n52.faroe.SettingDefinition;
-import org.n52.iceland.ds.DatasourceCallback;
 
 import com.google.common.collect.Sets;
 
@@ -67,6 +66,11 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         setServiceHostDescription(HOST_DESCRIPTION);
         setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
         setServicePathDescription(PROXY_PATH_DESCRIPTION);
+    }
+
+    @Override
+    public Set<String> getSpringProfiles() {
+        return AquariusDatasource.super.getSpringProfiles();
     }
 
     @Override
@@ -121,56 +125,6 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
     @Override
     public void validateConnection(Properties current, Map<String, Object> changed) {
         validateConnection(mergeProperties(current, changed));
-    }
-
-    @Override
-    public boolean needsSchema() {
-        return false;
-    }
-
-    @Override
-    public boolean checkIfSchemaExists(Map<String, Object> settings) {
-        return false;
-    }
-
-    @Override
-    public boolean checkIfSchemaExists(Properties current, Map<String, Object> newSettings) {
-        return false;
-    }
-
-    @Override
-    public boolean checkSchemaCreation(Map<String, Object> settings) {
-        return false;
-    }
-
-    @Override
-    public String[] createSchema(Map<String, Object> settings) {
-        return new String[0];
-    }
-
-    @Override
-    public String[] dropSchema(Map<String, Object> settings) {
-        return new String[0];
-    }
-
-    @Override
-    public String[] updateSchema(Map<String, Object> settings) {
-        return new String[0];
-    }
-
-    @Override
-    public boolean supportsClear() {
-        return false;
-    }
-
-    @Override
-    public boolean isPostCreateSchema() {
-        return false;
-    }
-
-    @Override
-    public DatasourceCallback getCallback() {
-        return DatasourceCallback.nullCallback();
     }
 
     /**
@@ -228,66 +182,6 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
     public void setServicePathDefault(String restPathDefaultValue) {
         this.restPathDefault = restPathDefaultValue;
 
-    }
-
-    /**
-     * Merge current properties with changed settings
-     *
-     * @param current
-     *            Current properties
-     * @param changed
-     *            Changed settings
-     * @return Updated settings
-     */
-    protected Map<String, Object> mergeProperties(Properties current, Map<String, Object> changed) {
-        Map<String, Object> settings = parseDatasourceProperties(current);
-        settings.putAll(changed);
-        return settings;
-    }
-
-    @Override
-    public void validatePrerequisites(Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void validatePrerequisites(Properties current, Map<String, Object> newSettings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void validateSchema(Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void validateSchema(Properties current, Map<String, Object> newSettings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void execute(String[] sql, Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void clear(Properties settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void prepare(Map<String, Object> settings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void executePostCreateSchema(Map<String, Object> databaseSettings) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void checkPostCreation(Properties properties) {
-        // TODO Auto-generated method stub
     }
 
 }

@@ -36,6 +36,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.Hibernate;
 import org.n52.sensorweb.server.db.factory.ServiceEntityFactory;
 import org.n52.sensorweb.server.db.repositories.core.DatasetRepository;
 import org.n52.series.db.beans.CategoryEntity;
@@ -47,7 +48,6 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ServiceEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.dao.AquariusGetObservationDao;
 import org.n52.sos.aquarius.ds.AquariusConnector;
@@ -62,11 +62,12 @@ import org.n52.sos.aquarius.pojo.Units;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.proxy.da.InsertionRepository;
-import org.n52.sos.proxy.harvest.HarvesterHelper;
+import org.n52.sos.proxy.harvest.AbstractProxyHelper;
+import org.n52.sos.proxy.harvest.Harvester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractAquariusHarvester implements HarvesterHelper, AquariusEntityBuilder {
+public abstract class AbstractAquariusHarvester implements Harvester, AquariusEntityBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAquariusHarvester.class);
 
@@ -105,6 +106,11 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
     }
 
     @Override
+    public AbstractProxyHelper getProxyHelper() {
+        return getAquariusHelper();
+    }
+
+    @Override
     public InsertionRepository getInsertionRepository() {
         return insertionRepository;
     }
@@ -122,6 +128,11 @@ public abstract class AbstractAquariusHarvester implements HarvesterHelper, Aqua
     @Override
     public String getConnectorName() {
         return AquariusGetObservationDao.class.getName();
+    }
+
+    @Override
+    public <T> T unproxy(T entity) {
+        return (T) Hibernate.unproxy(entity);
     }
 
     protected Map<String, Location> getLocations(AquariusConnector connector) throws OwsExceptionReport {

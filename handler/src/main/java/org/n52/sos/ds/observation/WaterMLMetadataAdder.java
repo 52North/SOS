@@ -90,8 +90,7 @@ public class WaterMLMetadataAdder {
             }
             observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
                     .setInterpolationtype(interpolationType);
-            observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
-            
+
             /*
              * Add cumulative
              */

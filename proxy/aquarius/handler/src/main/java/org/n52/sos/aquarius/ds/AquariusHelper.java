@@ -50,11 +50,12 @@ import org.n52.sos.aquarius.requests.GetTimeSeriesCorrectedData;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionList;
 import org.n52.sos.aquarius.requests.GetTimeSeriesRawData;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
+import org.n52.sos.proxy.harvest.AbstractProxyHelper;
 
 import com.google.common.base.Strings;
 
 @Configurable
-public class AquariusHelper {
+public class AquariusHelper extends AbstractProxyHelper {
 
     public static final String APPLY_ROUNDING = "proxy.aquarius.applyRounding";
 
@@ -81,8 +82,6 @@ public class AquariusHelper {
 
     private static final String ABOVE_IDENTIFIER = "proxy.aquarius.detectionlimit.above";
 
-    private static final String DELETE_PYHSICALLY = "proxy.aquarius.delete.physically";
-
     private Map<String, Parameter> parameters = new HashMap<>();
 
     private Map<String, Location> locations = new HashMap<>();
@@ -94,8 +93,6 @@ public class AquariusHelper {
     private boolean returnFullCoverage = Boolean.FALSE.booleanValue();
 
     private boolean includeGapMarkers = Boolean.TRUE.booleanValue();
-
-    private boolean deletePhysically = Boolean.TRUE.booleanValue();
 
     private DataType dataType = DataType.RAW;
 
@@ -175,12 +172,6 @@ public class AquariusHelper {
         return this;
     }
 
-    @Setting(DELETE_PYHSICALLY)
-    public AquariusHelper setDeletePhysically(boolean deletePhysically) {
-        this.deletePhysically = deletePhysically;
-        return this;
-    }
-
     public String getBelowQualifier() {
         return belowQualifier;
     }
@@ -195,10 +186,6 @@ public class AquariusHelper {
 
     public boolean isSetAboveQualifier() {
         return !Strings.isNullOrEmpty(getAboveQualifier());
-    }
-
-    public boolean isDeletePhysically() {
-        return deletePhysically;
     }
 
     private boolean isSetExtendedAttributeTimeSeriesKey() {

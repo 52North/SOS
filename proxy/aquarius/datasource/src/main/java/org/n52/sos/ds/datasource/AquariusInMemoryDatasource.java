@@ -73,11 +73,6 @@ public class AquariusInMemoryDatasource extends AbstractAquariusH2Datasource {
     }
 
     @Override
-    public boolean needsSchema() {
-        return false;
-    }
-
-    @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = super.parseDatasourceProperties(current);
         settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));

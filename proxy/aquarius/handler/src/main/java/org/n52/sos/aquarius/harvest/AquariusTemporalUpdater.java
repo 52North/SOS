@@ -110,4 +110,9 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
         return connector.getTimeSeriesDescriptionsByUniqueId(new GetTimeSeriesDescriptionsByUniqueId(ids));
     }
 
+    @Override
+    public Logger getLogger() {
+        return LOGGER;
+    }
+
 }

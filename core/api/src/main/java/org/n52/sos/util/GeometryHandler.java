@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.geolatte.geom.crs.CrsRegistry;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.CRS.AxisOrder;
@@ -103,13 +104,13 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
 
     private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
 
-    private int storageEPSG;
+    private Integer storageEPSG;
 
-    private int storage3DEPSG;
+    private Integer storage3DEPSG;
 
-    private int defaultResponseEPSG;
+    private Integer defaultResponseEPSG;
 
-    private int defaultResponse3DEPSG;
+    private Integer defaultResponse3DEPSG;
 
     private final Set<String> supportedCRS = Sets.newHashSet();
 
@@ -140,6 +141,10 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         }
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, eastingFirstEpsgCode);
         this.crsAuthority = ReferencingFactoryFinder.getCRSAuthorityFactory(this.authority, hints);
+
+        supportedCRS.stream().forEach(crs -> {
+            CrsRegistry.ifAbsentReturnProjected2D(Integer.parseInt(crs));
+        });
     }
 
     @Override
@@ -174,7 +179,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Storage EPSG code
      */
     public int getStorageEPSG() {
-        return storageEPSG;
+        return storageEPSG.intValue();
     }
 
     /**
@@ -183,7 +188,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Storage 3D EPSG code
      */
     public int getStorage3DEPSG() {
-        return storage3DEPSG;
+        return storage3DEPSG.intValue();
     }
 
     /**
@@ -192,7 +197,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Default response EPSG code
      */
     public int getDefaultResponseEPSG() {
-        return defaultResponseEPSG;
+        return defaultResponseEPSG.intValue();
     }
 
     /**
@@ -201,7 +206,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Default response 3D EPSG code
      */
     public int getDefaultResponse3DEPSG() {
-        return defaultResponse3DEPSG;
+        return defaultResponse3DEPSG.intValue();
     }
 
     /**
@@ -216,7 +221,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
     public void setStorageEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
-        storageEPSG = epsgCode;
+        this.storageEPSG = Integer.valueOf(epsgCode);
         addToSupportedCrs(epsgCode);
     }
 
@@ -232,7 +237,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
     public void setStorage3DEpsg(int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
-        storage3DEPSG = epsgCode3D;
+        this.storage3DEPSG = Integer.valueOf(epsgCode3D);
         addToSupportedCrs(epsgCode3D);
     }
 
@@ -248,7 +253,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
     public void setDefaultResponseEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Default response EPSG Code", epsgCode);
-        defaultResponseEPSG = epsgCode;
+        this.defaultResponseEPSG = Integer.valueOf(epsgCode);
         addToSupportedCrs(epsgCode);
     }
 
@@ -264,7 +269,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
     public void setDefaultResponse3DEpsg(int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Default response 3D EPSG Code", epsgCode3D);
-        defaultResponse3DEPSG = epsgCode3D;
+        this.defaultResponse3DEPSG = Integer.valueOf(epsgCode3D);
         addToSupportedCrs(epsgCode3D);
     }
 
@@ -283,6 +288,22 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
         // supportedCRS);
         this.supportedCRS.clear();
         this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, ","));
+        addDefaultCrs();
+    }
+
+    private void addDefaultCrs() {
+        if (storageEPSG != null) {
+            addToSupportedCrs(getStorageEPSG());
+        }
+        if (storage3DEPSG != null) {
+            addToSupportedCrs(getStorage3DEPSG());
+        }
+        if (defaultResponseEPSG != null) {
+            addToSupportedCrs(getDefaultResponseEPSG());
+        }
+        if (defaultResponse3DEPSG != null) {
+            addToSupportedCrs(getDefaultResponse3DEPSG());
+        }
     }
 
     /**

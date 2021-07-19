@@ -4,6 +4,10 @@
       "type" : "integer",
       "value" : 1000
     },
+    "helgoland.externa.url" : {
+      "type" : "uri",
+      "value" : "http://localhost:8080/52n-sos-webapp"
+    },
     "service.observation.onlineResource" : {
       "type" : "boolean",
       "value" : false
@@ -72,6 +76,10 @@
       "type" : "string",
       "value" : ""
     },
+    "helgoland.service.name" : {
+      "type" : "string",
+      "value" : "My RESTful Dataset Service"
+    },
     "serviceProvider.postalCode" : {
       "type" : "string",
       "value" : "48155"
@@ -81,6 +89,10 @@
       "value" : {
         "en" : "52North Sensor Observation Service - Data Access for the Sensor Web"
       }
+    },
+    "helgoland.service.version" : {
+      "type" : "string",
+      "value" : "3.0"
     },
     "procedureDesc.ENRICH_WITH_OFFERINGS" : {
       "type" : "boolean",
@@ -93,6 +105,10 @@
     "coding.tupleSeparator" : {
       "type" : "string",
       "value" : "@@"
+    },
+    "helgoland.request.default.locale" : {
+      "type" : "string",
+      "value" : "en"
     },
     "serviceProvider.facsimile" : {
       "type" : "string",
@@ -117,6 +133,10 @@
     "sos.prefix.obervableProperty" : {
       "type" : "string",
       "value" : ""
+    },
+    "service.security.login.lock.duration" : {
+      "type" : "integer",
+      "value" : 1
     },
     "netcdf.contributor" : {
       "type" : "choice",
@@ -238,6 +258,10 @@
       "type" : "string",
       "value" : "."
     },
+    "service.transactionalAllowedIps" : {
+      "type" : "string",
+      "value" : "127.0.0.1"
+    },
     "inspire.conformity.title" : {
       "type" : "string",
       "value" : "OGC SOS 2.0 for Inspire"
@@ -274,6 +298,10 @@
       "type" : "string",
       "value" : "m"
     },
+    "helgoland.job.prerendering.cron.expression" : {
+      "type" : "string",
+      "value" : "0 0 03 * * ?"
+    },
     "oceansites.definition.network" : {
       "type" : "string",
       "value" : "http://www.nexosproject.eu/dictionary/definitions.html#NETWORK_ID"
@@ -290,13 +318,25 @@
       "type" : "choice",
       "value" : "BIT_PACKED"
     },
+    "service.security.login.attempt" : {
+      "type" : "integer",
+      "value" : 5
+    },
     "service.sta.supports.urls" : {
       "type" : "boolean",
       "value" : false
     },
+    "helgoland.job.prerendering.config.file" : {
+      "type" : "string",
+      "value" : "/config-task-prerendering.json"
+    },
     "service.encodeFullChildrenInDescribeSensor" : {
       "type" : "boolean",
       "value" : true
+    },
+    "service.security.login.lock.timeunit" : {
+      "type" : "choice",
+      "value" : "DAYS"
     },
     "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION" : {
       "type" : "string",
@@ -305,6 +345,10 @@
     "exi.fidelity.prefixes" : {
       "type" : "boolean",
       "value" : true
+    },
+    "helgoland.service.id" : {
+      "type" : "integer",
+      "value" : 1
     },
     "service.SpatialDatasource" : {
       "type" : "boolean",
@@ -329,6 +373,10 @@
     "swe.coordinate.easting" : {
       "type" : "string",
       "value" : "easting,longitude,westing"
+    },
+    "helgoland.request.interval.restriction" : {
+      "type" : "string",
+      "value" : "P370D"
     },
     "misc.merge.eprtr" : {
       "type" : "boolean",
@@ -454,6 +502,10 @@
       "type" : "string",
       "value" : "31466"
     },
+    "helgoland.job.prerendering.trigger.startup" : {
+      "type" : "boolean",
+      "value" : true
+    },
     "inspire.metadataUrl.url" : {
       "type" : "uri",
       "value" : "http://myserver.org/"
@@ -471,6 +523,10 @@
       "value" : true
     },
     "service.security.transactional.active" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "helgoland.job.scheduler.enable" : {
       "type" : "boolean",
       "value" : false
     },
@@ -540,9 +596,17 @@
       "type" : "string",
       "value" : "urn:ogc:def:classifier:OGC:1.0:application"
     },
+    "helgoland.service.nodatavalues" : {
+      "type" : "string",
+      "value" : "-9999.0,99999,NO_DATA"
+    },
     "procedureDesc.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE" : {
       "type" : "string",
       "value" : "The procedure '%s' generates the following output(s): '%s'. The input(s) is/are unknown (this description is generated)."
+    },
+    "helgoland.job.prerendering.enable" : {
+      "type" : "boolean",
+      "value" : true
     },
     "procedureDesc.USE_SERVICE_CONTACT_AS_SENSOR_CONTACT" : {
       "type" : "boolean",
@@ -559,6 +623,10 @@
     "service.createFeatureGeometryFromSamplingGeometries" : {
       "type" : "boolean",
       "value" : false
+    },
+    "helgoland.job.scheduler.startup.delay" : {
+      "type" : "integer",
+      "value" : 5
     },
     "inspire.metadataUrl.mediaType" : {
       "type" : "string",

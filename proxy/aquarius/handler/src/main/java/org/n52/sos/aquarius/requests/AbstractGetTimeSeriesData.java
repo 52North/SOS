@@ -101,7 +101,7 @@ public abstract class AbstractGetTimeSeriesData extends AbstractAquariusGetReque
     }
 
     public AbstractGetTimeSeriesData setApplyRounding(Boolean applyRounding) {
-        this.applyRounding = applyRounding ? null : applyRounding;
+        this.applyRounding = !applyRounding ? null : applyRounding;
         return this;
     }
 

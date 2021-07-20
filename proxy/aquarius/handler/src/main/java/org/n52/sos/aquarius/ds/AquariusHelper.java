@@ -188,6 +188,10 @@ public class AquariusHelper extends AbstractProxyHelper {
         return !Strings.isNullOrEmpty(getAboveQualifier());
     }
 
+    public boolean isSetApplyRounding() {
+        return applyRounding;
+    }
+
     private boolean isSetExtendedAttributeTimeSeriesKey() {
         return extendedAttributeTimeSeriesKey != null && !extendedAttributeTimeSeriesKey.isEmpty();
     }

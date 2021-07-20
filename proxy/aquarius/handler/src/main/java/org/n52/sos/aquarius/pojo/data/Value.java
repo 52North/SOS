@@ -87,12 +87,17 @@ public class Value implements Serializable {
     }
 
     public boolean isNumeric() {
-        return getNumeric() != null && (getDisplay() == null || getDisplay().isEmpty());
+        return getNumeric() != null;
     }
 
     @JsonProperty("Display")
     public String getDisplay() {
         return display;
+    }
+
+    @JsonIgnore
+    public BigDecimal getDisplayAsBigDecimal() {
+        return isDisplay() ? new BigDecimal(getDisplay()) : null;
     }
 
     @JsonProperty("Display")
@@ -101,7 +106,7 @@ public class Value implements Serializable {
     }
 
     public boolean isDisplay() {
-        return getDisplay() != null && (getNumeric() == null || (Math.abs(0.0 - getNumeric()) < 0.0001));
+        return getDisplay() != null && !getDisplay().isEmpty();
     }
 
     @JsonAnyGetter

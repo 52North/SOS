@@ -385,4 +385,8 @@ public class AquariusGetObservationDao extends AbstractAquariusDao
         return measurements;
     }
 
+    private DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter) {
+        return createDataEntity(dataset, point, counter, aquariusHelper.isSetApplyRounding());
+    }
+
 }

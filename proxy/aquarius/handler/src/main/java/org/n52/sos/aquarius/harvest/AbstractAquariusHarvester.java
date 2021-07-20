@@ -291,7 +291,7 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     }
 
     protected DataEntity<?> insertData(DatasetEntity dataset, Point point) {
-        return insertData(dataset, createDataEntity(dataset, point, (Long) null));
+        return insertData(dataset, createDataEntity(dataset, point, (Long) null, aquariusHelper.isSetApplyRounding()));
     }
 
     protected DataEntity<?> insertData(DatasetEntity dataset, DataEntity<?> data) {

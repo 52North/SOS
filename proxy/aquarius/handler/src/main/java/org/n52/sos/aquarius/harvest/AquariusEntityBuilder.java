@@ -223,20 +223,25 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return entity;
     }
 
-    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter) {
-        return createDataEntity(dataset, point, counter.next());
+    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter, boolean applyRounding) {
+        return createDataEntity(dataset, point, counter.next(), applyRounding);
     }
 
-    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Long id) {
+    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Long id, boolean applyRounding) {
         DateTime time = checkDateTimeStringFor24(point.getTimestamp());
         if (point.getValue()
                 .isNumeric()) {
             QuantityDataEntity dataEntity = createQuantityDataEntity(dataset, time, id);
             if (point.hasQualifier()) {
-                addDetectionLimit(dataEntity, point);
+                addDetectionLimit(dataEntity, point, applyRounding);
             } else {
-                dataEntity.setValue(getValue(point.getValue()
-                        .getNumeric()));
+                if (applyRounding && point.getValue().isDisplay()) {
+                    dataEntity.setValue(point.getValue()
+                            .getDisplayAsBigDecimal());
+                } else {
+                    dataEntity.setValue(point.getValue()
+                            .getNumericAsBigDecimal());
+                }
             }
             return dataEntity;
         } else if (point.getValue()
@@ -263,11 +268,15 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return (TextDataEntity) addDefault(new TextDataEntity(), dataset, time, id);
     }
 
-    default void addDetectionLimit(QuantityDataEntity dataEntity, Point point) {
+    default void addDetectionLimit(QuantityDataEntity dataEntity, Point point, boolean applyRounding) {
         DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
-        detectionLimitEntity.setDetectionLimit(getValue(point.getValue()
-                .getNumeric()));
-
+        if (applyRounding && point.getValue().isDisplay()) {
+            detectionLimitEntity.setDetectionLimit(point.getValue()
+                    .getDisplayAsBigDecimal());
+        } else {
+            detectionLimitEntity.setDetectionLimit(point.getValue()
+                    .getNumericAsBigDecimal());
+        }
         if (QualifierKey.ABOVE.equals(point.getQualifier()
                 .getKey())) {
             detectionLimitEntity.setFlag(Short.valueOf("1"));
@@ -294,13 +303,6 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default UnitEntity createUnit(String unit, ServiceEntity service) {
         return createUnit(unit, unit, null, service);
-    }
-
-    default BigDecimal getValue(Double value) {
-        if (value != null && !value.isNaN()) {
-            return BigDecimal.valueOf(value);
-        }
-        return null;
     }
 
 }

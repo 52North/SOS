@@ -35,7 +35,7 @@ import java.sql.Connection;
 import org.geolatte.geom.codec.db.oracle.ConnectionFinder;
 
 import com.mchange.v2.c3p0.C3P0ProxyConnection;
-import com.zaxxer.hikari.pool.HikariProxyConnection;
+import com.zaxxer.hikari.pool.ProxyConnection;
 
 import oracle.jdbc.OracleConnection;
 
@@ -82,11 +82,11 @@ public class OracleConnectionFinder implements ConnectionFinder {
             }
         }
 
-        if (conn instanceof HikariProxyConnection) {
-            HikariProxyConnection cpCon = (HikariProxyConnection) conn;
+        if (conn instanceof ProxyConnection) {
+            ProxyConnection cpCon = (ProxyConnection) conn;
             Connection unwrappedCon = null;
             try {
-                unwrappedCon = cpCon.unwrap(OracleConnection.class);
+                unwrappedCon = cpCon.unwrap(ProxyConnection.class);
                 // Field delegate = ((HikariProxyConnection)
                 // con).getClass().getSuperclass().getDeclaredField("delegate");
                 // delegate.setAccessible(true);

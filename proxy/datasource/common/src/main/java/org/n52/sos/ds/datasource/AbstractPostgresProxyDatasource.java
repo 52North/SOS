@@ -68,8 +68,12 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
-        p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
-        p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
+        if (settings.containsKey(PROXY_HOST_KEY)) {
+            p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
+        }
+        if (settings.containsKey(PROXY_PATH_KEY)) {
+            p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
+        }
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -77,8 +81,12 @@ public abstract class AbstractPostgresProxyDatasource extends AbstractPostgresDa
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
         final Map<String, Object> settings = super.parseDatasourceProperties(current);
-        settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
-        settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
+        if (current.containsKey(PROXY_HOST_KEY)) {
+            settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
+        }
+        if (current.containsKey(PROXY_PATH_KEY)) {
+            settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
+        }
         return settings;
     }
 

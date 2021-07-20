@@ -163,7 +163,7 @@ public interface AquariusDatasource extends ProxyDatasource {
     default void validateConnection(Map<String, Object> settings) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             String host = (String) settings.get(PROXY_HOST_KEY);
-            String path = (String) settings.get(PROXY_PATH_KEY);
+            String path = AQUARIUS_PATH_DEFAULT_VALUE;
             String username = (String) settings.get(PROXY_USERNAME_KEY);
             String password = (String) settings.get(PROXY_PASSWORD_KEY);
             String url = host + path + "session";

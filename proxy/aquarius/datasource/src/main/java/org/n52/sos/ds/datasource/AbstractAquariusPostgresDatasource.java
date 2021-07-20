@@ -46,9 +46,9 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
 
     private String passwordDescription;
 
-    private String restPathDefault;
-
-    private String restPathDescription;
+//    private String restPathDefault;
+//
+//    private String restPathDescription;
 
     private String hostDefault;
 
@@ -62,8 +62,8 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
         setServicePasswordDescription(PROXY_PASSWORD_DESCRIPTION);
         setServiceHostDefault(AQUARIUS_HOST_DEFAULT_VALUE);
         setServiceHostDescription(HOST_DESCRIPTION);
-        setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
-        setServicePathDescription(PROXY_PATH_DESCRIPTION);
+//        setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
+//        setServicePathDescription(PROXY_PATH_DESCRIPTION);
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
         settings.add(createServiceUsernameDefinition(usernameDefault, usernameDescription));
         settings.add(createServicePasswordDefinition(passwordDefault, passwordDescription));
         settings.add(createServiceHostDefinition(hostDefault, hostDescription));
-        settings.add(createServicePathDefinition(restPathDefault, restPathDescription));
+//        settings.add(createServicePathDefinition(restPathDefault, restPathDescription));
         return settings;
     }
 
@@ -87,7 +87,7 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
         settings.add(createServiceUsernameDefinition((String) current.get(PROXY_USERNAME_KEY), usernameDescription));
         settings.add(createServicePasswordDefinition((String) current.get(PROXY_PASSWORD_KEY), passwordDescription));
         settings.add(createServiceHostDefinition((String) current.get(PROXY_HOST_KEY), hostDescription));
-        settings.add(createServicePathDefinition((String) current.get(PROXY_PATH_KEY), restPathDescription));
+//        settings.add(createServicePathDefinition((String) current.get(PROXY_PATH_KEY), restPathDescription));
         return settings;
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
         p.put(PROXY_USERNAME_KEY, settings.get(PROXY_USERNAME_KEY));
         p.put(PROXY_PASSWORD_KEY, settings.get(PROXY_PASSWORD_KEY));
         p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
-        p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
+//        p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
         return p;
     }
 
@@ -112,7 +112,7 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
         settings.put(PROXY_USERNAME_KEY, current.getProperty(PROXY_USERNAME_KEY));
         settings.put(PROXY_PASSWORD_KEY, current.getProperty(PROXY_PASSWORD_KEY));
         settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
-        settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
+//        settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
         return settings;
     }
 
@@ -174,13 +174,13 @@ public abstract class AbstractAquariusPostgresDatasource extends AbstractPostgre
         this.hostDescription = hostDescription;
     }
 
-    public void setServicePathDescription(String restPathDescription) {
-        this.restPathDescription = restPathDescription;
-    }
-
-    public void setServicePathDefault(String restPathDefaultValue) {
-        this.restPathDefault = restPathDefaultValue;
-
-    }
+//    public void setServicePathDescription(String restPathDescription) {
+//        this.restPathDescription = restPathDescription;
+//    }
+//
+//    public void setServicePathDefault(String restPathDefaultValue) {
+//        this.restPathDefault = restPathDefaultValue;
+//
+//    }
 
 }

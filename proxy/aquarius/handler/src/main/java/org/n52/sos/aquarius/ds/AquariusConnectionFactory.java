@@ -39,6 +39,7 @@ import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.ds.datasource.AbstractAquariusH2Datasource;
 import org.n52.sos.web.HttpClientHandler;
 import org.slf4j.Logger;
@@ -87,9 +88,7 @@ public class AquariusConnectionFactory implements Constructable, Destroyable {
     }
 
     private String getRestPath() {
-        return databaseSettingsHandler.getAll()
-                .getProperty(AbstractAquariusH2Datasource.PROXY_PATH_KEY,
-                        AbstractAquariusH2Datasource.AQUARIUS_PATH_DEFAULT_VALUE);
+        return AquariusConstants.AQUARIUS_PATH;
     }
 
     @Override

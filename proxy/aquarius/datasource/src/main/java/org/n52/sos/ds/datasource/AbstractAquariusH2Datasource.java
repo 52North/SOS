@@ -48,9 +48,9 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
 
     private String passwordDescription;
 
-    private String restPathDefault;
-
-    private String restPathDescription;
+//    private String restPathDefault;
+//
+//    private String restPathDescription;
 
     private String hostDefault;
 
@@ -64,8 +64,8 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         setServicePasswordDescription(PROXY_PASSWORD_DESCRIPTION);
         setServiceHostDefault(AQUARIUS_HOST_DEFAULT_VALUE);
         setServiceHostDescription(HOST_DESCRIPTION);
-        setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
-        setServicePathDescription(PROXY_PATH_DESCRIPTION);
+//        setServicePathDefault(AQUARIUS_PATH_DEFAULT_VALUE);
+//        setServicePathDescription(PROXY_PATH_DESCRIPTION);
     }
 
     @Override
@@ -78,8 +78,8 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         return Sets.<SettingDefinition<?>> newHashSet(
                 createServiceUsernameDefinition(usernameDefault, usernameDescription),
                 createServicePasswordDefinition(passwordDefault, passwordDescription),
-                createServiceHostDefinition(hostDefault, hostDescription),
-                createServicePathDefinition(restPathDefault, restPathDescription));
+                createServiceHostDefinition(hostDefault, hostDescription));
+//                createServicePathDefinition(restPathDefault, restPathDescription));
     }
 
     @Override
@@ -88,8 +88,8 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         return Sets.<SettingDefinition<?>> newHashSet(
                 createServiceUsernameDefinition((String) settings.get(PROXY_USERNAME_KEY), usernameDescription),
                 createServicePasswordDefinition((String) settings.get(PROXY_PASSWORD_KEY), passwordDescription),
-                createServiceHostDefinition((String) settings.get(PROXY_HOST_KEY), hostDescription),
-                createServicePathDefinition((String) settings.get(PROXY_PATH_KEY), restPathDescription));
+                createServiceHostDefinition((String) settings.get(PROXY_HOST_KEY), hostDescription));
+//                createServicePathDefinition((String) settings.get(PROXY_PATH_KEY), restPathDescription));
     }
 
     @Override
@@ -102,8 +102,6 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         Properties p = super.getDatasourceProperties(settings);
         p.put(PROXY_USERNAME_KEY, settings.get(PROXY_USERNAME_KEY));
         p.put(PROXY_PASSWORD_KEY, settings.get(PROXY_PASSWORD_KEY));
-        p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
-        p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
         return p;
     }
 
@@ -112,8 +110,12 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         final Map<String, Object> settings = new HashMap<String, Object>(current.size());
         settings.put(PROXY_USERNAME_KEY, current.getProperty(PROXY_USERNAME_KEY));
         settings.put(PROXY_PASSWORD_KEY, current.getProperty(PROXY_PASSWORD_KEY));
-        settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
-        settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
+        if (current.containsKey(PROXY_HOST_KEY)) {
+            settings.put(PROXY_HOST_KEY, current.getProperty(PROXY_HOST_KEY));
+        }
+        if (current.containsKey(PROXY_PATH_KEY)) {
+            settings.put(PROXY_PATH_KEY, current.getProperty(PROXY_PATH_KEY));
+        }
         return settings;
     }
 
@@ -175,13 +177,12 @@ public abstract class AbstractAquariusH2Datasource extends AbstractH2ProxyDataso
         this.hostDescription = hostDescription;
     }
 
-    public void setServicePathDescription(String restPathDescription) {
-        this.restPathDescription = restPathDescription;
-    }
-
-    public void setServicePathDefault(String restPathDefaultValue) {
-        this.restPathDefault = restPathDefaultValue;
-
-    }
+//    public void setServicePathDescription(String restPathDescription) {
+//        this.restPathDescription = restPathDescription;
+//    }
+//
+//    public void setServicePathDefault(String restPathDefaultValue) {
+//        this.restPathDefault = restPathDefaultValue;
+//    }
 
 }

@@ -29,6 +29,8 @@ package org.n52.sos.aquarius;
 
 public interface AquariusConstants {
 
+    String AQUARIUS_PATH = "/AQUARIUS/Publish/v2/";
+
     String HEADER_AQ_AUTH_TOKEN = "X-Authentication-Token";
 
     String FILTER = "filter";

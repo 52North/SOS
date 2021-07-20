@@ -47,7 +47,7 @@ public interface ProxyDatasource extends Datasource {
 
     String PROXY_HOST_TITLE = "Proxy Service Host";
 
-    String PROXY_PATH_TITLE = "Proxy Servic Path";
+    String PROXY_PATH_TITLE = "Proxy Service Path";
 
     @Override
     default Set<String> getSpringProfiles() {

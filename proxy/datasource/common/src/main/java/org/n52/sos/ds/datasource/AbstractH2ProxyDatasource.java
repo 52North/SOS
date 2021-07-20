@@ -48,6 +48,12 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));
+        if (settings.containsKey(PROXY_HOST_KEY)) {
+            p.put(PROXY_HOST_KEY, settings.get(PROXY_HOST_KEY));
+        }
+        if (settings.containsKey(PROXY_PATH_KEY)) {
+            p.put(PROXY_PATH_KEY, settings.get(PROXY_PATH_KEY));
+        }
         addMappingFileDirectories(settings, p);
         return p;
     }

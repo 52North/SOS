@@ -80,8 +80,8 @@
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.4.32.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
-        <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>25.1</version.geotools>
+        <version.hikaricp>5.0.0</version.hikaricp>
         <version.jackson>2.12.4</version.jackson>
         <version.logback>1.2.4</version.logback>
         <version.slf4j>1.7.31</version.slf4j>

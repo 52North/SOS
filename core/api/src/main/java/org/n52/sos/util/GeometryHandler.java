@@ -104,13 +104,13 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
 
     private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
 
-    private Integer storageEPSG;
+    private int storageEPSG;
 
-    private Integer storage3DEPSG;
+    private int storage3DEPSG;
 
-    private Integer defaultResponseEPSG;
+    private int defaultResponseEPSG;
 
-    private Integer defaultResponse3DEPSG;
+    private int defaultResponse3DEPSG;
 
     private final Set<String> supportedCRS = Sets.newHashSet();
 
@@ -179,7 +179,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Storage EPSG code
      */
     public int getStorageEPSG() {
-        return storageEPSG.intValue();
+        return storageEPSG;
     }
 
     /**
@@ -188,7 +188,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Storage 3D EPSG code
      */
     public int getStorage3DEPSG() {
-        return storage3DEPSG.intValue();
+        return storage3DEPSG;
     }
 
     /**
@@ -197,7 +197,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Default response EPSG code
      */
     public int getDefaultResponseEPSG() {
-        return defaultResponseEPSG.intValue();
+        return defaultResponseEPSG;
     }
 
     /**
@@ -206,7 +206,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
      * @return Default response 3D EPSG code
      */
     public int getDefaultResponse3DEPSG() {
-        return defaultResponse3DEPSG.intValue();
+        return defaultResponse3DEPSG;
     }
 
     /**
@@ -221,7 +221,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
     public void setStorageEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
-        this.storageEPSG = Integer.valueOf(epsgCode);
+        this.storageEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
     }
 
@@ -237,7 +237,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
     public void setStorage3DEpsg(int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
-        this.storage3DEPSG = Integer.valueOf(epsgCode3D);
+        this.storage3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
     }
 
@@ -253,7 +253,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
     public void setDefaultResponseEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Default response EPSG Code", epsgCode);
-        this.defaultResponseEPSG = Integer.valueOf(epsgCode);
+        this.defaultResponseEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
     }
 
@@ -269,7 +269,7 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
     public void setDefaultResponse3DEpsg(int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Default response 3D EPSG Code", epsgCode3D);
-        this.defaultResponse3DEPSG = Integer.valueOf(epsgCode3D);
+        this.defaultResponse3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
     }
 
@@ -292,16 +292,16 @@ public class GeometryHandler implements GeometryTransformer, Constructable, Dest
     }
 
     private void addDefaultCrs() {
-        if (storageEPSG != null) {
+        if (storageEPSG > 0) {
             addToSupportedCrs(getStorageEPSG());
         }
-        if (storage3DEPSG != null) {
+        if (storage3DEPSG > 0) {
             addToSupportedCrs(getStorage3DEPSG());
         }
-        if (defaultResponseEPSG != null) {
+        if (defaultResponseEPSG > 0) {
             addToSupportedCrs(getDefaultResponseEPSG());
         }
-        if (defaultResponse3DEPSG != null) {
+        if (defaultResponse3DEPSG > 0) {
             addToSupportedCrs(getDefaultResponse3DEPSG());
         }
     }

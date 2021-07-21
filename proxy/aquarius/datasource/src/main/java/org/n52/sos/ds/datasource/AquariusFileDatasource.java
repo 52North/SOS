@@ -179,4 +179,9 @@ public class AquariusFileDatasource extends AbstractAquariusH2Datasource {
         return new String[0];
     }
 
+    @Override
+    public boolean needsSchema() {
+        return true;
+    }
+
 }

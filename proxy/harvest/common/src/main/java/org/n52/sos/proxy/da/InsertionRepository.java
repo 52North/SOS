@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.hibernate.Hibernate;
 import org.n52.io.request.IoParameters;
 import org.n52.sensorweb.server.db.assembler.core.CategoryAssembler;
 import org.n52.sensorweb.server.db.assembler.core.DatasetAssembler;
@@ -172,31 +173,31 @@ public class InsertionRepository {
         if (tags != null && !tags.isEmpty()) {
             dataset.setTags(tags);
         }
-        return datasetAssembler.getOrInsertInstance(dataset);
+        return unproxy(datasetAssembler.getOrInsertInstance(dataset));
+    }
+
+    public synchronized AbstractFeatureEntity<?> insertFeature(AbstractFeatureEntity<?> feature) {
+        return unproxy(featureAssembler.getOrInsertInstance(feature));
     }
 
     private OfferingEntity insertOffering(OfferingEntity offering) {
-        return offeringAssembler.getOrInsertInstance(offering);
+        return unproxy(offeringAssembler.getOrInsertInstance(offering));
     }
 
     private ProcedureEntity insertProcedure(ProcedureEntity procedure) {
-        return procedureAssembler.getOrInsertInstance(procedure);
+        return unproxy(procedureAssembler.getOrInsertInstance(procedure));
     }
 
     private CategoryEntity insertCategory(CategoryEntity category) {
-        return categoryAssembler.getOrInsertInstance(category);
-    }
-
-    private AbstractFeatureEntity<?> insertFeature(AbstractFeatureEntity feature) {
-        return featureAssembler.getOrInsertInstance(feature);
+        return unproxy(categoryAssembler.getOrInsertInstance(category));
     }
 
     private PhenomenonEntity insertPhenomenon(PhenomenonEntity phenomenon) {
-        return phenomenonAssembler.getOrInsertInstance(phenomenon);
+        return unproxy(phenomenonAssembler.getOrInsertInstance(phenomenon));
     }
 
     private PlatformEntity insertPlatform(PlatformEntity platform) {
-        return platformAssembler.getOrInsertInstance(platform);
+        return unproxy(platformAssembler.getOrInsertInstance(platform));
     }
 
     private Set<TagEntity> insertTags(Collection<TagEntity> tags) {
@@ -204,14 +205,14 @@ public class InsertionRepository {
     }
 
     private TagEntity insertTag(TagEntity tag) {
-        return tagAssembler.getOrInsertInstance(tag);
+        return unproxy(tagAssembler.getOrInsertInstance(tag));
     }
 
     private UnitEntity insertUnit(UnitEntity unit) {
         if (unit != null && unit.isSetIdentifier()) {
             UnitEntity instance = unitRepository.getInstance(unit);
             if (instance != null) {
-                return instance;
+                return unproxy(instance);
             }
             return unitRepository.saveAndFlush(unit);
         }
@@ -278,7 +279,7 @@ public class InsertionRepository {
     }
 
     public synchronized DatasetEntity updateDataset(DatasetEntity dataset) {
-        return datasetRepository.saveAndFlush(dataset);
+        return unproxy(datasetRepository.saveAndFlush(dataset));
     }
 
     public DatasetQuerySpecifications getDatasetQuerySpecification() {
@@ -288,6 +289,10 @@ public class InsertionRepository {
     public DatasetQuerySpecifications getDatasetQuerySpecification(IoParameters parameters) {
         return DatasetQuerySpecifications.of(dbQueryFactory.createFrom(IoParameters.createDefaults()),
                 datasetAssembler.getEntityManager());
+    }
+
+    private <T> T unproxy(T entity) {
+        return (T) Hibernate.unproxy(entity);
     }
 
 }

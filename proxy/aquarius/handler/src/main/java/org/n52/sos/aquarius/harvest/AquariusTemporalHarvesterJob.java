@@ -50,6 +50,10 @@ public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob i
     @Inject
     private AquariusTemporalUpdater updater;
 
+    public AquariusTemporalHarvesterJob() {
+        setTriggerAtStartup(isTriggerAtStartup());
+    }
+
     @Override
     protected void save(JobExecutionContext context, AquariusConnector connector) {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();

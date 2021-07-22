@@ -171,7 +171,7 @@ public class DataSourceHarvesterJobFactory implements Constructable {
 
     private void validate(String cronExpression) {
         try {
-            new CronExpression(cronExpression);
+            CronExpression.validateExpression(cronExpression);
         } catch (ParseException e) {
             throw new ConfigurationError(String.format(
                     "%s is invalid! Please check http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials"

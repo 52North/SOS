@@ -187,11 +187,14 @@ public class HttpClientHandler implements Constructable, Destroyable {
     private CloseableHttpResponse executeHttpRequest(HttpRequestBase request) throws IOException {
         int counter = 4;
         CloseableHttpResponse response = null;
+        long start = System.currentTimeMillis();
         do {
             response = Failsafe.with(RETRY_POLICY)
                     .onFailure(ex -> LOGGER.warn("Could not connect to host; retrying", ex))
                     .get(() -> getClient().execute(request));
         } while (response == null && counter >= 0);
+
+        LOGGER.trace("Querying took {} ms!", System.currentTimeMillis() - start);
         return response;
     }
 

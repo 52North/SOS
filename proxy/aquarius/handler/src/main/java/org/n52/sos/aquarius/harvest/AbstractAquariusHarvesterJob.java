@@ -31,6 +31,7 @@ import javax.inject.Inject;
 
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnectionFactory;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.event.events.UpdateCache;
@@ -53,6 +54,11 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
 
     protected AquariusConnector getConnector() throws ConnectionProviderException {
         return connectionFactory.getConnection();
+    }
+
+    @Override
+    protected String getGroup() {
+        return AquariusConstants.GROUP;
     }
 
     @Override

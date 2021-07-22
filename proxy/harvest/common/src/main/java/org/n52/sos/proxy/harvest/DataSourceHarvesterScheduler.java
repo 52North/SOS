@@ -58,6 +58,9 @@ public class DataSourceHarvesterScheduler implements Destroyable {
             return;
         }
         try {
+            HarvesterTriggerJobListener harvesterTriggerJobListener = new HarvesterTriggerJobListener();
+            scheduler.getListenerManager().addJobListener(harvesterTriggerJobListener);
+            scheduler.getListenerManager().addTriggerListener(harvesterTriggerJobListener);
             scheduler.startDelayed(startupDelayInSeconds);
             LOGGER.debug("Scheduler will start jobs in {}s ...", startupDelayInSeconds);
         } catch (SchedulerException e) {

@@ -55,8 +55,10 @@ public abstract class AbstractHarvesterJob extends ScheduledJob implements Job {
 
     @Override
     public JobDetail createJobDetails() {
-        return JobBuilder.newJob(this.getClass()).withIdentity(getJobName()).build();
+        return JobBuilder.newJob(this.getClass()).withIdentity(getJobName(), getGroup()).build();
     }
+
+    protected abstract String getGroup();
 
     public InsertionRepository getInsertionRepository() {
         return insertionRepository;

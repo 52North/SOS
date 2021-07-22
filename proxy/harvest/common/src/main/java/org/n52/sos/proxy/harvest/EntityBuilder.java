@@ -105,7 +105,7 @@ public interface EntityBuilder {
 
     default UnitEntity createUnit(String identifier, String name, String description, ServiceEntity service) {
         UnitEntity entity = new UnitEntity();
-        addDescribeableData(entity, identifier, name, description, service);
+        addDescribeableData(entity, identifier.replace(" ", ""), name, description, service);
         return entity;
     }
 

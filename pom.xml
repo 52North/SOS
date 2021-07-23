@@ -97,7 +97,7 @@
         <version.springframework>5.3.9</version.springframework>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.5</version.saxon>
-        <version.elasticsearch>7.13.3</version.elasticsearch>
+        <version.elasticsearch>7.13.4</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>

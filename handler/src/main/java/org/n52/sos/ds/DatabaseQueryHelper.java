@@ -80,7 +80,7 @@ public interface DatabaseQueryHelper {
                 return  OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION;
             case quantity:
                 return  OmConstants.OBS_TYPE_MEASUREMENT;
-            case referenced:
+            case reference:
                 return  OmConstants.OBS_TYPE_REFERENCE_OBSERVATION;
             case text:
                 return  OmConstants.OBS_TYPE_TEXT_OBSERVATION;

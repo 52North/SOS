@@ -370,7 +370,7 @@ public class ObservationPersister
                 } else if (v instanceof GeometryValue) {
                     return ValueType.geometry;
                 } else if (v instanceof ReferenceValue) {
-                    return ValueType.referenced;
+                    return ValueType.reference;
                 } else if (v instanceof TextValue) {
                     return ValueType.text;
                 }

@@ -174,7 +174,7 @@ public abstract class DatasetFactory {
     public DatasetEntity reference()
             throws OwsExceptionReport {
         return instantiate(referenceClass()).setDatasetType(DatasetType.timeseries)
-                .setObservationType(ObservationType.simple).setValueType(ValueType.referenced);
+                .setObservationType(ObservationType.simple).setValueType(ValueType.reference);
     }
 
     private <T extends DatasetEntity> T instantiate(Class<T> c)

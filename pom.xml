@@ -92,7 +92,7 @@
         <version.arctic-sea>9.0.0</version.arctic-sea>
         <version.helgoland.api>3.4.1</version.helgoland.api>
         <version.dao-impl>3.5.0</version.dao-impl>
-        <version.db-model>3.1.0</version.db-model>
+        <version.db-model>3.1.1</version.db-model>
         <version.springframework.security>5.5.1</version.springframework.security>
         <version.springframework>5.3.9</version.springframework>
         <version.aspectj>1.9.7</version.aspectj>

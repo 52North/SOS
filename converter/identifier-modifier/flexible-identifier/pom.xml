@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-identifier-modifier</artifactId>
-        <version>5.2.10-SNAPSHOT</version>
+        <version>5.2.10</version>
     </parent>
     <artifactId>sos-flexible-identifier</artifactId>
     <packaging>jar</packaging>

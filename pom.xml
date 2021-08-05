@@ -73,24 +73,24 @@
 
 
         <version.postgresql>42.2.23</version.postgresql>
-        <version.postgis>2.5.0</version.postgis>
+        <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.1.0.0</version.ojdbc8>
-        <version.sqljdbc>9.2.1.jre8</version.sqljdbc>
+        <version.sqljdbc>9.4.0.jre8</version.sqljdbc>
         <version.mysql>8.0.26</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.4.32.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
-        <version.hikaricp>5.0.0</version.hikaricp>
+        <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>25.2</version.geotools>
         <version.jackson>2.12.4</version.jackson>
-        <version.logback>1.2.4</version.logback>
-        <version.slf4j>1.7.31</version.slf4j>
+        <version.logback>1.2.5</version.logback>
+        <version.slf4j>1.7.32</version.slf4j>
         <version.netcdf>5.4.1</version.netcdf>
         <version.jts>1.18.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.0.0</version.arctic-sea>
+        <version.arctic-sea>9.0.1</version.arctic-sea>
         <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
         <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
@@ -99,7 +99,7 @@
         <version.springframework.data>2.5.1</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.5</version.saxon>
-        <version.elasticsearch>7.13.3</version.elasticsearch>
+        <version.elasticsearch>7.14.0</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -846,7 +846,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.8</version>
+                 <version>1.11.10</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -911,7 +911,7 @@
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.4</version>
+                <version>3.1.6</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>

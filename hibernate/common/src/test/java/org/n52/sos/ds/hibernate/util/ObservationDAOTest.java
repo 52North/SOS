@@ -178,28 +178,4 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         }
     }
 
-    @Test
-    public void runtimeComparisonGetGlobalTemporalBoundingBoxes() throws ConnectionProviderException {
-        long startOldWay;
-        long startNewWay;
-        long endOldWay;
-        long endNewWay;
-        Session session = getSession();
-        try {
-            startOldWay = System.currentTimeMillis();
-            observationDAO.getMinPhenomenonTime(session);
-            observationDAO.getMaxPhenomenonTime(session);
-            endOldWay = System.currentTimeMillis();
-            startNewWay = System.currentTimeMillis();
-            observationDAO.getGlobalTemporalBoundingBox(session);
-            endNewWay = System.currentTimeMillis();
-            long oldTime = endOldWay - startOldWay;
-            long newTime = endNewWay - startNewWay;
-            assertThat(String.format("old way is faster? Old way: %sms\\nNew Way: %sms", oldTime, newTime), newTime,
-                    lessThanOrEqualTo(oldTime));
-            LOGGER.debug("ObservationDAO global temporal bbox: Old way: {}ms\\nNew Way: {}ms", oldTime, newTime);
-        } finally {
-            returnSession(session);
-        }
-    }
 }

@@ -96,7 +96,7 @@
         <version.db-model>4.0.0-PR.3</version.db-model>
         <version.springframework.security>5.5.1</version.springframework.security>
         <version.springframework>5.3.9</version.springframework>
-        <version.springframework.data>2.5.2</version.springframework.data>
+        <version.springframework.data>2.5.3</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.5</version.saxon>
         <version.elasticsearch>7.14.0</version.elasticsearch>

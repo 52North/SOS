@@ -257,11 +257,8 @@ public abstract class DatasetFactory {
 
     public DatasetEntity reference()
             throws OwsExceptionReport {
-        DatasetEntity referenced = instantiate(blobClass());
-        referenced.setDatasetType(DatasetType.timeseries);
-        referenced.setObservationType(ObservationType.simple);
-        referenced.setValueType(ValueType.referenced);
-        return referenced;
+        return instantiate(referenceClass()).setDatasetType(DatasetType.timeseries)
+                .setObservationType(ObservationType.simple).setValueType(ValueType.reference);
     }
 
     private <T extends DatasetEntity> T instantiate(Class<T> c)

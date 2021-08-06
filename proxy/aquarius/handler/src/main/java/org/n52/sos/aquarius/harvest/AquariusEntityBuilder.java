@@ -51,6 +51,11 @@ import org.n52.series.db.beans.QuantityDataEntity;
 import org.n52.series.db.beans.ServiceEntity;
 import org.n52.series.db.beans.TextDataEntity;
 import org.n52.series.db.beans.UnitEntity;
+import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.series.db.beans.parameter.ParameterFactory;
+import org.n52.series.db.beans.parameter.ParameterFactory.EntityType;
+import org.n52.series.db.beans.parameter.TextParameterEntity;
+import org.n52.series.db.beans.parameter.dataset.DatasetParameterEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.aquarius.ds.AquariusHelper;
 import org.n52.sos.aquarius.ds.AquariusTimeHelper;
@@ -305,4 +310,20 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return createUnit(unit, unit, null, service);
     }
 
+    default ParameterEntity<?> createParameter(DatasetEntity dataset, String domain, String name, String value) {
+        ParameterEntity<?> param = createDatasetParameterEntity(dataset,
+                org.n52.series.db.beans.parameter.ParameterFactory.ValueType.TEXT);
+        ((TextParameterEntity) param).setValue(value);
+        param.setName(name);
+        param.setDomain(domain);
+        return param;
+    }
+
+    default ParameterEntity<?> createDatasetParameterEntity(DatasetEntity dataset,
+            org.n52.series.db.beans.parameter.ParameterFactory.ValueType valueType) {
+        DatasetParameterEntity<?> param =
+                (DatasetParameterEntity<?>) ParameterFactory.from(EntityType.DATASET, valueType);
+        param.setDataset(dataset);
+        return param;
+    }
 }

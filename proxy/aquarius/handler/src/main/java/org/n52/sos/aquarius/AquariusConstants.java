@@ -111,4 +111,22 @@ public interface AquariusConstants {
         All, PointsOnly, MetadataOnly;
     }
 
+    enum InterpolationTypes {
+        PrecedingConstant, SucceedingConstant, InstananeousValues, DiscreteValues, InstantaneousTotals, PrecedingTotals;
+    }
+
+    enum ComputationIdentifiers {
+        Mean, Max, Min, Default;
+
+        public static ComputationIdentifiers getFrom(String value) {
+            for (ComputationIdentifiers identifier : values()) {
+                if (identifier.name()
+                        .equalsIgnoreCase(value)) {
+                    return identifier;
+                }
+            }
+            return ComputationIdentifiers.Default;
+        }
+    }
+
 }

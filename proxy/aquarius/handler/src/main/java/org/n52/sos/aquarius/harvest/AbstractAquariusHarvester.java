@@ -48,7 +48,10 @@ import org.n52.series.db.beans.PhenomenonEntity;
 import org.n52.series.db.beans.PlatformEntity;
 import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ServiceEntity;
+import org.n52.series.db.beans.parameter.ParameterEntity;
+import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.dao.AquariusGetObservationDao;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.aquarius.ds.AquariusHelper;
@@ -59,6 +62,7 @@ import org.n52.sos.aquarius.pojo.TimeSeriesData;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.Unit;
 import org.n52.sos.aquarius.pojo.Units;
+import org.n52.sos.aquarius.pojo.data.InterpolationType;
 import org.n52.sos.aquarius.pojo.data.Point;
 import org.n52.sos.aquarius.requests.GetLocationDescriptionList;
 import org.n52.sos.proxy.da.InsertionRepository;
@@ -70,6 +74,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractAquariusHarvester implements Harvester, AquariusEntityBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAquariusHarvester.class);
+
+    private static final String UNKNOWN = "Unknown";
 
     protected Map<String, ProcedureEntity> procedures = new HashMap<>();
 
@@ -249,8 +255,11 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
                                 createPhenomenon(parameters.get(timeSeries.getParameter()), phenomenon, service);
                         dataset.setPhenomenon(phen);
                         dataset.setCategory(createCategory(phen, categories, service));
+                        TimeSeriesData firstTimeSeriesData =
+                                connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
+                        addParameter(dataset, timeSeries, firstTimeSeriesData);
                         DatasetEntity insertDataset = getInsertionRepository().insertDataset(dataset);
-                        updateFirstLastObservation(insertDataset, timeSeries, connector);
+                        updateFirstLastObservation(insertDataset, firstTimeSeriesData, timeSeries, connector);
                     }
                 }
             } catch (Exception e) {
@@ -274,6 +283,11 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     protected void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesDescription timeSeries,
             AquariusConnector connector) throws OwsExceptionReport {
         TimeSeriesData firstTimeSeriesData = connector.getTimeSeriesDataFirstPoint(timeSeries.getUniqueId());
+        updateFirstLastObservation(dataset, firstTimeSeriesData, timeSeries, connector);
+    }
+
+    private void updateFirstLastObservation(DatasetEntity dataset, TimeSeriesData firstTimeSeriesData,
+            TimeSeriesDescription timeSeries, AquariusConnector connector) throws OwsExceptionReport {
         TimeSeriesData lastTimeSeriesData = connector.getTimeSeriesDataLastPoint(timeSeries.getUniqueId());
         updateDataset(dataset, firstTimeSeriesData, lastTimeSeriesData);
     }
@@ -297,4 +311,95 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     protected DataEntity<?> insertData(DatasetEntity dataset, DataEntity<?> data) {
         return getInsertionRepository().insertData(dataset, data);
     }
+
+    protected void addParameter(DatasetEntity dataset, TimeSeriesDescription timeSeries,
+            TimeSeriesData firstTimeSeriesData) throws OwsExceptionReport {
+        if (timeSeries.hasComputationIdentifier() && firstTimeSeriesData.hasInterpolationTypes()) {
+            ParameterEntity<?> param = createInterpolationParam(dataset, firstTimeSeriesData.getInterpolationTypes()
+                    .get(0), timeSeries.getComputationIdentifier());
+            if (param != null) {
+                dataset.addParameter(param);
+            }
+        }
+        if (timeSeries.hasComputationPeriodIdentifier()) {
+            ParameterEntity<?> param = createAggregationParam(dataset, timeSeries.getComputationPeriodIdentifier());
+            if (param != null) {
+                dataset.addParameter(param);
+            }
+        }
+    }
+
+    private ParameterEntity<?> createInterpolationParam(DatasetEntity dataset, InterpolationType interpolationType,
+            String computationIdentifier) {
+        switch (AquariusConstants.InterpolationTypes.valueOf(interpolationType.getType())) {
+            case InstananeousValues:
+                return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
+                        WaterMLConstants.InterpolationType.Continuous.name());
+            case DiscreteValues:
+                return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
+                        WaterMLConstants.InterpolationType.Discontinuous.name());
+            case InstantaneousTotals:
+                return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
+                        WaterMLConstants.InterpolationType.InstantTotal.name());
+            case PrecedingTotals:
+                return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
+                        WaterMLConstants.InterpolationType.TotalPrec.name());
+            case PrecedingConstant:
+                return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
+                        getPreceding(computationIdentifier));
+            case SucceedingConstant:
+                return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
+                        getSucceeding(computationIdentifier));
+            default:
+                return null;
+        }
+    }
+
+    private String getPreceding(String computationIdentifier) {
+        switch (AquariusConstants.ComputationIdentifiers.getFrom(computationIdentifier)) {
+            case Min:
+                return WaterMLConstants.InterpolationType.MinPrec.name();
+            case Max:
+                return WaterMLConstants.InterpolationType.MaxPrec.name();
+            case Mean:
+                return WaterMLConstants.InterpolationType.AveragePrec.name();
+            case Default:
+            default:
+                return WaterMLConstants.InterpolationType.ConstPrec.name();
+        }
+    }
+
+    private String getSucceeding(String computationIdentifier) {
+        switch (AquariusConstants.ComputationIdentifiers.getFrom(computationIdentifier)) {
+            case Min:
+                return WaterMLConstants.InterpolationType.MinSucc.name();
+            case Max:
+                return WaterMLConstants.InterpolationType.MaxSucc.name();
+            case Mean:
+                return WaterMLConstants.InterpolationType.AverageSucc.name();
+            case Default:
+            default:
+                return WaterMLConstants.InterpolationType.ConstSucc.name();
+        }
+    }
+
+    private ParameterEntity<?> createAggregationParam(DatasetEntity dataset, String computationPeriodIdentifier) {
+        switch (computationPeriodIdentifier) {
+            case "Daily":
+                return createParameter(dataset, WaterMLConstants.EN_AGGREGATION_DURATION, "P1D");
+            case "Hourly":
+                return createParameter(dataset, WaterMLConstants.EN_AGGREGATION_DURATION, "PT1H");
+            case "Monthly":
+                return createParameter(dataset, WaterMLConstants.EN_AGGREGATION_DURATION, "P1M");
+            case "Points":
+            case UNKNOWN:
+            default:
+                return null;
+        }
+    }
+
+    private ParameterEntity<?> createParameter(DatasetEntity dataset, String name, String value) {
+        return createParameter(dataset, WaterMLConstants.NS_WML_20, name, value);
+    }
+
 }

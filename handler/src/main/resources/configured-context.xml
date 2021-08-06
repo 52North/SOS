@@ -17,6 +17,7 @@
     <bean class="org.n52.sos.ds.observation.AdditionalObservationCreatorRepository" />
     <bean class="org.n52.sos.ds.observation.InspireObservationCreator"/>
     <bean class="org.n52.sos.ds.observation.WaterMLObservationCreator"/>
+    <bean class="org.n52.sos.ds.observation.TimeseriesMLObservationCreator"/>
 
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository" />
     <bean class="org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactorySml101"/>

@@ -281,6 +281,10 @@ public class TimeSeriesData implements Serializable {
         this.interpolationTypes = interpolationTypes;
     }
 
+    public boolean hasInterpolationTypes() {
+        return getInterpolationTypes() != null && !getInterpolationTypes().isEmpty();
+    }
+
     @JsonProperty("Notes")
     public List<Note> getNotes() {
         return notes;

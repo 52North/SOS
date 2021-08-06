@@ -36,9 +36,9 @@ import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.series.DefaultPointMetadata;
 import org.n52.shetland.ogc.om.series.MeasurementTimeseriesMetadata;
 import org.n52.shetland.ogc.om.series.Metadata;
-import org.n52.shetland.ogc.om.series.wml.DefaultTVPMeasurementMetadata;
-import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
-import org.n52.shetland.ogc.om.series.wml.WaterMLConstants.InterpolationType;
+import org.n52.shetland.ogc.om.series.tsml.DefaultTVPMeasurementMetadata;
+import org.n52.shetland.ogc.om.series.tsml.TimeseriesMLConstants;
+import org.n52.shetland.ogc.om.series.tsml.TimeseriesMLConstants.InterpolationType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
@@ -47,18 +47,18 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
  *         J&uuml;rrens</a>
  *
  */
-public class WaterMLMetadataAdder {
+public class TimeseriesMLMetadataAdder {
 
     private OmObservation omObservation;
 
     private DatasetEntity series;
 
-    public WaterMLMetadataAdder(OmObservation omObservation, DatasetEntity series) {
+    public TimeseriesMLMetadataAdder(OmObservation omObservation, DatasetEntity series) {
         this.omObservation = omObservation;
         this.series = series;
     }
 
-    public WaterMLMetadataAdder add() throws CodedException {
+    public TimeseriesMLMetadataAdder add() throws CodedException {
         if (series.hasParameters()) {
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             /*
@@ -75,16 +75,16 @@ public class WaterMLMetadataAdder {
              * Get interpolation type from database
              */
             Optional<Object> interpolationTypeTitle =
-                    getMetadataElement(series, WaterMLConstants.NS_WML_20, WaterMLConstants.INTERPOLATION_TYPE);
+                    getMetadataElement(series, TimeseriesMLConstants.NS_TSML_10, TimeseriesMLConstants.INTERPOLATION_TYPE);
             /*
              * Default Value
              */
-            InterpolationType interpolationType = WaterMLConstants.InterpolationType.Continuous;
+            InterpolationType interpolationType = TimeseriesMLConstants.InterpolationType.Continuous;
             if (interpolationTypeTitle.isPresent()) {
                 try {
                     interpolationType = InterpolationType.from(interpolationTypeTitle.get().toString());
                 } catch (IllegalArgumentException iae) {
-                    throw createMetadataInvalidException(WaterMLConstants.INTERPOLATION_TYPE,
+                    throw createMetadataInvalidException(TimeseriesMLConstants.INTERPOLATION_TYPE,
                             interpolationType.getTitle(), iae);
                 }
             }
@@ -93,7 +93,7 @@ public class WaterMLMetadataAdder {
 
             // aggregationDuration
             Optional<Object> aggregationDuration =
-                    getMetadataElement(series, WaterMLConstants.NS_WML_20, WaterMLConstants.EN_AGGREGATION_DURATION);
+                    getMetadataElement(series, TimeseriesMLConstants.NS_TSML_10, TimeseriesMLConstants.EN_AGGREGATION_DURATION);
             if (aggregationDuration.isPresent()) {
                 observationConstellation.getDefaultPointMetadata()
                         .getDefaultTVPMeasurementMetadata()
@@ -110,8 +110,8 @@ public class WaterMLMetadataAdder {
             if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
                 observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
             }
-            Optional<Object> cumulativeMetadata = getMetadataElement(series, WaterMLConstants.NS_WML_20,
-                    WaterMLConstants.SERIES_METADATA_CUMULATIVE);
+            Optional<Object> cumulativeMetadata = getMetadataElement(series, TimeseriesMLConstants.NS_TSML_10,
+                    TimeseriesMLConstants.SERIES_METADATA_CUMULATIVE);
             /*
              * Default Value
              */
@@ -128,7 +128,7 @@ public class WaterMLMetadataAdder {
                         cumulative = Boolean.parseBoolean(cumulativeMetadataValue);
                     }
                 } else {
-                    throw createMetadataInvalidException(WaterMLConstants.SERIES_METADATA_CUMULATIVE,
+                    throw createMetadataInvalidException(TimeseriesMLConstants.SERIES_METADATA_CUMULATIVE,
                             cumulativeMetadataValue, null);
                 }
             }

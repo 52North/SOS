@@ -34,7 +34,7 @@ import org.hibernate.Session;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.DatasetEntity;
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.om.series.wml.WaterMLConstants;
+import org.n52.shetland.ogc.om.series.tsml.TimeseriesMLConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 
 import com.google.common.collect.Sets;
@@ -44,10 +44,10 @@ import com.google.common.collect.Sets;
  *         J&uuml;rrens</a>
  *
  */
-public class WaterMLObservationCreator implements AdditionalObservationCreator {
+public class TimeseriesMLObservationCreator implements AdditionalObservationCreator {
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = Sets.union(
-            AdditionalObservationCreatorRepository.encoderKeysForElements(WaterMLConstants.NS_WML_20, DataEntity.class,
+            AdditionalObservationCreatorRepository.encoderKeysForElements(TimeseriesMLConstants.NS_TSML_10, DataEntity.class,
                     DatasetEntity.class),
             AdditionalObservationCreatorRepository.encoderKeysForElements("application/uvf", DataEntity.class,
                     DatasetEntity.class));
@@ -60,29 +60,29 @@ public class WaterMLObservationCreator implements AdditionalObservationCreator {
     @Override
     public OmObservation create(OmObservation omObservation, DataEntity<?> observation, Session session)
             throws CodedException {
-        return addWaterMLMetadata(omObservation, observation.getDataset());
+        return addWTimeseriesMLMetadata(omObservation, observation.getDataset());
     }
 
     @Override
     public OmObservation create(OmObservation omObservation, DatasetEntity series, Session session)
             throws CodedException {
-        return addWaterMLMetadata(omObservation, series);
+        return addWTimeseriesMLMetadata(omObservation, series);
     }
 
     @Override
     public OmObservation create(OmObservation omObservation, DatasetEntity dataset) throws CodedException {
-        return addWaterMLMetadata(omObservation, dataset);
+        return addWTimeseriesMLMetadata(omObservation, dataset);
     }
 
     @Override
     public OmObservation add(OmObservation omObservation, DataEntity<?> observation, Session session)
             throws CodedException {
-        return addWaterMLMetadata(omObservation, observation.getDataset());
+        return addWTimeseriesMLMetadata(omObservation, observation.getDataset());
     }
 
-    private OmObservation addWaterMLMetadata(OmObservation omObservation, DatasetEntity series)
+    private OmObservation addWTimeseriesMLMetadata(OmObservation omObservation, DatasetEntity series)
             throws CodedException {
-        return new WaterMLMetadataAdder(omObservation, series).add().result();
+        return new TimeseriesMLMetadataAdder(omObservation, series).add().result();
     }
 
 }

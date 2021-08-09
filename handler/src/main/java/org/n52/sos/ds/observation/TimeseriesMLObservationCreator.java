@@ -47,8 +47,8 @@ import com.google.common.collect.Sets;
 public class TimeseriesMLObservationCreator implements AdditionalObservationCreator {
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = Sets.union(
-            AdditionalObservationCreatorRepository.encoderKeysForElements(TimeseriesMLConstants.NS_TSML_10, DataEntity.class,
-                    DatasetEntity.class),
+            AdditionalObservationCreatorRepository.encoderKeysForElements(TimeseriesMLConstants.NS_TSML_10,
+                    DataEntity.class, DatasetEntity.class),
             AdditionalObservationCreatorRepository.encoderKeysForElements("application/uvf", DataEntity.class,
                     DatasetEntity.class));
 
@@ -82,7 +82,8 @@ public class TimeseriesMLObservationCreator implements AdditionalObservationCrea
 
     private OmObservation addWTimeseriesMLMetadata(OmObservation omObservation, DatasetEntity series)
             throws CodedException {
-        return new TimeseriesMLMetadataAdder(omObservation, series).add().result();
+        return new TimeseriesMLMetadataAdder(omObservation, series).add()
+                .result();
     }
 
 }

@@ -30,7 +30,6 @@ package org.n52.sos.ds.observation;
 import java.util.Optional;
 
 import org.n52.series.db.beans.DatasetEntity;
-import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.series.DefaultPointMetadata;
@@ -40,60 +39,55 @@ import org.n52.shetland.ogc.om.series.tsml.DefaultTVPMeasurementMetadata;
 import org.n52.shetland.ogc.om.series.tsml.TimeseriesMLConstants;
 import org.n52.shetland.ogc.om.series.tsml.TimeseriesMLConstants.InterpolationType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  *
  */
-public class TimeseriesMLMetadataAdder {
+public class TimeseriesMLMetadataAdder extends SeriesMetadataAdder {
 
-    private OmObservation omObservation;
-
-    private DatasetEntity series;
-
-    public TimeseriesMLMetadataAdder(OmObservation omObservation, DatasetEntity series) {
-        this.omObservation = omObservation;
-        this.series = series;
+    public TimeseriesMLMetadataAdder(OmObservation omObservation, DatasetEntity dataset) {
+        super(omObservation, dataset);
     }
 
     public TimeseriesMLMetadataAdder add() throws CodedException {
-        if (series.hasParameters()) {
-            OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
+        if (getDataset().hasParameters()) {
+            OmObservationConstellation observationConstellation = getObservation().getObservationConstellation();
             /*
              * Add interpolation type
              */
             if (!observationConstellation.isSetDefaultPointMetadata()) {
                 observationConstellation.setDefaultPointMetadata(new DefaultPointMetadata());
             }
-            if (!observationConstellation.getDefaultPointMetadata().isSetDefaultTVPMeasurementMetadata()) {
+            if (!observationConstellation.getDefaultPointMetadata()
+                    .isSetDefaultTVPMeasurementMetadata()) {
                 observationConstellation.getDefaultPointMetadata()
                         .setDefaultTVPMeasurementMetadata(new DefaultTVPMeasurementMetadata());
             }
             /*
              * Get interpolation type from database
              */
-            Optional<Object> interpolationTypeTitle =
-                    getMetadataElement(series, TimeseriesMLConstants.NS_TSML_10, TimeseriesMLConstants.INTERPOLATION_TYPE);
+            Optional<Object> interpolationTypeTitle = getMetadataElement(TimeseriesMLConstants.INTERPOLATION_TYPE);
             /*
              * Default Value
              */
             InterpolationType interpolationType = TimeseriesMLConstants.InterpolationType.Continuous;
             if (interpolationTypeTitle.isPresent()) {
                 try {
-                    interpolationType = InterpolationType.from(interpolationTypeTitle.get().toString());
+                    interpolationType = InterpolationType.from(interpolationTypeTitle.get()
+                            .toString());
                 } catch (IllegalArgumentException iae) {
                     throw createMetadataInvalidException(TimeseriesMLConstants.INTERPOLATION_TYPE,
                             interpolationType.getTitle(), iae);
                 }
             }
-            observationConstellation.getDefaultPointMetadata().getDefaultTVPMeasurementMetadata()
+            observationConstellation.getDefaultPointMetadata()
+                    .getDefaultTVPMeasurementMetadata()
                     .setInterpolationtype(interpolationType);
 
             // aggregationDuration
-            Optional<Object> aggregationDuration =
-                    getMetadataElement(series, TimeseriesMLConstants.NS_TSML_10, TimeseriesMLConstants.EN_AGGREGATION_DURATION);
+            Optional<Object> aggregationDuration = getMetadataElement(TimeseriesMLConstants.EN_AGGREGATION_DURATION);
             if (aggregationDuration.isPresent()) {
                 observationConstellation.getDefaultPointMetadata()
                         .getDefaultTVPMeasurementMetadata()
@@ -107,17 +101,19 @@ public class TimeseriesMLMetadataAdder {
             if (!observationConstellation.isSetMetadata()) {
                 observationConstellation.setMetadata(new Metadata());
             }
-            if (!observationConstellation.getMetadata().isSetTimeseriesMetadata()) {
-                observationConstellation.getMetadata().setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
+            if (!observationConstellation.getMetadata()
+                    .isSetTimeseriesMetadata()) {
+                observationConstellation.getMetadata()
+                        .setTimeseriesmetadata(new MeasurementTimeseriesMetadata());
             }
-            Optional<Object> cumulativeMetadata = getMetadataElement(series, TimeseriesMLConstants.NS_TSML_10,
-                    TimeseriesMLConstants.SERIES_METADATA_CUMULATIVE);
+            Optional<Object> cumulativeMetadata = getMetadataElement(TimeseriesMLConstants.SERIES_METADATA_CUMULATIVE);
             /*
              * Default Value
              */
             boolean cumulative = false;
             if (cumulativeMetadata.isPresent()) {
-                String cumulativeMetadataValue = cumulativeMetadata.get().toString();
+                String cumulativeMetadataValue = cumulativeMetadata.get()
+                        .toString();
                 if (!cumulativeMetadataValue.isEmpty() && (cumulativeMetadataValue.equalsIgnoreCase("true")
                         || cumulativeMetadataValue.equalsIgnoreCase("false")
                         || cumulativeMetadataValue.equalsIgnoreCase("1")
@@ -132,38 +128,14 @@ public class TimeseriesMLMetadataAdder {
                             cumulativeMetadataValue, null);
                 }
             }
-            ((MeasurementTimeseriesMetadata) observationConstellation.getMetadata().getTimeseriesmetadata())
-                    .setCumulative(cumulative);
+            ((MeasurementTimeseriesMetadata) observationConstellation.getMetadata()
+                    .getTimeseriesmetadata()).setCumulative(cumulative);
         }
         return this;
     }
 
-    private Optional<Object> getMetadataElement(DatasetEntity dataset, String domain, String name) {
-        if (dataset.hasParameters()) {
-            for (ParameterEntity<?> parameter : dataset.getParameters()) {
-                if (domain.equals(parameter.getDomain()) && name.equals(parameter.getName())) {
-                    return Optional.ofNullable(parameter.getValue());
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-    private CodedException createMetadataInvalidException(String metadataKey, String metadataContent,
-            IllegalArgumentException iae) {
-        CodedException e = new NoApplicableCodeException().withMessage(
-                "Series Metadata '%s' for Series '%s' "
-                        + "could not be parsed '%s'. Please contact the administrator of this service.",
-                metadataKey, series.getId(), metadataContent);
-        if (iae != null) {
-            return e.causedBy(iae);
-        } else {
-            return e;
-        }
-    }
-
-    public OmObservation result() {
-        return omObservation;
+    protected Optional<Object> getMetadataElement(String name) {
+        return super.getMetadataElement(getDataset(), TimeseriesMLConstants.NS_TSML_10, name);
     }
 
 }

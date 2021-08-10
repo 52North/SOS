@@ -61,7 +61,7 @@ public class GetTimeSeriesDescriptionsByUniqueId extends AbstractAquariusGetRequ
     }
 
     /**
-     * @return the locationIdentifier
+     * @return the unique ids
      */
     public Set<String> getUniqueIds() {
         return uniqueIds;
@@ -74,8 +74,8 @@ public class GetTimeSeriesDescriptionsByUniqueId extends AbstractAquariusGetRequ
     }
 
     /**
-     * @param locationIdentifier
-     *            the locationIdentifier to set
+     * @param uniqueIds
+     *            the teh unique ids to set
      */
     public GetTimeSeriesDescriptionsByUniqueId setUniqueIds(Collection<String> uniqueIds) {
         this.uniqueIds.clear();

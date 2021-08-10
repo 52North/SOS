@@ -331,8 +331,8 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
 
     private ParameterEntity<?> createInterpolationParam(DatasetEntity dataset, InterpolationType interpolationType,
             String computationIdentifier) {
-        switch (AquariusConstants.InterpolationTypes.valueOf(interpolationType.getType())) {
-            case InstananeousValues:
+        switch (AquariusConstants.InterpolationTypes.getFrom(interpolationType.getType())) {
+            case InstantaneousValues:
                 return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
                         WaterMLConstants.InterpolationType.Continuous.name());
             case DiscreteValues:
@@ -350,6 +350,7 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
             case SucceedingConstant:
                 return createParameter(dataset, WaterMLConstants.INTERPOLATION_TYPE,
                         getSucceeding(computationIdentifier));
+            case Default:
             default:
                 return null;
         }

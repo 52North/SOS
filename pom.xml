@@ -90,7 +90,7 @@
         <version.jts>1.18.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.0.1</version.arctic-sea>
+        <version.arctic-sea>9.1.0</version.arctic-sea>
         <version.helgoland.api>3.5.0-SNAPSHOT</version.helgoland.api>
         <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
@@ -846,7 +846,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.10</version>
+                 <version>1.11.12</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>

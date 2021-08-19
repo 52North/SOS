@@ -65,9 +65,6 @@ public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob i
         context.getJobDetail()
                 .getJobDataMap()
                 .put(AquariusConstants.LAST_UPDATE_TIME, getNextTime(update, now));
-        LOGGER.info(context.getJobDetail()
-                .getKey() + " execution ends.");
-        getEventBus().submit(new UpdateCache());
     }
 
     private DateTime getNextTime(String update, DateTime now) {

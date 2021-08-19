@@ -76,14 +76,16 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
                         updateFirstLastObservation(dataset, timeSeries, connector);
                         getDatasetRepository().saveAndFlush(dataset);
                     } else {
-                        if (service == null) {
-                            service = getOrInsertServiceEntity();
-                        }
                         Location location = getLocation(timeSeries.getLocationIdentifier(), connector);
-                        ProcedureEntity procedure = createProcedure(location, procedures, service);
-                        FeatureEntity feature = createFeature(location, features, service);
-                        PlatformEntity platform = createPlatform(location, platforms, service);
-                        harvestDatasets(location, timeSeries, feature, procedure, platform, service, connector);
+                        if (checkLocation(location)) {
+                            if (service == null) {
+                                service = getOrInsertServiceEntity();
+                            }
+                            ProcedureEntity procedure = createProcedure(location, procedures, service);
+                            FeatureEntity feature = createFeature(location, features, service);
+                            PlatformEntity platform = createPlatform(location, platforms, service);
+                            harvestDatasets(location, timeSeries, feature, procedure, platform, service, connector);
+                        }
                     }
                 }
             }

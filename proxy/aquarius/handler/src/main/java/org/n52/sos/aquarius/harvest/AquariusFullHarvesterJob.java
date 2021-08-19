@@ -51,10 +51,6 @@ public class AquariusFullHarvesterJob extends AbstractAquariusHarvesterJob imple
     @Override
     protected void save(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport {
         harvester.harvest(connector);
-        LOGGER.info(context.getJobDetail()
-                .getKey() + " execution ends.");
-        getEventBus().submit(new UpdateCache());
-
     }
 
 }

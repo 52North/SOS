@@ -63,6 +63,7 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
 
     @Override
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+        Long start = System.currentTimeMillis();
         try {
             LOGGER.debug(context.getJobDetail()
                     .getKey() + " execution starts.");
@@ -71,12 +72,11 @@ public abstract class AbstractAquariusHarvesterJob extends AbstractHarvesterJob 
             LOGGER.error("Error while harvesting data!", ex);
         } finally {
             LOGGER.debug(context.getJobDetail()
-                    .getKey() + " execution finished.");
+                    .getKey() + " execution finished in {} ms.", System.currentTimeMillis() - start);
             getEventBus().submit(new UpdateCache());
         }
     }
 
     protected abstract void save(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport;
-
 
 }

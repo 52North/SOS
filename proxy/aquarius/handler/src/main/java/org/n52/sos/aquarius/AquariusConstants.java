@@ -112,7 +112,12 @@ public interface AquariusConstants {
     }
 
     enum InterpolationTypes {
-        PrecedingConstant, SucceedingConstant, InstantaneousValues, DiscreteValues, InstantaneousTotals, PrecedingTotals, Default;
+        PrecedingConstant,
+        SucceedingConstant,
+        InstantaneousValues,
+        DiscreteValues,
+        InstantaneousTotals,
+        PrecedingTotals, Default;
 
         public static InterpolationTypes getFrom(String value) {
             for (InterpolationTypes identifier : values()) {

@@ -31,7 +31,6 @@ import javax.inject.Inject;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.FullHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;

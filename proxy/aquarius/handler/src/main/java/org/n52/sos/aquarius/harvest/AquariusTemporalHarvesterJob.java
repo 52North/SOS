@@ -32,7 +32,6 @@ import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.n52.sos.aquarius.AquariusConstants;
 import org.n52.sos.aquarius.ds.AquariusConnector;
-import org.n52.sos.event.events.UpdateCache;
 import org.n52.sos.proxy.harvest.TemporalHarvesterJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;

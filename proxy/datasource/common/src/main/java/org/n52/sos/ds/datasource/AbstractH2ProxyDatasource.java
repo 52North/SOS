@@ -45,6 +45,8 @@ public abstract class AbstractH2ProxyDatasource extends AbstractH2Datasource imp
         p.put(HibernateConstants.DIALECT, H2_DIALECT_CLASS);
         p.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
         p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
+        p.put(HibernateConstants.C3P0_MAX_SIZE, "200");
+        p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         p.put(DATABASE_EXTENSION_KEY, settings.get(DATABASE_EXTENSION_KEY));
         p.put(SPRING_PROFILE_KEY, String.join(",", getSpringProfiles()));

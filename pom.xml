@@ -89,11 +89,11 @@
         <version.jts>1.18.1</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>9.0.1</version.arctic-sea>
+        <version.arctic-sea>9.1.0</version.arctic-sea>
         <version.helgoland.api>3.4.1</version.helgoland.api>
         <version.dao-impl>3.5.1</version.dao-impl>
         <version.db-model>3.1.2</version.db-model>
-        <version.springframework.security>5.5.1</version.springframework.security>
+        <version.springframework.security>5.5.2</version.springframework.security>
         <version.springframework>5.3.9</version.springframework>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.5</version.saxon>
@@ -771,7 +771,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.11.2</version>
+                <version>3.12.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -787,7 +787,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.10</version>
+                 <version>1.11.13</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1553,7 +1553,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.3.0</version>
+                <version>4.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1877,7 +1877,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.8.0</version>
+                <version>5.9.0</version>
             </dependency>
             <!-- EXI -->
             <dependency>

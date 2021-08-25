@@ -54,21 +54,22 @@ public class AquariusTemporalHarvesterJob extends AbstractAquariusHarvesterJob i
     }
 
     @Override
-    protected void save(JobExecutionContext context, AquariusConnector connector) {
+    protected boolean process(JobExecutionContext context, AquariusConnector connector) {
         JobDataMap mergedJobDataMap = context.getMergedJobDataMap();
         if (!mergedJobDataMap.containsKey(AquariusConstants.LAST_UPDATE_TIME)) {
             mergedJobDataMap.put(AquariusConstants.LAST_UPDATE_TIME, getLastUpdateTime(context));
         }
         DateTime now = DateTime.now();
-        String update = updater.update(mergedJobDataMap, connector);
+        TemporalUpdateResponse response = updater.update(mergedJobDataMap, connector);
         context.getJobDetail()
                 .getJobDataMap()
-                .put(AquariusConstants.LAST_UPDATE_TIME, getNextTime(update, now));
+                .put(AquariusConstants.LAST_UPDATE_TIME, getNextTime(response.getNextToken(), now));
+        return response.isUpdated();
     }
 
-    private DateTime getNextTime(String update, DateTime now) {
-        if (update != null && !update.isEmpty()) {
-            return new DateTime(update);
+    private DateTime getNextTime(String nextToken, DateTime now) {
+        if (nextToken != null && !nextToken.isEmpty()) {
+            return new DateTime(nextToken);
         }
         return now;
     }

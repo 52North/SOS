@@ -48,8 +48,9 @@ public class AquariusFullHarvesterJob extends AbstractAquariusHarvesterJob imple
     private AquariusFullHarvester harvester;
 
     @Override
-    protected void save(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport {
+    protected boolean process(JobExecutionContext context, AquariusConnector connector) throws OwsExceptionReport {
         harvester.harvest(connector);
+        return true;
     }
 
 }

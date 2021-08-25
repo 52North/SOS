@@ -162,7 +162,7 @@ public class AquariusConnector implements AccessorConnector {
         try {
             Response response = query(request);
             if (response.getEntity() != null) {
-                return  om.readValue(response.getEntity(), TimeSeriesUniqueIds.class);
+                return om.readValue(response.getEntity(), TimeSeriesUniqueIds.class);
             }
             return null;
         } catch (URISyntaxException | IOException e) {

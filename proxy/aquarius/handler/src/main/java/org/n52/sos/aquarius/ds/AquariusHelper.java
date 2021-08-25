@@ -65,6 +65,8 @@ public class AquariusHelper extends AbstractProxyHelper {
 
     public static final String DATA_TYPE = "proxy.aquarius.dataType";
 
+    public static final String CREATE_TEMPORAL = "proxy.aquarius.temporal.create";
+
     public static final String PUBLISHED = "proxy.aquarius.published";
 
     private static final String EXTENDED_ATTRIBUTE_TIMESERIES_KEY = "proxy.aquarius.extendenattribute.timeseries.key";
@@ -111,6 +113,8 @@ public class AquariusHelper extends AbstractProxyHelper {
     private String belowQualifier;
 
     private String aboveQualifier;
+
+    private boolean createTemporal = Boolean.FALSE.booleanValue();
 
     @Setting(APPLY_ROUNDING)
     public AquariusHelper setApplyRoundig(boolean applyRounding) {
@@ -218,6 +222,16 @@ public class AquariusHelper extends AbstractProxyHelper {
 
     private boolean isExtendendAttributeLocationAsTimeseries() {
         return extendedAttributeLocationAsTimeSeries;
+    }
+
+//    @Setting(CREATE_TEMPORAL)
+    public AquariusHelper setCreateTemporal(boolean createTemporal) {
+        this.createTemporal  = createTemporal;
+        return this;
+    }
+
+    public boolean isCreateTemporal() {
+        return createTemporal;
     }
 
     @Setting(DATA_TYPE)

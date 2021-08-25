@@ -31,6 +31,8 @@ import java.math.BigDecimal;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.geotools.util.Range;
 import org.joda.time.DateTime;
@@ -71,13 +73,21 @@ import org.n52.sos.proxy.harvest.EntityBuilder;
 
 public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper {
 
-    default OfferingEntity createOffering(Map<String, OfferingEntity> offerings, TimeSeriesDescription dataset,
-            Parameter parameter, ProcedureEntity procedure, ServiceEntity service, AquariusHelper aquariusHelper) {
-        String offeringId = dataset.getIdentifier();
+    String COMMA = ",";
+
+    String UNDERSCORE = "_";
+
+    String DOT = ".";
+
+    Pattern PATTERN = Pattern.compile("[0-9],[0-9]");
+
+    default OfferingEntity createOffering(Map<String, OfferingEntity> offerings, TimeSeriesDescription timeSeries,
+            ProcedureEntity procedure, ServiceEntity service, AquariusHelper aquariusHelper) {
+        String offeringId = getValidatedIdentifier(timeSeries.getIdentifier());
         OfferingEntity parentOffering = getParentOffering(procedure, offerings, service);
         if (!offerings.containsKey(offeringId)) {
-            OfferingEntity entity = createOffering(offeringId, dataset.getIdentifier()
-                    .replaceAll(parameter.getIdentifier(), parameter.getDisplayName()), offeringId, service);
+            OfferingEntity entity = createOffering(offeringId, getValidatedIdentifier(timeSeries.getIdentifier()),
+                    offeringId, service);
             if (parentOffering != null) {
                 Set<OfferingEntity> parents = new LinkedHashSet<>();
                 parents.add(parentOffering);
@@ -85,7 +95,7 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
             }
             offerings.put(offeringId, entity);
         }
-        Range<DateTime> timeRange = aquariusHelper.getTimeRange(dataset);
+        Range<DateTime> timeRange = aquariusHelper.getTimeRange(timeSeries);
         updateTime(parentOffering, timeRange);
         return updateTime(offerings.get(offeringId), timeRange);
     }
@@ -182,12 +192,25 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default PhenomenonEntity createPhenomenon(Parameter parameter, Map<String, PhenomenonEntity> phenomenon,
             ServiceEntity service) {
-        if (!phenomenon.containsKey(parameter.getIdentifier())) {
-            PhenomenonEntity entity = createPhenomenon(parameter.getIdentifier(), parameter.getDisplayName(),
+        String identifier = getValidatedIdentifier(parameter.getIdentifier());
+        if (!phenomenon.containsKey(identifier)) {
+            PhenomenonEntity entity = createPhenomenon(identifier, parameter.getDisplayName(),
                     parameter.getDisplayName(), service);
             phenomenon.put(entity.getIdentifier(), entity);
         }
-        return phenomenon.get(parameter.getIdentifier());
+        return phenomenon.get(identifier);
+    }
+
+    default String getValidatedIdentifier(String identifier) {
+        if (identifier.contains(COMMA)) {
+            Matcher matcher = PATTERN.matcher(identifier);
+            String checked = identifier;
+            while (matcher.find()) {
+                checked = checked.replace(matcher.group(0), matcher.group(0).replace(COMMA, DOT));
+            }
+            return checked.replaceAll(COMMA, UNDERSCORE);
+        }
+        return identifier;
     }
 
     default CategoryEntity createCategory(PhenomenonEntity phen, Map<String, CategoryEntity> categories,
@@ -203,9 +226,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
     default DatasetEntity createDataset(ProcedureEntity procedure, OfferingEntity offering, FeatureEntity feature,
             PlatformEntity platform, TimeSeriesDescription timeSeries, Parameter parameter, Unit unit,
             ServiceEntity service) {
-        DatasetEntity entity = createDataset(timeSeries.getUniqueId(), timeSeries.getIdentifier()
-                .replaceAll(parameter.getIdentifier(), parameter.getDisplayName()), timeSeries.getIdentifier(),
-                service);
+        DatasetEntity entity = createDataset(timeSeries.getUniqueId(), timeSeries.getIdentifier(),
+                getDatasetDescription(timeSeries, parameter), service);
         entity.setProcedure(procedure);
         entity.setOffering(offering);
         entity.setFeature(feature);
@@ -215,6 +237,14 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         entity.setMobile(Boolean.FALSE);
         entity.setUnit(unit != null ? createUnit(unit, service) : createUnit(timeSeries.getUnit(), service));
         return entity;
+    }
+
+    default String getDatasetDescription(TimeSeriesDescription timeSeries, Parameter parameter) {
+        if (parameter != null && parameter.hasDisplayName()) {
+            return timeSeries.getIdentifier()
+                    .replaceAll(parameter.getIdentifier(), parameter.getDisplayName());
+        }
+        return timeSeries.getIdentifier();
     }
 
     default QuantityDataEntity createDataEntity(DateTime time, BigDecimal value, Long id, Qualifier qualifier) {
@@ -228,7 +258,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
         return entity;
     }
 
-    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter, boolean applyRounding) {
+    default DataEntity<?> createDataEntity(DatasetEntity dataset, Point point, Counter counter,
+            boolean applyRounding) {
         return createDataEntity(dataset, point, counter.next(), applyRounding);
     }
 
@@ -240,7 +271,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
             if (point.hasQualifier()) {
                 addDetectionLimit(dataEntity, point, applyRounding);
             } else {
-                if (applyRounding && point.getValue().isDisplay()) {
+                if (applyRounding && point.getValue()
+                        .isDisplay()) {
                     dataEntity.setValue(point.getValue()
                             .getDisplayAsBigDecimal());
                 } else {
@@ -275,7 +307,8 @@ public interface AquariusEntityBuilder extends EntityBuilder, AquariusTimeHelper
 
     default void addDetectionLimit(QuantityDataEntity dataEntity, Point point, boolean applyRounding) {
         DetectionLimitEntity detectionLimitEntity = new DetectionLimitEntity();
-        if (applyRounding && point.getValue().isDisplay()) {
+        if (applyRounding && point.getValue()
+                .isDisplay()) {
             detectionLimitEntity.setDetectionLimit(point.getValue()
                     .getDisplayAsBigDecimal());
         } else {

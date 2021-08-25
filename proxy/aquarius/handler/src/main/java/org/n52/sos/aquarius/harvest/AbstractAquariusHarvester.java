@@ -244,8 +244,8 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
         if (feature.isSetGeometry()) {
             try {
                 if (getAquariusHelper().checkForData(timeSeries)) {
-                    OfferingEntity offering = createOffering(offerings, timeSeries,
-                            parameters.get(timeSeries.getParameter()), procedure, service, getAquariusHelper());
+                    OfferingEntity offering =
+                            createOffering(offerings, timeSeries, procedure, service, getAquariusHelper());
                     DatasetEntity dataset = createDataset(procedure, offering, feature, platform, timeSeries,
                             parameters.get(timeSeries.getParameter()), units.get(timeSeries.getUnit()), service);
                     if (dataset != null) {
@@ -314,8 +314,8 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
 
     protected void addParameter(DatasetEntity dataset, TimeSeriesDescription timeSeries,
             TimeSeriesData firstTimeSeriesData) throws OwsExceptionReport {
-        if (timeSeries.hasComputationIdentifier() && firstTimeSeriesData.hasInterpolationTypes()) {
         if (timeSeries.hasComputationIdentifier() && firstTimeSeriesData != null
+                && firstTimeSeriesData.hasInterpolationTypes()) {
             ParameterEntity<?> param = createInterpolationParam(dataset, firstTimeSeriesData.getInterpolationTypes()
                     .get(0), timeSeries.getComputationIdentifier());
             if (param != null) {

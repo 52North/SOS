@@ -128,6 +128,11 @@ public class Parameter implements Serializable {
         this.displayName = displayName;
     }
 
+    @JsonIgnore
+    public boolean hasDisplayName() {
+        return getDisplayName() != null && !getDisplayName().isEmpty();
+    }
+
     @JsonProperty("InterpolationType")
     public String getInterpolationType() {
         return interpolationType;

@@ -27,8 +27,10 @@
  */
 package org.n52.sos.aquarius.harvest;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
@@ -44,6 +46,7 @@ import org.n52.sos.aquarius.pojo.Location;
 import org.n52.sos.aquarius.pojo.TimeSeriesDescription;
 import org.n52.sos.aquarius.pojo.TimeSeriesUniqueId;
 import org.n52.sos.aquarius.pojo.TimeSeriesUniqueIds;
+import org.n52.sos.aquarius.requests.AbstractAquariusGetRequest.ChangeEvent;
 import org.n52.sos.aquarius.requests.GetTimeSeriesDescriptionsByUniqueId;
 import org.n52.sos.aquarius.requests.GetTimeSeriesUniqueIdList;
 import org.quartz.JobDataMap;
@@ -58,16 +61,17 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
     private static final Logger LOGGER = LoggerFactory.getLogger(AquariusTemporalUpdater.class);
 
     @Transactional(rollbackFor = Exception.class)
-    public String update(JobDataMap mergedJobDataMap, AquariusConnector connector) {
+    public TemporalUpdateResponse update(JobDataMap mergedJobDataMap, AquariusConnector connector) {
         return update(connector, (DateTime) mergedJobDataMap.get(AquariusConstants.LAST_UPDATE_TIME));
     }
 
-    protected String update(AquariusConnector connector, DateTime changedSince) {
+    protected TemporalUpdateResponse update(AquariusConnector connector, DateTime changedSince) {
+        boolean updated = false;
         try {
             ServiceEntity service = null;
             TimeSeriesUniqueIds timeSeriesUniqueIds = connector.getTimeSeriesUniqueIds(
                     (GetTimeSeriesUniqueIdList) getAquariusHelper().getTimeSeriesUniqueIdsRequest()
-                            .withChangesSinceToken(changedSince.toString()));
+                            .withChangesSinceToken(changedSince.toString()).withChangeEventType(ChangeEvent.Data));
             if (timeSeriesUniqueIds.hasTimeSeriesUniqueIds()) {
                 for (TimeSeriesDescription timeSeries : getTimeSeriesDescriptions(
                         timeSeriesUniqueIds.getTimeSeriesUniqueIds(), connector)) {
@@ -75,35 +79,49 @@ public class AquariusTemporalUpdater extends AbstractAquariusHarvester {
                     if (dataset != null) {
                         updateFirstLastObservation(dataset, timeSeries, connector);
                         getDatasetRepository().saveAndFlush(dataset);
+                        updated = true;
                     } else {
-                        Location location = getLocation(timeSeries.getLocationIdentifier(), connector);
-                        if (checkLocation(location)) {
-                            if (service == null) {
-                                service = getOrInsertServiceEntity();
+                        if (getAquariusHelper().isCreateTemporal()) {
+                            Location location = getLocation(timeSeries.getLocationIdentifier(), connector);
+                            if (checkLocation(location)) {
+                                if (service == null) {
+                                    service = getOrInsertServiceEntity();
+                                }
+                                ProcedureEntity procedure = createProcedure(location, procedures, service);
+                                FeatureEntity feature = createFeature(location, features, service);
+                                PlatformEntity platform = createPlatform(location, platforms, service);
+                                harvestDatasets(location, timeSeries, feature, procedure, platform, service, connector);
+                                updated = true;
                             }
-                            ProcedureEntity procedure = createProcedure(location, procedures, service);
-                            FeatureEntity feature = createFeature(location, features, service);
-                            PlatformEntity platform = createPlatform(location, platforms, service);
-                            harvestDatasets(location, timeSeries, feature, procedure, platform, service, connector);
                         }
                     }
                 }
             }
-            return timeSeriesUniqueIds.getNextToken();
+            return new TemporalUpdateResponse(updated, timeSeriesUniqueIds.getNextToken());
         } catch (OwsExceptionReport e) {
             LOGGER.error("Error while updating!", e);
         }
-        return null;
+        return new TemporalUpdateResponse(updated, null);
     }
 
     private List<TimeSeriesDescription> getTimeSeriesDescriptions(List<TimeSeriesUniqueId> timeSeriesUniqueIds,
             AquariusConnector connector) throws OwsExceptionReport {
-        List<String> ids = timeSeriesUniqueIds.stream()
+        Set<String> ids = timeSeriesUniqueIds.stream()
                 .map(t -> t.getUniqueId())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+        if (!getAquariusHelper().isCreateTemporal()) {
+            Set<String> datasets = getDatasetRepository().findAll().stream().map(d -> d.getIdentifier())
+            .collect(Collectors.toSet());
+            if (datasets != null && !datasets.isEmpty()) {
+                ids.retainAll(datasets);
+            }
+        }
+        if (ids.size() == 0) {
+            return Collections.emptyList();
+        }
         if (ids.size() > 50) {
             List<TimeSeriesDescription> data = new LinkedList<>();
-            for (List<String> list : Lists.partition(ids, 50)) {
+            for (List<String> list : Lists.partition(new LinkedList<>(ids), 50)) {
                 data.addAll(
                         connector.getTimeSeriesDescriptionsByUniqueId(new GetTimeSeriesDescriptionsByUniqueId(list)));
             }

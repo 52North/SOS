@@ -35,9 +35,15 @@ import org.n52.sos.proxy.request.AbstractGetRequest;
 public abstract class AbstractAquariusGetRequest extends AbstractGetRequest {
 
     private String changesSinceToke;
+    private ChangeEvent changeEventType;
 
     public AbstractAquariusGetRequest withChangesSinceToken(String changeSinceToken) {
         this.changesSinceToke = changeSinceToken;
+        return this;
+    }
+
+    public AbstractAquariusGetRequest withChangeEventType(ChangeEvent changeEventType) {
+       this.changeEventType = changeEventType;
         return this;
     }
 
@@ -45,13 +51,24 @@ public abstract class AbstractAquariusGetRequest extends AbstractGetRequest {
         return changesSinceToke != null && !changesSinceToke.isEmpty();
     }
 
+    private boolean isSetChangeEventType() {
+        return changeEventType != null;
+    }
+
     @Override
     public Map<String, String> getQueryParameters() {
         Map<String, String> parameter = createMap();
         if (isSetChangesSinceToken()) {
-            parameter.put(AquariusConstants.Parameters.CHANGES_SINCE_TOKEN , changesSinceToke);
+            parameter.put(AquariusConstants.Parameters.CHANGES_SINCE_TOKEN, changesSinceToke);
+        }
+        if (isSetChangeEventType()) {
+            parameter.put(AquariusConstants.Parameters.CHANGE_EVENT_TYPE, changeEventType.name());
         }
         return parameter;
+    }
+
+    public enum ChangeEvent {
+        Data, Attribute;
     }
 
 }

@@ -315,6 +315,7 @@ public abstract class AbstractAquariusHarvester implements Harvester, AquariusEn
     protected void addParameter(DatasetEntity dataset, TimeSeriesDescription timeSeries,
             TimeSeriesData firstTimeSeriesData) throws OwsExceptionReport {
         if (timeSeries.hasComputationIdentifier() && firstTimeSeriesData.hasInterpolationTypes()) {
+        if (timeSeries.hasComputationIdentifier() && firstTimeSeriesData != null
             ParameterEntity<?> param = createInterpolationParam(dataset, firstTimeSeriesData.getInterpolationTypes()
                     .get(0), timeSeries.getComputationIdentifier());
             if (param != null) {

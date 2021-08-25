@@ -49,12 +49,15 @@ import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Renamed, in version 4.x called AbstractInsertSensorDAO
  *
  * @since 5.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractInsertSensorHandler extends AbstractSosOperationHandler {
 
     private ProcedureDescriptionFormatRepository procedureDescriptionFormatRepository;

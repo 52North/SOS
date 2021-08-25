@@ -60,6 +60,8 @@ import org.n52.svalbard.encode.ObservationEncoder;
 
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Renamed, in version 4.x called AbstractOperationDAO
  *
@@ -67,6 +69,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractSosOperationHandler
         extends org.n52.iceland.request.handler.AbstractOperationHandler {
 

@@ -48,11 +48,14 @@ import org.n52.svalbard.encode.ProcedureEncoder;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ProcedureDescriptionFormatRepository
         implements ActivationManager<ProcedureDescriptionFormatKey>,
         ActivationSource<ProcedureDescriptionFormatKey> {

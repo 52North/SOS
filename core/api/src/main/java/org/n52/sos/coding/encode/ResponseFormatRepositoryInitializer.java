@@ -33,11 +33,14 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.svalbard.encode.EncoderRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ResponseFormatRepositoryInitializer implements Constructable {
 
     private final EncoderRepository encoderRepository;

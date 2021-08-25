@@ -37,6 +37,8 @@ import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.svalbard.encode.EncoderRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@link ResponseWriterFactory} implementation for {@link OwsServiceResponse}
  * and {@link AbstractServiceResponseWriter}
@@ -45,6 +47,7 @@ import org.n52.svalbard.encode.EncoderRepository;
  * @since 4.1.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class AbstractServiceResponseWriterFactory
         implements
         SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>,
@@ -62,6 +65,7 @@ public class AbstractServiceResponseWriterFactory
     }
 
     @Inject
+
     public void setResponseWriterRepository(
             ResponseWriterRepository responseWriterRepository) {
         this.responseWriterRepository = responseWriterRepository;

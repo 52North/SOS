@@ -33,6 +33,8 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.svalbard.encode.EncoderRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Separate initializer for {@link ProcedureDescriptionFormatRepository}
  *
@@ -40,6 +42,7 @@ import org.n52.svalbard.encode.EncoderRepository;
  * org.n52.svalbard.encode.EncoderRepository)
  * @author Martin Kiesow
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ProcedureDescriptionFormatRepositoryInitializer implements Constructable {
 
     private final EncoderRepository encoderRepository;

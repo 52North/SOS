@@ -31,6 +31,8 @@ import org.locationtech.jts.geom.Geometry;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hold min and max obs time for offering
  *
@@ -38,6 +40,7 @@ import com.google.common.base.Strings;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class OfferingTimeExtrema extends TimeExtrema {
     private String offering;
     private Geometry envelope;

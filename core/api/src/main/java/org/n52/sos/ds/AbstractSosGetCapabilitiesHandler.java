@@ -364,7 +364,7 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                         .values())
                 .flatMap(Collection::stream)
                 .filter(o -> !(o instanceof AbstractTransactionalRequestOperator)
-                        || (o instanceof AbstractTransactionalRequestOperator && showTransactionalOperations))
+                        || o instanceof AbstractTransactionalRequestOperator && showTransactionalOperations)
                 .filter(c -> c instanceof ConformanceClass)
                 .map(c -> (ConformanceClass) c)
                 .map(c -> c.getConformanceClasses(service, version))
@@ -1013,8 +1013,8 @@ public abstract class AbstractSosGetCapabilitiesHandler extends AbstractGetCapab
                 .map(getRequestOperatorRepository()::getRequestOperator)
                 .map(operator -> {
                     if (!(operator instanceof AbstractTransactionalRequestOperator)
-                            || (operator instanceof AbstractTransactionalRequestOperator
-                                    && showTransactionalOperations)) {
+                            || operator instanceof AbstractTransactionalRequestOperator
+                                    && showTransactionalOperations) {
                         try {
                             return operator.getOperationMetadata(service, version);
                         } catch (OwsExceptionReport ex) {

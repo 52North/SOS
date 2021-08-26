@@ -206,7 +206,7 @@ public final class QueryHelper {
     }
 
     /**
-     * Creates a criterion for objects, considers if size is > 1000 (Oracle
+     * Creates a criterion for objects, considers if size is gt 1000 (Oracle
      * expression limit).
      *
      * @param propertyName
@@ -240,7 +240,7 @@ public final class QueryHelper {
     }
 
     /**
-     * Creates a list of lists from identifiers, considers if size is > 1000
+     * Creates a list of lists from identifiers, considers if size is gt 1000
      * (Oracle expression limit).
      *
      * @param identifiers

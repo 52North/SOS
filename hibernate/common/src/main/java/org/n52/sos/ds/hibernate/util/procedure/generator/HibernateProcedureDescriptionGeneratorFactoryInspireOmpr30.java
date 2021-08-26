@@ -37,6 +37,8 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Generator class for WaterML 2.0 procedure descriptions
  *
@@ -44,6 +46,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
  * @since 4.2.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class HibernateProcedureDescriptionGeneratorFactoryInspireOmpr30
         implements HibernateProcedureDescriptionGeneratorFactory {
 

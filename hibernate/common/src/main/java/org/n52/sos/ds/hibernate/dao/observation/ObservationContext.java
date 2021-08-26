@@ -50,6 +50,8 @@ import org.n52.series.db.beans.sampling.SamplingEntity;
 import org.n52.series.db.beans.sampling.SamplingProfileDatasetEntity;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Class to carry observation identifiers (featureOfInterest,
  * observableProperty, procedure).
@@ -59,6 +61,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class ObservationContext {
     private AbstractFeatureEntity<?> featureOfInterest;
     private PhenomenonEntity observableProperty;

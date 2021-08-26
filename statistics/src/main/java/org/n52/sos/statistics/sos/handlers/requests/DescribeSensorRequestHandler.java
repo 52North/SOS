@@ -34,7 +34,7 @@ import org.n52.sos.statistics.sos.models.TimeEsModel;
 public class DescribeSensorRequestHandler extends AbstractSosRequestHandler<DescribeSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(DescribeSensorRequest request) {
         put(SosDataMapping.DS_PROCEDURE, request.getProcedure());
         put(SosDataMapping.DS_PROCEDURE_DESC_FORMAT, request.getProcedureDescriptionFormat());
         if (request.getValidTime() != null) {

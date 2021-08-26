@@ -34,7 +34,7 @@ import org.n52.sos.statistics.sos.models.OmObservationConstellationEsModel;
 public class InsertResultTemplateRequestHandler extends AbstractSosRequestHandler<InsertResultTemplateRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(InsertResultTemplateRequest request) {
         put(SosDataMapping.IRT_IDENTIFIER, request.getIdentifier());
         put(SosDataMapping.IRT_OBSERVATION_TEMPLATE,
                 OmObservationConstellationEsModel.convert(request.getObservationTemplate()));

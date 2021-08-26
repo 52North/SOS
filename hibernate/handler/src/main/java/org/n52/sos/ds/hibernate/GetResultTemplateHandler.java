@@ -45,12 +45,15 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.svalbard.util.SweHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Implementation of the abstract class AbstractGetResultTemplateHandler
  *
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
         implements AbstractResultHandler, Constructable {
     private HibernateSessionHolder sessionHolder;

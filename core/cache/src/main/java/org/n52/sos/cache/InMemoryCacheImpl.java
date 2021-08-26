@@ -58,6 +58,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class InMemoryCacheImpl extends AbstractStaticSosContentCache
         implements SosWritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheImpl.class);

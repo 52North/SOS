@@ -35,6 +35,8 @@ import org.n52.faroe.SettingDefinition;
 import org.n52.faroe.SettingValue;
 import org.n52.iceland.ds.Datasource;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
@@ -42,6 +44,7 @@ import org.n52.iceland.ds.Datasource;
  *
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class InstallationConfiguration implements Serializable {
 
     private Map<SettingDefinition<?>, SettingValue<?>> settings = new HashMap<>();

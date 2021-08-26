@@ -61,6 +61,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.CDMNode;
@@ -78,6 +79,7 @@ import ucar.nc2.constants.CF.FeatureType;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOceanSITESEncoder.class);
@@ -216,7 +218,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addSiteCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getSiteDefinition(), OceanSITESConstants.SITE_CODE);
             if (exists) {
                 return getAttribute(writer, OceanSITESConstants.SITE_CODE);
@@ -229,7 +231,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     protected CDMNode addPlatform(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         // platform_code (RECOMMENDED)
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getPlatformDefinition(), OceanSITESConstants.PLATFORM_CODE);
             if (exists) {
                 return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE);
@@ -240,7 +242,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addDataMode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            if (!addAttributeIfClassifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            if (!addAttributeIfClassifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getDataModeDefinition(), OceanSITESConstants.DATA_MODE)) {
                 String dataModeText = OceanSITESConstants.DataMode.R.toString();
                 if (getOceanSITEHelper().isSetDataMode()) {
@@ -269,7 +271,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addWmoCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getWmoPlatformCodeDefinition(), OceanSITESConstants.WMO_PLATFORM_CODE);
         }
         return getAttribute(writer, OceanSITESConstants.WMO_PLATFORM_CODE);
@@ -277,7 +279,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addAcknowledge(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getAcknowledgement(), ACDDConstants.ACKNOWLEDGEMENT);
 
         }
@@ -286,7 +288,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected boolean addArray(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            return addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            return addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getArrayDefinition(), OceanSITESConstants.ARRAY);
         }
         return false;
@@ -294,7 +296,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addNetwork(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getNetworkDefinition(), OceanSITESConstants.NETWORK);
 
         }
@@ -303,7 +305,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addProject(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            if (addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            if (addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getProjectDefinition(), ACDDConstants.PROJECT)) {
                 if (getOceanSITEHelper().isSetProject()) {
                     return writer.addGroupAttribute(null,
@@ -322,7 +324,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addArea(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescription(),
                     getOceanSITEHelper().getAreaDefinition(), OceanSITESConstants.AREA);
 
         }

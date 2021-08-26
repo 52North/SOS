@@ -53,6 +53,9 @@ import org.n52.sos.exception.sos.concrete.DeleteResultTemplateInvalidParameterVa
 
 import com.google.common.collect.Lists;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class DeleteResultTemplateHandler
         extends AbstractDeleteResultTemplateHandler {
 

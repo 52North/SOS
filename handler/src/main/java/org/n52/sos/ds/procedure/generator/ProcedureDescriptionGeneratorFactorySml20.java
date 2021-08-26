@@ -45,6 +45,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.common.base.Strings;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Generator class for SensorML 2.0 procedure descriptions
  *
@@ -53,6 +55,7 @@ import com.google.common.base.Strings;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class ProcedureDescriptionGeneratorFactorySml20 implements ProcedureDescriptionGeneratorFactory {
 
     private final SettingsService settingsService;

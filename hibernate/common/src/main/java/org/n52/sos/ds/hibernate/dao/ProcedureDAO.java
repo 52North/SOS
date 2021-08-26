@@ -992,7 +992,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         AbstractFeature af = procedureDescription.getProcedureDescription();
         if (af.isSetName()) {
             if (!procedure.isSetName()
-                    || (procedure.isSetName() && !checkForName(af.getName(), procedure.getName()))) {
+                    || procedure.isSetName() && !checkForName(af.getName(), procedure.getName())) {
                 procedure.setName(af.getFirstName().getValue());
             }
             if (af.isSetDescription() && !af.getDescription().equals(procedure.getDescription())) {

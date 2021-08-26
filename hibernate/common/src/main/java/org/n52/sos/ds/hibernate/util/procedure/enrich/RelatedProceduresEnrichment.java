@@ -78,10 +78,9 @@ public class RelatedProceduresEnrichment
                         if (getValidTime() != null && !thisCvptValidTime.isWithin(getValidTime())) {
                             continue;
                         }
-
                         if (childHistory == null || cph.getEndTime() == null
-                                || (cph.getEndTime() != null && childHistory.getEndTime() != null
-                                        && cph.getEndTime().after(childHistory.getEndTime()))) {
+                                || cph.getEndTime() != null && childHistory.getEndTime() != null
+                                        && cph.getEndTime().after(childHistory.getEndTime())) {
                             childHistory = cph;
                         }
                     }

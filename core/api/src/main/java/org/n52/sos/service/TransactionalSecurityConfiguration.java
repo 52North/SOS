@@ -38,12 +38,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
  *
  * @since 4.0.0
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class TransactionalSecurityConfiguration implements TransactionalSecuritySettings {
 
     private boolean transactionalActive;

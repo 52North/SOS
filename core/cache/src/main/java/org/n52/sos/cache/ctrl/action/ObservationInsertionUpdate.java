@@ -29,6 +29,8 @@ package org.n52.sos.cache.ctrl.action;
 
 import com.google.common.base.Preconditions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.List;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -75,6 +77,7 @@ import org.locationtech.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ObservationInsertionUpdate extends InMemoryCacheUpdate {
 
     private final InsertObservationRequest request;

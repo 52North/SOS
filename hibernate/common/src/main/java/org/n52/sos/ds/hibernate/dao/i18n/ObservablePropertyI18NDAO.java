@@ -40,11 +40,14 @@ import org.n52.series.db.beans.i18n.I18nPhenomenonEntity;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ObservablePropertyI18NDAO extends AbstractHibernateI18NDAO<PhenomenonEntity,
                                                                         I18NObservablePropertyMetadata,
                                                                         I18nPhenomenonEntity> {

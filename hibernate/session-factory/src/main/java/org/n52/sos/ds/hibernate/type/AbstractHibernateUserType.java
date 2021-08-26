@@ -32,11 +32,14 @@ import java.io.Serializable;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractHibernateUserType implements UserType {
 
     private Class<?> clazz;

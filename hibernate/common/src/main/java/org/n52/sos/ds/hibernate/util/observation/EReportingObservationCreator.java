@@ -41,6 +41,9 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.svalbard.util.SweHelper;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class EReportingObservationCreator implements AdditionalObservationCreator {
 
     private static final Set<AdditionalObservationCreatorKey> KEYS = AdditionalObservationCreatorRepository

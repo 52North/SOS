@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class InsertResultRequestHandler extends AbstractSosRequestHandler<InsertResultRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(InsertResultRequest request) {
         put(SosDataMapping.IR_TEMPLATE_IDENTIFIER, request.getTemplateIdentifier());
         put(SosDataMapping.IR_RESULT_VALUES, request.getResultValues());
 

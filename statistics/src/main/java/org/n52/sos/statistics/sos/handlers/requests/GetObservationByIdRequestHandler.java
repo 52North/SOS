@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class GetObservationByIdRequestHandler extends AbstractSosRequestHandler<GetObservationByIdRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(GetObservationByIdRequest request) {
         put(SosDataMapping.GOBID_OBSERVATION_IDENTIFIER, request.getObservationIdentifier());
     }
 

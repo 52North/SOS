@@ -28,6 +28,7 @@
 package org.n52.sos.ds;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -38,6 +39,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class FeatureQueryHandlerQueryObject {
 
     private Object connection;
@@ -64,7 +68,7 @@ public class FeatureQueryHandlerQueryObject {
      * @return the features
      */
     public Set<String> getFeatures() {
-        return features;
+        return Collections.unmodifiableSet(features);
     }
 
     /**
@@ -94,7 +98,7 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     public List<SpatialFilter> getSpatialFilters() {
-        return spatialFilters;
+        return Collections.unmodifiableList(spatialFilters);
     }
 
     public FeatureQueryHandlerQueryObject setSpatialFilters(List<SpatialFilter> spatialFilters) {

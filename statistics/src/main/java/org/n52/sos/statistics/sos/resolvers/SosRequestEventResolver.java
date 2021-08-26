@@ -27,6 +27,7 @@
  */
 package org.n52.sos.statistics.sos.resolvers;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.n52.iceland.event.events.RequestEvent;
@@ -46,7 +47,7 @@ public class SosRequestEventResolver implements StatisticsServiceEventResolver<R
 
     @Override
     public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
-        this.handlers = handlers;
+        this.handlers = handlers != null ? new LinkedHashMap<>(handlers) : new LinkedHashMap<>();
     }
 
     @Override

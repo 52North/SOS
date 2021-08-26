@@ -32,7 +32,8 @@ import org.n52.shetland.ogc.sos.request.BatchRequest;
 public class BatchRequestHandler extends AbstractSosRequestHandler<BatchRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
-        // This is intentionally left blank
+    protected void resolveConcreteRequest(BatchRequest request) {
+        // TODO Auto-generated method stub
+
     }
 }

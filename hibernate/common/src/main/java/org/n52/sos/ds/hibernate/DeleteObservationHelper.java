@@ -415,8 +415,8 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                 if (minMaxTimes.containsKey(series.getId())) {
                     SeriesTimeExtrema extrema = minMaxTimes.get(series.getId());
                     if (!series.isSetFirstValueAt()
-                            || (series.isSetFirstValueAt() && !DateTimeHelper.makeDateTime(series.getFirstValueAt())
-                                    .equals(extrema.getMinPhenomenonTime()))) {
+                            || series.isSetFirstValueAt() && !DateTimeHelper.makeDateTime(series.getFirstValueAt())
+                                    .equals(extrema.getMinPhenomenonTime())) {
                         series.setFirstValueAt(extrema.getMinPhenomenonTime()
                                 .toDate());
                         DataEntity<?> o = unproxy(
@@ -430,8 +430,8 @@ public interface DeleteObservationHelper extends HibernateUnproxy {
                         update = true;
                     }
                     if (!series.isSetLastValueAt()
-                            || (series.isSetLastValueAt() && !DateTimeHelper.makeDateTime(series.getLastValueAt())
-                                    .equals(extrema.getMaxPhenomenonTime()))) {
+                            || series.isSetLastValueAt() && !DateTimeHelper.makeDateTime(series.getLastValueAt())
+                                    .equals(extrema.getMaxPhenomenonTime())) {
                         series.setLastValueAt(extrema.getMaxPhenomenonTime()
                                 .toDate());
                         DataEntity<?> o = unproxy(

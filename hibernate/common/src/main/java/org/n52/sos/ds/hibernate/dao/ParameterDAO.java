@@ -75,12 +75,15 @@ import org.n52.sos.ds.hibernate.util.ParameterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hibernate DAO class to om:pramameter
  *
  * @since 4.0.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ParameterDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(ParameterDAO.class);

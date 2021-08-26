@@ -35,6 +35,8 @@ import javax.xml.namespace.QName;
 
 import org.n52.shetland.w3c.wsdl.Fault;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
@@ -42,6 +44,7 @@ import org.n52.shetland.w3c.wsdl.Fault;
  *
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class MetadataBuilder {
     private String name;
 

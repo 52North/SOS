@@ -44,6 +44,7 @@ import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ucar.nc2.constants.CF;
 
 /**
@@ -55,6 +56,7 @@ import ucar.nc2.constants.CF;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset> {
     private CF.FeatureType featureType;
 
@@ -126,11 +128,11 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
     }
 
     public List<OmObservableProperty> getPhenomena() {
-        return obsProps;
+        return Collections.unmodifiableList(obsProps);
     }
 
     public List<SubSensor> getSubSensors() {
-        return subSensors;
+        return Collections.unmodifiableList(subSensors);
     }
 
     public AbstractFeature getProcedureDescription() {
@@ -138,11 +140,11 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
     }
 
     public List<Time> getTimes() {
-        return times;
+        return Collections.unmodifiableList(times);
     }
 
     public Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> getDataValues() {
-        return dataValues;
+        return Collections.unmodifiableMap(dataValues);
     }
 
     public static Set<AbstractSensorDataset> getAbstractAssetDatasets(

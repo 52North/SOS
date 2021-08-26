@@ -86,6 +86,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
@@ -98,6 +99,7 @@ import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
  *        Inserts sample data into the database using the configuration files in
  *        the "sample-data" folder
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SampleDataInserter implements Sos2Constants {
 
     private static final String PROPERTY_FILE = "/sample-data/sample-data.properties";

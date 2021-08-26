@@ -35,6 +35,9 @@ import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.util.GeometryHandler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class SpatialFilteringProfileCreator {
 
     private final GeometryHandler geometryHandler;

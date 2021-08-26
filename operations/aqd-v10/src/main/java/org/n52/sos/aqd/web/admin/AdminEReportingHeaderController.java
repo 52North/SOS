@@ -61,6 +61,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * TODO JavaDoc
  *
@@ -68,6 +70,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @Controller
 @RequestMapping(value = "/admin/ereporting")
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class AdminEReportingHeaderController extends AbstractController {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdminEReportingHeaderController.class);

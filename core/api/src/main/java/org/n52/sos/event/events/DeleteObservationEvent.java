@@ -31,11 +31,14 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationRequest;
 import org.n52.shetland.ogc.sos.delobs.DeleteObservationResponse;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  *
  * @since 1.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP"})
 public class DeleteObservationEvent extends SosDeletionEvent<DeleteObservationRequest, DeleteObservationResponse> {
     private OmObservation deletedObservation;
 

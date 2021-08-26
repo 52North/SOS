@@ -88,12 +88,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Hibernate data access class for featureOfInterest
  *
  * @author CarstenHollmann
  * @since 4.0.0
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FeatureOfInterestDAO.class);

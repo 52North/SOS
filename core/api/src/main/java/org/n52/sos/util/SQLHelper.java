@@ -77,7 +77,7 @@ public final class SQLHelper {
             LOG.debug("Executing SQL file {}", path);
             while ((strLine = br.readLine()) != null) {
                 strLine = strLine.trim();
-                if ((strLine.length() > 0) && (!strLine.contains("--"))) {
+                if (strLine.length() > 0 && !strLine.contains("--")) {
                     if (strLine.equals("$$")) {
                         stringLiteral = !stringLiteral;
                     }

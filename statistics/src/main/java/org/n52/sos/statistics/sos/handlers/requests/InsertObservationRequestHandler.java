@@ -34,7 +34,7 @@ import org.n52.sos.statistics.sos.models.OmObservationEsModel;
 public class InsertObservationRequestHandler extends AbstractSosRequestHandler<InsertObservationRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(InsertObservationRequest request) {
         if (request.getObservations() != null) {
             put(SosDataMapping.IO_OBSERVATION, OmObservationEsModel.convert(request.getObservations()));
         }

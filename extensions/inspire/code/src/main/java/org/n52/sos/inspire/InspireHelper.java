@@ -48,6 +48,8 @@ import org.n52.sos.inspire.settings.InspireSettings;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Helper class for INSPIRE
  *
@@ -56,6 +58,7 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public class InspireHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InspireHelper.class);

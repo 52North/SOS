@@ -47,8 +47,11 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.locationtech.jts.geom.Envelope;
 
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class DeleteObservationCacheFeederDAO
         extends DatasourceCacheUpdate {
     protected static final Logger log = LoggerFactory.getLogger(DeleteObservationCacheFeederDAO.class);

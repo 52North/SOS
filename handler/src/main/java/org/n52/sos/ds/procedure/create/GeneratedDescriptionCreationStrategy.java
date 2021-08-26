@@ -36,9 +36,12 @@ import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGenerator;
 import org.n52.sos.ds.procedure.generator.ProcedureDescriptionGeneratorFactoryRepository;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Strategy to generate a description.
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class GeneratedDescriptionCreationStrategy implements
         DescriptionCreationStrategy {
 

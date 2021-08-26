@@ -35,6 +35,9 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class VerticalMetadataDAO {
 
     private static final Logger LOG = LoggerFactory.getLogger(VerticalMetadataDAO.class);

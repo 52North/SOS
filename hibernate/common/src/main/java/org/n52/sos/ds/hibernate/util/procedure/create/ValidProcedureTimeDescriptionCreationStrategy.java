@@ -36,10 +36,13 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureCreationContext;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Strategy to create the {@link SosProcedureDescription} from a
  * {@link ProcedureHistoryEntity}.
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class ValidProcedureTimeDescriptionCreationStrategy
         extends XmlStringDescriptionCreationStrategy {
     private final ProcedureHistoryEntity vpt;

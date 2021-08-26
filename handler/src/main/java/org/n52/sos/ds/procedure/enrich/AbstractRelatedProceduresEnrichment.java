@@ -39,6 +39,9 @@ import org.n52.sos.ds.procedure.AbstractProcedureCreationContext;
 
 import com.google.common.base.Preconditions;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+@SuppressFBWarnings({"EI_EXPOSE_REP", "EI_EXPOSE_REP2"})
 public abstract class AbstractRelatedProceduresEnrichment<T>
         extends ProcedureDescriptionEnrichment {
     private T procedure;

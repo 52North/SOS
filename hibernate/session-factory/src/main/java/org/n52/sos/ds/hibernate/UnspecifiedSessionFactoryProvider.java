@@ -42,6 +42,8 @@ import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.DataConnectionProvider;
 import org.n52.iceland.ds.Datasource;
@@ -57,6 +59,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.service.DriverCleanupListener;
 
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public abstract class UnspecifiedSessionFactoryProvider
         extends AbstractSessionFactoryProvider
         implements DataConnectionProvider,

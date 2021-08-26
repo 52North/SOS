@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class GetResultTemplateRequestHandler extends AbstractSosRequestHandler<GetResultTemplateRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(GetResultTemplateRequest request) {
         put(SosDataMapping.GRT_OBSERVED_PROPERTY, request.getObservedProperty());
         put(SosDataMapping.GRT_OFFERING, request.getOffering());
     }

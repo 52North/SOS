@@ -33,7 +33,7 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class GetCapabilitiesRequestHandler extends AbstractSosRequestHandler<GetCapabilitiesRequest> {
 
     @Override
-    protected void resolveConcreteRequest() {
+    protected void resolveConcreteRequest(GetCapabilitiesRequest request) {
         put(SosDataMapping.GC_VERSIONS_FIELD, request.getAcceptVersions());
         put(SosDataMapping.GC_FORMATS_FIELD, request.getAcceptFormats());
         put(SosDataMapping.GC_SECTIONS, request.getSections());

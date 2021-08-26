@@ -67,6 +67,8 @@ import org.n52.sos.converter.util.PrefixedIdentifierHelper;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * {@link RequestResponseModifier} to dynamically added/removed to/from the
  * identifier in the responses/requests.
@@ -75,6 +77,7 @@ import com.google.common.collect.Sets;
  * @since 4.4.0
  *
  */
+@SuppressFBWarnings({"EI_EXPOSE_REP2"})
 public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
 
     private Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;

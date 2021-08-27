@@ -166,7 +166,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 dataAvailability.setCount(entity.getObservationCount());
             }
             if (isIncludeResultTime(context.getRequest()) && dao.isPresent()) {
-                dataAvailability.setResultTimes(dao.get().getResultTimes(dataAvailability, context.getRequest()));
+                dataAvailability.setResultTimes(dao.get()
+                        .getResultTimes(dataAvailability, context.getRequest(), session));
             }
             return dataAvailability;
         }
@@ -177,8 +178,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * Get {@link DataAvailability}s for each series
      *
      * @param entity
-     *            the {@link DatasetEntity} to get
-     *            {@link DataAvailability}s for
+     *            the {@link DatasetEntity} to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
      * @param session
@@ -198,8 +198,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
      * Get {@link DataAvailability}s for each offering of a series
      *
      * @param entity
-     *            the {@link DatasetEntity} to get
-     *            {@link DataAvailability}s for
+     *            the {@link DatasetEntity} to get {@link DataAvailability}s for
      * @param context
      *            Request context to get {@link DataAvailability}s
      * @throws OwsExceptionReport
@@ -211,7 +210,8 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         if (dataAvailability != null) {
             dataAvailability.setFormatDescriptor(getFormatDescriptor(context, entity));
             if (dao.isPresent()) {
-                dataAvailability.setMetadata(dao.get().getMetadata(dataAvailability));
+                dataAvailability.setMetadata(dao.get()
+                        .getMetadata(dataAvailability, session));
             }
             context.addDataAvailability(dataAvailability);
         }

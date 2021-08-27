@@ -126,10 +126,10 @@ public class GetResultHandler extends AbstractGetResultHandler implements ApiQue
                 request.setFeatureIdentifiers(features.stream()
                         .map(f -> f.getIdentifier())
                         .collect(Collectors.toList()));
+                dao.get().queryResultData(request, response, session);
             } finally {
                 sessionStore.returnSession(session);
             }
-            dao.get().queryResultData(request, response);
         }
         return response;
     }

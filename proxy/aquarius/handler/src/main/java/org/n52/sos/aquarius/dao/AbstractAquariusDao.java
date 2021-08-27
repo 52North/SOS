@@ -31,10 +31,12 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.hibernate.Session;
 import org.n52.faroe.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.janmayen.i18n.LocaleHelper;
+import org.n52.series.db.old.HibernateSessionStore;
 import org.n52.sos.aquarius.ds.AquariusConnectionFactory;
 import org.n52.sos.aquarius.ds.AquariusConnector;
 import org.n52.sos.ds.dao.DefaultDao;
@@ -44,6 +46,8 @@ public abstract class AbstractAquariusDao implements DefaultDao {
 
     private AquariusConnectionFactory connectorFactory;
 
+    private HibernateSessionStore sessionStore;
+
     private ProfileHandler profileHandler;
 
     private Locale defaultLanguage;
@@ -51,6 +55,11 @@ public abstract class AbstractAquariusDao implements DefaultDao {
     @Inject
     public void setPegelOnlineConnectionFactory(AquariusConnectionFactory connectorFactory) {
         this.connectorFactory = connectorFactory;
+    }
+
+    @Inject
+    public void setConnectionProvider(HibernateSessionStore sessionStore) {
+        this.sessionStore = sessionStore;
     }
 
     @Inject
@@ -63,9 +72,25 @@ public abstract class AbstractAquariusDao implements DefaultDao {
         this.defaultLanguage = LocaleHelper.decode(defaultLanguage);
     }
 
-    protected AquariusConnector getConnector(Object connection) throws ConnectionProviderException {
+    protected AquariusConnector getAquariusConnector() throws ConnectionProviderException {
+        return connectorFactory.getConnection();
+    }
+
+    protected AquariusConnector getAquariusConnector(Object connection) throws ConnectionProviderException {
         return connection != null && connection instanceof AquariusConnector ? (AquariusConnector) connection
-                : connectorFactory.getConnection();
+                : getAquariusConnector();
+    }
+
+    protected HibernateSessionStore getSessionStore() {
+        return sessionStore;
+    }
+
+    protected boolean checkAquariusConnection(Object connection) {
+        return connection != null && connection instanceof AquariusConnector;
+    }
+
+    protected boolean checkHibernateConnection(Object connection) {
+        return connection != null && connection instanceof Session;
     }
 
     protected ProfileHandler getProfileHandler() {

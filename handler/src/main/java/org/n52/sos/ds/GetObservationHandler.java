@@ -94,10 +94,10 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
                 return response;
             }
             request.setFeatureIdentifiers(features.stream().map(f -> f.getIdentifier()).collect(Collectors.toList()));
+            dao.queryObservationData(request, response, session);
         } finally {
             sessionStore.returnSession(session);
         }
-        dao.queryObservationData(request, response);
         return response;
     }
 

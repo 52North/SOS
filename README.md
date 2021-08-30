@@ -1,7 +1,11 @@
 # 52°North Sensor Observation Service (SOS)
-| Master | Develop | OpenHUB | LGTM Alerts | LGTM code quality | dependabot |
-| ------------- | ------------- | ------------- | ------------- | ------------- | ------------- |
-| [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS) | [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS) | [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService) | [![Total alerts](https://img.shields.io/lgtm/alerts/g/52North/SOS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/52North/SOS/alerts/) | [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/52North/SOS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/52North/SOS/context:java) | [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=52North/SOS)](https://dependabot.com) |
+
+[![Develop Build Status](https://github.com/52North/SOS/actions/workflows/push.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/push.yml)
+[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](license)
+[![CodeAQL analysis](https://github.com/52North/SOS/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/52North/SOS/actions/workflows/codeql-analysis.yml)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/52North/SOS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/52North/SOS/alerts/)
+[![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/52North/SOS.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/52North/SOS/context:java)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=52North/SOS)](https://dependabot.com)
 
 ## Description
 

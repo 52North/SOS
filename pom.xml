@@ -83,18 +83,18 @@
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>25.2</version.geotools>
-        <version.jackson>2.12.4</version.jackson>
+        <version.jackson>2.12.5</version.jackson>
         <version.logback>1.2.5</version.logback>
         <version.slf4j>1.7.32</version.slf4j>
-        <version.netcdf>5.4.1</version.netcdf>
-        <version.jts>1.18.1</version.jts>
+        <version.netcdf>5.4.2</version.netcdf>
+        <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.1.0</version.arctic-sea>
         <version.helgoland.api>3.5.0-PR.3</version.helgoland.api>
         <version.dao-impl>4.0.0-PR.5</version.dao-impl>
         <version.db-model>4.0.0-PR.4</version.db-model>
-        <version.springframework.security>5.5.1</version.springframework.security>
+        <version.springframework.security>5.5.2</version.springframework.security>
         <version.springframework>5.3.9</version.springframework>
         <version.springframework.data>2.5.3</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
@@ -830,7 +830,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.11.2</version>
+                <version>3.12.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -846,7 +846,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.12</version>
+                 <version>1.11.13</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1663,7 +1663,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.3.0</version>
+                <version>4.4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1987,7 +1987,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.8.0</version>
+                <version>5.9.0</version>
             </dependency>
             <!-- EXI -->
             <dependency>

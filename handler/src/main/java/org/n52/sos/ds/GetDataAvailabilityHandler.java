@@ -166,7 +166,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                 dataAvailability.setCount(entity.getObservationCount());
             }
             if (isIncludeResultTime(context.getRequest()) && dao.isPresent()) {
-                dataAvailability.setResultTimes(dao.get().getResultTimes(dataAvailability, context.getRequest()));
+                dataAvailability.setResultTimes(dao.get().getResultTimes(dataAvailability, context.getRequest(), session));
             }
             return dataAvailability;
         }
@@ -211,7 +211,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         if (dataAvailability != null) {
             dataAvailability.setFormatDescriptor(getFormatDescriptor(context, entity));
             if (dao.isPresent()) {
-                dataAvailability.setMetadata(dao.get().getMetadata(dataAvailability));
+                dataAvailability.setMetadata(dao.get().getMetadata(dataAvailability, session));
             }
             context.addDataAvailability(dataAvailability);
         }

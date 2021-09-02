@@ -84,7 +84,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
             response.setResultModel(request.getResultModel());
             List<OmObservation> omObservations = Lists.newArrayList();
             if (dao != null) {
-                omObservations.addAll(dao.queryObservationsById(request));
+                omObservations.addAll(dao.queryObservationsById(request, session));
             }
             response.setObservationCollection(ObservationStream.of(omObservations));
             return response;

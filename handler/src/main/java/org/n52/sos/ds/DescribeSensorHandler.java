@@ -33,7 +33,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.io.request.IoParameters;
@@ -114,7 +116,8 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
             if (dao != null) {
                 response.setSensorDescriptions(dao.querySensorDescriptions(request, session));
             } else {
-                response.addSensorDescription(createSensorDescription(entities.iterator().next(), request, session));
+                response.addSensorDescription(createSensorDescription(entities.iterator()
+                        .next(), request, session));
             }
             return response;
         } catch (final HibernateException e) {
@@ -132,8 +135,8 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
 
     private SosProcedureDescription<?> createSensorDescription(ProcedureEntity procedure,
             DescribeSensorRequest request, Session session) throws OwsExceptionReport {
-        return procedureConverter.createSosProcedureDescription(procedure, request.getProcedureDescriptionFormat(),
-                request.getVersion(), getRequestedLocale(request), session);
+        return procedureConverter.createSosProcedureDescription(Hibernate.unproxy(procedure, ProcedureEntity.class),
+                request.getProcedureDescriptionFormat(), request.getVersion(), getRequestedLocale(request), session);
     }
 
     private DbQuery createDbQuery(DescribeSensorRequest req) {

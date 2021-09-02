@@ -115,7 +115,8 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
             if (dao != null) {
                 response.setSensorDescriptions(dao.querySensorDescriptions(request, session));
             } else {
-                response.addSensorDescription(createSensorDescription(entities.iterator().next(), request, session));
+                response.addSensorDescription(createSensorDescription(entities.iterator()
+                        .next(), request, session));
             }
 
             return response;

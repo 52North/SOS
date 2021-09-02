@@ -33,7 +33,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;

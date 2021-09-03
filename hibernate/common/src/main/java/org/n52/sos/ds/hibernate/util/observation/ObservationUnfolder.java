@@ -250,7 +250,9 @@ public class ObservationUnfolder {
                             } else if (dataComponent instanceof SweText && dataComponent.getDefinition()
                                     .contains("gml:description")) {
                                 description = token;
-                            } else if (dataComponent instanceof SweQuantity && checkDefinitionForDephtHeight(field)) {
+                            } else if (dataComponent instanceof SweQuantity && checkDefinitionForDephtHeight(field)
+                                    && checkNotObservedProperty(dataComponent,
+                                            multiObservation.getObservationConstellation())) {
                                 parseFieldAsParameter(field, token, parameterHolder);
                             } else {
                                 observedValue = parseSweAbstractSimpleType(dataComponent, token);
@@ -797,6 +799,16 @@ public class ObservationUnfolder {
                         || field.getElement()
                                 .getDefinition()
                                 .equalsIgnoreCase(TO));
+    }
+
+    private boolean checkNotObservedProperty(SweAbstractDataComponent dataComponent,
+            OmObservationConstellation observationConstellation) {
+        if (observationConstellation != null && observationConstellation.getObservableProperty() != null) {
+            return !dataComponent.getDefinition()
+                    .equalsIgnoreCase(observationConstellation.getObservableProperty()
+                            .getIdentifier());
+        }
+        return true;
     }
 
     private ReferenceType getParameterName(ReferenceType name) {

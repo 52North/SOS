@@ -22,6 +22,12 @@
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
             <artifactId>db-model-entities</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.neovisionaries</groupId>
+                    <artifactId>nv-i18n</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

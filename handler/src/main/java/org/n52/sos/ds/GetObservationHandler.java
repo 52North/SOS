@@ -50,6 +50,7 @@ import org.n52.sos.ds.dao.GetObservationDao;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -78,6 +79,7 @@ public class GetObservationHandler extends AbstractGetObservationHandler impleme
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
         if (request.getVersion().equals(Sos1Constants.SERVICEVERSION) && request.getObservedProperties().isEmpty()) {
             throw new MissingObservedPropertyParameterException();

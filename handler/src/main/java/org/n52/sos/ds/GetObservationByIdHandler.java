@@ -45,6 +45,7 @@ import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.ds.dao.GetObservationByIdDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
@@ -73,6 +74,7 @@ public class GetObservationByIdHandler extends AbstractGetObservationByIdHandler
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetObservationByIdResponse getObservationById(GetObservationByIdRequest request) throws OwsExceptionReport {
         Session session = null;
         try {

@@ -55,6 +55,7 @@ import org.n52.sos.service.SosSettings;
 import org.n52.svalbard.ConformanceClasses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -112,6 +113,7 @@ public class GetResultHandler extends AbstractGetResultHandler implements ApiQue
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
         final GetResultResponse response = new GetResultResponse();
         response.setService(request.getService());

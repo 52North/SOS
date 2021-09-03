@@ -54,6 +54,7 @@ import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.ds.dao.DescribeSensorDao;
 import org.n52.sos.ds.procedure.ProcedureConverter;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 
@@ -97,6 +98,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request) throws OwsExceptionReport {
         Session session = null;
         try {

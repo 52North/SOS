@@ -62,6 +62,7 @@ import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.FormatDescriptor
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
 import org.n52.shetland.ogc.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.ds.dao.GetDataAvailabilityDao;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -91,6 +92,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest request)
             throws OwsExceptionReport {
         GetDataAvailabilityResponse response = new GetDataAvailabilityResponse();

@@ -78,6 +78,7 @@ import org.n52.sos.ds.dao.GetFeatureOfInterestDao;
 import org.n52.sos.ds.feature.create.FeatureVisitorContext;
 import org.n52.sos.ds.feature.create.FeatureVisitorImpl;
 import org.n52.sos.util.GeometryHandler;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -142,6 +143,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetFeatureOfInterestResponse getFeatureOfInterest(GetFeatureOfInterestRequest request)
             throws OwsExceptionReport {
         Session session = sessionStore.getSession();

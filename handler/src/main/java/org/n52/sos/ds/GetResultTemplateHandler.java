@@ -45,6 +45,7 @@ import org.n52.sos.ds.utils.ResultHandlingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.util.SweHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the abstract class AbstractGetResultTemplateHandler
@@ -104,6 +105,7 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
     }
 
     @Override
+    @Transactional(readOnly = true)
     public GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request) throws OwsExceptionReport {
         GetResultTemplateResponse response = new GetResultTemplateResponse();
         response.setService(request.getService());

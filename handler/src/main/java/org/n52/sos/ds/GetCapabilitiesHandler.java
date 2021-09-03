@@ -89,6 +89,7 @@ import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.util.I18NHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 
@@ -118,6 +119,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
      *             If an error occurs
      */
     @Override
+    @Transactional(readOnly = true)
     protected List<SosObservationOffering> getContentsForSosV1(
             SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         Session session = null;
@@ -224,6 +226,7 @@ public class GetCapabilitiesHandler extends AbstractSosGetCapabilitiesHandler im
      *             * If an error occurs
      */
     @Override
+    @Transactional(readOnly = true)
     protected List<SosObservationOffering> getContentsForSosV2(
             SectionSpecificContentObject sectionSpecificContentObject) throws OwsExceptionReport {
         Session session = null;

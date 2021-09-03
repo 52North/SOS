@@ -34,6 +34,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.series.db.beans.ResultTemplateEntity;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
@@ -54,7 +55,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.util.CodingHelper;
 import org.n52.svalbard.util.XmlHelper;
 
-public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResultTemplateDao {
+public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResultTemplateDao, Constructable {
 
     private HibernateSessionHolder sessionHolder;
 
@@ -79,6 +80,7 @@ public class GetResultTemplateDaoImpl extends AbstractDaoImpl implements GetResu
         this.decodingRepository = decodingRepository;
     }
 
+    @Override
     public void init() {
         this.supportsDatabaseEntities = HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }

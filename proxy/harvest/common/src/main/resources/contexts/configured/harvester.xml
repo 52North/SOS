@@ -20,10 +20,6 @@
         <bean id="httpClientHandler" class="org.n52.sos.web.HttpClientHandler" />
 
         <bean id="insertionRepository" class="org.n52.sos.proxy.da.InsertionRepository" />
-        <jpa:repositories base-package="org.n52.sensorweb.server.db">
-          <repo:include-filter type="regex" expression=".ServiceRepository" />
-        </jpa:repositories>
-
         <bean id="harvesterJobFactory" class="org.n52.sos.proxy.harvest.DataSourceHarvesterJobFactory"/>
         <bean id="dataSourceHarvesterScheduler" class="org.n52.sos.proxy.harvest.DataSourceHarvesterScheduler" init-method="init" destroy-method="shutdown">
             <property name="scheduler">

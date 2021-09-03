@@ -114,7 +114,7 @@ public class GetResultTemplateHandler extends AbstractGetResultTemplateHandler
         try {
             session = sessionStore.getSession();
             GetResultTemplateResponse reponse = dao.isPresent() ? dao.get()
-                    .queryResultTemplate(request, response) : null;
+                    .queryResultTemplate(request, response, session) : null;
             if (response != null && response.getResultStructure() != null && response.getResultEncoding() != null) {
                 return reponse;
             } else {

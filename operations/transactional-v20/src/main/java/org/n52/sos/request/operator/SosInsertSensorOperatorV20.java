@@ -275,7 +275,7 @@ public class SosInsertSensorOperatorV20 extends
                                 }
                             }
                             containedOfferings.entrySet().forEach(e -> {
-                                if (e.getValue()) {
+                                if (!e.getValue()) {
                                     SosOffering sosOff = new SosOffering(e.getKey(),
                                             getCache().getOfferingHumanReadableNameForIdentifier(e.getKey()));
                                     sosOff.setParentOfferingFlag(true);
@@ -400,6 +400,7 @@ public class SosInsertSensorOperatorV20 extends
     private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId)
             throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
+
 
         // if no offerings are assigned, generate one
         if (CollectionHelper.isEmpty(sosOfferings)) {

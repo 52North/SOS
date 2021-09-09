@@ -90,10 +90,10 @@
         <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.helgoland.api>3.5.0-PR.3</version.helgoland.api>
-        <version.dao-impl>4.0.0-PR.5</version.dao-impl>
-        <version.db-model>4.0.0-PR.4</version.db-model>
         <version.arctic-sea>9.1.1</version.arctic-sea>
+        <version.helgoland.api>3.5.0-PR.4</version.helgoland.api>
+        <version.db-model>4.0.0-PR.5</version.db-model>
+        <version.dao-impl>4.0.0-PR.6</version.dao-impl>
         <version.springframework.security>5.5.2</version.springframework.security>
         <version.springframework>5.3.9</version.springframework>
         <version.springframework.data>2.5.4</version.springframework.data>

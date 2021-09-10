@@ -83,7 +83,7 @@
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>25.2</version.geotools>
         <version.jackson>2.12.5</version.jackson>
-        <version.logback>1.2.5</version.logback>
+        <version.logback>1.2.6</version.logback>
         <version.slf4j>1.7.32</version.slf4j>
         <version.netcdf>5.4.2</version.netcdf>
         <version.jts>1.18.2</version.jts>

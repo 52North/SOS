@@ -95,7 +95,7 @@
         <version.db-model>4.0.0-PR.5</version.db-model>
         <version.dao-impl>4.0.0-PR.6</version.dao-impl>
         <version.springframework.security>5.5.2</version.springframework.security>
-        <version.springframework>5.3.9</version.springframework>
+        <version.springframework>5.3.10</version.springframework>
         <version.springframework.data>2.5.4</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.5</version.saxon>
@@ -1663,7 +1663,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.4.0</version>
+                <version>4.4.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -2208,7 +2208,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

@@ -95,11 +95,11 @@
         <version.db-model>4.0.0-PR.5</version.db-model>
         <version.dao-impl>4.0.0-PR.6</version.dao-impl>
         <version.springframework.security>5.5.2</version.springframework.security>
-        <version.springframework>5.3.10</version.springframework>
+        <version.springframework>5.3.11</version.springframework>
         <version.springframework.data>2.5.4</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.6</version.saxon>
-        <version.elasticsearch>7.15.0</version.elasticsearch>
+        <version.elasticsearch>7.15.1</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -2223,7 +2223,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.6</version>
+                    <version>11.0.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

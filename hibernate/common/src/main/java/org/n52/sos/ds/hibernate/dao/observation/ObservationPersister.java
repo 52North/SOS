@@ -61,6 +61,7 @@ import org.n52.series.db.beans.VerticalMetadataEntity;
 import org.n52.series.db.beans.dataset.ValueType;
 import org.n52.series.db.beans.parameter.ParameterEntity;
 import org.n52.shetland.ogc.UoM;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -681,7 +682,13 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 }
             }
         }
-        return getObservableProperty(new OmObservableProperty(definition));
+        OmObservableProperty omObservableProperty = new OmObservableProperty(definition);
+        CodeType codeType = field.getName();
+        if (field.getElement().isSetLabel()) {
+            codeType.setValue(field.getElement().getLabel());
+        }
+        omObservableProperty.setName(codeType);
+        return getObservableProperty(omObservableProperty);
     }
 
     // private PhenomenonEntity getObservablePropertyForField(SweField field,

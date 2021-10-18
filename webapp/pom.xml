@@ -965,6 +965,10 @@
               <groupId>org.geotools</groupId>
               <artifactId>gt-metadata</artifactId>
             </exclusion>
+            <exclusion>
+              <groupId>com.neovisionaries</groupId>
+              <artifactId>nv-i18n</artifactId>
+            </exclusion>
           </exclusions>
         </dependency>
         <dependency>

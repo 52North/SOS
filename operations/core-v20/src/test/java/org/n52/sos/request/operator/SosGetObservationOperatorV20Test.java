@@ -34,7 +34,7 @@ import java.util.Set;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
-import org.hamcrest.core.IsCollectionContaining;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -82,8 +82,8 @@ public class SosGetObservationOperatorV20Test {
 
        MatcherAssert.assertThat(childFeatures.isEmpty(), Is.is(Boolean.FALSE));
        MatcherAssert.assertThat(childFeatures.size(), Is.is(2));
-       MatcherAssert.assertThat(childFeatures, IsCollectionContaining.hasItem(CHILD_FEATURE));
-       MatcherAssert.assertThat(childFeatures, IsCollectionContaining.hasItem(FEATURE));
+       MatcherAssert.assertThat(childFeatures, IsIterableContaining.hasItem(CHILD_FEATURE));
+       MatcherAssert.assertThat(childFeatures, IsIterableContaining.hasItem(FEATURE));
     }
 
 }

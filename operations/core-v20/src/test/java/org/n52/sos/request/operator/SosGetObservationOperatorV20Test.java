@@ -36,7 +36,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.Is;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.n52.sos.cache.SosContentCache;
 
@@ -56,7 +56,7 @@ public class SosGetObservationOperatorV20Test {
     @Test
     public void should_return_empty_list_for_bad_parameters() {
         final SosGetObservationOperatorV20 operator = Mockito.mock(SosGetObservationOperatorV20.class);
-        Mockito.when(operator.addChildFeatures(Matchers.anyCollectionOf(String.class))).thenCallRealMethod();
+        Mockito.when(operator.addChildFeatures(ArgumentMatchers.anyCollection())).thenCallRealMethod();
 
         // null
         List<String> childFeatures = operator.addChildFeatures(null);
@@ -73,10 +73,10 @@ public class SosGetObservationOperatorV20Test {
         final SosContentCache cache = Mockito.mock(SosContentCache.class);
         final Set<String> myChildFeatures = new HashSet<String>(1);
         myChildFeatures.add(CHILD_FEATURE);
-        Mockito.when(cache.getChildFeatures(Matchers.anyString(), Matchers.anyBoolean(), Matchers.anyBoolean()))
+        Mockito.when(cache.getChildFeatures(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean()))
                 .thenReturn(myChildFeatures);
         Mockito.when(operator.getCache()).thenReturn(cache);
-        Mockito.when(operator.addChildFeatures(Matchers.anyCollectionOf(String.class))).thenCallRealMethod();
+        Mockito.when(operator.addChildFeatures(ArgumentMatchers.anyCollection())).thenCallRealMethod();
 
         final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList(FEATURE));
 

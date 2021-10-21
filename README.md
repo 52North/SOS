@@ -78,10 +78,6 @@ Remote debugging enabled:
 docker run -p 8080:8080 -p 8000:8000 -e 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n' 52north/sos:latest
 ```
 
-## User Guide
-
- An Open Geospatial Consortium (OGC) SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial) is currently not available, see http://www.ogcnetwork.net.
-
 ## Demo
 
  Access a basic form-based test client and the administrative backend at our [demo site](http://sensorweb.demo.52north.org/sensorwebtestbed/).

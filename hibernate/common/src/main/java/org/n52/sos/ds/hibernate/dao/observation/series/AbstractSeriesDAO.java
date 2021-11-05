@@ -264,11 +264,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 .add(Restrictions.eq(PhenomenonEntity.IDENTIFIER, omObsConst.getObservablePropertyIdentifier()));
         criteria.createCriteria(DatasetEntity.PROPERTY_OFFERING)
                 .add(Restrictions.in(OfferingEntity.IDENTIFIER, omObsConst.getOfferings()));
-        // criteria.createAlias(DatasetEntity.PROPERTY_FEATURE, "f");
-        // criteria.add(Restrictions.or(Restrictions.isNull(DatasetEntity.PROPERTY_FEATURE),
-        // Restrictions
-        // .eq("f." + AbstractFeatureEntity.IDENTIFIER,
-        // omObsConst.getFeatureOfInterestIdentifier())));
+        criteria.setMaxResults(1);
         LOGGER.trace("QUERY getObservationConstellation(omObservationConstellation): {}",
                 HibernateHelper.getSqlString(criteria));
         return (DatasetEntity) criteria.uniqueResult();

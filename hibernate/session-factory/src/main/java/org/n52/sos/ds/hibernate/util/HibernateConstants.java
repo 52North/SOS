@@ -174,4 +174,5 @@ public interface HibernateConstants {
 
     String JDBC_TIME_ZONE = AvailableSettings.JDBC_TIME_ZONE;
 
+    String HBM2DDL_CHARSET_NAME = AvailableSettings.HBM2DDL_CHARSET_NAME;
 }

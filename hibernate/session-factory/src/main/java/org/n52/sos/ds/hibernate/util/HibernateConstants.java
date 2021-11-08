@@ -175,4 +175,5 @@ public interface HibernateConstants {
 
     String SPRING_PROFILE = "hibernate";
 
+    String HBM2DDL_CHARSET_NAME = AvailableSettings.HBM2DDL_CHARSET_NAME;
 }

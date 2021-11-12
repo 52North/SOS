@@ -74,7 +74,7 @@
         <version.postgresql>42.3.1</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.3.0.0</version.ojdbc8>
-        <version.sqljdbc>9.4.0.jre8</version.sqljdbc>
+        <version.sqljdbc>9.5.0.jre8-preview</version.sqljdbc>
         <version.mysql>8.0.27</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
@@ -83,21 +83,21 @@
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>26.0</version.geotools>
         <version.jackson>2.13.0</version.jackson>
-        <version.logback>1.2.6</version.logback>
+        <version.logback>1.2.7</version.logback>
         <version.slf4j>1.7.32</version.slf4j>
         <version.netcdf>5.4.2</version.netcdf>
         <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.2.0-SNAPSHOT</version.arctic-sea>
-        <version.helgoland.api>3.4.1</version.helgoland.api>
+        <version.helgoland.api>3.4.2</version.helgoland.api>
         <version.dao-impl>3.5.1</version.dao-impl>
-        <version.db-model>3.1.2</version.db-model>
+        <version.db-model>3.1.3</version.db-model>
         <version.springframework.security>5.5.3</version.springframework.security>
-        <version.springframework>5.3.12</version.springframework>
+        <version.springframework>5.3.13</version.springframework>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.6</version.saxon>
-        <version.elasticsearch>7.15.1</version.elasticsearch>
+        <version.elasticsearch>7.15.2</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -787,7 +787,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.22</version>
+                 <version>1.12.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1553,7 +1553,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.4.2</version>
+                <version>4.5.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1877,7 +1877,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.9.0</version>
+                <version>5.10.0</version>
             </dependency>
             <!-- EXI -->
             <dependency>

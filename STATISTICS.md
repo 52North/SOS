@@ -8,6 +8,8 @@
 
 ### 5.4.x
 
+[![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.4.1/total)](https://github.com/52North/SOS/releases/tag/v5.4.2)
+
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.4.1/total)](https://github.com/52North/SOS/releases/tag/v5.4.1)
 
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.4.0/total)](https://github.com/52North/SOS/releases/tag/v5.4.0)
@@ -19,6 +21,8 @@
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.3.0/total)](https://github.com/52North/SOS/releases/tag/v5.3.0)
 
 ### 5.2.x
+
+[![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.2.10/total)](https://github.com/52North/SOS/releases/tag/v5.2.11)
 
 [![Downloads](https://img.shields.io/github/downloads/52North/SOS/v5.2.10/total)](https://github.com/52North/SOS/releases/tag/v5.2.10)
 

@@ -76,7 +76,7 @@
         <version.ojdbc8>21.3.0.0</version.ojdbc8>
         <version.sqljdbc>9.5.0.jre8-preview</version.sqljdbc>
         <version.mysql>8.0.27</version.mysql>
-        <version.h2>1.4.200</version.h2>
+        <version.h2>2.0.202</version.h2>
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.6.1.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>

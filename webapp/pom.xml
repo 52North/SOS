@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sos-parent</artifactId>
         <groupId>org.n52.sensorweb-server.sos</groupId>
-        <version>5.4.0</version>
+        <version>5.4.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-webapp</artifactId>
@@ -964,6 +964,10 @@
             <exclusion>
               <groupId>org.geotools</groupId>
               <artifactId>gt-metadata</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.neovisionaries</groupId>
+              <artifactId>nv-i18n</artifactId>
             </exclusion>
           </exclusions>
         </dependency>

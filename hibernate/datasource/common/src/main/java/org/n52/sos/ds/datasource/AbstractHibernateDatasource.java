@@ -30,7 +30,7 @@ package org.n52.sos.ds.datasource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -448,7 +448,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             schemaExport.setDelimiter(";").setFormat(false).setHaltOnError(true)
                     .setOutputFile(createTempFile.toString());
             schemaExport.execute(EnumSet.of(TargetType.SCRIPT), Action.CREATE, m);
-            List<String> readAllLines = Files.readAllLines(createTempFile, Charset.defaultCharset());
+            List<String> readAllLines = Files.readAllLines(createTempFile);
             String[] script = readAllLines.toArray(new String[readAllLines.size()]);
             String[] pre = getPreSchemaScript();
             String[] post = getPostSchemaScript();
@@ -557,6 +557,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (registry != null) {
             checkPostCreation();
         }
+        settings.put(HibernateConstants.HBM2DDL_CHARSET_NAME, StandardCharsets.UTF_8.name());
         CustomConfiguration config = getConfig(settings);
         StandardServiceRegistryBuilder registryBuilder = config.getStandardServiceRegistryBuilder();
         settings.put(HibernateConstants.DIALECT, getDialectInternal().getClass().getName());

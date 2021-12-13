@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-spring</artifactId>
-        <version>5.4.0</version>
+        <version>5.4.2</version>
     </parent>
     <artifactId>sos-common-controller</artifactId>
     <name>52°North SOS - Web Common Controller</name>
@@ -107,6 +107,10 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

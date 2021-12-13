@@ -9,7 +9,7 @@
     </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <artifactId>sos-parent</artifactId>
-    <version>5.4.0</version>
+    <version>5.4.2</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://github.com/52North/SOS</url>
@@ -20,7 +20,7 @@
         <url>https://github.com/52North/SOS</url>
         <connection>scm:git:https://github.com/52North/SOS.git</connection>
         <developerConnection>scm:git:https://github.com/52North/SOS.git</developerConnection>
-        <tag>v5.4.0</tag>
+        <tag>v5.4.2</tag>
     </scm>
 
     <issueManagement>
@@ -32,19 +32,6 @@
         <system>Travis CI</system>
         <url>https://travis-ci.org/52North/SOS</url>
     </ciManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>n52-releases-dist</id>
-            <name>repository for 52North releases</name>
-            <url>dav:https://52north.org/maven/repo/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>n52-snapshots-dist</id>
-            <name>repository for 52North snapshots</name>
-            <url>dav:https://52north.org/maven/repo/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <licenses>
         <license>
@@ -84,33 +71,33 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.2.20</version.postgresql>
-        <version.postgis>2.5.0</version.postgis>
-        <version.ojdbc8>21.1.0.0</version.ojdbc8>
-        <version.sqljdbc>9.2.1.jre8</version.sqljdbc>
-        <version.mysql>8.0.25</version.mysql>
+        <version.postgresql>42.3.1</version.postgresql>
+        <version.postgis>2.5.1</version.postgis>
+        <version.ojdbc8>21.3.0.0</version.ojdbc8>
+        <version.sqljdbc>9.5.0.jre8-preview</version.sqljdbc>
+        <version.mysql>8.0.27</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.4.32.Final</version.hibernate>
+        <version.hibernate>5.6.0.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>25.1</version.geotools>
-        <version.jackson>2.12.3</version.jackson>
-        <version.logback>1.2.3</version.logback>
-        <version.slf4j>1.7.30</version.slf4j>
-        <version.netcdf>5.4.1</version.netcdf>
-        <version.jts>1.18.1</version.jts>
+        <version.geotools>26.0</version.geotools>
+        <version.jackson>2.13.0</version.jackson>
+        <version.logback>1.2.7</version.logback>
+        <version.slf4j>1.7.32</version.slf4j>
+        <version.netcdf>5.4.2</version.netcdf>
+        <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
-        <version.arctic-sea>8.2.1</version.arctic-sea>
-        <version.helgoland.api>3.4.1</version.helgoland.api>
-        <version.dao-impl>3.5.0</version.dao-impl>
-        <version.db-model>3.1.0</version.db-model>
-        <version.springframework.security>5.5.0</version.springframework.security>
-        <version.springframework>5.3.7</version.springframework>
-        <version.aspectj>1.9.6</version.aspectj>
-        <version.saxon>10.5</version.saxon>
-        <version.elasticsearch>7.13.0</version.elasticsearch>
+        <version.arctic-sea>9.2.0</version.arctic-sea>
+        <version.helgoland.api>3.4.2</version.helgoland.api>
+        <version.dao-impl>3.5.2</version.dao-impl>
+        <version.db-model>3.1.3</version.db-model>
+        <version.springframework.security>5.5.3</version.springframework.security>
+        <version.springframework>5.3.13</version.springframework>
+        <version.aspectj>1.9.7</version.aspectj>
+        <version.saxon>10.6</version.saxon>
+        <version.elasticsearch>7.15.2</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.14</version.httpcore>
         <version.httpcoponents>4.5.13</version.httpcoponents>
@@ -756,7 +743,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.9.0</version>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang</groupId>
@@ -784,7 +771,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>3.10.0</version>
+                <version>4.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -800,7 +787,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.11.0</version>
+                 <version>1.12.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -865,7 +852,7 @@
             <dependency>
                 <groupId>org.codehaus.janino</groupId>
                 <artifactId>janino</artifactId>
-                <version>3.1.4</version>
+                <version>3.1.6</version>
             </dependency>
             <dependency>
                 <groupId>org.locationtech.jts</groupId>
@@ -875,7 +862,7 @@
             <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
-                <version>2.10.10</version>
+                <version>2.10.13</version>
             </dependency>
             <!-- Hibernate Core Dependencies -->
             <dependency>
@@ -1289,6 +1276,17 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+                <version>${version.springframework.security}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
                 <version>${version.springframework.security}</version>
                 <scope>runtime</scope>
@@ -1555,7 +1553,7 @@
             <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-annotations</artifactId>
-                <version>4.2.3</version>
+                <version>4.5.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1580,7 +1578,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>30.1.1-jre</version>
+                <version>31.0.1-jre</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -1617,7 +1615,7 @@
             <dependency>
                 <groupId>org.geolatte</groupId>
                 <artifactId>geolatte-geom</artifactId>
-                <version>1.8.1</version>
+                <version>1.8.2</version>
             </dependency>
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
@@ -1775,7 +1773,7 @@
             <dependency>
                 <groupId>javax.measure</groupId>
                 <artifactId>unit-api</artifactId>
-                <version>2.1.2</version>
+                <version>2.1.3</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -1798,7 +1796,7 @@
             <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
-                <version>0.9.12</version>
+                <version>0.10.2</version>
             </dependency>
 
             <dependency>
@@ -1879,7 +1877,7 @@
             <dependency>
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna</artifactId>
-                <version>5.8.0</version>
+                <version>5.10.0</version>
             </dependency>
             <!-- EXI -->
             <dependency>
@@ -2100,7 +2098,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -2115,7 +2113,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.3</version>
+                    <version>11.0.7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -2169,7 +2167,7 @@
             <url>https://52north.org/maven/repo/releases</url>
         </repository>
         <repository>
-            <id>maven-snapshots</id>
+            <id>sonatype-nexus-snapshots</id>
             <name>Maven Central Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases>

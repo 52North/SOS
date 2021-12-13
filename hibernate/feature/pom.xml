@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb-server.sos</groupId>
         <artifactId>sos-hibernate</artifactId>
-        <version>5.4.0</version>
+        <version>5.4.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sos-hibernate-feature</artifactId>
@@ -55,6 +55,12 @@
         <dependency>
             <groupId>org.n52.sensorweb-server.db-model</groupId>
             <artifactId>db-model-entities</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.neovisionaries</groupId>
+                    <artifactId>nv-i18n</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

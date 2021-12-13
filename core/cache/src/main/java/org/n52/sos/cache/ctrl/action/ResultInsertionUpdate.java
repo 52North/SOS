@@ -111,10 +111,13 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
                 if (!cache.getHiddenChildProceduresForOffering(offering).contains(procedure)) {
                     cache.addProcedureForOffering(offering, procedure);
                 }
-                cache.addOfferingForProcedure(procedure, offering);
-                cache.updateEnvelopeForOffering(offering, envelope);
-                cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
-                cache.updateResultTimeForOffering(offering, resultTime);
+                        cache.addOfferingForProcedure(procedure, offering);
+                        cache.updateEnvelopeForOffering(offering,
+                                !envelope.isNull() ? envelope
+                                        : cache.getGlobalEnvelope()
+                                                .getEnvelope());
+                        cache.updatePhenomenonTimeForOffering(offering, phenomenonTime);
+                        cache.updateResultTimeForOffering(offering, resultTime);
                 // observable property
                 cache.addOfferingForObservableProperty(observableProperty, offering);
                 cache.addObservablePropertyForOffering(offering, observableProperty);

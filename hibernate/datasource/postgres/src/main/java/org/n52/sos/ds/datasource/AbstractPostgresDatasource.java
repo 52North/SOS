@@ -214,14 +214,14 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         Statement stmt = null;
         try {
             conn = openConnection(settings);
-            String catalog = checkCatalog(conn);
-            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
             Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
             List<String> names = new LinkedList<String>();
             while (tables.hasNext()) {
                 Table table = tables.next();
                 if (table.isPhysicalTable()) {
-                    names.add(table.getQualifiedName(createDialect(), null, schema));
+                    // TODO check if this works
+                    names.add(table.getQualifiedTableName().render());
+//                    names.add(table.getQualifiedName(createDialect(), null, schema));
                 }
             }
             if (!names.isEmpty()) {

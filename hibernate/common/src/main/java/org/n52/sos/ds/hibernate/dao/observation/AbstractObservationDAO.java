@@ -338,6 +338,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return criteria.list();
     }
 
+    public DataEntity<?> getObservationBy(Long dataset, Date samplingTimeStart, Date samplingTimeEnd, Session session) {
+        Criteria c = getDefaultObservationCriteria(session);
+        c.add(Restrictions.eq(DataEntity.PROPERTY_DATASET_ID, dataset));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_START, samplingTimeStart));
+        c.add(Restrictions.eq(DataEntity.PROPERTY_SAMPLING_TIME_END, samplingTimeEnd));
+        return (DataEntity<?>) c.uniqueResult();
+    }
+
     /**
      * Check if there are numeric observations for the offering
      *

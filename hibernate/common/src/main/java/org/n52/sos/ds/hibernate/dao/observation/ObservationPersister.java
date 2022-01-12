@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +53,7 @@ import org.n52.series.db.beans.GeometryDataEntity;
 import org.n52.series.db.beans.GeometryEntity;
 import org.n52.series.db.beans.OfferingEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.ReferencedDataEntity;
 import org.n52.series.db.beans.ResultTemplateEntity;
@@ -72,6 +74,7 @@ import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.ParameterHolder;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.AbstractPofileTrajectoryElement;
@@ -108,6 +111,8 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.SosResultEncoding;
 import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
@@ -120,11 +125,13 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FormatDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
+import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.PlatformDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.VerticalMetadataDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.DatasetFactory;
 import org.n52.sos.request.InternalInsertResultTemplateRequest;
 import org.n52.sos.util.GeometryHandler;
 
@@ -145,6 +152,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private final ObservationFactory observationFactory;
 
+    private DatasetFactory datasetFactory;
+
     private final OmObservation omObservation;
 
     private final Set<OfferingEntity> offerings;
@@ -158,8 +167,9 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             Map<String, CodespaceEntity> codespaceCache, Map<UoM, UnitEntity> unitCache,
             Map<String, FormatEntity> formatCache, Set<OfferingEntity> hOfferings, Session session)
             throws OwsExceptionReport {
-        this(daoFactory, new DAOs(observationDao, daoFactory), new Caches(codespaceCache, unitCache, formatCache, null),
-                sosObservation, hDataset, hFeature, null, hOfferings, session, null);
+        this(daoFactory, new DAOs(observationDao, daoFactory),
+                new Caches(codespaceCache, unitCache, formatCache, null), sosObservation, hDataset, hFeature, null,
+                hOfferings, session, null);
     }
 
     private ObservationPersister(DaoFactory daoFactory, DAOs daos, Caches caches, OmObservation observation,
@@ -175,6 +185,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         this.session = session;
         this.daos = daos;
         this.observationFactory = daos.observation().getObservationFactory();
+        this.datasetFactory = daos.dataset.getDatasetFactory();
         this.parent = parentId;
         this.offerings = hOfferings;
     }
@@ -234,25 +245,17 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         // dataArray = persist(dataArray, new HashSet<DataEntity<?>>());
         // persistChildren(value.getValue(), dataArray.getId());
         // } else {
-        dataArray.setStringValue(value.getValue()
-                .getValueAsString());
+        dataArray.setStringValue(value.getValue().getValueAsString());
         dataArray = (DataArrayDataEntity) persist((DataEntity) dataArray, new HashSet<DataEntity<?>>());
         // }
         // create result template
         InternalInsertResultTemplateRequest insertResultTemplateRequest = new InternalInsertResultTemplateRequest();
-        insertResultTemplateRequest.setObservationEncoding(new SosResultEncoding(value.getValue()
-                .getEncoding(),
-                value.getValue()
-                        .getEncoding()
-                        .getXml()));
-        insertResultTemplateRequest.setObservationStructure(new SosResultStructure(value.getValue()
-                .getElementType(),
-                value.getValue()
-                        .getElementType()
-                        .getXml()));
-        insertResultTemplateRequest.setIdentifier("OBS_" + IdGenerator.generate(value.getValue()
-                .getElementType()
-                .getXml()));
+        insertResultTemplateRequest.setObservationEncoding(
+                new SosResultEncoding(value.getValue().getEncoding(), value.getValue().getEncoding().getXml()));
+        insertResultTemplateRequest.setObservationStructure(
+                new SosResultStructure(value.getValue().getElementType(), value.getValue().getElementType().getXml()));
+        insertResultTemplateRequest
+                .setIdentifier("OBS_" + IdGenerator.generate(value.getValue().getElementType().getXml()));
         ResultTemplateEntity resultTemplate = daoFactory.getResultTemplateDAO()
                 .checkOrInsertResultTemplate(insertResultTemplateRequest, dataArray.getDataset(), session);
         dataArray.setResultTemplate(resultTemplate);
@@ -315,19 +318,16 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         ProfileDataEntity profile = observationFactory.profile();
         if (value.isSetFromLevel() || value.isSetToLevel()) {
             if (value.isSetFromLevel()) {
-                profile.setVerticalFrom(value.getFromLevel()
-                        .getValue());
+                profile.setVerticalFrom(value.getFromLevel().getValue());
                 omObservation.addParameter(createParameter((QuantityValue) value.getFromLevel()));
             }
             if (value.isSetToLevel()) {
-                profile.setVerticalTo(value.getToLevel()
-                        .getValue());
+                profile.setVerticalTo(value.getToLevel().getValue());
                 omObservation.addParameter(createParameter((QuantityValue) value.getToLevel()));
             }
         }
         if (value.isSetPhenomenonTime()) {
-            omObservation.getValue()
-                    .setPhenomenonTime(value.getPhenomenonTime());
+            omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
         }
         dataset.setValueType(getProfileValueType(value));
         DataEntity profileDataEntity = persist((DataEntity) profile, new HashSet<DataEntity<?>>());
@@ -341,22 +341,14 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         if (value.isSetValue()) {
             for (Value<?> v : value.getValue()) {
                 DataEntity<?> d = v.accept(this);
-                if (value.isSetLevelStart() && d.getVerticalFrom()
-                        .compareTo(value.getLevelStart()
-                                .getValue()) != 0) {
-                    d.setVerticalFrom(value.getLevelStart()
-                            .getValue());
-                } else if (!value.isSetLevelStart() && value.isSetLevelEnd() && d.getVerticalFrom()
-                        .compareTo(value.getLevelEnd()
-                                .getValue()) != 0) {
-                    d.setVerticalFrom(value.getLevelEnd()
-                            .getValue());
+                if (value.isSetLevelStart() && d.getVerticalFrom().compareTo(value.getLevelStart().getValue()) != 0) {
+                    d.setVerticalFrom(value.getLevelStart().getValue());
+                } else if (!value.isSetLevelStart() && value.isSetLevelEnd()
+                        && d.getVerticalFrom().compareTo(value.getLevelEnd().getValue()) != 0) {
+                    d.setVerticalFrom(value.getLevelEnd().getValue());
                 }
-                if (value.isSetLevelEnd() && d.getVerticalTo()
-                        .compareTo(value.getLevelEnd()
-                                .getValue()) != 0) {
-                    d.setVerticalTo(value.getLevelEnd()
-                            .getValue());
+                if (value.isSetLevelEnd() && d.getVerticalTo().compareTo(value.getLevelEnd().getValue()) != 0) {
+                    d.setVerticalTo(value.getLevelEnd().getValue());
                 }
                 childObservations.add(d);
             }
@@ -368,8 +360,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     public DataEntity<?> visit(TrajectoryValue value) throws OwsExceptionReport {
         TrajectoryDataEntity trajectory = observationFactory.trajectory();
         if (value.isSetPhenomenonTime()) {
-            omObservation.getValue()
-                    .setPhenomenonTime(value.getPhenomenonTime());
+            omObservation.getValue().setPhenomenonTime(value.getPhenomenonTime());
             if (value.getPhenomenonTime() instanceof TimeInstant) {
                 omObservation.setResultTime((TimeInstant) value.getPhenomenonTime());
             } else if (value.getPhenomenonTime() instanceof TimePeriod) {
@@ -413,11 +404,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private ValueType getProfileValueType(ProfileValue value) {
         for (ProfileLevel level : value.getValue()) {
-            if (level.getValue()
-                    .size() == 1) {
-                Value<?> v = level.getValue()
-                        .iterator()
-                        .next();
+            if (level.getValue().size() == 1) {
+                Value<?> v = level.getValue().iterator().next();
                 if (v instanceof QuantityValue) {
                     return ValueType.quantity;
                 } else if (v instanceof BooleanValue) {
@@ -446,11 +434,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private ValueType getTrajectoryValueType(TrajectoryValue value) {
         for (TrajectoryElement level : value.getValue()) {
-            if (level.getValue()
-                    .size() == 1) {
-                Value<?> v = level.getValue()
-                        .iterator()
-                        .next();
+            if (level.getValue().size() == 1) {
+                Value<?> v = level.getValue().iterator().next();
                 if (v instanceof QuantityValue) {
                     return ValueType.quantity;
                 } else if (v instanceof BooleanValue) {
@@ -490,6 +475,10 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     // sweAbstractDataRecord.getFields().get(getNotObservablePropertyField(sweAbstractDataRecord))
     // .getElement() instanceof SweTimeRange));
     // }
+
+    private <V, T extends DataEntity<V>> ValueType getValueType(T observation) throws OwsExceptionReport {
+        return datasetFactory.visit(observation).getValueType();
+    }
 
     private Set<DataEntity<?>> persistChildren(SweAbstractDataRecord dataRecord, DataEntity dataEntity)
             throws HibernateException, OwsExceptionReport {
@@ -576,8 +565,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     // }
 
     private int getNotObservablePropertyField(SweAbstractDataRecord dataRecord) {
-        return dataRecord.getFieldIndexByIdentifier(omObservation.getObservationConstellation()
-                .getObservablePropertyIdentifier()) == 0 ? 1 : 0;
+        return dataRecord.getFieldIndexByIdentifier(
+                omObservation.getObservationConstellation().getObservablePropertyIdentifier()) == 0 ? 1 : 0;
     }
 
     private OmObservation getObservationWithLevelParameter(ProfileLevel level) {
@@ -585,11 +574,9 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         omObservation.copyTo(o);
         if (level.isSetPhenomenonTime()) {
             o.setValue(new SingleObservationValue<>());
-            o.getValue()
-                    .setPhenomenonTime(level.getPhenomenonTime());
+            o.getValue().setPhenomenonTime(level.getPhenomenonTime());
         }
-        o.getParameterHolder()
-                .addParameter(level.getLevelStartEndAsParameter());
+        o.getParameterHolder().addParameter(level.getLevelStartEndAsParameter());
         return o;
     }
 
@@ -607,8 +594,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         omObservation.copyTo(o);
         if (element.isSetPhenomenonTime()) {
             o.setValue(new SingleObservationValue<>());
-            o.getValue()
-                    .setPhenomenonTime(element.getPhenomenonTime());
+            o.getValue().setPhenomenonTime(element.getPhenomenonTime());
         }
         return o;
     }
@@ -658,26 +644,22 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private DatasetEntity getObservationConstellation(PhenomenonEntity observableProperty,
             FormatEntity observationType, DatasetEntity datasetEntity) throws OwsExceptionReport {
-        return daos.dataset()
-                .checkOrInsertSeries(datasetEntity.getProcedure(), observableProperty, datasetEntity.getOffering(),
-                        datasetEntity.getCategory(), featureOfInterest, datasetEntity.getPlatform(), observationType,
-                        true, session);
+        return daos.dataset().checkOrInsertSeries(datasetEntity.getProcedure(), observableProperty,
+                datasetEntity.getOffering(), datasetEntity.getCategory(), featureOfInterest,
+                datasetEntity.getPlatform(), observationType, true, session);
     }
 
     private OwsExceptionReport notSupported(Value<?> value) throws OwsExceptionReport {
-        throw new NoApplicableCodeException().withMessage("Unsupported observation value %s", value.getClass()
-                .getCanonicalName());
+        throw new NoApplicableCodeException().withMessage("Unsupported observation value %s",
+                value.getClass().getCanonicalName());
     }
 
     private PhenomenonEntity getObservablePropertyForField(SweField field) {
-        String definition = field.getElement()
-                .getDefinition();
-        if (omObservation.getObservationConstellation()
-                .getObservableProperty() instanceof OmCompositePhenomenon) {
+        String definition = field.getElement().getDefinition();
+        if (omObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
             for (OmObservableProperty component : ((OmCompositePhenomenon) omObservation.getObservationConstellation()
                     .getObservableProperty()).getPhenomenonComponents()) {
-                if (component.getIdentifier()
-                        .equals(definition)) {
+                if (component.getIdentifier().equals(definition)) {
                     getObservableProperty(component);
                 }
             }
@@ -711,8 +693,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     // }
 
     private PhenomenonEntity getObservableProperty(AbstractPhenomenon observableProperty) {
-        return daos.observableProperty()
-                .getOrInsertObservableProperty(observableProperty, session);
+        return daos.observableProperty().getOrInsertObservableProperty(observableProperty, session);
     }
 
     private <V, T extends DataEntity<V>> T setUnitAndPersist(T observation, Value<V> value) throws OwsExceptionReport {
@@ -723,8 +704,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     private UnitEntity getUnit(Value<?> value) {
-        return value.isSetUnit() ? daos.observation()
-                .getUnit(value.getUnitObject(), caches.units(), session) : null;
+        return value.isSetUnit() ? daos.observation().getUnit(value.getUnitObject(), caches.units(), session) : null;
     }
 
     /**
@@ -758,8 +738,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             return localCache.get(unit);
         } else {
             // query unit and set cache
-            UnitEntity hUnit = daos.unit()
-                    .getOrInsertUnit(unit, session);
+            UnitEntity hUnit = daos.unit().getOrInsertUnit(unit, session);
             if (localCache != null) {
                 localCache.put(unit, hUnit);
             }
@@ -772,19 +751,15 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         observation.setDeleted(false);
 
         if (parent == null) {
-            daos.observation()
-                    .addIdentifier(omObservation, observation, session, caches.codespaces);
+            daos.observation().addIdentifier(omObservation, observation, session, caches.codespaces);
         } else {
             observation.setParent(parent);
             observation.setStaIdentifier(observation.generateUUID());
         }
 
-        daos.observation()
-                .addName(omObservation, observation, session, caches.codespaces);
-        daos.observation()
-                .addDescription(omObservation, observation);
-        daos.observation()
-                .addTime(omObservation, observation);
+        daos.observation().addName(omObservation, observation, session, caches.codespaces);
+        daos.observation().addDescription(omObservation, observation);
+        daos.observation().addTime(omObservation, observation);
         observation.setValue(value);
         if (samplingGeometry != null) {
             GeometryEntity geometryEntity = new GeometryEntity();
@@ -793,11 +768,9 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             checkUpdateFeatureOfInterestGeometry();
             omObservation.removeSpatialFilteringProfileParameter();
         }
-        ObservationContext observationContext = daos.observation()
-                .createObservationContext();
+        ObservationContext observationContext = daos.observation().createObservationContext();
 
-        String observationType = ObservationTypeObservationVisitor.getInstance()
-                .visit((DataEntity<?>) observation);
+        String observationType = ObservationTypeObservationVisitor.getInstance().visit((DataEntity<?>) observation);
 
         observationContext.setObservationType(getObservationType(observationType, session));
 
@@ -807,20 +780,13 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                     || (isTrajectoryObservation(dataset) && parent == null)
                     || (isDataArrayObservation(dataset) && parent == null)) {
                 offerings.add(dataset.getOffering());
-                if (!daos.dataset()
-                        .checkObservationType(dataset, observationType, session)) {
+                if (!daos.dataset().checkObservationType(dataset, observationType, session)) {
                     throw new InvalidParameterValueException().withMessage(
                             "The requested observationType (%s) is invalid for procedure = "
                                     + "%s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
-                            observationType, observation.getDataset()
-                                    .getProcedure()
-                                    .getIdentifier(),
-                            dataset.getObservableProperty()
-                                    .getIdentifier(),
-                            dataset.getOffering()
-                                    .getIdentifier(),
-                            dataset.getOmObservationType()
-                                    .getFormat());
+                            observationType, observation.getDataset().getProcedure().getIdentifier(),
+                            dataset.getObservableProperty().getIdentifier(), dataset.getOffering().getIdentifier(),
+                            dataset.getOmObservationType().getFormat());
                 }
             }
 
@@ -834,16 +800,17 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 observationContext.setValueType(dataset.getValueType());
             }
         }
+        boolean providedCategory = false;
         if (caches.category() == null) {
             if (omObservation.isSetCategoryParameter()) {
                 NamedValue<String> categoryParameter = (NamedValue<String>) omObservation.getCategoryParameter();
-                caches.setCategory(daos.category()
-                        .getOrInsertCategory((SweText) categoryParameter.getValue(), session));
+                caches.setCategory(
+                        daos.category().getOrInsertCategory((SweText) categoryParameter.getValue(), session));
                 omObservation.removeCategoryParameter();
                 observationContext.setCategory(caches.category(), true);
+                providedCategory = true;
             } else {
-                caches.setCategory(daos.category()
-                        .getOrInsertCategory(daoFactory.getDefaultCategory(), session));
+                caches.setCategory(daos.category().getOrInsertCategory(daoFactory.getDefaultCategory(), session));
                 observationContext.setCategory(caches.category());
             }
         }
@@ -859,38 +826,96 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         }
         observationContext.setFeatureOfInterest(featureOfInterest);
         if (!observationContext.isSetPlatform()) {
-            observationContext.setPlatform(daos.platform()
-                    .getOrInsertPlatform(featureOfInterest, session));
+            observationContext.setPlatform(daos.platform().getOrInsertPlatform(featureOfInterest, session));
         }
-        daos.observation()
-                .fillObservationContext(observationContext, omObservation, session);
+        daos.observation().fillObservationContext(observationContext, omObservation, session);
         checkVerticalParameter(observation, omObservation.getParameterHolder(), observationContext, session);
         if (observationContext.isSetVertical()) {
-            observationContext.setVertical(daos.verticalMetadata()
-                    .getOrInsertVerticalMetadata(observationContext.getVertical(), session));
+            observationContext.setVertical(
+                    daos.verticalMetadata().getOrInsertVerticalMetadata(observationContext.getVertical(), session));
         }
         if (dataset != null && dataset.hasVerticalMetadata()) {
             observationContext.setVertical(dataset.getVerticalMetadata());
         }
-        DatasetEntity persitedDataset = daos.observation()
-                .addObservationContextToObservation(observationContext, observation, session);
+        DatasetEntity persitedDataset =
+                daos.observation().addObservationContextToObservation(observationContext, observation, session);
         session.save(observation);
         session.flush();
-        session.refresh(observation);
         persistParameter(observation, omObservation.getParameterHolder(), observationContext, session);
         if (!(observation instanceof TrajectoryDataEntity)) {
             daos.dataset.updateDatasetWithObservation(persitedDataset, observation, session);
         }
+        if (daoFactory.isInsertAdditionallyAsProfile() && providedCategory
+                && !(observation instanceof ProfileDataEntity)) {
+            insertAdditionallyAsProfile(persitedDataset, observation, observationContext, observationType);
+
+        }
         return observation;
+    }
+
+    private <V, T extends DataEntity<V>> void insertAdditionallyAsProfile(DatasetEntity persitedDataset, T observation,
+            ObservationContext observationContext, String observationType) throws OwsExceptionReport {
+        ProcedureEntity parentProc = getParentProcedure(persitedDataset.getProcedure());
+        OfferingEntity parentOff = getParentOffering(parentProc.getIdentifier());
+        ObservationContext profileContext = daos.observation().createObservationContext().copy(observationContext);
+        profileContext.setProcedure(parentProc);
+        profileContext.setOffering(parentOff);
+        profileContext.setCategory(daos.category().getOrInsertCategory(daoFactory.getDefaultCategory(), session), true);
+        profileContext.setObservationType(getObservationType(OmConstants.OBS_TYPE_PROFILE_OBSERVATION, session));
+        profileContext.setValueType(getValueType(observation));
+        DatasetEntity profileDataset = daos.dataset.getOrInsert(profileContext, session);
+        DataEntity<?> profileObservation = daos.observation.getObservationBy(profileDataset.getId(),
+                observation.getSamplingTimeStart(), observation.getSamplingTimeEnd(), session);
+        if (profileObservation == null) {
+            OmObservation o = new OmObservation();
+            omObservation.copyTo(o);
+            OmObservationConstellation profileConstellation = o.getObservationConstellation().copy();
+            profileConstellation.setProcedure(new SosProcedureDescriptionUnknownType(parentProc.getIdentifier()));
+            Set<String> offIds = new LinkedHashSet<>();
+            offIds.add(parentOff.getIdentifier());
+            profileConstellation.setOfferings(offIds);
+            o.setObservationConstellation(profileConstellation);
+            o.setValue(new SingleObservationValue<>());
+            o.getValue().setPhenomenonTime(omObservation.getPhenomenonTime());
+            ProfileDataEntity profile = observationFactory.profile();
+            Set<OfferingEntity> offs = new LinkedHashSet<>();
+            offs.add(parentOff);
+            profileObservation = new ObservationPersister(daoFactory, daos, caches, o, profileDataset,
+                    featureOfInterest, null, offs, session, parent).persist(profile, new HashSet<DataEntity<?>>());
+        }
+        observation.setParent(profileObservation.getId());
+        session.merge(observation);
+        session.flush();
+        updateProfileVerticalValues(profileObservation, observation);
+    }
+
+    private <V, T extends DataEntity<V>> void updateProfileVerticalValues(DataEntity<?> profileObservation,
+            T observation) {
+        if (observation.hasVerticalFrom() && observation.hasVerticalTo()) {
+
+            session.merge(profileObservation);
+            session.flush();
+        }
+    }
+
+    private ProcedureEntity getParentProcedure(ProcedureEntity procedure) {
+        if (procedure != null && procedure.hasParents()) {
+            return getParentProcedure(procedure.getParents().iterator().next());
+        }
+        return procedure;
+    }
+
+    private OfferingEntity getParentOffering(String procedure) throws OwsExceptionReport {
+        String offering = daos.offering.getOfferingIdentifiersForProcedure(procedure, session).iterator().next();
+        return daos.offering.getOfferingForIdentifier(offering, session);
     }
 
     private FormatEntity getObservationType(String observationType, Session session) {
         if (!caches.formats.containsKey(observationType)) {
-            caches.formats.put(observationType, daos.observationType()
-                    .getOrInsertFormatEntity(observationType, session));
+            caches.formats.put(observationType,
+                    daos.observationType().getOrInsertFormatEntity(observationType, session));
         }
-        return caches.formats()
-                .get(observationType);
+        return caches.formats().get(observationType);
     }
 
     private <T extends DataEntity<?>> T checkVerticalParameter(T observation, ParameterHolder parameterHolder,
@@ -900,32 +925,24 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 NamedValue<BigDecimal> fromParameter = parameterHolder.getFromParameter();
                 NamedValue<BigDecimal> toParameter = parameterHolder.getToParameter();
                 if (!(observation instanceof ProfileDataEntity)) {
-                    observation.setVerticalFrom(fromParameter.getValue()
-                            .getValue());
-                    observation.setVerticalTo(toParameter.getValue()
-                            .getValue());
+                    observation.setVerticalFrom(fromParameter.getValue().getValue());
+                    observation.setVerticalTo(toParameter.getValue().getValue());
                 }
                 // set vertical metadata
                 VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
-                verticalMetadata.setVerticalFromName(fromParameter.getName()
-                        .getHref());
-                verticalMetadata.setVerticalToName(toParameter.getName()
-                        .getHref());
-                if (fromParameter.getValue()
-                        .isSetUnit()) {
-                    verticalMetadata.setVerticalUnit(getUnit(fromParameter.getValue()
-                            .getUnitObject(), caches.units, session));
+                verticalMetadata.setVerticalFromName(fromParameter.getName().getHref());
+                verticalMetadata.setVerticalToName(toParameter.getName().getHref());
+                if (fromParameter.getValue().isSetUnit()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(fromParameter.getValue().getUnitObject(), caches.units, session));
                 }
                 if (parameterHolder.isSetHeightDepthParameter()) {
                     if (parameterHolder.isSetDepthParameter() && parameterHolder.isSetHeightParameter()) {
-                        verticalMetadata.setOrientation(Integer.valueOf(0)
-                                .shortValue());
+                        verticalMetadata.setOrientation(Integer.valueOf(0).shortValue());
                     } else if (parameterHolder.isSetDepthParameter()) {
-                        verticalMetadata.setOrientation(Integer.valueOf(-1)
-                                .shortValue());
+                        verticalMetadata.setOrientation(Integer.valueOf(-1).shortValue());
                     } else {
-                        verticalMetadata.setOrientation(Integer.valueOf(1)
-                                .shortValue());
+                        verticalMetadata.setOrientation(Integer.valueOf(1).shortValue());
                     }
                 }
                 ctx.setVertical(verticalMetadata);
@@ -936,32 +953,23 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 VerticalMetadataEntity verticalMetadata = new VerticalMetadataEntity();
                 if (parameterHolder.isSetDepthParameter()) {
                     if (!(observation instanceof ProfileDataEntity)) {
-                        observation.setVerticalFrom(parameter.getValue()
-                                .getValue());
-                        observation.setVerticalTo(parameter.getValue()
-                                .getValue());
+                        observation.setVerticalFrom(parameter.getValue().getValue());
+                        observation.setVerticalTo(parameter.getValue().getValue());
                     }
-                    verticalMetadata.setOrientation(Integer.valueOf(-1)
-                            .shortValue());
+                    verticalMetadata.setOrientation(Integer.valueOf(-1).shortValue());
                 } else {
                     if (!(observation instanceof ProfileDataEntity)) {
-                        observation.setVerticalFrom(parameter.getValue()
-                                .getValue());
-                        observation.setVerticalTo(parameter.getValue()
-                                .getValue());
+                        observation.setVerticalFrom(parameter.getValue().getValue());
+                        observation.setVerticalTo(parameter.getValue().getValue());
                     }
-                    verticalMetadata.setOrientation(Integer.valueOf(1)
-                            .shortValue());
+                    verticalMetadata.setOrientation(Integer.valueOf(1).shortValue());
                 }
                 // set vertical metadata
-                verticalMetadata.setVerticalFromName(parameter.getName()
-                        .getHref());
-                verticalMetadata.setVerticalToName(parameter.getName()
-                        .getHref());
-                if (parameter.getValue()
-                        .isSetUnit()) {
-                    verticalMetadata.setVerticalUnit(getUnit(parameter.getValue()
-                            .getUnitObject(), caches.units, session));
+                verticalMetadata.setVerticalFromName(parameter.getName().getHref());
+                verticalMetadata.setVerticalToName(parameter.getName().getHref());
+                if (parameter.getValue().isSetUnit()) {
+                    verticalMetadata
+                            .setVerticalUnit(getUnit(parameter.getValue().getUnitObject(), caches.units, session));
                 }
                 ctx.setVertical(verticalMetadata);
                 parameterHolder.removeParameter(parameter);
@@ -973,8 +981,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     private <T extends DataEntity<?>> T persistParameter(T observation, ParameterHolder parameterHolder,
             ObservationContext ctx, Session session) throws OwsExceptionReport {
         if (parameterHolder.isSetParameter()) {
-            Set<ParameterEntity<?>> insertParameter = daos.parameter()
-                    .insertParameter(parameterHolder.getParameter(), caches.units, observation, session);
+            Set<ParameterEntity<?>> insertParameter = daos.parameter().insertParameter(parameterHolder.getParameter(),
+                    caches.units, observation, session);
             observation.addParameters(insertParameter);
         }
         return observation;
@@ -982,26 +990,23 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
     private boolean isProfileObservation(DatasetEntity observationConstellation) {
         return observationConstellation.isSetOMObservationType() && (OmConstants.OBS_TYPE_PROFILE_OBSERVATION
-                .equals(observationConstellation.getOmObservationType()
-                        .getFormat())
-                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG.equals(observationConstellation.getOmObservationType()
-                        .getFormat())
-                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE.equals(observationConstellation.getOmObservationType()
-                        .getFormat()));
+                .equals(observationConstellation.getOmObservationType().getFormat())
+                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG
+                        .equals(observationConstellation.getOmObservationType().getFormat())
+                || GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE
+                        .equals(observationConstellation.getOmObservationType().getFormat()));
     }
 
     private boolean isTrajectoryObservation(DatasetEntity dataset) {
         return dataset != null && dataset.isSetOMObservationType()
-                && OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(dataset.getOmObservationType()
-                        .getFormat());
-//                        && (DatasetType.trajectory.equals(dataset.getDatasetType())
-//                                || ObservationType.trajectory.equals(dataset.getObservationType())));
+                && OmConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(dataset.getOmObservationType().getFormat());
+        // && (DatasetType.trajectory.equals(dataset.getDatasetType())
+        // || ObservationType.trajectory.equals(dataset.getObservationType())));
     }
 
     private boolean isDataArrayObservation(DatasetEntity observationConstellation) {
-        return observationConstellation.isSetOMObservationType()
-                && (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationConstellation.getOmObservationType()
-                        .getFormat()));
+        return observationConstellation.isSetOMObservationType() && (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION
+                .equals(observationConstellation.getOmObservationType().getFormat()));
     }
 
     private Geometry getSamplingGeometryFromLevel(AbstractPofileTrajectoryElement<?> element)
@@ -1017,38 +1022,29 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
             return null;
         }
-        if (sosObservation.isSetValue() && sosObservation.getValue()
-                .isSetValue()
-                && sosObservation.getValue()
-                        .getValue() instanceof ProfileValue
-                && ((ProfileValue) sosObservation.getValue()
-                        .getValue()).isSetGeometry()) {
-            return geometryHandler
-                    .switchCoordinateAxisFromToDatasourceIfNeeded(((ProfileValue) sosObservation.getValue()
-                            .getValue()).getGeometry());
+        if (sosObservation.isSetValue() && sosObservation.getValue().isSetValue()
+                && sosObservation.getValue().getValue() instanceof ProfileValue
+                && ((ProfileValue) sosObservation.getValue().getValue()).isSetGeometry()) {
+            return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                    ((ProfileValue) sosObservation.getValue().getValue()).getGeometry());
         }
-        if (sosObservation.isSetValue() && sosObservation.getValue()
-                .isSetValue()
-                && sosObservation.getValue()
-                        .getValue() instanceof TrajectoryValue
-                && ((TrajectoryValue) sosObservation.getValue()
-                        .getValue()).isSetGeometry()) {
-            return geometryHandler
-                    .switchCoordinateAxisFromToDatasourceIfNeeded(((TrajectoryValue) sosObservation.getValue()
-                            .getValue()).getGeometry());
+        if (sosObservation.isSetValue() && sosObservation.getValue().isSetValue()
+                && sosObservation.getValue().getValue() instanceof TrajectoryValue
+                && ((TrajectoryValue) sosObservation.getValue().getValue()).isSetGeometry()) {
+            return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(
+                    ((TrajectoryValue) sosObservation.getValue().getValue()).getGeometry());
         }
         NamedValue<org.locationtech.jts.geom.Geometry> spatialFilteringProfileParameter =
                 sosObservation.getSpatialFilteringProfileParameter();
-        return geometryHandler.switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilteringProfileParameter.getValue()
-                .getValue());
+        return geometryHandler
+                .switchCoordinateAxisFromToDatasourceIfNeeded(spatialFilteringProfileParameter.getValue().getValue());
     }
 
     private void checkUpdateFeatureOfInterestGeometry() throws CodedException {
         // check if flag is set and if this observation is not a child
         // observation
         if (samplingGeometry != null && isUpdateFeatureGeometry() && parent != null) {
-            daos.feature()
-                    .updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
+            daos.feature().updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
         }
     }
 
@@ -1063,8 +1059,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         private final Map<String, FormatEntity> formats;
         private CategoryEntity category;
 
-        Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units,
-                Map<String, FormatEntity> formats, CategoryEntity category) {
+        Caches(Map<String, CodespaceEntity> codespaces, Map<UoM, UnitEntity> units, Map<String, FormatEntity> formats,
+                CategoryEntity category) {
             this.codespaces = codespaces;
             this.units = units;
             this.formats = formats;
@@ -1088,7 +1084,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         }
 
         public void setCategory(CategoryEntity category) {
-          this.category = category;
+            this.category = category;
         }
 
     }
@@ -1114,6 +1110,8 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         private final VerticalMetadataDAO verticalMetadata;
 
+        private final OfferingDAO offering;
+
         DAOs(AbstractObservationDAO observationDao, DaoFactory daoFactory) {
             this.observation = observationDao;
             this.observableProperty = daoFactory.getObservablePropertyDAO();
@@ -1125,6 +1123,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             this.dataset = daoFactory.getSeriesDAO();
             this.unit = daoFactory.getUnitDAO();
             this.verticalMetadata = daoFactory.getVerticalMetadataDAO();
+            this.offering = daoFactory.getOfferingDAO();
         }
 
         public ParameterDAO parameter() {
@@ -1165,6 +1164,10 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
 
         public VerticalMetadataDAO verticalMetadata() {
             return this.verticalMetadata;
+        }
+
+        public OfferingDAO offering() {
+            return this.offering;
         }
     }
 

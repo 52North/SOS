@@ -96,6 +96,7 @@ public class DaoFactory {
     private boolean staSupportsUrls;
     private SosHelper sosHelper;
     private ObservationHelper observationHelper;
+    private boolean insertAdditionallyAsProfile;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -171,6 +172,15 @@ public class DaoFactory {
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
+    }
+
+    @Setting(SosSettings.INSERT_ADDITIONALLY_AS_PROFILE)
+    public void setInsertAdditionallyAsProfile(boolean insertAdditionallyAsProfile) {
+        this.insertAdditionallyAsProfile = insertAdditionallyAsProfile;
+    }
+
+    public boolean isInsertAdditionallyAsProfile() {
+        return insertAdditionallyAsProfile;
     }
 
     public AbstractSeriesDAO getSeriesDAO() {

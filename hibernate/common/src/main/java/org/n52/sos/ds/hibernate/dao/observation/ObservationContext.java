@@ -360,4 +360,23 @@ public class ObservationContext {
     public void setIncludeCategory(boolean includeCategory) {
         this.includeCategory = includeCategory;
     }
+
+    public ObservationContext copy(ObservationContext context) {
+        setCategory(context.getCategory());
+        setFeatureOfInterest(context.getFeatureOfInterest());
+        setHiddenChild(context.isHiddenChild());
+        setIncludeCategory(context.isIncludeCategory());
+        setInsitu(context.isInsitu());
+        setMobile(context.isMobile());
+        setObservationType(context.getObservationType());
+        setOffering(context.getOffering());
+        setPhenomenon(context.getPhenomenon());
+        setPlatform(context.getPlatform());
+        setProcedure(context.getProcedure());
+        setPublish(context.isPublish());
+        setUnit(context.getUnit());
+        setValueType(context.getValueType());
+        setVertical(context.getVertical());
+        return this;
+    }
 }

@@ -32,6 +32,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.slf4j.Logger;
@@ -78,6 +80,20 @@ public class CategoryDAO extends AbstractIdentifierNameDescriptionDAO {
             addIdentifier(category, sweText.getValue(), session);
             addName(category, sweText.getName(), session);
             addDescription(category, sweText.getDescription());
+            session.save(category);
+            session.flush();
+            session.refresh(category);
+        }
+        return category;
+    }
+
+    public CategoryEntity getOrInsertCategory(SweCategory sweCategory, Session session) {
+        CategoryEntity category = getCategoryForIdentifier(sweCategory.getValue(), session);
+        if (category == null) {
+            category = new CategoryEntity();
+            addIdentifier(category, sweCategory.getValue(), session);
+            addName(category, sweCategory.getName(), session);
+            addDescription(category, sweCategory.getDescription());
             session.save(category);
             session.flush();
             session.refresh(category);

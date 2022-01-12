@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -57,6 +58,7 @@ import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.CategoryDAO;
@@ -143,7 +145,13 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     CategoryDAO categoryDAO = getDaoFactory().getCategoryDAO();
                     if (sosObsConst.isSetCategoryParameter()) {
                         NamedValue<String> categoryParameter = (NamedValue<String>) sosObsConst.getCategoryParameter();
-                        category = categoryDAO.getOrInsertCategory((SweText) categoryParameter.getValue(), session);
+                        if (categoryParameter.getValue() instanceof SweText) {
+                            category = categoryDAO.getOrInsertCategory((SweText) categoryParameter.getValue(), session);
+                        } else if (categoryParameter.getValue() instanceof SweCategory) {
+                            category = categoryDAO.getOrInsertCategory((SweCategory) categoryParameter.getValue(), session);
+                        } else {
+                            throw new InvalidParameterValueException("om:parameter", categoryParameter.getValue().getClass().getName());
+                        }
                     } else {
                         category = categoryDAO.getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
                     }

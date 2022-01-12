@@ -1046,14 +1046,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn)
             throws SQLException {
+        String catalog = checkCatalog(conn);
+        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         Iterator<Table> tables = getMetadata(conn, settings).collectTableMappings().iterator();
         List<String> names = new LinkedList<String>();
         while (tables.hasNext()) {
             Table table = tables.next();
             if (table.isPhysicalTable()) {
-                // TODO check if this works
-                names.add(table.getQualifiedTableName().render());
-//                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
+                // TODO check if this works since 5.6.2
+                // names.add(table.getQualifiedTableName().render());
+                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
             }
         }
         return names;

@@ -42,4 +42,5 @@ public interface SosSettings {
     String INCLUDE_RESULT_TIME_FOR_MERGING = "service.includeResultTimeForMerging";
     String CHECK_FOR_DUPLICITY = "service.checkForDuplicity";
     String STA_SUPPORTS_URLS = "service.sta.supports.urls";
+    String INSERT_ADDITIONALLY_AS_PROFILE = "service.transactional.insertadditionallyasprofile";
 }

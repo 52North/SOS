@@ -97,6 +97,7 @@ public class DaoFactory {
     private SosHelper sosHelper;
     private ObservationHelper observationHelper;
     private boolean insertAdditionallyAsProfile;
+    private boolean updateFeatureGeometry;
 
     @Inject
     public void setI18NDAORepository(I18NDAORepository i18NDAORepository) {
@@ -181,6 +182,15 @@ public class DaoFactory {
 
     public boolean isInsertAdditionallyAsProfile() {
         return insertAdditionallyAsProfile;
+    }
+
+    @Setting(SosSettings.UPDATE_FEATURE_GEOMETRY)
+    public void setUpdateFeatureGeometry(boolean updateFeatureGeometry) {
+        this.updateFeatureGeometry = updateFeatureGeometry;
+    }
+
+    public boolean isUpdateFeatureGeometry() {
+        return updateFeatureGeometry;
     }
 
     public AbstractSeriesDAO getSeriesDAO() {

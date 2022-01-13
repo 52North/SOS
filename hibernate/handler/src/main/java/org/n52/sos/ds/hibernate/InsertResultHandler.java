@@ -96,7 +96,9 @@ import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolder;
+import org.n52.sos.ds.hibernate.util.observation.ObservationUnfolderContext;
 import org.n52.sos.ds.utils.ResultHandlingHelper;
+import org.n52.sos.service.SosSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,6 +135,8 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
     private boolean abortInsertResultForExistingObservations;
 
     private ResultHandlingHelper helper;
+
+    private boolean insertAdditionallyAsProfile;
 
     public InsertResultHandler() {
         super(SosConstants.SOS);
@@ -252,6 +256,15 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
         return HibernateHelper.isEntitySupported(ResultTemplateEntity.class);
     }
 
+    @Setting(SosSettings.INSERT_ADDITIONALLY_AS_PROFILE)
+    public void setInsertAdditionallyAsProfile(boolean insertAdditionallyAsProfile) {
+        this.insertAdditionallyAsProfile = insertAdditionallyAsProfile;
+    }
+
+    public boolean isInsertAdditionallyAsProfile() {
+        return insertAdditionallyAsProfile;
+    }
+
     /**
      * Get the hibernate AbstractFeatureOfInterest object for an
      * AbstractFeature, returning it from the local cache if already requested
@@ -325,13 +338,19 @@ public class InsertResultHandler extends AbstractInsertResultHandler implements 
             throws OwsExceptionReport {
         try {
             return new ObservationUnfolder(observation, getDaoFactory().getSweHelper(),
-                    getDaoFactory().getGeometryHandler()).unfold(isConvertComplexProfileToSingleProfiles());
+                    getDaoFactory().getGeometryHandler()).unfold(getContext());
         } catch (final Exception e) {
             throw new InvalidParameterValueException().causedBy(e)
                     .at(Sos2Constants.InsertResultParams.resultValues)
                     .withMessage(
                             "The resultValues format does not comply to the resultStructure of the resultTemplate!");
         }
+    }
+
+    private ObservationUnfolderContext getContext() {
+        return new ObservationUnfolderContext()
+                .setComplexToSingle(isConvertComplexProfileToSingleProfiles())
+                .setInsertAdditionallyAsProfile(isInsertAdditionallyAsProfile());
     }
 
     /**

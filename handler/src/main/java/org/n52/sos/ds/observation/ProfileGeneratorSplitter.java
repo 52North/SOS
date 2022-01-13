@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.n52.series.db.beans.DataEntity;
 import org.n52.series.db.beans.ProfileDataEntity;
 import org.n52.series.db.beans.UnitEntity;
@@ -93,7 +94,8 @@ public class ProfileGeneratorSplitter {
     private List<ProfileLevel> createProfileLevel(ProfileDataEntity entity) throws OwsExceptionReport {
         Map<BigDecimal, ProfileLevel> map = Maps.newTreeMap();
         if (entity.hasValue()) {
-            for (DataEntity<?> observation : entity.getValue()) {
+            for (DataEntity<?> o : entity.getValue()) {
+                DataEntity<?> observation  = Hibernate.unproxy(o, DataEntity.class);
                 VerticalMetadataEntity verticalMetadata = entity.getDataset().getVerticalMetadata();
                 QuantityValue levelStart = observation.hasVerticalFrom() && observation.hasVerticalInterval()
                         ? getLevelStart(observation.getVerticalFrom(), verticalMetadata.getVerticalFromName(),

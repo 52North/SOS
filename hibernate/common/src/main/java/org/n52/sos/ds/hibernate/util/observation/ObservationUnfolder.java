@@ -28,11 +28,13 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -103,6 +105,8 @@ import org.n52.sos.ds.hibernate.dao.observation.ValueCreatingSweDataComponentVis
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.IncDecInteger;
 import org.n52.svalbard.util.SweHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -115,6 +119,8 @@ import com.google.common.collect.Maps;
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  */
 public class ObservationUnfolder {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationUnfolder.class);
 
     private static final String TO = "to";
 
@@ -132,6 +138,10 @@ public class ObservationUnfolder {
 
     private static final String SWE_FIELD_NULL = "sweField is null";
 
+    private static final String METER = "m";
+
+    private static final String CENTIMETER = "cm";
+
     private final OmObservation multiObservation;
 
     private final SweHelper helper;
@@ -145,10 +155,10 @@ public class ObservationUnfolder {
     }
 
     public List<OmObservation> unfold() throws OwsExceptionReport {
-        return unfold(false);
+        return unfold(new ObservationUnfolderContext());
     }
 
-    public List<OmObservation> unfold(boolean complexToSingle) throws OwsExceptionReport {
+    public List<OmObservation> unfold(ObservationUnfolderContext ctx) throws OwsExceptionReport {
         if (multiObservation.getValue() instanceof SingleObservationValue) {
             return Collections.singletonList(multiObservation);
         } else {
@@ -291,7 +301,7 @@ public class ObservationUnfolder {
                     for (final Value<?> iValue : observedValues) {
                         List<OmObservation> newObservations = new ArrayList<>();
                         if (isProfileObservations(parameterHolder)) {
-                            if (iValue instanceof ComplexValue && complexToSingle) {
+                            if (iValue instanceof ComplexValue && ctx.isComplexToSingle()) {
                                 complex = true;
                                 for (SweField field : ((ComplexValue) iValue).getValue()
                                         .getFields()) {
@@ -320,7 +330,7 @@ public class ObservationUnfolder {
                                 parameterHolder.removeParameter(parameterHolder.getToParameter());
                             }
                         } else if (isTrajectoryObservations(parameterHolder)) {
-                            if (iValue instanceof ComplexValue && complexToSingle) {
+                            if (iValue instanceof ComplexValue && ctx.isComplexToSingle()) {
                                 complex = true;
                                 for (SweField field : ((ComplexValue) iValue).getValue()
                                         .getFields()) {
@@ -380,6 +390,9 @@ public class ObservationUnfolder {
                             }
                             if (parameterHolder.isSetParameter()) {
                                 newObservation.setParameter(parameterHolder.getParameter());
+                                if (ctx.isInsertAdditionallyAsProfile()) {
+                                    checkForCategoryAsVertical(newObservation);
+                                }
                             }
                             observationCollection.add(newObservation);
                         }
@@ -834,6 +847,37 @@ public class ObservationUnfolder {
             parameter.addParameter(parameterHolder.getParameter());
         }
         return parameter;
+    }
+
+    private void checkForCategoryAsVertical(OmObservation newObservation) {
+        if (!newObservation.isSetHeightDepthParameter() && newObservation.isSetCategoryParameter()) {
+            String value = newObservation.getCategoryParameter().getValue().getValue();
+            String unit = getUnit(value);
+            if (unit != null) {
+                try {
+                    double number = NumberFormat.getInstance(Locale.US).parse(value.replace(unit, "")).doubleValue();
+                    Value<?> quantityValue = new QuantityValue(number, unit);
+                    ReferenceType ref = new ReferenceType();
+                    if (Double.compare(number, Double.valueOf(0.0)) < 0) {
+                        ref.setHref(DEPTH);
+                    } else {
+                        ref.setHref(HEIGHT);
+                    }
+                    newObservation.addParameter(new NamedValue<>(ref, quantityValue));
+                } catch (java.text.ParseException e) {
+                    LOGGER.warn("Error while checking category for height/depth!", e);
+                }
+            }
+        }
+    }
+
+    private String getUnit(String value) {
+        if (value.endsWith(METER)) {
+            return METER;
+        } else if (value.endsWith(CENTIMETER)) {
+            return CENTIMETER;
+        }
+        return null;
     }
 
     protected int getCrsFromString(String crs) throws OwsExceptionReport {

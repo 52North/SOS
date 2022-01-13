@@ -32,7 +32,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.series.db.beans.CategoryEntity;
 import org.n52.series.db.beans.PhenomenonEntity;
-import org.n52.shetland.ogc.om.values.CategoryValue;
 import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;

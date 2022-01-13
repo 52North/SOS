@@ -112,8 +112,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
-        response.setAcceptedTemplate(request.getIdentifier()
-                .getValue());
+        response.setAcceptedTemplate(request.getIdentifier().getValue());
         Session session = null;
         Transaction transaction = null;
         try {
@@ -122,13 +121,12 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
             OmObservationConstellation sosObsConst = request.getObservationTemplate();
             DatasetEntity obsConst = null;
             for (String offeringID : sosObsConst.getOfferings()) {
-                obsConst = getDaoFactory().getSeriesDAO()
-                        .checkSeries(sosObsConst, offeringID, session,
-                                Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                obsConst = getDaoFactory().getSeriesDAO().checkSeries(sosObsConst, offeringID, session,
+                        Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
                     // check if result structure elements are supported
-                    checkResultStructure(request.getResultStructure(), obsConst.getObservableProperty()
-                            .getIdentifier(), sosObsConst);
+                    checkResultStructure(request.getResultStructure(),
+                            obsConst.getObservableProperty().getIdentifier(), sosObsConst);
                     ProcedureEntity procedure = null;
                     AbstractFeatureEntity<?> feature = null;
                     if (sosObsConst.isSetFeatureOfInterest()) {
@@ -146,11 +144,14 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     if (sosObsConst.isSetCategoryParameter()) {
                         NamedValue<String> categoryParameter = (NamedValue<String>) sosObsConst.getCategoryParameter();
                         if (categoryParameter.getValue() instanceof SweText) {
-                            category = categoryDAO.getOrInsertCategory((SweText) categoryParameter.getValue(), session);
+                            category =
+                                    categoryDAO.getOrInsertCategory((SweText) categoryParameter.getValue(), session);
                         } else if (categoryParameter.getValue() instanceof SweCategory) {
-                            category = categoryDAO.getOrInsertCategory((SweCategory) categoryParameter.getValue(), session);
+                            category = categoryDAO.getOrInsertCategory((SweCategory) categoryParameter.getValue(),
+                                    session);
                         } else {
-                            throw new InvalidParameterValueException("om:parameter", categoryParameter.getValue().getClass().getName());
+                            throw new InvalidParameterValueException("om:parameter",
+                                    categoryParameter.getValue().getClass().getName());
                         }
                     } else {
                         category = categoryDAO.getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
@@ -158,8 +159,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     checkOrInsertResultTemplate(request, obsConst, procedure, feature, category, session);
                 } else {
                     // TODO make better exception.
-                    throw new InvalidObservationTypeException(request.getObservationTemplate()
-                            .getObservationType());
+                    throw new InvalidObservationTypeException(request.getObservationTemplate().getObservationType());
                 }
             }
             session.flush();
@@ -193,25 +193,23 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     private void checkOrInsertResultTemplate(InsertResultTemplateRequest request, DatasetEntity obsConst,
             ProcedureEntity procedure, AbstractFeatureEntity<?> feature, CategoryEntity category, Session session)
             throws OwsExceptionReport {
-        getDaoFactory().getResultTemplateDAO()
-                .checkOrInsertResultTemplate(request, obsConst, procedure, feature, category, session);
+        getDaoFactory().getResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, procedure, feature,
+                category, session);
     }
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty,
             OmObservationConstellation sosObsConst) throws OwsExceptionReport {
         // TODO modify or remove if complex field elements are supported
-        final SweDataRecord record = setRecordFrom(resultStructure.get()
-                .get());
+        final SweDataRecord record = setRecordFrom(resultStructure.get().get());
 
         List<String> definitions = new LinkedList<>();
         for (final SweField swefield : record.getFields()) {
             checkDuplicateDefinitions(definitions, swefield);
             if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>) || helper.isDataRecord(swefield)
                     || helper.isVector(swefield) || helper.isDataArray(swefield))) {
-                throw new NoApplicableCodeException()
-                        .withMessage("The swe:Field element of type %s is not yet supported!", swefield.getElement()
-                                .getClass()
-                                .getName());
+                throw new NoApplicableCodeException().withMessage(
+                        "The swe:Field element of type %s is not yet supported!",
+                        swefield.getElement().getClass().getName());
             }
             helper.checkDataRecordForObservedProperty(swefield, observedProperty);
             helper.checkVectorForSamplingGeometry(swefield);
@@ -225,8 +223,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                     .withMessage("Missing swe:field content with element definition %s", observedProperty);
         }
         if (allowTemplateWithoutProcedureAndFeature) {
-            if (sosObsConst.getNillableFeatureOfInterest()
-                    .isNil()
+            if (sosObsConst.getNillableFeatureOfInterest().isNil()
                     && helper.checkFields(record.getFields(), ResultHandlingHelper.OM_FEATURE_OF_INTEREST) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                         .withMessage(
@@ -234,8 +231,8 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                                         + "featureOfInterest is not defined in the observationTemplate!",
                                 ResultHandlingHelper.OM_FEATURE_OF_INTEREST);
             }
-            if (sosObsConst.getNillableProcedure()
-                    .isNil() && helper.checkFields(record.getFields(), ResultHandlingHelper.OM_PROCEDURE) == -1) {
+            if (sosObsConst.getNillableProcedure().isNil()
+                    && helper.checkFields(record.getFields(), ResultHandlingHelper.OM_PROCEDURE) == -1) {
                 throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                         .withMessage(
                                 "Missing swe:field content with element definition '%s' because the procdure "
@@ -243,8 +240,7 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
                                 ResultHandlingHelper.OM_PROCEDURE);
             }
         }
-        if (record.getFields()
-                .size() > getAllowedSize(record)) {
+        if (record.getFields().size() > getAllowedSize(record)) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage(
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element "
@@ -259,15 +255,12 @@ public class InsertResultTemplateHandler extends AbstractInsertResultTemplateHan
     }
 
     private void checkDuplicateDefinitions(List<String> definitions, SweField swefield) throws CodedException {
-        if (definitions.contains(swefield.getElement()
-                .getDefinition())) {
+        if (definitions.contains(swefield.getElement().getDefinition())) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage("The definition '%s' is already defined! Please check your insert result template!",
-                            swefield.getElement()
-                                    .getDefinition());
+                            swefield.getElement().getDefinition());
         } else {
-            definitions.add(swefield.getElement()
-                    .getDefinition());
+            definitions.add(swefield.getElement().getDefinition());
         }
     }
 

@@ -111,7 +111,6 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.sos.SosResultEncoding;
 import org.n52.shetland.ogc.sos.SosResultStructure;
@@ -132,11 +131,12 @@ import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.dao.VerticalMetadataDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.DatasetFactory;
+import org.n52.sos.ds.utils.HibernateUnproxy;
 import org.n52.sos.request.InternalInsertResultTemplateRequest;
 import org.n52.sos.util.GeometryHandler;
 
 public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExceptionReport>,
-        ProfileLevelVisitor<DataEntity<?>>, TrajectoryElementVisitor<DataEntity<?>> {
+        ProfileLevelVisitor<DataEntity<?>>, TrajectoryElementVisitor<DataEntity<?>>, HibernateUnproxy {
 
     private final DatasetEntity dataset;
 
@@ -860,12 +860,14 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
         ObservationContext profileContext = daos.observation().createObservationContext().copy(observationContext);
         profileContext.setProcedure(parentProc);
         profileContext.setOffering(parentOff);
-        profileContext.setCategory(daos.category().getOrInsertCategory(daoFactory.getDefaultCategory(), session), true);
+        profileContext.setCategory(daos.category().getOrInsertCategory(daoFactory.getDefaultCategory(), session),
+                true);
         profileContext.setObservationType(getObservationType(OmConstants.OBS_TYPE_PROFILE_OBSERVATION, session));
         profileContext.setValueType(getValueType(observation));
         DatasetEntity profileDataset = daos.dataset.getOrInsert(profileContext, session);
-        DataEntity<?> profileObservation = daos.observation.getObservationBy(profileDataset.getId(),
-                observation.getSamplingTimeStart(), observation.getSamplingTimeEnd(), session);
+        ProfileDataEntity profileObservation =
+                (ProfileDataEntity) unproxy(daos.observation.getObservationBy(profileDataset.getId(),
+                        observation.getSamplingTimeStart(), observation.getSamplingTimeEnd(), session), session);
         if (profileObservation == null) {
             OmObservation o = new OmObservation();
             omObservation.copyTo(o);
@@ -884,7 +886,12 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                     featureOfInterest, null, offs, session, parent).persist(profile, new HashSet<DataEntity<?>>());
         }
         observation.setParent(profileObservation.getId());
-        session.merge(observation);
+
+        Set<DataEntity<?>> value = profileObservation.getValue();
+        value.add(observation);
+        profileObservation.setValue(value);
+        session.saveOrUpdate(observation);
+        session.saveOrUpdate(profileObservation);
         session.flush();
         updateProfileVerticalValues(profileObservation, observation);
     }
@@ -893,7 +900,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
             T observation) {
         if (observation.hasVerticalFrom() && observation.hasVerticalTo()) {
 
-            session.merge(profileObservation);
+            session.saveOrUpdate(profileObservation);
             session.flush();
         }
     }
@@ -1049,8 +1056,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
     }
 
     private boolean isUpdateFeatureGeometry() {
-        // TODO
-        return true;
+        return daoFactory.isUpdateFeatureGeometry();
     }
 
     private static class Caches {

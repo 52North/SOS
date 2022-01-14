@@ -27,7 +27,6 @@
  */
 package org.n52.sos.ds.hibernate.values.dataset;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -50,6 +49,7 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.series.ValueQueryContext;
 
 /**
  * Hibernate dataset streaming value implementation for chunk results
@@ -168,16 +168,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         Session session = null;
         try {
             session = getSession();
-            // query with temporal filter
-            Collection<DataEntity<?>> resutltValues = new ArrayList<>();
-            if (temporalFilterCriterion != null) {
-                resutltValues.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series,
-                        temporalFilterCriterion, chunkSize, currentRow, session));
-            } else {
-                // query without temporal or indeterminate filters
-                resutltValues.addAll(seriesValueDAO.getStreamingSeriesValuesFor(request, series, chunkSize, currentRow,
-                        getSession()));
-            }
+            ValueQueryContext valueQueryContext = new ValueQueryContext(request, dataset, session)
+                    .setTemporalFilterCriterion(temporalFilterCriterion).setChunkSize(chunkSize)
+                    .setCurrentRow(currentRow);
+            Collection<DataEntity<?>> resutltValues = seriesValueDAO.getStreamingSeriesValuesFor(valueQueryContext);
             currentRow += chunkSize;
             if (DatasetType.trajectory.equals(dataset.getDatasetType())
                     || ObservationType.trajectory.equals(dataset.getObservationType())) {

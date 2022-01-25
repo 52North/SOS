@@ -9,8 +9,6 @@ This project includes:
   52°North Faroe JSON Backend under The Apache Software License, Version 2.0
   52°North Faroe Utilities under The Apache Software License, Version 2.0
   52°North Iceland under The Apache Software License, Version 2.0
-  52°North Iceland Statistics under The Apache Software License, Version 2.0
-  52°North Iceland Statistics Geolocation Feature under The Apache Software License, Version 2.0
   52°North Jan Mayen under The Apache Software License, Version 2.0
   52°North Sensor Observation Service under GPLv2
   52°North Shetland under The Apache Software License, Version 2.0
@@ -51,7 +49,6 @@ This project includes:
   52°North SOS - Observation Converter under GPLv2
   52°North SOS - OceanSITES netCDF API under GPLv2
   52°North SOS - OceanSITES netCDF Coding under GPLv2
-  52°North SOS - OGC Statistics under GPLv2
   52°North SOS - Operation Request Operators under GPLv2
   52°North SOS - Prefixed identifier convert module under GPLv2
   52°North SOS - Procedure Description Converter under GPLv2
@@ -87,7 +84,6 @@ This project includes:
   52°North Svalbard OData under The Apache Software License, Version 2.0
   52°North Svalbard XML Stream under The Apache Software License, Version 2.0
   52°North Svalbard XmlBeans under The Apache Software License, Version 2.0
-  aggs-matrix-stats under Elastic License 2.0 or Server Side Public License, v 1
   ANTLR 4 Runtime under The BSD License
   AntLR Parser Generator under BSD License
   Apache Commons CLI under Apache License, Version 2.0
@@ -100,17 +96,14 @@ This project includes:
   Apache FOP Core under The Apache Software License, Version 2.0
   Apache FOP Events under The Apache Software License, Version 2.0
   Apache FOP Utilities under The Apache Software License, Version 2.0
-  Apache HttpAsyncClient under Apache License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpClient Cache under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
-  Apache HttpCore NIO under Apache License, Version 2.0
   Apache Jena - ARQ (SPARQL 1.1 Query Engine) under The Apache Software License, Version 2.0
   Apache Jena - Base Common Environment under The Apache Software License, Version 2.0
   Apache Jena - Core under The Apache Software License, Version 2.0
   Apache Jena - IRI under The Apache Software License, Version 2.0
   Apache Jena - Shadowed external libraries under The Apache Software License, Version 2.0
-  Apache Log4j API under Apache License, Version 2.0
   Apache Thrift under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   AspectJ Tools (Compiler) under Eclipse Public License - v 2.0
@@ -125,18 +118,9 @@ This project includes:
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-compiler under BSD-3-Clause
-  compiler under Apache License 2.0
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   dexx under MIT License
   EJML under The Apache Software License, Version 2.0
-  Elastic JNA Distribution under Apache License, Version 2.0
-  elasticsearch-cli under Elastic License 2.0 or Server Side Public License, v 1
-  elasticsearch-core under Elastic License 2.0 or Server Side Public License, v 1
-  elasticsearch-geo under Elastic License 2.0 or Server Side Public License, v 1
-  elasticsearch-plugin-classloader under Elastic License 2.0 or Server Side Public License, v 1
-  elasticsearch-secure-sm under Elastic License 2.0 or Server Side Public License, v 1
-  elasticsearch-x-content under Elastic License 2.0 or Server Side Public License, v 1
-  embedded-elasticsearch under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   error-prone annotations under Apache 2.0
   EXIficient-Core under MIT License
@@ -154,13 +138,11 @@ This project includes:
   Guava: Google Core Libraries for Java under Apache License, Version 2.0
   H2 Database Engine under MPL 2.0 or EPL 1.0
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
-  HdrHistogram under Public Domain, per Creative Commons CC0
   Hibernate Commons Annotations under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-c3p0 under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-core under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-spatial under GNU Library General Public License v2.1 or later
   HikariCP under The Apache Software License, Version 2.0
-  HPPC Collections under The Apache Software License, Version 2.0
   HTTP Clients under Lesser General Public License (LGPL)
   httpservices under BSD 3-Clause License
   HyperSQL Database under HSQLDB License, a BSD open source license
@@ -181,7 +163,6 @@ This project includes:
   istack common utility code runtime under CDDL 1.1 or GPL2 w/ CPE
   J2ObjC Annotations under The Apache Software License, Version 2.0
   Jackson dataformat: CBOR under The Apache Software License, Version 2.0
-  Jackson dataformat: Smile under The Apache Software License, Version 2.0
   Jackson datatype: Joda under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
@@ -189,7 +170,6 @@ This project includes:
   jakarta.annotation API under EPL 2.0 or GPL2 w/ CPE
   janino under BSD-3-Clause
   Java Annotation Indexer under Apache License, Version 2.0
-  Java archiving library under Apache 2
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Native Access under LGPL-2.1-or-later or Apache-2.0
   Java Property Utility under The Apache Software License, Version 2.0
@@ -210,31 +190,12 @@ This project includes:
   JFreeChart under GNU Lesser General Public Licence
   jgridshift-core under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda-Time under Apache License, Version 2.0
-  JOpt Simple under The MIT License
   JSONLD Java :: Core under Revised BSD License
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JUL to SLF4J bridge under MIT License
-  lang-mustache under Elastic License 2.0 or Server Side Public License, v 1
   libphonenumber under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
-  Lucene Common Analyzers under Apache License, Version 2.0
-  Lucene Core under Apache License, Version 2.0
-  Lucene Grouping under Apache License, Version 2.0
-  Lucene Highlighter under Apache License, Version 2.0
-  Lucene Join under Apache License, Version 2.0
-  Lucene Memory under Apache License, Version 2.0
-  Lucene Miscellaneous under Apache License, Version 2.0
-  Lucene Queries under Apache License, Version 2.0
-  Lucene QueryParsers under Apache License, Version 2.0
-  Lucene Sandbox under Apache License, Version 2.0
-  Lucene Spatial 3D under Apache License, Version 2.0
-  Lucene Spatial Extras under Apache License, Version 2.0
-  Lucene Suggest under Apache License, Version 2.0
-  LZ4 and xxHash under The Apache Software License, Version 2.0
   Main module under Lesser General Public License (LGPL)
-  mapper-extras under Elastic License 2.0 or Server Side Public License, v 1
-  MaxMind DB Reader under Apache License 2.0
-  MaxMind GeoIP2 API under Apache License, Version 2.0
   mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under Lesser General Public License (LGPL)
   Microsoft JDBC Driver for SQL Server under MIT License
@@ -309,7 +270,6 @@ This project includes:
   org.apache.xmlgraphics:batik-util under The Apache Software License, Version 2.0
   org.apache.xmlgraphics:batik-xml under The Apache Software License, Version 2.0
   org.locationtech.jts:jts-core under Eclipse Public License, Version 2.0 or Eclipse Distribution License - v 1.0
-  parent-join under Elastic License 2.0 or Server Side Public License, v 1
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   PostGIS Geometry under GNU Lesser General Public License
   Postgis JDBC Driver under GNU Lesser General Public License
@@ -317,11 +277,8 @@ This project includes:
   Protocol Buffers [Core] under 3-Clause BSD License
   QDox under The Apache Software License, Version 2.0
   quartz under The Apache Software License, Version 2.0
-  rank-eval under Elastic License 2.0 or Server Side Public License, v 1
   RE2/J under Go License
   Referencing services under Lesser General Public License (LGPL)
-  rest under The Apache Software License, Version 2.0
-  rest-high-level under Elastic License 2.0
   Saxon-HE under Mozilla Public License Version 2.0
   Sensor Web Server DAO Impl - DAO under GNU General Public License, Version 2.0
   Sensor Web Server DAO Impl - Jpa Repositories under GNU General Public License, Version 2.0
@@ -332,11 +289,9 @@ This project includes:
   Sensor Web Server Helgoland - PDF report structure under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - REST module under GNU General Public License, Version 2.0
   Sensor Web Server Helgoland - SPI module under GNU General Public License, Version 2.0
-  server under Elastic License 2.0 or Server Side Public License, v 1
   SI Quantities under BSD 3-Clause
   SI Units under BSD
   SLF4J API Module under MIT License
-  SnakeYAML under Apache License, Version 2.0
   SpotBugs Annotations under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Spring AOP under Apache License, Version 2.0
   Spring Aspects under Apache License, Version 2.0
@@ -363,7 +318,6 @@ This project includes:
   spring-security-taglibs under Apache License, Version 2.0
   spring-security-web under Apache License, Version 2.0
   StAX API under The Apache Software License, Version 2.0
-  T-Digest under The Apache Software License, Version 2.0
   TXW2 Runtime under CDDL+GPL License
   udunits under BSD 3-Clause License
   Units of Measurement API under BSD 3-Clause

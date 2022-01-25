@@ -53,7 +53,7 @@
         <module>handler</module>
         <module>extensions</module>
         <module>spring</module>
-        <module>statistics</module>
+        <!-- <module>statistics</module> -->
         <module>webapp</module>
     </modules>
 
@@ -76,16 +76,16 @@
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.4.0.0.1</version.ojdbc8>
         <version.sqljdbc>10.1.0.jre8-preview</version.sqljdbc>
-        <version.mysql>8.0.27</version.mysql>
+        <version.mysql>8.0.28</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
         <version.hibernate>5.6.1.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
-        <version.geotools>26.1</version.geotools>
+        <version.geotools>26.2</version.geotools>
         <version.jackson>2.13.1</version.jackson>
         <version.logback>1.2.10</version.logback>
-        <version.slf4j>1.7.32</version.slf4j>
+        <version.slf4j>1.7.33</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
         <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
@@ -95,8 +95,8 @@
         <version.db-model>4.0.0-SNAPSHOT</version.db-model>
         <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.springframework.security>5.6.1</version.springframework.security>
-        <version.springframework>5.3.14</version.springframework>
-        <version.springframework.data>2.6.0</version.springframework.data>
+        <version.springframework>5.3.15</version.springframework>
+        <version.springframework.data>2.6.1</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.6</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>
@@ -854,7 +854,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.12.6</version>
+                 <version>1.12.7</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
@@ -1510,7 +1510,7 @@
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>

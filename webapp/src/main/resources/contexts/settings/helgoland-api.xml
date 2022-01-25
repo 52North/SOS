@@ -10,7 +10,7 @@
         <property name="description" value="Some Settings for the HelgolandAPI" />
     </bean>
     <bean class="org.n52.faroe.settings.UriSettingDefinition">
-        <property name="key" value="helgoland.externa.url" />
+        <property name="key" value="helgoland.external.url" />
         <property name="title" value="External HelgolandAPI URL" />
         <property name="description" value="The endpoint URL of this HelgolandAPI." />
         <property name="order" value="0.0" />

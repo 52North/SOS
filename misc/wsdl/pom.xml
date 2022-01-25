@@ -1,5 +1,10 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
+	<parent>
+        <groupId>org.n52</groupId>
+        <artifactId>parent</artifactId>
+        <version>21</version>
+    </parent>
     <groupId>org.n52.sensorweb-server.sos</groupId>
     <packaging>jar</packaging>
     <artifactId>wsdl</artifactId>
@@ -8,8 +13,8 @@
     <!-- To build sources from wsdl (http://127.0.0.1:8080/52n-sos-webapp/wsdl?wsdl) run: 'mvn clean package -Pxmlbeans' -->
     
     <properties>
-        <n52.common.xml.version>1.1.5</n52.common.xml.version>
-        <axis2.version>1.6.2</axis2.version>
+        <n52.common.xml.version>2.7.0</n52.common.xml.version>
+        <axis2.version>1.8.0</axis2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -18,8 +23,8 @@
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -85,62 +90,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <repositories>
-        <repository>
-            <id>Apache</id>
-            <name>Apache repository</name>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>n52-releases</id>
-            <name>52n Releases</name>
-            <url>https://52north.org/maven/repo/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>n52s</id>
-            <name>52n Snapshots</name>
-            <url>https://52north.org/maven/repo/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>Refractions</id>
-            <name>Refractions repository</name>
-            <url>https://lists.refractions.net/m2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>Hibernate Spatial repo</id>
-            <url>https://www.hibernatespatial.org/repository</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>boundless</id>
-            <name>Boundless repository</name>
-            <url>https://repo.boundlessgeo.com/main</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <profiles>
         <profile>
             <id>xmlbeans</id>
@@ -148,7 +97,7 @@
                 <dependency>
                     <groupId>org.apache.xmlbeans</groupId>
                     <artifactId>xmlbeans</artifactId>
-                    <version>2.6.0</version>
+                    <version>3.1.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.apache.axis2</groupId>
@@ -173,7 +122,7 @@
                 <dependency>
                     <groupId>org.apache.ws.commons.axiom</groupId>
                     <artifactId>axiom-impl</artifactId>
-                    <version>1.2.6</version>
+                    <version>1.3.0</version>
                 </dependency>
             </dependencies>
             <build>
@@ -181,7 +130,7 @@
                     <plugin>
                         <groupId>org.apache.axis2</groupId>
                         <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
-                        <version>1.5.4</version>
+                        <version>1.8.0</version>
                         <executions>
                             <execution>
                                 <goals>

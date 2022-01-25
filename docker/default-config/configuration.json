@@ -4,7 +4,7 @@
       "type" : "integer",
       "value" : 1000
     },
-    "helgoland.externa.url" : {
+    "helgoland.external.url" : {
       "type" : "uri",
       "value" : "http://localhost:8080/52n-sos-webapp"
     },

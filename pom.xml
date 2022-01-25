@@ -53,7 +53,7 @@
         <module>handler</module>
         <module>extensions</module>
         <module>spring</module>
-        <module>statistics</module>
+        <!-- <module>statistics</module> -->
         <module>webapp</module>
     </modules>
 
@@ -79,7 +79,7 @@
         <version.mysql>8.0.27</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
-        <version.hibernate>5.6.3.Final</version.hibernate>
+        <version.hibernate>5.6.1.Final</version.hibernate>
         <version.c3p0>0.9.5.5</version.c3p0>
         <version.hikaricp>4.0.3</version.hikaricp>
         <version.geotools>26.1</version.geotools>
@@ -92,11 +92,11 @@
         <version.n52.common.xml>2.7.0</version.n52.common.xml>
         <version.arctic-sea>9.2.1</version.arctic-sea>
         <version.helgoland.api>3.5.0-PR.4</version.helgoland.api>
-        <version.db-model>4.0.0-PR.5</version.db-model>
-        <version.dao-impl>4.0.0-PR.6</version.dao-impl>
+        <version.db-model>4.0.0-SNAPSHOT</version.db-model>
+        <version.dao-impl>4.0.0-SNAPSHOT</version.dao-impl>
         <version.springframework.security>5.6.1</version.springframework.security>
         <version.springframework>5.3.14</version.springframework>
-        <version.springframework.data>2.5.4</version.springframework.data>
+        <version.springframework.data>2.6.1</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
         <version.saxon>10.6</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>

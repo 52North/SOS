@@ -367,12 +367,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             dataset = (DatasetEntity) getDatasetFactory().visit(observation);
             ctx.addValuesToSeries(dataset);
             dataset.setIdentifier(UUID.randomUUID().toString(), getDaoFactory().isStaSupportsUrls());
-            addNameDesxcriptionForDatastream(dataset);
+            addNameDescriptionForDatastream(dataset);
             dataset.setDeleted(false);
             dataset.setPublished(ctx.isPublish());
         } else if (!dataset.isSetFeature()) {
             ctx.addValuesToSeries(dataset);
-            addNameDesxcriptionForDatastream(dataset);
+            addNameDescriptionForDatastream(dataset);
             dataset.setDeleted(false);
             dataset.setPublished(ctx.isPublish());
         } else if (!dataset.isSetUnit() && ctx.isSetUnit()) {
@@ -393,7 +393,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
 
-    private void addNameDesxcriptionForDatastream(DatasetEntity dataset) {
+    private void addNameDescriptionForDatastream(DatasetEntity dataset) {
         dataset.setName(createDatastreamName(dataset));
         dataset.setDescription(createDatastreamDescription(dataset));
     }

@@ -85,7 +85,7 @@
         <version.geotools>26.2</version.geotools>
         <version.jackson>2.13.1</version.jackson>
         <version.logback>1.2.10</version.logback>
-        <version.slf4j>1.7.33</version.slf4j>
+        <version.slf4j>1.7.35</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
         <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
@@ -838,7 +838,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
-                <version>4.2.0</version>
+                <version>4.3.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hamcrest</groupId>
@@ -1920,7 +1920,7 @@
             <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
-                <version>2.12.1</version>
+                <version>2.12.2</version>
             </dependency>
             <dependency>
                 <groupId>xml-apis</groupId>

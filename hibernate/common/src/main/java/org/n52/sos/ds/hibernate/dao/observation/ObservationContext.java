@@ -266,7 +266,7 @@ public class ObservationContext {
         if (contextual.getCategory() == null && isSetCategory()) {
             contextual.setCategory(getCategory());
         }
-        if (contextual.getPlatform() == null && isSetCategory()) {
+        if (contextual.getPlatform() == null && isSetPlatform()) {
             contextual.setPlatform(getPlatform());
         }
         if (!contextual.isSetOMObservationType() && isSetObservationType()) {

@@ -807,7 +807,7 @@ public class ObservationPersister implements ValueVisitor<DataEntity<?>, OwsExce
                 caches.setCategory(
                         daos.category().getOrInsertCategory((SweText) categoryParameter.getValue(), session));
                 omObservation.removeCategoryParameter();
-                observationContext.setCategory(caches.category(), true);
+                observationContext.setCategory(caches.category());
                 providedCategory = true;
             } else {
                 caches.setCategory(daos.category().getOrInsertCategory(daoFactory.getDefaultCategory(), session));

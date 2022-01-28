@@ -171,11 +171,9 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                         new DateTime(DateTimeZone.UTC), session);
                 if (!request.isType()) {
                     final List<FormatEntity> observationTypes =
-                            formatDAO.getOrInsertFormatEntitys(request.getMetadata()
-                                    .getObservationTypes(), session);
-                    final List<FormatEntity> featureOfInterestTypes =
-                            formatDAO.getOrInsertFormatEntitys(request.getMetadata()
-                                    .getFeatureOfInterestTypes(), session);
+                            formatDAO.getOrInsertFormatEntitys(request.getMetadata().getObservationTypes(), session);
+                    final List<FormatEntity> featureOfInterestTypes = formatDAO
+                            .getOrInsertFormatEntitys(request.getMetadata().getFeatureOfInterestTypes(), session);
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<PhenomenonEntity> hObservableProperties = getOrInsertNewObservableProperties(
                                 request.getObservableProperty(), request.getProcedureDescription(), session);
@@ -186,66 +184,65 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                         Set<String> allParentOfferings = getAllParentOfferings(hProcedure);
                         Set<String> parentOfferings = getParentOfferings(hProcedure);
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-                            final List<RelatedFeatureEntity> hRelatedFeatures = new LinkedList<RelatedFeatureEntity>();
-                            if (request.getRelatedFeatures() != null && !request.getRelatedFeatures()
-                                    .isEmpty()) {
-                                final RelatedFeatureDAO relatedFeatureDAO = getDaoFactory().getRelatedFeatureDAO();
-                                for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-                                    hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
-                                            relatedFeature.getFeature(), relatedFeature.getRole(), session));
+                            if (!assignedOffering.isParentOffering()) {
+                                final List<RelatedFeatureEntity> hRelatedFeatures =
+                                        new LinkedList<RelatedFeatureEntity>();
+                                if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
+                                    final RelatedFeatureDAO relatedFeatureDAO = getDaoFactory().getRelatedFeatureDAO();
+                                    for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
+                                        hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
+                                                relatedFeature.getFeature(), relatedFeature.getRole(), session));
+                                    }
                                 }
-                            }
-                            final OfferingEntity hOffering = offeringDAO.getAndUpdateOrInsert(
-                                    new SosOffering(assignedOffering.getIdentifier(),
-                                            assignedOffering.getOfferingName()),
-                                    hRelatedFeatures, observationTypes, featureOfInterestTypes, session);
+                                final OfferingEntity hOffering = offeringDAO.getAndUpdateOrInsert(
+                                        new SosOffering(assignedOffering.getIdentifier(),
+                                                assignedOffering.getOfferingName()),
+                                        hRelatedFeatures, observationTypes, featureOfInterestTypes, session);
 
-                            // add offering to parent offering if this procedure
-                            // is a child/component
-                            if (!parentOfferings.isEmpty() && !allParentOfferings.isEmpty() && hProcedure.hasParents()
-                                    && !allParentOfferings.contains(assignedOffering.getIdentifier())
-                                    && !parentOfferings.contains(assignedOffering.getIdentifier())) {
-                                offeringDAO.updateParentOfferings(parentOfferings, hOffering, session);
-                            }
-
-                            CategoryEntity hCategory = getCategory(request, session);
-                            for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
-                                ObservationContext ctx = new ObservationContext().setCategory(hCategory)
-                                        .setOffering(hOffering)
-                                        .setPhenomenon(hObservableProperty)
-                                        .setProcedure(hProcedure)
-                                        .setPublish(false)
-                                        .setHiddenChild(!assignedOffering.isParentOffering());
-                                checkForMobileInsituFlags(ctx, request.getProcedureDescription()
-                                        .getProcedureDescription());
-                                if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
-                                    ctx.setUnit(hUnits.get(hObservableProperty.getIdentifier()));
+                                // add offering to parent offering if this procedure
+                                // is a child/component
+                                if (!parentOfferings.isEmpty() && !allParentOfferings.isEmpty()
+                                        && hProcedure.hasParents()
+                                        && !allParentOfferings.contains(assignedOffering.getIdentifier())
+                                        && !parentOfferings.contains(assignedOffering.getIdentifier())) {
+                                    offeringDAO.updateParentOfferings(parentOfferings, hOffering, session);
                                 }
-                                if (request.getProcedureDescription()
-                                        .isSetFeaturesOfInterestMap()) {
-                                    boolean inserted = false;
-                                    for (AbstractFeature feature : request.getProcedureDescription()
-                                            .getFeaturesOfInterestMap()
-                                            .values()) {
-                                        if (feature instanceof FeatureWithGeometry
-                                                && ((FeatureWithGeometry) feature).isSetGeometry()) {
-                                            ctx.setFeatureOfInterest(getDaoFactory().getFeatureOfInterestDAO()
-                                                    .checkOrInsert(feature, session));
-                                            inserted = true;
+
+                                CategoryEntity hCategory = getCategory(request, session);
+                                for (final PhenomenonEntity hObservableProperty : hObservableProperties) {
+                                    ObservationContext ctx = new ObservationContext().setCategory(hCategory)
+                                            .setOffering(hOffering).setPhenomenon(hObservableProperty)
+                                            .setProcedure(hProcedure).setPublish(false)
+                                            .setHiddenChild(!assignedOffering.isParentOffering());
+                                    checkForMobileInsituFlags(ctx,
+                                            request.getProcedureDescription().getProcedureDescription());
+                                    if (hUnits.containsKey(hObservableProperty.getIdentifier())) {
+                                        ctx.setUnit(hUnits.get(hObservableProperty.getIdentifier()));
+                                    }
+                                    if (request.getProcedureDescription().isSetFeaturesOfInterestMap()) {
+                                        boolean inserted = false;
+                                        for (AbstractFeature feature : request.getProcedureDescription()
+                                                .getFeaturesOfInterestMap().values()) {
+                                            if (feature instanceof FeatureWithGeometry
+                                                    && ((FeatureWithGeometry) feature).isSetGeometry()) {
+                                                ctx.setFeatureOfInterest(getDaoFactory().getFeatureOfInterestDAO()
+                                                        .checkOrInsert(feature, session));
+                                                inserted = true;
+                                                seriesDAO.getOrInsert(ctx, session);
+                                            }
+                                        }
+                                        if (!inserted) {
                                             seriesDAO.getOrInsert(ctx, session);
                                         }
-                                    }
-                                    if (!inserted) {
+                                    } else {
                                         seriesDAO.getOrInsert(ctx, session);
                                     }
-                                } else {
-                                    seriesDAO.getOrInsert(ctx, session);
-                                }
 
-                                if (checkPreconditionsOfStaticReferenceValues(request)) {
-                                    addStaticReferenceValues(request, session, procedureDescriptionFormat, hProcedure,
-                                            observationTypes, featureOfInterestTypes, hRelatedFeatures, hOffering,
-                                            hObservableProperty, seriesDAO);
+                                    if (checkPreconditionsOfStaticReferenceValues(request)) {
+                                        addStaticReferenceValues(request, session, procedureDescriptionFormat,
+                                                hProcedure, observationTypes, featureOfInterestTypes, hRelatedFeatures,
+                                                hOffering, hObservableProperty, seriesDAO);
+                                    }
                                 }
                             }
                         }
@@ -276,19 +273,13 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
     }
 
     private boolean checkPreconditionsOfStaticReferenceValues(final InsertSensorRequest request) {
-        return request.getProcedureDescription()
-                .getProcedureDescription() instanceof AbstractProcessV20
-                && ((AbstractProcessV20) request.getProcedureDescription()
-                        .getProcedureDescription()).isSetSmlFeatureOfInterest()
-                && ((AbstractSensorML) request.getProcedureDescription()
-                        .getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE)
-                                .isPresent()
-                && !request.getProcedureDescription()
-                        .getFeaturesOfInterestMap()
-                        .isEmpty()
-                && request.getProcedureDescription()
-                        .getFeaturesOfInterestMap()
-                        .size() == 1;
+        return request.getProcedureDescription().getProcedureDescription() instanceof AbstractProcessV20
+                && ((AbstractProcessV20) request.getProcedureDescription().getProcedureDescription())
+                        .isSetSmlFeatureOfInterest()
+                && ((AbstractSensorML) request.getProcedureDescription().getProcedureDescription())
+                        .findCapabilities(REFERENCE_VALUES_PREDICATE).isPresent()
+                && !request.getProcedureDescription().getFeaturesOfInterestMap().isEmpty()
+                && request.getProcedureDescription().getFeaturesOfInterestMap().size() == 1;
     }
 
     private void addStaticReferenceValues(InsertSensorRequest request, Session session,
@@ -296,23 +287,15 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             List<FormatEntity> featureOfInterestTypes, List<RelatedFeatureEntity> hRelatedFeatures,
             OfferingEntity hOffering, PhenomenonEntity hObservableProperty, AbstractSeriesDAO seriesDAO)
             throws OwsExceptionReport {
-        AbstractFeature sosFeatureOfInterest = request.getProcedureDescription()
-                .getFeaturesOfInterestMap()
-                .entrySet()
-                .iterator()
-                .next()
-                .getValue();
-        AbstractFeatureEntity hFeature = getDaoFactory().getFeatureDAO()
-                .insertFeature(sosFeatureOfInterest, session);
+        AbstractFeature sosFeatureOfInterest =
+                request.getProcedureDescription().getFeaturesOfInterestMap().entrySet().iterator().next().getValue();
+        AbstractFeatureEntity hFeature = getDaoFactory().getFeatureDAO().insertFeature(sosFeatureOfInterest, session);
         for (SmlCapability referenceValue : ((AbstractSensorML) request.getProcedureDescription()
-                .getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE)
-                        .get()
-                        .getCapabilities()) {
+                .getProcedureDescription()).findCapabilities(REFERENCE_VALUES_PREDICATE).get().getCapabilities()) {
             if (!(referenceValue.getAbstractDataComponent() instanceof SweQuantity)) {
                 throw new NoApplicableCodeException().withMessage(
                         "ReferenceValue of Type '%s' is not supported -> Aborting InsertSensor Operation!",
-                        referenceValue.getAbstractDataComponent()
-                                .getDataComponentType());
+                        referenceValue.getAbstractDataComponent().getDataComponentType());
             }
             SweQuantity referenceValueValue = (SweQuantity) referenceValue.getAbstractDataComponent();
             String identifier = hProcedure.getIdentifier() + REFERENCE_VALUE;
@@ -320,14 +303,12 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                     new SosProcedureDescriptionUnknownType(identifier, procedureDescriptionFormat.getFormat(), "");
             procedureReferenceSeries.setReference(true);
             procedureReferenceSeries.setName(new CodeType(referenceValue.getName()));
-            ProcedureEntity hProcedureReferenceSeries = getDaoFactory().getProcedureDAO()
-                    .getOrInsertProcedure(identifier, procedureDescriptionFormat, procedureReferenceSeries, false,
-                            session);
-            OfferingEntity hOfferingReferenceSeries = getDaoFactory().getOfferingDAO()
-                    .getAndUpdateOrInsert(
-                            new SosOffering(hOffering.getIdentifier() + REFERENCE_VALUE,
-                                    hOffering.getName() + REFERENCE_VALUE),
-                            hRelatedFeatures, observationTypes, featureOfInterestTypes, session);
+            ProcedureEntity hProcedureReferenceSeries = getDaoFactory().getProcedureDAO().getOrInsertProcedure(
+                    identifier, procedureDescriptionFormat, procedureReferenceSeries, false, session);
+            OfferingEntity hOfferingReferenceSeries = getDaoFactory().getOfferingDAO().getAndUpdateOrInsert(
+                    new SosOffering(hOffering.getIdentifier() + REFERENCE_VALUE,
+                            hOffering.getName() + REFERENCE_VALUE),
+                    hRelatedFeatures, observationTypes, featureOfInterestTypes, session);
             TimeInstant time = new TimeInstant(new DateTime(0));
             SingleObservationValue<BigDecimal> sosValue = new SingleObservationValue<>(
                     new QuantityValue(referenceValueValue.getValue(), referenceValueValue.getUom()));
@@ -350,13 +331,10 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
                     new ObservationPersister(getDaoFactory(), getDaoFactory().getObservationDAO(), sosObservation,
                             hObservationConstellationReferenceSeries, hFeature, codespaceCache, unitCache, formatCache,
                             Collections.singleton(hOfferingReferenceSeries), session);
-            DataEntity<?> observation = sosValue.getValue()
-                    .accept(persister);
-            DatasetEntity hReferenceSeries = seriesDAO
-                    .getSeries(hProcedureReferenceSeries.getIdentifier(), hObservableProperty.getIdentifier(),
-                            hOfferingReferenceSeries.getIdentifier(), Collections.singleton(hFeature.getIdentifier()),
-                            session)
-                    .get(0);
+            DataEntity<?> observation = sosValue.getValue().accept(persister);
+            DatasetEntity hReferenceSeries = seriesDAO.getSeries(hProcedureReferenceSeries.getIdentifier(),
+                    hObservableProperty.getIdentifier(), hOfferingReferenceSeries.getIdentifier(),
+                    Collections.singleton(hFeature.getIdentifier()), session).get(0);
             hReferenceSeries.setPublished(false);
             session.update(hReferenceSeries);
             ObservationContext ctxReferenced = new ObservationContext();
@@ -366,8 +344,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             ctxReferenced.setOffering(hOffering);
             ctxReferenced.setPublish(false);
             DatasetEntity hSeries = seriesDAO.getOrInsertSeries(ctxReferenced, observation, session);
-            if (hSeries.getValueType()
-                    .equals(ValueType.quantity)) {
+            if (hSeries.getValueType().equals(ValueType.quantity)) {
                 hSeries.setReferenceValues(Lists.newArrayList(hReferenceSeries));
             }
             session.update(hSeries);
@@ -375,8 +352,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
     }
 
     /**
-     * Create OmObservableProperty objects from observableProperty identifiers
-     * and get or insert them into the database
+     * Create OmObservableProperty objects from observableProperty identifiers and get or insert them into the
+     * database
      *
      * @param obsProps
      *            observableProperty identifiers
@@ -404,8 +381,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             }
 
         }
-        return getDaoFactory().getObservablePropertyDAO()
-                .getOrInsertObservableProperty(observableProperties, session);
+        return getDaoFactory().getObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, session);
     }
 
     private Map<String, UnitEntity> getOrInsertNewUnits(List<PhenomenonEntity> hObservableProperties,
@@ -417,8 +393,7 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             for (PhenomenonEntity phenomenonEntity : hObservableProperties) {
                 UoM unit = process.getObservablePropertyUnit(phenomenonEntity.getIdentifier());
                 if (unit != null) {
-                    UnitEntity hUnit = getDaoFactory().getUnitDAO()
-                            .getOrInsertUnit(unit, session);
+                    UnitEntity hUnit = getDaoFactory().getUnitDAO().getOrInsertUnit(unit, session);
                     if (hUnit != null) {
                         map.put(phenomenonEntity.getIdentifier(), hUnit);
                     }
@@ -441,20 +416,15 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
             // if SensorML is not a wrapper
             if (!sensorML.isWrapper()) {
                 return sensorML.getXml();
-            } else if (sensorML.isWrapper() && sensorML.getMembers()
-                    .size() == 1) {
+            } else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1) {
                 // if SensorML is a wrapper and member size is 1
-                return sensorML.getMembers()
-                        .get(0)
-                        .getXml();
+                return sensorML.getMembers().get(0).getXml();
             } else {
                 // TODO: get sensor description for procedure identifier
                 return "";
             }
-        } else if (procedureDescription.getProcedureDescription()
-                .isSetXml()) {
-            return procedureDescription.getProcedureDescription()
-                    .getXml();
+        } else if (procedureDescription.getProcedureDescription().isSetXml()) {
+            return procedureDescription.getProcedureDescription().getXml();
         } else if (procedureDescription.isSetXml()) {
             return procedureDescription.getXml();
         }
@@ -462,8 +432,8 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
     }
 
     /**
-     * Check whether the procedure description provides flags for mobile and
-     * insitu and add it to the {@link ObservationContext}.
+     * Check whether the procedure description provides flags for mobile and insitu and add it to the
+     * {@link ObservationContext}.
      *
      * @param ctx
      *            the {@link ObservationContext} to add flags
@@ -485,15 +455,12 @@ public class InsertSensorHandler extends AbstractInsertSensorHandler implements 
     private CategoryEntity getCategory(InsertSensorRequest request, Session session) {
         if (request.hasExtension(CATEGORY)) {
             Optional<Extension<?>> extension = request.getExtension(CATEGORY);
-            if (extension.isPresent() && extension.get()
-                    .getValue() instanceof SweText) {
-                return getDaoFactory().getCategoryDAO()
-                        .getOrInsertCategory((SweText) extension.get()
-                                .getValue(), session);
+            if (extension.isPresent() && extension.get().getValue() instanceof SweText) {
+                return getDaoFactory().getCategoryDAO().getOrInsertCategory((SweText) extension.get().getValue(),
+                        session);
             }
         }
-        return getDaoFactory().getCategoryDAO()
-                .getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
+        return getDaoFactory().getCategoryDAO().getOrInsertCategory(getDaoFactory().getDefaultCategory(), session);
     }
 
     private Set<String> getAllParentOfferings(ProcedureEntity hProcedure) {

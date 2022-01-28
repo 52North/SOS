@@ -255,7 +255,7 @@ public abstract class AbstractObservationValueCreator extends AbstractValuedObse
             holder.addQuality(quantity);
             holder.addReference(WaterMLConstants.EN_CENSORED_REASON, reference);
         } else {
-            holder.addQuality(new TextValue(null));
+            holder.addQuality(new TextValue((String) null));
         }
         return holder;
     }

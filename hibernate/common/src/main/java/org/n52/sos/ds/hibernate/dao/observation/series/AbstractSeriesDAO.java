@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -281,14 +282,9 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         if (omObsConst.isSetCategoryParameter()) {
             List<DatasetEntity> datasets = criteria.list();
             return datasets.stream()
-                    .filter(d -> d.getCategory()
-                            .getIdentifier()
-                            .equals(omObsConst.getCategoryParameter()
-                                    .getValue()
-                                    .getValue()))
-                    .findFirst()
-                    .orElse(datasets.iterator()
-                            .next());
+                    .filter(d -> d.getCategory().getIdentifier()
+                            .equals(omObsConst.getCategoryParameter().getValue().getValue()))
+                    .findFirst().orElse(datasets.iterator().next());
 
         }
         criteria.setMaxResults(1);
@@ -313,8 +309,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             Session session);
 
     /**
-     * Insert or update and get series for procedure, observable property and
-     * featureOfInterest
+     * Insert or update and get series for procedure, observable property and featureOfInterest
      *
      * @param ctx
      *            identifiers object
@@ -352,9 +347,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 "QUERY getOrInsertSeries(feature, observableProperty, procedure, offering, platform, category): {}",
                 HibernateHelper.getSqlString(criteria));
         List<DatasetEntity> datasets = (List<DatasetEntity>) criteria.list();
-        DatasetEntity dataset = datasets.isEmpty() ? null
-                : datasets.stream().filter(d -> d.getCategory().equals(ctx.getCategory())).findFirst()
-                        .orElse(datasets.iterator().next());
+        DatasetEntity dataset = datasets.isEmpty() ? null : checkForCategory(datasets, ctx);
         if (dataset == null || dataset.getDatasetType().equals(DatasetType.not_initialized)) {
             dataset = preCheckDataset(ctx, observation, dataset, session);
             if (dataset != null && dataset.isMobile()) {
@@ -392,6 +385,28 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         return dataset;
     }
 
+    private DatasetEntity checkForCategory(List<DatasetEntity> datasets, ObservationContext ctx) {
+        Optional<DatasetEntity> dataset =
+                datasets.stream().filter(d -> checkCategories(d.getCategory(), ctx.getCategory())).findFirst();
+        if (dataset.isPresent()) {
+            return dataset.get();
+        }
+        dataset = datasets.stream().filter(d -> checkCategories(d.getCategory(), getDaoFactory().getDefaultCategory()))
+                .findFirst();
+        if (dataset.isPresent()) {
+            DatasetEntity ds = dataset.get();
+            ds.setCategory(ctx.getCategory());
+            return ds;
+        }
+        return datasets.iterator().next();
+    }
+
+    private boolean checkCategories(CategoryEntity one, CategoryEntity two) {
+        if (one != null && two != null) {
+            return one.getIdentifier().equals(two.getIdentifier());
+        }
+        return false;
+    }
 
     private void addNameDescriptionForDatastream(DatasetEntity dataset) {
         dataset.setName(createDatastreamName(dataset));
@@ -426,10 +441,11 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         DatasetEntity ds = dataset;
         if (ds == null) {
             Criteria criteria = getDefaultNotDefinedDatasetCriteria(session);
-            ctx.addIdentifierRestrictionsToCritera(criteria, false, true);
+            ctx.addIdentifierRestrictionsToCritera(criteria, false, false);
             LOGGER.trace("QUERY preCheckDataset(observableProperty, procedure, offering): {}",
                     HibernateHelper.getSqlString(criteria));
-            ds = (DatasetEntity) criteria.uniqueResult();
+            List<DatasetEntity> datasets = (List<DatasetEntity>) criteria.list();
+            ds = datasets.isEmpty() ? null : checkForCategory(datasets, ctx);
         }
         if (ds != null) {
             DatasetEntity concrete = getDatasetFactory().visit(observation);
@@ -808,8 +824,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     /**
-     * Get default Hibernate Criteria for querying series, deleted flag ==
-     * <code>false</code>
+     * Get default Hibernate Criteria for querying series, deleted flag == <code>false</code>
      *
      * @param session
      *            Hibernate Session
@@ -851,8 +866,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     /**
-     * Update series values which will be used by the Timeseries API. Can be
-     * later used by the SOS.
+     * Update series values which will be used by the Timeseries API. Can be later used by the SOS.
      *
      * @param dataset
      *            Series object
@@ -865,14 +879,14 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             Session session) {
         boolean minChanged = false;
         boolean maxChanged = false;
-        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt() && dataset.getFirstValueAt()
-                .after(observation.getSamplingTimeStart()))) {
+        if (!dataset.isSetFirstValueAt() || (dataset.isSetFirstValueAt()
+                && dataset.getFirstValueAt().after(observation.getSamplingTimeStart()))) {
             minChanged = true;
             dataset.setFirstValueAt(observation.getSamplingTimeStart());
             dataset.setFirstObservation(observation);
         }
-        if (!dataset.isSetLastValueAt() || (dataset.isSetLastValueAt() && dataset.getLastValueAt()
-                .before(observation.getSamplingTimeEnd()))) {
+        if (!dataset.isSetLastValueAt()
+                || (dataset.isSetLastValueAt() && dataset.getLastValueAt().before(observation.getSamplingTimeEnd()))) {
             maxChanged = true;
             dataset.setLastValueAt(observation.getSamplingTimeEnd());
             dataset.setLastObservation(observation);
@@ -885,34 +899,26 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 dataset.setLastQuantityValue(((QuantityDataEntity) observation).getValue());
             }
         }
-        if (!dataset.isSetResultTimeStart() || (dataset.isSetResultTimeStart() && dataset.getResultTimeStart()
-                .after(observation.getResultTime()))) {
+        if (!dataset.isSetResultTimeStart() || (dataset.isSetResultTimeStart()
+                && dataset.getResultTimeStart().after(observation.getResultTime()))) {
             dataset.setResultTimeStart(observation.getResultTime());
         }
-        if (!dataset.isSetResultTimeEnd() || (dataset.isSetResultTimeEnd() && dataset.getResultTimeEnd()
-                .before(observation.getResultTime()))) {
+        if (!dataset.isSetResultTimeEnd()
+                || (dataset.isSetResultTimeEnd() && dataset.getResultTimeEnd().before(observation.getResultTime()))) {
             dataset.setResultTimeEnd(observation.getResultTime());
         }
         if (observation.isSetGeometryEntity()) {
             if (dataset.isSetGeometry()) {
-                dataset.getGeometryEntity()
-                        .union(observation.getGeometryEntity());
+                dataset.getGeometryEntity().union(observation.getGeometryEntity());
             } else {
                 dataset.setGeometryEntity(new GeometryEntity().copy(observation.getGeometryEntity()));
             }
-        } else if (observation.getDataset().isSetFeature()
-                && observation.getDataset()
-                        .getFeature()
-                        .isSetGeometry()) {
+        } else if (observation.getDataset().isSetFeature() && observation.getDataset().getFeature().isSetGeometry()) {
             if (dataset.isSetGeometry()) {
-                dataset.getGeometryEntity()
-                        .union(observation.getDataset()
-                                .getFeature()
-                                .getGeometryEntity());
+                dataset.getGeometryEntity().union(observation.getDataset().getFeature().getGeometryEntity());
             } else {
-                dataset.setGeometryEntity(new GeometryEntity().copy(observation.getDataset()
-                        .getFeature()
-                        .getGeometryEntity()));
+                dataset.setGeometryEntity(
+                        new GeometryEntity().copy(observation.getDataset().getFeature().getGeometryEntity()));
             }
         }
         session.saveOrUpdate(dataset);
@@ -926,8 +932,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     /**
-     * Update Series for procedure by setting deleted flag and return changed
-     * series
+     * Update Series for procedure by setting deleted flag and return changed series
      *
      * @param procedure
      *            Procedure for which the series should be changed
@@ -966,8 +971,8 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     /**
-     * Check {@link DatasetEntity} if the deleted observation time stamp
-     * corresponds to the first/last series time stamp
+     * Check {@link DatasetEntity} if the deleted observation time stamp corresponds to the first/last series
+     * time stamp
      *
      * @param dataset
      *            Series to update
@@ -1015,7 +1020,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             dataset.setUnit(null);
             dataset.setGeometry(null);
         }
-        //restultTime
+        // restultTime
         if (dataset.isSetResultTimeStart() && dataset.getResultTimeStart().equals(observation.getResultTime())) {
             DataEntity<?> firstDataEntity = seriesObservationDAO.getFirstObservationFor(dataset, session);
             if (firstDataEntity != null) {
@@ -1128,8 +1133,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     }
 
     /**
-     * Get series query Hibernate Criteria for procedure, observableProperty and
-     * featureOfInterest
+     * Get series query Hibernate Criteria for procedure, observableProperty and featureOfInterest
      *
      * @param procedure
      *            Procedure to get series for

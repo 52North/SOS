@@ -264,9 +264,9 @@ public class SosInsertSensorOperatorV20 extends
                         Set<String> offeringsForProcedure = getCache().getOfferingsForProcedure(
                                 ((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo().getHref());
                         Map<String, Boolean> containedOfferings = new LinkedHashMap<>();
-                        for (String string : offeringsForProcedure) {
-                            containedOfferings.put(string, false);
-                        }
+//                        for (String string : offeringsForProcedure) {
+//                            containedOfferings.put(string, false);
+//                        }
                         if (procedureDescription.isSetOfferings()) {
                             for (SosOffering off : procedureDescription.getOfferings()) {
                                 if (offeringsForProcedure.contains(off.getIdentifier())) {
@@ -282,15 +282,15 @@ public class SosInsertSensorOperatorV20 extends
                                     procedureDescription.addOffering(sosOff);
                                 }
                             });
-                        } else {
-                            offeringsForProcedure.forEach(o -> {
-                                SosOffering sosOff = new SosOffering(o,
-                                        getCache().getOfferingHumanReadableNameForIdentifier(
-                                                ((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo()
-                                                        .getHref()));
-                                sosOff.setParentOfferingFlag(true);
-                                procedureDescription.addOffering(sosOff);
-                            });
+//                        } else {
+//                            offeringsForProcedure.forEach(o -> {
+//                                SosOffering sosOff = new SosOffering(o,
+//                                        getCache().getOfferingHumanReadableNameForIdentifier(
+//                                                ((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo()
+//                                                        .getHref()));
+//                                sosOff.setParentOfferingFlag(true);
+//                                procedureDescription.addOffering(sosOff);
+//                            });
                         }
                     }
                     if (abstractProcessV20.isSetSmlFeatureOfInterest()) {

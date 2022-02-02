@@ -71,7 +71,7 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.3.1</version.postgresql>
+        <version.postgresql>42.3.2</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.4.0.0.1</version.ojdbc8>
         <version.sqljdbc>10.1.0.jre8-preview</version.sqljdbc>

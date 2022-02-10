@@ -72,10 +72,10 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.3.1</version.postgresql>
+        <version.postgresql>42.3.2</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
         <version.ojdbc8>21.4.0.0.1</version.ojdbc8>
-        <version.sqljdbc>10.1.0.jre8-preview</version.sqljdbc>
+        <version.sqljdbc>10.2.0.jre8</version.sqljdbc>
         <version.mysql>8.0.28</version.mysql>
         <version.h2>1.4.200</version.h2>
         <version.geodb>0.9</version.geodb>
@@ -85,7 +85,7 @@
         <version.geotools>26.2</version.geotools>
         <version.jackson>2.13.1</version.jackson>
         <version.logback>1.2.10</version.logback>
-        <version.slf4j>1.7.35</version.slf4j>
+        <version.slf4j>1.7.36</version.slf4j>
         <version.netcdf>5.5.3</version.netcdf>
         <version.jts>1.18.2</version.jts>
         <!-- 52N dependency versions -->
@@ -98,7 +98,7 @@
         <version.springframework>5.3.15</version.springframework>
         <version.springframework.data>2.6.1</version.springframework.data>
         <version.aspectj>1.9.7</version.aspectj>
-        <version.saxon>10.6</version.saxon>
+        <version.saxon>11.1.1</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
         <version.httpcore>4.4.15</version.httpcore>
@@ -2231,7 +2231,7 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.7</version>
+                    <version>11.0.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

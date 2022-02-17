@@ -72,9 +72,9 @@
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
 
-        <version.postgresql>42.3.2</version.postgresql>
+        <version.postgresql>42.3.3</version.postgresql>
         <version.postgis>2.5.1</version.postgis>
-        <version.ojdbc8>21.4.0.0.1</version.ojdbc8>
+        <version.ojdbc8>21.5.0.0</version.ojdbc8>
         <version.sqljdbc>10.2.0.jre8</version.sqljdbc>
         <version.mysql>8.0.28</version.mysql>
         <version.h2>1.4.200</version.h2>
@@ -97,7 +97,7 @@
         <version.springframework.security>5.6.1</version.springframework.security>
         <version.springframework>5.3.15</version.springframework>
         <version.springframework.data>2.6.1</version.springframework.data>
-        <version.aspectj>1.9.7</version.aspectj>
+        <version.aspectj>1.9.8</version.aspectj>
         <version.saxon>11.1.1</version.saxon>
         <version.elasticsearch>7.15.2</version.elasticsearch>
         <version.sos.test.suite>2.0.0-M1</version.sos.test.suite>
@@ -854,7 +854,7 @@
             <dependency>
                  <groupId>net.bytebuddy</groupId>
                  <artifactId>byte-buddy</artifactId>
-                 <version>1.12.7</version>
+                 <version>1.12.8</version>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
